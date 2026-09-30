@@ -18,6 +18,12 @@ Bob-Z guarantees. Actual game success supplies all hiding estimates and
 Alice-Z consistency. Both adaptive inductions and terminal extraction are
 then constructed. The explicit power bound covers every nonnegative input
 error, including errors outside the smallness threshold of the induction.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the extracted register state
+is the register model `Ξ.reg (ι → F)` of a normalized auxiliary model `Ξ`, and the value is that of
+any value model `ω` dominating the POVM strategies of `Ξ`. The strategy terminal extraction builds
+lives in the model the two iterations return, which reduces to `Ξ`
+(`BipartiteModel.POVMReduces`), so `ω` dominates it too.
 -/
 
 noncomputable section
@@ -114,18 +120,21 @@ theorem exists_primitiveSoundness_errorProfile (r : ℕ) {edges a b : ℝ}
     (by linarith [primitiveSoundnessCoefficient_one_le r hE]) ha hx hε
 
 namespace TypedEstimates
-universe u
-variable {F ι A H K : Type u} {PauliType PauliAnswer κ : Type*}
+universe u v
+variable {F ι A : Type} {PauliType PauliAnswer κ : Type*}
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] [Fintype A] [Nonempty A]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
   [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]
   [Fintype κ] [DecidableEq κ] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type u} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜]
+  [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ]
+  [StarProper ℬ]
 
 set_option maxHeartbeats 800000 in
-set_option backward.isDefEq.respectTransparency false in
-/-- Complete finite-game soundness on an extracted register state. No hiding,
-prefix invariant, future measurement, or small-error hypothesis is assumed. -/
+/-- Complete finite-game soundness on an extracted register model, in every value model
+dominating its POVM strategies. No hiding, prefix invariant, future measurement, or small-error
+hypothesis is assumed. -/
 theorem quantumValue_ge_of_primitive_pauli
     (E : PauliType → PauliType → Bool) (X Z : PauliType)
     (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)
@@ -134,26 +143,25 @@ theorem quantumValue_ge_of_primitive_pauli
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (G : Game (ι → F) (ι → F) A A)
+    (ω : ValueModel) (G : Game (ι → F) (ι → F) A A)
     (hμ : ∀ x y, G.μ x y = CL.clDist (L false).eval (L true).eval x y)
-    (hD : G.D = D) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)
+    (hD : G.D = D) (Ξ : BipartiteModel.{v} 𝒞 𝒜 ℬ) (hΞ : ‖Ξ.ψ‖ = 1)
+    (hω : ω.DominatesPOVM Ξ)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))
-    (hMA : ∀ q, IsPVM (fun a => ((MA q).mats a).val))
-    (hMB : ∀ q, IsPVM (fun a => ((MB q).mats a).val))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ))
+    (hMA : ∀ q, IsPVMIn (MA q).op) (hMB : ∀ q, IsPVMIn (MB q).op)
     (qX qZ : κ → ZMod 2)
     (hqX : ∀ z, (P X).eval z = qX) (hqZ : ∀ z, (P Z).eval z = qZ)
     {t : ℝ} (ht : 0 ≤ t)
-    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)
-      (registerState (ι → F) ξ) MA MB ≤ t)
-    (hX : ∑ x, stateSqNorm (registerState (ι → F) ξ)
-      ((((MA (QuestionType.pauli X, qX)).map (pauliProjection projectPauli)).mats x).val -
-        (aOp (Honest.pauliXReadout x) : Matrix ((ι → F) × H) _ ℂ)) ≤ t)
-    (hZ : introBobZError projectPauli Z qZ ξ MB ≤ t) :
+    (hfail : 1 - (Ξ.reg (ι → F)).povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ t)
+    (hX : ∑ x, (Ξ.reg (ι → F)).stateSqNorm
+      (((MA (QuestionType.pauli X, qX)).map (pauliProjection projectPauli)).op x -
+        smulKron 1 (Honest.pauliXReadout x)) ≤ t)
+    (hZ : introBobZError projectPauli Z qZ Ξ MB ≤ t) :
     1 - primitiveSoundnessCoefficient ℓ (TypeGraph.edges E X Z ℓ).card *
-      iteratedRoot (6 * ℓ) t ≤ quantumValue G := by
+      iteratedRoot (6 * ℓ) t ≤ ω.val G := by
   let edges : ℝ := (TypeGraph.edges E X Z ℓ).card
   have hE : 0 ≤ edges := Nat.cast_nonneg _
   let c := primitiveBudgetCoefficient ℓ edges
@@ -164,42 +172,40 @@ theorem quantumValue_ge_of_primitive_pauli
   have hpay := primitiveSoundness_power_bounds ℓ hE ht
   rcases adaptiveSoundness_power_cases ℓ (2 * ℓ) hE hs
     (le_refl s) (le_refl s) (le_refl s) with ⟨hsmall, hbound⟩ | hlarge
-  · have hZA : introAliceZError projectPauli Z qZ ξ MA ≤ s := by
+  · have hZA : introAliceZError projectPauli Z qZ Ξ MA ≤ s := by
       apply (introAliceZError_le_of_bob E X Z P L projectPauli D DP
-        ξ hξ MA MB qZ hqZ hfail hZ).trans
+        Ξ hΞ MA MB qZ hqZ hfail hZ).trans
       calc
         _ = (4 * edges + 2) * t := by dsimp [edges]; ring
         _ ≤ s := mul_le_mul_of_nonneg_right hc.2.1 ht
     have hhide (w : Bool) (j : Fin ℓ) := hiding_register_rigidity_of_pauli
-      E X Z P L projectPauli D DP ξ hξ MA MB hfail qX qZ hqX hqZ
+      E X Z P L projectPauli D DP Ξ hΞ MA MB hfail qX qZ hqX hqZ
       (hMA _) hX hZ w (hL w).supportedOn (hMA _) (fun j => hMA _) (fun j => hMB _) j
-    have hhA (j : Fin ℓ) : hidingAliceError L false (hL false).supportedOn ξ MA j ≤ s := by
+    have hhA (j : Fin ℓ) : hidingAliceError L false (hL false).supportedOn Ξ MA j ≤ s := by
       apply (hhide false j).2.trans
       rw [hidingPauliBudget_common]
       calc
         _ = (4 * edges + 2 * hidingPauliBudget ℓ edges 1 1) * t := by dsimp [edges]; ring
         _ ≤ s := mul_le_mul_of_nonneg_right hc.2.2.2 ht
-    have hhB (j : Fin ℓ) : hidingBobError L true (hL true).supportedOn ξ MB j ≤ s := by
+    have hhB (j : Fin ℓ) : hidingBobError L true (hL true).supportedOn Ξ MB j ≤ s := by
       apply (hhide true j).1.trans
       rw [hidingPauliBudget_common]
       exact mul_le_mul_of_nonneg_right hc.2.2.1 ht
-    obtain ⟨MAN, MBN, IA, IB, _, _, hf⟩ := exists_intro_two_sided_iteration
-      E X Z P L projectPauli D DP ξ hξ MA MB hMA hMB qZ hqZ
+    obtain ⟨N₁, N₂, MAN, MBN, IA, IB, hN₂, _, _, hf, hred⟩ := exists_intro_two_sided_iteration
+      E X Z P L projectPauli D DP Ξ hΞ MA MB hMA hMB qZ hqZ
       (fun w => (hL w).supportedOn) hs hs hs (hfail.trans hts) hZA
       (hZ.trans hts) hhA hhB hsmall hsmall hsmall
-    obtain ⟨S, _, _, hS⟩ := TypedExtraction.exists_strategy_of_terminal_invariants
-      E X Z P L hL projectPauli D DP G hμ hD (introTwoSidedState ξ ℓ)
-      (introTwoSidedState_unit ξ hξ ℓ) MAN MBN IA IB hf
+    obtain ⟨S, hS⟩ := TypedExtraction.exists_strategy_of_terminal_invariants
+      E X Z P L hL projectPauli D DP G hμ hD N₂.Ξ.swap hN₂ MAN MBN IA IB hf
     have hbudget := (mul_le_mul_of_nonneg_left hbound hE).trans hpay.2
-    have hvalue : S.value ≤ quantumValue G :=
-      le_ciSup (TensorProductStrategy.bddAbove_range_value G) S
+    have hvalue : S.value ≤ ω.val G :=
+      ValueModel.DominatesPOVM.dominates (ValueModel.DominatesPOVM.of_povmReduces hred hω) G S
     exact (by linarith : 1 - primitiveSoundnessCoefficient ℓ edges *
       iteratedRoot (6 * ℓ) t ≤ S.value).trans hvalue
   · have htotal := hlarge.trans hpay.1
     exact (by linarith : 1 - primitiveSoundnessCoefficient ℓ edges *
-      iteratedRoot (6 * ℓ) t ≤ 0).trans (quantumValue_nonneg G)
+      iteratedRoot (6 * ℓ) t ≤ 0).trans (ω.nonneg G)
 
-set_option backward.isDefEq.respectTransparency false in
 /-- The composed soundness theorem in the original two-term profile. Its
 exponent and coefficient depend only on depth, graph size, and the primitive
 QLD profile constants. -/
@@ -211,30 +217,30 @@ theorem quantumValue_ge_of_primitive_profile
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (G : Game (ι → F) (ι → F) A A)
+    (ω : ValueModel) (G : Game (ι → F) (ι → F) A A)
     (hμ : ∀ x y, G.μ x y = CL.clDist (L false).eval (L true).eval x y)
-    (hD : G.D = D) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)
+    (hD : G.D = D) (Ξ : BipartiteModel.{v} 𝒞 𝒜 ℬ) (hΞ : ‖Ξ.ψ‖ = 1)
+    (hω : ω.DominatesPOVM Ξ)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))
-    (hMA : ∀ q, IsPVM (fun a => ((MA q).mats a).val))
-    (hMB : ∀ q, IsPVM (fun a => ((MB q).mats a).val))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ))
+    (hMA : ∀ q, IsPVMIn (MA q).op) (hMB : ∀ q, IsPVMIn (MB q).op)
     (qX qZ : κ → ZMod 2)
     (hqX : ∀ z, (P X).eval z = qX) (hqZ : ∀ z, (P Z).eval z = qZ)
     {a b x ε : ℝ} (ha : 0 ≤ a) (hx : 1 ≤ x) (hε : 0 ≤ ε)
-    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)
-      (registerState (ι → F) ξ) MA MB ≤ errorProfile a b x ε)
-    (hX : ∑ z, stateSqNorm (registerState (ι → F) ξ)
-      ((((MA (QuestionType.pauli X, qX)).map (pauliProjection projectPauli)).mats z).val -
-        (aOp (Honest.pauliXReadout z) : Matrix ((ι → F) × H) _ ℂ)) ≤ errorProfile a b x ε)
-    (hZ : introBobZError projectPauli Z qZ ξ MB ≤ errorProfile a b x ε) :
+    (hfail : 1 - (Ξ.reg (ι → F)).povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤
+      errorProfile a b x ε)
+    (hX : ∑ z, (Ξ.reg (ι → F)).stateSqNorm
+      (((MA (QuestionType.pauli X, qX)).map (pauliProjection projectPauli)).op z -
+        smulKron 1 (Honest.pauliXReadout z)) ≤ errorProfile a b x ε)
+    (hZ : introBobZError projectPauli Z qZ Ξ MB ≤ errorProfile a b x ε) :
     1 - errorProfile
       (powerCoefficient (primitiveSoundnessCoefficient ℓ (TypeGraph.edges E X Z ℓ).card)
         a (rootExponent (6 * ℓ)))
-      (b * rootExponent (6 * ℓ)) x ε ≤ quantumValue G := by
+      (b * rootExponent (6 * ℓ)) x ε ≤ ω.val G := by
   have hv := quantumValue_ge_of_primitive_pauli E X Z P L hL projectPauli D DP
-    G hμ hD ξ hξ MA MB hMA hMB qX qZ hqX hqZ
+    ω G hμ hD Ξ hΞ hω MA MB hMA hMB qX qZ hqX hqZ
     (errorProfile_nonneg ha (by linarith) hε) hfail hX hZ
   have hC := primitiveSoundnessCoefficient_one_le ℓ
     (Nat.cast_nonneg (α := ℝ) (TypeGraph.edges E X Z ℓ).card)
