@@ -30,6 +30,15 @@ set_option linter.unusedSectionVars false
 
 variable {V W : Type*} [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
 
+/-- A product operator's squared state norm factors over a product state, in the matrix model:
+the register statements of `RegisterEPR` and the Pauli basis test use it. -/
+theorem stateSqNorm_expVec_kron {H K : Type*} [Fintype H] [DecidableEq H] [Fintype K]
+    [DecidableEq K] (ψ : V × W → ℂ) (ξ : H × K → ℂ) (Q : Matrix V V ℂ) (A : Matrix H H ℂ) :
+    stateSqNorm (expVec ψ ξ) (Q ⊗ₖ A) = stateSqNorm ψ Q * stateSqNorm ξ A := by
+  unfold stateSqNorm stateNorm stateVec
+  change ‖evec _‖ ^ 2 = ‖evec _‖ ^ 2 * ‖evec _‖ ^ 2
+  rw [mulVec_kron_expVec, norm_evec_expVec, mul_pow]
+
 /-- The identity's squared state norm is the squared norm of the state. -/
 theorem stateSqNorm_one_eq (ψ : V × W → ℂ) :
     stateSqNorm ψ (1 : Matrix V V ℂ) = ‖evec ψ‖ ^ 2 := by

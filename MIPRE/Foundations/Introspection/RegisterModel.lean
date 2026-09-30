@@ -40,6 +40,8 @@ namespace MIPRE.Introspection
 open Finset Matrix
 open scoped Kronecker
 
+set_option linter.unusedSectionVars false
+
 variable {I J R : Type*} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
   [Fintype R] [DecidableEq R]
 
@@ -76,7 +78,7 @@ theorem registerEPR_norm [Nonempty I] : ‖evec (registerEPR I)‖ = 1 := by
   rw [evec, EuclideanSpace.norm_eq]
   simp only [registerEPR, Fintype.sum_prod_type]
   simp only [apply_ite norm, norm_zero, zero_pow (by decide : 2 ≠ 0),
-    ite_pow, Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_const,
+    ite_pow, Finset.sum_ite_eq, Finset.mem_univ, ite_true, Finset.sum_const,
     Finset.card_univ, nsmul_eq_mul, Complex.norm_real, Real.norm_eq_abs,
     abs_inv, abs_of_nonneg (Real.sqrt_nonneg _), inv_pow, Real.sq_sqrt hc.le]
   rw [mul_inv_cancel₀ hc.ne', Real.sqrt_one]
@@ -93,7 +95,50 @@ theorem kron_one_mulVec_registerEPR (P : Matrix I I ℂ) :
   obtain ⟨i, j⟩ := p
   simp only [mulVec, dotProduct, Fintype.sum_prod_type, kroneckerMap_apply, one_apply,
     transpose_apply, registerEPR, mul_ite, ite_mul, mul_one, one_mul, mul_zero, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+
+/-! ## Splitting a register of block matrices -/
+
+section Split
+
+variable {A : Type*} [Ring A] [StarRing A] [Algebra ℂ A]
+
+/-- **The reindexing of block matrices along `e : I ≃ J × R`**: a block matrix over `J` of block
+matrices over `R`, read as a block matrix over `I`. It is the players' homomorphism of the
+register splitting `BipartiteModel.regSplit`, and depends on nothing else. -/
+def regSplitHom (e : I ≃ J × R) : Matrix J J (Matrix R R A) →⋆ₙₐ[ℂ] Matrix I I A :=
+  (submatrixHom e).comp compHom
+
+/-- Its inverse: a block matrix over `I` as a block matrix over `J` of block matrices over `R`. -/
+def regSplitInvHom (e : I ≃ J × R) : Matrix I I A →⋆ₙₐ[ℂ] Matrix J J (Matrix R R A) :=
+  uncompHom.comp (submatrixHom e.symm)
+
+theorem regSplitHom_apply (e : I ≃ J × R) (X : Matrix J J (Matrix R R A)) (i i' : I) :
+    regSplitHom e X i i' = X (e i).1 (e i').1 (e i).2 (e i').2 := rfl
+
+theorem regSplitInvHom_apply (e : I ≃ J × R) (X : Matrix I I A) (j j' : J) (r r' : R) :
+    regSplitInvHom e X j j' r r' = X (e.symm (j, r)) (e.symm (j', r')) := rfl
+
+@[simp]
+theorem regSplitHom_inv (e : I ≃ J × R) (X : Matrix I I A) :
+    regSplitHom e (regSplitInvHom e X) = X := by
+  ext i i'
+  rw [regSplitHom_apply, regSplitInvHom_apply, Prod.mk.eta, Prod.mk.eta, Equiv.symm_apply_apply,
+    Equiv.symm_apply_apply]
+
+@[simp]
+theorem regSplitInvHom_hom (e : I ≃ J × R) (X : Matrix J J (Matrix R R A)) :
+    regSplitInvHom e (regSplitHom e X) = X := by
+  ext j j' r r'
+  rw [regSplitInvHom_apply, regSplitHom_apply, Equiv.apply_symm_apply, Equiv.apply_symm_apply]
+
+theorem regSplitHom_one (e : I ≃ J × R) : regSplitHom e (1 : Matrix J J (Matrix R R A)) = 1 := by
+  simp only [regSplitHom, NonUnitalStarAlgHom.comp_apply, compHom_one, submatrixHom_one]
+
+theorem regSplitInvHom_one (e : I ≃ J × R) : regSplitInvHom e (1 : Matrix I I A) = 1 := by
+  rw [← regSplitHom_one e, regSplitInvHom_hom]
+
+end Split
 
 end MIPRE.Introspection
 
@@ -164,6 +209,10 @@ theorem regSplit_W_ψ (e : I ≃ J × R) : (N.regSplit e).W ((N.reg R).reg J).ψ
   LocalIsometry.comp_W_ψ
     (N.assoc_W_ψ _ _ _ fun q => by rw [registerEPR_prod]; rfl)
     (N.relabel_W_ψ _ _ e e fun p => (congrFun (registerEPR_equiv e) p).symm)
+
+theorem regSplit_ΦA_eq (e : I ≃ J × R) : (N.regSplit e).ΦA = regSplitHom e := rfl
+
+theorem regSplit_ΦB_eq (e : I ≃ J × R) : (N.regSplit e).ΦB = regSplitHom e := rfl
 
 theorem regSplit_ΦA (e : I ≃ J × R) (X : Matrix J J (Matrix R R 𝒜)) (i i' : I) :
     (N.regSplit e).ΦA X i i' = X (e i).1 (e i').1 (e i).2 (e i').2 := rfl

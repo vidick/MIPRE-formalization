@@ -179,6 +179,41 @@ theorem compHom_apply (X : Matrix α' α' (Matrix α α R)) (p q : α' × α) :
 
 theorem compHom_one : compHom (1 : Matrix α' α' (Matrix α α R)) = 1 := comp_one
 
+/-- Block matrices over pairs as block matrices of block matrices, the inverse of `compHom`. -/
+def uncompHom : Matrix (α' × α) (α' × α) R →⋆ₙₐ[ℂ] Matrix α' α' (Matrix α α R) where
+  toFun X := (comp α' α' α α R).symm X
+  map_smul' c X := by
+    ext i j k l
+    simp only [comp_symm_apply, Matrix.smul_apply, MonoidHom.id_apply]
+  map_zero' := by
+    ext i j k l
+    simp only [comp_symm_apply, Matrix.zero_apply]
+  map_add' X Y := by
+    ext i j k l
+    simp only [comp_symm_apply, Matrix.add_apply]
+  map_mul' X Y := (compRingEquiv α' α R).symm.map_mul X Y
+  map_star' X := by
+    ext i j k l
+    simp only [comp_symm_apply, Matrix.star_apply]
+
+omit [DecidableEq α] [DecidableEq α'] in
+@[simp]
+theorem uncompHom_apply (X : Matrix (α' × α) (α' × α) R) (i j : α') (k l : α) :
+    uncompHom X i j k l = X (i, k) (j, l) := rfl
+
+omit [DecidableEq α] [DecidableEq α'] in
+@[simp]
+theorem compHom_uncompHom (X : Matrix (α' × α) (α' × α) R) :
+    compHom (uncompHom X) = X := (comp α' α' α α R).apply_symm_apply X
+
+omit [DecidableEq α] [DecidableEq α'] in
+@[simp]
+theorem uncompHom_compHom (X : Matrix α' α' (Matrix α α R)) :
+    uncompHom (compHom X) = X := (comp α' α' α α R).symm_apply_apply X
+
+theorem uncompHom_one : uncompHom (1 : Matrix (α' × α) (α' × α) R) = 1 := by
+  rw [← compHom_one, uncompHom_compHom]
+
 end Hom
 
 namespace BipartiteModel

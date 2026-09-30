@@ -169,6 +169,15 @@ theorem IsPVMIn.smulKron [StarRing R] [StarModule ℂ R] {ι κ : Type*} [Fintyp
       rw [hQ.orthogonal h2, smulKron_zero_right]
     · rw [hP.orthogonal h1, smulKron_zero_left]
 
+/-- **A projective measurement of the register is projective in the matrices over `R`**, as
+`P ↦ 1 ⊗ P`. -/
+theorem IsPVMIn.smulKron_one [StarRing R] [StarModule ℂ R] {ι : Type*} [Fintype ι]
+    {P : ι → Matrix α α ℂ} (hP : IsPVMIn P) : IsPVMIn fun i => MIPRE.smulKron (1 : R) (P i) where
+  star_eq i := by rw [star_smulKron, star_one, ← star_eq_conjTranspose, hP.star_eq]
+  idem i := by rw [smulKron_mul, one_mul, hP.idem]
+  sum_eq_one := by rw [← smulKron_sum_right, hP.sum_eq_one, smulKron_one_one]
+  orthogonal hij := by rw [smulKron_mul, hP.orthogonal hij, smulKron_zero_right]
+
 end SmulKron
 
 /-! ## The two registers of a pair -/
