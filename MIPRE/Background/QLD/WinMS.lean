@@ -41,6 +41,21 @@ puts no mass, and the two deciders need not agree at all. On the support the pai
 oriented incidence, hence an edge of the Pauli test's type graph, and `subtest_le` applies. The
 average of `msEps` over the anticommuting tuples is then `86 ε`, one factor of `86` and not
 thirty-six, because the Magic Square's own distribution is normalized.
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The strategy is a model
+`M : BipartiteModel 𝒞 𝒜 ℬ` with `‖M.ψ‖ = 1` and two families of POVMs `PA`, `PB` in the players'
+ordered algebras; the conditional strategy `msPOVM` coarse-grains a family in any ordered
+`⋆`-ring, the error `msEps` is a sum of the model's conditional failures `M.condFail`, the value
+is `M.povmValue`, and the second player's `‖(Id ⊗ Y)|ψ⟩‖²` is `M.swap.stateSqNorm Y`. The
+relabelling and averaging steps need no projectivity. Item 6 does, on the constraint player's
+side: `lem:ms-direct-anticomm` is stated for a projective constraint player
+(`MS.ms_direct_anticomm_avg`, whose Naimark dilation is gone), so `item_magicSquare` asks the
+first player's measurements to be projective, as every strategy of the Pauli basis test is, and
+passes the projectivity of the conditional strategy on (`isPVMIn_msPOVM`). On a unit vector
+`ψ : dA × dB → ℂ` the statements are read at the tensor-product model `BipartiteModel.tensor ψ`
+with the families `POVM.toIn`.
 -/
 
 noncomputable section
@@ -50,7 +65,10 @@ namespace MIPRE.QLD
 open Finset MIPRE MIPRE.LCS.MagicSquare
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  [NeZero m]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 /-! ## The conditional Magic Square strategy -/
 
@@ -80,10 +98,21 @@ def msAns : layout.Question → Answer F m d → layout.Answer
   | .inl i, a => .inl (msAssign i a)
   | .inr _, a => .inr (rdBit a)
 
-/-- **The conditional Magic Square strategy of the tuple `ω`.** -/
-def msPOVM (M : Question F m → POVM (Answer F m d) dA) (ω : Omega F m) :
-    layout.Question → POVM layout.Answer dA :=
-  fun x => (M (msQ ω x)).map (msAns x)
+/-- **The conditional Magic Square strategy of the tuple `ω`**, for a family of POVMs in any
+ordered `⋆`-ring. -/
+def msPOVM {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    (P : Question F m → POVMIn (Answer F m d) R) (ω : Omega F m) :
+    layout.Question → POVMIn layout.Answer R :=
+  fun x => (P (msQ ω x)).map (msAns x)
+
+omit [Field F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
+/-- **The conditional strategy of a projective family is projective**: each of its measurements
+is a coarse-graining of a projective one. -/
+theorem isPVMIn_msPOVM {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    {P : Question F m → POVMIn (Answer F m d) R} (hP : ∀ q, IsPVMIn (P q).op) (ω : Omega F m)
+    (x : layout.Question) : IsPVMIn (msPOVM P ω x).op := by
+  rw [show (msPOVM P ω x).op = _ from funext (POVMIn.map_op (msAns x) (P (msQ ω x)))]
+  exact (hP (msQ ω x)).coarse (msAns x)
 
 /-! ## The assignment reads the three bits -/
 
@@ -94,9 +123,9 @@ omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
 theorem msAssign_cell (i : Fin layout.r) (α : Fin 3 → ZMod 2) (t : Fin 3) :
     msAssign (d := d) (F := F) (m := m) i (.bitTriple α) (cell i t) = α t := by
   show (∑ t' : Fin 3, if cell i t' = cell i t then α t' else 0) = α t
-  rw [Finset.sum_eq_single t (fun t' _ h => if_neg fun hh => h ((cell_injective i) hh))
+  rw [Finset.sum_eq_single t (fun t' _ h => ite_eq_right fun hh => h ((cell_injective i) hh))
     fun h => absurd (Finset.mem_univ t) h]
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
 theorem sum_msAssign (i : Fin layout.r) (α : Fin 3 → ZMod 2) :
@@ -156,8 +185,8 @@ theorem accepts_ms_of_accepts' {hm : m ∣ Fintype.card F} {i : Fin layout.r} {j
 
 section Transfer
 
-variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
 
 /-- **Relabelling is data processing, so the Magic Square failure at a question pair is at most
 the Pauli test's failure at the corresponding pair** --- given that the Pauli test's rule is the
@@ -165,36 +194,37 @@ stricter of the two there. -/
 theorem condFail_ms_le (ω : Omega F m) (x y : layout.Question)
     (hD : ∀ a b : Answer F m d, accepts hm (msQ ω x) (msQ ω y) a b = true →
       game.accepts x y (msAns x a) (msAns y b) = true) :
-    condFail nonlocalGame ψ (msPOVM MA ω) (msPOVM MB ω) x y
-      ≤ condFail (qldGame hm) ψ MA MB (msQ ω x) (msQ ω y) := by
+    M.condFail nonlocalGame (msPOVM PA ω) (msPOVM PB ω) x y
+      ≤ M.condFail (qldGame hm) PA PB (msQ ω x) (msQ ω y) := by
   classical
-  have hwin : condWin (qldGame hm) ψ MA MB (msQ ω x) (msQ ω y)
-      ≤ condWin nonlocalGame ψ (msPOVM MA ω) (msPOVM MB ω) x y := by
-    rw [condWin, condWin, msPOVM, msPOVM,
-      sum_weight_bornProb_map (ψ := ψ) (MA (msQ ω x)) (MB (msQ ω y)) (msAns x) (msAns y)
+  have hwin : M.condWin (qldGame hm) PA PB (msQ ω x) (msQ ω y)
+      ≤ M.condWin nonlocalGame (msPOVM PA ω) (msPOVM PB ω) x y := by
+    rw [BipartiteModel.condWin, BipartiteModel.condWin, msPOVM, msPOVM,
+      M.sum_weight_bornProb_map (PA (msQ ω x)) (PB (msQ ω y)) (msAns x) (msAns y)
         fun A B => if nonlocalGame.D x y A B then (1 : ℝ) else 0]
     refine Finset.sum_le_sum fun a _ => Finset.sum_le_sum fun b _ => ?_
-    have h0 : 0 ≤ bornProb ψ (((MA (msQ ω x)).mats a).val) (((MB (msQ ω y)).mats b).val) :=
-      bornProb_nonneg ψ ((MA (msQ ω x)).posSemidef a) ((MB (msQ ω y)).posSemidef b)
+    have h0 : 0 ≤ M.bornProb ((PA (msQ ω x)).op a) ((PB (msQ ω y)).op b) :=
+      M.bornProb_nonneg ((PA (msQ ω x)).op_nonneg a) ((PB (msQ ω y)).op_nonneg b)
     refine mul_le_mul_of_nonneg_right ?_ h0
     by_cases h : (qldGame hm).D (msQ ω x) (msQ ω y) a b = true
-    · rw [if_pos h, if_pos (show nonlocalGame.D x y (msAns x a) (msAns y b) = true from hD a b h)]
-    · rw [if_neg h]
+    · rw [ite_eq_left h,
+        ite_eq_left (show nonlocalGame.D x y (msAns x a) (msAns y b) = true from hD a b h)]
+    · rw [ite_eq_right h]
       split_ifs <;> norm_num
-  rw [condFail, condFail]
+  rw [BipartiteModel.condFail, BipartiteModel.condFail]
   linarith
 
 /-- The error the conditional Magic Square strategy inherits: the Magic Square game's own
 question-weighted sum of the Pauli test's conditional failures. -/
-def msEps (hm : m ∣ Fintype.card F) (ψ : dA × dB → ℂ)
-    (MA : Question F m → POVM (Answer F m d) dA) (MB : Question F m → POVM (Answer F m d) dB)
+def msEps (hm : m ∣ Fintype.card F) (M : BipartiteModel 𝒞 𝒜 ℬ)
+    (PA : Question F m → POVMIn (Answer F m d) 𝒜) (PB : Question F m → POVMIn (Answer F m d) ℬ)
     (ω : Omega F m) : ℝ :=
   ∑ x : layout.Question, ∑ y : layout.Question,
-    layout.questionDist x y * condFail (qldGame hm) ψ MA MB (msQ ω x) (msQ ω y)
+    layout.questionDist x y * M.condFail (qldGame hm) PA PB (msQ ω x) (msQ ω y)
 
-theorem msEps_nonneg (hψ : star ψ ⬝ᵥ ψ = 1) (ω : Omega F m) : 0 ≤ msEps hm ψ MA MB ω :=
+theorem msEps_nonneg (hM : ‖M.ψ‖ = 1) (ω : Omega F m) : 0 ≤ msEps hm M PA PB ω :=
   Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ =>
-    mul_nonneg (layout.questionDist_nonneg _ _) (condFail_nonneg hψ _ _)
+    mul_nonneg (layout.questionDist_nonneg _ _) (M.condFail_nonneg hM _ _)
 
 /-- Off the support of the Magic Square distribution the two deciders need not agree at all; on
 it, the pair is an oriented incidence. -/
@@ -221,8 +251,8 @@ theorem incidence_of_questionDist_ne_zero {x y : layout.Question}
 /-- **The conditional Magic Square strategy of an anticommuting tuple fails by at most
 `msEps`.** -/
 theorem one_sub_povmValue_ms_le {ω : Omega F m} (hγ : gam ω ≠ 0) :
-    1 - povmValue nonlocalGame ψ (msPOVM MA ω) (msPOVM MB ω) ≤ msEps hm ψ MA MB ω := by
-  rw [one_sub_povmValue_eq, msEps]
+    1 - M.povmValue nonlocalGame (msPOVM PA ω) (msPOVM PB ω) ≤ msEps hm M PA PB ω := by
+  rw [M.one_sub_povmValue_eq, msEps]
   refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
   by_cases h : layout.questionDist x y = 0
   · rw [show nonlocalGame.μ x y = layout.questionDist x y from rfl, h, zero_mul, zero_mul]
@@ -235,19 +265,19 @@ theorem one_sub_povmValue_ms_le {ω : Omega F m} (hγ : gam ω ≠ 0) :
 /-- **The averaged error is `86 ε`**, one factor of `86` and not thirty-six: the Magic Square's
 own question distribution is normalized, so the thirty-six incidences share the mass rather than
 each contributing. -/
-theorem sum_msEps_le (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
-    ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ * msEps hm ψ MA MB c.omega
+theorem sum_msEps_le (hM : ‖M.ψ‖ = 1) {ε : ℝ}
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
+    ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ * msEps hm M PA PB c.omega
       ≤ 86 * ε := by
   classical
   -- the average of the Pauli test's failures at the questions a Magic Square question pair names
   set S : layout.Question → layout.Question → ℝ := fun x y =>
     ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ *
-      condFail (qldGame hm) ψ MA MB (c.question hm (msTy x)) (c.question hm (msTy y)) with hSdef
-  have step1 : ∀ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * msEps hm ψ MA MB c.omega
+      M.condFail (qldGame hm) PA PB (c.question hm (msTy x)) (c.question hm (msTy y)) with hSdef
+  have step1 : ∀ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * msEps hm M PA PB c.omega
       = ∑ x : layout.Question, ∑ y : layout.Question,
           layout.questionDist x y * ((Fintype.card (Content F m) : ℝ)⁻¹ *
-            condFail (qldGame hm) ψ MA MB (c.question hm (msTy x)) (c.question hm (msTy y))) := by
+            M.condFail (qldGame hm) PA PB (c.question hm (msTy x)) (c.question hm (msTy y))) := by
     intro c
     rw [msEps, Finset.mul_sum]
     refine Finset.sum_congr rfl fun x _ => ?_
@@ -256,7 +286,7 @@ theorem sum_msEps_le (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
     rw [question_msTy, question_msTy]
     ring
   -- exchange the content average with the Magic Square question average
-  have hex : ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ * msEps hm ψ MA MB c.omega
+  have hex : ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ * msEps hm M PA PB c.omega
       = ∑ x : layout.Question, ∑ y : layout.Question, layout.questionDist x y * S x y := by
     rw [Finset.sum_congr rfl fun c (_ : c ∈ acommSet) => step1 c, Finset.sum_comm]
     refine Finset.sum_congr rfl fun x _ => ?_
@@ -271,8 +301,8 @@ theorem sum_msEps_le (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
     · refine mul_le_mul_of_nonneg_left ?_ (layout.questionDist_nonneg x y)
       rw [hSdef]
       rcases incidence_of_questionDist_ne_zero h with ⟨i, j, hj, rfl, rfl⟩ | ⟨i, j, hj, rfl, rfl⟩
-      · exact subtest_le hψ hfail (adj_con_var hj) acommSet
-      · exact subtest_le hψ hfail (adj_var_con hj) acommSet
+      · exact subtest_le hM hfail (adj_con_var hj) acommSet
+      · exact subtest_le hM hfail (adj_var_con hj) acommSet
   have hsum : (∑ x : layout.Question, ∑ y : layout.Question, layout.questionDist x y)
         * (86 * ε)
       = ∑ x : layout.Question, ∑ y : layout.Question, layout.questionDist x y * (86 * ε) := by
@@ -289,21 +319,21 @@ then `xStateDist_obsOf_le`. -/
 
 /-- **The point observables are cross-party consistent**, the paper's `eq:pts-obs-consistency`.
 For each basis `W` and each `r ∈ F_q`, the `±1`-observable of the two-outcome probe
-`a ↦ tr(a r)` of the `(Point, W)` measurement is cross-party consistent at `344 ε = 2 · 172 ε`,
-the `2` being the two outcomes of the probe. Item 1 at the reading `φ = tr(· r)`, then
-`xStateDist_obsOf_le`. -/
-theorem pts_obs_consistency (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) (r : F) :
-    xStateDist (fun _ : Content F m => (Fintype.card (Content F m) : ℝ)⁻¹) ψ
-        (obsOf sgn fun c => (MA (c.question hm (.point W))).map (fun a => prb (rdVal a) r))
-        (obsOf sgn fun c => (MB (c.question hm (.point W))).map (fun a => prb (rdVal a) r))
+`a ↦ tr(a r)` of the `(Point, W)` measurement --- its signed sum `pvmObs · sgn` --- is
+cross-party consistent at `344 ε = 2 · 172 ε`, the `2` being the two outcomes of the probe.
+Item 1 at the reading `φ = tr(· r)`, then `xStateDist_obsOf_le`. -/
+theorem pts_obs_consistency (hM : ‖M.ψ‖ = 1) {ε : ℝ}
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) (r : F) :
+    M.xStateDist (fun _ : Content F m => (Fintype.card (Content F m) : ℝ)⁻¹)
+        (fun c => pvmObs ((PA (c.question hm (.point W))).map (fun a => prb (rdVal a) r)).op sgn)
+        (fun c => pvmObs ((PB (c.question hm (.point W))).map (fun a => prb (rdVal a) r)).op sgn)
       ≤ 344 * ε := by
-  refine le_trans (xStateDist_obsOf_le (fun _ => by positivity) ψ _ _ sgn
+  refine le_trans (M.xStateDist_obsOf_le (fun _ => by positivity) _ _ sgn
     fun a => le_of_eq (norm_sgn a)) ?_
   rw [show (344 : ℝ) * ε = (Fintype.card (ZMod 2) : ℝ) * (172 * ε) from by
     rw [ZMod.card]; push_cast; ring]
   exact mul_le_mul_of_nonneg_left
-    (item_consistency hψ hfail (.point W) fun a => prb (rdVal a) r) (by positivity)
+    (item_consistency hM hfail (.point W) fun a => prb (rdVal a) r) (by positivity)
 
 
 /-! ## The anticommutator bound
@@ -316,26 +346,29 @@ anticommuting tuples, the anticommutator of the Pauli test's own two distinguish
 observables annihilates the state up to `186624 * 86 = 16049664` times the failure probability.
 
 The two variables are `0` and `4` --- the paper's `Variable_1` and `Variable_5` --- which are the
-ones its `(Point, X)` and `(Point, Z)` rules tie to the point measurements. -/
-theorem item_magicSquare (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+ones its `(Point, X)` and `(Point, Z)` rules tie to the point measurements. The first player's
+measurements are projective, as `lem:ms-direct-anticomm` asks of the constraint player; the
+second player's are arbitrary POVMs. -/
+theorem item_magicSquare [StarModule ℂ 𝒜] (hM : ‖M.ψ‖ = 1) (hPA : ∀ q, IsPVMIn (PA q).op)
+    {ε : ℝ} (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
     ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ‖stateVecB ψ (MS.anti (msPOVM MB c.omega))‖ ^ 2
+        M.swap.stateSqNorm (MS.anti (msPOVM PB c.omega))
       ≤ 16049664 * ε := by
   classical
   have havg := MS.ms_direct_anticomm_avg (Ω := ↥(acommSet : Finset (Content F m)))
     (fun _ => (Fintype.card (Content F m) : ℝ)⁻¹) (fun _ => by positivity)
-    (fun _ => ψ) (fun _ => hψ)
-    (fun c => msPOVM MA c.val.omega) (fun c => msPOVM MB c.val.omega)
-    (fun c => msEps hm ψ MA MB c.val.omega) (fun c => msEps_nonneg hψ _)
+    (fun _ => M) (fun _ => hM)
+    (fun c => msPOVM PA c.val.omega) (fun c x => isPVMIn_msPOVM hPA c.val.omega x)
+    (fun c => msPOVM PB c.val.omega)
+    (fun c => msEps hm M PA PB c.val.omega) (fun c => msEps_nonneg hM _)
     fun c => one_sub_povmValue_ms_le (gam_ne_zero_of_mem_acommSet c.2)
   rw [Finset.sum_coe_sort acommSet fun c => (Fintype.card (Content F m) : ℝ)⁻¹ *
-      ‖stateVecB ψ (MS.anti (msPOVM MB c.omega))‖ ^ 2,
+      M.swap.stateSqNorm (MS.anti (msPOVM PB c.omega)),
     Finset.sum_coe_sort acommSet fun c => (Fintype.card (Content F m) : ℝ)⁻¹ *
-      msEps hm ψ MA MB c.omega] at havg
+      msEps hm M PA PB c.omega] at havg
   refine le_trans havg ?_
   rw [show (16049664 : ℝ) * ε = 186624 * (86 * ε) from by ring]
-  exact mul_le_mul_of_nonneg_left (sum_msEps_le hψ hfail) (by norm_num)
+  exact mul_le_mul_of_nonneg_left (sum_msEps_le hM hfail) (by norm_num)
 
 end Transfer
 
