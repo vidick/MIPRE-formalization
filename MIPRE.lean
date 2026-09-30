@@ -740,6 +740,7 @@ public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+public import MIPRE.Foundations.AncillaDilation
 public import MIPRE.Foundations.AncillaIsometry
 public import MIPRE.Foundations.AncillaModel
 public import MIPRE.Foundations.BipartiteModel
@@ -1141,6 +1142,7 @@ public import MIPRE.Foundations.Introspection.ValidPauliSoundness
 public import MIPRE.Foundations.Introspection.ValueStability
 public import MIPRE.Foundations.Introspection.VaryingPauliMixing
 public import MIPRE.Foundations.Introspection.VerifierSourceGame
+public import MIPRE.Foundations.KrausDilation
 public import MIPRE.Foundations.Linearity
 public import MIPRE.Foundations.LocalIsometry
 public import MIPRE.Foundations.LowDegree.Anticomm

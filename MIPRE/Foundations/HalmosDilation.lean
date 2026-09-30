@@ -24,14 +24,16 @@ space through `MIPRE/Foundations/OperatorMatrix.lean`.
   comparing the two defect projections `1 − w wᴴ` and `1 − wᴴ w`; an extension of `w` inside
   `Matrix m m R` itself would have to compare them, and in infinite dimension, inside the
   commutant of another family of operators, that comparison is Murray–von Neumann theory.
-* **The Naimark matrix** (`Halmos.naimark`). For `s : m → R` with self-adjoint entries and
-  `∑ a, s a * s a = 1`, the matrix whose `a₀`-th column is `s` and whose other columns vanish
+* **The Naimark matrix** (`Halmos.naimark`). For a Kraus family `s : m → R`,
+  `∑ a, s aᴴ s a = 1`, the matrix whose `a₀`-th column is `s` and whose other columns vanish
   is a partial isometry, with `wᴴ w` the matrix unit at `(a₀, a₀)`
-  (`conjTranspose_naimark_mul_naimark`, `naimark_mul_conjTranspose_mul`).
+  (`conjTranspose_naimark_mul_naimark'`, `naimark_mul_conjTranspose_mul'`); with self-adjoint
+  entries, `∑ a, s a * s a = 1` (`conjTranspose_naimark_mul_naimark`,
+  `naimark_mul_conjTranspose_mul`).
 * **The dilated projections** (`Halmos.proj`). `proj w a := Uᴴ Q_a U`, with `U` the Halmos
   unitary and `Q_a` the diagonal projection onto the two copies of the coordinate `a`, is a star
   projection (`isStarProjection_proj`), the `proj w a` sum to one (`sum_proj`), the
-  `(inl a₀, inl a₀)` entry of `proj (naimark s a₀) a` is `s a * s a` (`proj_naimark_inl_inl`),
+  `(inl a₀, inl a₀)` entry of `proj (naimark s a₀) a` is `s aᴴ s a` (`proj_naimark_inl_inl'`),
   and `proj (naimark s a₀) a` commutes with the constant diagonal matrix of any `c` commuting
   with every `s a` (`commute_diagonal_proj_naimark`).
 
@@ -175,26 +177,29 @@ theorem sum_proj {w : Matrix m m R} (hw : w * wᴴ * w = w) : ∑ a, proj w a = 
 def naimark (s : m → R) (a₀ : m) : Matrix m m R :=
   of fun i j => if j = a₀ then s i else 0
 
-section Naimark
+section Kraus
 
-variable {s : m → R} (hs : ∀ a, star (s a) = s a)
-include hs
+/-! ### A Kraus family
+
+The column `s` need not be self-adjoint: `∑ a, s aᴴ s a = 1` is what makes the Naimark matrix a
+partial isometry, and the dilation then compresses to `s aᴴ s a`. The self-adjoint case below is
+this one with `s aᴴ = s a`. -/
 
 omit [Fintype m] in
-theorem conjTranspose_naimark_apply (a₀ i j : m) :
-    (naimark s a₀)ᴴ i j = if i = a₀ then s j else 0 := by
+theorem conjTranspose_naimark_apply' (s : m → R) (a₀ i j : m) :
+    (naimark s a₀)ᴴ i j = if i = a₀ then star (s j) else 0 := by
   rw [conjTranspose_apply, naimark, of_apply]
-  split_ifs <;> simp [hs]
+  split_ifs <;> simp
 
-variable (hsum : ∑ a, s a * s a = 1)
+variable {s : m → R} (hsum : ∑ a, star (s a) * s a = 1)
 include hsum
 
 /-- `wᴴ w` is the matrix unit at `(a₀, a₀)`. -/
-theorem conjTranspose_naimark_mul_naimark (a₀ : m) :
+theorem conjTranspose_naimark_mul_naimark' (a₀ : m) :
     (naimark s a₀)ᴴ * naimark s a₀ = diagonal fun j => if j = a₀ then 1 else 0 := by
   ext i j
   rw [mul_apply, diagonal_apply]
-  simp only [conjTranspose_naimark_apply hs]
+  simp only [conjTranspose_naimark_apply']
   simp only [naimark, of_apply]
   by_cases hi : i = a₀ <;> by_cases hj : j = a₀
   · subst hi hj
@@ -203,18 +208,18 @@ theorem conjTranspose_naimark_mul_naimark (a₀ : m) :
   · simp [hi, hj]
   · simp [hi, hj]
 
-/-- **The Naimark matrix is a partial isometry.** -/
-theorem naimark_mul_conjTranspose_mul (a₀ : m) :
+/-- **The Naimark matrix of a Kraus family is a partial isometry.** -/
+theorem naimark_mul_conjTranspose_mul' (a₀ : m) :
     naimark s a₀ * (naimark s a₀)ᴴ * naimark s a₀ = naimark s a₀ := by
-  rw [Matrix.mul_assoc, conjTranspose_naimark_mul_naimark hs hsum]
+  rw [Matrix.mul_assoc, conjTranspose_naimark_mul_naimark' hsum]
   ext i j
   rw [mul_diagonal, naimark, of_apply]
   split_ifs <;> simp
 
-/-- **The dilation compresses to `s a * s a` at `e_{inl a₀}`.** -/
-theorem proj_naimark_inl_inl (a₀ a : m) :
-    proj (naimark s a₀) a (Sum.inl a₀) (Sum.inl a₀) = s a * s a := by
-  have hq := conjTranspose_naimark_mul_naimark hs hsum a₀
+/-- **The dilation compresses to `s aᴴ s a` at `e_{inl a₀}`.** -/
+theorem proj_naimark_inl_inl' (a₀ a : m) :
+    proj (naimark s a₀) a (Sum.inl a₀) (Sum.inl a₀) = star (s a) * s a := by
+  have hq := conjTranspose_naimark_mul_naimark' hsum a₀
   rw [proj, mul_apply, Fintype.sum_sum_type]
   simp only [coordProj, mul_diagonal, conjTranspose_apply, extension, fromBlocks_apply₁₁,
     fromBlocks_apply₂₁, Sum.elim_inl, Sum.elim_inr, id_eq, hq, sub_apply, one_apply,
@@ -223,13 +228,48 @@ theorem proj_naimark_inl_inl (a₀ a : m) :
       if b = a₀ then (if b = a₀ then 1 else 0) else 0) = 0 := by
     intro b
     split_ifs <;> simp
-  simp only [h0, mul_zero, Finset.sum_const_zero, add_zero, naimark, of_apply, ite_true, hs]
+  simp only [h0, mul_zero, Finset.sum_const_zero, add_zero, naimark, of_apply, ite_true]
   rw [Finset.sum_eq_single a]
   · simp
   · intro b _ hb
     simp [hb]
   · intro h
     exact absurd (Finset.mem_univ a) h
+
+end Kraus
+
+section Naimark
+
+variable {s : m → R} (hs : ∀ a, star (s a) = s a)
+include hs
+
+omit [Fintype m] in
+theorem conjTranspose_naimark_apply (a₀ i j : m) :
+    (naimark s a₀)ᴴ i j = if i = a₀ then s j else 0 := by
+  rw [conjTranspose_naimark_apply', hs]
+
+variable (hsum : ∑ a, s a * s a = 1)
+include hsum
+
+omit [DecidableEq m] in
+theorem sum_star_mul_self_of_selfAdjoint : ∑ a, star (s a) * s a = 1 := by
+  simp only [hs]
+  exact hsum
+
+/-- `wᴴ w` is the matrix unit at `(a₀, a₀)`. -/
+theorem conjTranspose_naimark_mul_naimark (a₀ : m) :
+    (naimark s a₀)ᴴ * naimark s a₀ = diagonal fun j => if j = a₀ then 1 else 0 :=
+  conjTranspose_naimark_mul_naimark' (sum_star_mul_self_of_selfAdjoint hs hsum) a₀
+
+/-- **The Naimark matrix is a partial isometry.** -/
+theorem naimark_mul_conjTranspose_mul (a₀ : m) :
+    naimark s a₀ * (naimark s a₀)ᴴ * naimark s a₀ = naimark s a₀ :=
+  naimark_mul_conjTranspose_mul' (sum_star_mul_self_of_selfAdjoint hs hsum) a₀
+
+/-- **The dilation compresses to `s a * s a` at `e_{inl a₀}`.** -/
+theorem proj_naimark_inl_inl (a₀ a : m) :
+    proj (naimark s a₀) a (Sum.inl a₀) (Sum.inl a₀) = s a * s a := by
+  rw [proj_naimark_inl_inl' (sum_star_mul_self_of_selfAdjoint hs hsum), hs]
 
 omit hs hsum [StarRing R] in
 theorem commute_diagonal_naimark {c : R} (hc : ∀ a, Commute c (s a)) (a₀ : m) :
