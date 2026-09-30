@@ -15,18 +15,27 @@ measurement at prefix zero, by explicit coordinate restriction. Impossible
 prefixes receive a deterministic malformed answer. Their prefix projectors
 vanish, so the original measurement is recovered exactly, including its
 malformed-answer operator.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the original measurement is a
+POVM of block matrices over the coordinate register `ι → F` with entries in the first player's
+algebra `𝒜` (`POVMIn _ (Matrix (ι → F) (ι → F) 𝒜)`), and a residual measurement at the prefix `y`
+one of block matrices over the remaining register `stageRemaining P 0 y → F`. At prefix zero it
+is the original measurement relabelled along `initialRegisterEquiv`, pushed forward along the
+unital `⋆`-homomorphism `submatrixHom` (the `ΦA` of `regRelabel`); at an impossible prefix it is
+the register readout of the constant malformed answer, entering as `smulKron 1 _`. The reassembly
+through `prefixResidualOp` is an identity of block matrices, checked entry by entry.
 -/
 
 noncomputable section
 namespace MIPRE.Introspection
 
 open Finset Matrix Classical
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
-variable {ι F H A : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι F A : Type*} [Fintype ι] [DecidableEq ι]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  [Fintype H] [DecidableEq H] [Fintype A] [DecidableEq A] {ℓ : ℕ}
+  [Fintype A] [DecidableEq A] {ℓ : ℕ}
+variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜]
 
 theorem prefixRegister_initial (P : CL.CLFun F ι ℓ) (y : ι → F) :
     CLChecks.prefixRegister P 0 y = ∅ := by
@@ -45,103 +54,100 @@ def initialRegisterEquiv (P : CL.CLFun F ι ℓ) (y : ι → F) :
   left_inv u := by funext i; rfl
   right_inv x := rfl
 
-set_option backward.isDefEq.respectTransparency false in
 /-- At stage zero only prefix zero survives, and there are no used-register
 indices left to constrain an operator entry. -/
 theorem prefixResidualOp_initial_apply (P : CL.CLFun F ι ℓ) (y : ι → F)
-    (M : Matrix ((stageRemaining P 0 y → F) × H)
-      ((stageRemaining P 0 y → F) × H) ℂ)
-    (x x' : ι → F) (a a' : H) :
-    prefixResidualOp P 0 y M (x, a) (x', a') =
-      if y = 0 then M (fun i => x i, a) (fun i => x' i, a') else 0 := by
+    (M : Matrix (stageRemaining P 0 y → F) (stageRemaining P 0 y → F) 𝒜)
+    (x x' : ι → F) :
+    prefixResidualOp P 0 y M x x' =
+      if y = 0 then M (fun i => x i) (fun i => x' i) else 0 := by
   have he : (fun i : CLChecks.prefixRegister P 0 y => x i) =
       (fun i : CLChecks.prefixRegister P 0 y => x' i) := by
     funext i
     have hi : i.val ∈ (∅ : Finset ι) := by
       simpa only [prefixRegister_initial] using i.property
     simp at hi
-  unfold prefixResidualOp Honest.prefixProjector
-  simp only [registerOp_apply, registerParty, Equiv.trans_apply,
-    Equiv.prodCongr_apply, Equiv.prodAssoc_apply, ambientSplit,
-    Matrix.kroneckerMap_apply, readout, Matrix.diagonal_apply,
+  rw [prefixResidualOp, regSplitHom_apply, smulKron_apply, Matrix.smul_apply]
+  change (Honest.prefixProjector P 0 y (fun i => x i) (fun i => x' i)) •
+      M (fun i => x i) (fun i => x' i) = _
+  simp only [Honest.prefixProjector, readout, Matrix.diagonal_apply, he, ite_true,
     CL.CLFun.truncate_zero, CL.CLFun.eval_zero]
-  change (if (fun i : CLChecks.prefixRegister P 0 y => x i) =
-      (fun i : CLChecks.prefixRegister P 0 y => x' i) then
-      (if (0 : ι → F) = y then (1 : ℂ) else 0) else 0) *
-      M (fun i => x i, a) (fun i => x' i, a') =
-    if y = 0 then M (fun i => x i, a) (fun i => x' i, a') else 0
-  simp only [he, if_true]
   by_cases hy : y = 0 <;> simp [hy, eq_comm]
+
+section Measurement
+
+variable [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜]
 
 /-- The initial residual measurement retains the complete option-valued
 answer alphabet. At an impossible prefix it returns `none` deterministically. -/
 def initialResidualPOVM (P : CL.CLFun F ι ℓ)
-    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H)) (y : ι → F) :
-    POVM (Option ((ι → F) × A)) ((stageRemaining P 0 y → F) × H) :=
+    (N : POVMIn (Option ((ι → F) × A)) (Matrix (ι → F) (ι → F) 𝒜)) (y : ι → F) :
+    POVMIn (Option ((ι → F) × A))
+      (Matrix (stageRemaining P 0 y → F) (stageRemaining P 0 y → F) 𝒜) :=
   if y = 0 then
-    registerPOVM ((initialRegisterEquiv P y).prodCongr (Equiv.refl H)) N
+    N.pushforward (submatrixHom (initialRegisterEquiv P y)) (submatrixHom_one _)
   else
-    (readout_isPVM (fun _ : (stageRemaining P 0 y → F) × H =>
-      (none : Option ((ι → F) × A)))).toPOVM
+    (IsPVMIn.smulKron_one (R := 𝒜) (readout_isPVM (fun _ : stageRemaining P 0 y → F =>
+      (none : Option ((ι → F) × A)))).toIn).toPOVMIn
 
 theorem initialResidualPOVM_isPVM (P : CL.CLFun F ι ℓ)
-    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H))
-    (hN : IsPVM (fun a => (N.mats a).val)) (y : ι → F) :
-    IsPVM (fun a => ((initialResidualPOVM P N y).mats a).val) := by
+    (N : POVMIn (Option ((ι → F) × A)) (Matrix (ι → F) (ι → F) 𝒜))
+    (hN : IsPVMIn N.op) (y : ι → F) :
+    IsPVMIn (initialResidualPOVM P N y).op := by
   by_cases hy : y = 0
-  · simpa only [initialResidualPOVM, if_pos hy, registerPOVM_mats] using
-      registerOp_isPVM ((initialRegisterEquiv P y).prodCongr (Equiv.refl H)) hN
-  · simpa only [initialResidualPOVM, if_neg hy, IsPVM.toPOVM_mats] using
-      readout_isPVM (fun _ : (stageRemaining P 0 y → F) × H =>
-        (none : Option ((ι → F) × A)))
+  · rw [initialResidualPOVM, ite_eq_left hy]
+    exact POVMIn.isPVMIn_pushforward _ _ hN
+  · rw [initialResidualPOVM, ite_eq_right hy]
+    exact IsPVMIn.smulKron_one (readout_isPVM _).toIn
 
-set_option backward.isDefEq.respectTransparency false in
 theorem initialResidualPOVM_block (P : CL.CLFun F ι ℓ)
-    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H))
+    (N : POVMIn (Option ((ι → F) × A)) (Matrix (ι → F) (ι → F) 𝒜))
     (y : ι → F) (b : Option ((ι → F) × A)) :
-    prefixResidualOp P 0 y ((initialResidualPOVM P N y).mats b).val =
-      if y = 0 then (N.mats b).val else 0 := by
-  ext ⟨x, a⟩ ⟨x', a'⟩
+    prefixResidualOp P 0 y ((initialResidualPOVM P N y).op b) =
+      if y = 0 then N.op b else 0 := by
+  ext x x'
   rw [prefixResidualOp_initial_apply]
   by_cases hy : y = 0
-  · simp only [if_pos hy, initialResidualPOVM, registerPOVM_mats, registerOp_apply,
-      Equiv.prodCongr_apply, initialRegisterEquiv]
+  · rw [ite_eq_left hy, ite_eq_left hy, initialResidualPOVM, ite_eq_left hy, POVMIn.pushforward_op,
+      submatrixHom_apply, submatrix_apply]
     rfl
-  · simp only [if_neg hy, Matrix.zero_apply]
+  · rw [ite_eq_right hy, ite_eq_right hy, Matrix.zero_apply]
 
 /-- Exact initialization of the full option-valued prefix invariant. No
 projectivity or success assumption is required for this algebraic equality. -/
 theorem initialResidualPOVM_reassembly (P : CL.CLFun F ι ℓ)
-    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H))
+    (N : POVMIn (Option ((ι → F) × A)) (Matrix (ι → F) (ι → F) 𝒜))
     (b : Option ((ι → F) × A)) :
-    (N.mats b).val =
-      ∑ y, prefixResidualOp P 0 y ((initialResidualPOVM P N y).mats b).val := by
-  simp only [initialResidualPOVM_block, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    N.op b = ∑ y, prefixResidualOp P 0 y ((initialResidualPOVM P N y).op b) := by
+  simp only [initialResidualPOVM_block, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 /-- Every valid residual answer is supported on its claimed initial prefix;
 the malformed answer is retained without a zero-operator assumption. -/
 theorem initialResidualPOVM_some_support (P : CL.CLFun F ι ℓ)
-    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H))
+    (N : POVMIn (Option ((ι → F) × A)) (Matrix (ι → F) (ι → F) 𝒜))
     (y x : ι → F) (a : A) (hy : P.outputPrefix 0 x ≠ y) :
-    ((initialResidualPOVM P N y).mats (some (x, a))).val = 0 := by
+    (initialResidualPOVM P N y).op (some (x, a)) = 0 := by
   have hn : y ≠ 0 := by
     intro he
     exact hy (by simpa only [he] using P.outputPrefix_zero x)
+  rw [initialResidualPOVM, ite_eq_right hn, IsPVMIn.toPOVMIn_op]
   ext i j
-  simp [initialResidualPOVM, hn, IsPVM.toPOVM_mats, readout]
+  simp [readout, smulKron_apply]
 
 /-- Every projective measurement has the concrete initial adaptive form,
 with the original ancilla and the full option-valued answer alphabet. -/
 theorem exists_initial_residual (P : CL.CLFun F ι ℓ)
-    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H))
-    (hN : IsPVM (fun a => (N.mats a).val)) :
-    ∃ M : (y : ι → F) →
-        POVM (Option ((ι → F) × A)) ((stageRemaining P 0 y → F) × H),
-      (∀ y, IsPVM (fun a => ((M y).mats a).val)) ∧
-      (∀ b, (N.mats b).val = ∑ y, prefixResidualOp P 0 y ((M y).mats b).val) ∧
-      (∀ y x a, P.outputPrefix 0 x ≠ y → ((M y).mats (some (x, a))).val = 0) := by
-  exact ⟨initialResidualPOVM P N, initialResidualPOVM_isPVM P N hN,
+    (N : POVMIn (Option ((ι → F) × A)) (Matrix (ι → F) (ι → F) 𝒜))
+    (hN : IsPVMIn N.op) :
+    ∃ M : (y : ι → F) → POVMIn (Option ((ι → F) × A))
+        (Matrix (stageRemaining P 0 y → F) (stageRemaining P 0 y → F) 𝒜),
+      (∀ y, IsPVMIn (M y).op) ∧
+      (∀ b, N.op b = ∑ y, prefixResidualOp P 0 y ((M y).op b)) ∧
+      (∀ y x a, P.outputPrefix 0 x ≠ y → (M y).op (some (x, a)) = 0) :=
+  ⟨initialResidualPOVM P N, initialResidualPOVM_isPVM P N hN,
     initialResidualPOVM_reassembly P N, initialResidualPOVM_some_support P N⟩
+
+end Measurement
 
 end MIPRE.Introspection
 end
