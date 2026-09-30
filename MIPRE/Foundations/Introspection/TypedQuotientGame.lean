@@ -16,11 +16,18 @@ The question law is unchanged. Decoding dual answer coordinates gives a
 legacy strategy with at least the original value, on the same registers and
 state and with every Pauli-question effect unchanged. In the other direction,
 copying a legacy strategy preserves perfect PCC completeness and its dimension.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): decoding is question-dependent
+answer merging of a projective strategy in any model (`ProjStrat.mergeAnswersByQuestion`), so the
+decoded strategy lives in the same model by its type, and the statements about its state and
+dimensions have no counterpart. The value comparison `quantumValue_eq` is the tensor-product
+instance.
 -/
 
 noncomputable section
 namespace MIPRE.Introspection.AuxiliaryQuotient
 open Classical
+open scoped MatrixOrder
 set_option linter.unusedSectionVars false
 set_option backward.isDefEq.respectTransparency true
 
@@ -59,14 +66,20 @@ theorem game_accepts_of_legacy (hL : ∀ w, (L w).SupportedOn Finset.univ)
     (game E X Z P L project D DP).D q r a b = true :=
   check_of_legacy L X Z project D hL _ q.1 r.1 a b h
 
+section Model
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {Ψ : BipartiteModel 𝒞 𝒜 ℬ}
+
 /-- Decode auxiliary answers according to their question's side. -/
-abbrev decodedStrategy (S : TensorProductStrategy (game E X Z P L project D DP)) :
-    TensorProductStrategy (TypedEstimates.parsedGame E X Z P L project D DP) :=
+abbrev decodedStrategy (S : Ψ.ProjStrat (game E X Z P L project D DP)) :
+    Ψ.ProjStrat (TypedEstimates.parsedGame E X Z P L project D DP) :=
   S.mergeAnswersByQuestion _ (fun q => decodeAnswer L q.1) (fun q => decodeAnswer L q.1)
 
 /-- Deterministic answer decoding does not decrease the winning probability. -/
 theorem value_le_decodedStrategy (hL : ∀ w, (L w).SupportedOn Finset.univ)
-    (S : TensorProductStrategy (game E X Z P L project D DP)) :
+    (S : Ψ.ProjStrat (game E X Z P L project D DP)) :
     S.value ≤ (decodedStrategy E X Z P L project D DP S).value := by
   apply S.value_le_mergeAnswersByQuestion
     (TypedEstimates.parsedGame E X Z P L project D DP)
@@ -76,48 +89,38 @@ theorem value_le_decodedStrategy (hL : ∀ w, (L w).SupportedOn Finset.univ)
 
 /-- Any failure bound for the quotient strategy also bounds its legacy decoding. -/
 theorem decodedStrategy_failure_le (hL : ∀ w, (L w).SupportedOn Finset.univ)
-    (S : TensorProductStrategy (game E X Z P L project D DP))
+    (S : Ψ.ProjStrat (game E X Z P L project D DP))
     {ε : ℝ} (hS : 1 - S.value ≤ ε) :
     1 - (decodedStrategy E X Z P L project D DP S).value ≤ ε :=
   (sub_le_sub_left (value_le_decodedStrategy E X Z P L project D DP hL S) 1).trans hS
 
-/-- Decoding preserves the literal original shared state. -/
-theorem decodedStrategy_state (S : TensorProductStrategy (game E X Z P L project D DP)) :
-    S.MergeByQuestionStateEq (TypedEstimates.parsedGame E X Z P L project D DP)
-      (fun q => decodeAnswer L q.1) (fun q => decodeAnswer L q.1) :=
-  S.mergeByQuestionStateEq _ _ _
-
-set_option linter.defProp false in
-/-- Decoding preserves both register dimensions. The inferred exact equality
-avoids reducing concrete game definitions inside strategy projections. -/
-def decodedStrategy_dimensions
-    (S : TensorProductStrategy (game E X Z P L project D DP)) :=
-  S.mergeAnswersByQuestion_dimensions (TypedEstimates.parsedGame E X Z P L project D DP)
-    (fun q => decodeAnswer L q.1) (fun q => decodeAnswer L q.1)
-
 /-- Every Alice effect at every Pauli question is unchanged. -/
-theorem decodedStrategy_pauli_A (S : TensorProductStrategy (game E X Z P L project D DP))
+theorem decodedStrategy_pauli_A (S : Ψ.ProjStrat (game E X Z P L project D DP))
     (p : PauliType) (x : κ → ZMod 2) (a : ParsedAnswer (ι → F) A PauliAnswer) :
-    S.MergeByQuestionPAEq (TypedEstimates.parsedGame E X Z P L project D DP)
-      (fun q => decodeAnswer L q.1) (fun q => decodeAnswer L q.1) (.inl p,x) a :=
-  S.mergeByQuestionPAEq _ _ _ _ _ (fun _ => rfl)
+    ((decodedStrategy E X Z P L project D DP S).PA (.inl p, x)).op a =
+      (S.PA (.inl p, x)).op a :=
+  S.mergeByQuestionPAEq_op _ _ _ _ _ (fun _ => rfl)
 
 /-- Every Bob effect at every Pauli question is unchanged. -/
-theorem decodedStrategy_pauli_B (S : TensorProductStrategy (game E X Z P L project D DP))
+theorem decodedStrategy_pauli_B (S : Ψ.ProjStrat (game E X Z P L project D DP))
     (p : PauliType) (x : κ → ZMod 2) (a : ParsedAnswer (ι → F) A PauliAnswer) :
-    S.MergeByQuestionPBEq (TypedEstimates.parsedGame E X Z P L project D DP)
-      (fun q => decodeAnswer L q.1) (fun q => decodeAnswer L q.1) (.inl p,x) a :=
-  S.mergeByQuestionPBEq _ _ _ _ _ (fun _ => rfl)
+    ((decodedStrategy E X Z P L project D DP S).PB (.inl p, x)).op a =
+      (S.PB (.inl p, x)).op a :=
+  S.mergeByQuestionPBEq_op _ _ _ _ _ (fun _ => rfl)
 
-/-- The quotient relaxation has exactly the legacy quantum value. -/
+end Model
+
+/-- The quotient relaxation has exactly the legacy quantum value: a tensor-product strategy is a
+projective strategy of its tensor-product model, where decoding does not lose value. -/
 theorem quantumValue_eq (hL : ∀ w, (L w).SupportedOn Finset.univ) :
     quantumValue (game E X Z P L project D DP) =
       quantumValue (TypedEstimates.parsedGame E X Z P L project D DP) := by
   apply le_antisymm
   · refine Real.iSup_le (fun S => ?_) (quantumValue_nonneg _)
-    exact (value_le_decodedStrategy E X Z P L project D DP hL S).trans
-      (le_ciSup (TensorProductStrategy.bddAbove_range_value _)
-        (decodedStrategy E X Z P L project D DP S))
+    rw [← S.value_toModel]
+    refine (value_le_decodedStrategy E X Z P L project D DP hL S.toModel).trans ?_
+    rw [← BipartiteModel.ProjStrat.value_toTensor]
+    exact le_ciSup (TensorProductStrategy.bddAbove_range_value _) _
   · exact quantumValue_mono _ _ (game_mu E X Z P L project D DP)
       (game_accepts_of_legacy E X Z P L project D DP hL)
 

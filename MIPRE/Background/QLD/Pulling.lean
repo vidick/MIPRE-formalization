@@ -228,8 +228,8 @@ theorem sum_qform_sandwich_le_of_subset (v : N → ℂ) {P : ι → Matrix N N �
 
 omit [DecidableEq N] [Fintype ι] [DecidableEq ι] in
 /-- **Cauchy--Schwarz across an index, with the first family not self-adjoint.**
-`Introspection.abs_sum_qform_mul_le` is the case where it is, so that `M * R` is already
-`Mᴴ * R`; the projector form of the chain's swap needs the general one. -/
+With `M` self-adjoint, `M * R` is already `Mᴴ * R`; the projector form of the chain's swap needs
+the general one. -/
 theorem abs_sum_qform_conjTranspose_mul_le (v : N → ℂ) (s : Finset ι)
     (M R : ι → Matrix N N ℂ) :
     |∑ i ∈ s, qform v ((M i)ᴴ * R i)|
@@ -346,8 +346,9 @@ theorem abs_sum_qform_swap_le (v : N → ℂ) (s : Finset ι) {X Y S : ι → Ma
   have hb : ∀ Z : ι → Matrix N N ℂ, (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 →
       |∑ i ∈ s, qform v ((X i - Y i) * (S i * Z i))| ≤ Real.sqrt ε := by
     intro Z hZ
-    refine le_trans (Introspection.abs_sum_qform_mul_le v s (fun i => X i - Y i)
-      (fun i => S i * Z i) hdev) ?_
+    have hcs := abs_sum_qform_conjTranspose_mul_le v s (fun i => X i - Y i) (fun i => S i * Z i)
+    simp only [hdev] at hcs
+    refine le_trans hcs ?_
     have h1 : Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 := by
       simpa using Real.sqrt_le_sqrt hZ
     calc Real.sqrt (∑ i ∈ s, snorm v (X i - Y i) ^ 2)

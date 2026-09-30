@@ -12,140 +12,167 @@ public import MIPRE.Foundations.Introspection.AdaptiveDilationTransport
 Only an auxiliary register in a fixed pure state is added. The EPR register
 and Bob's operators remain unchanged. All identities hold for arbitrary
 operators and auxiliary states, without normalization or projectivity.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the auxiliary register in its
+fixed state is the first player's one-sided ancilla `Ξ.expandA t₀`, and the registered extension
+is the local isometry `registeredExtend Ξ t₀` from the register model `Ξ.reg I` into
+`(Ξ.expandA t₀).reg I`: the inert embedding `BipartiteModel.inertA`, an old operator `M` becoming
+`M ⊗ 1`, followed by the reassociation `regExchange`. It carries the state to the state, so every
+error is transported exactly (`LocalIsometry.stateSqNorm_of_W_ψ`, `xSqNorm_of_W_ψ`,
+`bornProb_of_W_ψ`). The extended operator `registeredExtendOp M` is its `ΦA`, the extended
+measurement `registeredExtendPOVM M` the old one pushed forward along it, and Bob's operators are
+unchanged. A relabelling of the local coordinates is `BipartiteModel.relabel`.
 -/
 
 noncomputable section
 namespace MIPRE.Introspection
 
 open Finset Matrix Classical
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
 section Raw
-variable {H K T H' K' : Type*}
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-  [Fintype T] [DecidableEq T]
-  [Fintype H'] [DecidableEq H'] [Fintype K'] [DecidableEq K']
 
-theorem xSqNorm_registerOp (e : H' ≃ H) (f : K' ≃ K) (ψ : H × K → ℂ)
-    (M : Matrix H H ℂ) (N : Matrix K K ℂ) :
-    xSqNorm (ψ ∘ e.prodCongr f) (registerOp e M) (registerOp f N) =
-      xSqNorm ψ M N := by
-  simp only [xSqNorm_eq_snorm_sq, snorm]
-  have h : (aOp (registerOp e M) : Matrix (H' × K') _ ℂ) - bOp (registerOp f N) =
-      registerOp (e.prodCongr f) (aOp M - bOp N) := by
-    rw [registerOp_sub]
-    simp only [aOp, bOp, registerOp_kronecker, registerOp_one]
-  rw [h, registerOp_mulVec, norm_evec_comp_equiv]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (Ψ : BipartiteModel 𝒞 𝒜 ℬ)
+variable {T α β α' β' : Type*} [Fintype T] [DecidableEq T]
+  [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+  [Fintype α'] [DecidableEq α'] [Fintype β'] [DecidableEq β']
+
+/-- Relabelling the registers of an extension, along a bijection for each player, preserves the
+cross norm. -/
+theorem xSqNorm_registerOp (e : α × β → ℂ) (e' : α' × β' → ℂ) (f : α' ≃ α) (g : β' ≃ β)
+    (he : ∀ p, e' p = e (f p.1, g p.2)) (M : Matrix α α 𝒜) (N : Matrix β β ℬ) :
+    (Ψ.expand e').xSqNorm (M.submatrix f f) (N.submatrix g g) = (Ψ.expand e).xSqNorm M N :=
+  (Ψ.relabel e e' f g).xSqNorm_of_W_ψ (Ψ.relabel_W_ψ e e' f g he) M N
 
 /-- The old deviation vector is extended by the same fixed isometry. -/
-theorem deviation_extVecA (ψ : H × K → ℂ) (a₀ : T)
-    (M : Matrix H H ℂ) (N : Matrix K K ℂ) :
-    (aOp (aOp M : Matrix (H × T) _ ℂ) - bOp N) *ᵥ extVecA ψ a₀ =
-      extVecA ((aOp M - bOp N) *ᵥ ψ) a₀ := by
-  have h : (aOp (aOp M : Matrix (H × T) _ ℂ) - bOp N) *
-      (ancillaEmbed H a₀ ⊗ₖ (1 : Matrix K K ℂ)) =
-      (ancillaEmbed H a₀ ⊗ₖ (1 : Matrix K K ℂ)) * (aOp M - bOp N) := by
-    change ((M ⊗ₖ 1) ⊗ₖ 1 - 1 ⊗ₖ N) * _ = _ * (M ⊗ₖ 1 - 1 ⊗ₖ N)
-    rw [Matrix.sub_mul, Matrix.mul_sub]
-    simp only [← Matrix.mul_kronecker_mul, Matrix.one_mul, Matrix.mul_one,
-      kron_one_mul_ancillaEmbed]
-  simp only [extVecA, Matrix.mulVec_mulVec, h]
+theorem deviation_extVecA (t₀ : T) (M : 𝒜) (N : ℬ) :
+    (Ψ.expandA t₀).π ((Ψ.expandA t₀).πA (diagonal fun _ => M) - (Ψ.expandA t₀).πB N)
+        (Ψ.expandA t₀).ψ =
+      (Ψ.inertA t₀).W (Ψ.π (Ψ.πA M - Ψ.πB N) Ψ.ψ) := by
+  have hA := (Ψ.inertA t₀).intertwineA M Ψ.ψ
+  have hB := (Ψ.inertA t₀).intertwineB N Ψ.ψ
+  rw [BipartiteModel.inertA_ΦA] at hA
+  rw [BipartiteModel.inertA_ΦB] at hB
+  rw [← Ψ.inertA_W_ψ t₀, map_sub, map_sub, _root_.sub_apply, _root_.sub_apply, hA, hB, map_sub]
 
-theorem xSqNorm_extVecA (ψ : H × K → ℂ) (a₀ : T)
-    (M : Matrix H H ℂ) (N : Matrix K K ℂ) :
-    xSqNorm (extVecA ψ a₀) (aOp M) N = xSqNorm ψ M N := by
-  simp only [xSqNorm_eq_snorm_sq, snorm, deviation_extVecA, norm_evec_extVecA]
+theorem xSqNorm_extVecA (t₀ : T) (M : 𝒜) (N : ℬ) :
+    (Ψ.expandA t₀).xSqNorm (diagonal fun _ => M) N = Ψ.xSqNorm M N := by
+  show ‖(Ψ.expandA t₀).π ((Ψ.expandA t₀).πA (diagonal fun _ => M) - (Ψ.expandA t₀).πB N)
+      (Ψ.expandA t₀).ψ‖ ^ 2 = ‖Ψ.π (Ψ.πA M - Ψ.πB N) Ψ.ψ‖ ^ 2
+  rw [deviation_extVecA, LinearIsometry.norm_map]
 
 end Raw
 
-variable {I H K T A B : Type*}
-  [Fintype I] [DecidableEq I] [Fintype H] [DecidableEq H]
-  [Fintype K] [DecidableEq K] [Fintype T] [DecidableEq T]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
+variable {I T A B : Type*} [Fintype I] [DecidableEq I] [Fintype T] [DecidableEq T]
   [Fintype A] [Fintype B] [DecidableEq B]
 
 /-- Extend an old operator by identity, then absorb the new register into
 Alice's auxiliary factor. -/
-def registeredExtendOp (M : Matrix (I × H) (I × H) ℂ) :
-    Matrix (I × (H × T)) (I × (H × T)) ℂ :=
-  registerOp (Equiv.prodAssoc I H T).symm (aOp M)
+def registeredExtendOp (M : Matrix I I 𝒜) : Matrix I I (Matrix T T 𝒜) :=
+  BipartiteModel.layerSwap (diagonal fun _ : T => M)
+
+/-- The extension is the `⋆`-homomorphism `M ↦ M ⊗ 1` followed by the exchange of the layers. -/
+theorem registeredExtendOp_eq (M : Matrix I I 𝒜) :
+    registeredExtendOp (T := T) M = (BipartiteModel.layerSwap.comp diagHom) M := rfl
+
+theorem registeredExtendOp_apply (M : Matrix I I 𝒜) (i j : I) :
+    registeredExtendOp (T := T) M i j = diagonal fun _ => M i j := by
+  ext t t'
+  by_cases h : t = t'
+  · subst h
+    simp only [registeredExtendOp, BipartiteModel.layerSwap_apply, diagonal_apply_eq]
+  · simp only [registeredExtendOp, BipartiteModel.layerSwap_apply, diagonal_apply_ne _ h,
+      Matrix.zero_apply]
 
 @[simp] theorem registeredExtendOp_zero :
-    registeredExtendOp (I := I) (H := H) (T := T) 0 = 0 := by
-  ext i j
-  simp [registeredExtendOp, registerOp, aOp_zero]
+    registeredExtendOp (I := I) (T := T) (0 : Matrix I I 𝒜) = 0 := by
+  rw [registeredExtendOp_eq, map_zero]
 
-theorem registeredExtendOp_sub (M N : Matrix (I × H) (I × H) ℂ) :
+theorem registeredExtendOp_sub (M N : Matrix I I 𝒜) :
     registeredExtendOp (T := T) (M - N) = registeredExtendOp M - registeredExtendOp N := by
-  simp only [registeredExtendOp, aOp_sub, registerOp_sub]
+  simp only [registeredExtendOp_eq, map_sub]
 
 /-- Every ideal acting on the original register is literally the same
 ideal tensored with the enlarged auxiliary identity. -/
-theorem registeredExtendOp_aOp (M : Matrix I I ℂ) :
-    registeredExtendOp (H := H) (T := T) (aOp M) = aOp M := by
-  ext ⟨i, h, t⟩ ⟨j, h', t'⟩
-  by_cases hh : h = h'
-  · by_cases ht : t = t' <;>
-      simp [registeredExtendOp, aOp, Matrix.kroneckerMap_apply,
-        Prod.mk.injEq, hh, ht]
-  · simp [registeredExtendOp, aOp, Matrix.kroneckerMap_apply, Matrix.one_apply,
-      Prod.mk.injEq, hh]
+theorem registeredExtendOp_aOp (P : Matrix I I ℂ) :
+    registeredExtendOp (T := T) (smulKron (1 : 𝒜) P) = smulKron 1 P := by
+  ext i j t t'
+  rw [registeredExtendOp_apply, smulKron_apply, smulKron_apply, Matrix.smul_apply]
+  by_cases h : t = t'
+  · subst h
+    rw [diagonal_apply_eq, one_apply_eq]
+  · rw [diagonal_apply_ne _ h, one_apply_ne h, smul_zero]
 
-def registeredExtendPOVM (M : POVM A (I × H)) : POVM A (I × (H × T)) :=
-  M.aOp.reindex (Equiv.prodAssoc I H T)
+/-! ## The registered extension as a local isometry -/
 
-@[simp] theorem registeredExtendPOVM_mats (M : POVM A (I × H)) (a : A) :
-    ((registeredExtendPOVM (T := T) M).mats a).val = registeredExtendOp (M.mats a).val := rfl
+/-- **The registered extension**: the register model into the register model of the one-sided
+extension, the inert embedding of the fresh ancilla followed by its exchange with the register.
+The first player's operator `M` becomes `registeredExtendOp M`, the second player's are
+unchanged. -/
+def registeredExtend (t₀ : T) : BipartiteModel.LocalIsometry (Ξ.reg I) ((Ξ.expandA t₀).reg I) :=
+  (regExchange Ξ t₀).comp ((Ξ.reg I).inertA t₀)
 
-theorem registeredExtendPOVM_map (M : POVM A (I × H)) (f : A → B) :
-    registeredExtendPOVM (T := T) (M.map f) = (registeredExtendPOVM M).map f := by
-  rw [registeredExtendPOVM, POVM.map_aOp, POVM.map_reindex]
+@[simp]
+theorem registeredExtend_ΦA (t₀ : T) (M : Matrix I I 𝒜) :
+    (registeredExtend Ξ t₀).ΦA M = registeredExtendOp M := rfl
+
+@[simp]
+theorem registeredExtend_ΦB (t₀ : T) (N : Matrix I I ℬ) : (registeredExtend Ξ t₀).ΦB N = N :=
   rfl
 
-theorem registeredExtendPOVM_isPVM (M : POVM A (I × H))
-    (hM : IsPVM (fun a => (M.mats a).val)) :
-    IsPVM (fun a => ((registeredExtendPOVM (T := T) M).mats a).val) :=
-  registerOp_isPVM (Equiv.prodAssoc I H T).symm hM.aOp
+/-- The registered extension carries the state to the state. -/
+theorem registeredExtend_W_ψ (t₀ : T) :
+    (registeredExtend (I := I) Ξ t₀).W (Ξ.reg I).ψ = ((Ξ.expandA t₀).reg I).ψ :=
+  BipartiteModel.LocalIsometry.comp_W_ψ ((Ξ.reg I).inertA_W_ψ t₀)
+    (Ξ.exchange_W_ψ t₀ (registerEPR I))
 
-theorem stateSqNorm_registeredExtendOp (ξ : H × K → ℂ) (a₀ : T)
-    (M : Matrix (I × H) (I × H) ℂ) :
-    stateSqNorm (registerState I (extVecA ξ a₀)) (registeredExtendOp M) =
-      stateSqNorm (registerState I ξ) M := by
-  rw [registeredExtendOp, stateSqNorm_reassociated_extVecA, stateSqNorm_extVecA_aOp]
+theorem stateSqNorm_registeredExtendOp (t₀ : T) (M : Matrix I I 𝒜) :
+    ((Ξ.expandA t₀).reg I).stateSqNorm (registeredExtendOp M) = (Ξ.reg I).stateSqNorm M :=
+  (registeredExtend Ξ t₀).stateSqNorm_of_W_ψ (registeredExtend_W_ψ Ξ t₀) M
 
-theorem xSqNorm_registeredExtendOp (ξ : H × K → ℂ) (a₀ : T)
-    (M : Matrix (I × H) (I × H) ℂ) (N : Matrix (I × K) (I × K) ℂ) :
-    xSqNorm (registerState I (extVecA ξ a₀)) (registeredExtendOp M) N =
-      xSqNorm (registerState I ξ) M N := by
-  have hs := reindex_extVecA_registerState (I := I) ξ a₀
-  change (extVecA (registerState I ξ) a₀) ∘
-    ((Equiv.prodAssoc I H T).symm.prodCongr (Equiv.refl (I × K))) = _ at hs
-  rw [← hs]
-  change xSqNorm _ (registerOp (Equiv.prodAssoc I H T).symm (aOp M))
-    (registerOp (Equiv.refl (I × K)) N) = _
-  rw [xSqNorm_registerOp, xSqNorm_extVecA]
+theorem xSqNorm_registeredExtendOp (t₀ : T) (M : Matrix I I 𝒜) (N : Matrix I I ℬ) :
+    ((Ξ.expandA t₀).reg I).xSqNorm (registeredExtendOp M) N = (Ξ.reg I).xSqNorm M N :=
+  (registeredExtend Ξ t₀).xSqNorm_of_W_ψ (registeredExtend_W_ψ Ξ t₀) M N
 
 /-- Bob's same-party error is unaffected by adding an auxiliary register
 on Alice's side, including the exact registered state reassociation. -/
-theorem snorm_bOp_registered_extVecA (ξ : H × K → ℂ) (a₀ : T)
-    (N : Matrix (I × K) (I × K) ℂ) :
-    snorm (registerState I (extVecA ξ a₀)) (bOp N) ^ 2 =
-      snorm (registerState I ξ) (bOp N) ^ 2 := by
-  have h := xSqNorm_registeredExtendOp ξ a₀ (0 : Matrix (I × H) _ ℂ) N
-  rw [registeredExtendOp_zero, xSqNorm_eq_snorm_sq, aOp_zero,
-    snorm_sub_comm, sub_zero, xSqNorm_eq_snorm_sq, aOp_zero,
-    snorm_sub_comm, sub_zero] at h
-  exact h
+theorem snorm_bOp_registered_extVecA (t₀ : T) (N : Matrix I I ℬ) :
+    ((Ξ.expandA t₀).reg I).snorm (((Ξ.expandA t₀).reg I).πB N) ^ 2 =
+      (Ξ.reg I).snorm ((Ξ.reg I).πB N) ^ 2 :=
+  (registeredExtend Ξ t₀).swap_stateSqNorm_of_W_ψ (registeredExtend_W_ψ Ξ t₀) N
 
-theorem bornProb_registeredExtendOp (ξ : H × K → ℂ) (a₀ : T)
-    (M : Matrix (I × H) (I × H) ℂ) (N : Matrix (I × K) (I × K) ℂ) :
-    bornProb (registerState I (extVecA ξ a₀)) (registeredExtendOp M) N =
-      bornProb (registerState I ξ) M N := by
-  have h := bornProb_reindex (Equiv.prodAssoc I H T) (Equiv.refl (I × K))
-    (extVecA (registerState I ξ) a₀) (aOp M) N
-  change bornProb _ (registeredExtendOp M) N = _ at h
-  rw [reindex_extVecA_registerState, bornProb_extVecA, compress_aOp] at h
-  exact h
+theorem bornProb_registeredExtendOp (t₀ : T) (M : Matrix I I 𝒜) (N : Matrix I I ℬ) :
+    ((Ξ.expandA t₀).reg I).bornProb (registeredExtendOp M) N = (Ξ.reg I).bornProb M N :=
+  (registeredExtend Ξ t₀).bornProb_of_W_ψ (registeredExtend_W_ψ Ξ t₀) M N
+
+/-! ## Measurements -/
+
+section POVM
+
+variable [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜]
+
+/-- An old measurement on the register model, tensored with the identity of the fresh ancilla and
+carried to the register model of the one-sided extension. -/
+def registeredExtendPOVM (M : POVMIn A (Matrix I I 𝒜)) : POVMIn A (Matrix I I (Matrix T T 𝒜)) :=
+  (POVMIn.ampA M).pushforward BipartiteModel.layerSwap BipartiteModel.layerSwap_one
+
+@[simp] theorem registeredExtendPOVM_mats (M : POVMIn A (Matrix I I 𝒜)) (a : A) :
+    (registeredExtendPOVM (T := T) M).op a = registeredExtendOp (M.op a) := rfl
+
+theorem registeredExtendPOVM_map (M : POVMIn A (Matrix I I 𝒜)) (f : A → B) :
+    registeredExtendPOVM (T := T) (M.map f) = (registeredExtendPOVM M).map f := by
+  refine POVMIn.ext' fun b => ?_
+  rw [registeredExtendPOVM_mats, POVMIn.map_op, POVMIn.map_op]
+  simp only [registeredExtendPOVM_mats, registeredExtendOp_eq, map_sum]
+
+theorem registeredExtendPOVM_isPVM (M : POVMIn A (Matrix I I 𝒜)) (hM : IsPVMIn M.op) :
+    IsPVMIn (registeredExtendPOVM (T := T) M).op :=
+  (hM.pushforward (diagHom_one (α := T))).pushforward BipartiteModel.layerSwap_one
+
+end POVM
 
 end MIPRE.Introspection
 end

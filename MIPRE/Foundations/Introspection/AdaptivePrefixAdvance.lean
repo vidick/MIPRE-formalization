@@ -14,6 +14,10 @@ Adding the next selected-coordinate answer preserves the preceding claimed
 prefix and the next remaining register. For attainable old prefixes, the
 old label and the new coordinate answer are both recovered exactly. The
 actual next sampler output is the advance by its selected linear readout.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the last two identities are
+between the register operators embedded, as `smulKron 1 _`, in the matrices over any algebra `𝒜`,
+the first player's algebra of a register model; coarse-graining is `fibSumIn`.
 -/
 
 noncomputable section
@@ -182,13 +186,13 @@ theorem advancePrefix_readout {P : CL.CLFun F ι ℓ} {T : Finset ι}
   funext x
   exact (advancePrefix_adaptiveLinearOutcome hP k x).symm
 
-variable [Algebra (ZMod 2) F] {H : Type*} [Fintype H] [DecidableEq H]
+variable [Algebra (ZMod 2) F] {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜]
 
 /-- The actual selected linear outcome factors into the old prefix projector
 and the local current-stage spectral readout. -/
 theorem adaptiveLinear_readout_factor (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) :
-    (aOp (readout (adaptiveLinearOutcome P k) ⟨y, z⟩) : Matrix ((ι → F) × H) _ ℂ) =
+    smulKron (1 : 𝒜) (readout (adaptiveLinearOutcome P k) ⟨y, z⟩) =
       prefixResidualOp P k y (registerReadout (stageSplit P hP k y) wZ
         (coordinateLinear (CLChecks.stageLinear P k y)) z) := by
   rw [registerReadout_wZ, prefixResidualOp_readout P hP]
@@ -197,7 +201,7 @@ theorem adaptiveLinear_readout_factor (P : CL.CLFun F ι ℓ) (hP : P.SupportedO
   simp only [readout, Matrix.diagonal_apply]
   by_cases hxx : x = x'
   · subst x'
-    simp only [if_true]
+    simp only [ite_true]
     apply if_congr _ rfl rfl
     by_cases hy : (P.truncate k).eval x = y
     · subst y
@@ -213,13 +217,14 @@ theorem adaptiveLinear_readout_factor (P : CL.CLFun F ι ℓ) (hP : P.SupportedO
 gives exactly the next honest prefix measurement. -/
 theorem advancePrefix_projector_assembly (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (v : ι → F) :
-    (aOp (Honest.hidingPrefixOp P (k + 1) (some v)) : Matrix ((ι → F) × H) _ ℂ) =
-      fibSum
+    smulKron (1 : 𝒜) (Honest.hidingPrefixOp P (k + 1) (some v)) =
+      fibSumIn
         (fun p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F) =>
           prefixResidualOp P k p.1 (registerReadout (stageSplit P hP k p.1) wZ
             (coordinateLinear (CLChecks.stageLinear P k p.1)) p.2))
         (fun p => advancePrefix P k p.1 p.2) v := by
-  rw [Honest.hidingPrefixOp_some, advancePrefix_readout hP, ← fibSum_aOp]
+  rw [Honest.hidingPrefixOp_some, advancePrefix_readout hP, fibSum_eq_fibSumIn, fibSumIn,
+    fibSumIn, smulKron_sum_right]
   apply Finset.sum_congr rfl
   intro p _
   exact adaptiveLinear_readout_factor P hP k p.1 p.2

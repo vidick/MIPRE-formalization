@@ -8,26 +8,28 @@ public import MIPRE.Foundations.Introspection.TwoSidedCommutation
 
 @[expose] public section
 
-/-! # Composed twirling from two commutator estimates -/
+/-! # Composed twirling from two commutator estimates
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`).
+-/
 
 noncomputable section
 
 namespace MIPRE.Introspection
 
-open Finset Matrix
+open Finset
 
-variable {dA dB I J A : Type*} [Fintype dA] [DecidableEq dA]
-  [Fintype dB] [DecidableEq dB] [Fintype I] [Fintype J] [Fintype A]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
+  {I J A : Type*} [Fintype I] [Fintype J] [Fintype A]
 
 /-- Successive twirls equal the twirl by the independently sampled product. -/
-theorem unitaryTwirl_comp (μ : I → ℝ) (ν : J → ℝ)
-    (U : I → Matrix dA dA ℂ) (V : J → Matrix dA dA ℂ) (M : Matrix dA dA ℂ) :
+theorem unitaryTwirl_comp (μ : I → ℝ) (ν : J → ℝ) (U : I → 𝒜) (V : J → 𝒜) (M : 𝒜) :
     unitaryTwirl ν V (unitaryTwirl μ U M) =
       unitaryTwirl (fun p : I × J => μ p.1 * ν p.2) (fun p => V p.2 * U p.1) M := by
   classical
-  simp only [unitaryTwirl, Finset.mul_sum, Finset.sum_mul, Matrix.mul_smul,
-    Matrix.smul_mul, Finset.smul_sum, smul_smul, Fintype.sum_prod_type,
-    Matrix.conjTranspose_mul, Complex.ofReal_mul]
+  simp only [unitaryTwirl, Finset.mul_sum, Finset.sum_mul, mul_smul_comm, smul_mul_assoc,
+    Finset.smul_sum, smul_smul, Fintype.sum_prod_type, star_mul, Complex.ofReal_mul]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro i _
@@ -37,36 +39,36 @@ theorem unitaryTwirl_comp (μ : I → ℝ) (ν : J → ℝ)
   congr 1
   noncomm_ring
 
-/-- Two reflective twirls stay close if each commutator is small and the second has an exact mirror. -/
-theorem composed_twirl_dist_le (μ : I → ℝ) (ν : J → ℝ)
+/-- Two reflective twirls stay close if each commutator is small and the second has an exact
+mirror. -/
+theorem composed_twirl_dist_le [PartialOrder 𝒜] [StarOrderedRing 𝒜] (Ψ : BipartiteModel 𝒞 𝒜 ℬ)
+    (μ : I → ℝ) (ν : J → ℝ)
     (hμ0 : ∀ i, 0 ≤ μ i) (hν0 : ∀ j, 0 ≤ ν j)
     (hμ1 : ∑ i, μ i = 1) (hν1 : ∑ j, ν j = 1)
-    (ψ : dA × dB → ℂ) (M : POVM A dA)
-    (U : I → Matrix dA dA ℂ) (V : J → Matrix dA dA ℂ) (W : J → Matrix dB dB ℂ)
-    (hUsa : ∀ i, (U i)ᴴ = U i) (hUid : ∀ i, U i * U i = 1)
-    (hVsa : ∀ j, (V j)ᴴ = V j) (hVid : ∀ j, V j * V j = 1)
-    (hW : ∀ j, (W j)ᴴ * W j = 1) (hmirror : ∀ j, xSqNorm ψ (V j) (W j) = 0) :
-    (∑ a, stateSqNorm ψ
-      (unitaryTwirl ν V (unitaryTwirl μ U (M.mats a).val) - (M.mats a).val)) ≤
-      4 * (∑ i, μ i * ∑ a, stateSqNorm ψ ((M.mats a).val * U i - U i * (M.mats a).val)) +
-      4 * (∑ j, ν j * ∑ a, stateSqNorm ψ ((M.mats a).val * V j - V j * (M.mats a).val)) := by
+    (M : POVMIn A 𝒜) (U : I → 𝒜) (V : J → 𝒜) (W : J → ℬ)
+    (hUsa : ∀ i, star (U i) = U i) (hUid : ∀ i, U i * U i = 1)
+    (hVsa : ∀ j, star (V j) = V j) (hVid : ∀ j, V j * V j = 1)
+    (hW : ∀ j, star (W j) * W j = 1) (hmirror : ∀ j, Ψ.xSqNorm (V j) (W j) = 0) :
+    (∑ a, Ψ.stateSqNorm (unitaryTwirl ν V (unitaryTwirl μ U (M.op a)) - M.op a)) ≤
+      4 * (∑ i, μ i * ∑ a, Ψ.stateSqNorm (M.op a * U i - U i * M.op a)) +
+      4 * (∑ j, ν j * ∑ a, Ψ.stateSqNorm (M.op a * V j - V j * M.op a)) := by
   classical
   have hprob : (∑ p : I × J, μ p.1 * ν p.2) = 1 := by
     rw [Fintype.sum_prod_type]
     simp_rw [← Finset.mul_sum, hν1, mul_one]
     exact hμ1
-  have hprod (p : I × J) : (V p.2 * U p.1)ᴴ * (V p.2 * U p.1) = 1 := by
-    rw [Matrix.conjTranspose_mul, hUsa, hVsa, mul_assoc,
-      ← mul_assoc (V p.2), hVid, one_mul, hUid]
-  have hJ := unitaryTwirl_outcome_dist_le (fun _ : Unit => (1 : ℝ)) (by simp)
+  have hprod (p : I × J) : star (V p.2 * U p.1) * (V p.2 * U p.1) = 1 := by
+    rw [star_mul, hUsa, hVsa, mul_assoc, ← mul_assoc (V p.2), hVid, one_mul, hUid]
+  have hprod' (p : I × J) : (V p.2 * U p.1) * star (V p.2 * U p.1) = 1 := by
+    rw [star_mul, hUsa, hVsa, mul_assoc, ← mul_assoc (U p.1), hUid, one_mul, hVid]
+  have hJ := unitaryTwirl_outcome_dist_le Ψ (fun _ : Unit => (1 : ℝ)) (by simp)
     (fun _ (p : I × J) => μ p.1 * ν p.2) (fun _ p => mul_nonneg (hμ0 p.1) (hν0 p.2))
-    (fun _ => hprob) (fun _ p => V p.2 * U p.1) (fun _ p => hprod p) ψ
-    (fun _ a => (M.mats a).val)
-  simp only [Finset.univ_unique, Finset.sum_singleton, one_mul,
-    Matrix.conjTranspose_mul, hUsa, hVsa] at hJ
-  have hC := two_sided_commutation_avg (fun _ : Unit => (1 : ℝ)) (by simp)
+    (fun _ => hprob) (fun _ p => V p.2 * U p.1) (fun _ p => hprod p) (fun _ p => hprod' p)
+    (fun _ a => M.op a)
+  simp only [Finset.univ_unique, Finset.sum_singleton, one_mul, star_mul, hUsa, hVsa] at hJ
+  have hC := two_sided_commutation_avg Ψ (fun _ : Unit => (1 : ℝ)) (by simp)
     (fun _ => μ) (fun _ => ν) (fun _ => hμ0) (fun _ => hν0)
-    (fun _ => hμ1) (fun _ => hν1) ψ (fun _ => M) (fun _ => U) (fun _ => V) (fun _ => W)
+    (fun _ => hμ1) (fun _ => hν1) (fun _ => M) (fun _ => U) (fun _ => V) (fun _ => W)
     (fun _ i => by rw [hUsa, hUid]) (fun _ => hW)
   simp only [Finset.univ_unique, Finset.sum_singleton, one_mul, hmirror, mul_zero,
     Finset.sum_const_zero, add_zero] at hC

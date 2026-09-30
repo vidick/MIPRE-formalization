@@ -1519,7 +1519,7 @@ bits too long is a statement about a different verifier.
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
-\uses{def:qld-game,def:q-value,lem:ms-direct-anticomm}
+\uses{def:qld-game,def:q-value,lem:ms-direct-anticomm,def:register-model}
 \lean{MIPRE.QLD.errShape, MIPRE.QLD.ErrSmall, MIPRE.QLD.errSum, MIPRE.QLD.errShape_eq,
   MIPRE.QLD.errSum_nonneg, MIPRE.QLD.one_le_md_real, MIPRE.QLD.one_le_q_real,
   MIPRE.QLD.errSum_anti, MIPRE.QLD.errSum_le_three, MIPRE.QLD.errSum_rpow_le,
@@ -1775,6 +1775,7 @@ $\sigma^W_{\phi(u)}$, for both parties and both bases.
 \end{corollary}
 
 \begin{proof}
+\uses{lem:register-model}
 \leanok
 The relabelling is a bijection of basis index sets, so the transport is a reindexing and no
 quantity changes: the maximally entangled state is preserved by any simultaneous relabelling of

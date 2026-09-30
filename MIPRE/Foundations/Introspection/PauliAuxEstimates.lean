@@ -13,6 +13,8 @@ The Pauli-X and Pauli-Z vertices have a fixed question. We state that property
 explicitly: the generic Pauli CL family supplied to the typed construction
 does not itself force their question to be zero. Both edge orientations have
 exactly inverse ordered-edge-count probability.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`).
 -/
 
 noncomputable section
@@ -23,10 +25,10 @@ open Finset Matrix Classical
 
 set_option linter.unusedSectionVars false
 
-variable {PauliType κ A B C H K : Type*}
+variable {PauliType κ A B C : Type*}
   [Fintype PauliType] [DecidableEq PauliType]
   [Fintype κ] [DecidableEq κ] [Fintype A] [Fintype B]
-  [Fintype C] [DecidableEq C] [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
+  [Fintype C] [DecidableEq C]
   {ℓ : ℕ}
 
 namespace TypedPresentation
@@ -87,6 +89,10 @@ end TypedPresentation
 
 namespace TypedEstimates
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
+
 /-- Project the tested Pauli answer, retaining all wrong constructors as a
 separate malformed outcome. -/
 def pauliProjection {V A PA : Type*} (projectPauli : PA → V) :
@@ -94,35 +100,37 @@ def pauliProjection {V A PA : Type*} (projectPauli : PA → V) :
   | .pauli a => some (projectPauli a)
   | _ => none
 
+/-- On an edge whose two questions are constant, the coarsened cross-party distance costs
+twice the ordered-edge count times the game's failure. -/
 theorem constant_edge_agreement_estimate (E : PauliType → PauliType → Bool) (X Z : PauliType)
     (P : PauliType → CL.CLFun (ZMod 2) κ 3)
     (D : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
       CL.Detyping.Question (QuestionType PauliType ℓ) κ → A → B → Bool)
-    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
-    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM A H)
-    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM B K)
-    {ε : ℝ} (hfail : 1 - povmValue (TypedPresentation.game E X Z ℓ P D) ψ MA MB ≤ ε)
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
+    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVMIn A 𝒜)
+    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVMIn B ℬ)
+    {ε : ℝ} (hfail : 1 - Ψ.povmValue (TypedPresentation.game E X Z ℓ P D) MA MB ≤ ε)
     (t u : QuestionType PauliType ℓ) (x y : κ → ZMod 2)
     (ht : ∀ z, (TypedPresentation.family P t).eval z = x)
     (hu : ∀ z, (TypedPresentation.family P u).eval z = y)
     (hedge : TypeGraph.Adj E X Z t u) (f : A → C) (g : B → C)
     (hcheck : ∀ a b, D (t, x) (u, y) a b = true → f a = g b) :
-    (∑ z, xSqNorm ψ ((((MA (t, x)).map f).mats z).val)
-      ((((MB (u, y)).map g).mats z).val)) ≤ 2 * (TypeGraph.edges E X Z ℓ).card * ε := by
+    (∑ z, Ψ.xSqNorm (((MA (t, x)).map f).op z) (((MB (u, y)).map g).op z)) ≤
+      2 * (TypeGraph.edges E X Z ℓ).card * ε := by
   let G := TypedPresentation.game E X Z ℓ P D
-  have hterm := sum_mul_condFail_le (G := G) (ψ := ψ) (MA := MA) (MB := MB)
-    hψ hfail {((t, x), (u, y))}
+  have hterm := Ψ.sum_mul_condFail_le (G := G) (MA := MA) (MB := MB) hΨ hfail
+    {((t, x), (u, y))}
   simp only [sum_singleton] at hterm
-  change G.μ (t, x) (u, y) * condFail G ψ MA MB (t, x) (u, y) ≤ ε at hterm
+  change G.μ (t, x) (u, y) * Ψ.condFail G MA MB (t, x) (u, y) ≤ ε at hterm
   rw [TypedPresentation.mu_constant_edge E X Z P D t u x y ht hu hedge,
     inv_mul_eq_div] at hterm
   have hc : (0 : ℝ) < (TypeGraph.edges E X Z ℓ).card := by
     exact_mod_cast (TypeGraph.edges_nonempty E X Z ℓ).card_pos
   have hcond := (div_le_iff₀ hc).mp hterm
-  have hdist := xSqNorm_sum_le_condFail (G := G) (ψ := ψ) (MA := MA) (MB := MB)
-    (x := (t, x)) (y := (u, y)) hψ f g hcheck
+  have hdist := Ψ.xSqNorm_sum_le_condFail (G := G) (MA := MA) (MB := MB)
+    (x := (t, x)) (y := (u, y)) hΨ f g hcheck
   calc
-    _ ≤ 2 * condFail G ψ MA MB (t, x) (u, y) := hdist
+    _ ≤ 2 * Ψ.condFail G MA MB (t, x) (u, y) := hdist
     _ ≤ 2 * (ε * (TypeGraph.edges E X Z ℓ).card) :=
       mul_le_mul_of_nonneg_left hcond (by norm_num)
     _ = _ := by ring
@@ -131,36 +139,36 @@ theorem pauli_aux_agreement_estimate (E : PauliType → PauliType → Bool) (X Z
     (P : PauliType → CL.CLFun (ZMod 2) κ 3)
     (D : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
       CL.Detyping.Question (QuestionType PauliType ℓ) κ → A → B → Bool)
-    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
-    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM A H)
-    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM B K)
-    {ε : ℝ} (hfail : 1 - povmValue (TypedPresentation.game E X Z ℓ P D) ψ MA MB ≤ ε)
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
+    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVMIn A 𝒜)
+    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVMIn B ℬ)
+    {ε : ℝ} (hfail : 1 - Ψ.povmValue (TypedPresentation.game E X Z ℓ P D) MA MB ≤ ε)
     (p : PauliType) (q : κ → ZMod 2) (hq : ∀ z, (P p).eval z = q)
     (t : AuxType ℓ) (w : Bool) (hedge : TypeGraph.Adj E X Z (.inl p) (.inr (t, w)))
     (f : A → C) (g : B → C)
     (hcheck : ∀ a b, D (.inl p, q) (.inr (t, w), 0) a b = true → f a = g b) :
-    (∑ z, xSqNorm ψ ((((MA (.inl p, q)).map f).mats z).val)
-      ((((MB (.inr (t, w), 0)).map g).mats z).val)) ≤
+    (∑ z, Ψ.xSqNorm (((MA (.inl p, q)).map f).op z)
+      (((MB (.inr (t, w), 0)).map g).op z)) ≤
         2 * (TypeGraph.edges E X Z ℓ).card * ε :=
-  constant_edge_agreement_estimate E X Z P D ψ hψ MA MB hfail (.inl p) (.inr (t, w)) q 0 hq
+  constant_edge_agreement_estimate E X Z P D Ψ hΨ MA MB hfail (.inl p) (.inr (t, w)) q 0 hq
     (TypedPresentation.eval_aux P t w) hedge f g hcheck
 
 theorem aux_pauli_agreement_estimate (E : PauliType → PauliType → Bool) (X Z : PauliType)
     (P : PauliType → CL.CLFun (ZMod 2) κ 3)
     (D : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
       CL.Detyping.Question (QuestionType PauliType ℓ) κ → A → B → Bool)
-    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
-    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM A H)
-    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM B K)
-    {ε : ℝ} (hfail : 1 - povmValue (TypedPresentation.game E X Z ℓ P D) ψ MA MB ≤ ε)
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
+    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVMIn A 𝒜)
+    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVMIn B ℬ)
+    {ε : ℝ} (hfail : 1 - Ψ.povmValue (TypedPresentation.game E X Z ℓ P D) MA MB ≤ ε)
     (t : AuxType ℓ) (w : Bool) (p : PauliType) (q : κ → ZMod 2)
     (hq : ∀ z, (P p).eval z = q) (hedge : TypeGraph.Adj E X Z (.inr (t, w)) (.inl p))
     (f : A → C) (g : B → C)
     (hcheck : ∀ a b, D (.inr (t, w), 0) (.inl p, q) a b = true → f a = g b) :
-    (∑ z, xSqNorm ψ ((((MA (.inr (t, w), 0)).map f).mats z).val)
-      ((((MB (.inl p, q)).map g).mats z).val)) ≤
+    (∑ z, Ψ.xSqNorm (((MA (.inr (t, w), 0)).map f).op z)
+      (((MB (.inl p, q)).map g).op z)) ≤
         2 * (TypeGraph.edges E X Z ℓ).card * ε :=
-  constant_edge_agreement_estimate E X Z P D ψ hψ MA MB hfail (.inr (t, w)) (.inl p) 0 q
+  constant_edge_agreement_estimate E X Z P D Ψ hΨ MA MB hfail (.inr (t, w)) (.inl p) 0 q
     (TypedPresentation.eval_aux P t w) hq hedge f g hcheck
 
 end TypedEstimates

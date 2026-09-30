@@ -3,7 +3,7 @@ Copyright (c) 2026 MIPRE contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
-public import MIPRE.Foundations.GameTransport
+public import MIPRE.Foundations.ModelStrategy
 public import MIPRE.Foundations.PerfectStrategy
 
 @[expose] public section
@@ -13,11 +13,24 @@ public import MIPRE.Foundations.PerfectStrategy
 Deterministic answer decoding can depend on the question. Merging the fibers
 of these maps preserves projectivity, register dimensions and the shared
 state. Acceptance implication gives monotonicity of the resulting value.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): for a projective strategy
+of a model (`BipartiteModel.ProjStrat`) the merge is the coarse-graining of each measurement
+along its own question's decoder, `fun x => (S'.PA x).map (rA x)`, which is the adapter
+`ProjStrat.adapt` along the identity of the questions
+(`BipartiteModel.ProjStrat.mergeAnswersByQuestion`). The merged strategy is a strategy of the
+same model, so there is no state or register dimension to preserve, and a question whose decoder
+is the identity keeps its measurement (`mergeByQuestionPAEq`, `mergeByQuestionPBEq`, equalities of
+POVMs). The value bound is `BipartiteModel.povmValue_le_postprocess`; the tensor-product
+statements are its instances in the tensor-product model of a strategy
+(`TensorProductStrategy.value_mergeAnswersByQuestion`, through
+`ProjectiveMeasurement.mergeByQuestion_toIn`).
 -/
 
 noncomputable section
 namespace MIPRE
 open Matrix Kronecker Finset Classical
+open scoped ComplexOrder MatrixOrder
 
 namespace ProjectiveMeasurement
 variable {X A A' H : Type*} [Fintype A] [Fintype A'] [DecidableEq A]
@@ -41,7 +54,78 @@ theorem mergeByQuestion_M_of_id (P : ProjectiveMeasurement X A (Matrix H H ℂ))
     (r : X → A → A) (x : X) (hr : ∀ a, r x a = a) (a : A) :
     (P.mergeByQuestion r).M x a = P.M x a := by
   simp [mergeByQuestion_M, hr, Finset.sum_filter]
+
+/-- **The merged measurement is a coarse-graining in the matrix algebra**: at each question, the
+fiber sums of the original POVM along that question's decoder (`POVMIn.map`). -/
+theorem mergeByQuestion_toIn (P : ProjectiveMeasurement X A' (Matrix H H ℂ)) (r : X → A' → A)
+    (x : X) : ((P.mergeByQuestion r).toPOVM x).toIn = (P.toPOVM x).toIn.map (r x) :=
+  POVMIn.ext' fun a => by
+    rw [POVMIn.map_op]
+    rfl
 end ProjectiveMeasurement
+
+/-! ## In a bipartite model -/
+
+namespace BipartiteModel.ProjStrat
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+variable {X Y A B A' B' : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+  [Fintype A'] [Fintype B'] [DecidableEq A] [DecidableEq B]
+
+/-- **Decode answers by a question-dependent function**: at each question, the measurement of
+`S'` with its outcomes merged along that question's decoder. It is the adapter along the
+identity of the questions, a strategy of the same model. -/
+def mergeAnswersByQuestion {G' : Game X Y A' B'} (S' : M.ProjStrat G') (G : Game X Y A B)
+    (rA : X → A' → A) (rB : Y → B' → B) : M.ProjStrat G :=
+  S'.adapt G (fun x => x) (fun y => y) rA rB
+
+/-- A merged first-player measurement is the coarse-graining along the question's decoder. -/
+@[simp] theorem mergeAnswersByQuestion_PA {G' : Game X Y A' B'} (S' : M.ProjStrat G')
+    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) (x : X) :
+    (S'.mergeAnswersByQuestion G rA rB).PA x = (S'.PA x).map (rA x) := rfl
+
+/-- A merged second-player measurement is the coarse-graining along the question's decoder. -/
+@[simp] theorem mergeAnswersByQuestion_PB {G' : Game X Y A' B'} (S' : M.ProjStrat G')
+    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) (y : Y) :
+    (S'.mergeAnswersByQuestion G rA rB).PB y = (S'.PB y).map (rB y) := rfl
+
+/-- **Acceptance-preserving answer decoding can only increase the value**, on the same question
+law (`BipartiteModel.povmValue_le_postprocess`). -/
+theorem value_le_mergeAnswersByQuestion {G' : Game X Y A' B'} (S' : M.ProjStrat G')
+    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) (hμ : ∀ x y, G.μ x y = G'.μ x y)
+    (hD : ∀ x y a' b', G'.D x y a' b' = true → G.D x y (rA x a') (rB y b') = true) :
+    S'.value ≤ (S'.mergeAnswersByQuestion G rA rB).value :=
+  M.povmValue_le_postprocess G' G S'.PA S'.PB rA rB hμ hD
+
+/-- **Identity decoding at a first-player question keeps its measurement**, under a
+same-alphabet answer merge. -/
+theorem mergeByQuestionPAEq {G' : Game X Y A B} (S' : M.ProjStrat G') (G : Game X Y A B)
+    (rA : X → A → A) (rB : Y → B → B) (x : X) (hr : ∀ a, rA x a = a) :
+    (S'.mergeAnswersByQuestion G rA rB).PA x = S'.PA x := by
+  rw [mergeAnswersByQuestion_PA, show rA x = fun a => a from funext hr, POVMIn.map_id]
+
+/-- **Identity decoding at a second-player question keeps its measurement**, under a
+same-alphabet answer merge. -/
+theorem mergeByQuestionPBEq {G' : Game X Y A B} (S' : M.ProjStrat G') (G : Game X Y A B)
+    (rA : X → A → A) (rB : Y → B → B) (y : Y) (hr : ∀ b, rB y b = b) :
+    (S'.mergeAnswersByQuestion G rA rB).PB y = S'.PB y := by
+  rw [mergeAnswersByQuestion_PB, show rB y = fun b => b from funext hr, POVMIn.map_id]
+
+/-- Identity decoding at a first-player question keeps each of its effects. -/
+theorem mergeByQuestionPAEq_op {G' : Game X Y A B} (S' : M.ProjStrat G') (G : Game X Y A B)
+    (rA : X → A → A) (rB : Y → B → B) (x : X) (a : A) (hr : ∀ a, rA x a = a) :
+    ((S'.mergeAnswersByQuestion G rA rB).PA x).op a = (S'.PA x).op a := by
+  rw [S'.mergeByQuestionPAEq G rA rB x hr]
+
+/-- Identity decoding at a second-player question keeps each of its effects. -/
+theorem mergeByQuestionPBEq_op {G' : Game X Y A B} (S' : M.ProjStrat G') (G : Game X Y A B)
+    (rA : X → A → A) (rB : Y → B → B) (y : Y) (b : B) (hr : ∀ b, rB y b = b) :
+    ((S'.mergeAnswersByQuestion G rA rB).PB y).op b = (S'.PB y).op b := by
+  rw [S'.mergeByQuestionPBEq G rA rB y hr]
+
+end BipartiteModel.ProjStrat
 
 namespace TensorProductStrategy
 variable {X Y A B A' B' : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -52,65 +136,25 @@ def mergeAnswersByQuestion {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
     (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) : TensorProductStrategy G :=
   ⟨S'.dA, S'.dB, S'.ψ, S'.ψ_unit, S'.PA.mergeByQuestion rA, S'.PB.mergeByQuestion rB⟩
 
-/-- Acceptance-preserving answer decoding can only increase the strategy value. -/
+/-- **The merged strategy is the model's merged strategy**: its value is that of the projective
+strategy of `S'` in its tensor-product model (`toModel`), merged question by question. -/
+theorem value_mergeAnswersByQuestion {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
+    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) :
+    (S'.mergeAnswersByQuestion G rA rB).value
+      = (S'.toModel.mergeAnswersByQuestion G rA rB).value := by
+  rw [value_eq_tensor_povmValue]
+  exact congrArg₂ ((BipartiteModel.tensor S'.ψ).povmValue G)
+    (funext (S'.PA.mergeByQuestion_toIn rA)) (funext (S'.PB.mergeByQuestion_toIn rB))
+
+/-- Acceptance-preserving answer decoding can only increase the strategy value: the
+tensor-product instance of `BipartiteModel.ProjStrat.value_le_mergeAnswersByQuestion`. -/
 theorem value_le_mergeAnswersByQuestion {G' : Game X Y A' B'}
     (S' : TensorProductStrategy G') (G : Game X Y A B)
     (rA : X → A' → A) (rB : Y → B' → B) (hμ : ∀ x y, G.μ x y = G'.μ x y)
     (hD : ∀ x y a' b', G'.D x y a' b' = true → G.D x y (rA x a') (rB y b') = true) :
     S'.value ≤ (S'.mergeAnswersByQuestion G rA rB).value := by
-  unfold value
-  refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
-  set w : A' → B' → ℝ :=
-    fun a' b' => (star S'.ψ ⬝ᵥ ((S'.PA.M x a' ⊗ₖ S'.PB.M y b') *ᵥ S'.ψ)).re with hw
-  have hw0 : ∀ a' b', 0 ≤ w a' b' := fun a' b' => S'.re_dotProduct_nonneg x y a' b'
-  -- the merged Born-rule weight of `(a, b)` is the sum of the weights over the fibers
-  have hbil : ∀ a b, (star S'.ψ ⬝ᵥ (((S'.PA.mergeByQuestion rA).M x a ⊗ₖ (S'.PB.mergeByQuestion rB).M y b) *ᵥ
-      S'.ψ)).re = ∑ a' ∈ Finset.univ.filter (fun a' => rA x a' = a),
-        ∑ b' ∈ Finset.univ.filter (fun b' => rB y b' = b), w a' b' := by
-    intro a b
-    have hsplit : (S'.PA.mergeByQuestion rA).M x a ⊗ₖ (S'.PB.mergeByQuestion rB).M y b =
-        ∑ a' ∈ Finset.univ.filter (fun a' => rA x a' = a),
-          ∑ b' ∈ Finset.univ.filter (fun b' => rB y b' = b), S'.PA.M x a' ⊗ₖ S'.PB.M y b' := by
-      ext p q
-      simp only [ProjectiveMeasurement.mergeByQuestion_M, Matrix.sum_apply, kroneckerMap_apply,
-        Finset.sum_mul_sum]
-    rw [hsplit, Matrix.sum_mulVec, dotProduct_sum, Complex.re_sum]
-    refine Finset.sum_congr rfl fun a' _ => ?_
-    rw [Matrix.sum_mulVec, dotProduct_sum, Complex.re_sum]
-  show ∑ a', ∑ b', G'.μ x y * (if G'.D x y a' b' then 1 else 0) * w a' b' ≤
-    ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *
-      (star S'.ψ ⬝ᵥ (((S'.PA.mergeByQuestion rA).M x a ⊗ₖ (S'.PB.mergeByQuestion rB).M y b) *ᵥ S'.ψ)).re
-  simp_rw [hbil]
-  calc ∑ a', ∑ b', G'.μ x y * (if G'.D x y a' b' then 1 else 0) * w a' b'
-      ≤ ∑ a', ∑ b', G.μ x y * (if G.D x y (rA x a') (rB y b') then 1 else 0) * w a' b' := by
-        refine Finset.sum_le_sum fun a' _ => Finset.sum_le_sum fun b' _ => ?_
-        rw [hμ]
-        refine mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left ?_ (G'.μ_nonneg x y))
-          (hw0 a' b')
-        cases h : G'.D x y a' b' with
-        | false => by_cases h' : G.D x y (rA x a') (rB y b') = true <;> simp [h']
-        | true => rw [hD x y a' b' h]
-    _ = ∑ a, ∑ a' ∈ Finset.univ.filter (fun a' => rA x a' = a), ∑ b,
-          ∑ b' ∈ Finset.univ.filter (fun b' => rB y b' = b),
-            G.μ x y * (if G.D x y (rA x a') (rB y b') then 1 else 0) * w a' b' := by
-        rw [Finset.sum_fiberwise Finset.univ (rA x)]
-        refine Finset.sum_congr rfl fun a' _ => ?_
-        rw [Finset.sum_fiberwise Finset.univ (rB y)]
-    _ = ∑ a, ∑ a' ∈ Finset.univ.filter (fun a' => rA x a' = a), ∑ b,
-          ∑ b' ∈ Finset.univ.filter (fun b' => rB y b' = b),
-            G.μ x y * (if G.D x y a b then 1 else 0) * w a' b' := by
-        refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun a' ha' =>
-          Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun b' hb' => ?_
-        rw [(Finset.mem_filter.1 ha').2, (Finset.mem_filter.1 hb').2]
-    _ = ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *
-          ∑ a' ∈ Finset.univ.filter (fun a' => rA x a' = a),
-            ∑ b' ∈ Finset.univ.filter (fun b' => rB y b' = b), w a' b' := by
-        refine Finset.sum_congr rfl fun a _ => ?_
-        rw [Finset.sum_comm]
-        refine Finset.sum_congr rfl fun b _ => ?_
-        rw [Finset.mul_sum]
-        refine Finset.sum_congr rfl fun a' _ => ?_
-        rw [Finset.mul_sum]
+  rw [value_mergeAnswersByQuestion, ← S'.value_toModel]
+  exact S'.toModel.value_le_mergeAnswersByQuestion G rA rB hμ hD
 
 /-- Exact state equality for a question-dependent answer merge. The named
 proposition avoids comparing concrete game definitions in dependent registers. -/

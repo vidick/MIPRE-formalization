@@ -14,6 +14,8 @@ The earlier answer is processed using the question reported in the later
 answer. This is a conditional measurement, not a single fixed coarse-graining.
 The resulting estimate is derived from the parsed game and its actual uniform
 ordered-edge law, including the malformed-answer outcomes.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`).
 -/
 
 noncomputable section
@@ -27,82 +29,93 @@ set_option linter.unusedSectionVars false
 
 section Conditional
 
-variable {H K A B Y Z : Type*}
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-  [Fintype A] [Fintype B] [DecidableEq B]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] (Ψ : BipartiteModel 𝒞 𝒜 ℬ)
+variable {A B Y Z : Type*} [Fintype A] [Fintype B] [DecidableEq B]
   [Fintype Y] [DecidableEq Y] [Fintype Z] [DecidableEq Z]
 
 /-- Squared error of the conditional coarse comparison, retaining Bob's
 conditioning index and summing every coarse outcome. -/
-def conditionalCoarseDistance (ψ : H × K → ℂ) (M : POVM A H) (N : POVM B K)
+def conditionalCoarseDistance (M : POVMIn A 𝒜) (N : POVMIn B ℬ)
     (f : Y → A → Z) (g : B → Y × Z) : ℝ :=
-  ∑ p : Y × Z, snorm ψ
-    (bOp (((N.map g).mats p).val) -
-      (((M.map (f p.1)).mats p.2).val ⊗ₖ (∑ z, ((N.map g).mats (p.1, z)).val))) ^ 2
+  ∑ p : Y × Z, Ψ.snorm
+    (Ψ.πB ((N.map g).op p) -
+      Ψ.πA ((M.map (f p.1)).op p.2) * Ψ.πB (∑ z, (N.map g).op (p.1, z))) ^ 2
 
 /-- Data processing when Alice's outcome map depends on a retained part of
 Bob's outcome. The dependency remains inside the Born sum. -/
-theorem conditional_bornProb_map (ψ : H × K → ℂ) (M : POVM A H) (N : POVM B K)
+theorem conditional_bornProb_map (M : POVMIn A 𝒜) (N : POVMIn B ℬ)
     (f : Y → A → Z) (g : B → Y × Z) :
-    (∑ p : Y × Z, bornProb ψ (((M.map (f p.1)).mats p.2).val)
-      (((N.map g).mats p).val)) =
+    (∑ p : Y × Z, Ψ.bornProb ((M.map (f p.1)).op p.2) ((N.map g).op p)) =
     ∑ b, ∑ a, (if f (g b).1 a = (g b).2 then (1 : ℝ) else 0) *
-      bornProb ψ (M.mats a).val (N.mats b).val := by
+      Ψ.bornProb (M.op a) (N.op b) := by
   calc
     _ = ∑ p : Y × Z, ∑ b ∈ univ.filter (fun b => g b = p),
-        bornProb ψ (((M.map (f (g b).1)).mats (g b).2).val) (N.mats b).val := by
+        Ψ.bornProb ((M.map (f (g b).1)).op (g b).2) (N.op b) := by
       apply Finset.sum_congr rfl
       intro p _
-      rw [POVM.map_mats g N p, bornProb_sum_right]
+      rw [POVMIn.map_op g N p, Ψ.bornProb_sum_right]
       apply Finset.sum_congr rfl
       intro b hb
       rw [(Finset.mem_filter.mp hb).2]
-    _ = ∑ b, bornProb ψ (((M.map (f (g b).1)).mats (g b).2).val) (N.mats b).val :=
+    _ = ∑ b, Ψ.bornProb ((M.map (f (g b).1)).op (g b).2) (N.op b) :=
       Finset.sum_fiberwise _ _ _
     _ = _ := by
       apply Finset.sum_congr rfl
       intro b _
-      rw [POVM.map_mats, bornProb_sum_left, Finset.sum_filter]
+      rw [POVMIn.map_op, Ψ.bornProb_sum_left, Finset.sum_filter]
       apply Finset.sum_congr rfl
       intro a _
       split_ifs <;> simp
 
 /-- Conditional consistency for an actual pair of measurements and explicit
 outcome maps. The acceptance premise is solely a scalar tested probability. -/
-theorem conditional_coarse_consistency (ψ : H × K → ℂ) (hψ : ‖evec ψ‖ = 1)
-    (M : POVM A H) (N : POVM B K) (hN : IsPVM (fun b => (N.mats b).val))
+theorem conditional_coarse_consistency (hΨ : ‖Ψ.ψ‖ = 1)
+    (M : POVMIn A 𝒜) (N : POVMIn B ℬ) (hN : IsPVMIn N.op)
     (f : Y → A → Z) (g : B → Y × Z) (test : A → B → Bool)
     {δ : ℝ}
     (hwin : 1 - δ ≤ ∑ a, ∑ b,
-      (if test a b = true then (1 : ℝ) else 0) * bornProb ψ (M.mats a).val (N.mats b).val)
+      (if test a b = true then (1 : ℝ) else 0) * Ψ.bornProb (M.op a) (N.op b))
     (hcheck : ∀ a b, test a b = true → f (g b).1 a = (g b).2) :
-    conditionalCoarseDistance ψ M N f g ≤ 2 * δ := by
-  let P (p : Y × Z) := ((N.map g).mats p).val
+    conditionalCoarseDistance Ψ M N f g ≤ 2 * δ := by
+  let P (p : Y × Z) := (N.map g).op p
   let R y := ∑ z, P (y, z)
-  let C (p : Y × Z) := ((M.map (f p.1)).mats p.2).val ⊗ₖ R p.1
-  have hP : IsPVM P := isPVM_povm_map N hN g
-  have hR : IsPVM R := hP.marg_left
-  have hC0 p : (0 : Matrix (H × K) _ ℂ) ≤ C p :=
-    Matrix.nonneg_iff_posSemidef.mpr
-      (((M.map (f p.1)).posSemidef p.2).kronecker (hR.posSemidef p.1))
-  have hCsum : ∑ p, C p ≤ (1 : Matrix (H × K) _ ℂ) := by
+  let C (p : Y × Z) : 𝒞 := Ψ.πA ((M.map (f p.1)).op p.2) * Ψ.πB (R p.1)
+  have hP : IsPVMIn P := by
+    rw [show P = _ from funext (POVMIn.map_op g N)]
+    exact hN.coarse g
+  have hR : IsPVMIn R := hP.marg_left
+  have hCsa p : star (C p) = C p := by
+    simp only [C, star_mul, ← map_star, POVMIn.star_op, hR.star_eq]
+    exact (Ψ.commute _ _).eq.symm
+  have hC0 p : 0 ≤ Ψ.π (C p) := by
+    have hc : Commute (Ψ.π (Ψ.πA ((M.map (f p.1)).op p.2))) (Ψ.π (Ψ.πB (R p.1))) :=
+      (Ψ.commute _ _).map Ψ.π
+    simp only [C, map_mul]
+    exact hc.mul_nonneg (Ψ.π_πA_nonneg (POVMIn.op_nonneg _ _)) (Ψ.π_πB_nonneg (hR.nonneg _))
+  have hCsum : ∑ p, Ψ.π (C p) ≤ 1 := by
     apply le_of_eq
-    simp only [C, Fintype.sum_prod_type, ← sum_kronecker_left, POVM.sum_val]
-    rw [← kronecker_sum_right, hR.sum_eq_one, Matrix.one_kronecker_one]
-  have hprod p : bOp (P p) * C p = ((M.map (f p.1)).mats p.2).val ⊗ₖ P p := by
-    dsimp only [bOp, C, R]
-    rw [← Matrix.mul_kronecker_mul, Matrix.one_mul, joint_mul_marginal hP]
-  have hdist := submeasurement_agreement_dist ψ hψ (fun p => bOp (P p)) C hP.bOp hC0 hCsum
-  have heq p : qform ψ (bOp (P p) * C p) =
-      bornProb ψ ((M.map (f p.1)).mats p.2).val (P p) := by
-    rw [hprod, bornProb_eq_qform]
-    simp only [aOp, bOp, ← Matrix.mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul]
+    rw [← map_sum]
+    simp only [C, Fintype.sum_prod_type, ← Finset.sum_mul, ← map_sum, POVMIn.sum_op, map_one,
+      one_mul]
+    rw [hR.sum_eq_one, map_one, map_one]
+  have hprod p : Ψ.πB (P p) * C p = Ψ.πA ((M.map (f p.1)).op p.2) * Ψ.πB (P p) := by
+    obtain ⟨y, z⟩ := p
+    dsimp only [C, R]
+    rw [← mul_assoc, ← (Ψ.commute _ _).eq, mul_assoc, ← map_mul, joint_mul_marginal hP]
+  have hdist := submeasurement_agreement_dist Ψ.toStateModel hΨ (fun p => Ψ.πB (P p)) C
+    (hP.map Ψ.πB) hCsa hC0 hCsum
+  have heq p : Ψ.qform (Ψ.πB (P p) * C p) =
+      Ψ.bornProb ((M.map (f p.1)).op p.2) (P p) := by
+    rw [hprod]
+    rfl
   simp_rw [heq] at hdist
   have hagree : 1 - δ ≤ ∑ p : Y × Z,
-      bornProb ψ ((M.map (f p.1)).mats p.2).val (P p) := by
-    rw [show (∑ p : Y × Z, bornProb ψ ((M.map (f p.1)).mats p.2).val (P p)) =
+      Ψ.bornProb ((M.map (f p.1)).op p.2) (P p) := by
+    rw [show (∑ p : Y × Z, Ψ.bornProb ((M.map (f p.1)).op p.2) (P p)) =
       ∑ b, ∑ a, (if f (g b).1 a = (g b).2 then (1 : ℝ) else 0) *
-        bornProb ψ (M.mats a).val (N.mats b).val from conditional_bornProb_map ψ M N f g]
+        Ψ.bornProb (M.op a) (N.op b) from conditional_bornProb_map Ψ M N f g]
     refine hwin.trans ?_
     rw [Finset.sum_comm]
     apply Finset.sum_le_sum
@@ -110,10 +123,10 @@ theorem conditional_coarse_consistency (ψ : H × K → ℂ) (hψ : ‖evec ψ�
     apply Finset.sum_le_sum
     intro a _
     by_cases h : test a b = true
-    · rw [if_pos h, if_pos (hcheck a b h)]
-    · rw [if_neg h, zero_mul]
+    · rw [ite_eq_left h, ite_eq_left (hcheck a b h)]
+    · rw [ite_eq_right h, zero_mul]
       exact mul_nonneg (by split_ifs <;> norm_num)
-        (bornProb_nonneg ψ (M.posSemidef a) (N.posSemidef b))
+        (Ψ.bornProb_nonneg (M.op_nonneg a) (N.op_nonneg b))
   exact hdist.trans (by linarith)
 
 end Conditional
@@ -176,11 +189,13 @@ namespace TypedEstimates
 
 section Parsed
 
-variable {PauliType PauliAnswer F ι κ A H K : Type*}
+variable {PauliType PauliAnswer F ι κ A : Type*}
   [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]
   [Field F] [Fintype F] [DecidableEq F] [Fintype ι] [DecidableEq ι]
-  [Fintype κ] [DecidableEq κ] [Fintype A]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K] {ℓ : ℕ}
+  [Fintype κ] [DecidableEq κ] [Fintype A] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 /-- Retain exactly the later hiding answer's preceding question prefix as
 the conditioning index. Malformed answers retain a separate index. -/
@@ -254,36 +269,34 @@ theorem hiding_next_conditional_estimate
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) 𝒜)
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)
-    {ε : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) ℬ)
+    {ε : ℝ} (hfail : 1 - Ψ.povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ ε)
     (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)
     (hL : (L w).SupportedOn univ)
-    (hMB : IsPVM (fun b => ((MB (QuestionType.hide w j, 0)).mats b).val)) :
-    conditionalCoarseDistance ψ (MA (QuestionType.hide w k, 0)) (MB (QuestionType.hide w j, 0))
+    (hMB : IsPVMIn (MB (QuestionType.hide w j, 0)).op) :
+    conditionalCoarseDistance Ψ (MA (QuestionType.hide w k, 0)) (MB (QuestionType.hide w j, 0))
       (hidingNextEarlier (L w) k.val) (hidingNextLater (L w) k.val) ≤
         2 * (TypeGraph.edges E X Z ℓ).card * ε := by
   let G := parsedGame E X Z P L projectPauli D DP
   let q : CL.Detyping.Question (QuestionType PauliType ℓ) κ := (QuestionType.hide w k, 0)
   let r : CL.Detyping.Question (QuestionType PauliType ℓ) κ := (QuestionType.hide w j, 0)
-  have hterm := sum_mul_condFail_le (G := G) (ψ := ψ) (MA := MA) (MB := MB)
-    hψ hfail {(q, r)}
+  have hterm := Ψ.sum_mul_condFail_le (G := G) (MA := MA) (MB := MB) hΨ hfail {(q, r)}
   simp only [sum_singleton] at hterm
   change (TypedPresentation.game E X Z ℓ P (questionCheck L X Z projectPauli D DP)).μ
-    (.inr (.hide k, w), 0) (.inr (.hide j, w), 0) * condFail G ψ MA MB q r ≤ ε at hterm
+    (.inr (.hide k, w), 0) (.inr (.hide j, w), 0) * Ψ.condFail G MA MB q r ≤ ε at hterm
   rw [TypedPresentation.mu_aux E X Z P (questionCheck L X Z projectPauli D DP)
     (.hide k) (.hide j) w w (TypeGraph.adj_hide_next E X Z w k j hk), inv_mul_eq_div] at hterm
   have hc : (0 : ℝ) < (TypeGraph.edges E X Z ℓ).card := by
     exact_mod_cast (TypeGraph.edges_nonempty E X Z ℓ).card_pos
   have hcond := (div_le_iff₀ hc).mp hterm
-  have hwin : 1 - (TypeGraph.edges E X Z ℓ).card * ε ≤ condWin G ψ MA MB q r := by
-    unfold condFail at hcond
+  have hwin : 1 - (TypeGraph.edges E X Z ℓ).card * ε ≤ Ψ.condWin G MA MB q r := by
+    unfold BipartiteModel.condFail at hcond
     nlinarith
-  have h := conditional_coarse_consistency ψ (norm_evec_eq_one_of_unit hψ)
-    (MA q) (MB r) hMB (hidingNextEarlier (L w) k.val) (hidingNextLater (L w) k.val)
+  have h := conditional_coarse_consistency Ψ hΨ (MA q) (MB r) hMB (hidingNextEarlier (L w) k.val) (hidingNextLater (L w) k.val)
     (G.D q r)
     (δ := (TypeGraph.edges E X Z ℓ).card * ε)
     hwin

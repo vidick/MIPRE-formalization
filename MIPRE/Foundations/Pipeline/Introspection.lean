@@ -130,8 +130,9 @@ structure Introspection (ℓ : ℕ) where
 
 /-- **The soundness clause of introspection in a value model**: the field `soundness` with the
 value `val*` replaced by the model's. The field is the tensor-product case
-(`Introspection.soundIn_tensor`); the commuting-operator case is what Phase 4 of
-`planning/mipco-track.md` proves. -/
+(`Introspection.soundIn_tensor`); for the compiler of the main theorem, the commuting-operator case
+follows from the soundness of the Pauli basis test in the commuting-operator model
+(`Introspection.seven_soundIn_commuting`, Phase 4 of `planning/mipco-track.md`). -/
 def Introspection.SoundIn {ℓ : ℕ} (I : Introspection ℓ) (ω : ValueModel) : Prop :=
   ∀ (V : Verifier ℓ) (lam n : ℕ) (ε : ℝ), V.IsBounded lam → 1 ≤ n → 0 < ε →
     1 - ε < (I.output (V.sampler.prog, V.decider.prog) lam).val ω n

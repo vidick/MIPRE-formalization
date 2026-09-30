@@ -8,7 +8,13 @@ public import MIPRE.Foundations.Introspection.HidingBaseOperators
 
 @[expose] public section
 
-/-! # The actual Pauli-X/first-hiding test -/
+/-! # The actual Pauli-X/first-hiding test
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the agreement estimate takes
+a model `Ψ` with `‖Ψ.ψ‖ = 1` and measurements `POVMIn _ 𝒜`, `POVMIn _ ℬ`, and is the model
+instance of `pauli_aux_agreement_estimate`. The two acceptance statements concern answers only
+and are unchanged.
+-/
 
 noncomputable section
 
@@ -18,11 +24,13 @@ open Finset Matrix Classical
 
 set_option linter.unusedSectionVars false
 
-variable {PauliType PauliAnswer F ι κ A H K : Type*}
+variable {PauliType PauliAnswer F ι κ A : Type*}
   [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] [Fintype A]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K] {ℓ : ℕ}
+  [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] [Fintype A] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 theorem hidingCoarse_zero_hide (P : CL.CLFun F ι ℓ) (y yp x : ι → F) :
     hidingCoarse (A := A) (PauliAnswer := PauliAnswer) P 0 (.hide y yp x) =
@@ -61,18 +69,18 @@ theorem hiding_first_agreement_estimate
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)
+    (Ψ : BipartiteModel 𝒞 𝒜 ℬ) (hΨ : ‖Ψ.ψ‖ = 1)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) 𝒜)
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)
-    {ε : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) ℬ)
+    {ε : ℝ} (hfail : 1 - Ψ.povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ ε)
     (w : Bool) (k : Fin ℓ) (hk : k.val = 0)
     (qX : κ → ZMod 2) (hqX : ∀ z, (P X).eval z = qX) :
-    (∑ z, xSqNorm ψ
-      ((((MA (.inl X, qX)).map (fun a =>
-        Option.map (Honest.firstHideAnswer (L w)) (pauliProjection projectPauli a))).mats z).val)
-      ((((MB (QuestionType.hide w k, 0)).map (hidingCoarse (L w) 0)).mats z).val)) ≤
+    (∑ z, Ψ.xSqNorm
+      (((MA (.inl X, qX)).map (fun a =>
+        Option.map (Honest.firstHideAnswer (L w)) (pauliProjection projectPauli a))).op z)
+      (((MB (QuestionType.hide w k, 0)).map (hidingCoarse (L w) 0)).op z)) ≤
         2 * (TypeGraph.edges E X Z ℓ).card * ε := by
   have hℓ : 0 < ℓ := by simpa only [hk] using k.isLt
   have heq : k = ⟨0, hℓ⟩ := Fin.ext hk
@@ -80,7 +88,7 @@ theorem hiding_first_agreement_estimate
     subst k
     exact TypeGraph.adj_pauliX_hide_first E X Z hℓ w
   exact pauli_aux_agreement_estimate E X Z P (questionCheck L X Z projectPauli D DP)
-    ψ hψ MA MB hfail X qX hqX (.hide k) w hedge
+    Ψ hΨ MA MB hfail X qX hqX (.hide k) w hedge
     (fun a => Option.map (Honest.firstHideAnswer (L w)) (pauliProjection projectPauli a))
     (hidingCoarse (L w) 0)
     (hiding_first_accepts L X Z projectPauli D (fun p r => DP p r qX 0) w k hk)

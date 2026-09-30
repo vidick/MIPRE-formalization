@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 public import MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement
+public import MIPRE.Foundations.Introspection.RegisteredExtensionErrors
 
 @[expose] public section
 
@@ -12,6 +13,10 @@ public import MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement
 Both sides use explicit reassociations of the actual computational registers.
 The identity identifies the globally extended old measurement with the local
 extensions compared by conditional Naimark dilation.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): adjoining the ancilla to a block
+matrix over a register is `registeredExtendOp` (`M ↦ M ⊗ 1`, then the exchange of the layers), and
+reassembly behind the prefix projector is `prefixResidualOp` with entries in any algebra.
 -/
 
 noncomputable section
@@ -19,37 +24,33 @@ noncomputable section
 namespace MIPRE.Introspection
 
 open Finset Matrix Classical
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
-theorem registerParty_extend {I J R H A : Type*}
-    [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
-    [Fintype R] [DecidableEq R] [Fintype H] [DecidableEq H]
-    [Fintype A] [DecidableEq A]
-    (e : I ≃ J × R) (Q : Matrix J J ℂ) (M : Matrix (R × H) (R × H) ℂ) :
-    registerOp (registerParty e (H × A))
-      (Q ⊗ₖ registerOp (Equiv.prodAssoc R H A).symm
-        (aOp M : Matrix ((R × H) × A) _ ℂ)) =
-      registerOp (Equiv.prodAssoc I H A).symm
-        (aOp (registerOp (registerParty e H) (Q ⊗ₖ M)) : Matrix ((I × H) × A) _ ℂ) := by
-  ext ⟨i, h, a⟩ ⟨j, h', a'⟩
-  simp only [registerOp_apply, registerParty, Equiv.trans_apply, Equiv.prodCongr_apply,
-    Equiv.prodAssoc_apply, Equiv.prodAssoc_symm_apply, aOp, Matrix.kroneckerMap_apply,
-    Matrix.one_apply, mul_assoc, Prod.map_fst, Prod.map_snd, Equiv.refl_apply]
+variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜] {T : Type*} [Fintype T] [DecidableEq T]
 
-variable {F ι H A : Type*} [Field F] [Fintype F] [DecidableEq F]
-  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι]
-  [Fintype H] [DecidableEq H] [Fintype A] [DecidableEq A] {ℓ : ℕ}
+/-- Splitting a register commutes with adjoining a fixed ancilla to the entries. -/
+theorem registerParty_extend {I J R : Type*}
+    [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
+    [Fintype R] [DecidableEq R]
+    (e : I ≃ J × R) (Q : Matrix J J ℂ) (M : Matrix R R 𝒜) :
+    regSplitHom e (smulKron (registeredExtendOp (T := T) M) Q) =
+      registeredExtendOp (T := T) (regSplitHom e (smulKron M Q)) := by
+  ext i i' t t'
+  simp only [regSplitHom_apply, smulKron_apply, registeredExtendOp_apply, Matrix.smul_apply]
+  by_cases h : t = t'
+  · subst h
+    simp only [diagonal_apply_eq, regSplitHom_apply, smulKron_apply]
+  · simp only [diagonal_apply_ne _ h, smul_zero]
+
+variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F]
+  [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}
 
 /-- Extending the local residual measurement by a fixed ancilla and then
 reassembling is identical to extending the reassembled ambient measurement. -/
 theorem prefixResidualOp_extend (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F)
-    (M : Matrix ((↥((CLChecks.prefixRegister P k y)ᶜ) → F) × H) _ ℂ) :
-    prefixResidualOp (H := H × A) P k y
-      (registerOp (Equiv.prodAssoc (↥((CLChecks.prefixRegister P k y)ᶜ) → F) H A).symm
-        (aOp M : Matrix (((↥((CLChecks.prefixRegister P k y)ᶜ) → F) × H) × A) _ ℂ)) =
-      registerOp (Equiv.prodAssoc (ι → F) H A).symm
-        (aOp (prefixResidualOp (H := H) P k y M) : Matrix (((ι → F) × H) × A) _ ℂ) :=
+    (M : Matrix (↥((CLChecks.prefixRegister P k y)ᶜ) → F) _ 𝒜) :
+    prefixResidualOp P k y (registeredExtendOp (T := T) M) =
+      registeredExtendOp (T := T) (prefixResidualOp P k y M) :=
   registerParty_extend _ _ _
 
 end MIPRE.Introspection

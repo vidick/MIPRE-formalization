@@ -158,7 +158,7 @@ theorem hideOp_conditionalIdeal_eq_next (P : CL.CLFun F ι ℓ) (k : ℕ)
   have he := conditionalIdeal_eq_coarse_of_reject (hideOp P k h) (hideOp P (k + 1) h)
     (hidingPrefixOp P (k + 1))
     (fun y a => TypedEstimates.hidingNextGuarded P k y (hideLabelCoarse P k a))
-    (hideLabelNext P k) (hideOp_isPVM P k h) (hideOp_isPVM P (k + 1) h)
+    (hideLabelNext P k) (hideOp_isPVM P k h).toIn (hideOp_isPVM P (k + 1) h).toIn
     (hidingPrefixOp_commute_hideOp P k h) (hidingPrefixOp_mul_next P k h)
     (by
       intro a b hab
@@ -166,7 +166,7 @@ theorem hideOp_conditionalIdeal_eq_next (P : CL.CLFun F ι ℓ) (k : ℕ)
       intro hcheck
       exact hab (hideLabel_guarded_of_check P k h a b hcheck)) p
   refine he.trans ?_
-  simp only [fibSum, Finset.sum_filter]
+  simp only [fibSum, fibSumIn, Finset.sum_filter]
   apply Finset.sum_congr rfl
   intro a _
   by_cases ha : hideLabelNext P k a = p <;> simp [ha]
@@ -191,8 +191,8 @@ theorem hideCoarseOp_conditionalIdeal_eq_next (P : CL.CLFun F ι ℓ) (k : ℕ)
         fibSum (hideOp P (k + 1) h) (hideLabelNext P k) p := by
   have hc := coarseOp_comp (hideLabelCoarse P k)
     (TypedEstimates.hidingNextGuarded P k p.1) (hideOp P k h) p.2
-  change fibSum (hideCoarseOp P k h) (TypedEstimates.hidingNextGuarded P k p.1) p.2 =
-    fibSum (hideOp P k h)
+  change fibSumIn (hideCoarseOp P k h) (TypedEstimates.hidingNextGuarded P k p.1) p.2 =
+    fibSumIn (hideOp P k h)
       (fun a => TypedEstimates.hidingNextGuarded P k p.1 (hideLabelCoarse P k a)) p.2 at hc
   rw [conditionalIdeal, hc]
   exact hideOp_conditionalIdeal_eq_next P k hk h p

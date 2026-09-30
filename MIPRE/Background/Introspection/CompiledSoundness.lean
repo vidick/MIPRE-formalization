@@ -14,6 +14,13 @@ The compiled strategy is restricted through finite detyping, decoded to the
 canonical quotient game, and passed to the proved QLD theorem. Coordinate
 padding is removed and the fixed detyping factor is absorbed into the uniform
 error profile. The answer budget may be any budget above the enforced cutoff.
+
+Stated in a value model (Phase 4 of `planning/mipco-track.md`): a raw strategy is a projective
+strategy of a model in which the Pauli basis test is sound (`QLD.SoundIn ω M`), and the output's
+value is that of any value model approached by such strategies (`QLD.ApproxSoundIn ω`) and by the
+projective strategies of the models it dominates (`ValueModel.ProjApprox`, for the padding). Both
+hold for `val*` (`QLD.approxSoundIn_tensor`, `ValueModel.tensor_projApprox`) and, when the test
+is sound in every commuting-operator model, for `ω_co`.
 -/
 
 noncomputable section
@@ -57,16 +64,21 @@ theorem scale_error {x ε : ℝ} (c : ℕ) (hx : 1 ≤ x) (hε : 0 ≤ ε) :
 local instance power_neZero (c lam n : ℕ) : NeZero (registerPower c lam n) :=
   ⟨Nat.ne_of_gt (registerPower_pos c lam n)⟩
 
-/-- A raw typed strategy already gives the original verifier's source value. -/
-theorem source_value_ge_of_raw (c : ℕ) (hc : 2 ≤ c) (he : Even c)
-    (hcb : 2 * qldCoefficient + 2 ≤ (c : ℝ) * qldExponent)
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
+
+/-- A raw typed strategy, in a model where the Pauli basis test is sound, already gives the
+original verifier's source value, in every value model approached by projective strategies. -/
+theorem source_value_ge_of_raw (ω : ValueModel) (hω : ω.ProjApprox) (c : ℕ) (hc : 2 ≤ c)
+    (he : Even c) (hcb : 2 * qldCoefficient + 2 ≤ (c : ℝ) * qldExponent)
     (U : ClockedUniversalMachine) {lam n : ℕ}
-    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)
-    (S : TensorProductStrategy
-      (rawGame c (by omega) he U (V.sampler.prog,V.decider.prog) lam n))
+    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n) {M : BipartiteModel 𝒞 𝒜 ℬ}
+    (hQ : QLD.SoundIn ω M)
+    (S : M.ProjStrat (rawGame c (by omega) he U (V.sampler.prog,V.decider.prog) lam n))
     {ε : ℝ} (hε : 0 ≤ ε) (hS : 1 - S.value ≤ ε) :
     1 - errorProfile (sourceCoefficient c) exponent (lam * n) ε ≤
-      V.valStar (2^n) ((2^n)^lam) := by
+      V.val ω (2^n) ((2^n)^lam) := by
   have hc1 : 1 ≤ c := by omega
   have hx : 2 ≤ lam * n := calc
     2 ≤ lam := hV.two_le
@@ -82,34 +94,41 @@ theorem source_value_ge_of_raw (c : ℕ) (hc : 2 ≤ c) (he : Even c)
     (CanonicalGame.numbering c lam n) (AuxiliaryDecision.padded V hs)
     (VerifierSource.paddedPredicate V hs ((2^n)^lam)) hL
     (CanonicalGame.selector c hc1 lam n) (CanonicalGame.permutation c lam n)
-    (CanonicalGame.selector_eq c hc1 lam n) R
+    (CanonicalGame.selector_eq c hc1 lam n) hQ R
     (CanonicalDecoded.supported_A c hc1 he U lam n V hs S)
     (CanonicalDecoded.supported_B c hc1 he U lam n V hs S) hε
     (CanonicalDecoded.failure_le c hc1 he U V hV hn hc hs S hS)
-  exact hv.trans (VerifierSource.padded_quantumValue_le V hs)
+  exact hv.trans (VerifierSource.padded_quantumValue_le V hs hω)
 
-/-- Soundness in exactly the ambient verifier-value form used by the pipeline. -/
-theorem output_soundness (c : ℕ) (hc : 2 ≤ c) (he : Even c)
+/-- Soundness in exactly the ambient verifier-value form used by the pipeline, in every value
+model approached by projective strategies of models where the Pauli basis test is sound. -/
+theorem output_soundness (ω : ValueModel) (hω : ω.ProjApprox) (hA : QLD.ApproxSoundIn ω)
+    (c : ℕ) (hc : 2 ≤ c) (he : Even c)
     (hcb : 2 * qldCoefficient + 2 ≤ (c : ℝ) * qldExponent)
     (U : ClockedUniversalMachine) (V : Verifier 7) (lam n B : ℕ) (ε : ℝ)
     (hV : V.IsBounded lam) (hn : 1 ≤ n) (hε : 0 < ε)
     (hB : outerBound c lam n ≤ B)
     (hv : 1 - ε < (DecisionCompiler.output c (by omega) he U
-      (V.sampler.prog,V.decider.prog) lam).valStar n B) :
-    1 - delta (coefficient c) exponent lam n ε ≤ V.valStar (2^n) ((2^n)^lam) := by
+      (V.sampler.prog,V.decider.prog) lam).val ω n B) :
+    1 - delta (coefficient c) exponent lam n ε ≤ V.val ω (2^n) ((2^n)^lam) := by
   have hc1 : 1 ≤ c := by omega
   have hl : 1 ≤ lam := by have := hV.two_le; omega
-  obtain ⟨S,hS⟩ := exists_raw_failure_le c hc1 he U (V.sampler.prog,V.decider.prog)
-    hl hn hB ε hv
-  have hraw := source_value_ge_of_raw c hc he hcb U V hV hn S
-    (mul_nonneg detypingLoss_nonneg hε.le) hS
   have hx : (1 : ℝ) ≤ (lam : ℝ) * n := by
     exact_mod_cast (show 1 ≤ lam * n from Nat.mul_pos hl hn)
+  rcases le_or_gt 1 ε with hε1 | hε1
+  · have hd : 1 ≤ errorProfile (coefficient c) exponent ((lam : ℝ) * n) ε :=
+      one_le_errorProfile (coefficient_one_le c) exponent_pos.le hx hε1
+    exact (by linarith : 1 - errorProfile (coefficient c) exponent ((lam : ℝ) * n) ε ≤ 0).trans
+      (ω.nonneg _)
+  rw [output_val_eq_reference ω c hc1 he U (V.sampler.prog,V.decider.prog) hl hn hB] at hv
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, M, hQ, S, hS⟩ :=
+    hA _ (by linarith) hv
+  obtain ⟨R, hR⟩ := exists_raw_failure_le c hc1 he U (V.sampler.prog,V.decider.prog) S
+    (ε := ε) (by linarith)
+  have hraw := source_value_ge_of_raw ω hω c hc he hcb U V hV hn hQ R
+    (mul_nonneg detypingLoss_nonneg hε.le) hR
   have hscale := scale_error c hx hε.le
-  have hh : 1 - errorProfile (coefficient c) exponent ((lam : ℝ) * n) ε ≤
-      V.valStar (2^n) ((2^n)^lam) := by
-    exact (sub_le_sub_left hscale 1).trans hraw
-  exact hh
+  exact (sub_le_sub_left hscale 1).trans hraw
 
 end MIPRE.Introspection.CompiledSoundness
 end

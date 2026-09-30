@@ -16,6 +16,17 @@ Its decoder overwrites the visited coordinates and retains the remaining
 tail. Attainable prefixes give the required valid-answer support, while
 unattainable prefixes use the constant malformed residual measurement.
 The selected raw replacement has exactly this decoded product form.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the decoded next residual
+PVMs are measurements of block matrices over the remaining coordinates of the next prefix whose
+entries are block matrices over the ancilla `T` with entries in any algebra `𝒜`, and the selected
+full-answer measurement is the registered replacement, a POVM in
+`Matrix (ι → F) (ι → F) (Matrix T T 𝒜)`, the first player's algebra of the register model
+`(Ξ.expandA t₀).reg (ι → F)` of the returned strategy. The decoder is unchanged. At an
+unattainable prefix the malformed residual is the register readout of the constant answer
+`none`, entering as `smulKron 1 _`, so its valid-answer operators vanish; projectivity is
+`IsPVMIn`, and the product-form identity (`registeredReplacement_nextOption_mats`) is an identity
+of operators `.op`.
 -/
 
 noncomputable section
@@ -23,9 +34,9 @@ namespace MIPRE.Introspection
 open Finset Matrix Classical
 set_option linter.unusedSectionVars false
 
-variable {ι F H A : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι F A : Type*} [Fintype ι] [DecidableEq ι]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  [Fintype H] [DecidableEq H] [Fintype A] [DecidableEq A] {ℓ : ℕ}
+  [Fintype A] [DecidableEq A] {ℓ : ℕ}
 
 /-- Decode a retained answer using only its new prefix and its unvisited tail. -/
 def nextOptionDecoder (P : CL.CLFun F ι ℓ) (k : ℕ) :
@@ -68,13 +79,16 @@ theorem nextOptionDecoder_prefix {P : CL.CLFun F ι ℓ} {T : Finset ι}
       simp [stageRemaining, CL.proj_apply, hi]
     _ = v := outputPrefix_of_mem_prefixOutcomes hP (k + 1) v hv
 
+variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜]
+  [StarOrderedRing 𝒜] [StarProper 𝒜]
+variable {T : Type*} [Fintype T] [DecidableEq T]
+
 /-- The full option-valued next residual measurement is projective. -/
 theorem nextPrefixDecodedPOVM_option_isPVM (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
-    (D : AdaptiveDilationFamily P k H (Option ((ι → F) × A)))
-    (hD : ∀ y z, IsPVM (D y z)) (v : ι → F) :
-    IsPVM (fun a =>
-      ((nextPrefixDecodedPOVM P hP k none D hD (nextOptionDecoder P k) v).mats a).val) :=
+    (D : AdaptiveDilationFamily P k 𝒜 T (Option ((ι → F) × A)))
+    (hD : ∀ y z, IsPVMIn (D y z)) (v : ι → F) :
+    IsPVMIn (nextPrefixDecodedPOVM P hP k none D hD (nextOptionDecoder P k) v).op :=
   nextPrefixDecodedPOVM_isPVM P hP k none D hD (nextOptionDecoder P k) v
 
 /-- Every valid decoded answer has the correct next prefix, for every
@@ -82,13 +96,12 @@ branch. Off-image branches use the constant `none` residual, rather than a
 coordinate claim about an unattainable prefix. -/
 theorem nextPrefixDecodedPOVM_some_support (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
-    (D : AdaptiveDilationFamily P k H (Option ((ι → F) × A)))
-    (hD : ∀ y z, IsPVM (D y z)) (v x : ι → F) (a : A)
+    (D : AdaptiveDilationFamily P k 𝒜 T (Option ((ι → F) × A)))
+    (hD : ∀ y z, IsPVMIn (D y z)) (v x : ι → F) (a : A)
     (hx : P.outputPrefix (k + 1) x ≠ v) :
-    ((nextPrefixDecodedPOVM P hP k none D hD (nextOptionDecoder P k) v).mats
-      (some (x, a))).val = 0 := by
+    (nextPrefixDecodedPOVM P hP k none D hD (nextOptionDecoder P k) v).op (some (x, a)) = 0 := by
   unfold nextPrefixDecodedPOVM
-  rw [POVM.map_mats]
+  rw [POVMIn.map_op]
   apply Finset.sum_eq_zero
   intro b hb
   have he : nextOptionDecoder P k (v, b) = some (x, a) := (mem_filter.mp hb).2
@@ -102,9 +115,9 @@ theorem nextPrefixDecodedPOVM_some_support (P : CL.CLFun F ι ℓ)
       rw [hxv] at hp
       exact False.elim (hx hp)
     · change nextPrefixResidual P hP k none D v (some b) = 0
-      rw [nextPrefixResidual, dif_neg hv]
+      rw [nextPrefixResidual, dite_eq_right hv]
       ext i j
-      simp [readout]
+      simp [readout, smulKron_apply]
 
 variable {X PauliAnswer : Type*} [Fintype X] [DecidableEq X] [Fintype PauliAnswer]
 
@@ -112,44 +125,46 @@ variable {X PauliAnswer : Type*} [Fintype X] [DecidableEq X] [Fintype PauliAnswe
 canonical option-valued next joint measurement. -/
 theorem registeredReplacement_nextOption_at (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
-    (D : AdaptiveDilationFamily P k H (Option ((ι → F) × A)))
-    (hD : ∀ y z, IsPVM (D y z))
-    (MA : X → POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H)) (q : X) :
+    (D : AdaptiveDilationFamily P k 𝒜 T (Option ((ι → F) × A)))
+    (hD : ∀ y z, IsPVMIn (D y z))
+    (MA : X → POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
+    (q : X) :
     (registeredReplacement MA q ((adaptiveReplacementPOVM P hP k D hD).map
       (fun p => restoreIntroAnswer (nextOptionDecoder P k (advanceStageAnswer P k p)))) q).map
         TypedEstimates.introspectPair =
       (nextPrefixJointPOVM P hP k none D hD).map (nextOptionDecoder P k) := by
   rw [registeredReplacement_next_at P hP k none D hD MA q
-    (fun p => restoreIntroAnswer (nextOptionDecoder P k p)), POVM.map_map]
+    (fun p => restoreIntroAnswer (nextOptionDecoder P k p)), POVMIn.map_map]
   simp only [introspectPair_restoreIntroAnswer]
 
 /-- The actual selected full-answer measurement satisfies the next
 product-form invariant with the concrete decoded residual PVMs. -/
 theorem registeredReplacement_nextOption_mats (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
-    (D : AdaptiveDilationFamily P k H (Option ((ι → F) × A)))
-    (hD : ∀ y z, IsPVM (D y z))
-    (MA : X → POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H)) (q : X)
-    (a : Option ((ι → F) × A)) :
-    (((registeredReplacement MA q ((adaptiveReplacementPOVM P hP k D hD).map
+    (D : AdaptiveDilationFamily P k 𝒜 T (Option ((ι → F) × A)))
+    (hD : ∀ y z, IsPVMIn (D y z))
+    (MA : X → POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
+    (q : X) (a : Option ((ι → F) × A)) :
+    ((registeredReplacement MA q ((adaptiveReplacementPOVM P hP k D hD).map
       (fun p => restoreIntroAnswer (nextOptionDecoder P k (advanceStageAnswer P k p)))) q).map
-        TypedEstimates.introspectPair).mats a).val =
+        TypedEstimates.introspectPair).op a =
       ∑ v, prefixResidualOp P (k + 1) v
-        ((nextPrefixDecodedPOVM P hP k none D hD (nextOptionDecoder P k) v).mats a).val := by
+        ((nextPrefixDecodedPOVM P hP k none D hD (nextOptionDecoder P k) v).op a) := by
   rw [registeredReplacement_nextOption_at P hP k D hD MA q]
   exact nextPrefixJointPOVM_map_mats P hP k none D hD (nextOptionDecoder P k) a
 
 theorem registeredReplacement_nextOption_isPVM (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ)
-    (D : AdaptiveDilationFamily P k H (Option ((ι → F) × A)))
-    (hD : ∀ y z, IsPVM (D y z))
-    (MA : X → POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H)) (q : X) :
-    IsPVM (fun a =>
-      (((registeredReplacement MA q ((adaptiveReplacementPOVM P hP k D hD).map
-        (fun p => restoreIntroAnswer (nextOptionDecoder P k (advanceStageAnswer P k p)))) q).map
-          TypedEstimates.introspectPair).mats a).val) := by
+    (D : AdaptiveDilationFamily P k 𝒜 T (Option ((ι → F) × A)))
+    (hD : ∀ y z, IsPVMIn (D y z))
+    (MA : X → POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
+    (q : X) :
+    IsPVMIn ((registeredReplacement MA q ((adaptiveReplacementPOVM P hP k D hD).map
+      (fun p => restoreIntroAnswer (nextOptionDecoder P k (advanceStageAnswer P k p)))) q).map
+        TypedEstimates.introspectPair).op := by
   rw [registeredReplacement_nextOption_at P hP k D hD MA q]
-  exact isPVM_povm_map _ (nextPrefixJoint_isPVM P hP k none D hD) (nextOptionDecoder P k)
+  exact POVMIn.isPVMIn_map (M := nextPrefixJointPOVM P hP k none D hD)
+    (nextPrefixJoint_isPVM P hP k none D hD) _
 
 end MIPRE.Introspection
 end

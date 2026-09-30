@@ -50,7 +50,6 @@ public import MIPRE.Background.Introspection.BinarySampled
 public import MIPRE.Background.Introspection.CanonicalComplete
 public import MIPRE.Background.Introspection.CanonicalDecodedStrategy
 public import MIPRE.Background.Introspection.CanonicalGame
-public import MIPRE.Background.Introspection.CanonicalSoundness
 public import MIPRE.Background.Introspection.CompiledSoundness
 public import MIPRE.Background.Introspection.Compiler
 public import MIPRE.Background.Introspection.CompleteAnchors
@@ -536,6 +535,7 @@ public import MIPRE.Background.QLD.Lines
 public import MIPRE.Background.QLD.MTilde
 public import MIPRE.Background.QLD.Mirror
 public import MIPRE.Background.QLD.MirrorExists
+public import MIPRE.Background.QLD.ModelSoundness
 public import MIPRE.Background.QLD.Multilinear
 public import MIPRE.Background.QLD.NonMultilinear
 public import MIPRE.Background.QLD.Ortho
@@ -739,8 +739,11 @@ public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+public import MIPRE.Foundations.AncillaDilation
+public import MIPRE.Foundations.AncillaIsometry
 public import MIPRE.Foundations.AncillaModel
 public import MIPRE.Foundations.BipartiteModel
+public import MIPRE.Foundations.BlockOrder
 public import MIPRE.Foundations.Blocks
 public import MIPRE.Foundations.CL.Basic
 public import MIPRE.Foundations.CL.Canonical
@@ -1081,6 +1084,7 @@ public import MIPRE.Foundations.Introspection.Readout
 public import MIPRE.Foundations.Introspection.RegisterCoordinates
 public import MIPRE.Foundations.Introspection.RegisterEPR
 public import MIPRE.Foundations.Introspection.RegisterMixing
+public import MIPRE.Foundations.Introspection.RegisterModel
 public import MIPRE.Foundations.Introspection.RegisterTransport
 public import MIPRE.Foundations.Introspection.RegisteredExtensionErrors
 public import MIPRE.Foundations.Introspection.RestrictedErrorBounds
@@ -1137,7 +1141,9 @@ public import MIPRE.Foundations.Introspection.ValidPauliSoundness
 public import MIPRE.Foundations.Introspection.ValueStability
 public import MIPRE.Foundations.Introspection.VaryingPauliMixing
 public import MIPRE.Foundations.Introspection.VerifierSourceGame
+public import MIPRE.Foundations.KrausDilation
 public import MIPRE.Foundations.Linearity
+public import MIPRE.Foundations.LocalIsometry
 public import MIPRE.Foundations.LowDegree.Anticomm
 public import MIPRE.Foundations.LowDegree.BinaryArtinSchreier
 public import MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop
@@ -1223,6 +1229,7 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.Measurement
+public import MIPRE.Foundations.ModelOver
 public import MIPRE.Foundations.ModelStrategy
 public import MIPRE.Foundations.NCPoly.Basic
 public import MIPRE.Foundations.NCPoly.Cone
@@ -1239,7 +1246,9 @@ public import MIPRE.Foundations.OracularSound
 public import MIPRE.Foundations.OracularTensor
 public import MIPRE.Foundations.OracularTyped
 public import MIPRE.Foundations.OracularValue
+public import MIPRE.Foundations.POVMDomination
 public import MIPRE.Foundations.POVMMix
+public import MIPRE.Foundations.POVMReduction
 public import MIPRE.Foundations.POVMValue
 public import MIPRE.Foundations.PVM
 public import MIPRE.Foundations.Parseval
@@ -1323,6 +1332,7 @@ public import MIPRE.Foundations.Swap
 public import MIPRE.Foundations.SyncMergeByQuestion
 public import MIPRE.Foundations.SyncPushQ
 public import MIPRE.Foundations.SyncTransport
+public import MIPRE.Foundations.TensorExpand
 public import MIPRE.Foundations.TensorFamily
 public import MIPRE.Foundations.Tsirelson.Algebra
 public import MIPRE.Foundations.Tsirelson.Certificate

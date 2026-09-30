@@ -14,98 +14,106 @@ The replacement at the selected question is arbitrary. Every other question
 is the concrete identity extension in the original register ordering.
 Consequently the primitive Pauli estimates and the hiding and Read estimates
 can be reused at the next induction stage without an additional error.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the old register state is the
+register model `Ξ.reg I`, the new one the register model `(Ξ.expandA t₀).reg I` of the auxiliary
+model extended by a first-player ancilla in the fixed state `t₀`. At an unchanged question the
+registered replacement is the old measurement carried along the registered extension
+`registeredExtend Ξ t₀` (`registeredExtendPOVM`), a local isometry taking the state to the state,
+so every error is transported exactly. An honest register operator enters as `smulKron 1 J` and
+is fixed by the extension (`registeredExtendOp_aOp`); the second player's operators are unchanged.
 -/
 
 noncomputable section
 namespace MIPRE.Introspection
 open Finset Matrix Classical
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
 section Generic
-variable {X I H K T A B : Type*}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ 𝒜] [PartialOrder 𝒜]
+  [StarOrderedRing 𝒜] [StarProper 𝒜]
+variable {X I T A B : Type*}
   [Fintype X] [DecidableEq X] [Fintype I] [DecidableEq I]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
   [Fintype T] [DecidableEq T] [Fintype A] [Fintype B] [DecidableEq B]
 
-theorem registeredReplacement_other_eq (MA : X → POVM A (I × H)) (q x : X)
-    (R : POVM A ((I × H) × T)) (hx : x ≠ q) :
+theorem registeredReplacement_other_eq (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) :
     registeredReplacement MA q R x = registeredExtendPOVM (MA x) :=
   registeredReplacement_other MA q x R hx
 
 /-- Outcome maps, including their malformed outcome, are transported exactly. -/
-theorem registeredReplacement_other_map (MA : X → POVM A (I × H)) (q x : X)
-    (R : POVM A ((I × H) × T)) (hx : x ≠ q) (f : A → B) :
+theorem registeredReplacement_other_map (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) (f : A → B) :
     (registeredReplacement MA q R x).map f = registeredExtendPOVM ((MA x).map f) := by
   rw [registeredReplacement_other_eq MA q x R hx, registeredExtendPOVM_map]
 
 /-- Projectivity at an unchanged question does not depend on projectivity
 of the selected replacement. -/
-theorem registeredReplacement_other_isPVM (MA : X → POVM A (I × H)) (q x : X)
-    (R : POVM A ((I × H) × T)) (hx : x ≠ q)
-    (hM : IsPVM (fun a => ((MA x).mats a).val)) :
-    IsPVM (fun a => ((registeredReplacement MA q R x).mats a).val) := by
+theorem registeredReplacement_other_isPVM (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) (hM : IsPVMIn (MA x).op) :
+    IsPVMIn (registeredReplacement MA q R x).op := by
   rw [registeredReplacement_other_eq MA q x R hx]
   exact registeredExtendPOVM_isPVM (MA x) hM
 
 theorem registeredReplacement_samePartyError_other
-    (ξ : H × K → ℂ) (a₀ : T) (MA : X → POVM A (I × H)) (q x : X)
-    (R : POVM A ((I × H) × T)) (hx : x ≠ q) (f : A → B)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) (f : A → B)
     (J : B → Matrix I I ℂ) :
-    (∑ b, stateSqNorm (registerState I (extVecA ξ a₀))
-      ((((registeredReplacement MA q R x).map f).mats b).val - aOp (J b))) =
-      ∑ b, stateSqNorm (registerState I ξ) ((((MA x).map f).mats b).val - aOp (J b)) := by
+    (∑ b, ((Ξ.expandA t₀).reg I).stateSqNorm
+      (((registeredReplacement MA q R x).map f).op b - smulKron 1 (J b))) =
+      ∑ b, (Ξ.reg I).stateSqNorm (((MA x).map f).op b - smulKron 1 (J b)) := by
   rw [registeredReplacement_other_map MA q x R hx f]
-  apply Finset.sum_congr rfl
-  intro b _
-  rw [registeredExtendPOVM_mats, ← registeredExtendOp_aOp,
-    ← registeredExtendOp_sub, stateSqNorm_registeredExtendOp]
+  refine Finset.sum_congr rfl fun b _ => ?_
+  rw [registeredExtendPOVM_mats, ← registeredExtendOp_aOp, ← registeredExtendOp_sub,
+    stateSqNorm_registeredExtendOp]
 
 theorem registeredReplacement_crossError_other
-    (ξ : H × K → ℂ) (a₀ : T) (MA : X → POVM A (I × H)) (q x : X)
-    (R : POVM A ((I × H) × T)) (hx : x ≠ q) (f : A → B)
-    (N : B → Matrix (I × K) (I × K) ℂ) :
-    (∑ b, xSqNorm (registerState I (extVecA ξ a₀))
-      ((((registeredReplacement MA q R x).map f).mats b).val) (N b)) =
-      ∑ b, xSqNorm (registerState I ξ) ((((MA x).map f).mats b).val) (N b) := by
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) (f : A → B)
+    (N : B → Matrix I I ℬ) :
+    (∑ b, ((Ξ.expandA t₀).reg I).xSqNorm
+      (((registeredReplacement MA q R x).map f).op b) (N b)) =
+      ∑ b, (Ξ.reg I).xSqNorm (((MA x).map f).op b) (N b) := by
   rw [registeredReplacement_other_map MA q x R hx f]
   simp only [registeredExtendPOVM_mats, xSqNorm_registeredExtendOp]
 
+omit [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] in
 theorem registeredExtension_bobCrossError
-    (ξ : H × K → ℂ) (a₀ : T) (J : B → Matrix I I ℂ)
-    (N : B → Matrix (I × K) (I × K) ℂ) :
-    (∑ b, xSqNorm (registerState I (extVecA ξ a₀)) (aOp (J b)) (N b)) =
-      ∑ b, xSqNorm (registerState I ξ) (aOp (J b)) (N b) := by
-  apply Finset.sum_congr rfl
-  intro b _
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (J : B → Matrix I I ℂ)
+    (N : B → Matrix I I ℬ) :
+    (∑ b, ((Ξ.expandA t₀).reg I).xSqNorm (smulKron 1 (J b)) (N b)) =
+      ∑ b, (Ξ.reg I).xSqNorm (smulKron 1 (J b)) (N b) := by
+  refine Finset.sum_congr rfl fun b _ => ?_
   rw [← registeredExtendOp_aOp, xSqNorm_registeredExtendOp]
 
+omit [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] in
 theorem registeredExtension_bobSamePartyError
-    (ξ : H × K → ℂ) (a₀ : T) (N : B → Matrix (I × K) (I × K) ℂ) :
-    (∑ b, snorm (registerState I (extVecA ξ a₀)) (bOp (N b)) ^ 2) =
-      ∑ b, snorm (registerState I ξ) (bOp (N b)) ^ 2 := by
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (N : B → Matrix I I ℬ) :
+    (∑ b, ((Ξ.expandA t₀).reg I).snorm (((Ξ.expandA t₀).reg I).πB (N b)) ^ 2) =
+      ∑ b, (Ξ.reg I).snorm ((Ξ.reg I).πB (N b)) ^ 2 := by
   simp only [snorm_bOp_registered_extVecA]
 
 /-- Any unchanged pair of questions has exactly its old outcome law. -/
 theorem registeredReplacement_bornProb_other
-    (ξ : H × K → ℂ) (a₀ : T) (MA : X → POVM A (I × H)) (q x : X)
-    (R : POVM A ((I × H) × T)) (hx : x ≠ q) (a : A)
-    (N : Matrix (I × K) (I × K) ℂ) :
-    bornProb (registerState I (extVecA ξ a₀))
-      ((registeredReplacement MA q R x).mats a).val N =
-      bornProb (registerState I ξ) ((MA x).mats a).val N := by
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) (a : A)
+    (N : Matrix I I ℬ) :
+    ((Ξ.expandA t₀).reg I).bornProb ((registeredReplacement MA q R x).op a) N =
+      (Ξ.reg I).bornProb ((MA x).op a) N := by
   rw [registeredReplacement_other_eq MA q x R hx, registeredExtendPOVM_mats,
     bornProb_registeredExtendOp]
 
 /-- An arbitrary weighted consistency test supported away from the replaced
 question is preserved, without assumptions on the replacement measurement. -/
-theorem inconsistency_registeredReplacement_away [DecidableEq A]
-    (μ : X → ℝ) (ξ : H × K → ℂ) (a₀ : T)
-    (MA : X → POVM A (I × H)) (MB : X → POVM A (I × K)) (q : X)
-    (R : POVM A ((I × H) × T)) (hq : μ q = 0) :
-    inconsistency μ (registerState I (extVecA ξ a₀)) (registeredReplacement MA q R) MB =
-      inconsistency μ (registerState I ξ) MA MB := by
-  unfold inconsistency
+theorem inconsistency_registeredReplacement_away [DecidableEq A] [PartialOrder ℬ]
+    [StarOrderedRing ℬ] [StarProper ℬ]
+    (μ : X → ℝ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
+    (MA : X → POVMIn A (Matrix I I 𝒜)) (MB : X → POVMIn A (Matrix I I ℬ)) (q : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hq : μ q = 0) :
+    ((Ξ.expandA t₀).reg I).inconsistency μ (registeredReplacement MA q R) MB =
+      (Ξ.reg I).inconsistency μ MA MB := by
+  unfold BipartiteModel.inconsistency
   apply Finset.sum_congr rfl
   intro x _
   by_cases hx : x = q
@@ -117,17 +125,18 @@ theorem inconsistency_registeredReplacement_away [DecidableEq A]
     apply Finset.sum_congr rfl
     intro b _
     by_cases hab : a = b
-    · simp only [hab, if_pos]
-    · simp only [if_neg hab]
-      exact registeredReplacement_bornProb_other ξ a₀ MA q x R hx a ((MB x).mats b).val
+    · rw [ite_eq_left hab, ite_eq_left hab]
+    · rw [ite_eq_right hab, ite_eq_right hab]
+      exact registeredReplacement_bornProb_other Ξ t₀ MA q x R hx a ((MB x).op b)
 
-theorem xPovmDist_registeredReplacement_away [DecidableEq A]
-    (μ : X → ℝ) (ξ : H × K → ℂ) (a₀ : T)
-    (MA : X → POVM A (I × H)) (MB : X → POVM A (I × K)) (q : X)
-    (R : POVM A ((I × H) × T)) (hq : μ q = 0) :
-    xPovmDist μ (registerState I (extVecA ξ a₀)) (registeredReplacement MA q R) MB =
-      xPovmDist μ (registerState I ξ) MA MB := by
-  unfold xPovmDist
+theorem xPovmDist_registeredReplacement_away [DecidableEq A] [PartialOrder ℬ]
+    [StarOrderedRing ℬ] [StarProper ℬ]
+    (μ : X → ℝ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
+    (MA : X → POVMIn A (Matrix I I 𝒜)) (MB : X → POVMIn A (Matrix I I ℬ)) (q : X)
+    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hq : μ q = 0) :
+    ((Ξ.expandA t₀).reg I).xPovmDist μ (registeredReplacement MA q R) MB =
+      (Ξ.reg I).xPovmDist μ MA MB := by
+  unfold BipartiteModel.xPovmDist
   apply Finset.sum_congr rfl
   intro x _
   by_cases hx : x = q
@@ -139,87 +148,105 @@ theorem xPovmDist_registeredReplacement_away [DecidableEq A]
 end Generic
 
 namespace TypedEstimates
-variable {PauliType PauliAnswer F ι κ A H K T : Type*}
+variable {PauliType PauliAnswer F ι κ A T : Type*}
   [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] [Fintype A]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
   [Fintype T] [DecidableEq T] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
+
+/-! ### The first player's errors at the unchanged questions -/
+
+section Alice
+variable [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜]
 
 theorem hidingAliceError_registeredReplacement
     (L : Bool → CL.CLFun F ι ℓ) (w v : Bool) (hL : (L w).SupportedOn univ)
-    (ξ : H × K → ℂ) (a₀ : T)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
-    (R : POVM (ParsedAnswer (ι → F) A PauliAnswer) (((ι → F) × H) × T)) (j : Fin ℓ) :
-    hidingAliceError L w hL (extVecA ξ a₀)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
+    (R : POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix T T (Matrix (ι → F) (ι → F) 𝒜)))
+    (j : Fin ℓ) :
+    hidingAliceError L w hL (Ξ.expandA t₀)
       (registeredReplacement MA (QuestionType.introspect v, 0) R) j =
-      hidingAliceError L w hL ξ MA j := by
-  exact registeredReplacement_crossError_other ξ a₀ MA _ _ R (by simp)
-    (hidingCoarse (L w) j.val) (fun i => aOp (Honest.hideCoarseOp (L w) j.val hL i))
-
-theorem hidingBobError_registeredExtension
-    (L : Bool → CL.CLFun F ι ℓ) (w : Bool) (hL : (L w).SupportedOn univ)
-    (ξ : H × K → ℂ) (a₀ : T)
-    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K)) (j : Fin ℓ) :
-    hidingBobError L w hL (extVecA ξ a₀) MB j = hidingBobError L w hL ξ MB j :=
-  registeredExtension_bobCrossError ξ a₀ (Honest.hideCoarseOp (L w) j.val hL)
-    (fun i => (((MB (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).mats i).val)
+      hidingAliceError L w hL Ξ MA j := by
+  exact registeredReplacement_crossError_other Ξ t₀ MA _ _ R (by simp)
+    (hidingCoarse (L w) j.val) (fun i => smulKron 1 (Honest.hideCoarseOp (L w) j.val hL i))
 
 theorem readAliceError_registeredReplacement
     (L : Bool → CL.CLFun F ι ℓ) (w v : Bool) (hL : (L w).SupportedOn univ)
-    (ξ : H × K → ℂ) (a₀ : T)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
-    (R : POVM (ParsedAnswer (ι → F) A PauliAnswer) (((ι → F) × H) × T)) (j : Fin ℓ) :
-    readAliceError L w hL (extVecA ξ a₀)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
+    (R : POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix T T (Matrix (ι → F) (ι → F) 𝒜)))
+    (j : Fin ℓ) :
+    readAliceError L w hL (Ξ.expandA t₀)
       (registeredReplacement MA (QuestionType.introspect v, 0) R) j =
-      readAliceError L w hL ξ MA j := by
-  exact registeredReplacement_crossError_other ξ a₀ MA _ _ R (by simp)
-    (reportedDual (L w) j.val .read) (fun i => aOp (Honest.readDualOp (L w) j.val hL i))
-
-theorem readBobError_registeredExtension
-    (L : Bool → CL.CLFun F ι ℓ) (w : Bool) (hL : (L w).SupportedOn univ)
-    (ξ : H × K → ℂ) (a₀ : T)
-    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K)) (j : Fin ℓ) :
-    readBobError L w hL (extVecA ξ a₀) MB j = readBobError L w hL ξ MB j :=
-  registeredExtension_bobCrossError ξ a₀ (Honest.readDualOp (L w) j.val hL)
-    (fun i => (((MB (QuestionType.read w, 0)).map (reportedDual (L w) j.val .read)).mats i).val)
+      readAliceError L w hL Ξ MA j := by
+  exact registeredReplacement_crossError_other Ξ t₀ MA _ _ R (by simp)
+    (reportedDual (L w) j.val .read) (fun i => smulKron 1 (Honest.readDualOp (L w) j.val hL i))
 
 /-- The primitive Alice Pauli estimate, for any fixed register ideal, is
 unchanged when an Introspect question is replaced. -/
 theorem pauliAliceError_registeredReplacement
-    (ξ : H × K → ℂ) (a₀ : T) (projectPauli : PauliAnswer → ι → F)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (projectPauli : PauliAnswer → ι → F)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
-    (R : POVM (ParsedAnswer (ι → F) A PauliAnswer) (((ι → F) × H) × T))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
+    (R : POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix T T (Matrix (ι → F) (ι → F) 𝒜)))
     (v : Bool) (p : PauliType) (q : κ → ZMod 2)
     (J : Option (ι → F) → Matrix (ι → F) (ι → F) ℂ) :
-    (∑ z, stateSqNorm (registerState (ι → F) (extVecA ξ a₀))
-      (((((registeredReplacement MA (QuestionType.introspect v, 0) R)
-        (QuestionType.pauli p, q)).map (pauliProjection projectPauli)).mats z).val - aOp (J z))) =
-    ∑ z, stateSqNorm (registerState (ι → F) ξ)
-      ((((MA (QuestionType.pauli p, q)).map (pauliProjection projectPauli)).mats z).val - aOp (J z)) := by
-  exact registeredReplacement_samePartyError_other ξ a₀ MA _ _ R (by simp)
+    (∑ z, ((Ξ.expandA t₀).reg (ι → F)).stateSqNorm
+      (((registeredReplacement MA (QuestionType.introspect v, 0) R
+        (QuestionType.pauli p, q)).map (pauliProjection projectPauli)).op z - smulKron 1 (J z))) =
+    ∑ z, (Ξ.reg (ι → F)).stateSqNorm
+      (((MA (QuestionType.pauli p, q)).map (pauliProjection projectPauli)).op z -
+        smulKron 1 (J z)) := by
+  exact registeredReplacement_samePartyError_other Ξ t₀ MA _ _ R (by simp)
     (pauliProjection projectPauli) J
+
+end Alice
+
+/-! ### The second player's errors on the extended state -/
+
+section Bob
+variable [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
+
+theorem hidingBobError_registeredExtension
+    (L : Bool → CL.CLFun F ι ℓ) (w : Bool) (hL : (L w).SupportedOn univ)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
+    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ)) (j : Fin ℓ) :
+    hidingBobError L w hL (Ξ.expandA t₀) MB j = hidingBobError L w hL Ξ MB j :=
+  registeredExtension_bobCrossError Ξ t₀ (Honest.hideCoarseOp (L w) j.val hL)
+    (fun i => ((MB (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).op i)
+
+theorem readBobError_registeredExtension
+    (L : Bool → CL.CLFun F ι ℓ) (w : Bool) (hL : (L w).SupportedOn univ)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
+    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ)) (j : Fin ℓ) :
+    readBobError L w hL (Ξ.expandA t₀) MB j = readBobError L w hL Ξ MB j :=
+  registeredExtension_bobCrossError Ξ t₀ (Honest.readDualOp (L w) j.val hL)
+    (fun i => ((MB (QuestionType.read w, 0)).map (reportedDual (L w) j.val .read)).op i)
 
 /-- The primitive Bob Pauli estimate is unchanged on the newly extended
 state; Bob's actual family is literally retained. -/
 theorem pauliBobError_registeredExtension
-    (ξ : H × K → ℂ) (a₀ : T) (projectPauli : PauliAnswer → ι → F)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (projectPauli : PauliAnswer → ι → F)
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ))
     (p : PauliType) (q : κ → ZMod 2)
     (J : Option (ι → F) → Matrix (ι → F) (ι → F) ℂ) :
-    (∑ z, snorm (registerState (ι → F) (extVecA ξ a₀)) (bOp
-      ((((MB (QuestionType.pauli p, q)).map (pauliProjection projectPauli)).mats z).val -
-        (aOp (J z) : Matrix ((ι → F) × K) _ ℂ))) ^ 2) =
-    ∑ z, snorm (registerState (ι → F) ξ) (bOp
-      ((((MB (QuestionType.pauli p, q)).map (pauliProjection projectPauli)).mats z).val -
-        (aOp (J z) : Matrix ((ι → F) × K) _ ℂ))) ^ 2 := by
-  exact registeredExtension_bobSamePartyError ξ a₀ _
+    (∑ z, ((Ξ.expandA t₀).reg (ι → F)).snorm (((Ξ.expandA t₀).reg (ι → F)).πB
+      (((MB (QuestionType.pauli p, q)).map (pauliProjection projectPauli)).op z -
+        smulKron 1 (J z))) ^ 2) =
+    ∑ z, (Ξ.reg (ι → F)).snorm ((Ξ.reg (ι → F)).πB
+      (((MB (QuestionType.pauli p, q)).map (pauliProjection projectPauli)).op z -
+        smulKron 1 (J z))) ^ 2 :=
+  registeredExtension_bobSamePartyError Ξ t₀ _
+
+end Bob
 
 end TypedEstimates
 end MIPRE.Introspection

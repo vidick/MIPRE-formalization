@@ -15,6 +15,10 @@ public import MIPRE.Foundations.VerifierValue
 The semantic source game has exactly the verifier's distribution and decision
 predicate. Padding preserves perfect PCC strategies and can be removed from
 the soundness conclusion without any additional error.
+
+Stated in a value model (Phase 4 of `planning/mipco-track.md`): removing the padding loses no value
+in every value model approached by the projective strategies of the models it dominates
+(`ValueModel.ProjApprox`), `val*` (`ValueModel.tensor_projApprox`) and `ω_co` among them.
 -/
 
 noncomputable section
@@ -69,13 +73,14 @@ theorem padded_hasPerfectPCC {n Q B : ℕ} (V : Verifier 7)
   rw [he]
   exact ⟨S,hS,hvS⟩
 
-/-- Removing the padded coordinates loses no source-game value. -/
+/-- Removing the padded coordinates loses no source-game value, in every value model approached by
+the projective strategies of the models it dominates. -/
 theorem padded_quantumValue_le {n Q B : ℕ} (V : Verifier 7)
-    (hs : V.sampler.dim (2^n) ≤ Q) :
-    quantumValue (Honest.sourceGame (AuxiliaryDecision.padded V hs)
-      (paddedPredicate V hs B)) ≤ V.valStar (2^n) B := by
+    (hs : V.sampler.dim (2^n) ≤ Q) {ω : ValueModel} (hω : ω.ProjApprox) :
+    ω.val (Honest.sourceGame (AuxiliaryDecision.padded V hs)
+      (paddedPredicate V hs B)) ≤ V.val ω (2^n) B := by
   have h := SourcePadding.quantumValue_depthFamily_le (firstEmbedding hs)
-    (sourceFamily V n) (predicate V n B) (by decide)
+    (sourceFamily V n) (predicate V n B) hω (by decide)
     (fun w => (V.sampler.cl_exactlyOn _ _).supportedOn)
   rw [sourceGame_eq] at h
   exact h

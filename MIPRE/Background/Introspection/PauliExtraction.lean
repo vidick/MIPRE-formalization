@@ -9,29 +9,44 @@ public import MIPRE.Background.Introspection.CompleteGame
 public import MIPRE.Foundations.Introspection.ValidPauliSoundness
 public import MIPRE.Background.QLD.ValidAnswers
 public import MIPRE.Background.QLD.BinaryForm
+public import MIPRE.Background.QLD.ModelSoundness
 
 @[expose] public section
 
 /-! # Actual Pauli extraction for introspection (`lem:intro-pauli-strat`)
 
 `TypedEstimates.quantumValue_ge_of_valid_isometric_images` proves introspection soundness from
-five supplied facts about a projective strategy of the parsed introspection game:
-* local isometries onto the register `ι → F`, tensored with auxiliary spaces;
-* a unit auxiliary state `ξ`;
-* an unsquared state distance to `|EPR> ⊗ |ξ>`;
+supplied facts about a projective strategy of the parsed introspection game in a bipartite model:
+* a local isometry of the strategy's model into the register model `Ξ.reg (ι → F)` of a
+  normalized auxiliary model `Ξ`, whose POVM strategies the value model dominates;
+* an unsquared distance of the transported state to the register model's state `|EPR> ⊗ ψ_Ξ`;
 * a failure bound;
 * Alice's `X` and Bob's `Z` errors, summed over the valid full-register Pauli answers only.
 
-It does not prove that such isometries exist. That is the Pauli basis test's soundness,
+It does not prove that such data exist. That is the Pauli basis test's soundness,
 `thm:qld`, applied to the strategy's Pauli block, as in the paper's proof of
-`lem:intro-pauli-strat`. This file supplies those facts and composes the result with the consumer.
+`lem:intro-pauli-strat`. This file supplies those facts for tensor-product strategies and
+composes the result with the consumer.
+
+Phase 4 of `planning/mipco-track.md`: the statements stay in tensor-product strategies and
+`val*`, and are proved as the tensor-product instance of the model theorems they call. A strategy
+`S` is read as the projective strategy `S.toModel` of its tensor-product model
+`BipartiteModel.tensor S.ψ`, of the same value (`TensorProductStrategy.value_toModel`). The model
+restriction `PauliRestriction.strategy` is applied there, and its measurements are read back as
+matrix POVMs (`POVMIn.toPOVM`) for the matrix theorem `qld_soundness_valid`, as in
+`QLD.soundIn_tensor`. The soundness theorems are the model consumer at the value model `val*`
+(`ValueModel.tensor`), the auxiliary model `BipartiteModel.tensor ξ`
+(`ValueModel.tensor_dominatesPOVM`), the strategy `S.toModel`, and the local isometry
+`QLD.tensorPhi`: `V_A ⊗ V_B` followed by the reading of the flat register state as the register
+model, whose state and Pauli errors are the matrix ones (`tensorPhi_W_ψ`, `tensorPhi_alice`,
+`tensorPhi_bob`).
 
 ## The route
 
 1. **Restriction** (`PauliRestriction`). A strategy `S` of the full parsed game
    `PauliRestriction.fullGame` is turned into a strategy of the actual Pauli basis game
-   `qldGame`, on the same state (`strategy_state`). Malformed outer answers are completed at the
-   scalar answer `.val 0`. Its failure is at most `N ε`, where `N` is the ordered-edge count of
+   `qldGame` in the same model, hence on the same state. Malformed outer answers are completed at
+   the scalar answer `.val 0`. Its failure is at most `N ε`, where `N` is the ordered-edge count of
    the typed graph (`strategy_failure_le`). This is the paper's conditioning on the Pauli block,
    which has probability `Θ(1/ℓ)`. At a valid answer `.pauliAns h`, its Pauli operator is exactly
    `S`'s (`strategy_pauliAns_A`, `_B`).
@@ -50,8 +65,9 @@ It does not prove that such isometries exist. That is the Pauli basis test's sou
    Result: `exists_binary_extraction`, with one error `T = ε + 2 errShape a b (N ε) m d q + 8/q`
    that dominates every hypothesis. As in the paper, it holds for both players and both bases:
    four Pauli estimates, of which Alice's `X` and Bob's `Z` are the consumer's `hX`, `hZ`.
-4. **Soundness** (`exists_quantumValue_ge_of_binary`). The consumer applied to step 3 bounds
-   `val*(G)`, for the original game `G` behind the CL functions.
+4. **Soundness** (`exists_quantumValue_ge_of_binary`). The consumer, at the tensor-product
+   models of `S` and `ξ`, applied to step 3 bounds `val*(G)`, for the original game `G` behind
+   the CL functions.
 
 Steps 3–4 have field-register analogues for `Complete.game`, whose register is `F_q^M` itself.
 There no basis relabelling is needed (`proj_weylOf_X`, `proj_weylOf_Z`):
@@ -90,6 +106,7 @@ such claim, and neither does this file.
 noncomputable section
 namespace MIPRE.Introspection.PauliExtraction
 open Matrix Finset MIPRE.QLD MIPRE.Weyl
+open scoped ComplexOrder MatrixOrder
 
 /-! ## Step 1–2: the qudit extraction for any full parsed game -/
 
@@ -106,7 +123,9 @@ auxiliary state `ξ` with:
 
 Proof: restrict `S` to the actual Pauli basis game (`PauliRestriction.strategy`) and apply
 `qld_soundness_valid`. The restriction keeps the state, multiplies the failure by at most `N`,
-and does not change the operators at valid answers. -/
+and does not change the operators at valid answers. It is the model restriction at `S.toModel`,
+the projective strategy of the tensor-product model of `S.ψ` that `S` is, of the same value; its
+measurements, in the matrix algebras, are read back as matrix POVMs (`POVMIn.toPOVM`). -/
 theorem exists_valid_extraction :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b < 1 ∧
       ∀ {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
@@ -139,32 +158,31 @@ theorem exists_valid_extraction :
   obtain ⟨a, b, ha, hb0, hb1, H⟩ := qld_soundness_valid
   refine ⟨a, b, ha, hb0, hb1, ?_⟩
   intro F _ _ _ _ F₀ ι A _ _ _ _ _ _ m t d ℓ _ hm hd bas L project D S ε hε hS
-  let Q := PauliRestriction.strategy hm bas L project D S (.val 0) (.val 0)
-  have hQ : 1 - povmValue (qldGame hm) S.ψ (fun q => Q.PA.toPOVM q) (fun q => Q.PB.toPOVM q)
+  -- The model restriction, at the projective strategy of `S`'s tensor-product model.
+  let Q := PauliRestriction.strategy hm bas L project D S.toModel (.val 0) (.val 0)
+  have hQ : 1 - povmValue (qldGame hm) S.ψ (fun q => (Q.PA q).toPOVM) (fun q => (Q.PB q).toPOVM)
       ≤ (TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card * ε := by
-    have hv := PauliRestriction.strategy_failure_le hm bas L project D S (.val 0) (.val 0) hS
-    rw [TensorProductStrategy.value_eq_povmValue] at hv
-    exact hv
-  have hpA : ∀ W : Bas, IsPVM fun a => ((Q.PA.toPOVM (.pauli W)).mats a).val := fun W =>
-    ⟨fun a => by rw [← Matrix.star_eq_conjTranspose]; exact Q.PA.selfAdjoint _ a,
-      fun a => Q.PA.projective _ a, Q.PA.normalized _⟩
-  have hpB : ∀ W : Bas, IsPVM fun a => ((Q.PB.toPOVM (.pauli W)).mats a).val := fun W =>
-    ⟨fun a => by rw [← Matrix.star_eq_conjTranspose]; exact Q.PB.selfAdjoint _ a,
-      fun a => Q.PB.projective _ a, Q.PB.normalized _⟩
+    rw [povmValue_eq_tensor]
+    simp only [POVMIn.toPOVM_toIn]
+    exact PauliRestriction.strategy_failure_le hm bas L project D S.toModel (.val 0) (.val 0)
+      (by rw [S.value_toModel]; exact hS)
   obtain ⟨HA, HB, i1, i2, i3, i4, VA, VB, ξ, hA, hB, hξ, h1, h2⟩ :=
-    H hm hd S.ψ S.ψ_unit (fun q => Q.PA.toPOVM q) (fun q => Q.PB.toPOVM q) hpA hpB
+    H hm hd S.ψ S.ψ_unit (fun q => (Q.PA q).toPOVM) (fun q => (Q.PB q).toPOVM)
+      (fun W => (Q.projA (.pauli W)).toIsPVM) (fun W => (Q.projB (.pauli W)).toIsPVM)
       (mul_nonneg (Nat.cast_nonneg _) hε) hQ
   refine ⟨HA, HB, i1, i2, i3, i4, VA, VB, ξ, hA, hB, hξ, h1, fun W => ⟨?_, ?_⟩⟩
   · have e : ∀ h : Anc F m,
         ((S.PA.toPOVM (QuestionType.pauli (.pauli W), 0)).mats (.pauli (.pauliAns h))).val
-          = ((Q.PA.toPOVM (.pauli W)).mats (.pauliAns h)).val := fun h =>
-      (PauliRestriction.strategy_pauliAns_A hm bas L project D S W h).symm
+          = (((Q.PA (.pauli W)).toPOVM).mats (.pauliAns h)).val := fun h => by
+      rw [← POVM.toIn_op, ← POVM.toIn_op, POVMIn.toPOVM_toIn]
+      exact (PauliRestriction.strategy_pauliAns_A hm bas L project D S.toModel W h).symm
     simp only [e]
     exact (h2 W).1
   · have e : ∀ h : Anc F m,
         ((S.PB.toPOVM (QuestionType.pauli (.pauli W), 0)).mats (.pauli (.pauliAns h))).val
-          = ((Q.PB.toPOVM (.pauli W)).mats (.pauliAns h)).val := fun h =>
-      (PauliRestriction.strategy_pauliAns_B hm bas L project D S W h).symm
+          = (((Q.PB (.pauli W)).toPOVM).mats (.pauliAns h)).val := fun h => by
+      rw [← POVM.toIn_op, ← POVM.toIn_op, POVMIn.toPOVM_toIn]
+      exact (PauliRestriction.strategy_pauliAns_B hm bas L project D S.toModel W h).symm
     simp only [e]
     exact (h2 W).2
 
@@ -324,10 +342,15 @@ then
 `val*(G) ≥ 1 - validSoundnessCoefficient ℓ N · iteratedRoot (6ℓ + 2) T`,
 with `N` the ordered-edge count and `T = ε + 2 errShape a b (N ε) m d q + 8 / q`.
 
-This is `TypedEstimates.quantumValue_ge_of_valid_isometric_images` with its extraction
-hypotheses discharged by `exists_binary_extraction`. The valid Pauli answer at `x` is
-`.pauliAns (binEquiv⁻¹ x)`, and the Pauli questions' seeds are `0`
-(`binaryPresentation_pauli_eval`). -/
+This is the tensor-product instance of the model theorem
+`TypedEstimates.quantumValue_ge_of_valid_isometric_images`, with its extraction hypotheses
+discharged by `exists_binary_extraction`: the value model is `val*` (`ValueModel.tensor`), the
+auxiliary model is the tensor-product model of `ξ`, which `val*` dominates
+(`ValueModel.tensor_dominatesPOVM`), the strategy is `S.toModel` in the tensor-product model of
+`S.ψ`, and the local isometry is `QLD.tensorPhi` on the register `BinaryComplete.Seed m t`, whose
+state and Pauli errors are the matrix ones (`tensorPhi_W_ψ`, `tensorPhi_alice`, `tensorPhi_bob`).
+The valid Pauli answer at `x` is `.pauliAns (binEquiv⁻¹ x)`, and the Pauli questions' seeds are
+`0` (`binaryPresentation_pauli_eval`). -/
 theorem exists_quantumValue_ge_of_binary :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b < 1 ∧
       ∀ {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
@@ -355,24 +378,25 @@ theorem exists_quantumValue_ge_of_binary :
       m d (Fintype.card F) :=
     errShape_nonneg (by linarith) (mul_nonneg (Nat.cast_nonneg _) hε)
   have hq : (0 : ℝ) ≤ 8 / Fintype.card F := by positivity
-  have hfail : 1 - povmValue (BinaryComplete.game (d := d) L D hm bas) S.ψ
-      (fun q => S.PA.toPOVM q) (fun q => S.PB.toPOVM q)
+  have hfail : 1 - S.toModel.value
       ≤ ε + 2 * errShape a b ((TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card * ε)
           m d (Fintype.card F) + 8 / Fintype.card F := by
-    rw [← TensorProductStrategy.value_eq_povmValue]
+    rw [S.value_toModel]
     linarith
-  exact TypedEstimates.quantumValue_ge_of_valid_isometric_images QLD.adj (.pauli .X) (.pauli .Z)
+  -- The model theorem at `val*`, the tensor-product models of `ξ` and `S.ψ`, and `tensorPhi`.
+  exact (TypedEstimates.quantumValue_ge_of_valid_isometric_images QLD.adj (.pauli .X) (.pauli .Z)
     (QLD.PauliCL.binaryPresentation hm bas) L hL (BinaryComplete.project bas)
     (fun x => .pauliAns ((binEquiv bas).symm x))
     (fun x => (binEquiv bas).apply_symm_apply x)
-    D (BinaryComplete.pauliCheck hm bas) G hμ hD ξ hξ S.ψ (norm_evec_eq_one_of_unit S.ψ_unit)
-    VA VB hA hB (fun q => S.PA.toPOVM q) (fun q => S.PB.toPOVM q)
-    (fun q => ⟨fun a => by rw [← Matrix.star_eq_conjTranspose]; exact S.PA.selfAdjoint q a,
-      fun a => S.PA.projective q a, S.PA.normalized q⟩)
-    (fun q => ⟨fun a => by rw [← Matrix.star_eq_conjTranspose]; exact S.PB.selfAdjoint q a,
-      fun a => S.PB.projective q a, S.PB.normalized q⟩)
-    0 0 (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .X)
-    (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .Z) (by positivity) h1 hfail hX hZ
+    D (BinaryComplete.pauliCheck hm bas) .tensor G hμ hD (BipartiteModel.tensor ξ)
+    (norm_evec_eq_one hξ) (ValueModel.tensor_dominatesPOVM ξ hξ) (BipartiteModel.tensor S.ψ)
+    S.toModel.ψ_unit (tensorPhi S.ψ ξ VA VB hA hB) S.toModel.PA S.toModel.PB S.toModel.projA
+    S.toModel.projB 0 0 (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .X)
+    (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .Z) (by positivity)
+    ((tensorPhi_W_ψ S.ψ ξ VA VB hA hB).trans_le h1) hfail
+    (le_of_eq_of_le (Finset.sum_congr rfl fun _ _ => tensorPhi_alice S.ψ ξ VA VB hA hB _ _) hX)
+    (le_of_eq_of_le (Finset.sum_congr rfl fun _ _ => tensorPhi_bob S.ψ ξ VA VB hA hB _ _) hZ)
+    ).trans_eq (ValueModel.tensor_val G)
 
 /-! ## The field introspection game -/
 
@@ -451,7 +475,9 @@ theorem exists_field_extraction :
 
 /-- **Introspection soundness for the field game, with the Pauli extraction supplied.** This is
 `exists_quantumValue_ge_of_binary` for `Complete.game`: the original game `G` lives on the field
-register `F_q^M`, its CL functions are over `F_q`, and no basis property is needed. -/
+register `F_q^M`, its CL functions are over `F_q`, and no basis property is needed. As there, it is
+the tensor-product instance of `TypedEstimates.quantumValue_ge_of_valid_isometric_images`, with
+the local isometry `QLD.tensorPhi` on the register `Complete.Seed F m = Anc F m`. -/
 theorem exists_quantumValue_ge_of_field :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b < 1 ∧
       ∀ {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
@@ -478,23 +504,24 @@ theorem exists_quantumValue_ge_of_field :
       m d (Fintype.card F) :=
     errShape_nonneg (by linarith) (mul_nonneg (Nat.cast_nonneg _) hε)
   have hq : (0 : ℝ) ≤ 8 / Fintype.card F := by positivity
-  have hfail : 1 - povmValue (Complete.game (d := d) L D hm bas) S.ψ
-      (fun q => S.PA.toPOVM q) (fun q => S.PB.toPOVM q)
+  have hfail : 1 - S.toModel.value
       ≤ ε + 2 * errShape a b ((TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card * ε)
           m d (Fintype.card F) + 8 / Fintype.card F := by
-    rw [← TensorProductStrategy.value_eq_povmValue]
+    rw [S.value_toModel]
     linarith
-  exact TypedEstimates.quantumValue_ge_of_valid_isometric_images QLD.adj (.pauli .X) (.pauli .Z)
+  -- The model theorem at `val*`, the tensor-product models of `ξ` and `S.ψ`, and `tensorPhi`.
+  exact (TypedEstimates.quantumValue_ge_of_valid_isometric_images QLD.adj (.pauli .X) (.pauli .Z)
     (QLD.PauliCL.binaryPresentation hm bas) L hL (Complete.project (d := d))
     (fun x => .pauliAns x) (fun _ => rfl)
-    D (Complete.pauliCheck hm bas) G hμ hD ξ hξ S.ψ (norm_evec_eq_one_of_unit S.ψ_unit)
-    VA VB hA hB (fun q => S.PA.toPOVM q) (fun q => S.PB.toPOVM q)
-    (fun q => ⟨fun a => by rw [← Matrix.star_eq_conjTranspose]; exact S.PA.selfAdjoint q a,
-      fun a => S.PA.projective q a, S.PA.normalized q⟩)
-    (fun q => ⟨fun a => by rw [← Matrix.star_eq_conjTranspose]; exact S.PB.selfAdjoint q a,
-      fun a => S.PB.projective q a, S.PB.normalized q⟩)
-    0 0 (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .X)
-    (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .Z) (by positivity) h1 hfail hX hZ
+    D (Complete.pauliCheck hm bas) .tensor G hμ hD (BipartiteModel.tensor ξ)
+    (norm_evec_eq_one hξ) (ValueModel.tensor_dominatesPOVM ξ hξ) (BipartiteModel.tensor S.ψ)
+    S.toModel.ψ_unit (tensorPhi S.ψ ξ VA VB hA hB) S.toModel.PA S.toModel.PB S.toModel.projA
+    S.toModel.projB 0 0 (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .X)
+    (QLD.PauliCL.binaryPresentation_pauli_eval hm bas .Z) (by positivity)
+    ((tensorPhi_W_ψ S.ψ ξ VA VB hA hB).trans_le h1) hfail
+    (le_of_eq_of_le (Finset.sum_congr rfl fun _ _ => tensorPhi_alice S.ψ ξ VA VB hA hB _ _) hX)
+    (le_of_eq_of_le (Finset.sum_congr rfl fun _ _ => tensorPhi_bob S.ψ ξ VA VB hA hB _ _) hZ)
+    ).trans_eq (ValueModel.tensor_val G)
 
 end MIPRE.Introspection.PauliExtraction
 end

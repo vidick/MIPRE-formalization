@@ -12,6 +12,9 @@ public import MIPRE.Foundations.Introspection.PauliMixing
 The number of sampled coordinates and both ancillary spaces can depend on the
 question. This is the form used after splitting a retained register from its
 complement. The register's ambient embeddings are not part of this statement.
+
+In a bipartite model (Phase 4 of `planning/mipco-track.md`) the ancillary state of each question
+is a model `Ξ x`, over algebras that may depend on the question too.
 -/
 
 noncomputable section
@@ -19,36 +22,38 @@ noncomputable section
 namespace MIPRE.Introspection
 
 open Finset Matrix Weyl Classical
-open scoped Kronecker
+
+set_option linter.unusedSectionVars false
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A]
-  {n : X → ℕ} {H K : X → Type*}
-  [∀ x, Fintype (H x)] [∀ x, DecidableEq (H x)]
-  [∀ x, Fintype (K x)] [∀ x, DecidableEq (K x)]
+  {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A] {n : X → ℕ}
+  {𝒞 𝒜 ℬ : X → Type*} [∀ x, Ring (𝒞 x)] [∀ x, StarRing (𝒞 x)] [∀ x, Algebra ℂ (𝒞 x)]
+  [∀ x, Ring (𝒜 x)] [∀ x, StarRing (𝒜 x)] [∀ x, Algebra ℂ (𝒜 x)] [∀ x, StarModule ℂ (𝒜 x)]
+  [∀ x, PartialOrder (𝒜 x)] [∀ x, StarOrderedRing (𝒜 x)] [∀ x, StarProper (𝒜 x)]
+  [∀ x, Ring (ℬ x)] [∀ x, StarRing (ℬ x)] [∀ x, Algebra ℂ (ℬ x)] [∀ x, StarModule ℂ (ℬ x)]
 
 /-- Averaged mixing when the retained register and its complement vary with the question. -/
 theorem exists_pauli_mixing_varying
     (D : X → ℝ) (hD0 : ∀ x, 0 ≤ D x) (hD1 : ∑ x, D x = 1)
     (L : (x : X) → (Fin (n x) → F) →ₗ[F] (Fin (n x) → F))
-    (ξ : (x : X) → H x × K x → ℂ) (hξ : ∀ x, ‖evec (ξ x)‖ = 1)
-    (M : (x : X) → POVM ((Fin (n x) → F) × A) ((Fin (n x) → F) × H x))
-    (hM : ∀ x, IsPVM (fun p => ((M x).mats p).val))
-    {δ : ℝ} (hδ : ∑ x, D x * mixingError (L x) (ξ x) (M x) ≤ δ) :
-    ∃ Q : (x : X) → (Fin (n x) → F) → POVM A (H x),
-      (∑ x, D x * ∑ p : (Fin (n x) → F) × A, stateSqNorm (eprWithAux (ξ x))
-        (((M x).mats p).val - synOf wZ (L x) p.1 ⊗ₖ ((Q x p.1).mats p.2).val)) ≤
+    (Ξ : (x : X) → BipartiteModel (𝒞 x) (𝒜 x) (ℬ x)) (hΞ : ∀ x, ‖(Ξ x).ψ‖ = 1)
+    (M : (x : X) → POVMIn ((Fin (n x) → F) × A) (Matrix (Fin (n x) → F) (Fin (n x) → F) (𝒜 x)))
+    (hM : ∀ x, IsPVMIn (M x).op)
+    {δ : ℝ} (hδ : ∑ x, D x * mixingError (L x) (Ξ x) (M x) ≤ δ) :
+    ∃ Q : (x : X) → (Fin (n x) → F) → POVMIn A (𝒜 x),
+      (∑ x, D x * ∑ p : (Fin (n x) → F) × A, ((Ξ x).reg (Fin (n x) → F)).stateSqNorm
+        ((M x).op p - smulKron ((Q x p.1).op p.2) (synOf wZ (L x) p.1))) ≤
       2 * δ + 4 * Real.sqrt δ := by
-  choose Q hQ using fun x => exists_pauli_mixing (L x) (ξ x) (hξ x) (M x) (hM x)
+  choose Q hQ using fun x => exists_pauli_mixing (L x) (Ξ x) (hΞ x) (M x) (hM x)
   refine ⟨Q, ?_⟩
   have hsum := Finset.sum_le_sum fun x (_ : x ∈ univ) =>
     mul_le_mul_of_nonneg_left (hQ x) (hD0 x)
-  have hroot := (sum_weighted_sqrt_le D (fun x => mixingError (L x) (ξ x) (M x)) hD0 hD1
-    (fun x => mixingError_nonneg (L x) (ξ x) (M x))).trans (Real.sqrt_le_sqrt hδ)
-  have heq : (∑ x, D x * (2 * mixingError (L x) (ξ x) (M x) +
-      4 * Real.sqrt (mixingError (L x) (ξ x) (M x)))) =
-      2 * (∑ x, D x * mixingError (L x) (ξ x) (M x)) +
-      4 * ∑ x, D x * Real.sqrt (mixingError (L x) (ξ x) (M x)) := by
+  have hroot := (sum_weighted_sqrt_le D (fun x => mixingError (L x) (Ξ x) (M x)) hD0 hD1
+    (fun x => mixingError_nonneg (L x) (Ξ x) (M x))).trans (Real.sqrt_le_sqrt hδ)
+  have heq : (∑ x, D x * (2 * mixingError (L x) (Ξ x) (M x) +
+      4 * Real.sqrt (mixingError (L x) (Ξ x) (M x)))) =
+      2 * (∑ x, D x * mixingError (L x) (Ξ x) (M x)) +
+      4 * ∑ x, D x * Real.sqrt (mixingError (L x) (Ξ x) (M x)) := by
     simp only [mul_add, Finset.sum_add_distrib, mul_left_comm (b := (2 : ℝ)),
       mul_left_comm (b := (4 : ℝ)), ← Finset.mul_sum]
   rw [heq] at hsum
@@ -69,25 +74,24 @@ theorem mixing_error_sqrt_bound {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) :
 theorem exists_pauli_mixing_sqrt
     (D : X → ℝ) (hD0 : ∀ x, 0 ≤ D x) (hD1 : ∑ x, D x = 1)
     (L : (x : X) → (Fin (n x) → F) →ₗ[F] (Fin (n x) → F))
-    (ξ : (x : X) → H x × K x → ℂ) (hξ : ∀ x, ‖evec (ξ x)‖ = 1)
-    (M : (x : X) → POVM ((Fin (n x) → F) × A) ((Fin (n x) → F) × H x))
-    (hM : ∀ x, IsPVM (fun p => ((M x).mats p).val))
+    (Ξ : (x : X) → BipartiteModel (𝒞 x) (𝒜 x) (ℬ x)) (hΞ : ∀ x, ‖(Ξ x).ψ‖ = 1)
+    (M : (x : X) → POVMIn ((Fin (n x) → F) × A) (Matrix (Fin (n x) → F) (Fin (n x) → F) (𝒜 x)))
+    (hM : ∀ x, IsPVMIn (M x).op)
     {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1)
-    (hmarg : ∑ x, D x * readoutMarginalError (L x) (eprWithAux (ξ x))
-      (fun p => ((M x).mats p).val) ≤ ε)
-    (hZ : ∑ x, D x * readoutCommutatorError (eprWithAux (ξ x))
-      (fun p => ((M x).mats p).val) wZ LinearMap.id ≤ ε)
-    (hX : ∑ x, D x * readoutCommutatorError (eprWithAux (ξ x))
-      (fun p => ((M x).mats p).val) wX (CL.lperp (L x)) ≤ ε) :
-    ∃ Q : (x : X) → (Fin (n x) → F) → POVM A (H x),
-      (∑ x, D x * ∑ p : (Fin (n x) → F) × A, stateSqNorm (eprWithAux (ξ x))
-        (((M x).mats p).val - synOf wZ (L x) p.1 ⊗ₖ ((Q x p.1).mats p.2).val)) ≤
+    (hmarg : ∑ x, D x * readoutMarginalError (L x) ((Ξ x).reg (Fin (n x) → F)) (M x).op ≤ ε)
+    (hZ : ∑ x, D x * readoutCommutatorError ((Ξ x).reg (Fin (n x) → F)) (M x).op wZ
+      LinearMap.id ≤ ε)
+    (hX : ∑ x, D x * readoutCommutatorError ((Ξ x).reg (Fin (n x) → F)) (M x).op wX
+      (CL.lperp (L x)) ≤ ε) :
+    ∃ Q : (x : X) → (Fin (n x) → F) → POVMIn A (𝒜 x),
+      (∑ x, D x * ∑ p : (Fin (n x) → F) × A, ((Ξ x).reg (Fin (n x) → F)).stateSqNorm
+        ((M x).op p - smulKron ((Q x p.1).op p.2) (synOf wZ (L x) p.1))) ≤
       56 * Real.sqrt ε := by
-  have hδ : ∑ x, D x * mixingError (L x) (ξ x) (M x) ≤ 18 * ε := by
+  have hδ : ∑ x, D x * mixingError (L x) (Ξ x) (M x) ≤ 18 * ε := by
     simp only [mixingError, mul_add, Finset.sum_add_distrib,
       mul_left_comm (b := (2 : ℝ)), mul_left_comm (b := (8 : ℝ)), ← Finset.mul_sum]
     linarith
-  obtain ⟨Q, hQ⟩ := exists_pauli_mixing_varying D hD0 hD1 L ξ hξ M hM hδ
+  obtain ⟨Q, hQ⟩ := exists_pauli_mixing_varying D hD0 hD1 L Ξ hΞ M hM hδ
   exact ⟨Q, hQ.trans (mixing_error_sqrt_bound hε0 hε1)⟩
 
 end MIPRE.Introspection

@@ -25,11 +25,13 @@ discharging the hypothesis takes.
 
 `mipco_eq_core_of_stages` states it with the hypothesis split into the commuting-operator
 soundness clauses of the stages of the compression. Parallel repetition's is proved
-(`repetitionCo_soundIn_commuting`, Phase 2), and answer reduction's is proved from the soundness
-of the low-individual-degree test in the commuting-operator model
-(`AnswerReduction.answerReduction_soundIn_commuting`, Phase 3): what remains is the clause of
-introspection and that soundness, `LIDT.Simul.SoundCo`. It goes through `gapCompressionCo`, the
-main theorem's pipeline with the number of repetitions chosen against the smaller of the two
+(`repetitionCo_soundIn_commuting`, Phase 2); answer reduction's is proved from the soundness of
+the low-individual-degree test in the commuting-operator model
+(`AnswerReduction.answerReduction_soundIn_commuting`, Phase 3); and introspection's is proved from
+the soundness of the Pauli basis test in the commuting-operator model
+(`Introspection.seven_soundIn_commuting`, Phase 4). What remains are those two soundness
+statements, `QLD.SoundCo` and `LIDT.Simul.SoundCo`. It goes through `gapCompressionCo`, the main
+theorem's pipeline with the number of repetitions chosen against the smaller of the two
 repetition constants (`repetitionCo`), since the commuting-operator repetition theorem has a
 constant of its own; any gap compression sound in `ω_co` gives the theorem
 (`Halting.mipco_eq_core_of`).
@@ -65,18 +67,20 @@ for. -/
 noncomputable def gapCompressionCo : GapCompression :=
   GapCompression.ofPipeline Introspection.seven AnswerReduction.answerReduction (repetitionCo 7)
 
-/-- **`MIP^co = coRE` from the commuting-operator soundness of introspection and of the
+/-- **`MIP^co = coRE` from the commuting-operator soundness of the Pauli basis test and of the
 low-individual-degree test** (blueprint `cor:mipco-from-stages`): `gapCompressionCo` is sound in
 `ω_co` as soon as each stage's soundness clause holds there (`GapCompression.ofPipeline_sound`);
-parallel repetition's does (`repetitionCo_soundIn_commuting`), and answer reduction's does once
-the low-individual-degree test is sound in the commuting-operator model
-(`AnswerReduction.answerReduction_soundIn_commuting`). This is the form Phases 4 to 6 of
+parallel repetition's does (`repetitionCo_soundIn_commuting`), introspection's does once the Pauli
+basis test is sound in the model of every commuting-operator strategy
+(`Introspection.seven_soundIn_commuting`), and answer reduction's does once the
+low-individual-degree test is sound in the commuting-operator model
+(`AnswerReduction.answerReduction_soundIn_commuting`). This is the form Phases 5 and 6 of
 `planning/mipco-track.md` discharge. -/
-theorem mipco_eq_core_of_stages (hI : Introspection.seven.SoundIn .commuting)
-    (hL : LIDT.Simul.SoundCo) : MIPCo = IsCoRE :=
+theorem mipco_eq_core_of_stages (hQ : QLD.SoundCo) (hL : LIDT.Simul.SoundCo) :
+    MIPCo = IsCoRE :=
   Halting.mipco_eq_core_of gapCompressionCo Cost.selfUniversal
-    (GapCompression.ofPipeline_sound hI (AnswerReduction.answerReduction_soundIn_commuting hL)
-      (repetitionCo_soundIn_commuting 7))
+    (GapCompression.ofPipeline_sound (Introspection.seven_soundIn_commuting hQ)
+      (AnswerReduction.answerReduction_soundIn_commuting hL) (repetitionCo_soundIn_commuting 7))
 
 end MIPRE
 

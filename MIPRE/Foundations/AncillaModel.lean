@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Foundations.OperatorMatrix
 public import MIPRE.Foundations.StateDistance
+public import MIPRE.Foundations.BlockOrder
 
 @[expose] public section
 
@@ -84,6 +85,31 @@ theorem smulKron_mul [Fintype α] (X Y : R) (P Q : Matrix α α ℂ) :
   ext a b
   simp only [smulKron_apply, mul_apply, smul_mul_smul_comm, Finset.sum_smul]
 
+theorem smulKron_add_left (X Y : R) (P : Matrix α α ℂ) :
+    smulKron (X + Y) P = smulKron X P + smulKron Y P := by
+  ext a b
+  simp only [smulKron_apply, Matrix.add_apply, smul_add]
+
+theorem smulKron_sub_left (X Y : R) (P : Matrix α α ℂ) :
+    smulKron X P - smulKron Y P = smulKron (X - Y) P := by
+  ext a b
+  simp only [smulKron_apply, Matrix.sub_apply, smul_sub]
+
+theorem smulKron_add_right (X : R) (P Q : Matrix α α ℂ) :
+    smulKron X (P + Q) = smulKron X P + smulKron X Q := by
+  ext a b
+  simp only [smulKron_apply, Matrix.add_apply, add_smul]
+
+theorem smulKron_sub_right (X : R) (P Q : Matrix α α ℂ) :
+    smulKron X (P - Q) = smulKron X P - smulKron X Q := by
+  ext a b
+  simp only [smulKron_apply, Matrix.sub_apply, sub_smul]
+
+theorem smulKron_smul_right (X : R) (c : ℂ) (P : Matrix α α ℂ) :
+    smulKron X (c • P) = c • smulKron X P := by
+  ext a b
+  simp only [smulKron_apply, Matrix.smul_apply, smul_eq_mul, mul_smul]
+
 variable [DecidableEq α]
 
 theorem smulKron_one_one : smulKron (1 : R) (1 : Matrix α α ℂ) = 1 := by
@@ -105,6 +131,24 @@ theorem star_smulKron_one [StarRing R] (X : R) :
 
 variable [Fintype α]
 
+omit [DecidableEq α] in
+/-- **A nonnegative element times a projection of the register is nonnegative**, in the order of
+the matrices over a proper ordered `⋆`-ring (`MIPRE.MatrixStar.instPartialOrderStar`):
+`z⋆ z ⊗ P = (z ⊗ P)⋆ (z ⊗ P)` when `Pᴴ P = P`. -/
+theorem smulKron_nonneg_of_proj [StarRing R] [StarModule ℂ R] [PartialOrder R]
+    [StarOrderedRing R] [StarProper R] {X : R} (hX : 0 ≤ X) {P : Matrix α α ℂ}
+    (hP : Pᴴ * P = P) : 0 ≤ smulKron X P := by
+  rw [StarOrderedRing.nonneg_iff] at hX
+  induction hX using AddSubmonoid.closure_induction with
+  | mem x hx =>
+    obtain ⟨z, rfl⟩ := hx
+    have h : smulKron (star z * z) P = star (smulKron z P) * smulKron z P := by
+      rw [star_smulKron, smulKron_mul, hP]
+    rw [h]
+    exact star_mul_self_nonneg _
+  | zero => rw [smulKron_zero_left]
+  | add x y _ _ hx hy => rw [smulKron_add_left]; exact add_nonneg hx hy
+
 /-- **A product of projective measurements is projective**: the first in `R`, the second of
 scalar matrices on the register. -/
 theorem IsPVMIn.smulKron [StarRing R] [StarModule ℂ R] {ι κ : Type*} [Fintype ι] [Fintype κ]
@@ -124,6 +168,15 @@ theorem IsPVMIn.smulKron [StarRing R] [StarModule ℂ R] {ι κ : Type*} [Fintyp
     · have h2 : p.2 ≠ q.2 := fun h2 => hpq (Prod.ext h1 h2)
       rw [hQ.orthogonal h2, smulKron_zero_right]
     · rw [hP.orthogonal h1, smulKron_zero_left]
+
+/-- **A projective measurement of the register is projective in the matrices over `R`**, as
+`P ↦ 1 ⊗ P`. -/
+theorem IsPVMIn.smulKron_one [StarRing R] [StarModule ℂ R] {ι : Type*} [Fintype ι]
+    {P : ι → Matrix α α ℂ} (hP : IsPVMIn P) : IsPVMIn fun i => MIPRE.smulKron (1 : R) (P i) where
+  star_eq i := by rw [star_smulKron, star_one, ← star_eq_conjTranspose, hP.star_eq]
+  idem i := by rw [smulKron_mul, one_mul, hP.idem]
+  sum_eq_one := by rw [← smulKron_sum_right, hP.sum_eq_one, smulKron_one_one]
+  orthogonal hij := by rw [smulKron_mul, hP.orthogonal hij, smulKron_zero_right]
 
 end SmulKron
 

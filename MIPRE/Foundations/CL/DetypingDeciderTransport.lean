@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 public import MIPRE.Foundations.CL.DetypingDeciderGame
-public import MIPRE.Foundations.CL.DetypingSoundness
+public import MIPRE.Foundations.CL.DetypingModel
 public import MIPRE.Foundations.CL.DetypingComplete
+public import MIPRE.Foundations.ModelStrategy
 
 @[expose] public section
 
@@ -15,6 +16,16 @@ The actual sampler's numbered CL presentations have precisely the finite
 detyping distribution after the coordinate permutation. Together with the
 proved executable predicate law, this transports the existing finite-game
 restriction to strategies for the compiled ambient verifier.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): a projective strategy
+(`BipartiteModel.ProjStrat`) of the compiled verifier's game in a model is read in the unnumbered
+finite game by relabelling its questions along the coordinate numbering (`toFinite`, through
+`ProjStrat.relabel`), and restricted to the valid typed graph views by asking its measurements at
+the embedded typed questions (`restrictAmbient`, through `ProjStrat.restrict`), in the same model.
+The failure bound, with the factor `16^{|T|}`, is the model form of finite-game detyping
+(`CL.Detyping.restrict_failure_le_povm`). The statements that the shared state is unchanged
+(`toFinite_state`, `restrictAmbient_state`) have no counterpart: the model is the state. The
+completeness transport, for synchronous strategies, is unchanged.
 -/
 
 noncomputable section
@@ -73,18 +84,21 @@ theorem verifier_game_mu (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
   rw [game_mu_eq_clDist]
   exact numbered_clDist E S n x y
 
-/-- Read the actual compiled-verifier strategy in the unnumbered finite game. -/
+section Model
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+
+/-- Read the actual compiled-verifier strategy in the unnumbered finite game, in the same model:
+the same measurements, asked along the coordinate numbering. -/
 def toFinite (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
-    (R : TensorProductStrategy ((verifier E S D C hℓ hD).game n (C.outer n))) :
-    TensorProductStrategy (Detyping.game E (sourceFamily S n) (typedPredicate S D C n)) :=
+    (R : M.ProjStrat ((verifier E S D C hℓ hD).game n (C.outer n))) :
+    M.ProjStrat (Detyping.game E (sourceFamily S n) (typedPredicate S D C n)) :=
   R.relabel _ (vectorEquiv (S.dim n)) (vectorEquiv (S.dim n)) (.refl _) (.refl _)
 
-theorem toFinite_state (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
-    (R : TensorProductStrategy ((verifier E S D C hℓ hD).game n (C.outer n))) :
-    (toFinite E S D C hℓ hD n R).ψ = R.ψ := rfl
-
 theorem toFinite_value (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
-    (R : TensorProductStrategy ((verifier E S D C hℓ hD).game n (C.outer n))) :
+    (R : M.ProjStrat ((verifier E S D C hℓ hD).game n (C.outer n))) :
     (toFinite E S D C hℓ hD n R).value = R.value := by
   apply R.value_relabel _ (vectorEquiv (S.dim n)) (vectorEquiv (S.dim n)) (.refl _) (.refl _)
   · intro x y
@@ -92,39 +106,36 @@ theorem toFinite_value (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
   · intro x y a b
     exact (verifier_game_D E S D C hℓ hD n x y a b).symm
 
-/-- Restrict an actual compiled-verifier strategy to valid typed graph views. -/
+/-- Restrict an actual compiled-verifier strategy to valid typed graph views, in the same model:
+the finite-game measurements, asked at the embedded typed questions. -/
 def restrictAmbient (hne : (Graph.edges E).Nonempty) (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
-    (R : TensorProductStrategy ((verifier E S D C hℓ hD).game n (C.outer n))) :
-    TensorProductStrategy (typedGame E hne (sourceFamily S n) (typedPredicate S D C n)) :=
-  Detyping.restrict E hne _ _ (toFinite E S D C hℓ hD n R)
-
-/-- Ambient restriction changes neither Hilbert spaces nor the shared state. -/
-theorem restrictAmbient_state (hne : (Graph.edges E).Nonempty)
-    (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
-    (R : TensorProductStrategy ((verifier E S D C hℓ hD).game n (C.outer n))) :
-    (restrictAmbient E S D C hne hℓ hD n R).ψ = R.ψ := rfl
+    (R : M.ProjStrat ((verifier E S D C hℓ hD).game n (C.outer n))) :
+    M.ProjStrat (typedGame E hne (sourceFamily S n) (typedPredicate S D C n)) :=
+  (toFinite E S D C hℓ hD n R).restrict _ (question E false) (question E true)
 
 /-- The source detyping soundness factor now applies to the actual program-defined game. -/
 theorem restrictAmbient_failure_le (hE : ∀ u v, E u v → E v u)
     (hne : (Graph.edges E).Nonempty) (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
-    (R : TensorProductStrategy ((verifier E S D C hℓ hD).game n (C.outer n))) :
+    (R : M.ProjStrat ((verifier E S D C hℓ hD).game n (C.outer n))) :
     1 - (restrictAmbient E S D C hne hℓ hD n R).value ≤
       (16 : ℝ) ^ Fintype.card T * (1 - R.value) := by
-  have h := Detyping.restrict_failure_le E hE hne (sourceFamily S n)
+  have h := restrict_failure_le_povm M R.ψ_unit E hE hne (sourceFamily S n)
     (fun w t => S.cl_exactlyOn n (Player.ofBool w) t) hℓ (typedPredicate S D C n)
-    (toFinite E S D C hℓ hD n R)
-  rw [toFinite_value] at h
+    (toFinite E S D C hℓ hD n R).PA (toFinite E S D C hℓ hD n R).PB
+  rw [← toFinite_value E S D C hℓ hD n R]
   exact h
 
 theorem restrictAmbient_value_ge (hE : ∀ u v, E u v → E v u)
     (hne : (Graph.edges E).Nonempty) (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
-    (R : TensorProductStrategy ((verifier E S D C hℓ hD).game n (C.outer n)))
+    (R : M.ProjStrat ((verifier E S D C hℓ hD).game n (C.outer n)))
     {ε : ℝ} (hR : 1 - ε ≤ R.value) :
     1 - (16 : ℝ) ^ Fintype.card T * ε ≤
       (restrictAmbient E S D C hne hℓ hD n R).value := by
   have h := restrictAmbient_failure_le E S D C hE hne hℓ hD n R
   have hp : 0 ≤ (16 : ℝ) ^ Fintype.card T := pow_nonneg (by norm_num) _
   nlinarith
+
+end Model
 
 /-- Undo coordinate numbering while preserving the doubling tag. -/
 def doubledVectorEquiv (s : ℕ) :

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 public import MIPRE.Foundations.Introspection.RegisterTransport
+public import MIPRE.Foundations.Introspection.RegisterModel
 
 @[expose] public section
 
@@ -22,44 +23,6 @@ variable {I J R H K : Type*}
   [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
   [Fintype R] [DecidableEq R] [Fintype H] [DecidableEq H]
   [Fintype K] [DecidableEq K]
-
-/-- The maximally entangled state, indexed by an arbitrary finite basis. -/
-def registerEPR (I : Type*) [Fintype I] [DecidableEq I] : I × I → ℂ :=
-  fun p => if p.1 = p.2 then (((Real.sqrt (Fintype.card I))⁻¹ : ℝ) : ℂ) else 0
-
-/-- The finite-basis EPR definition agrees literally with the Weyl-register definition. -/
-theorem registerEPR_eq_weyl {F : Type*} [Field F] [Fintype F] [DecidableEq F]
-    [Algebra (ZMod 2) F] {ι : Type*} [Fintype ι] [DecidableEq ι] :
-    registerEPR (ι → F) = Weyl.epr (F := F) (n := ι) := rfl
-
-/-- Simultaneous relabelling of both EPR halves leaves the state unchanged. -/
-theorem registerEPR_equiv (e : I ≃ J) :
-    registerEPR J ∘ e.prodCongr e = registerEPR I := by
-  funext p
-  simp only [Function.comp_apply, Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd,
-    registerEPR, e.injective.eq_iff,
-    Fintype.card_congr e]
-
-/-- EPR on a product basis factors exactly into the two EPR states. -/
-theorem registerEPR_prod :
-    registerEPR (I × J) = expVec (registerEPR I) (registerEPR J) := by
-  funext p
-  obtain ⟨⟨i, j⟩, ⟨i', j'⟩⟩ := p
-  simp only [registerEPR, expVec, Prod.mk.injEq, Fintype.card_prod, Nat.cast_mul,
-    Real.sqrt_mul (Nat.cast_nonneg _), _root_.mul_inv_rev, Complex.ofReal_mul]
-  by_cases hi : i = i' <;> by_cases hj : j = j' <;> simp [hi, hj, mul_comm]
-
-/-- Unit normalization for a nonempty finite EPR basis. -/
-theorem registerEPR_norm [Nonempty I] : ‖evec (registerEPR I)‖ = 1 := by
-  have hc : (0 : ℝ) < Fintype.card I := by exact_mod_cast Fintype.card_pos
-  have hs : Real.sqrt (Fintype.card I) ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hc)
-  rw [evec, EuclideanSpace.norm_eq]
-  simp only [registerEPR, Fintype.sum_prod_type]
-  simp only [apply_ite norm, norm_zero, zero_pow (by decide : 2 ≠ 0),
-    ite_pow, Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_const,
-    Finset.card_univ, nsmul_eq_mul, Complex.norm_real, Real.norm_eq_abs,
-    abs_inv, abs_of_nonneg (Real.sqrt_nonneg _), inv_pow, Real.sq_sqrt hc.le]
-  rw [mul_inv_cancel₀ hc.ne', Real.sqrt_one]
 
 /-- EPR together with the original ancillary state, in the original basis. -/
 def registerState (I : Type*) [Fintype I] [DecidableEq I] (ξ : H × K → ℂ) :

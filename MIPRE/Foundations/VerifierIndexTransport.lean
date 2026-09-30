@@ -12,6 +12,11 @@ public import MIPRE.Foundations.VerifierValue
 Wrappers may change a sampler at exceptional indices. Equality of its dimension
 and CL presentations at the index in question suffices to preserve both quantum
 value and perfect PCC strategies; the programs need not agree elsewhere.
+
+Stated in a value model (Phase 4 of `planning/mipco-track.md`): the two games are related by
+equivalences of their alphabets, so they have the same value in every value model
+(`val_congr_at`, through `ValueModel.eq_of_equiv`); the quantum-value statement
+`valStar_congr_at` is its instance at `ValueModel.tensor`.
 -/
 
 noncomputable section
@@ -62,14 +67,20 @@ theorem game_D_dimensionEquiv (h : SamplerAgreement V W n)
   simp only [toBits_dimensionEquiv]
   exact decide_eq_decide.mpr (hD _ _ _ _).symm
 
+/-- Changing programs away from the current index preserves the value, in every value model. -/
+theorem val_congr_at (ω : ValueModel) (h : SamplerAgreement V W n)
+    (hD : ∀ x y a b, V.decider.Accepts n x y a b ↔ W.decider.Accepts n x y a b) :
+    V.val ω n T = W.val ω n T :=
+  ω.eq_of_equiv (W.game n T) (V.game n T)
+    (dimensionEquiv h.dimension) (dimensionEquiv h.dimension) (.refl _) (.refl _)
+    (fun x y => (game_mu_dimensionEquiv h x y).symm)
+    (fun x y a b => (game_D_dimensionEquiv h hD x y a b).symm)
+
 /-- Changing programs away from the current index preserves quantum value. -/
 theorem valStar_congr_at (h : SamplerAgreement V W n)
     (hD : ∀ x y a b, V.decider.Accepts n x y a b ↔ W.decider.Accepts n x y a b) :
     V.valStar n T = W.valStar n T :=
-  quantumValue_eq_of_equiv (W.game n T) (V.game n T)
-    (dimensionEquiv h.dimension) (dimensionEquiv h.dimension) (.refl _) (.refl _)
-    (fun x y => (game_mu_dimensionEquiv h x y).symm)
-    (fun x y a b => (game_D_dimensionEquiv h hD x y a b).symm)
+  val_congr_at .tensor h hD
 
 /-- Perfect PCC strategies also depend only on the game at the current index. -/
 theorem hasPerfectPCC_of_congr_at (h : SamplerAgreement V W n)

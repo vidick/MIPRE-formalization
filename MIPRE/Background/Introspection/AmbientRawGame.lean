@@ -13,6 +13,9 @@ public import MIPRE.Background.Introspection.DecisionKernelCanonical
 The outer answer alphabet is first reduced to the enforced binary cutoff.
 Finite graph detyping then gives the same-state typed strategy with its fixed
 loss factor, and carries perfect PCC completeness in the other direction.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the restriction is one of
+projective strategies in any model, and the value identities hold in every value model.
 -/
 
 noncomputable section
@@ -55,16 +58,27 @@ theorem raw_accepts_iff (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUnive
     from readNat_encode n]
   rfl
 
-theorem output_valStar_cutoff (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
-    (source : Prog × Prog) {lam n B : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n)
-    (hB : outerBound c lam n ≤ B) :
-    (output c hc he U source lam).valStar n B =
-      (output c hc he U source lam).valStar n (outerBound c lam n) := by
-  apply Verifier.valStar_eq_of_rejects _ hB
+/-- Answers beyond the enforced cutoff never help, in every value model. -/
+theorem output_val_cutoff (ω : ValueModel) (c : ℕ) (hc : 1 ≤ c) (he : Even c)
+    (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n B : ℕ} (hl : 1 ≤ lam)
+    (hn : 1 ≤ n) (hB : outerBound c lam n ≤ B) :
+    (output c hc he U source lam).val ω n B =
+      (output c hc he U source lam).val ω n (outerBound c lam n) := by
+  apply Verifier.val_eq_of_rejects _ ω hB
   intro x y a b hlong hacc
   have hh := (accepts_positive_bounds c U source.1 source.2 hl hn x y a b hacc).2.2
   change a.length ≤ outerBound c lam n ∧ b.length ≤ outerBound c lam n at hh
   rcases hlong with hlong | hlong <;> omega
+
+/-- **The output verifier's value is the reference verifier's at the cutoff**, in every value
+model. -/
+theorem output_val_eq_reference (ω : ValueModel) (c : ℕ) (hc : 1 ≤ c) (he : Even c)
+    (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n B : ℕ} (hl : 1 ≤ lam)
+    (hn : 1 ≤ n) (hB : outerBound c lam n ≤ B) :
+    (output c hc he U source lam).val ω n B =
+      ω.val ((reference c hc he U source lam n).game n (outerBound c lam n)) := by
+  rw [output_val_cutoff ω c hc he U source hl hn hB, val_reference ω c hc he U source hl hn]
+  rfl
 
 /-- A perfect typed raw-kernel strategy gives completeness of the actual output. -/
 theorem output_hasPerfectPCC_of_raw (c : ℕ) (hc : 1 ≤ c) (he : Even c)
@@ -86,34 +100,32 @@ def detypingLoss : ℝ := (16 : ℝ) ^ Fintype.card DecisionKernel.Label
 
 theorem detypingLoss_nonneg : 0 ≤ detypingLoss := pow_nonneg (by norm_num) _
 
-/-- An ambient value above `1-ε` supplies a typed raw strategy with the
-detyping loss. The input answer bound can be any larger global budget. -/
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
+
+/-- **A strategy for the reference verifier's game restricts to a typed raw strategy**, in the
+same model, with the detyping loss. With `output_val_eq_reference`, a value of the output
+verifier above `1 - ε` in a value model approached by projective strategies gives such a raw
+strategy of failure at most `detypingLoss * ε`. -/
 theorem exists_raw_failure_le (c : ℕ) (hc : 1 ≤ c) (he : Even c)
-    (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n B : ℕ}
-    (hl : 1 ≤ lam) (hn : 1 ≤ n) (hB : outerBound c lam n ≤ B)
-    (ε : ℝ) (hv : 1-ε < (output c hc he U source lam).valStar n B) :
-    ∃ S : TensorProductStrategy (rawGame c hc he U source lam n),
-      1-S.value ≤ detypingLoss*ε := by
-  rw [output_valStar_cutoff c hc he U source hl hn hB,
-    valStar_reference c hc he U source hl hn] at hv
-  let G := (reference c hc he U source lam n).game n (outerBound c lam n)
-  let : Nonempty (TensorProductStrategy G) :=
-    ⟨(SyncStrategy.const G.doubled ⟨[],by simp⟩).toTensorProductStrategy.undouble⟩
-  obtain ⟨S,hS⟩ := (lt_ciSup_iff (TensorProductStrategy.bddAbove_range_value
-    ((reference c hc he U source lam n).game n (outerBound c lam n)))).mp hv
-  let R := DeciderProgram.restrictAmbient graph (extendedSampler c hc he lam)
+    (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n : ℕ}
+    {M : BipartiteModel 𝒞 𝒜 ℬ}
+    (S : M.ProjStrat ((reference c hc he U source lam n).game n (outerBound c lam n)))
+    {ε : ℝ} (hS : 1 - S.value ≤ ε) :
+    ∃ R : M.ProjStrat (rawGame c hc he U source lam n), 1 - R.value ≤ detypingLoss * ε := by
+  refine ⟨DeciderProgram.restrictAmbient graph (extendedSampler c hc he lam)
     (typedDecider c U (SourceDescriptionCompiler.clamp (source,lam)))
     (constantCutoff (outerBound c lam n))
     (TypeGraph.edges_nonempty QLD.adj (.pauli .X) (.pauli .Z) 7)
-    (by decide) (typedDecider_total c U _) n S
-  refine ⟨R,?_⟩
+    (by decide) (typedDecider_total c U _) n S, ?_⟩
   have hr := DeciderProgram.restrictAmbient_failure_le graph (extendedSampler c hc he lam)
     (typedDecider c U (SourceDescriptionCompiler.clamp (source,lam)))
     (constantCutoff (outerBound c lam n))
     (TypeGraph.symmetric QLD.adj (.pauli .X) (.pauli .Z))
     (TypeGraph.edges_nonempty QLD.adj (.pauli .X) (.pauli .Z) 7)
     (by decide) (typedDecider_total c U _) n S
-  exact hr.trans (mul_le_mul_of_nonneg_left (by linarith) detypingLoss_nonneg)
+  exact hr.trans (mul_le_mul_of_nonneg_left hS detypingLoss_nonneg)
 
 end MIPRE.Introspection.DecisionCompiler
 

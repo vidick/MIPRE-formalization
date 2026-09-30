@@ -33,7 +33,7 @@ theorem coreOp_eq_zero_of_unattained (t : CoreType) (y : ι → F) (a : A)
     ext x x'
     have hn : displayed L t x ≠ y := fun h => hy ⟨x,h⟩
     simp [readout, Matrix.diagonal_apply, hn]
-  simp [coreOp, conditionalReadout, hz]
+  simp [coreOp, kronReadout, hz]
 
 theorem coreOp_displayed_attained (t : CoreType) (y : ι → F) (a : A)
     (ha : coreOp L D R t (y,a) ≠ 0) : ∃ x, displayed L t x = y := by

@@ -1,15 +1,16 @@
 # The commuting-operator class, `MIP^co = coRE`: plan
 
 **Status: Phase 0 done (#235, #236), made generic in #239; Phase 1 done (#241, #243, #245);
-Phase 2 done (#247); Phase 3 done (#249); Phases 4–6 planned around generalizing the existing
-analyses (`reports/co-generalization-audit.md`).** The conditional theorem — `MIP^co = coRE`
-given the commuting-operator soundness of gap compression — is in, with all of its plumbing,
-written once for both values. Since Phase 3 it follows from the soundness clause of
-introspection read in `ω_co` and the soundness of the low-individual-degree test in the
-commuting-operator model (`MIPRE.mipco_eq_core_of_stages`), parallel repetition's clause being
-proved and answer reduction's proved from the latter. The operator calculus of the stage analyses
-is proved once over a bipartite model, with the matrix layer as its tensor-product instance, and
-so are the soundness of oracularization and that of answer reduction.
+Phase 2 done (#247); Phase 3 done (#249); Phase 4 done (#251); Phases 5–6 planned around
+generalizing the existing analyses (`reports/co-generalization-audit.md`).** The conditional
+theorem — `MIP^co = coRE` given the commuting-operator soundness of gap compression — is in, with
+all of its plumbing, written once for both values. Since Phase 4 it follows from the soundness of
+the Pauli basis test and of the low-individual-degree test in the commuting-operator model
+(`MIPRE.mipco_eq_core_of_stages`, hypotheses `QLD.SoundCo` and `LIDT.Simul.SoundCo`): parallel
+repetition's clause is proved, answer reduction's is proved from the second test and
+introspection's from the first. The operator calculus of the stage analyses is proved once over a
+bipartite model, with the matrix layer as its tensor-product instance, and so are the soundness of
+oracularization, of answer reduction and of introspection.
 
 Written 2026-09-28, after the explicit separation (#222) and the paper's class (#230–#233).
 Target: Lin's theorem `MIP^co = coRE` (`Lin25`, arXiv:2510.07162, STOC 2026), proved by
@@ -487,6 +488,59 @@ soundness in the commuting model.** Touched: ≈ 20k lines; check first that the
 run at the same error rates with the new dilation (they should: the compression identity is
 the same).
 
+*Done (#251).* The whole soundness analysis of introspection is stated for a strategy in a
+bipartite model, and the matrix statements that remain (Pauli extraction, the quotient value) are
+its tensor-product instance. What the setting changed:
+
+- *Local isometries* (`BipartiteModel.LocalIsometry`): a linear isometry of the Hilbert spaces with
+  a non-unital `⋆`-homomorphism for each player, intertwining the representations; `V_A X V_Aᴴ` is
+  the tensor-product case. A projective measurement is transported with the complement of the
+  image added at one outcome (`transportA`), and a strategy and its transport have the same value
+  on the transported state (`povmValue_transport`). `isometricPOVM` and its completion error are
+  this, in any model.
+- *The register model* (`BipartiteModel.reg N I := N.expand (registerEPR I)`) replaces
+  `registerState I ξ`, with the ancilla an arbitrary normalized auxiliary model; relabelling,
+  splitting, extending and exchanging the register are local isometries (`regRelabel`,
+  `regSplit`, `regExtend`, `regSwap`), and the tensor-product case is `tensorExpand` /
+  `tensorUnexpand`. The players' algebras of an extension are matrices over theirs, ordered as a
+  `⋆`-algebra (`MatrixStar.instPartialOrderStar`), which needs the algebras to be proper.
+- *The dilation*: the Naimark steps of the adaptive inductions are Halmos dilations of a Kraus
+  family in the first player's algebra (`exists_pvm_dilation`: a nonnegative element of a
+  star-ordered ring is a finite sum of squares), with no square root and no finite dimension. The
+  ancilla `DilationAncilla A K` has a size `K` chosen along the way, so each Alice stage changes
+  the model's type: the iteration returns a model over the second player's algebra packed with its
+  algebras (`ModelOver`), and every POVM strategy of it reduces to one of the original model
+  (`BipartiteModel.POVMReduces`), which is how a value model dominating the original model
+  dominates it. Bob's block is the Alice block on `Ξ.swap`. The inductions run at the same error
+  rates.
+- *The value*: the extracted strategy is a POVM strategy, so value models dominate POVM strategies
+  (`ValueModel.DominatesPOVM`; `val*` through the Naimark dilation, `ω_co` directly).
+- *The interface*: `QLD.SoundIn ω M` is `exists_le_qldErr`'s conclusion for the projective
+  strategies of `M`, at the error `qldErr`, with `ω` dominating the ancilla model; `QLD.SoundCo`
+  asks it in the model of every commuting-operator strategy; `QLD.soundIn_tensor` is
+  `exists_le_qldErr`. The value level needs `QLD.ApproxSoundIn ω` (below `ω.val G`, a strategy in
+  a model where the test is sound) and, for removing the source padding, `ValueModel.ProjApprox`;
+  both hold for `val*` and, given `QLD.SoundCo`, for `ω_co`. The QLD constants are those of the
+  closed form of `qldErr` (`QLD.exists_qldErr_le`), a fact about that function alone.
+- *The compiler* `Introspection.seven` is defined explicitly (its constants by `Classical.choose`),
+  so that `seven_soundIn ω` can be proved for every such `ω`; its `soundness` field is the
+  instance at `val*`, and `seven_soundIn_commuting : QLD.SoundCo → seven.SoundIn .commuting`.
+
+Deleted, as dead or without model meaning: the matrix iteration states (`introIterationState`,
+`introBobIterationState`, `introTwoSidedState`, `introIterationAux`, `introIterationExtend`),
+the ancilla numbering of the QLD adapter, the callback forms of conditional soundness in
+`RestrictedProfileSoundness`, and `CanonicalSoundness.lean`. Kept for follow-up cleanups that
+each rebuild much of the library: `POVMIn.map_map`, `POVMIn.map_equiv_op`,
+`POVMIn.map_pushforward`, `ProjStrat.relabel_PA_op` and `ValueModel.ProjApprox` sit in the files
+that first needed them rather than in `Measurement.lean`, `LocalIsometry.lean` and
+`ModelStrategy.lean`; and `DecidableEq (DilationAncilla A K)` exceeds `synthInstance.maxSize` in
+`open Classical` files, worked around by a local option on the three declarations that need it
+until `KrausDilation.lean` provides the instance.
+
+Measured: ≈ 3k lines of Lean in eleven new files and ≈ 110 introspection modules restated in
+place (149 files, ≈ 10.7k lines inserted, 7k removed); blueprint section `sec:ds-mipco-phase4`,
+17 nodes, and the introspection nodes of chapter 6 updated.
+
 **Phase 5 — the Pauli basis test, with the LIDT soundness as the hypothesis** (report §3.4).
 The 23k B lines restated; M1 (the top-level `exists_legal_dilation`, the sandwich's joint
 measurement, `Anticomm`) become the Phase 1 lemma; M2, the one use of de la Salle's
@@ -599,7 +653,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 | C1 | Phase 1: the projective commuting-operator model, the dilation lemma, the operator calculus restated with the matrix layer as its instance, the stage interfaces in `Verifier.val ω` | 3k–5k new, ≈ 10k restated | done (#240): (a) #241; (b) #243, #245; (c) #245 |
 | C2 | Phase 2: oracularization, repetition and the composition in the model; `mipco_eq_core` conditional on the introspection and answer-reduction clauses in `ω_co` | 2k–3k | done (#247) |
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | done (#249): ≈ 0.55k new, the ≈ 4k-line chain restated; the LIDT adapter deferred to C6 |
-| C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | open |
+| C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | done (#251): ≈ 3k new, ≈ 110 modules restated; `mipco_eq_core` conditional on the Pauli basis and LIDT tests in the commuting model |
 | C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | open |
 | C6 | Phase 6: the low-individual-degree test in the commuting-operator model | unknown; 40k–130k by analogy | open; verify Lin's paper trail first |
 | C7 | Phase 7: the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |

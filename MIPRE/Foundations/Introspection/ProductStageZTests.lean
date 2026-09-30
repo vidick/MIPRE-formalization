@@ -16,6 +16,16 @@ records its evaluated question and original answer, while the other records
 an arbitrary function of its seed. Both marginal estimates are obtained from
 the parsed game and the extracted Pauli-Z estimate before applying the joint
 commutation theorem. Malformed answers retain a dummy outcome throughout.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the EPR seed beside an
+arbitrary auxiliary state is the register model `Ξ.reg (ι → F)` of a normalized model `Ξ`, the
+strategy is a pair of POVM families of matrices over `ι → F` with entries in `Ξ`'s algebras, and
+the honest computational readouts, complex register matrices, act as `smulKron 1 _` for either
+player; the readout of a seed function is a projective measurement of the model
+(`IsPVMIn.toPOVMIn`). Coarse-graining a POVM is `POVMIn.map`, and coarse-graining an embedded
+register family is `fibSumIn` (`fibSumIn_smulKron_one`). The exact mirror of a readout is the
+vector identity `π (πA _) ψ = π (πB _) ψ` of `BipartiteModel.reg_mirror`, and Bob's commutator is
+Alice's in the exchanged model `(Ξ.reg (ι → F)).swap`.
 -/
 
 noncomputable section
@@ -23,10 +33,9 @@ noncomputable section
 namespace MIPRE.Introspection.TypedEstimates
 
 open Finset Matrix Classical Honest
-open scoped Kronecker
 set_option linter.unusedSectionVars false
 
-variable {PauliType PauliAnswer F ι κ A H K C : Type*}
+variable {PauliType PauliAnswer F ι κ A C : Type*}
   [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}
 
 /-- The complete question/answer pair reported at Introspect. -/
@@ -69,199 +78,179 @@ theorem check_sample_introspect_pair
   simp only [evaluatedSamplePair, introspectPair, he.1, he.2]
 
 variable [Fintype F] [DecidableEq F] [Fintype A] [Fintype PauliAnswer]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
   [Fintype C] [DecidableEq C]
 
+/-- The first marginal of the joint Sample measurement, for a POVM in any ordered `⋆`-ring. -/
 theorem sampleJointZ_left (P : CL.CLFun F ι ℓ) (g : (ι → F) → C)
-    (M : POVM (ParsedAnswer (ι → F) A PauliAnswer) H) (y : Option ((ι → F) × A)) :
-    (∑ c, ((M.map (sampleJointZ P g)).mats (y, c)).val) =
-      ((M.map (evaluatedSamplePair P)).mats y).val := by
-  have hm := POVM.sum_mats_map_prod M (evaluatedSamplePair P) (sampledCoarseZ g) y
-  convert hm using 1
-  apply Finset.sum_congr rfl
-  intro c _
-  unfold sampleJointZ
-  simp only [POVM.map_mats, Finset.sum_filter]
+    {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    (M : POVMIn (ParsedAnswer (ι → F) A PauliAnswer) R) (y : Option ((ι → F) × A)) :
+    (∑ c, (M.map (sampleJointZ P g)).op (y, c)) = (M.map (evaluatedSamplePair P)).op y :=
+  POVMIn.sum_op_map_prod M (evaluatedSamplePair P) (sampledCoarseZ g) y
 
+/-- The second marginal of the joint Sample measurement, for a POVM in any ordered `⋆`-ring. -/
 theorem sampleJointZ_right (P : CL.CLFun F ι ℓ) (g : (ι → F) → C)
-    (M : POVM (ParsedAnswer (ι → F) A PauliAnswer) H) (c : Option C) :
-    (∑ y, ((M.map (sampleJointZ P g)).mats (y, c)).val) =
-      ((M.map (sampledCoarseZ g)).mats c).val := by
-  have hm := POVM.sum_mats_map_prod' M (evaluatedSamplePair P) (sampledCoarseZ g) c
-  convert hm using 1
-  apply Finset.sum_congr rfl
-  intro y _
-  unfold sampleJointZ
-  simp only [POVM.map_mats, Finset.sum_filter]
+    {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    (M : POVMIn (ParsedAnswer (ι → F) A PauliAnswer) R) (c : Option C) :
+    (∑ y, (M.map (sampleJointZ P g)).op (y, c)) = (M.map (sampledCoarseZ g)).op c :=
+  POVMIn.sum_op_map_prod' M (evaluatedSamplePair P) (sampledCoarseZ g) c
 
+/-- Processing the actual sampled seed produces the selected seed readout, for a POVM in any
+ordered `⋆`-ring. -/
 theorem sampledCoarseZ_mapped (g : (ι → F) → C)
-    (M : POVM (ParsedAnswer (ι → F) A PauliAnswer) H) (c : Option C) :
-    fibSum (fun z => ((M.map sampleSeed).mats z).val) (Option.map g) c =
-      ((M.map (sampledCoarseZ g)).mats c).val := by
-  rw [fibSum, ← POVM.map_mats, POVM.map_map]
+    {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    (M : POVMIn (ParsedAnswer (ι → F) A PauliAnswer) R) (c : Option C) :
+    fibSumIn (M.map sampleSeed).op (Option.map g) c = (M.map (sampledCoarseZ g)).op c := by
+  rw [fibSumIn, ← POVMIn.map_op, POVMIn.map_map]
   rfl
 
 /-- Ideal Z followed by any classical seed processing is the corresponding
-computational readout on the same register. -/
-theorem idealZ_coarse_fibSum (g : (ι → F) → C) (c : Option C) :
-    fibSum (fun z => (aOp (readout (some : (ι → F) → Option (ι → F)) z) :
-      Matrix ((ι → F) × K) _ ℂ)) (Option.map g) c =
-      aOp (readout (fun z => some (g z)) c) := by
-  rw [fibSum_aOp, fibSum_readout]
+computational readout on the same register. Both are honest register operators, embedded as
+`smulKron 1` in the matrices over any algebra. -/
+theorem idealZ_coarse_fibSum {R : Type*} [Ring R] [Algebra ℂ R] (g : (ι → F) → C)
+    (c : Option C) :
+    fibSumIn (fun z => smulKron (1 : R) (readout (some : (ι → F) → Option (ι → F)) z))
+      (Option.map g) c = smulKron 1 (readout (fun z => some (g z)) c) := by
+  rw [fibSumIn_smulKron_one, ← fibSum_eq_fibSumIn, fibSum_readout]
   rfl
 
 variable [Fintype PauliType] [DecidableEq PauliType] [Fintype κ] [DecidableEq κ]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
 
-set_option backward.isDefEq.respectTransparency false in
 /-- The actual Introspect operators almost commute with every chosen coarse
 Z readout. Its joint witness and both marginal bounds come from actual Sample
 measurements and tested game edges; no commutator or marginal estimate is an
 extra hypothesis. -/
-theorem introspect_coarseZ_commutator_bob
+theorem introspect_coarseZ_commutator_bob [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜]
+    [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
     (E : PauliType → PauliType → Bool) (X Z : PauliType)
     (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)
     (projectPauli : PauliAnswer → ι → F)
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (hΞ : ‖Ξ.ψ‖ = 1)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ))
     {ε η : ℝ}
-    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)
-      (registerState (ι → F) ξ) MA MB ≤ ε)
+    (hfail : 1 - (Ξ.reg (ι → F)).povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ ε)
     (q : κ → ZMod 2) (hq : ∀ z, (P Z).eval z = q) (w : Bool)
-    (hS : IsPVM (fun a => ((MA (QuestionType.sample w, 0)).mats a).val))
-    (hZ : ∑ z, snorm (registerState (ι → F) ξ) (bOp
-      ((((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).mats z).val -
-        (aOp (readout (some : (ι → F) → Option (ι → F)) z) :
-          Matrix ((ι → F) × K) _ ℂ))) ^ 2 ≤ η)
+    (hS : IsPVMIn (MA (QuestionType.sample w, 0)).op)
+    (hZ : ∑ z, (Ξ.reg (ι → F)).snorm ((Ξ.reg (ι → F)).πB
+      (((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).op z -
+        smulKron 1 (readout (some : (ι → F) → Option (ι → F)) z))) ^ 2 ≤ η)
     (g : (ι → F) → C) :
-    (∑ a, ∑ c, snorm (registerState (ι → F) ξ) (bOp
-      ((((MB (QuestionType.introspect w, 0)).map introspectPair).mats a).val *
-        (aOp (readout (fun z => some (g z)) c) : Matrix ((ι → F) × K) _ ℂ) -
-       (aOp (readout (fun z => some (g z)) c) : Matrix ((ι → F) × K) _ ℂ) *
-        (((MB (QuestionType.introspect w, 0)).map introspectPair).mats a).val)) ^ 2) ≤
+    (∑ a, ∑ c, (Ξ.reg (ι → F)).snorm ((Ξ.reg (ι → F)).πB
+      (((MB (QuestionType.introspect w, 0)).map introspectPair).op a *
+        smulKron 1 (readout (fun z => some (g z)) c) -
+       smulKron 1 (readout (fun z => some (g z)) c) *
+        ((MB (QuestionType.introspect w, 0)).map introspectPair).op a)) ^ 2) ≤
       32 * η + 96 * (TypeGraph.edges E X Z ℓ).card * ε := by
-  have hψ : star (registerState (ι → F) ξ) ⬝ᵥ registerState (ι → F) ξ = 1 := by
-    rw [dotProduct_star_self, registerState_norm ξ (norm_evec_eq_one_of_unit hξ)]
-    norm_num
+  have hψ : ‖(Ξ.reg (ι → F)).ψ‖ = 1 := by rw [BipartiteModel.norm_reg_ψ, hΞ]
   have hsample := aux_pauli_agreement_estimate E X Z P
-    (questionCheck L X Z projectPauli D DP) (registerState (ι → F) ξ) hψ MA MB hfail
+    (questionCheck L X Z projectPauli D DP) (Ξ.reg (ι → F)) hψ MA MB hfail
     .sample w Z q hq
     (TypeGraph.symmetric E X Z _ _ (TypeGraph.adj_pauliZ_sample E X Z w))
     sampleSeed (pauliProjection projectPauli)
     (fun a b hab => check_sample_pauliZ_seed L X Z projectPauli D
       (fun p s => DP p s 0 q) w hab)
-  have hseed := sampling_replace_bob (registerState (ι → F) ξ)
-    (fun z => (((MA (QuestionType.sample w, 0)).map sampleSeed).mats z).val)
-    (fun z => (((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).mats z).val)
-    (fun z => (aOp (readout (some : (ι → F) → Option (ι → F)) z) :
-      Matrix ((ι → F) × K) _ ℂ)) hsample hZ
-  have hcoarse := sum_xSqNorm_fibSum_le (norm_evec_eq_one_of_unit hψ)
-    (isPVM_povm_map (MA (QuestionType.sample w, 0)) hS sampleSeed)
-    (readout_isPVM (some : (ι → F) → Option (ι → F))).aOp (Option.map g)
+  have hseed := sampling_replace_bob (Ξ.reg (ι → F))
+    (fun z => ((MA (QuestionType.sample w, 0)).map sampleSeed).op z)
+    (fun z => ((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).op z)
+    (fun z => smulKron 1 (readout (some : (ι → F) → Option (ι → F)) z)) hsample hZ
+  have hcoarse := (Ξ.reg (ι → F)).sum_xSqNorm_fibSum_le hψ
+    (POVMIn.isPVMIn_map hS sampleSeed)
+    (readout_isPVM (some : (ι → F) → Option (ι → F))).toIn.smulKron_one (Option.map g)
   simp only [sampledCoarseZ_mapped, idealZ_coarse_fibSum] at hcoarse
   have hright := hcoarse.trans hseed
   have hleft := aux_agreement_estimate E X Z P
-    (questionCheck L X Z projectPauli D DP) (registerState (ι → F) ξ) hψ MA MB hfail
+    (questionCheck L X Z projectPauli D DP) (Ξ.reg (ι → F)) hψ MA MB hfail
     .sample .introspect w w (TypeGraph.adj_sample_introspect E X Z w)
     (evaluatedSamplePair (L w)) introspectPair
     (fun a b hab => check_sample_introspect_pair L X Z projectPauli D
       (fun p s => DP p s 0 0) w hab)
-  let N : POVM (Option C) ((ι → F) × K) :=
-    (IsPVM.aOp (dB := K) (readout_isPVM (fun z : ι → F => some (g z)))).toPOVM
-  have ht := coarse_joint_commutator_bound (swapVec (registerState (ι → F) ξ))
+  let N : POVMIn (Option C) (Matrix (ι → F) (ι → F) ℬ) :=
+    (readout_isPVM (fun z : ι → F => some (g z))).toIn.smulKron_one.toPOVMIn
+  have ht := coarse_joint_commutator_bound (Ξ.reg (ι → F)).swap
     ((MB (QuestionType.introspect w, 0)).map introspectPair) N
     (MA (QuestionType.sample w, 0)) hS (sampleJointZ (L w) g)
   simp only [coarseJointLeftError, coarseJointRightError, sampleJointZ_left,
-    sampleJointZ_right, N, IsPVM.toPOVM_mats,
-    xSqNorm_eq_snorm_sq, snorm_swapVec_aOp_sub_bOp,
-    stateSqNorm, ← norm_stateVecB, norm_stateVecB_eq_snorm] at ht
-  simp only [← xSqNorm_eq_sq] at ht
+    sampleJointZ_right, N, IsPVMIn.toPOVMIn_op, BipartiteModel.xSqNorm_swap,
+    BipartiteModel.stateSqNorm, BipartiteModel.stateNorm, BipartiteModel.swap_toStateModel,
+    BipartiteModel.swap_πA] at ht
   linarith only [ht, hleft, hright]
 
-variable [Algebra (ZMod 2) F]
+/-- Every computational seed readout has an exact mirror on the register model of any bipartite
+auxiliary model. -/
+theorem coarseZ_registerState_mirror (g : (ι → F) → C) (c : C) (Ξ : BipartiteModel 𝒞 𝒜 ℬ) :
+    (Ξ.reg (ι → F)).π ((Ξ.reg (ι → F)).πA (smulKron 1 (readout g c))) (Ξ.reg (ι → F)).ψ =
+      (Ξ.reg (ι → F)).π ((Ξ.reg (ι → F)).πB (smulKron 1 (readout g c))) (Ξ.reg (ι → F)).ψ := by
+  have he := Ξ.reg_mirror (readout g c)
+  rwa [show (readout g c)ᵀ = readout g c from Matrix.diagonal_transpose _] at he
 
-/-- Every computational seed readout has an exact mirror on the extracted
-EPR register, including with arbitrary auxiliary state. -/
-theorem coarseZ_registerState_mirror (g : (ι → F) → C) (c : C) (ξ : H × K → ℂ) :
-    aOp (aOp (readout g c) : Matrix ((ι → F) × H) _ ℂ) *ᵥ registerState (ι → F) ξ =
-      bOp (aOp (readout g c) : Matrix ((ι → F) × K) _ ℂ) *ᵥ registerState (ι → F) ξ := by
-  have he := Weyl.stateVec_epr (readout g c)
-  have ht : (readout g c)ᵀ = readout g c := Matrix.diagonal_transpose _
-  rw [ht, ← registerEPR_eq_weyl] at he
-  exact congrArg WithLp.ofLp (mirror_expVec (registerEPR (ι → F)) ξ _ _ he)
-
-set_option backward.isDefEq.respectTransparency false in
 /-- Alice's coarse Z commutator from the same primitive Bob-Z guarantee.
 The actual Sample consistency loop transfers the fine seed estimate before
 any coarse-graining. There is no additional Alice extraction hypothesis. -/
-theorem introspect_coarseZ_commutator_alice
+theorem introspect_coarseZ_commutator_alice [StarModule ℂ 𝒜] [PartialOrder 𝒜]
+    [StarOrderedRing 𝒜] [StarProper 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
     (E : PauliType → PauliType → Bool) (X Z : PauliType)
     (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)
     (projectPauli : PauliAnswer → ι → F)
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)
+    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (hΞ : ‖Ξ.ψ‖ = 1)
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) ℬ))
     {ε η : ℝ}
-    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)
-      (registerState (ι → F) ξ) MA MB ≤ ε)
+    (hfail : 1 - (Ξ.reg (ι → F)).povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ ε)
     (q : κ → ZMod 2) (hq : ∀ z, (P Z).eval z = q) (w : Bool)
-    (hS : IsPVM (fun a => ((MB (QuestionType.sample w, 0)).mats a).val))
-    (hZ : ∑ z, snorm (registerState (ι → F) ξ) (bOp
-      ((((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).mats z).val -
-        (aOp (readout (some : (ι → F) → Option (ι → F)) z) :
-          Matrix ((ι → F) × K) _ ℂ))) ^ 2 ≤ η)
+    (hS : IsPVMIn (MB (QuestionType.sample w, 0)).op)
+    (hZ : ∑ z, (Ξ.reg (ι → F)).snorm ((Ξ.reg (ι → F)).πB
+      (((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).op z -
+        smulKron 1 (readout (some : (ι → F) → Option (ι → F)) z))) ^ 2 ≤ η)
     (g : (ι → F) → C) :
-    (∑ a, ∑ c, stateSqNorm (registerState (ι → F) ξ)
-      ((((MA (QuestionType.introspect w, 0)).map introspectPair).mats a).val *
-        (aOp (readout (fun z => some (g z)) c) : Matrix ((ι → F) × H) _ ℂ) -
-       (aOp (readout (fun z => some (g z)) c) : Matrix ((ι → F) × H) _ ℂ) *
-        (((MA (QuestionType.introspect w, 0)).map introspectPair).mats a).val)) ≤
+    (∑ a, ∑ c, (Ξ.reg (ι → F)).stateSqNorm
+      (((MA (QuestionType.introspect w, 0)).map introspectPair).op a *
+        smulKron 1 (readout (fun z => some (g z)) c) -
+       smulKron 1 (readout (fun z => some (g z)) c) *
+        ((MA (QuestionType.introspect w, 0)).map introspectPair).op a)) ≤
       64 * η + 224 * (TypeGraph.edges E X Z ℓ).card * ε := by
-  have hψ : star (registerState (ι → F) ξ) ⬝ᵥ registerState (ι → F) ξ = 1 := by
-    rw [dotProduct_star_self, registerState_norm ξ (norm_evec_eq_one_of_unit hξ)]
-    norm_num
+  have hψ : ‖(Ξ.reg (ι → F)).ψ‖ = 1 := by rw [BipartiteModel.norm_reg_ψ, hΞ]
   have hsample := aux_pauli_agreement_estimate E X Z P
-    (questionCheck L X Z projectPauli D DP) (registerState (ι → F) ξ) hψ MA MB hfail
+    (questionCheck L X Z projectPauli D DP) (Ξ.reg (ι → F)) hψ MA MB hfail
     .sample w Z q hq
     (TypeGraph.symmetric E X Z _ _ (TypeGraph.adj_pauliZ_sample E X Z w))
     sampleSeed (pauliProjection projectPauli)
     (fun a b hab => check_sample_pauliZ_seed L X Z projectPauli D
       (fun p s => DP p s 0 q) w hab)
-  have hseed := sampling_replace_bob (registerState (ι → F) ξ)
-    (fun z => (((MA (QuestionType.sample w, 0)).map sampleSeed).mats z).val)
-    (fun z => (((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).mats z).val)
-    (fun z => (aOp (readout (some : (ι → F) → Option (ι → F)) z) :
-      Matrix ((ι → F) × K) _ ℂ)) hsample hZ
+  have hseed := sampling_replace_bob (Ξ.reg (ι → F))
+    (fun z => ((MA (QuestionType.sample w, 0)).map sampleSeed).op z)
+    (fun z => ((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).op z)
+    (fun z => smulKron 1 (readout (some : (ι → F) → Option (ι → F)) z)) hsample hZ
   have hdist := hseed
   simp only [xSqNorm_eq_stateSqNorm_of_mirror _ _ _ _
-    (coarseZ_registerState_mirror (some : (ι → F) → Option (ι → F)) _ ξ)] at hdist
+    (coarseZ_registerState_mirror (some : (ι → F) → Option (ι → F)) _ Ξ)] at hdist
   have hloop := aux_agreement_estimate E X Z P
-    (questionCheck L X Z projectPauli D DP) (registerState (ι → F) ξ) hψ MA MB hfail
+    (questionCheck L X Z projectPauli D DP) (Ξ.reg (ι → F)) hψ MA MB hfail
     .sample .sample w w (TypeGraph.adj_self E X Z (QuestionType.sample w))
     sampleSeed sampleSeed (fun a b hab => congrArg sampleSeed
       (TypedPredicate.check_consistency L X Z projectPauli D (fun p s => DP p s 0 0) hab))
-  have hseedB := sum_xSqNorm_le_of_two_step
-    (fun z => (aOp (readout (some : (ι → F) → Option (ι → F)) z) :
-      Matrix ((ι → F) × H) _ ℂ))
-    (fun z => (((MA (QuestionType.sample w, 0)).map sampleSeed).mats z).val)
-    (fun z => (((MB (QuestionType.sample w, 0)).map sampleSeed).mats z).val) hdist hloop
-  have hcoarse := sum_xSqNorm_fibSum_le (norm_evec_eq_one_of_unit hψ)
-    (readout_isPVM (some : (ι → F) → Option (ι → F))).aOp
-    (isPVM_povm_map (MB (QuestionType.sample w, 0)) hS sampleSeed) (Option.map g)
+  have hseedB := (Ξ.reg (ι → F)).sum_xSqNorm_le_of_two_step
+    (fun z => smulKron 1 (readout (some : (ι → F) → Option (ι → F)) z))
+    (fun z => ((MA (QuestionType.sample w, 0)).map sampleSeed).op z)
+    (fun z => ((MB (QuestionType.sample w, 0)).map sampleSeed).op z) hdist hloop
+  have hcoarse := (Ξ.reg (ι → F)).sum_xSqNorm_fibSum_le hψ
+    (readout_isPVM (some : (ι → F) → Option (ι → F))).toIn.smulKron_one
+    (POVMIn.isPVMIn_map hS sampleSeed) (Option.map g)
   simp only [sampledCoarseZ_mapped, idealZ_coarse_fibSum] at hcoarse
   have hright := hcoarse.trans hseedB
   have hleft := aux_agreement_estimate E X Z P
-    (questionCheck L X Z projectPauli D DP) (registerState (ι → F) ξ) hψ MA MB hfail
+    (questionCheck L X Z projectPauli D DP) (Ξ.reg (ι → F)) hψ MA MB hfail
     .introspect .sample w w
     (TypeGraph.symmetric E X Z _ _ (TypeGraph.adj_sample_introspect E X Z w))
     introspectPair (evaluatedSamplePair (L w)) (fun a b hab => by
@@ -271,13 +260,13 @@ theorem introspect_coarseZ_commutator_alice
       have he := TypedPredicate.check_sampling L X Z projectPauli D
         (fun p s => DP p s 0 0) w hab
       exact congrArg some (Prod.ext he.1 he.2))
-  let N : POVM (Option C) ((ι → F) × H) :=
-    (IsPVM.aOp (dB := H) (readout_isPVM (fun z : ι → F => some (g z)))).toPOVM
-  have ht := coarse_joint_commutator_bound (registerState (ι → F) ξ)
+  let N : POVMIn (Option C) (Matrix (ι → F) (ι → F) 𝒜) :=
+    (readout_isPVM (fun z : ι → F => some (g z))).toIn.smulKron_one.toPOVMIn
+  have ht := coarse_joint_commutator_bound (Ξ.reg (ι → F))
     ((MA (QuestionType.introspect w, 0)).map introspectPair) N
     (MB (QuestionType.sample w, 0)) hS (sampleJointZ (L w) g)
   simp only [coarseJointLeftError, coarseJointRightError, sampleJointZ_left,
-    sampleJointZ_right, N, IsPVM.toPOVM_mats] at ht
+    sampleJointZ_right, N, IsPVMIn.toPOVMIn_op] at ht
   linarith only [ht, hleft, hright]
 
 end MIPRE.Introspection.TypedEstimates

@@ -91,13 +91,35 @@ theorem source_reject_zero (hR : R.IsPCC) (hval : R.value = 1)
       R.P.projective]
   · exact R.re_eq_zero_of_value_eq_one hval (source_mu_pos L D z) hD
 
+/-- The honest conditional readout on the concrete register-auxiliary product: read the question
+from the seed, then measure the auxiliary system (`conditionalReadout` in the register model). -/
+def kronReadout {I X Y H : Type*} [Fintype I] [DecidableEq I] [DecidableEq X] (f : I → X)
+    (P : X → Y → Matrix H H ℂ) (xa : X × Y) : Matrix (I × H) (I × H) ℂ :=
+  readout f xa.1 ⊗ₖ P xa.1 xa.2
+
+theorem kronReadout_isPVM {I X Y H : Type*} [Fintype I] [DecidableEq I] [Fintype X]
+    [DecidableEq X] [Fintype Y] [Fintype H] [DecidableEq H] (f : I → X)
+    (P : X → Y → Matrix H H ℂ) (hP : ∀ x, IsPVM (P x)) : IsPVM (kronReadout f P) where
+  isSelfAdjoint xa := by
+    rw [kronReadout, Matrix.conjTranspose_kronecker,
+      (readout_isPVM f).isSelfAdjoint, (hP xa.1).isSelfAdjoint]
+  idem xa := by
+    rw [kronReadout, ← Matrix.mul_kronecker_mul, (readout_isPVM f).idem, (hP xa.1).idem]
+  sum_eq_one := by
+    rw [Fintype.sum_prod_type]
+    simp only [kronReadout]
+    have hs (x : X) : (∑ a, readout f x ⊗ₖ P x a) = readout f x ⊗ₖ (1 : Matrix H H ℂ) := by
+      rw [← kronecker_sum_right, (hP x).sum_eq_one]
+    simp_rw [hs]
+    rw [← sum_kronecker_left, (readout_isPVM f).sum_eq_one, Matrix.one_kronecker_one]
+
 /-- The actual honest register/auxiliary measurement for each of the four core types. -/
 def coreOp (t : CoreType) (ya : (ι → F) × A) :
     Matrix ((ι → F) × Fin R.d) ((ι → F) × Fin R.d) ℂ :=
-  conditionalReadout (displayed L t) (fun y => R.P.M (t.2, originalQuestion L t y)) ya
+  kronReadout (displayed L t) (fun y => R.P.M (t.2, originalQuestion L t y)) ya
 
 theorem coreOp_isPVM (t : CoreType) : IsPVM (coreOp L D R t) :=
-  conditionalReadout_isPVM _ _ (fun _ => source_isPVM L D R _ _)
+  kronReadout_isPVM _ _ (fun _ => source_isPVM L D R _ _)
 
 /-- Each seed block contains exactly the original two auxiliary operators.
 All impossible claimed labels vanish before any commutation assumption is used. -/
@@ -106,7 +128,7 @@ theorem coreOp_mul_apply (t u : CoreType) (ya zb : (ι → F) × A)
     (coreOp L D R t ya * coreOp L D R u zb) (s, i) (s', j) =
       if s = s' ∧ displayed L t s = ya.1 ∧ displayed L u s = zb.1 then
         (R.P.M (t.2, (L t.2).eval s) ya.2 * R.P.M (u.2, (L u.2).eval s) zb.2) i j else 0 := by
-  rw [coreOp, coreOp, conditionalReadout, conditionalReadout, ← Matrix.mul_kronecker_mul,
+  rw [coreOp, coreOp, kronReadout, kronReadout, ← Matrix.mul_kronecker_mul,
     readout, readout, Matrix.diagonal_mul_diagonal]
   by_cases hs : s = s'
   · subst s'

@@ -15,6 +15,12 @@ distance and measurement errors summed only over valid full-register
 answers. Every other raw answer, and the isometric image complement, is
 accounted for by the proof. The local isometries and their estimates are
 inputs; existence of those data is the separate Pauli soundness theorem.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the strategy lives in any model
+`M`, the local isometries are one local isometry of models into the register model `Ξ.reg (ι → F)`
+of a normalized auxiliary model `Ξ`, and the value is that of any value model dominating the POVM
+strategies of `Ξ`. This is the shape of the conclusion of the Pauli basis test in a model
+(`QLD.Extraction`).
 -/
 
 noncomputable section
@@ -48,16 +54,20 @@ theorem exists_validSoundness_errorProfile (r : ℕ) {edges a b : ℝ}
     (by linarith [validSoundnessCoefficient_one_le r hE]) ha hx hε
 
 namespace TypedEstimates
-universe u
-variable {F ι A H K : Type u} {H₀ K₀ PauliType PauliAnswer κ : Type*}
+universe u v
+variable {F ι A : Type} {PauliType PauliAnswer κ : Type*}
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   [Fintype ι] [DecidableEq ι] [Fintype A] [Nonempty A]
-  [Fintype H] [DecidableEq H] [Fintype K] [DecidableEq K]
-  [Fintype H₀] [DecidableEq H₀] [Fintype K₀] [DecidableEq K₀]
   [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]
   [Fintype κ] [DecidableEq κ] {ℓ : ℕ}
+variable {𝒞 𝒜 ℬ : Type u} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜]
+  [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ]
+  [StarProper ℬ]
+variable {𝒞₀ 𝒜₀ ℬ₀ : Type*} [Ring 𝒞₀] [StarRing 𝒞₀] [Algebra ℂ 𝒞₀] [Ring 𝒜₀] [StarRing 𝒜₀]
+  [Algebra ℂ 𝒜₀] [Ring ℬ₀] [StarRing ℬ₀] [Algebra ℂ ℬ₀] [PartialOrder 𝒜₀] [StarOrderedRing 𝒜₀]
+  [PartialOrder ℬ₀] [StarOrderedRing ℬ₀]
 
-set_option backward.isDefEq.respectTransparency false in
 /-- Complete finite-game soundness from the valid-answer, unsquared-distance
 form of Pauli extraction. No zero-malformed-mass assumption is required. -/
 theorem quantumValue_ge_of_valid_isometric_images
@@ -70,58 +80,55 @@ theorem quantumValue_ge_of_valid_isometric_images
     (D : (ι → F) → (ι → F) → A → A → Bool)
     (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →
       PauliAnswer → PauliAnswer → Bool)
-    (G : Game (ι → F) (ι → F) A A)
+    (ω : ValueModel) (G : Game (ι → F) (ι → F) A A)
     (hμ : ∀ x y, G.μ x y = CL.clDist (L false).eval (L true).eval x y)
-    (hD : G.D = D) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)
-    (ψ : H₀ × K₀ → ℂ) (hψ : ‖evec ψ‖ = 1)
-    (VA : Matrix ((ι → F) × H) H₀ ℂ) (VB : Matrix ((ι → F) × K) K₀ ℂ)
-    (hVA : VAᴴ * VA = 1) (hVB : VBᴴ * VB = 1)
+    (hD : G.D = D) (Ξ : BipartiteModel.{v} 𝒞 𝒜 ℬ) (hΞ : ‖Ξ.ψ‖ = 1)
+    (hω : ω.DominatesPOVM Ξ) (M : BipartiteModel 𝒞₀ 𝒜₀ ℬ₀) (hM : ‖M.ψ‖ = 1)
+    (Φ : BipartiteModel.LocalIsometry M (Ξ.reg (ι → F)))
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) H₀)
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) 𝒜₀)
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVM (ParsedAnswer (ι → F) A PauliAnswer) K₀)
-    (hMA : ∀ q, IsPVM (fun a => ((MA q).mats a).val))
-    (hMB : ∀ q, IsPVM (fun a => ((MB q).mats a).val))
+      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) ℬ₀)
+    (hMA : ∀ q, IsPVMIn (MA q).op) (hMB : ∀ q, IsPVMIn (MB q).op)
     (qX qZ : κ → ZMod 2)
     (hqX : ∀ z, (P X).eval z = qX) (hqZ : ∀ z, (P Z).eval z = qZ)
     {t : ℝ} (ht : 0 ≤ t)
-    (hstate : ‖evec (isometricState VA VB ψ - registerState (ι → F) ξ)‖ ≤ t)
-    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ t)
-    (hX : ∑ x, snorm (registerState (ι → F) ξ) (aOp
-      (isometricImage VA ((MA (QuestionType.pauli X, qX)).mats (.pauli (validPauli x))).val -
-        (aOp (Honest.pauliXReadout (some x)) : Matrix ((ι → F) × H) _ ℂ))) ^ 2 ≤ t)
-    (hZ : ∑ z, snorm (registerState (ι → F) ξ) (bOp
-      (isometricImage VB ((MB (QuestionType.pauli Z, qZ)).mats (.pauli (validPauli z))).val -
-        (aOp (readout (some : (ι → F) → Option (ι → F)) (some z)) :
-          Matrix ((ι → F) × K) _ ℂ))) ^ 2 ≤ t) :
+    (hstate : ‖Φ.W M.ψ - (Ξ.reg (ι → F)).ψ‖ ≤ t)
+    (hfail : 1 - M.povmValue (parsedGame E X Z P L projectPauli D DP) MA MB ≤ t)
+    (hX : ∑ x, (Ξ.reg (ι → F)).stateSqNorm
+      (Φ.ΦA ((MA (QuestionType.pauli X, qX)).op (.pauli (validPauli x))) -
+        smulKron 1 (Honest.pauliXReadout (some x))) ≤ t)
+    (hZ : ∑ z, (Ξ.reg (ι → F)).swap.stateSqNorm
+      (Φ.ΦB ((MB (QuestionType.pauli Z, qZ)).op (.pauli (validPauli z))) -
+        smulKron 1 (readout (some : (ι → F) → Option (ι → F)) (some z))) ≤ t) :
     1 - validSoundnessCoefficient ℓ (TypeGraph.edges E X Z ℓ).card *
-      iteratedRoot (6 * ℓ + 2) t ≤ quantumValue G := by
+      iteratedRoot (6 * ℓ + 2) t ≤ ω.val G := by
   have hE : (0 : ℝ) ≤ (TypeGraph.edges E X Z ℓ).card := Nat.cast_nonneg _
   by_cases ht1 : t ≤ 1
-  · have hnφ := registerState_norm (I := ι → F) ξ (norm_evec_eq_one_of_unit hξ)
+  · have hreg : ‖(Ξ.reg (ι → F)).ψ‖ = 1 := by rw [BipartiteModel.norm_reg_ψ, hΞ]
     have hv (x : ι → F) : pauliProjection projectPauli
         (ParsedAnswer.pauli (A := A) (validPauli x)) = some x := by
       simp only [pauliProjection, hvalid]
-    have hx := isometric_valid_outcome_alice_error_le VA hVA _ hnφ
+    have hx := isometric_valid_outcome_alice_error_le Φ hreg
       (MA (QuestionType.pauli X, qX)) (pauliProjection projectPauli)
-      (fun x => .pauli (validPauli x)) hv (fun x => aOp (Honest.pauliXReadout x))
-      Honest.pauliXReadout_isPVM.aOp (by rw [Honest.pauliXReadout_none, aOp_zero]) hX
-    have hz := isometric_valid_outcome_bob_error_le VB hVB _ hnφ
+      (fun x => .pauli (validPauli x)) hv (fun x => smulKron 1 (Honest.pauliXReadout x))
+      (Honest.pauliXReadout_isPVM (F := F) (ι := ι)).toIn.smulKron_one
+      (by rw [Honest.pauliXReadout_none, smulKron_zero_right]) hX
+    have hz := isometric_valid_outcome_bob_error_le Φ hreg
       (MB (QuestionType.pauli Z, qZ)) (pauliProjection projectPauli)
-      (fun x => .pauli (validPauli x)) hv (fun z => aOp (readout (some : (ι → F) → Option (ι → F)) z))
-      (readout_isPVM some).aOp (by simp [readout, aOp_zero]) hZ
+      (fun x => .pauli (validPauli x)) hv
+      (fun z => smulKron 1 (readout (some : (ι → F) → Option (ι → F)) z))
+      (readout_isPVM (some : (ι → F) → Option (ι → F))).toIn.smulKron_one
+      (by simp [readout, smulKron_zero_right]) hZ
     have hs := Real.sqrt_nonneg t
     have htr : t ≤ Real.sqrt t := by
       simpa only [iteratedRoot] using self_le_iteratedRoot 1 ht ht1
-    have hstate' : ‖evec (isometricState VA VB ψ - registerState (ι → F) ξ)‖ ^ 2 ≤
-        6 * Real.sqrt t := by
-      nlinarith [norm_nonneg (evec (isometricState VA VB ψ - registerState (ι → F) ξ)),
-        mul_nonneg ht (sub_nonneg.mpr ht1)]
+    have hstate' : ‖Φ.W M.ψ - (Ξ.reg (ι → F)).ψ‖ ^ 2 ≤ 6 * Real.sqrt t := by
+      nlinarith [norm_nonneg (Φ.W M.ψ - (Ξ.reg (ι → F)).ψ), mul_nonneg ht (sub_nonneg.mpr ht1)]
     have hout := quantumValue_ge_of_isometric_images E X Z P L hL projectPauli D DP
-      G hμ hD ξ hξ ψ hψ VA VB hVA hVB MA MB hMA hMB qX qZ hqX hqZ
+      ω G hμ hD Ξ hΞ hω M hM Φ MA MB hMA hMB qX qZ hqX hqZ
       (show 0 ≤ 6 * Real.sqrt t by positivity) hstate' (hfail.trans (by linarith))
-      (by simpa only [stateSqNorm, stateNorm, norm_stateVec_eq_snorm] using
-        hx.trans (show 2 * t + 4 * Real.sqrt t ≤ 6 * Real.sqrt t by linarith))
+      (hx.trans (show 2 * t + 4 * Real.sqrt t ≤ 6 * Real.sqrt t by linarith))
       (hz.trans (by linarith))
     have hr := iteratedRoot_scale_le (6 * ℓ + 1) (c := 6) (t := Real.sqrt t) (by norm_num)
     have he : iteratedRoot (6 * ℓ + 1) (Real.sqrt t) = iteratedRoot (6 * ℓ + 2) t := by
@@ -138,8 +145,7 @@ theorem quantumValue_ge_of_valid_isometric_images
         iteratedRoot (6 * ℓ + 2) t := by
       nlinarith [mul_nonneg (sub_nonneg.mpr hc) (sub_nonneg.mpr hr)]
     exact (by linarith : 1 - validSoundnessCoefficient ℓ
-      (TypeGraph.edges E X Z ℓ).card * iteratedRoot (6 * ℓ + 2) t ≤ 0).trans
-      (quantumValue_nonneg G)
+      (TypeGraph.edges E X Z ℓ).card * iteratedRoot (6 * ℓ + 2) t ≤ 0).trans (ω.nonneg G)
 
 end TypedEstimates
 end MIPRE.Introspection

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 public import MIPRE.Background.QLD.CLBinary
+public import MIPRE.Foundations.ModelStrategy
 
 @[expose] public section
 
@@ -13,6 +14,9 @@ Question content has a canonical ambient encoding, with unused registers set
 to zero. This encoding inverts the decoder on every attained CL output.
 Consequently arbitrary strategies for the binary typed game pull back to the
 existing Pauli game with exactly the same state, dimensions, and value.
+
+The strategies are projective strategies of any bipartite model (Phase 4 of
+`planning/mipco-track.md`); the pullback stays in the same model.
 -/
 
 noncomputable section
@@ -117,27 +121,31 @@ def binaryGame (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
   exact SampledGame.game (binaryQuery hm b false) (binaryQuery hm b true)
     (fun x y a b' => accepts hm (decodeQuestion b x) (decodeQuestion b y) a b')
 
+section Model
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
+
 /-- Play the binary game's measurements at the canonical encoding of each
-Pauli question. The shared state is unchanged. -/
+Pauli question. The model, and so the shared state, is unchanged. -/
 def pullbackStrategy (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
-    (S : TensorProductStrategy (binaryGame (d := d) hm b)) :
-    TensorProductStrategy (qldGame (d := d) hm) where
-  dA := S.dA
-  dB := S.dB
-  ψ := S.ψ
+    (S : M.ProjStrat (binaryGame (d := d) hm b)) : M.ProjStrat (qldGame (d := d) hm) where
+  PA q := S.PA (encodeQuestion b q)
+  PB q := S.PB (encodeQuestion b q)
+  projA q := S.projA _
+  projB q := S.projB _
   ψ_unit := S.ψ_unit
-  PA := S.PA.reindex (encodeQuestion b) (Equiv.refl _)
-  PB := S.PB.reindex (encodeQuestion b) (Equiv.refl _)
 
 theorem pullbackStrategy_value (hm : m ∣ Fintype.card F)
     (b : Module.Basis (Fin t) (ZMod 2) F)
-    (S : TensorProductStrategy (binaryGame (d := d) hm b)) :
+    (S : M.ProjStrat (binaryGame (d := d) hm b)) :
     (pullbackStrategy hm b S).value = S.value := by
-  rw [TensorProductStrategy.value_eq_sum_succAt, TensorProductStrategy.value_eq_sum_succAt]
+  unfold BipartiteModel.ProjStrat.value BipartiteModel.povmValue
   simp_rw [qldGame_mu_binaryPresentation hm b]
   rw [SampledGame.sum_dist_mul]
   change _ = ∑ x, ∑ y, SampledGame.dist (binaryQuery hm b false)
-    (binaryQuery hm b true) x y * S.succAt x y
+    (binaryQuery hm b true) x y * M.condWin _ S.PA S.PB x y
   rw [SampledGame.sum_dist_mul]
   apply congrArg (fun r : ℝ => r /
     (Fintype.card (TyEdge × (Fin ((3 * m + 3) * t) → ZMod 2)) : ℝ))
@@ -145,25 +153,24 @@ theorem pullbackStrategy_value (hm : m ∣ Fintype.card F)
   have hA := encode_decode_eval hm b p.1.val.1 p.2
   have hB := encode_decode_eval hm b p.1.val.2 p.2
   simp only [decodeQuestion] at hA hB
-  unfold TensorProductStrategy.succAt TensorProductStrategy.born
-  simp only [pullbackStrategy, ProjectiveMeasurement.reindex_M, Equiv.refl_apply,
-    binaryGame, SampledGame.game, binaryQuery, Bool.false_eq_true, ↓reduceIte,
-    decodeQuestion, hA, hB, qldGame_D]
+  unfold BipartiteModel.condWin
+  simp only [pullbackStrategy, binaryGame, SampledGame.game, binaryQuery, Bool.false_eq_true,
+    ↓reduceIte, decodeQuestion, hA, hB, qldGame_D]
   rfl
 
 theorem pullbackStrategy_pauli_A (hm : m ∣ Fintype.card F)
     (b : Module.Basis (Fin t) (ZMod 2) F)
-    (S : TensorProductStrategy (binaryGame (d := d) hm b)) (W : Bas) (a : Answer F m d) :
-    (pullbackStrategy hm b S).PA.M (.pauli W) a = S.PA.M (.pauli W, 0) a := by
-  simp only [pullbackStrategy, ProjectiveMeasurement.reindex_M, Equiv.refl_apply,
-    encodeQuestion, Question.ty, canonicalVector_pauli, map_zero]
+    (S : M.ProjStrat (binaryGame (d := d) hm b)) (W : Bas) :
+    (pullbackStrategy hm b S).PA (.pauli W) = S.PA (.pauli W, 0) := by
+  simp only [pullbackStrategy, encodeQuestion, Question.ty, canonicalVector_pauli, map_zero]
 
 theorem pullbackStrategy_pauli_B (hm : m ∣ Fintype.card F)
     (b : Module.Basis (Fin t) (ZMod 2) F)
-    (S : TensorProductStrategy (binaryGame (d := d) hm b)) (W : Bas) (a : Answer F m d) :
-    (pullbackStrategy hm b S).PB.M (.pauli W) a = S.PB.M (.pauli W, 0) a := by
-  simp only [pullbackStrategy, ProjectiveMeasurement.reindex_M, Equiv.refl_apply,
-    encodeQuestion, Question.ty, canonicalVector_pauli, map_zero]
+    (S : M.ProjStrat (binaryGame (d := d) hm b)) (W : Bas) :
+    (pullbackStrategy hm b S).PB (.pauli W) = S.PB (.pauli W, 0) := by
+  simp only [pullbackStrategy, encodeQuestion, Question.ty, canonicalVector_pauli, map_zero]
+
+end Model
 
 end MIPRE.QLD.PauliCL
 end

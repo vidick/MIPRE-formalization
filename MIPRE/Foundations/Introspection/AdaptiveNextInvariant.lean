@@ -13,6 +13,15 @@ The next residual PVM is constructed from the previous prefix and current
 coordinate branch. Unattainable next prefixes receive a fixed default PVM;
 their ambient operators are zero. The answer component, including any dummy
 answer, is retained without an additional support assumption.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): a next residual operator is a
+block matrix over the remaining coordinates of the next prefix whose entries are block matrices
+over the ancilla `T` with entries in any algebra `𝒜`
+(`Matrix (stageRemaining P (k + 1) v → F) _ (Matrix T T 𝒜)`), so the auxiliary system and the
+ancilla live inside the algebra. The transport of `nextResidualOp` to an equal next label is
+unchanged; the default PVM at an unattainable prefix is the register readout of the constant
+answer, entering as `smulKron 1 _`, as in `initialResidualPOVM`. Projectivity is `IsPVMIn`, and
+the coarse-graining of the joint replacement measurement along the advanced answer is `fibSumIn`.
 -/
 
 noncomputable section
@@ -20,9 +29,11 @@ namespace MIPRE.Introspection
 open Finset Matrix Classical Weyl
 set_option linter.unusedSectionVars false
 
-variable {ι F H A : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι F A : Type*} [Fintype ι] [DecidableEq ι]
   [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  [Fintype H] [DecidableEq H] [Fintype A] [DecidableEq A] {ℓ : ℕ}
+  [Fintype A] [DecidableEq A] {ℓ : ℕ}
+variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜]
+variable {T : Type*} [Fintype T] [DecidableEq T]
 
 abbrev AttainableStageCoordinate (P : CL.CLFun F ι ℓ) (k : ℕ) :=
   (y : ↥(prefixOutcomes P k)) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F)
@@ -48,24 +59,25 @@ theorem nextPrefixSource_advance (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn uni
 def nextResidualOpAt (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F)
     (v : ι → F) (hv : advancePrefix P k y z = v)
-    (N : Matrix (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A)
-      (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A) ℂ) :
-    Matrix ((stageRemaining P (k + 1) v → F) × (H × A))
-      ((stageRemaining P (k + 1) v → F) × (H × A)) ℂ :=
+    (N : Matrix T T (Matrix (↥(stageRemaining P k y \ P.factorOfPrefix k y) → F)
+      (↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) 𝒜)) :
+    Matrix (stageRemaining P (k + 1) v → F) (stageRemaining P (k + 1) v → F) (Matrix T T 𝒜) :=
   hv ▸ nextResidualOp P hP k y z N
 
 theorem nextResidualOpAt_isPVM (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F)
     (v : ι → F) (hv : advancePrefix P k y z = v)
-    (N : A → Matrix (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A) _ ℂ)
-    (hN : IsPVM N) : IsPVM (nextResidualOpAt P hP k y z v hv ∘ N) := by
+    (N : A → Matrix T T (Matrix (↥(stageRemaining P k y \ P.factorOfPrefix k y) → F)
+      (↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) 𝒜))
+    (hN : IsPVMIn N) : IsPVMIn (nextResidualOpAt P hP k y z v hv ∘ N) := by
   subst v
   exact nextResidualOp_isPVM P hP k y z N hN
 
 theorem prefixResidualOp_nextResidualOpAt (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F)
     (v : ι → F) (hv : advancePrefix P k y z = v)
-    (N : Matrix (((↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) × H) × A) _ ℂ) :
+    (N : Matrix T T (Matrix (↥(stageRemaining P k y \ P.factorOfPrefix k y) → F)
+      (↥(stageRemaining P k y \ P.factorOfPrefix k y) → F) 𝒜)) :
     prefixResidualOp P (k + 1) (advancePrefix P k y z) (nextResidualOp P hP k y z N) =
       prefixResidualOp P (k + 1) v (nextResidualOpAt P hP k y z v hv N) := by
   subst v
@@ -73,45 +85,44 @@ theorem prefixResidualOp_nextResidualOpAt (P : CL.CLFun F ι ℓ) (hP : P.Suppor
 
 /-- The residual projectors after advancing to the next prefix. -/
 def nextPrefixResidual (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
-    (k : ℕ) (a₀ : A) (D : AdaptiveDilationFamily P k H A) (v : ι → F) (a : A) :
-    Matrix ((stageRemaining P (k + 1) v → F) × (H × A))
-      ((stageRemaining P (k + 1) v → F) × (H × A)) ℂ :=
+    (k : ℕ) (a₀ : A) (D : AdaptiveDilationFamily P k 𝒜 T A) (v : ι → F) (a : A) :
+    Matrix (stageRemaining P (k + 1) v → F) (stageRemaining P (k + 1) v → F) (Matrix T T 𝒜) :=
   if hv : v ∈ prefixOutcomes P (k + 1) then
     let p := nextPrefixSource P hP k v hv
     nextResidualOpAt P hP k p.1 p.2 v (nextPrefixSource_advance P hP k v hv) (D p.1 p.2 a)
-  else readout (fun _ => a₀) a
+  else smulKron 1 (readout (fun _ => a₀) a)
 
-theorem nextPrefixResidual_isPVM (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
-    (k : ℕ) (a₀ : A) (D : AdaptiveDilationFamily P k H A)
-    (hD : ∀ y z, IsPVM (D y z)) (v : ι → F) :
-    IsPVM (nextPrefixResidual P hP k a₀ D v) := by
+theorem nextPrefixResidual_isPVM [StarModule ℂ 𝒜] (P : CL.CLFun F ι ℓ)
+    (hP : P.SupportedOn univ) (k : ℕ) (a₀ : A) (D : AdaptiveDilationFamily P k 𝒜 T A)
+    (hD : ∀ y z, IsPVMIn (D y z)) (v : ι → F) :
+    IsPVMIn (nextPrefixResidual P hP k a₀ D v) := by
   by_cases hv : v ∈ prefixOutcomes P (k + 1)
   · let p := nextPrefixSource P hP k v hv
     have he : nextPrefixResidual P hP k a₀ D v =
         nextResidualOpAt P hP k p.1 p.2 v (nextPrefixSource_advance P hP k v hv) ∘ D p.1 p.2 := by
       funext a
-      simp only [nextPrefixResidual, dif_pos hv, Function.comp_apply, p]
+      simp only [nextPrefixResidual, dite_eq_left hv, Function.comp_apply, p]
     rw [he]
     exact nextResidualOpAt_isPVM P hP k p.1 p.2 v _ _ (hD p.1 p.2)
-  · have he : nextPrefixResidual P hP k a₀ D v =
-        readout (fun _ : (stageRemaining P (k + 1) v → F) × (H × A) => a₀) := by
+  · have he : nextPrefixResidual P hP k a₀ D v = fun a => smulKron (1 : Matrix T T 𝒜)
+        (readout (fun _ : stageRemaining P (k + 1) v → F => a₀) a) := by
       funext a
-      simp only [nextPrefixResidual, dif_neg hv]
+      simp only [nextPrefixResidual, dite_eq_right hv]
     rw [he]
-    exact readout_isPVM _
+    exact IsPVMIn.smulKron_one (readout_isPVM _).toIn
 
 /-- Retain the original residual answer and advance only the prefix label. -/
 def advanceStageAnswer (P : CL.CLFun F ι ℓ) (k : ℕ) (p : AdaptiveStageAnswer P k A) :
     (ι → F) × A := (advancePrefix P k p.1 p.2.1, p.2.2)
 
 theorem adaptiveReplacementJointOp_off_prefix (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ) (D : AdaptiveDilationFamily P k H A)
+    (hP : P.SupportedOn univ) (k : ℕ) (D : AdaptiveDilationFamily P k 𝒜 T A)
     (p : AdaptiveStageAnswer P k A) (hp : p.1 ∉ prefixOutcomes P k) :
     adaptiveReplacementJointOp P hP k D p = 0 :=
   prefixResidualOp_eq_zero P k p.1 hp _
 
 theorem adaptiveReplacementJointOp_off_next (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ) (D : AdaptiveDilationFamily P k H A)
+    (hP : P.SupportedOn univ) (k : ℕ) (D : AdaptiveDilationFamily P k 𝒜 T A)
     (p : AdaptiveStageAnswer P k A)
     (hp : (advanceStageAnswer P k p).1 ∉ prefixOutcomes P (k + 1)) :
     adaptiveReplacementJointOp P hP k D p = 0 := by
@@ -141,8 +152,8 @@ theorem advanceStageAnswer_injective_support (P : CL.CLFun F ι ℓ)
 All off-image branches vanish exactly; no conclusion-shaped premise is used. -/
 theorem adaptiveReplacementJointOp_next_reassembly (P : CL.CLFun F ι ℓ)
     (hP : P.SupportedOn univ) (k : ℕ) (a₀ : A)
-    (D : AdaptiveDilationFamily P k H A) (v : ι → F) (a : A) :
-    fibSum (adaptiveReplacementJointOp P hP k D) (advanceStageAnswer P k) (v, a) =
+    (D : AdaptiveDilationFamily P k 𝒜 T A) (v : ι → F) (a : A) :
+    fibSumIn (adaptiveReplacementJointOp P hP k D) (advanceStageAnswer P k) (v, a) =
       prefixResidualOp P (k + 1) v (nextPrefixResidual P hP k a₀ D v a) := by
   by_cases hv : v ∈ prefixOutcomes P (k + 1)
   · let p := nextPrefixSource P hP k v hv
@@ -150,7 +161,7 @@ theorem adaptiveReplacementJointOp_next_reassembly (P : CL.CLFun F ι ℓ)
     have hq : advanceStageAnswer P k q = (v, a) :=
       Prod.ext (nextPrefixSource_advance P hP k v hv) rfl
     have hm : q ∈ univ.filter (fun r => advanceStageAnswer P k r = (v, a)) := by simp [hq]
-    have heq : fibSum (adaptiveReplacementJointOp P hP k D) (advanceStageAnswer P k) (v, a) =
+    have heq : fibSumIn (adaptiveReplacementJointOp P hP k D) (advanceStageAnswer P k) (v, a) =
         adaptiveReplacementJointOp P hP k D q := by
       apply Finset.sum_eq_single_of_mem q hm
       intro r hr hrq
@@ -164,7 +175,7 @@ theorem adaptiveReplacementJointOp_next_reassembly (P : CL.CLFun F ι ℓ)
     have hp := nextPrefixSource_advance P hP k v hv
     change prefixResidualOp P (k + 1) (advancePrefix P k p.1 p.2)
       (nextResidualOp P hP k p.1 p.2 (D p.1 p.2 a)) = _
-    simp only [nextPrefixResidual, dif_pos hv]
+    simp only [nextPrefixResidual, dite_eq_left hv]
     exact prefixResidualOp_nextResidualOpAt P hP k p.1 p.2 v hp _
   · rw [prefixResidualOp_eq_zero P (k + 1) v hv]
     apply Finset.sum_eq_zero
@@ -174,15 +185,16 @@ theorem adaptiveReplacementJointOp_next_reassembly (P : CL.CLFun F ι ℓ)
     simpa only [he] using hv
 
 /-- The reassembled next-prefix family is a projective measurement on the
-same ambient register and the single enlarged auxiliary space. -/
-theorem nextPrefixJoint_isPVM (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
-    (k : ℕ) (a₀ : A) (D : AdaptiveDilationFamily P k H A)
-    (hD : ∀ y z, IsPVM (D y z)) :
-    IsPVM (fun p : (ι → F) × A =>
+same ambient register, with entries in the single enlarged auxiliary algebra `Matrix T T 𝒜`. -/
+theorem nextPrefixJoint_isPVM [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+    [StarProper 𝒜] (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
+    (k : ℕ) (a₀ : A) (D : AdaptiveDilationFamily P k 𝒜 T A)
+    (hD : ∀ y z, IsPVMIn (D y z)) :
+    IsPVMIn (fun p : (ι → F) × A =>
       prefixResidualOp P (k + 1) p.1 (nextPrefixResidual P hP k a₀ D p.1 p.2)) := by
-  have h := isPVM_fibSum (adaptiveReplacementJointOp_isPVM P hP k D hD)
+  have h := isPVMIn_fibSumIn (adaptiveReplacementJointOp_isPVM P hP k D hD)
     (advanceStageAnswer P k)
-  have he : fibSum (adaptiveReplacementJointOp P hP k D) (advanceStageAnswer P k) =
+  have he : fibSumIn (adaptiveReplacementJointOp P hP k D) (advanceStageAnswer P k) =
       (fun p : (ι → F) × A =>
         prefixResidualOp P (k + 1) p.1 (nextPrefixResidual P hP k a₀ D p.1 p.2)) := by
     funext p

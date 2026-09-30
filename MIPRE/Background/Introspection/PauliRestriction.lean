@@ -13,6 +13,10 @@ public import MIPRE.Background.QLD.CLTransport
 The strategy is built on exactly the original finite registers and state.
 Outer malformed answers are completed at fixed answers; the binary CL
 strategy then pulls back to the actual QLD game along canonical encodings.
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the strategies are projective
+strategies of one model `Ξ`, and the restricted QLD strategy is a strategy of the same model, so
+the state is unchanged by construction.
 -/
 
 noncomputable section
@@ -35,57 +39,58 @@ def fullGame (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
   TypedEstimates.parsedGame QLD.adj (.pauli .X) (.pauli .Z)
     (QLD.PauliCL.binaryPresentation hm b) L project D (pauliCheck hm b)
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {Ξ : BipartiteModel 𝒞 𝒜 ℬ}
+
 variable (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
   (L : Bool → CL.CLFun F₀ ι ℓ) (project : QLD.Answer F m d → ι → F₀)
   (D : (ι → F₀) → (ι → F₀) → A → A → Bool)
-  (S : TensorProductStrategy (fullGame hm b L project D))
+  (S : Ξ.ProjStrat (fullGame hm b L project D))
 
 def alice (a₀ : QLD.Answer F m d) (q : QLD.PauliCL.BinaryQuestion m t) :
-    POVM (QLD.Answer F m d) (Fin S.dA) :=
-  completePauliPOVM a₀ (S.PA.toPOVM (.inl q.1,q.2))
+    POVMIn (QLD.Answer F m d) 𝒜 :=
+  completePauliPOVM a₀ (S.PA (.inl q.1,q.2))
 
 def bob (b₀ : QLD.Answer F m d) (q : QLD.PauliCL.BinaryQuestion m t) :
-    POVM (QLD.Answer F m d) (Fin S.dB) :=
-  completePauliPOVM b₀ (S.PB.toPOVM (.inl q.1,q.2))
+    POVMIn (QLD.Answer F m d) ℬ :=
+  completePauliPOVM b₀ (S.PB (.inl q.1,q.2))
 
 theorem alice_isPVM (a₀ : QLD.Answer F m d) (q : QLD.PauliCL.BinaryQuestion m t) :
-    IsPVM (fun a => ((alice hm b L project D S a₀ q).mats a).val) := by
-  apply completePauliPOVM_isPVM
-  exact ⟨S.PA.selfAdjoint _, S.PA.projective _, S.PA.normalized _⟩
+    IsPVMIn (alice hm b L project D S a₀ q).op :=
+  completePauliPOVM_isPVM _ _ (S.projA _)
 
 theorem bob_isPVM (b₀ : QLD.Answer F m d) (q : QLD.PauliCL.BinaryQuestion m t) :
-    IsPVM (fun a => ((bob hm b L project D S b₀ q).mats a).val) := by
-  apply completePauliPOVM_isPVM
-  exact ⟨S.PB.selfAdjoint _, S.PB.projective _, S.PB.normalized _⟩
+    IsPVMIn (bob hm b L project D S b₀ q).op :=
+  completePauliPOVM_isPVM _ _ (S.projB _)
 
 /-- Restriction and answer completion preserve the actual original state. -/
 def binaryStrategy (a₀ b₀ : QLD.Answer F m d) :
-    TensorProductStrategy (QLD.PauliCL.binaryGame (d := d) hm b) where
-  dA := S.dA
-  dB := S.dB
-  ψ := S.ψ
+    Ξ.ProjStrat (QLD.PauliCL.binaryGame (d := d) hm b) where
+  PA := alice hm b L project D S a₀
+  PB := bob hm b L project D S b₀
+  projA := alice_isPVM hm b L project D S a₀
+  projB := bob_isPVM hm b L project D S b₀
   ψ_unit := S.ψ_unit
-  PA := ProjectiveMeasurement.ofIsPVM (alice hm b L project D S a₀)
-    (alice_isPVM hm b L project D S a₀)
-  PB := ProjectiveMeasurement.ofIsPVM (bob hm b L project D S b₀)
-    (bob_isPVM hm b L project D S b₀)
 
 theorem binaryStrategy_failAt_le (a₀ b₀ : QLD.Answer F m d)
     (x y : QLD.PauliCL.BinaryQuestion m t) :
-    (binaryStrategy hm b L project D S a₀ b₀).failAt x y ≤
-      S.failAt (.inl x.1,x.2) (.inl y.1,y.2) :=
+    Ξ.condFail (QLD.PauliCL.binaryGame (d := d) hm b)
+        (binaryStrategy hm b L project D S a₀ b₀).PA
+        (binaryStrategy hm b L project D S a₀ b₀).PB x y ≤
+      Ξ.condFail (fullGame hm b L project D) S.PA S.PB (.inl x.1,x.2) (.inl y.1,y.2) :=
   TypedEstimates.completed_pauli_condFail_le QLD.adj (.pauli .X) (.pauli .Z)
     (QLD.PauliCL.binaryPresentation hm b) L project D (pauliCheck hm b)
-    (QLD.PauliCL.binaryGame hm b) (fun _ _ _ _ => rfl) S.ψ
-    S.PA.toPOVM S.PB.toPOVM a₀ b₀ x y
+    (QLD.PauliCL.binaryGame hm b) (fun _ _ _ _ => rfl) Ξ
+    (fun q => S.PA q) (fun q => S.PB q) a₀ b₀ x y
 
-set_option backward.isDefEq.respectTransparency false in
 /-- The full ordered-edge count is a uniform soundness factor for restriction. -/
 theorem binaryStrategy_failure_le (a₀ b₀ : QLD.Answer F m d) {ε : ℝ}
     (hS : 1 - S.value ≤ ε) :
     1 - (binaryStrategy hm b L project D S a₀ b₀).value ≤
       (TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card * ε := by
   let R := binaryStrategy hm b L project D S a₀ b₀
+  let G := QLD.PauliCL.binaryGame (d := d) hm b
   let n : ℝ := Fintype.card (Fin ((3*m+3)*t) → ZMod 2)
   let c : ℝ := (TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card * ε
   have hn : 0 < n := by dsimp [n]; exact_mod_cast Fintype.card_pos
@@ -93,7 +98,8 @@ theorem binaryStrategy_failure_le (a₀ b₀ : QLD.Answer F m d) {ε : ℝ}
   have he : (0 : ℝ) < Fintype.card QLD.TyEdge := by exact_mod_cast Fintype.card_pos
   have havg (e : QLD.TyEdge) :
       (∑ z : Fin ((3*m+3)*t) → ZMod 2,
-        R.failAt (e.val.1, (QLD.PauliCL.binaryPresentation hm b e.val.1).eval z)
+        Ξ.condFail G R.PA R.PB
+          (e.val.1, (QLD.PauliCL.binaryPresentation hm b e.val.1).eval z)
           (e.val.2, (QLD.PauliCL.binaryPresentation hm b e.val.2).eval z)) / n ≤ c := by
     have hedge : TypeGraph.Adj (ℓ := ℓ) QLD.adj (.pauli .X) (.pauli .Z)
         (.inl e.val.1) (.inl e.val.2) := by
@@ -103,8 +109,8 @@ theorem binaryStrategy_failure_le (a₀ b₀ : QLD.Answer F m d) {ε : ℝ}
     have hf := TypedEstimates.typed_edge_mean_failure_le QLD.adj (.pauli .X) (.pauli .Z)
       (QLD.PauliCL.binaryPresentation hm b)
       (TypedEstimates.questionCheck L (.pauli .X) (.pauli .Z) project D (pauliCheck hm b))
-      S.ψ S.ψ_unit S.PA.toPOVM S.PB.toPOVM
-      (by simpa only [TensorProductStrategy.value_eq_povmValue, fullGame,
+      Ξ S.ψ_unit (fun q => S.PA q) (fun q => S.PB q)
+      (by simpa only [BipartiteModel.ProjStrat.value, fullGame,
         TypedEstimates.parsedGame] using hS)
       (.inl e.val.1) (.inl e.val.2) hedge
     apply le_trans (div_le_div_of_nonneg_right (Finset.sum_le_sum (fun z _ =>
@@ -113,12 +119,13 @@ theorem binaryStrategy_failure_le (a₀ b₀ : QLD.Answer F m d) {ε : ℝ}
   have hs := Finset.sum_le_sum (fun e (_ : e ∈ (univ : Finset QLD.TyEdge)) => havg e)
   have hform : 1 - R.value =
       (∑ e : QLD.TyEdge, (∑ z : Fin ((3*m+3)*t) → ZMod 2,
-        R.failAt (e.val.1, (QLD.PauliCL.binaryPresentation hm b e.val.1).eval z)
+        Ξ.condFail G R.PA R.PB
+          (e.val.1, (QLD.PauliCL.binaryPresentation hm b e.val.1).eval z)
           (e.val.2, (QLD.PauliCL.binaryPresentation hm b e.val.2).eval z)) / n) /
         Fintype.card QLD.TyEdge := by
-    rw [R.one_sub_value_eq_sum_failAt]
+    rw [BipartiteModel.ProjStrat.value, Ξ.one_sub_povmValue_eq]
     change (∑ x, ∑ y, SampledGame.dist (QLD.PauliCL.binaryQuery hm b false)
-      (QLD.PauliCL.binaryQuery hm b true) x y * R.failAt x y) = _
+      (QLD.PauliCL.binaryQuery hm b true) x y * Ξ.condFail G R.PA R.PB x y) = _
     rw [SampledGame.sum_dist_mul]
     simp only [Fintype.sum_prod_type, Fintype.card_prod, Nat.cast_mul,
       QLD.PauliCL.binaryQuery, Bool.false_eq_true, ↓reduceIte, ← Finset.sum_div, div_div, n]
@@ -130,11 +137,8 @@ theorem binaryStrategy_failure_le (a₀ b₀ : QLD.Answer F m d) {ε : ℝ}
     _ = c := by simp [he.ne']
 
 /-- The actual QLD strategy obtained by canonical question pullback. -/
-def strategy (a₀ b₀ : QLD.Answer F m d) : TensorProductStrategy (QLD.qldGame (d := d) hm) :=
+def strategy (a₀ b₀ : QLD.Answer F m d) : Ξ.ProjStrat (QLD.qldGame (d := d) hm) :=
   QLD.PauliCL.pullbackStrategy hm b (binaryStrategy hm b L project D S a₀ b₀)
-
-theorem strategy_state (a₀ b₀ : QLD.Answer F m d) :
-    (strategy hm b L project D S a₀ b₀).ψ = S.ψ := rfl
 
 theorem strategy_failure_le (a₀ b₀ : QLD.Answer F m d) {ε : ℝ} (hS : 1 - S.value ≤ ε) :
     1 - (strategy hm b L project D S a₀ b₀).value ≤
@@ -142,31 +146,27 @@ theorem strategy_failure_le (a₀ b₀ : QLD.Answer F m d) {ε : ℝ} (hS : 1 - 
   rw [strategy, QLD.PauliCL.pullbackStrategy_value]
   exact binaryStrategy_failure_le hm b L project D S a₀ b₀ hS
 
-theorem strategy_pauli_A (a₀ b₀ : QLD.Answer F m d) (W : QLD.Bas) (a : QLD.Answer F m d) :
-    (strategy hm b L project D S a₀ b₀).PA.M (.pauli W) a =
-      ((completePauliPOVM a₀ (S.PA.toPOVM (QuestionType.pauli (.pauli W),0))).mats a).val := by
-  exact QLD.PauliCL.pullbackStrategy_pauli_A hm b
-    (binaryStrategy hm b L project D S a₀ b₀) W a
+theorem strategy_pauli_A (a₀ b₀ : QLD.Answer F m d) (W : QLD.Bas) :
+    (strategy hm b L project D S a₀ b₀).PA (.pauli W) =
+      completePauliPOVM a₀ (S.PA (QuestionType.pauli (.pauli W),0)) :=
+  QLD.PauliCL.pullbackStrategy_pauli_A hm b (binaryStrategy hm b L project D S a₀ b₀) W
 
-theorem strategy_pauli_B (a₀ b₀ : QLD.Answer F m d) (W : QLD.Bas) (a : QLD.Answer F m d) :
-    (strategy hm b L project D S a₀ b₀).PB.M (.pauli W) a =
-      ((completePauliPOVM b₀ (S.PB.toPOVM (QuestionType.pauli (.pauli W),0))).mats a).val := by
-  exact QLD.PauliCL.pullbackStrategy_pauli_B hm b
-    (binaryStrategy hm b L project D S a₀ b₀) W a
+theorem strategy_pauli_B (a₀ b₀ : QLD.Answer F m d) (W : QLD.Bas) :
+    (strategy hm b L project D S a₀ b₀).PB (.pauli W) =
+      completePauliPOVM b₀ (S.PB (QuestionType.pauli (.pauli W),0)) :=
+  QLD.PauliCL.pullbackStrategy_pauli_B hm b (binaryStrategy hm b L project D S a₀ b₀) W
 
 /-- Choosing a scalar completion answer leaves every genuine Pauli answer
 operator exactly unchanged, even when malformed outer answers have mass. -/
 theorem strategy_pauliAns_A (W : QLD.Bas) (a : (Fin m → Bool) → F) :
-    (strategy hm b L project D S (.val 0) (.val 0)).PA.M (.pauli W) (.pauliAns a) =
-      S.PA.M (QuestionType.pauli (.pauli W),0) (.pauli (.pauliAns a)) := by
+    ((strategy hm b L project D S (.val 0) (.val 0)).PA (.pauli W)).op (.pauliAns a) =
+      (S.PA (QuestionType.pauli (.pauli W),0)).op (.pauli (.pauliAns a)) := by
   rw [strategy_pauli_A, completePauliPOVM_mats_of_ne _ _ (by intro h; cases h)]
-  rfl
 
 theorem strategy_pauliAns_B (W : QLD.Bas) (a : (Fin m → Bool) → F) :
-    (strategy hm b L project D S (.val 0) (.val 0)).PB.M (.pauli W) (.pauliAns a) =
-      S.PB.M (QuestionType.pauli (.pauli W),0) (.pauli (.pauliAns a)) := by
+    ((strategy hm b L project D S (.val 0) (.val 0)).PB (.pauli W)).op (.pauliAns a) =
+      (S.PB (QuestionType.pauli (.pauli W),0)).op (.pauli (.pauliAns a)) := by
   rw [strategy_pauli_B, completePauliPOVM_mats_of_ne _ _ (by intro h; cases h)]
-  rfl
 
 end MIPRE.Introspection.PauliRestriction
 end

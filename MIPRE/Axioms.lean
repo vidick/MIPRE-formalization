@@ -1335,7 +1335,7 @@ tell you the guard is missing.
   MIPRE.Introspection.conditionalReadout_isPVM,
   MIPRE.Introspection.bornProb_conditionalReadout,
   MIPRE.Introspection.readoutAcceptance_eq_value,
-  MIPRE.Introspection.quantumValue_ge_of_readoutAcceptance,
+  MIPRE.Introspection.val_ge_of_readoutAcceptance,
   MIPRE.Introspection.exists_strategy_of_readoutAcceptance,
   MIPRE.Introspection.verifier_readoutAcceptance_eq_value,
   MIPRE.Introspection.errorProfile_power,
@@ -1408,9 +1408,7 @@ tell you the guard is missing.
 
 #guard_sorry_free MIPRE.CL.Detyping.DeciderProgram.numbered_clDist,
   MIPRE.CL.Detyping.DeciderProgram.verifier_game_mu,
-  MIPRE.CL.Detyping.DeciderProgram.toFinite_state,
   MIPRE.CL.Detyping.DeciderProgram.toFinite_value,
-  MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_state,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_failure_le,
   MIPRE.CL.Detyping.DeciderProgram.restrictAmbient_value_ge,
   MIPRE.CL.Detyping.DeciderProgram.fromFiniteSync_isPCC,
@@ -1445,7 +1443,8 @@ tell you the guard is missing.
   MIPRE.Introspection.sampling_hiding_isPVM
 
 #guard_sorry_free MIPRE.Introspection.linear_twirl_blocks,
-  MIPRE.Introspection.averagedBlock_posSemidef,
+  MIPRE.Introspection.star_averagedBlock,
+  MIPRE.Introspection.averagedBlock_nonneg,
   MIPRE.Introspection.sum_averagedBlock_eq_one,
   MIPRE.Introspection.blockPOVM,
   MIPRE.Introspection.linear_twirl_povm
@@ -1943,10 +1942,9 @@ tell you the guard is missing.
   MIPRE.Introspection.retained_block_le_completion,
   MIPRE.Introspection.block_retention_precompletion,
   MIPRE.Introspection.block_retention_dist_avg,
-  MIPRE.Introspection.mirror_expVec,
-  MIPRE.Introspection.eprWithAux_norm,
-  MIPRE.Introspection.eprWithAux_wX_mirror,
-  MIPRE.Introspection.eprWithAux_readout_mirror,
+  MIPRE.Introspection.mirror_expand,
+  MIPRE.Introspection.reg_wX_mirror,
+  MIPRE.Introspection.reg_readout_mirror,
   MIPRE.Introspection.pauli_twirl_dist_le,
   MIPRE.Introspection.fine_commutator_parseval,
   MIPRE.Introspection.kernel_commutator_parseval,
@@ -2153,13 +2151,14 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.Honest.parsedHide_read_reject_zero,
   MIPRE.Introspection.Honest.parsedRead_hide_reject_zero
 
-#guard_sorry_free MIPRE.Introspection.bornProb_extVecA,
-  MIPRE.Introspection.stateSqNorm_extVecA_aOp,
+#guard_sorry_free MIPRE.Introspection.qform_πA_expandA,
+  MIPRE.Introspection.stateSqNorm_expandA_diagonal,
   MIPRE.Introspection.dilated_pvm_distance,
   MIPRE.Introspection.conditionalDilationOp_isPVM,
   MIPRE.Introspection.conditionalDilationOp_compress,
   MIPRE.Introspection.conditionalDilationOp_born,
-  MIPRE.Introspection.extVecA_registerState,
+  MIPRE.Introspection.regExchange,
+  MIPRE.Introspection.regExchange_W_ψ,
   MIPRE.Introspection.exists_conditional_projective_dilation,
   MIPRE.Introspection.exists_varying_conditional_projective_dilation
 
@@ -2444,6 +2443,8 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.registeredReplacement_canonicalizeIntro,
   MIPRE.Introspection.introSuccessorFamily_isPVM,
   MIPRE.Introspection.introSuccessorInvariant,
+  MIPRE.Introspection.TypedEstimates.introBobZError,
+  MIPRE.Introspection.TypedEstimates.introAliceZError,
   MIPRE.Introspection.TypedEstimates.exists_intro_successor
 
 #guard_sorry_free MIPRE.Introspection.adaptiveStageBudget_mono_depth,
@@ -2452,9 +2453,7 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.adaptiveFailureBudget_le_threshold,
   MIPRE.Introspection.adaptiveStageBudget_le_one_of_threshold
 
-#guard_sorry_free MIPRE.Introspection.introIterationState_unit,
-  MIPRE.Introspection.TypedEstimates.introBobZError_introIterationState,
-  MIPRE.Introspection.TypedEstimates.exists_intro_iteration
+#guard_sorry_free MIPRE.Introspection.TypedEstimates.exists_intro_iteration
 
 #print axioms MIPRE.Introspection.TypedEstimates.exists_intro_successor
 #print axioms MIPRE.Introspection.TypedEstimates.exists_intro_iteration
@@ -2463,16 +2462,21 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.IntroPrefixInvariant.terminal_some,
   MIPRE.Introspection.IntroPrefixInvariant.terminal_none
 
-#guard_sorry_free MIPRE.Introspection.swapVec_registerState,
-  MIPRE.Introspection.TypedPresentation.mu_swap,
+#guard_sorry_free MIPRE.Introspection.TypedPresentation.mu_swap,
+  MIPRE.Introspection.TypedEstimates.parsedGame_transpose,
+  MIPRE.Introspection.TypedEstimates.swap_reg_bornProb,
+  MIPRE.Introspection.TypedEstimates.swap_reg_povmValue,
+  MIPRE.Introspection.TypedEstimates.swap_reg_stateSqNorm,
+  MIPRE.Introspection.TypedEstimates.swap_reg_swap_stateSqNorm,
+  MIPRE.Introspection.TypedEstimates.swap_reg_xSqNorm,
   MIPRE.Introspection.TypedEstimates.parsedGame_value_swap,
-  MIPRE.Introspection.introBobIterationState_unit,
-  MIPRE.Introspection.TypedEstimates.introAliceZError_of_iteration_other,
-  MIPRE.Introspection.TypedEstimates.hidingBobError_introIterationState,
+  MIPRE.Introspection.TypedEstimates.introBobZError_swap,
+  MIPRE.Introspection.TypedEstimates.introAliceZError_swap,
+  MIPRE.Introspection.TypedEstimates.hidingAliceError_swap,
+  MIPRE.Introspection.TypedEstimates.hidingBobError_swap,
   MIPRE.Introspection.TypedEstimates.exists_intro_bob_iteration
 
 #guard_sorry_free MIPRE.Introspection.adaptiveFailureBudget_add,
-  MIPRE.Introspection.introTwoSidedState_unit,
   MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration
 
 #guard_sorry_free MIPRE.Introspection.completeOptionPOVM_isPVM,
@@ -2538,7 +2542,7 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.isometricEffect_alice_error_le,
   MIPRE.Introspection.isometricEffect_bob_error_le
 
-#guard_sorry_free MIPRE.Introspection.isometricPOVM_map_mats_eq,
+#guard_sorry_free MIPRE.Introspection.transportA_map_op,
   MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images,
   MIPRE.Introspection.submeasurement_extension_mass,
   MIPRE.Introspection.submeasurement_extension_dist,
@@ -2577,8 +2581,8 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.SourcePadding.strategy_isPCC,
   MIPRE.Introspection.SourcePadding.strategy_value,
   MIPRE.Introspection.SourcePadding.average_pull,
-  MIPRE.Introspection.SourcePadding.restrictStrategy_state,
   MIPRE.Introspection.SourcePadding.restrictStrategy_value,
+  MIPRE.Introspection.SourcePadding.exists_projStrat_value_ge,
   MIPRE.Introspection.SourcePadding.quantumValue_le,
   MIPRE.Introspection.SourcePadding.quantumValue_depthFamily_le
 
@@ -2622,6 +2626,9 @@ historical admission remains unchanged; these guards describe the Lean proof.
   MIPRE.Introspection.DecisionCompiler.raw_accepts_iff,
   MIPRE.Introspection.DecisionCompiler.output_hasPerfectPCC_of_raw,
   MIPRE.Introspection.DecisionCompiler.exists_raw_failure_le,
+  MIPRE.Introspection.DecisionCompiler.val_reference,
+  MIPRE.Introspection.DecisionCompiler.output_val_cutoff,
+  MIPRE.Introspection.DecisionCompiler.output_val_eq_reference,
   MIPRE.Introspection.CanonicalDecoded.value_le,
   MIPRE.Introspection.CanonicalDecoded.supported_A,
   MIPRE.Introspection.CanonicalDecoded.supported_B
@@ -2629,7 +2636,13 @@ historical admission remains unchanged; these guards describe the Lean proof.
 #guard_sorry_free MIPRE.Introspection.exists_seven,
   MIPRE.Introspection.seven,
   MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC,
-  MIPRE.Introspection.CompiledSoundness.output_soundness
+  MIPRE.Introspection.CompiledSoundness.output_soundness,
+  MIPRE.Introspection.sevenConstant,
+  MIPRE.Introspection.sevenConstant_spec,
+  MIPRE.Introspection.one_le_sevenConstant,
+  MIPRE.Introspection.sevenC,
+  MIPRE.Introspection.sevenC_spec,
+  MIPRE.Introspection.sevenOutput_soundness
 
 /-! ## Blocks of an index type
 
@@ -2939,5 +2952,113 @@ chain itself is restated in a model under its existing guards. -/
 
 #guard_sorry_free MIPRE.AnswerReduction.arVerifier_soundness_commuting,
   MIPRE.AnswerReduction.answerReduction_soundIn_commuting
+
+/-! The commuting-operator track, Phase 4 (`planning/mipco-track.md` §5): local isometries of
+bipartite models, `lem:local-isometry` (`MIPRE/Foundations/LocalIsometry.lean`); moving registers
+along them, `lem:ancilla-isometries` (`MIPRE/Foundations/AncillaIsometry.lean`); the register
+model, `lem:register-model` (`MIPRE/Foundations/Introspection/RegisterModel.lean`); the ancilla
+extension of a tensor-product model, `lem:tensor-expand` (`MIPRE/Foundations/TensorExpand.lean`);
+the one-sided ancilla extension, `lem:one-sided-extension`
+(`MIPRE/Foundations/AncillaDilation.lean`); the projective dilation in a star-ordered ring,
+`lem:kraus-dilation` (`MIPRE/Foundations/KrausDilation.lean`); domination of POVM strategies and
+approximation by projective ones, `lem:povm-domination` (`MIPRE/Foundations/POVMDomination.lean`,
+`MIPRE/Foundations/Introspection/SourcePaddingValue.lean`); reductions of POVM strategies,
+`lem:povm-reduction` (`MIPRE/Foundations/POVMReduction.lean`, `MIPRE/Foundations/ModelOver.lean`);
+the Pauli basis test sound in the tensor-product model, `lem:qld-sound-in-tensor`
+(`MIPRE/Background/QLD/ModelSoundness.lean`); and introspection sound in every value model where
+that test is, `thm:intro-sound-co` (`MIPRE/Background/Introspection/Compiler.lean`). The
+introspection analysis itself is restated in a model under its existing guards. -/
+#guard_sorry_free MIPRE.BipartiteModel.LocalIsometry.intertwine,
+  MIPRE.BipartiteModel.LocalIsometry.bornProb_withState,
+  MIPRE.BipartiteModel.LocalIsometry.stateSqNorm_withState,
+  MIPRE.BipartiteModel.LocalIsometry.bornProb_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.stateSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.swap_stateSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.xSqNorm_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.comp_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.isPVMIn_transportA,
+  MIPRE.BipartiteModel.LocalIsometry.isPVMIn_transportB,
+  MIPRE.BipartiteModel.LocalIsometry.intertwine_transportOpA,
+  MIPRE.BipartiteModel.LocalIsometry.povmValue_transport,
+  MIPRE.BipartiteModel.LocalIsometry.povmValue_pushforward
+
+#guard_sorry_free MIPRE.BipartiteModel.inert,
+  MIPRE.BipartiteModel.inert_W_ψ,
+  MIPRE.BipartiteModel.relabel,
+  MIPRE.BipartiteModel.relabel_W_ψ,
+  MIPRE.BipartiteModel.assoc,
+  MIPRE.BipartiteModel.assoc_W_ψ,
+  MIPRE.BipartiteModel.swapExpand,
+  MIPRE.BipartiteModel.swapExpand_W_ψ,
+  MIPRE.BipartiteModel.expand_π_πA_apply,
+  MIPRE.BipartiteModel.expand_π_πB_apply
+
+#guard_sorry_free MIPRE.BipartiteModel.norm_reg_ψ,
+  MIPRE.BipartiteModel.reg_mirror,
+  MIPRE.BipartiteModel.reg_mirror_smulKron,
+  MIPRE.BipartiteModel.regRelabel_W_ψ,
+  MIPRE.BipartiteModel.regSplit_W_ψ,
+  MIPRE.BipartiteModel.regExtend_W_ψ,
+  MIPRE.BipartiteModel.regSwap_W_ψ,
+  MIPRE.Introspection.registerEPR_equiv,
+  MIPRE.Introspection.registerEPR_prod
+
+#guard_sorry_free MIPRE.BipartiteModel.tensorExpand,
+  MIPRE.BipartiteModel.tensorExpand_W_ψ,
+  MIPRE.BipartiteModel.tensorUnexpand,
+  MIPRE.BipartiteModel.tensorUnexpand_W_ψ,
+  MIPRE.BipartiteModel.tensorUnexpand_ΦA,
+  MIPRE.BipartiteModel.tensorUnexpand_ΦB,
+  MIPRE.BipartiteModel.tensorIsometry,
+  MIPRE.BipartiteModel.tensorIsometry_W,
+  MIPRE.BipartiteModel.compSymmHom,
+  MIPRE.BipartiteModel.compSymmHom_kronecker_one
+
+#guard_sorry_free MIPRE.BipartiteModel.norm_expandA_ψ,
+  MIPRE.BipartiteModel.qform_expandA,
+  MIPRE.BipartiteModel.bornProb_expandA,
+  MIPRE.BipartiteModel.stateSqNorm_expandA,
+  MIPRE.BipartiteModel.inertA_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.expand_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.expandA_W_ψ,
+  MIPRE.BipartiteModel.exchange_W_ψ
+
+#guard_sorry_free MIPRE.exists_sum_star_mul_self,
+  MIPRE.sum_star_mul_self_pad,
+  MIPRE.Halmos.isPVMIn_proj,
+  MIPRE.DilationAncilla,
+  MIPRE.exists_pvm_dilation_ge,
+  MIPRE.exists_pvm_dilation
+
+#guard_sorry_free MIPRE.ValueModel.DominatesPOVM.dominates,
+  MIPRE.ValueModel.tensor_dominatesPOVM,
+  MIPRE.ValueModel.commuting_dominatesPOVM,
+  MIPRE.ValueModel.tensor_projApprox,
+  MIPRE.ValueModel.commuting_projApprox,
+  MIPRE.povmValue_le_quantumValue
+
+#guard_sorry_free MIPRE.BipartiteModel.POVMReduces.refl,
+  MIPRE.BipartiteModel.POVMReduces.trans,
+  MIPRE.BipartiteModel.POVMReduces.swap,
+  MIPRE.BipartiteModel.LocalIsometry.povmReduces,
+  MIPRE.BipartiteModel.povmReduces_expandA,
+  MIPRE.BipartiteModel.povmReduces_expandB,
+  MIPRE.BipartiteModel.povmValue_swap_game,
+  MIPRE.ValueModel.DominatesPOVM.of_povmReduces,
+  MIPRE.ModelOver.povmReduces_expandA,
+  MIPRE.ModelOver.norm_expandA_ψ,
+  MIPRE.POVMIn.compress_op
+
+#guard_sorry_free MIPRE.QLD.soundIn_tensor,
+  MIPRE.QLD.tensorAncilla,
+  MIPRE.QLD.tensorPhi,
+  MIPRE.QLD.tensorPhi_W_ψ,
+  MIPRE.QLD.tensorPhi_alice,
+  MIPRE.QLD.tensorPhi_bob,
+  MIPRE.QLD.approxSoundIn_tensor,
+  MIPRE.QLD.approxSoundIn_commuting
+
+#guard_sorry_free MIPRE.Introspection.seven_soundIn,
+  MIPRE.Introspection.seven_soundIn_commuting
 
 end

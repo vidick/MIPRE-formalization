@@ -8,7 +8,11 @@ public import MIPRE.Foundations.Introspection.AdaptivePrefixMixing
 
 @[expose] public section
 
-/-! # The honest dual marginal in the selected mixing coordinates -/
+/-! # The honest dual marginal in the selected mixing coordinates
+
+Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the honest dual readout enters
+the matrices over `ι → F` with entries in any algebra `𝒜` as `smulKron 1 _`, and the prefix
+factorization is an identity there. -/
 
 noncomputable section
 namespace MIPRE.Introspection
@@ -16,20 +20,19 @@ open Finset Matrix Weyl Classical Honest
 open scoped Kronecker
 set_option linter.unusedSectionVars false
 
-theorem aOp_registerOp_kron {I J R H : Type*}
+/-- A register operator `P ⊗ N`, read along `e : I ≃ J × R` and tensored with `X`, is the block
+matrix `(X ⊗ N) ⊗ P` over `J` of block matrices over `R`, read along the split. -/
+theorem aOp_registerOp_kron {I J R 𝒜 : Type*}
     [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
-    [Fintype R] [DecidableEq R] [Fintype H] [DecidableEq H]
-    (e : I ≃ J × R) (P : Matrix J J ℂ) (N : Matrix R R ℂ) :
-    (aOp (registerOp e (P ⊗ₖ N)) : Matrix (I × H) _ ℂ) =
-      registerOp (registerParty e H) (P ⊗ₖ (aOp N : Matrix (R × H) _ ℂ)) := by
-  ext ⟨i,h⟩ ⟨j,h'⟩
-  simp only [aOp, registerOp_apply, Matrix.kroneckerMap_apply, registerParty,
-    Equiv.trans_apply, Equiv.prodCongr_apply, Equiv.prodAssoc_apply]
-  exact mul_assoc _ _ _
+    [Fintype R] [DecidableEq R] [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜]
+    (e : I ≃ J × R) (X : 𝒜) (P : Matrix J J ℂ) (N : Matrix R R ℂ) :
+    smulKron X (registerOp e (P ⊗ₖ N)) = regSplitHom e (smulKron (smulKron X N) P) := by
+  ext i i'
+  simp only [smulKron_apply, registerOp_apply, regSplitHom_apply, kroneckerMap_apply, mul_smul,
+    Matrix.smul_apply]
 
-variable {ι F H : Type*} [Fintype ι] [DecidableEq ι]
-  [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  [Fintype H] [DecidableEq H] {ℓ : ℕ}
+variable {ι F : Type*} [Fintype ι] [DecidableEq ι]
+  [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {ℓ : ℕ}
 
 theorem synX_coordinateInsert {S : Finset ι}
     (L : (Fin (Fintype.card S) → F) →ₗ[F] (Fin (Fintype.card S) → F))
@@ -71,16 +74,15 @@ theorem residualDualOp_stage (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
 
 /-- The actual honest dual family, including any auxiliary factor, is exactly
 the prefix-conditioned current X-dual readout consumed by adaptive mixing. -/
-theorem readDualOp_stage_factor (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
+theorem readDualOp_stage_factor {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜]
+    (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)
     (k : ℕ) (y : ι → F) (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) :
-    (aOp (readDualOp P k hP (some (y, coordinateInsert (P.factorOfPrefix k y) z))) :
-      Matrix ((ι → F) × H) _ ℂ) =
+    smulKron (1 : 𝒜) (readDualOp P k hP (some (y, coordinateInsert (P.factorOfPrefix k y) z))) =
       prefixResidualOp P k y (registerReadout (stageSplit P hP k y)
         wX (CL.lperp (coordinateLinear (CLChecks.stageLinear P k y))) z) := by
   rw [readDualOp_prefix_factor P hP, aOp_registerOp_kron, residualDualOp_stage P hP]
   unfold prefixResidualOp registerReadout
   rw [← registerParty_kron_one]
-  rfl
 
 end MIPRE.Introspection
 
