@@ -1,6 +1,6 @@
 # C6b: the low-individual-degree test in II₁ finite pairs
 
-Tracking: the C6 row of `planning/mipco-track.md` (Phase 6). Written 2026-10-01, after the
+Tracking: #259, and the C6 row of `planning/mipco-track.md` (Phase 6). Written 2026-10-01, after the
 maintainer chose the II₁ orthonormalization tier, from a design round of six parts: four
 surveys of the code and four paper proofs, each proof checked by three independent skeptics and
 revised, most of the new steps prototyped in Lean. The proofs are recorded in
