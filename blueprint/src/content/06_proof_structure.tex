@@ -3495,7 +3495,7 @@ coordinates, with dimension $2\cdot2^{2^m t}D$. The binary source functions
 need not be linear over the larger field.
 \end{lemma}
 \begin{proof}
-\uses{lem:intro-honest-full-auxiliary,lem:intro-honest-pauli-measurements}
+\uses{lem:intro-honest-full-auxiliary,lem:intro-honest-pauli-measurements,lem:cool-closeness-fact}
 \leanok
 Put the explicit Pauli PVMs, the auxiliary PVMs, the source strategy and
 one extra qubit on a common carrier. Check the X/Hide and Z/Sample anchor
@@ -3538,7 +3538,8 @@ answer, so its fibre contains only its original raw constructor.
 
 \begin{lemma}[Pauli extraction for the introspection game]
 \label{lem:intro-pauli-extraction}
-\uses{lem:intro-pauli-restriction,def:qld-sound-in,def:register-model,def:model-proj-strategy}
+\uses{lem:intro-pauli-restriction,def:qld-sound-in,def:register-model,def:model-proj-strategy,
+  cor:qld-binary}
 \lean{MIPRE.Introspection.RestrictedSoundness.restriction,
   MIPRE.Introspection.RestrictedSoundness.edgeCount,
   MIPRE.Introspection.RestrictedSoundness.edgeCount_one_le,
@@ -3893,7 +3894,7 @@ the raw soundness and honest encoding implications in both orientations.
 
 \begin{lemma}[Full question transport and actual QLD extraction]
 \label{lem:intro-numbered-transport}
-\uses{lem:intro-explicit-selector-questions,thm:qld,def:qld-sound-in}
+\uses{lem:intro-explicit-selector-questions,def:qld-sound-in,lem:intro-extracted-soundness}
 \lean{MIPRE.Introspection.ExplicitGame.game_mu,
   MIPRE.Introspection.ExplicitGame.game_D,
   MIPRE.Introspection.ExplicitGame.toLegacy_value,
@@ -5803,7 +5804,7 @@ averaged over the seed.
 \begin{lemma}[Common individual polynomial measurements]
 \label{lem:ar-common-polynomials}
 \ledgernode{1.3.4.6}
-\uses{thm:lidt-cl-soundness-one,lem:schwartz-zippel,def:lidt-sound-in}
+\uses{lem:schwartz-zippel,def:lidt-sound-in}
 \lean{MIPRE.AnswerReduction.exists_ext1, MIPRE.AnswerReduction.ext1_spec,
   MIPRE.AnswerReduction.sum_deltaSim1_le, MIPRE.LIDT.Simul.sum_deltaSim_le}
 \leanok
@@ -5824,7 +5825,7 @@ theorem itself (Lemma~\ref{lem:lidt-sound-in-tensor}).
 \end{lemma}
 
 \begin{proof}
-\uses{thm:lidt-cl-soundness-one,lem:ar-global-tests}
+\uses{lem:ar-global-tests}
 \leanok
 For each seed and copy, the seeded low-degree test's soundness extracts the measurements
 (\texttt{exists\_ext1}, \texttt{ext1\_spec}), with error $\delta_{\mathrm{sim}}$ at the copy's

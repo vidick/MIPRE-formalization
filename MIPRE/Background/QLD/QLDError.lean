@@ -12,6 +12,8 @@ public import MIPRE.Background.QLD.SwapItemTwo
 /-!
 # The error of `thm:qld`, named once
 
+Blueprint `lem:qld-error`, with `MIPRE/Background/QLD/ErrorShape.lean`.
+
 `MirrorSimul.swap_isometry` (`MIPRE/Background/QLD/SwapItemTwo.lean`) closes the swap isometry
 lemma `lem:qld-swap` for a legal projective strategy, at the `MirrorSimul` that
 `exists_mirrorSimul` builds. Its two bounds, and the hypothesis it needs, are explicit expressions

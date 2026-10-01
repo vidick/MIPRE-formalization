@@ -32,10 +32,11 @@ Three inputs, all already proved:
 
 ## Why this case costs `eps` and not `sqrt(eps)`
 
-The blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the paper's
-*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM
-strategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The
-anticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the
+The paper states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what its *commuting*
+case costs: it needs the `Pair` measurement to be projective, which a general POVM strategy's is
+not, so it goes through the orthogonalization corollary (`cor:ortho-from-consistency`) and pays a
+square root. Here the first player's measurements are projective by hypothesis, and the blueprint
+states the lemma at the constant proved below. The anticommuting case needs no projectivity: every input is already a squared-norm bound linear in `eps`, and the
 only inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the
 constant here is honest and there is no square root --- `48157248 eps`, from
 `12 * 344 + 12 * 344 + 3 * 16049664`.
@@ -864,7 +865,7 @@ content distribution is uniform, so the statement is the sum of the two restrict
 
 /-- **`lem:qld-obs-commutation`.** On average over the verifier's content, the two point
 observables commute up to the sign `(-1)^{gamma(omega)}`, at `57676416 eps = 9519168 eps +
-48157248 eps`. The blueprint states this at `O(sqrt(eps))`; it is `O(eps)`, and the two halves are
+48157248 eps`. The paper states this at `O(sqrt(eps))`; it is `O(eps)`, and the two halves are
 where that is decided. The first player's measurements are projective, which both halves use. -/
 theorem signed_commutation [StarModule ℂ 𝒜] (hM : ‖M.ψ‖ = 1) (hPA : ∀ q, IsPVMIn (PA q).op)
     (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :

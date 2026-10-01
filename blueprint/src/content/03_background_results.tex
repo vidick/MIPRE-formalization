@@ -377,7 +377,7 @@ Mermin--Peres magic square. The form above is~\cite[Section 8]{JNVWY20}.
 \begin{lemma}[Direct Magic Square anticommutation --- what the pipeline actually needs]
 \label{lem:ms-direct-anticomm}
 \ledgernode{1.2.2.4.1, 1.2.2.4.1.6, 1.2.2.4.1.7, 1.2.2.4.1.9}
-\uses{def:magic-square,def:lcs-game,def:state-distance}
+\uses{def:magic-square,def:lcs-game}
 \lean{MIPRE.QLD.MS.anti, MIPRE.QLD.MS.ms_direct_anticomm, MIPRE.QLD.MS.ms_direct_anticomm',
   MIPRE.QLD.MS.ms_direct_anticomm_avg, MIPRE.QLD.MS.isPVMIn_repPOVM, MIPRE.QLD.MS.refl_eq_sum,
   MIPRE.QLD.MS.bnd_one_sub_sq_of_sub, MIPRE.QLD.MS.isometry_πA, MIPRE.QLD.MS.povmValue_swap}
@@ -1177,7 +1177,7 @@ and Lemma~\ref{lem:lidt-ldc-extraction} turns those into $G^\alice$, $G^\bob$.
 \begin{lemma}[The padded multi-codeword game adapter]
 \label{lem:lidt-ldc-adapter}
 \ledgernode{1.2.1.9.2}
-\uses{def:lidt-cl,lem:lidt-ldc-extraction}
+\uses{def:lidt-cl,lem:lidt-ldc-extraction,def:q-value}
 \lean{MIPRE.LIDT.Simul.valAt, MIPRE.LIDT.Simul.IsCross, MIPRE.LIDT.Simul.SampleRel,
   MIPRE.LIDT.Simul.sample_mem_line, MIPRE.LIDT.Simul.accepts_sample_imp,
   MIPRE.LIDT.Simul.accepts_sample_of, MIPRE.LIDT.Simul.eq_rep_add_lineParam,
@@ -1226,6 +1226,7 @@ game failure, not arbitrarily.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:cl-canonical}
 \leanok
 On the two questions of one sample, the decider checks the formats, then equality for equal
 types, nothing for the two cross type pairs, and otherwise equality of the two answers' values at
@@ -1251,7 +1252,7 @@ chain of consistency links and the $d/q$ term does not arise.
 \begin{lemma}[Extracting exactly linear combined codewords]
 \label{lem:lidt-ldc-extraction}
 \ledgernode{1.2.1.9.2}
-\uses{def:lidt-cl,lem:schwartz-zippel}
+\uses{lem:schwartz-zippel,def:inconsistency}
 \lean{MIPRE.LIDT.Simul.extracted_conclusions, MIPRE.LIDT.Simul.inconsistency_extract_right_le,
   MIPRE.LIDT.Simul.inconsistency_extract_left_le, MIPRE.LIDT.Simul.inconsistency_map_le,
   MIPRE.LIDT.Simul.pevY, MIPRE.LIDT.Simul.eval_pevY, MIPRE.LIDT.Simul.eval_sub,
@@ -1297,7 +1298,7 @@ with error $\delta$. It does not select independent single-codeword measurements
 
 \begin{proof}
 \leanok
-\uses{lem:schwartz-zippel}
+\uses{lem:schwartz-zippel,def:cross-distance,def:expanded-state}
 Fix $y$, the original answer $b$ and the outcome $g$, and average over $x$ alone: the Born
 probabilities do not depend on $x$, since the original point measurement is asked $y$ and $R$ is
 asked nothing. If $g$ is exactly linear in $x$ and its tuple at $y$ is not $b$, then
@@ -1326,7 +1327,7 @@ depends on.
 \begin{lemma}[Absorbing the simultaneous reduction's error]
 \label{lem:lidt-ldc-error}
 \ledgernode{1.2.1.9.3}
-\uses{lem:lidt-ldc-extraction}
+\uses{lem:lidt-ldc-extraction,lem:lidt-cl-adapter-params}
 \lean{MIPRE.LIDT.Simul.padM, MIPRE.LIDT.Simul.le_padM, MIPRE.LIDT.Simul.padM_le,
   MIPRE.LIDT.Simul.padM_le_mul, MIPRE.LIDT.Simul.padM_dvd, MIPRE.LIDT.Simul.simA,
   MIPRE.LIDT.Simul.deltaSim, MIPRE.LIDT.Simul.forty_le_simA, MIPRE.LIDT.Simul.clA_add_one_le_simA,
@@ -1613,7 +1614,7 @@ follows from the soundness of the seeded CL test in the commuting-operator model
 
 \begin{proof}
 \uses{lem:qld-swap,lem:qld-pauli-selfcons,lem:qld-axis-degree,lem:pauli-mixing,
-  def:qld-physical-model,lem:qld-error}
+  def:qld-physical-model,lem:qld-error,lem:povm-reduction}
 \leanok
 Two cases. Inside the regime --- $48md \leq q$, and $2\sqrt{X} + 2X < 1$ at the constant $X$ of
 Lemma~\ref{lem:qld-pauli-selfcons}, which is what item~1 of Lemma~\ref{lem:qld-swap} needs ---
@@ -1744,7 +1745,7 @@ constants the proof produces.
 
 \begin{corollary}[Theorem~\ref{thm:qld} on the valid answers]
 \label{cor:qld-valid}
-\uses{thm:qld,def:qld-sound-in}
+\uses{def:qld-sound-in,def:intro-verifier}
 \lean{MIPRE.Introspection.RestrictedSoundness.PauliSupported,
   MIPRE.Introspection.RestrictedSoundness.rdPauliVec_op_of_supported,
   MIPRE.Introspection.RestrictedSoundness.ParsedPauliSupported,
@@ -1777,7 +1778,7 @@ is sound (Definition~\ref{def:qld-sound-in}); the statement above is its tensor-
 \end{corollary}
 
 \begin{proof}
-\uses{thm:qld,def:qld-sound-in,lem:qld-error}
+\uses{def:qld-sound-in,lem:qld-error}
 \leanok
 When a measurement has no element at a malformed answer, the coarse measurement that reads every
 answer as cube data has at $h$ exactly the element of the answer $h$: the fibre of $h$ holds $h$
@@ -2088,8 +2089,8 @@ It is kept as the paper's statement, with the repair above, and carries no forma
 \begin{lemma}[Win implications]
 \label{lem:qld-win}
 \ledgernode{1.2.2.4, 1.2.2.4.2}
-\uses{def:qld-game,def:cross-distance,fact:omega-anticomm-prob,lem:ms-direct-anticomm,
-  def:magic-square,def:ld-encoding,def:lidt-cl}
+\uses{def:qld-game,fact:omega-anticomm-prob,lem:ms-direct-anticomm,def:magic-square,def:ld-encoding,
+  def:lidt-cl}
 \lean{MIPRE.QLD.subtest_le, MIPRE.QLD.agree_subtest_le, MIPRE.QLD.item_consistency,
   MIPRE.QLD.item_lowDeg_aline, MIPRE.QLD.item_lowDeg_dline, MIPRE.QLD.item_pauli_consistency,
   MIPRE.QLD.item_commutation, MIPRE.QLD.item_commutation_consistency,
@@ -2146,7 +2147,7 @@ statement above is its tensor-product instance.
 
 \begin{proof}
 \leanok
-\uses{lem:ms-direct-anticomm,def:cross-distance}
+\uses{lem:ms-direct-anticomm}
 Items 1--5 and 7 are one lemma applied seven times. The question distribution factors as an
 ordered type edge times the content, both uniform, so a question pair arising from a fixed edge
 of the type graph carries at least $1/86$ of the mass --- $86$ being the ordered pairs counted in
@@ -2221,7 +2222,7 @@ Lemma~\ref{lem:qld-win} item 1 and costs one factor of two; the second is the sy
 
 \begin{lemma}[Consistency of the point observables]
 \label{lem:qld-obs-consistency}
-\uses{lem:qld-win,def:cross-distance}
+\uses{lem:qld-win}
 \lean{MIPRE.QLD.pts_obs_consistency}
 \leanok
 For $W \in \{X, Z\}$ and $r \in \F_q$ write
@@ -2238,7 +2239,7 @@ projectivity.
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,def:cross-distance}
+\uses{lem:qld-win}
 Item 1 of Lemma~\ref{lem:qld-win} holds for any \emph{common} reading of the two answers, the
 rule at equal types accepting only when the answers are equal and equal answers having equal
 readings --- so the data-processing step the paper cites separately is already in the item. Take
@@ -2252,7 +2253,7 @@ $2 \cdot 172\eps$.
 
 \begin{lemma}[Signed commutation of the point observables]
 \label{lem:qld-obs-commutation}
-\uses{lem:qld-win,fact:omega-anticomm-prob,lem:commutation-analysis,def:cross-distance}
+\uses{lem:qld-win,fact:omega-anticomm-prob,lem:qld-obs-commutation-acomm}
 \lean{MIPRE.QLD.signed_commutation}
 \leanok
 Under the hypotheses of Lemma~\ref{lem:qld-win}, with the first player's measurements projective,
@@ -2269,7 +2270,7 @@ the first player's measurements projective; the statement above is its tensor-pr
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,lem:commutation-analysis,def:cross-distance}
+\uses{lem:qld-win,lem:qld-obs-commutation-comm}
 Two cases, and the sign is the branch. The content distribution is uniform and the two cases
 partition it, so the statement is the sum of the two restricted ones:
 Lemma~\ref{lem:qld-obs-commutation-comm} at $9519168\,\eps$ and
@@ -2280,7 +2281,7 @@ Lemma~\ref{lem:qld-obs-commutation-acomm} at $48157248\,\eps$.
 
 \begin{lemma}[Signed commutation, the commuting case]
 \label{lem:qld-obs-commutation-comm}
-\uses{lem:qld-win,lem:commutation-analysis,def:cross-distance}
+\uses{lem:qld-win}
 \lean{MIPRE.QLD.pairPOVM, MIPRE.QLD.pairPOVMB, MIPRE.QLD.ptPOVM, MIPRE.QLD.ptPOVMB,
   MIPRE.QLD.ptObsB, MIPRE.QLD.ptObs_eq_obs2, MIPRE.QLD.ptObsB_mul_self_le_one,
   MIPRE.QLD.sum_pairPOVM_X, MIPRE.QLD.sum_pairPOVM_Z, MIPRE.QLD.adj_pairB_point,
@@ -2306,7 +2307,7 @@ summed over the \emph{commuting} tuples with the uniform weight $\abs{\mC}^{-1}$
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,lem:commutation-analysis,def:cross-distance}
+\uses{lem:qld-win}
 Items 5, 4 and 1 chain each point probe to a \emph{marginal} of the $\mathtt{Pair}$ measurement on
 the other side: three links at $172\eps$ each, so $1548\eps$ after a three-term triangle
 inequality. The first player's $\mathtt{Pair}$ measurement is projective, and so is its reading as
@@ -2355,7 +2356,7 @@ $\approx$ form would be proving something false.
 
 \begin{lemma}[Signed commutation, the anticommuting case]
 \label{lem:qld-obs-commutation-acomm}
-\uses{lem:qld-win,fact:omega-anticomm-prob,def:cross-distance}
+\uses{lem:qld-win,fact:omega-anticomm-prob}
 \lean{MIPRE.QLD.ptObs, MIPRE.QLD.varObs, MIPRE.QLD.ptObs_mul_self_le_one,
   MIPRE.QLD.varObs_mul_self_le_one, MIPRE.QLD.acommWeight, MIPRE.QLD.acommWeight_nonneg,
   MIPRE.QLD.sum_acommWeight_mul, MIPRE.QLD.xStateDist_ptObs_varObs_X,
@@ -2377,7 +2378,7 @@ which is Lemma~\ref{lem:qld-obs-commutation} at $(-1)^{\gamma(\omega)} = -1$.
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,def:cross-distance}
+\uses{lem:qld-win}
 Item 7 of Lemma~\ref{lem:qld-win} says that on an anticommuting tuple each point probe agrees
 with one of the two distinguished $\mathtt{Variable}$ bits on the other side. At the level of
 observables that is $X^{r_X}(u_X) \ot \Id \simeq_{344\eps} \Id \ot V_1$ and
@@ -2428,7 +2429,8 @@ Lemma~\ref{lem:qld-expanded-points} cancels against the ancillas.
 \begin{lemma}[Expanded point measurements]
 \label{lem:qld-expanded-points}
 \ledgernode{1.2.2.5}
-\uses{lem:qld-win,def:expanded-state,lem:qld-expanded-commutation,lem:qld-expanded-consistency}
+\uses{lem:qld-win,def:expanded-state,lem:qld-expanded-commutation,lem:qld-expanded-consistency,
+  def:register-model}
 \lean{MIPRE.QLD.expanded_points}
 \leanok
 Adjoin EPR ancilla registers to $\ket{\psi}$. There are measurements
@@ -2460,7 +2462,7 @@ Definition~\ref{def:expanded-state}'s items 3 and 4.
 
 \begin{lemma}[Expanded point measurements are self-consistent]
 \label{lem:qld-expanded-consistency}
-\uses{lem:qld-win,def:generalized-pauli,def:weyl-epr,def:expanded-state}
+\uses{lem:qld-win,def:generalized-pauli,def:weyl-epr,def:expanded-state,def:block-order}
 \lean{MIPRE.QLD.synPOVM, MIPRE.QLD.synPOVM_mats, MIPRE.QLD.weylOf_transpose,
   MIPRE.QLD.sum_bornProb_epr_synPOVM, MIPRE.QLD.ptValPOVM, MIPRE.QLD.hatPOVM,
   MIPRE.QLD.sum_xSqNorm_hatPOVM_le, MIPRE.QLD.hatPOVM_consistency}
@@ -2482,7 +2484,7 @@ model (Definition~\ref{def:register-model}); the statement above is its tensor-p
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,def:weyl-epr,def:expanded-state}
+\uses{lem:qld-win,def:weyl-epr,def:expanded-state,def:cross-distance,lem:ancilla-extension}
 Three inputs and no loss. The agreement probability of a product measurement on the expanded state
 factorizes (Definition~\ref{def:expanded-state}); the ancilla factor is \emph{exactly one}, because
 the syndrome projectors are perfectly self-consistent across the two halves of
@@ -2525,7 +2527,8 @@ tensor-product instance.
 
 \begin{proof}
 \leanok
-\uses{lem:qld-obs-commutation,def:generalized-pauli,def:weyl-epr,def:expanded-state}
+\uses{lem:qld-obs-commutation,def:generalized-pauli,def:weyl-epr,def:expanded-state,
+  lem:ancilla-extension}
 One identity and two bookkeeping facts. The identity is
 \begin{equation*}
   \bigl[ \widehat{X}^{r_X}(u_X),\, \widehat{Z}^{r_Z}(u_Z) \bigr]
@@ -2557,7 +2560,7 @@ anything, which is also why it is stated there rather than here.
 \begin{lemma}[Expanded line measurements]
 \label{lem:qld-expanded-lines}
 \ledgernode{1.2.2.6}
-\uses{lem:qld-win,def:weyl-epr,def:expanded-state,def:line-restriction,def:lidt-cl}
+\uses{lem:qld-win,def:weyl-epr,def:expanded-state,def:line-restriction,def:lidt-cl,def:block-order}
 \lean{MIPRE.QLD.lineCoeffs, MIPRE.QLD.eval_lineCoeffs, MIPRE.QLD.dotF_indVec, MIPRE.QLD.padLine,
   MIPRE.QLD.linePoly_eval_eq_range, MIPRE.QLD.eval_padLine, MIPRE.QLD.rdLine, MIPRE.QLD.synLinePOVM,
   MIPRE.QLD.synLinePOVM_map_eval, MIPRE.QLD.lineAnsPOVM, MIPRE.QLD.hatLinePOVM,
@@ -2601,7 +2604,8 @@ the statement above is its tensor-product instance.
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,def:weyl-epr,def:expanded-state,def:line-restriction}
+\uses{lem:qld-win,def:weyl-epr,def:expanded-state,def:line-restriction,lem:model-proj-strategy,
+  def:cross-distance,lem:ancilla-extension}
 Everything is exact except the strategy's own error, and the two items come out of the same
 three inputs as Lemma~\ref{lem:qld-expanded-consistency}.
 
@@ -2785,7 +2789,8 @@ Same-side operator comparisons use Definition~\ref{def:state-distance}.
 \begin{lemma}[Combined $XZ$ point measurements]
 \label{lem:qld-combined-points}
 \ledgernode{1.2.2.8}
-\uses{lem:naimark-dilation,def:expanded-state,def:qld-game,thm:linearity,def:weyl-epr}
+\uses{lem:naimark-dilation,def:expanded-state,def:qld-game,thm:linearity,def:weyl-epr,
+  lem:qld-obs-commutation-acomm,def:block-order}
 \lean{MIPRE.fourierVec, MIPRE.sum_norm_fourierVec_sq, MIPRE.trObs, MIPRE.trFourier,
   MIPRE.trFourier_trObs, MIPRE.trObs_map, MIPRE.pairVec, MIPRE.sum_prod_eq_sum_pairVec,
   MIPRE.fourierOf_pair_mul, MIPRE.sum_stateSqNorm_fourierOf, MIPRE.obs2_map, MIPRE.swapVec_expVec,
@@ -2855,7 +2860,9 @@ is its tensor-product instance.
 
 \begin{proof}
 \leanok
-\uses{lem:kraus-dilation,def:expanded-state,def:generalized-pauli,lem:commutation-analysis}
+\uses{lem:kraus-dilation,def:expanded-state,def:generalized-pauli,lem:commutation-analysis,
+  lem:qld-obs-commutation-comm,def:model-proj-strategy,lem:model-reading,lem:ancilla-extension,
+  lem:local-isometry,lem:model-parseval}
 The sandwich, its Naimark dilation, and one five-link chain.
 
 \textbf{The sandwich is a POVM, exactly.} With $\{\widehat{M}^{(\mathtt{Point}, Z), z}_b\}$
@@ -3035,8 +3042,8 @@ the degree computation in \texttt{MIPRE/Background/QLD/PaddedLines.lean}.
 \begin{lemma}[Pairs of lines]
 \label{lem:qld-pairs-of-lines}
 \ledgernode{1.2.2.9}
-\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,lem:cool-closeness-fact,
-  lem:schwartz-zippel,lem:qld-expanded-commutation}
+\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,lem:schwartz-zippel,
+  lem:qld-expanded-commutation,def:register-model}
 \lean{MIPRE.QLD.toPoly, MIPRE.QLD.natDegree_toPoly_le, MIPRE.QLD.eval_toPoly,
   MIPRE.QLD.coeff_toPoly, MIPRE.QLD.toPoly_injective, MIPRE.QLD.card_agree_linePoly_le,
   MIPRE.QLD.lineParam_add_smul, MIPRE.QLD.rep_add_smul, MIPRE.QLD.Content.shiftPt,
@@ -3091,8 +3098,8 @@ statement above is its tensor-product instance.
 
 \begin{proof}
 \leanok
-\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,lem:cool-closeness-fact,
-  lem:schwartz-zippel,lem:qld-expanded-consistency,lem:cl-canonical}
+\uses{lem:qld-combined-points,lem:qld-expanded-lines,lem:pasting-updated,lem:schwartz-zippel,
+  lem:qld-expanded-consistency,lem:cl-canonical}
 This is the pasting lemma (Lemma~\ref{lem:pasting-updated}) at
 $G_1 = \widehat{M}^{(\mathtt{Line}, Z), \ell_Z}$, $G_2 = \widehat{M}^{(\mathtt{Line}, X),
 \ell_X}$ and $A = \widehat{Q}^{x,z}$, and what has to be supplied is its four hypotheses.
@@ -3650,7 +3657,8 @@ this step.
 \begin{definition}[The models of stages 4 and 5]
 \label{def:qld-physical-model}
 \uses{def:register-model,def:ancilla-extension,lem:ancilla-isometries,def:model-reading,
-  def:model-embedding,def:model-iso,lem:kraus-dilation,def:lidt-sound-in,def:lidt-cl}
+  def:model-embedding,def:model-iso,lem:kraus-dilation,def:lidt-sound-in,def:lidt-cl,
+  lem:pauli-mixing,lem:model-embedding}
 \lean{MIPRE.QLD.ansZero, MIPRE.QLD.PadAnc, MIPRE.QLD.t₀, MIPRE.QLD.instFintypePadAnc,
   MIPRE.QLD.instDecidableEqPadAnc, MIPRE.QLD.padE, MIPRE.QLD.padE_apply,
   MIPRE.QLD.padE_eq_expVec, MIPRE.QLD.norm_padE, MIPRE.QLD.padModel, MIPRE.QLD.soundIn_padModel,
@@ -3997,7 +4005,8 @@ where the hypothesis holds by Lemma~\ref{lem:lidt-sound-in-tensor}.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-global-success,def:lidt-sound-in,lem:kraus-dilation,def:qld-physical-model}
+\uses{lem:qld-global-success,def:lidt-sound-in,lem:kraus-dilation,def:qld-physical-model,
+  lem:lidt-model-transport}
 \leanok
 Lemma~\ref{lem:qld-global-success} is the value hypothesis of the seeded test for the padded
 strategy at $(q, 4m, d, 1)$. Each player's family of POVMs is dilated to a projective family on that
@@ -4064,7 +4073,7 @@ global measurement in one player's algebra against a point measurement in the ot
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-global-pvm,lem:schwartz-zippel}
+\uses{lem:qld-global-pvm,lem:schwartz-zippel,lem:model-iso}
 \leanok
 Resample the dummy coordinates: for independent uniform points $u, u'$ let $\mathrm{mix}(u, u')$
 be $u$ with its dummy coordinates replaced by those of $u'$. The point measurement is the same at
@@ -4133,7 +4142,7 @@ tensor-product instance.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-global-pvm,lem:qld-combined-points,def:state-distance}
+\uses{lem:qld-global-pvm,lem:qld-combined-points,def:state-distance,lem:model-iso}
 \leanok
 Write $P_u(c) = \sum_{\alpha a + \beta b = c} \widehat M^Z_b \widehat M^X_a \widehat M^Z_b$ for
 the sandwich combination the consistency of Lemma~\ref{lem:qld-global-pvm} is stated against,
@@ -4198,7 +4207,8 @@ the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-global-pvm,lem:qld-global-products,lem:schwartz-zippel,lem:qld-global-dummy}
+\uses{lem:qld-global-pvm,lem:qld-global-products,lem:schwartz-zippel,lem:qld-global-dummy,
+  lem:model-state-calculus}
 \leanok
 Fix $g \notin L$, write $S = G_{A,g}$, and let $B_u(c)$ be the combination of the ordered
 products $\widehat M^X_a \widehat M^Z_b$ along $\alpha a + \beta b = c$, for the padded point
@@ -4876,7 +4886,7 @@ by a unit vector. The statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel}
+\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,lem:register-model}
 \leanok
 The paper's ``pulling'' chain. Right-multiplying $\tilde{M}^{W,\tilde{u}}_a$ on one party by the
 near-identity $\sum_g (\widehat S^W_g)_{\alice\alice'} \ot
@@ -5404,7 +5414,7 @@ Lemma~\ref{lem:qld-povm-to-obs} in the state-norm form that step takes.
 \label{lem:qld-swap}
 \ledgernode{1.2.2.16}
 \uses{lem:qld-exact-paulis,lem:qld-pauli-selfcons,lem:qld-win,lem:schwartz-zippel,
-  def:state-distance,def:cross-distance,def:qld-physical-model}
+  def:state-distance,def:cross-distance,def:qld-physical-model,lem:register-action}
 \lean{MIPRE.QLD.sTensor, MIPRE.QLD.sTensor_mul, MIPRE.QLD.sTensor_one,
   MIPRE.QLD.sTensor_conjTranspose, MIPRE.QLD.wTilde_eq_sTensor, MIPRE.QLD.uOf, MIPRE.QLD.swapU,
   MIPRE.QLD.uOf_conjTranspose, MIPRE.QLD.uOf_mul_conjTranspose, MIPRE.QLD.uOf_conjTranspose_mul,

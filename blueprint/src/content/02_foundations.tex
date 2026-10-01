@@ -592,8 +592,9 @@ Inequality~\eqref{eq:cross-from-agreement} is the whole analytic content of the 
 (\texttt{MIPRE/Foundations/CrossConsistency.lean}): expand each square, and the two diagonal
 sums are at most one because a POVM element satisfies $A^\dagger A = A^2 \leq A$
 (\texttt{POVM.mul\_self\_le\_self}) and the elements sum to the identity. \textbf{No projectivity
-is used}, which matters --- the strategies it is applied to are arbitrary POVM strategies, and
-projectivity arrives only later, through Corollary~\ref{cor:ortho-from-consistency}.
+is used}, so the inequality holds for arbitrary POVM strategies. On the paper's route projectivity
+arrives only later, through Corollary~\ref{cor:ortho-from-consistency}; the formalized route
+assumes it from the start, Theorem~\ref{thm:qld} being stated for projective strategies.
 
 Two things the formalization needs that the paper leaves implicit. First, what a subtest buys is
 not that its decider \emph{equals} an agreement predicate but that \emph{accepting implies
@@ -650,9 +651,10 @@ instead of an anticommutator --- the same split, Bob's two products cancelling e
 \texttt{snorm\_swapVec\_aOp\_sub\_bOp} exchanges the two sides of a cross-party deviation, which is what lets
 a lemma proved for Alice's factor be applied to Bob's: the clean statement is at the level of
 vectors, $(X \ot Y)\,\mathrm{swap}\ket{\psi} = \mathrm{swap}\,(Y \ot X)\ket{\psi}$, and everything
-else follows by linearity. Corollary~\ref{cor:ortho-from-consistency} produces a projective
-measurement on \emph{Alice's} factor only, so the commutation analysis below is run on Bob's
-observables and carried back; that swap is the bridge.
+else follows by linearity. On the paper's route Corollary~\ref{cor:ortho-from-consistency}
+produces a projective measurement on \emph{Alice's} factor only, so the commutation analysis below
+is run on Bob's observables and carried back; that swap is the bridge. The formalized route assumes
+the first player's measurements projective from the outset and uses the swap in the same way.
 
 \subsection{The expanded state}
 

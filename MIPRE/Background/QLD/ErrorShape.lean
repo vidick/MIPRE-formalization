@@ -12,7 +12,7 @@ public import MIPRE.Background.QLD.PaddedLIDT
 /-!
 # The error shape of `thm:qld`
 
-Blueprint `thm:qld` states its error in one closed form,
+Blueprint `thm:qld` states its error in one closed form (`lem:qld-error`),
 
 `δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,
 `0 < b < 1`.

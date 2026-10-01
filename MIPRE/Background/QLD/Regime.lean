@@ -14,8 +14,9 @@ public import MIPRE.Tactics
 
 Stage 4 of the appendix runs at the padded dimension `4m`, so it needs `4m | q`; the theorem is
 stated for every tuple with `m | q`. The paper closes the gap in a `\cnote` of `qld-combining.tex`
-("admissibility makes `m` a power of two") and `lem:qld-global-setup` lists `4m | q` beside the
-regime `16md <= q` as though it were a further hypothesis. Neither says what the derivation uses,
+("admissibility makes `m` a power of two") and its stage-4 setup lists `4m | q` beside the regime
+`16md <= q` as though it were a further hypothesis; blueprint `lem:qld-global-setup` states the
+derivation, and lists the lemmas below. Neither says what the derivation uses,
 and the derivation is short enough to be worth getting exactly right, because the obvious reading
 of it is false.
 

@@ -2048,7 +2048,7 @@ form a POVM in $\alg_A$. The rest is a composition.
 \begin{definition}[The Pauli basis test is sound in a model]
 \label{def:qld-sound-in}
 \uses{def:qld-game,def:register-model,def:local-isometry,def:povm-domination,
-  def:model-proj-strategy,def:block-order}
+  def:model-proj-strategy,def:block-order,lem:qld-error}
 \lean{MIPRE.QLD.AncillaModel, MIPRE.QLD.AncillaModel.of, MIPRE.QLD.Extraction,
   MIPRE.QLD.Extraction.mono, MIPRE.QLD.SoundIn, MIPRE.QLD.SoundCo, MIPRE.QLD.ApproxSoundIn}
 \leanok
@@ -2066,7 +2066,7 @@ dividing $q$ and every $d \geq 1$, every projective strategy in $M$ failing the 
 probability at most $\eps$ has an extraction at the error $\delta_{qld}(\eps, m, d, q)$ of
 Theorem~\ref{thm:qld} whose ancilla model $\omega$ dominates (Definition~\ref{def:povm-domination}).
 That error is, in Lean, the function \texttt{qldErr} the proof of the theorem produces, at most the
-closed form of the theorem when $\eps \leq 1$. Soundness in $M$ is the conclusion of
+closed form of the theorem when $\eps \leq 1$ (Lemma~\ref{lem:qld-error}). Soundness in $M$ is the conclusion of
 Theorem~\ref{thm:qld} for the projective strategies in $M$, and that theorem proves it in every
 model with ordered, proper player algebras in which the seeded low-individual-degree test is sound
 in every extension by a unit vector and whose extensions, in every unit state, $\omega$ dominates.
@@ -2243,7 +2243,7 @@ commute.
 
 \begin{lemma}[Isomorphisms between extensions]
 \label{lem:extension-isos}
-\uses{def:model-iso,lem:ancilla-isometries,lem:tensor-expand,lem:model-iso}
+\uses{def:model-iso,lem:ancilla-isometries,lem:tensor-expand}
 \lean{MIPRE.OperatorMatrix.amplSubsingleton, MIPRE.OperatorMatrix.amplSubsingleton_apply,
   MIPRE.norm_evec_comp_swap, MIPRE.matrixUnitStarAlgEquiv, MIPRE.matrixUnitStarAlgEquiv_apply,
   MIPRE.submatrixStarAlgEquiv, MIPRE.submatrixStarAlgEquiv_apply,
@@ -2307,7 +2307,7 @@ vector of a pair of registers at $(a_0, b_0)$ is written $\ket{a_0 b_0}$.
 
 \begin{lemma}[Readings of an extension]
 \label{lem:model-reading}
-\uses{def:model-reading,def:model-iso,lem:ancilla-extension}
+\uses{def:model-reading,def:model-iso}
 \lean{MIPRE.reindexStarAlgHomR_apply, MIPRE.smulKron_eq_diagonal_mul,
   MIPRE.compHom_smulKron_smulKron, MIPRE.compHom_smulKron_one, MIPRE.moveEquiv_apply,
   MIPRE.moveEquiv_symm_apply, MIPRE.basisVec_apply, MIPRE.basisVec_swap, MIPRE.norm_basisVec,
@@ -2343,6 +2343,7 @@ vector of a pair of registers at $(a_0, b_0)$ is written $\ket{a_0 b_0}$.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:ancilla-isometries}
 \leanok
 An operator of an extension acts entrywise on the copies of the Hilbert space, and a reading
 permutes the copies, so items 1 to 3 compare entries of block matrices; in item 3 the reindexing of
@@ -2353,7 +2354,7 @@ through the entry at $(a_0, b_0)$ of each.
 
 \begin{definition}[Embeddings of bipartite models]
 \label{def:model-embedding}
-\uses{def:local-isometry,def:model-iso}
+\uses{def:local-isometry,def:model-iso,lem:local-isometry}
 \lean{MIPRE.BipartiteModel.Embedding, MIPRE.BipartiteModel.Embedding.id,
   MIPRE.BipartiteModel.Embedding.comp, MIPRE.BipartiteModel.Embedding.swap,
   MIPRE.BipartiteModel.Iso.toEmbedding, MIPRE.BipartiteModel.LocalIsometry.toWithState}
@@ -2367,7 +2368,8 @@ $M'^{\varphi}$, for every vector $\varphi$ of the space of $M'$.
 
 \begin{lemma}[Embeddings]
 \label{lem:model-embedding}
-\uses{def:model-embedding,lem:local-isometry,lem:ancilla-isometries,lem:model-reading,lem:model-iso}
+\uses{def:model-embedding,lem:local-isometry,lem:ancilla-isometries,lem:model-reading,
+  def:model-proj-strategy}
 \lean{MIPRE.POVMIn.pushforward_comp, MIPRE.BipartiteModel.inconsistency_map_equiv,
   MIPRE.BipartiteModel.star_πA_mul_πB_mul_self, MIPRE.BipartiteModel.LocalIsometry.toWithState_W,
   MIPRE.BipartiteModel.LocalIsometry.toWithState_ΦA,
@@ -2434,7 +2436,8 @@ conjugations unital.
 
 \begin{lemma}[The seeded test, moved between models]
 \label{lem:lidt-model-transport}
-\uses{def:lidt-sound-in,def:lidt-cl,lem:model-iso,lem:extension-isos,lem:lidt-sound-in-tensor}
+\uses{def:lidt-sound-in,def:lidt-cl,lem:model-iso,lem:extension-isos,lem:lidt-sound-in-tensor,
+  def:block-order}
 \lean{MIPRE.LIDT.CL.Sample.swapTy, MIPRE.LIDT.CL.Sample.swapTyEquiv, MIPRE.LIDT.CL.subtests_swap,
   MIPRE.LIDT.CL.accepts_swap, MIPRE.LIDT.CL.clGame_μ_swap, MIPRE.LIDT.CL.clGame_D_swap,
   MIPRE.LIDT.Simul.tuplePOVMAIn_pushStrat, MIPRE.LIDT.Simul.tuplePOVMBIn_pushStrat,
@@ -2571,7 +2574,7 @@ player's algebra $\alg_A$ of $\strategy$, and its second player's algebra is $\{
 \end{lemma}
 
 \begin{proof}
-\uses{lem:co-value-model}
+\uses{lem:ancilla-extension}
 \leanok
 An operator commuting with the second player's operators commutes with $F^y_b \otimes \Id$ and with
 the register's diagonal and uniform projections, hence with its matrix units, so it is $X \otimes
@@ -2635,7 +2638,7 @@ copies of the Hilbert space alone.
 
 \begin{lemma}[The state calculus of the Pauli basis test, in a model]
 \label{lem:model-state-calculus}
-\uses{def:bipartite-model}
+\uses{def:bipartite-model,def:local-isometry}
 \lean{MIPRE.Op.abs_qform_sub_qform_le, MIPRE.StateModel.snorm_sq_sum_orthogonal,
   MIPRE.StateModel.snorm_sq_sum_orthogonal', MIPRE.StateModel.sum_snorm_sq_chain_le,
   MIPRE.StateModel.snorm_sq_obs_sub_le, MIPRE.StateModel.abs_qform_sub_qform_le,
@@ -2675,7 +2678,7 @@ through $0$, and a projective measurement on a unit vector has summed squared st
 
 \begin{lemma}[Parseval in a model]
 \label{lem:model-parseval}
-\uses{def:bipartite-model}
+\uses{def:bipartite-model,def:generalized-pauli}
 \lean{MIPRE.sum_norm_charSum_sq, MIPRE.sum_sgn_trMul_eq_ite, MIPRE.sum_star_sgn_trMul,
   MIPRE.sum_star_sgn_trMul2, MIPRE.sum_norm_trSum_sq, MIPRE.sum_norm_trSum2_sq,
   MIPRE.sum_avg_norm_fibreSum_sq, MIPRE.StateModel.sum_avg_snorm_sq_fibre_eq,
