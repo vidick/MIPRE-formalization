@@ -459,6 +459,11 @@ public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Strategy
 public import MIPRE.Background.LiehrTsirelson.Upstream.Core.Value
 public import MIPRE.Background.LiehrTsirelson.Upstream.MainStatement
 public import MIPRE.Background.Orthonormalization.Axioms
+public import MIPRE.Background.Orthonormalization.CenterComparison
+public import MIPRE.Background.Orthonormalization.CenterTrace
+public import MIPRE.Background.Orthonormalization.CenterTraceClauses
+public import MIPRE.Background.Orthonormalization.FinitePairOrtho
+public import MIPRE.Background.Orthonormalization.NoAbelian
 public import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
 public import MIPRE.Background.Orthonormalization.Orthogonalization.Basic
 public import MIPRE.Background.Orthonormalization.Orthogonalization.Blocks.Bicommutant

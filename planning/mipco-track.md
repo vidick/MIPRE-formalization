@@ -17,7 +17,9 @@ reduction, of introspection and of the Pauli basis test. The audit finds no pape
 different hypothesis, incomparable with it: `LIDT.Simul.SoundFin`, soundness in every finite pair
 (two algebras that are each other's commutants and carry faithful tracial states), reached from
 `ω_co` through the vendored tracial density (`MIPRE.mipco_eq_core_of_lidtFin`, §5, Phase 6). What
-remains is `SoundFin` itself (C6b).
+remains is `SoundFin` itself (C6b), planned in `planning/c6b-plan.md` with the II₁
+orthonormalization tier; its analytic core, de la Salle's Theorem 1.2 in algebras without abelian
+projections, is proved.
 
 Written 2026-09-28, after the explicit separation (#222) and the paper's class (#230–#233).
 Target: Lin's theorem `MIP^co = coRE` (`Lin25`, arXiv:2510.07162, STOC 2026), proved by
@@ -712,10 +714,15 @@ recorded in `FinitePair.lean` and in `def:finite-pair`.
 
 *Decisions for the maintainer.*
 - Where the port lives: under `MIPRE/Background/LIDT/`, the only directory that may name
-  `MIPStarRE`, or upstream and then vendored.
-- The orthonormalization tier: H5 for type I finite pairs, or a II₁ condition on finite pairs
-  with the amplification in the value lemma.
-- Whether to have the operator-dual derivation reviewed.
+  `MIPStarRE`, or upstream and then vendored. Default taken for C6b: `MIPRE/Background/LIDT/Co/`.
+- The orthonormalization tier: **taken 2026-10-01, the II₁ tier.** The C6b design round
+  (`planning/c6b-plan.md`, `reports/c6b-paper-proofs.md`) found that it needs a centre-valued trace
+  at the projection `1` for an algebra with a faithful vector trace (proved, with no factor
+  hypothesis), no abelian projections from dyadic matrix units (a trace estimate, no comparison
+  theory), and an amplifying algebra `B` with such units in the value lemma (open). The class
+  becomes the dyadic pairs, and `SoundFin` is narrowed to them.
+- Whether to have the operator-dual derivation reviewed: not on C6b's path, which proves the
+  summed semidefinite form with the trace; it matters for route A1 only.
 - The findings to report to Lin (report §5.2).
 
 **Phase 7 (optional) — the paper's class.** `MIP^co_{1,1/2}(2,1)` with a polynomial-time
@@ -807,7 +814,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | done (#249): ≈ 0.55k new, the ≈ 4k-line chain restated; the LIDT adapter deferred to C6 |
 | C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | done (#251): ≈ 3k new, ≈ 110 modules restated; `mipco_eq_core` conditional on the Pauli basis and LIDT tests in the commuting model |
 | C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | done (#253): ≈ 5.2k new, ≈ 50 modules restated; `mipco_eq_core_of_lidt` conditional on `LIDT.Simul.SoundCo` alone |
-| C6 | Phase 6: the low-individual-degree test in the commuting-operator model. C6a: `SoundFin → MIPCo = IsCoRE` with the adapters; C6b: the core theorem on class C | C6a 2–3k; C6b 70–120k new, plus an orthonormalization tier (4–8k with a II₁ restriction) | audit done (#255, `reports/lidt-co-audit.md`); C6a done: target `SoundFin`, `mipco_eq_core_of_lidtFin`, ≈ 0.8k new lines; C6b open, the port's location and the orthonormalization tier await the maintainer |
+| C6 | Phase 6: the low-individual-degree test in the commuting-operator model. C6a: `SoundFin → MIPCo = IsCoRE` with the adapters; C6b: the core theorem on class C | C6a 2–3k; C6b 70–120k new, plus an orthonormalization tier (4–8k with a II₁ restriction) | audit done (#255, `reports/lidt-co-audit.md`); C6a done (#258): target `SoundFin`, `mipco_eq_core_of_lidtFin`, ≈ 0.8k new lines; C6b planned (`planning/c6b-plan.md`): II₁ tier chosen, its orthonormalization core proved (≈ 1.25k), the class, the amplification and the port open |
 | C7 | Phase 7: the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
 
 C1 is the prerequisite of everything after it; C3 and C4 need only C1 and are independent
