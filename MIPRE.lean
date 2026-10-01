@@ -82,7 +82,6 @@ public import MIPRE.Background.Introspection.HonestPauliMeasurements
 public import MIPRE.Background.Introspection.HonestPauliObservables
 public import MIPRE.Background.Introspection.NumberedComplete
 public import MIPRE.Background.Introspection.NumberedSoundness
-public import MIPRE.Background.Introspection.PauliExtraction
 public import MIPRE.Background.Introspection.PauliRestriction
 public import MIPRE.Background.Introspection.PauliSampler
 public import MIPRE.Background.Introspection.PauliSamplerCost
@@ -95,7 +94,6 @@ public import MIPRE.Background.Introspection.RestrictedSoundness
 public import MIPRE.Background.LIDT.Adapter.Geometry
 public import MIPRE.Background.LIDT.Adapter.Parameters
 public import MIPRE.Background.LIDT.Adapter.Reduction
-public import MIPRE.Background.LIDT.Adapter.Registers
 public import MIPRE.Background.LIDT.Adapter.Reparam
 public import MIPRE.Background.LIDT.Adapter.Seeds
 public import MIPRE.Background.LIDT.Adapter.Strategy
@@ -509,7 +507,6 @@ public import MIPRE.Background.QLD.AncTransport
 public import MIPRE.Background.QLD.Anticomm
 public import MIPRE.Background.QLD.Axioms
 public import MIPRE.Background.QLD.BinaryBlocks
-public import MIPRE.Background.QLD.BinaryForm
 public import MIPRE.Background.QLD.CLBinary
 public import MIPRE.Background.QLD.CLExplicitSeed
 public import MIPRE.Background.QLD.CLExplicitTransport
@@ -523,7 +520,6 @@ public import MIPRE.Background.QLD.Combine
 public import MIPRE.Background.QLD.Combined
 public import MIPRE.Background.QLD.Commutation
 public import MIPRE.Background.QLD.Complete
-public import MIPRE.Background.QLD.Descent
 public import MIPRE.Background.QLD.Dummy
 public import MIPRE.Background.QLD.ErrorShape
 public import MIPRE.Background.QLD.ExactPauli
@@ -564,14 +560,12 @@ public import MIPRE.Background.QLD.PauliFullAnswerPrograms
 public import MIPRE.Background.QLD.PauliQuestionPrograms
 public import MIPRE.Background.QLD.PauliRowPrograms
 public import MIPRE.Background.QLD.PauliStagePrograms
-public import MIPRE.Background.QLD.PhysEmbed
 public import MIPRE.Background.QLD.PhysModel
 public import MIPRE.Background.QLD.Product
 public import MIPRE.Background.QLD.Products
 public import MIPRE.Background.QLD.Pulling
 public import MIPRE.Background.QLD.QLDError
 public import MIPRE.Background.QLD.Regime
-public import MIPRE.Background.QLD.RegisterForm
 public import MIPRE.Background.QLD.SamplerQueryProgram
 public import MIPRE.Background.QLD.SeededLinePrograms
 public import MIPRE.Background.QLD.SelfCons
@@ -587,7 +581,6 @@ public import MIPRE.Background.QLD.SwapState
 public import MIPRE.Background.QLD.SwapUnitary
 public import MIPRE.Background.QLD.TypeEncoding
 public import MIPRE.Background.QLD.Uniform
-public import MIPRE.Background.QLD.ValidAnswers
 public import MIPRE.Background.QLD.Win
 public import MIPRE.Background.QLD.WinMS
 public import MIPRE.Background.Repetition.Axioms

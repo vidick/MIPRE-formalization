@@ -21,7 +21,7 @@ The proof produces something else: a chain of explicit errors, each a polynomial
 roots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and
 `deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability
 `md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns
-that into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and
+that into `deltaLD = deltaSim q (4m) d 1 deltaGS`; `deltaS` (`lem:qld-simultaneous`) and
 `deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`
 (`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows
 every link is of the blueprint's form. It does so with a closure calculus rather than by bounding
@@ -58,10 +58,11 @@ multiplied by something small, and it does: `2/q`, `(md + 1)/q`.
 ## The base cases
 
 `ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and
-`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at
-`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, `B = clB`, and
-`(4md)^A = 4^A (md)^A`, `2^{-4Bmd} ≤ 2^{-Bmd}`, so it is small whenever `x` is. This is the
-absorption `lidtError_le_deltaCL` performs for the canonical-line error, run once more.
+`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaSim_comp`:
+at `(q, 4m, d, 1)` its error `δ_sim` is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = simA`,
+`B = clB`, and `(4md)^A = 4^A (md)^A`, `2^{-4Bmd} ≤ 2^{-Bmd}`, so it is small whenever `x` is.
+This is the absorption `lidtError_le_deltaCL` performs for the canonical-line error, run once
+more.
 `MIPRE/Foundations/Introspection/ErrorBounds.lean` does the same kind of normalization for the
 introspection error, whose shape `a (x^a ε^b + x^{-b})` has no `2^{-bmd}` term.
 
@@ -587,15 +588,15 @@ theorem errSmall_deltaGS : ErrSmall fun ε m d q => deltaGS q m d ε := by
   exact ((hP.m_mul_m_mul.const_mul (by norm_num)).add
     (errSmall_deltaQ.const_mul (by norm_num))).add hL
 
-/-- **`δ_CL` at `(q, 4m, d)` is of the shape, with `4m` read as `m`**: `(4md)^A = 4^A (md)^A`,
+/-- **`δ_sim` at `(q, 4m, d, 1)` is of the shape, with `4m` read as `m`**: `(4md)^A = 4^A (md)^A`,
 and `2^{-B·4md} ≤ 2^{-Bmd}`. -/
-theorem deltaCL_four_mul_le {q m d : ℕ} {x : ℝ} (hx : 0 ≤ x) :
-    deltaCL q (4 * m) d x ≤ clA * 4 ^ clA * (((m : ℝ) * d) ^ clA *
+theorem deltaSim_four_mul_le {q m d : ℕ} {x : ℝ} (hx : 0 ≤ x) :
+    Simul.deltaSim q (4 * m) d 1 x ≤ Simul.simA * 4 ^ Simul.simA * (((m : ℝ) * d) ^ Simul.simA *
       (x ^ clB + (q : ℝ) ^ (-clB) + (2 : ℝ) ^ (-(clB * m * d)))) := by
-  have hA : 0 ≤ clA := by linarith [one_le_clA]
+  have hA : 0 ≤ Simul.simA := by linarith [Simul.forty_le_simA]
   have hB := clB_pos
   have hmd : 0 ≤ (m : ℝ) * d := by positivity
-  have hcast : ((d * (4 * m) : ℕ) : ℝ) = 4 * ((m : ℝ) * d) := by push_cast; ring
+  have hcast : ((d * (4 * m) * 1 : ℕ) : ℝ) = 4 * ((m : ℝ) * d) := by push_cast; ring
   have h2 : (2 : ℝ) ^ (-(clB * ((4 * m : ℕ) : ℝ) * d)) ≤ (2 : ℝ) ^ (-(clB * m * d)) := by
     refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
     have : clB * (m : ℝ) * d ≤ clB * ((4 * m : ℕ) : ℝ) * d := by
@@ -603,34 +604,34 @@ theorem deltaCL_four_mul_le {q m d : ℕ} {x : ℝ} (hx : 0 ≤ x) :
       nlinarith [mul_nonneg hB.le hmd]
     linarith
   have h0 : 0 ≤ x ^ clB + (q : ℝ) ^ (-clB) := by positivity
-  unfold deltaCL
+  unfold Simul.deltaSim
   rw [hcast, Real.mul_rpow (by norm_num) hmd]
-  calc clA * (4 ^ clA * ((m : ℝ) * d) ^ clA)
+  calc Simul.simA * (4 ^ Simul.simA * ((m : ℝ) * d) ^ Simul.simA)
         * (x ^ clB + (q : ℝ) ^ (-clB) + (2 : ℝ) ^ (-(clB * ((4 * m : ℕ) : ℝ) * d)))
-      ≤ clA * (4 ^ clA * ((m : ℝ) * d) ^ clA)
+      ≤ Simul.simA * (4 ^ Simul.simA * ((m : ℝ) * d) ^ Simul.simA)
         * (x ^ clB + (q : ℝ) ^ (-clB) + (2 : ℝ) ^ (-(clB * m * d))) := by gcongr
-    _ = clA * 4 ^ clA * (((m : ℝ) * d) ^ clA *
+    _ = Simul.simA * 4 ^ Simul.simA * (((m : ℝ) * d) ^ Simul.simA *
       (x ^ clB + (q : ℝ) ^ (-clB) + (2 : ℝ) ^ (-(clB * m * d)))) := by ring
 
-/-- **The seeded soundness theorem's error at `(q, 4m, d)`, fed a small failure probability, is
-small.** -/
-theorem ErrSmall.deltaCL_comp {g : ℝ → ℕ → ℕ → ℕ → ℝ} (hg : ErrSmall g) :
-    ErrSmall fun ε m d q => deltaCL q (4 * m) d (g ε m d q) := by
-  have hA : 0 ≤ clA := by linarith [one_le_clA]
-  have hR : ErrSmall fun ε m d q => clA * 4 ^ clA * (((m : ℝ) * d) ^ clA *
+/-- **The seeded soundness theorem's error at `(q, 4m, d, 1)`, fed a small failure probability,
+is small.** -/
+theorem ErrSmall.deltaSim_comp {g : ℝ → ℕ → ℕ → ℕ → ℝ} (hg : ErrSmall g) :
+    ErrSmall fun ε m d q => Simul.deltaSim q (4 * m) d 1 (g ε m d q) := by
+  have hA : 0 ≤ Simul.simA := by linarith [Simul.forty_le_simA]
+  have hR : ErrSmall fun ε m d q => Simul.simA * 4 ^ Simul.simA * (((m : ℝ) * d) ^ Simul.simA *
       (g ε m d q ^ clB + (q : ℝ) ^ (-clB) + (2 : ℝ) ^ (-(clB * m * d)))) :=
     ((((hg.rpow clB_pos clB_lt_one.le).add (errSmall_q_rpow_neg clB_pos)).add
       (errSmall_two_rpow_neg clB_pos)).mdpow_mul hA).const_mul (by positivity)
   refine hR.mono fun ε m d q hε0 hε1 hm hd hq => ?_
   have hx := hg.nonneg hε0 hε1 hm hd hq
-  refine ⟨?_, deltaCL_four_mul_le hx⟩
-  unfold deltaCL
+  refine ⟨?_, deltaSim_four_mul_le hx⟩
+  unfold Simul.deltaSim
   positivity
 
 /-- `δ_ld`, the seeded soundness theorem's error on the padded strategy (`lem:qld-global-pvm`). -/
 theorem errSmall_deltaLD : ErrSmall fun ε m d q => deltaLD q m d ε := by
   unfold deltaLD
-  exact errSmall_deltaGS.deltaCL_comp
+  exact errSmall_deltaGS.deltaSim_comp
 
 /-- `δ_S`, the error of `lem:qld-simultaneous`, at any small `GlobalPair` error. -/
 theorem ErrSmall.deltaS_comp {g : ℝ → ℕ → ℕ → ℕ → ℝ} (hg : ErrSmall g) :

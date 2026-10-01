@@ -29,8 +29,9 @@ soundness clauses of the stages of the compression. Parallel repetition's is pro
 the low-individual-degree test in the commuting-operator model
 (`AnswerReduction.answerReduction_soundIn_commuting`, Phase 3); and introspection's is proved from
 the soundness of the Pauli basis test in the commuting-operator model
-(`Introspection.seven_soundIn_commuting`, Phase 4). What remains are those two soundness
-statements, `QLD.SoundCo` and `LIDT.Simul.SoundCo`. It goes through `gapCompressionCo`, the main
+(`Introspection.seven_soundIn_commuting`, Phase 4). The first follows from the second
+(`QLD.soundCo_of_lidt`, Phase 5), so `mipco_eq_core_of_lidt` states the theorem with the one
+hypothesis `LIDT.Simul.SoundCo`. It goes through `gapCompressionCo`, the main
 theorem's pipeline with the number of repetitions chosen against the smaller of the two
 repetition constants (`repetitionCo`), since the commuting-operator repetition theorem has a
 constant of its own; any gap compression sound in `ω_co` gives the theorem
@@ -81,6 +82,14 @@ theorem mipco_eq_core_of_stages (hQ : QLD.SoundCo) (hL : LIDT.Simul.SoundCo) :
   Halting.mipco_eq_core_of gapCompressionCo Cost.selfUniversal
     (GapCompression.ofPipeline_sound (Introspection.seven_soundIn_commuting hQ)
       (AnswerReduction.answerReduction_soundIn_commuting hL) (repetitionCo_soundIn_commuting 7))
+
+/-- **`MIP^co = coRE` from the commuting-operator soundness of the low-individual-degree test
+alone** (blueprint `cor:mipco-from-lidt`): the Pauli basis test is sound in the model of every
+commuting-operator strategy as soon as the seeded low-individual-degree test is sound in the
+commuting-operator model (`QLD.soundCo_of_lidt`, Phase 5 of `planning/mipco-track.md`), so the two
+hypotheses of `mipco_eq_core_of_stages` are one. -/
+theorem mipco_eq_core_of_lidt (hL : LIDT.Simul.SoundCo) : MIPCo = IsCoRE :=
+  mipco_eq_core_of_stages (QLD.soundCo_of_lidt hL) hL
 
 end MIPRE
 
