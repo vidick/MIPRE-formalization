@@ -42,6 +42,12 @@ This file is the geometry of that padding, and it is deliberately free of operat
 
 `aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions
 `2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`), which changes nothing here:
+no statement of this file mentions a state, a strategy or an operator, so the geometry is the
+matrix route's verbatim, compiled against the model form of `MIPRE/Background/QLD/Lines.lean`.
 -/
 
 noncomputable section

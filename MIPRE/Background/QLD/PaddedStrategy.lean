@@ -21,18 +21,32 @@ This file defines the strategy and bounds its conditional failure at each of the
 question pairs by an agreement defect of the measurements it is built from; the averages over the
 verifier's samples, and the value bound, are in `PaddedValue.lean`.
 
-## The registers, and why the strategy is a family of POVMs
+## The model, and why the strategy is a family of POVMs
 
-The strategy lives on the registers `(dA × Anc F m) × (F × F)` of `extHat ψ`: the player's own
-space, the expansion's ancilla, and the combining coefficients' ancilla that `lem:qld-padded-points`
-dilates its sandwich with. Its point measurement is the *sandwich* `M^X_a M^Z_b M^X_a` of the
-hatted point measurements, coarse-grained along `(a, b) ↦ α a + β b`, extended by the identity to
-the last register; its line measurements are the padded line measurements `padLineMats`. Both are
-POVMs and neither is projective, so the strategy is a family of POVMs, and one Naimark dilation at
-the end (`clSoundness_ldc_one_deltaCL_of_povm`) makes it the projective strategy the soundness
-theorem takes. The dilated point measurement of `lem:qld-padded-points` is not used: on the
-extended state the Born rule sees only compressions (`bornProb_extVec2`), so every bound proved
-for it is a bound for the sandwich.
+The strategy lives in the expanded model `M.reg (Anc F m)` of stage 2: each player's measurements
+are elements of `Matrix (Anc F m) (Anc F m) R` over the player's algebra `R` (the player's own
+algebra and the expansion's ancilla, register outer). There is no register for the combining
+coefficients: it was inert in every padded measurement. The point measurement is the *sandwich*
+`M^Z_b M^X_a M^Z_b` of the hatted point measurements (`POVMIn.sand`), coarse-grained along
+`(a, b) ↦ α a + β b`; its line measurements are the padded line measurements `padLineMats`,
+averaged over the raw directions. Both are POVMs --- the point elements are coarse-grainings of Gram
+elements `(X_a Z_b)⋆ (X_a Z_b)`, the line elements averages of pasted sandwiches --- and neither is
+projective, so the strategy is a family of POVMs, and one Halmos dilation at the end makes it the
+projective strategy the soundness theorem takes. The dilated point measurement of
+`lem:qld-padded-points` is not used: every bound of stage 3 is stated for the sandwich itself
+(`combined_points_pts`, `padded_lines_consistency`).
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The strategy of each player is
+`padStrat hm hm4 hS` for a projective family `S : Question F m → POVMIn (Answer F m d) R` (the
+design's `padStratIn`; the cited names `padStrat`, `padPt`, `padPtPair`, `padLinePOVM`, `lineMeas`
+are the model versions), the conditional failures are those of any bipartite model whose algebras
+are the two players' `Matrix (Anc F m) (Anc F m) _` (in particular `M.reg (Anc F m)`), and
+polynomial separation holds in any bipartite model. The model forms of the matrix helpers `POVM.ofPosSemidef`,
+`POVM.avgOn` and the support lemmas of coarse-grainings are `POVMIn.ofNonneg`, `POVMIn.avgOn`,
+`POVMIn.map_congr_of_support`, `POVMIn.map_op_eq_zero_of_forall_ne` and `POVMIn.map_const_op`
+below.
 
 ## A function of the question
 
@@ -52,62 +66,129 @@ question is the average of the per-sample quantities.
 
 noncomputable section
 
+namespace MIPRE
+
+/-! ## POVMs in a `⋆`-algebra from nonnegative families, uniform averages, and supports
+
+The model forms of `POVM.ofPosSemidef`, `POVM.avgOn` and three facts about coarse-grainings
+(`MIPRE/Foundations/POVMMix.lean`), which the padded strategy needs in a player's algebra. -/
+
+namespace POVMIn
+
+open Finset
+
+variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R] {A : Type*}
+  [Fintype A]
+
+/-- **A POVM from a family of nonnegative elements summing to one**, in a star-ordered ring: a
+nonnegative element is self-adjoint. -/
+def ofNonneg (E : A → R) (hpos : ∀ a, 0 ≤ E a) (hsum : ∑ a, E a = 1) : POVMIn A R where
+  mats a := ⟨E a, IsSelfAdjoint.of_nonneg (hpos a)⟩
+  nonneg a := Subtype.coe_le_coe.mp (hpos a)
+  normalized := by
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    exact hsum
+
+@[simp] theorem ofNonneg_op (E : A → R) (hpos : ∀ a, 0 ≤ E a) (hsum : ∑ a, E a = 1) (a : A) :
+    (ofNonneg E hpos hsum).op a = E a := rfl
+
+/-- An outcome outside the range of the relabelling carries the zero element. -/
+theorem map_op_eq_zero_of_forall_ne {B : Type*} [Fintype B] [DecidableEq B] (f : A → B)
+    (M : POVMIn A R) {b : B} (h : ∀ a, f a ≠ b) : (M.map f).op b = 0 := by
+  rw [map_op]
+  exact Finset.sum_eq_zero fun a ha => absurd (Finset.mem_filter.mp ha).2 (h a)
+
+/-- Two relabellings that agree on the support of a POVM relabel it the same way. -/
+theorem map_congr_of_support {B : Type*} [Fintype B] [DecidableEq B] {f g : A → B}
+    (M : POVMIn A R) (h : ∀ a, M.op a ≠ 0 → f a = g a) : M.map f = M.map g :=
+  ext' fun b => by
+    rw [map_op, map_op, Finset.sum_filter, Finset.sum_filter]
+    refine Finset.sum_congr rfl fun a _ => ?_
+    by_cases ha : M.op a = 0
+    · rw [ha]
+      simp
+    · rw [h a ha]
+
+/-- Forgetting the outcome altogether gives the identity. -/
+theorem map_const_op (M : POVMIn A R) : (M.map fun _ => ()).op () = 1 := by
+  rw [map_op, Finset.filter_true_of_mem fun _ _ => rfl, sum_op]
+
+variable [Algebra ℂ R] [StarModule ℂ R] [DecidableEq A] {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+/-- **The uniform average of POVMs over a finset**, defaulting to the deterministic answer `a₀`
+when the finset is empty. -/
+def avgOn (T : Finset ι) (Q : ι → POVMIn A R) (a₀ : A) : POVMIn A R :=
+  if hT : T.Nonempty then mix (unifOn T) (unifOn_nonneg T) (sum_unifOn T hT) Q else dirac a₀
+
+/-- The elements of a uniform average over a nonempty finset. -/
+theorem avgOn_op {T : Finset ι} (hT : T.Nonempty) (Q : ι → POVMIn A R) (a₀ a : A) :
+    (avgOn T Q a₀).op a = (((T.card : ℝ)⁻¹ : ℝ) : ℂ) • ∑ i ∈ T, (Q i).op a := by
+  rw [avgOn, dif_pos hT, mix_op, Finset.smul_sum]
+  have hz : ∀ i ∈ (univ : Finset ι), i ∉ T → ((unifOn T i : ℝ) : ℂ) • (Q i).op a = 0 :=
+    fun i _ hi => by rw [unifOn, if_neg hi, Complex.ofReal_zero, zero_smul]
+  rw [← Finset.sum_subset (Finset.subset_univ T) hz]
+  exact Finset.sum_congr rfl fun i hi => by rw [unifOn, if_pos hi]
+
+end POVMIn
+
+end MIPRE
+
 namespace MIPRE.QLD
 
 open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL
 open scoped Kronecker ComplexOrder MatrixOrder
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA : Type} [Fintype dA] [DecidableEq dA] {hm : m ∣ Fintype.card F}
+  [NeZero m] {hm : m ∣ Fintype.card F} {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R]
+  [StarModule ℂ R] [PartialOrder R] [StarOrderedRing R] [StarProper R]
 
 /-! ## The padded point measurement -/
 
-/-- The sandwich `M^X_a M^Z_b M^X_a` of the hatted point measurements at the `X` and `Z` blocks of
-a padded point, as a POVM with outcomes the pairs `(a, b)`. -/
-def padPtPair {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m)) :
-    POVM (F × F) (dA × Anc F m) :=
-  sandPOVM (isPVM_hatMats hM .X (xBlk u)) (isPVM_hatMats hM .Z (zBlk u))
+/-- The sandwich `M^Z_b M^X_a M^Z_b` of the hatted point measurements at the `X` and `Z` blocks of
+a padded point, as a POVM in the register's matrices over the player's algebra, with outcomes the
+pairs `(a, b)`. -/
+def padPtPair {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
+    (u : Point F (4 * m)) : POVMIn (F × F) (Matrix (Anc F m) (Anc F m) R) :=
+  POVMIn.sand (isPVM_hatMats hS .X (xBlk u)) (isPVM_hatMats hS .Z (zBlk u))
 
-@[simp] theorem padPtPair_mats {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m)) (r : F × F) :
-    (((padPtPair hM u).mats r).val) = sand (hatMats M .X (xBlk u)) (hatMats M .Z (zBlk u)) r :=
+@[simp] theorem padPtPair_mats {S : Question F m → POVMIn (Answer F m d) R}
+    (hS : ∀ q, IsPVMIn (S q).op) (u : Point F (4 * m)) (r : F × F) :
+    (padPtPair hS u).op r = sand (hatMats S .X (xBlk u)) (hatMats S .Z (zBlk u)) r :=
   rfl
 
 /-- The combining coefficients' reading of a pair outcome at a padded point:
 `(a, b) ↦ α a + β b`. -/
 def padComb (u : Point F (4 * m)) (r : F × F) : F := alph u * r.1 + bet u * r.2
 
-/-- **The padded point measurement**: the sandwich read through the combining coefficients and
-extended by the identity to the coefficients' ancilla, the strategy's answer to a point question
-as a POVM with outcomes in `F`. -/
-def padPt {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m)) :
-    POVM F ((dA × Anc F m) × (F × F)) :=
-  ((padPtPair hM u).aOp).map (padComb u)
+/-- **The padded point measurement**: the sandwich read through the combining coefficients, the
+strategy's answer to a point question as a POVM with outcomes in `F`. -/
+def padPt {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
+    (u : Point F (4 * m)) : POVMIn F (Matrix (Anc F m) (Anc F m) R) :=
+  (padPtPair hS u).map (padComb u)
 
-theorem padPt_mats {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m)) (a : F) :
-    ((padPt hM u).mats a).val
-      = aOp (ptComb (sand (hatMats M .X (xBlk u)) (hatMats M .Z (zBlk u))) (alph u) (bet u) a) := by
-  rw [padPt, POVM.map_mats, ptComb, aOp_sum]
+theorem padPt_mats {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
+    (u : Point F (4 * m)) (a : F) :
+    (padPt hS u).op a
+      = ptComb (sand (hatMats S .X (xBlk u)) (hatMats S .Z (zBlk u))) (alph u) (bet u) a := by
+  rw [padPt, POVMIn.map_op, ptComb]
   rfl
 
 /-! ## The padded line measurements, as POVMs -/
 
 variable (hm4 : 4 * m ∣ Fintype.card F)
 
-/-- `padLineMats`, bundled as a POVM. -/
+/-- `padLineMats`, bundled as a POVM in the register's matrices over the player's algebra. -/
 def padLinePOVM (ty : CL.Ty) (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
-    {M : Question F m → POVM (Answer F m d) dA} (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
-    (P : LPData F (4 * m)) : POVM (LinePoly F (m * d + 1)) ((dA × Anc F m) × (F × F)) :=
-  POVM.ofPosSemidef (padLineMats hm4 ty PX PZ M P) (posSemidef_padLineMats hm4 ty PX PZ hM P)
-    (sum_padLineMats hm4 ty PX PZ hM P)
+    {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
+    (P : LPData F (4 * m)) : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) R) :=
+  POVMIn.ofNonneg (padLineMats hm4 ty PX PZ S P) (posSemidef_padLineMats hm4 ty PX PZ hS P)
+    (sum_padLineMats hm4 ty PX PZ hS P)
 
 @[simp] theorem padLinePOVM_mats (ty : CL.Ty) (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
-    {M : Question F m → POVM (Answer F m d) dA} (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
+    {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
     (P : LPData F (4 * m)) (f : LinePoly F (m * d + 1)) :
-    (((padLinePOVM hm4 ty PX PZ hM P).mats f).val) = padLineMats hm4 ty PX PZ M P f := rfl
+    (padLinePOVM hm4 ty PX PZ hS P).op f = padLineMats hm4 ty PX PZ S P f := rfl
 
 variable (hm)
 
@@ -152,19 +233,21 @@ theorem presOf_dir_ofLPZ (ty : CL.Ty) (hty : ty ≠ .point) (D : LPData F m) (u 
   · exact dPres_dir_ofLPZ hm D u
 
 /-- **The line measurement of the padded strategy**: the padded line POVM at the data
-`⟨u₀, s, raw⟩`, averaged over the raw directions in `S`. -/
-def lineMeas (ty : CL.Ty) {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u₀ : Point F (4 * m)) (s : F)
-    (S : Finset (Point F (4 * m))) : POVM (LinePoly F (m * d + 1)) ((dA × Anc F m) × (F × F)) :=
-  POVM.avgOn S (fun raw => padLinePOVM hm4 ty (presOf hm ty .X) (presOf hm ty .Z) hM ⟨u₀, s, raw⟩) 0
+`⟨u₀, s, raw⟩`, averaged over the raw directions in `T`. -/
+def lineMeas (ty : CL.Ty) {S : Question F m → POVMIn (Answer F m d) R}
+    (hS : ∀ q, IsPVMIn (S q).op) (u₀ : Point F (4 * m)) (s : F)
+    (T : Finset (Point F (4 * m))) :
+    POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) R) :=
+  POVMIn.avgOn T
+    (fun raw => padLinePOVM hm4 ty (presOf hm ty .X) (presOf hm ty .Z) hS ⟨u₀, s, raw⟩) 0
 
-theorem lineMeas_mats (ty : CL.Ty) {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u₀ : Point F (4 * m)) (s : F)
-    {S : Finset (Point F (4 * m))} (hS : S.Nonempty) (f : LinePoly F (m * d + 1)) :
-    ((lineMeas hm hm4 ty hM u₀ s S).mats f).val
-      = (S.card : ℝ)⁻¹ • ∑ raw ∈ S,
-          padLineMats hm4 ty (presOf hm ty .X) (presOf hm ty .Z) M ⟨u₀, s, raw⟩ f := by
-  rw [lineMeas, POVM.avgOn_mats hS]
+theorem lineMeas_mats (ty : CL.Ty) {S : Question F m → POVMIn (Answer F m d) R}
+    (hS : ∀ q, IsPVMIn (S q).op) (u₀ : Point F (4 * m)) (s : F)
+    {T : Finset (Point F (4 * m))} (hT : T.Nonempty) (f : LinePoly F (m * d + 1)) :
+    (lineMeas hm hm4 ty hS u₀ s T).op f
+      = (((T.card : ℝ)⁻¹ : ℝ) : ℂ) • ∑ raw ∈ T,
+          padLineMats hm4 ty (presOf hm ty .X) (presOf hm ty .Z) S ⟨u₀, s, raw⟩ f := by
+  rw [lineMeas, POVMIn.avgOn_op hT]
   rfl
 
 /-- The raw directions a sample with seed `s` can carry so that its diagonal question shows the
@@ -278,24 +361,24 @@ def rdEval (t : F) : CL.Answer F (4 * m) d 1 → F
   | .dpolys p => (p 0).eval t
   | _ => 0
 
-/-- **The padded strategy** of one player, as a family of POVMs indexed by the seeded test's
-questions at `(q, 4m, d, 1)`. -/
-def padStrat {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) :
-    CL.Question F (4 * m) → POVM (CL.Answer F (4 * m) d 1) ((dA × Anc F m) × (F × F))
-  | .point u => (padPt hM u).map fun a => .values fun _ => a
-  | .aline u₀ s => (lineMeas hm hm4 .aline hM u₀ s univ).map (lineAns .aline)
-  | .dline u₀ s v' => (lineMeas hm hm4 .dline hM u₀ s (rawFiber hm4 s v')).map (lineAns .dline)
+/-- **The padded strategy** of one player, as a family of POVMs in the register's matrices over
+the player's algebra, indexed by the seeded test's questions at `(q, 4m, d, 1)` (the design's
+`padStratIn`). -/
+def padStrat {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op) :
+    CL.Question F (4 * m) → POVMIn (CL.Answer F (4 * m) d 1) (Matrix (Anc F m) (Anc F m) R)
+  | .point u => (padPt hS u).map fun a => .values fun _ => a
+  | .aline u₀ s => (lineMeas hm hm4 .aline hS u₀ s univ).map (lineAns .aline)
+  | .dline u₀ s v' => (lineMeas hm hm4 .dline hS u₀ s (rawFiber hm4 s v')).map (lineAns .dline)
 
-theorem padStrat_point {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m)) :
-    padStrat hm hm4 hM (.point u) = (padPt hM u).map fun a => .values fun _ => a := rfl
+theorem padStrat_point {S : Question F m → POVMIn (Answer F m d) R}
+    (hS : ∀ q, IsPVMIn (S q).op) (u : Point F (4 * m)) :
+    padStrat hm hm4 hS (.point u) = (padPt hS u).map fun a => .values fun _ => a := rfl
 
-theorem padStrat_lineQ (ty : CL.Ty) (hty : ty ≠ .point) {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m)) (s : F)
-    (raw : Point F (4 * m)) :
-    padStrat hm hm4 hM (lineQ hm4 ty u s raw)
-      = (lineMeas hm hm4 ty hM (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
+theorem padStrat_lineQ (ty : CL.Ty) (hty : ty ≠ .point)
+    {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
+    (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) :
+    padStrat hm hm4 hS (lineQ hm4 ty u s raw)
+      = (lineMeas hm hm4 ty hS (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
           (lineAns ty) := by
   cases ty
   · exact absurd rfl hty
@@ -304,21 +387,21 @@ theorem padStrat_lineQ (ty : CL.Ty) (hty : ty ≠ .point) {M : Question F m → 
 
 /-! ## The support of the strategy's answers -/
 
-theorem exists_of_padStrat_point_mats_ne_zero {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m))
-    {a : CL.Answer F (4 * m) d 1} (h : ((padStrat hm hm4 hM (.point u)).mats a).val ≠ 0) :
+theorem exists_of_padStrat_point_mats_ne_zero {S : Question F m → POVMIn (Answer F m d) R}
+    (hS : ∀ q, IsPVMIn (S q).op) (u : Point F (4 * m))
+    {a : CL.Answer F (4 * m) d 1} (h : (padStrat hm hm4 hS (.point u)).op a ≠ 0) :
     ∃ c : F, a = .values fun _ => c := by
   by_contra hne
-  exact h (POVM.map_mats_eq_zero_of_forall_ne _ _ fun c hc => hne ⟨c, hc.symm⟩)
+  exact h (POVMIn.map_op_eq_zero_of_forall_ne _ _ fun c hc => hne ⟨c, hc.symm⟩)
 
 theorem exists_of_padStrat_lineQ_mats_ne_zero (ty : CL.Ty) (hty : ty ≠ .point)
-    {M : Question F m → POVM (Answer F m d) dA} (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
+    {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
     (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) {a : CL.Answer F (4 * m) d 1}
-    (h : ((padStrat hm hm4 hM (lineQ hm4 ty u s raw)).mats a).val ≠ 0) :
+    (h : (padStrat hm hm4 hS (lineQ hm4 ty u s raw)).op a ≠ 0) :
     ∃ f, a = lineAns ty f := by
   rw [padStrat_lineQ hm hm4 ty hty] at h
   by_contra hne
-  exact h (POVM.map_mats_eq_zero_of_forall_ne _ _ fun f hf => hne ⟨f, hf.symm⟩)
+  exact h (POVMIn.map_op_eq_zero_of_forall_ne _ _ fun f hf => hne ⟨f, hf.symm⟩)
 
 omit [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
 /-- Resizing to the degree bound a polynomial already satisfies does not change its values. -/
@@ -355,47 +438,45 @@ theorem eval_padLine_of_degLE {k n : ℕ} {f : LinePoly F k} (hf : DegLE f n) (t
 
 /-- On an axis-parallel line, the strategy's line measurement has no element off `DegLE _ d`. -/
 theorem lineMeas_aline_mats_eq_zero_of_not_degLE (hd : 1 ≤ d)
-    {M : Question F m → POVM (Answer F m d) dA} (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
-    (hleg : LegalSupport M) (u₀ : Point F (4 * m)) (s : F) (S : Finset (Point F (4 * m)))
+    {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
+    (hleg : LegalSupport S) (u₀ : Point F (4 * m)) (s : F) (T : Finset (Point F (4 * m)))
     {f : LinePoly F (m * d + 1)} (hf : ¬ DegLE f d) :
-    ((lineMeas hm hm4 .aline hM u₀ s S).mats f).val = 0 := by
-  by_cases hS : S.Nonempty
-  · rw [lineMeas_mats hm hm4 .aline hM u₀ s hS, Finset.sum_eq_zero, smul_zero]
+    (lineMeas hm hm4 .aline hS u₀ s T).op f = 0 := by
+  by_cases hT : T.Nonempty
+  · rw [lineMeas_mats hm hm4 .aline hS u₀ s hT, Finset.sum_eq_zero, smul_zero]
     intro raw _
     exact padLineMats_aline_eq_zero_of_not_degLE hm4 hd hleg _ hf
-  · rw [lineMeas, POVM.avgOn, dif_neg hS]
-    show (if f = 0 then (1 : Matrix _ _ ℂ) else 0) = 0
-    rw [if_neg]
+  · rw [lineMeas, POVMIn.avgOn, dif_neg hT, POVMIn.dirac_op, if_neg]
     rintro rfl
     exact hf degLE_zero
 
 /-- **Reading the strategy's line answer at a parameter is reading the line measurement there**:
 the resizing in `lineAns` is invisible on the support. -/
 theorem padStrat_lineQ_map_rdEval (ty : CL.Ty) (hty : ty ≠ .point) (hd : 1 ≤ d)
-    {M : Question F m → POVM (Answer F m d) dA} (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
-    (hleg : LegalSupport M) (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) (t : F) :
-    (padStrat hm hm4 hM (lineQ hm4 ty u s raw)).map (rdEval t)
-      = (lineMeas hm hm4 ty hM (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
+    {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
+    (hleg : LegalSupport S) (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) (t : F) :
+    (padStrat hm hm4 hS (lineQ hm4 ty u s raw)).map (rdEval t)
+      = (lineMeas hm hm4 ty hS (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
           fun f => LinePoly.eval f t := by
-  rw [padStrat_lineQ hm hm4 ty hty, POVM.map_map]
+  rw [padStrat_lineQ hm hm4 ty hty, POVMIn.map_map]
   cases ty
   · exact absurd rfl hty
-  · refine POVM.map_congr_of_support _ fun f hf => ?_
+  · refine POVMIn.map_congr_of_support _ fun f hf => ?_
     have hdeg : DegLE f d := by
       by_contra h
-      exact hf (lineMeas_aline_mats_eq_zero_of_not_degLE hm hm4 hd hM hleg _ _ _ h)
+      exact hf (lineMeas_aline_mats_eq_zero_of_not_degLE hm hm4 hd hS hleg _ _ _ h)
     exact eval_padLine_of_degLE hdeg t
-  · refine POVM.map_congr_of_support _ fun f _ => ?_
+  · refine POVMIn.map_congr_of_support _ fun f _ => ?_
     show (padLine (4 * m * d) f).eval t = f.eval t
     have hm1 : 1 ≤ m := Nat.pos_of_ne_zero (NeZero.ne m)
     exact eval_padLine (by nlinarith) f t
 
 /-- The strategy's point answer, read back as a field element, is the padded point measurement. -/
-theorem padStrat_point_map_toValue {M : Question F m → POVM (Answer F m d) dA}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m)) :
-    (padStrat hm hm4 hM (.point u)).map CL.Answer.toValue = padPt hM u := by
-  rw [padStrat_point, POVM.map_map]
-  exact POVM.map_id _
+theorem padStrat_point_map_toValue {S : Question F m → POVMIn (Answer F m d) R}
+    (hS : ∀ q, IsPVMIn (S q).op) (u : Point F (4 * m)) :
+    (padStrat hm hm4 hS (.point u)).map CL.Answer.toValue = padPt hS u := by
+  rw [padStrat_point, POVMIn.map_map]
+  exact POVMIn.map_id _
 
 /-! ## The line measurement read at the sampled point
 
@@ -409,23 +490,23 @@ does not move at all (`xBlk_dir_sub`, `zBlk_dir_sub`). -/
 
 section ShiftInvariance
 
-variable {dB : Type} [Fintype dB] [DecidableEq dB] {M : Question F m → POVM (Answer F m d) dB}
+variable {S : Question F m → POVMIn (Answer F m d) R}
 
 /-- The `X` line measurement of the pair of sublines is unchanged by the padded shift. -/
 theorem lineMats_pairCX_padShift (ty : CL.Ty) (PX : LinePres F m hm .X) (hfacX : FactorsX PX)
     (hdirX : ∀ (D : LPData F m) (u : Point F m), PX.dir (ofLPX D u) = D.dir hm ty) (tau : F)
     (P : LPData F (4 * m)) (e : SubRand F m) :
-    PX.lineMats d M (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))
-      = PX.lineMats d M (pairCX (subPair hm4 hm ty P e)) := by
-  have hL : PX.lineMats d M (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))
-      = PX.lineMats d M (ofLPX (subX hm4 hm (padShift hm4 ty tau P) e.1)
+    PX.lineMats d S (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))
+      = PX.lineMats d S (pairCX (subPair hm4 hm ty P e)) := by
+  have hL : PX.lineMats d S (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))
+      = PX.lineMats d S (ofLPX (subX hm4 hm (padShift hm4 ty tau P) e.1)
           (subZ hm4 hm ty P e.2).pt) :=
     lineMats_ofLPX hfacX (ofLPX (subX hm4 hm (padShift hm4 ty tau P) e.1)
       (subZ hm4 hm ty P e.2).pt) (subZ hm4 hm ty (padShift hm4 ty tau P) e.2).pt
   rw [hL, subX_padShift]
-  show PX.lineMats d M (ofLPX ⟨xBlk (padShift hm4 ty tau P).pt, (subX hm4 hm P e.1).s,
+  show PX.lineMats d S (ofLPX ⟨xBlk (padShift hm4 ty tau P).pt, (subX hm4 hm P e.1).s,
     (subX hm4 hm P e.1).raw⟩ (subZ hm4 hm ty P e.2).pt)
-    = PX.lineMats d M (ofLPX (subX hm4 hm P e.1) (subZ hm4 hm ty P e.2).pt)
+    = PX.lineMats d S (ofLPX (subX hm4 hm P e.1) (subZ hm4 hm ty P e.2).pt)
   rcases xBlk_dir_sub hm4 hm ty P e.1 with h | h
   · have hc : ofLPX (⟨xBlk (padShift hm4 ty tau P).pt, (subX hm4 hm P e.1).s,
         (subX hm4 hm P e.1).raw⟩ : LPData F m) (subZ hm4 hm ty P e.2).pt
@@ -445,17 +526,17 @@ theorem lineMats_pairCX_padShift (ty : CL.Ty) (PX : LinePres F m hm .X) (hfacX :
 theorem lineMats_pairCZ_padShift (ty : CL.Ty) (PZ : LinePres F m hm .Z) (hfacZ : FactorsZ PZ)
     (hdirZ : ∀ (D : LPData F m) (u : Point F m), PZ.dir (ofLPZ D u) = D.dir hm ty) (tau : F)
     (P : LPData F (4 * m)) (e : SubRand F m) :
-    PZ.lineMats d M (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e))
-      = PZ.lineMats d M (pairCZ (subPair hm4 hm ty P e)) := by
-  have hL : PZ.lineMats d M (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e))
-      = PZ.lineMats d M (ofLPZ (subZ hm4 hm ty (padShift hm4 ty tau P) e.2)
+    PZ.lineMats d S (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e))
+      = PZ.lineMats d S (pairCZ (subPair hm4 hm ty P e)) := by
+  have hL : PZ.lineMats d S (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e))
+      = PZ.lineMats d S (ofLPZ (subZ hm4 hm ty (padShift hm4 ty tau P) e.2)
           (subX hm4 hm P e.1).pt) :=
     lineMats_ofLPZ hfacZ (ofLPZ (subZ hm4 hm ty (padShift hm4 ty tau P) e.2)
       (subX hm4 hm P e.1).pt) (subX hm4 hm (padShift hm4 ty tau P) e.1).pt
   rw [hL, subZ_padShift]
-  show PZ.lineMats d M (ofLPZ ⟨zBlk (padShift hm4 ty tau P).pt, (subZ hm4 hm ty P e.2).s,
+  show PZ.lineMats d S (ofLPZ ⟨zBlk (padShift hm4 ty tau P).pt, (subZ hm4 hm ty P e.2).s,
     (subZ hm4 hm ty P e.2).raw⟩ (subX hm4 hm P e.1).pt)
-    = PZ.lineMats d M (ofLPZ (subZ hm4 hm ty P e.2) (subX hm4 hm P e.1).pt)
+    = PZ.lineMats d S (ofLPZ (subZ hm4 hm ty P e.2) (subX hm4 hm P e.1).pt)
   rcases zBlk_dir_sub hm4 hm ty P e.2 with h | h
   · have hc : ofLPZ (⟨zBlk (padShift hm4 ty tau P).pt, (subZ hm4 hm ty P e.2).s,
         (subZ hm4 hm ty P e.2).raw⟩ : LPData F m) (subX hm4 hm P e.1).pt
@@ -478,9 +559,9 @@ theorem pasteLine_subPair_padShift (ty : CL.Ty) (PX : LinePres F m hm .X) (PZ : 
     (hdirX : ∀ (D : LPData F m) (u : Point F m), PX.dir (ofLPX D u) = D.dir hm ty)
     (hdirZ : ∀ (D : LPData F m) (u : Point F m), PZ.dir (ofLPZ D u) = D.dir hm ty) (tau : F)
     (P : LPData F (4 * m)) (e : SubRand F m) (q : LinePoly F (m * d) × LinePoly F (m * d)) :
-    pasteLine PX PZ d M (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))
+    pasteLine PX PZ d S (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))
         (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e)) q
-      = pasteLine PX PZ d M (pairCX (subPair hm4 hm ty P e)) (pairCZ (subPair hm4 hm ty P e)) q :=
+      = pasteLine PX PZ d S (pairCX (subPair hm4 hm ty P e)) (pairCZ (subPair hm4 hm ty P e)) q :=
           by
   rw [pasteLine, pasteLine, lineMats_pairCX_padShift hm hm4 ty PX hfacX hdirX,
     lineMats_pairCZ_padShift hm hm4 ty PZ hfacZ hdirZ]
@@ -496,9 +577,9 @@ theorem sum_filter_padLineMats_eq_lineComb (ty : CL.Ty) (PX : LinePres F m hm .X
     (hdirZ : ∀ (D : LPData F m) (u : Point F m), PZ.dir (ofLPZ D u) = D.dir hm ty)
     (P : LPData F (4 * m)) (tau a : F) :
     ∑ f ∈ univ.filter fun f : LinePoly F (m * d + 1) => LinePoly.eval f tau = a,
-        padLineMats hm4 ty PX PZ M P f
-      = ((Fintype.card (SubRand F m) : ℝ))⁻¹ • ∑ e : SubRand F m,
-          lineComb PX PZ d M (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))
+        padLineMats hm4 ty PX PZ S P f
+      = (((Fintype.card (SubRand F m) : ℝ)⁻¹ : ℝ) : ℂ) • ∑ e : SubRand F m,
+          lineComb PX PZ d S (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))
             (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e))
             (alph (padShift hm4 ty tau P).pt) (bet (padShift hm4 ty tau P).pt) a := by
   rw [sum_filter_padLineMats hm4 ty PX PZ hbaseX hdirX hbaseZ hdirZ P tau a]
@@ -514,18 +595,18 @@ average over the raw directions and the fresh randomness of the pasted line meas
 sample's own data, coarse-grained by the combining map at the sample's point.** This is the
 quantity `lem:qld-padded-lines` controls. -/
 theorem lineMeas_map_eval_mats (ty : CL.Ty) (hty : ty ≠ .point)
-    {M : Question F m → POVM (Answer F m d) dA} (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
+    {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
     (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) (a : F) :
-    (((lineMeas hm hm4 ty hM (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
-        fun f => LinePoly.eval f (lineTau hm4 ty u s raw)).mats a).val
-      = ((rawSet hm4 ty s raw).card : ℝ)⁻¹ • ∑ raw' ∈ rawSet hm4 ty s raw,
-          ((Fintype.card (SubRand F m) : ℝ))⁻¹ • ∑ e : SubRand F m,
-            lineComb (presOf hm ty .X) (presOf hm ty .Z) d M
-              (pairCX (subPair hm4 hm ty ⟨u, s, raw'⟩ e)) (pairCZ (subPair hm4 hm ty ⟨u, s, raw'⟩
-                  e))
+    ((lineMeas hm hm4 ty hS (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
+        fun f => LinePoly.eval f (lineTau hm4 ty u s raw)).op a
+      = ((((rawSet hm4 ty s raw).card : ℝ)⁻¹ : ℝ) : ℂ) • ∑ raw' ∈ rawSet hm4 ty s raw,
+          (((Fintype.card (SubRand F m) : ℝ)⁻¹ : ℝ) : ℂ) • ∑ e : SubRand F m,
+            lineComb (presOf hm ty .X) (presOf hm ty .Z) d S
+              (pairCX (subPair hm4 hm ty ⟨u, s, raw'⟩ e))
+              (pairCZ (subPair hm4 hm ty ⟨u, s, raw'⟩ e))
               (alph u) (bet u) a := by
-  rw [POVM.map_mats]
-  simp only [lineMeas_mats hm hm4 ty hM _ s (rawSet_nonempty hm4 ty s raw)]
+  rw [POVMIn.map_op]
+  simp only [lineMeas_mats hm hm4 ty hS _ s (rawSet_nonempty hm4 ty s raw)]
   rw [← Finset.smul_sum, Finset.sum_comm]
   refine congrArg _ (Finset.sum_congr rfl fun raw' hraw' => ?_)
   rw [sum_filter_padLineMats_eq_lineComb hm hm4 ty _ _ (factorsX_presOf hm ty) (factorsZ_presOf hm
@@ -537,11 +618,12 @@ theorem lineMeas_map_eval_mats (ty : CL.Ty) (hty : ty ≠ .point)
 
 section Fail
 
-variable {dB : Type} [Fintype dB] [DecidableEq dB]
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-  (hMA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-  (hMB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
-  (Ψ : ((dA × Anc F m) × (F × F)) × ((dB × Anc F m) × (F × F)) → ℂ)
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [Ring ℬ]
+  [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+  (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op)
+  (N : BipartiteModel 𝒞 (Matrix (Anc F m) (Anc F m) 𝒜) (Matrix (Anc F m) (Anc F m) ℬ))
 
 /-- A line answer read at the parameter of the sampled point, against the point answer there: the
 decider accepts. -/
@@ -594,48 +676,49 @@ theorem accepts_lineQ_lineQ_self (ty : CL.Ty) (hty : ty ≠ .point) (u : Point F
   · simp [lineQ_aline, lineAns, alineAns, CL.accepts, CL.Question.fmtOk, CL.subtests]
   · simp [lineQ_dline, lineAns, dlineAns, CL.accepts, CL.Question.fmtOk, CL.subtests]
 
-/-- **Alice's line against Bob's point**: the conditional failure is at most the disagreement of
-Alice's line measurement read at the sample's point with Bob's padded point measurement. -/
+/-- **The first player's line against the second player's point**: the conditional failure is at
+most the disagreement of the first player's line measurement read at the sample's point with the
+second player's padded point measurement. -/
 theorem condFail_lineQ_point_le (ty : CL.Ty) (hty : ty ≠ .point) (hd : 1 ≤ d)
-    (hlegA : LegalSupport MA) (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) :
-    condFail (clGame (d := d) (ldc := 1) hm4) Ψ (padStrat hm hm4 hMA) (padStrat hm hm4 hMB)
+    (hlegA : LegalSupport PA) (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) :
+    N.condFail (clGame (d := d) (ldc := 1) hm4) (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
         (lineQ hm4 ty u s raw) (.point u)
-      ≤ 1 - ∑ a, bornProb Ψ
-          ((((lineMeas hm hm4 ty hMA (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
-            fun f => LinePoly.eval f (lineTau hm4 ty u s raw)).mats a).val)
-          (((padPt hMB u).mats a).val) := by
-  rw [← padStrat_lineQ_map_rdEval hm hm4 ty hty hd hMA hlegA u s raw,
-    ← padStrat_point_map_toValue hm hm4 hMB u]
-  refine condFail_le_one_sub_sum_bornProb_map _ _ fun a b ha hb hab => ?_
-  obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 ty hty hMA u s raw ha
-  obtain ⟨c, rfl⟩ := exists_of_padStrat_point_mats_ne_zero hm hm4 hMB u hb
+      ≤ 1 - ∑ a, N.bornProb
+          (((lineMeas hm hm4 ty hPA (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
+            fun f => LinePoly.eval f (lineTau hm4 ty u s raw)).op a)
+          ((padPt hPB u).op a) := by
+  rw [← padStrat_lineQ_map_rdEval hm hm4 ty hty hd hPA hlegA u s raw,
+    ← padStrat_point_map_toValue hm hm4 hPB u]
+  refine N.condFail_le_one_sub_sum_bornProb_map _ _ fun a b ha hb hab => ?_
+  obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 ty hty hPA u s raw ha
+  obtain ⟨c, rfl⟩ := exists_of_padStrat_point_mats_ne_zero hm hm4 hPB u hb
   exact accepts_lineQ_point hm4 ty hty u s raw f c hab
 
-/-- **Alice's point against Bob's line.** -/
+/-- **The first player's point against the second player's line.** -/
 theorem condFail_point_lineQ_le (ty : CL.Ty) (hty : ty ≠ .point) (hd : 1 ≤ d)
-    (hlegB : LegalSupport MB) (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) :
-    condFail (clGame (d := d) (ldc := 1) hm4) Ψ (padStrat hm hm4 hMA) (padStrat hm hm4 hMB)
+    (hlegB : LegalSupport PB) (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) :
+    N.condFail (clGame (d := d) (ldc := 1) hm4) (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
         (.point u) (lineQ hm4 ty u s raw)
-      ≤ 1 - ∑ a, bornProb Ψ (((padPt hMA u).mats a).val)
-          ((((lineMeas hm hm4 ty hMB (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
-            fun f => LinePoly.eval f (lineTau hm4 ty u s raw)).mats a).val) := by
-  rw [← padStrat_lineQ_map_rdEval hm hm4 ty hty hd hMB hlegB u s raw,
-    ← padStrat_point_map_toValue hm hm4 hMA u]
-  refine condFail_le_one_sub_sum_bornProb_map _ _ fun a b ha hb hab => ?_
-  obtain ⟨c, rfl⟩ := exists_of_padStrat_point_mats_ne_zero hm hm4 hMA u ha
-  obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 ty hty hMB u s raw hb
+      ≤ 1 - ∑ a, N.bornProb ((padPt hPA u).op a)
+          (((lineMeas hm hm4 ty hPB (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map
+            fun f => LinePoly.eval f (lineTau hm4 ty u s raw)).op a) := by
+  rw [← padStrat_lineQ_map_rdEval hm hm4 ty hty hd hPB hlegB u s raw,
+    ← padStrat_point_map_toValue hm hm4 hPA u]
+  refine N.condFail_le_one_sub_sum_bornProb_map _ _ fun a b ha hb hab => ?_
+  obtain ⟨c, rfl⟩ := exists_of_padStrat_point_mats_ne_zero hm hm4 hPA u ha
+  obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 ty hty hPB u s raw hb
   exact accepts_point_lineQ hm4 ty hty u s raw f c hab
 
 /-- **Identical points**: the conditional failure is at most the disagreement of the two padded
 point measurements. -/
 theorem condFail_point_point_le (u : Point F (4 * m)) :
-    condFail (clGame (d := d) (ldc := 1) hm4) Ψ (padStrat hm hm4 hMA) (padStrat hm hm4 hMB)
+    N.condFail (clGame (d := d) (ldc := 1) hm4) (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
         (.point u) (.point u)
-      ≤ 1 - ∑ a, bornProb Ψ (((padPt hMA u).mats a).val) (((padPt hMB u).mats a).val) := by
-  rw [← padStrat_point_map_toValue hm hm4 hMA u, ← padStrat_point_map_toValue hm hm4 hMB u]
-  refine condFail_le_one_sub_sum_bornProb_map _ _ fun a b ha hb hab => ?_
-  obtain ⟨c, rfl⟩ := exists_of_padStrat_point_mats_ne_zero hm hm4 hMA u ha
-  obtain ⟨c', rfl⟩ := exists_of_padStrat_point_mats_ne_zero hm hm4 hMB u hb
+      ≤ 1 - ∑ a, N.bornProb ((padPt hPA u).op a) ((padPt hPB u).op a) := by
+  rw [← padStrat_point_map_toValue hm hm4 hPA u, ← padStrat_point_map_toValue hm hm4 hPB u]
+  refine N.condFail_le_one_sub_sum_bornProb_map _ _ fun a b ha hb hab => ?_
+  obtain ⟨c, rfl⟩ := exists_of_padStrat_point_mats_ne_zero hm hm4 hPA u ha
+  obtain ⟨c', rfl⟩ := exists_of_padStrat_point_mats_ne_zero hm hm4 hPB u hb
   have hc : c = c' := hab
   subst hc
   exact accepts_point_self (d := d) hm4 u _
@@ -644,51 +727,50 @@ theorem condFail_point_point_le (u : Point F (4 * m)) :
 measurements, outcome polynomial by outcome polynomial. -/
 theorem condFail_lineQ_lineQ_le (ty : CL.Ty) (hty : ty ≠ .point) (u : Point F (4 * m)) (s : F)
     (raw : Point F (4 * m)) :
-    condFail (clGame (d := d) (ldc := 1) hm4) Ψ (padStrat hm hm4 hMA) (padStrat hm hm4 hMB)
+    N.condFail (clGame (d := d) (ldc := 1) hm4) (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
         (lineQ hm4 ty u s raw) (lineQ hm4 ty u s raw)
-      ≤ 1 - ∑ f, bornProb Ψ
-          (((lineMeas hm hm4 ty hMA (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).mats
-            f).val)
-          (((lineMeas hm hm4 ty hMB (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).mats
-            f).val) := by
-  refine le_trans (condFail_le_one_sub_sum_bornProb_diag fun a ha _ => ?_) ?_
-  · obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 ty hty hMA u s raw ha
+      ≤ 1 - ∑ f, N.bornProb
+          ((lineMeas hm hm4 ty hPA (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).op f)
+          ((lineMeas hm hm4 ty hPB (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).op
+            f) := by
+  refine le_trans (N.condFail_le_one_sub_sum_bornProb_diag fun a ha _ => ?_) ?_
+  · obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 ty hty hPA u s raw ha
     exact accepts_lineQ_lineQ_self hm4 ty hty u s raw f
-  · rw [padStrat_lineQ hm hm4 ty hty hMA, padStrat_lineQ hm hm4 ty hty hMB]
-    have := sum_bornProb_le_map Ψ
-      (lineMeas hm hm4 ty hMA (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw))
-      (lineMeas hm hm4 ty hMB (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw))
+  · rw [padStrat_lineQ hm hm4 ty hty hPA, padStrat_lineQ hm hm4 ty hty hPB]
+    have := N.sum_bornProb_le_map
+      (lineMeas hm hm4 ty hPA (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw))
+      (lineMeas hm hm4 ty hPB (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw))
       (lineAns ty)
     linarith
 
 /-- **The two cross type pairs are always accepted**: the strategy answers in the right format, and
 the decider checks nothing else. -/
-theorem condFail_aline_dline_le (hΨ : star Ψ ⬝ᵥ Ψ = 1) (u : Point F (4 * m)) (s : F)
+theorem condFail_aline_dline_le (hN : ‖N.ψ‖ = 1) (u : Point F (4 * m)) (s : F)
     (raw : Point F (4 * m)) (u' : Point F (4 * m)) (s' : F) (raw' : Point F (4 * m)) :
-    condFail (clGame (d := d) (ldc := 1) hm4) Ψ (padStrat hm hm4 hMA) (padStrat hm hm4 hMB)
+    N.condFail (clGame (d := d) (ldc := 1) hm4) (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
         (lineQ hm4 .aline u s raw) (lineQ hm4 .dline u' s' raw') ≤ 0 := by
-  refine le_trans (condFail_le_one_sub_sum_bornProb_map (fun _ => ()) (fun _ => ())
+  refine le_trans (N.condFail_le_one_sub_sum_bornProb_map (fun _ => ()) (fun _ => ())
     fun a b ha hb _ => ?_) ?_
-  · obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 .aline (by decide) hMA u s raw
+  · obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 .aline (by decide) hPA u s raw
       ha
-    obtain ⟨g, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 .dline (by decide) hMB u' s'
+    obtain ⟨g, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 .dline (by decide) hPB u' s'
         raw' hb
     rfl
-  · rw [Fintype.sum_unique, POVM.map_const_mats, POVM.map_const_mats, bornProb_one_one hΨ]
+  · rw [Fintype.sum_unique, POVMIn.map_const_op, POVMIn.map_const_op, N.bornProb_one_one hN]
     norm_num
 
-theorem condFail_dline_aline_le (hΨ : star Ψ ⬝ᵥ Ψ = 1) (u : Point F (4 * m)) (s : F)
+theorem condFail_dline_aline_le (hN : ‖N.ψ‖ = 1) (u : Point F (4 * m)) (s : F)
     (raw : Point F (4 * m)) (u' : Point F (4 * m)) (s' : F) (raw' : Point F (4 * m)) :
-    condFail (clGame (d := d) (ldc := 1) hm4) Ψ (padStrat hm hm4 hMA) (padStrat hm hm4 hMB)
+    N.condFail (clGame (d := d) (ldc := 1) hm4) (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
         (lineQ hm4 .dline u s raw) (lineQ hm4 .aline u' s' raw') ≤ 0 := by
-  refine le_trans (condFail_le_one_sub_sum_bornProb_map (fun _ => ()) (fun _ => ())
+  refine le_trans (N.condFail_le_one_sub_sum_bornProb_map (fun _ => ()) (fun _ => ())
     fun a b ha hb _ => ?_) ?_
-  · obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 .dline (by decide) hMA u s raw
+  · obtain ⟨f, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 .dline (by decide) hPA u s raw
       ha
-    obtain ⟨g, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 .aline (by decide) hMB u' s'
+    obtain ⟨g, rfl⟩ := exists_of_padStrat_lineQ_mats_ne_zero hm hm4 .aline (by decide) hPB u' s'
         raw' hb
     rfl
-  · rw [Fintype.sum_unique, POVM.map_const_mats, POVM.map_const_mats, bornProb_one_one hΨ]
+  · rw [Fintype.sum_unique, POVMIn.map_const_op, POVMIn.map_const_op, N.bornProb_one_one hN]
     norm_num
 
 end Fail
@@ -702,32 +784,34 @@ paper's argument for the identical-line subtest. -/
 
 section Separation
 
-variable {dA' dB' : Type*} [Fintype dA'] [DecidableEq dA'] [Fintype dB'] [DecidableEq dB']
+variable {𝒞' 𝒜' ℬ' : Type*} [Ring 𝒞'] [StarRing 𝒞'] [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜']
+  [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ'] [PartialOrder 𝒜'] [StarOrderedRing 𝒜']
+  [PartialOrder ℬ'] [StarOrderedRing ℬ']
 
 omit [Algebra (ZMod 2) F] [NeZero m] in
-/-- **Polynomial separation.** -/
-theorem one_sub_sum_bornProb_le_avg_eval {n : ℕ} {ψ : dA' × dB' → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (LA : POVM (LinePoly F n) dA') (LB : POVM (LinePoly F n) dB') :
-    1 - ∑ f, bornProb ψ ((LA.mats f).val) ((LB.mats f).val)
+/-- **Polynomial separation**, in any bipartite model. -/
+theorem one_sub_sum_bornProb_le_avg_eval {n : ℕ} {N : BipartiteModel 𝒞' 𝒜' ℬ'} (hN : ‖N.ψ‖ = 1)
+    (LA : POVMIn (LinePoly F n) 𝒜') (LB : POVMIn (LinePoly F n) ℬ') :
+    1 - ∑ f, N.bornProb (LA.op f) (LB.op f)
       ≤ (Fintype.card F : ℝ)⁻¹ * ∑ t : F, (1 - ∑ a : F,
-          bornProb ψ (((LA.map fun f => LinePoly.eval f t).mats a).val)
-            (((LB.map fun f => LinePoly.eval f t).mats a).val))
+          N.bornProb ((LA.map fun f => LinePoly.eval f t).op a)
+            ((LB.map fun f => LinePoly.eval f t).op a))
         + (n : ℝ) / Fintype.card F := by
   classical
   have hq : (0 : ℝ) < Fintype.card F := Nat.cast_pos.mpr Fintype.card_pos
   set b : LinePoly F n → LinePoly F n → ℝ := fun f g =>
-    bornProb ψ ((LA.mats f).val) ((LB.mats g).val) with hb
+    N.bornProb (LA.op f) (LB.op g) with hb
   have hb0 : ∀ f g, 0 ≤ b f g := fun f g =>
-    bornProb_nonneg ψ (LA.posSemidef f) (LB.posSemidef g)
-  have hb1 : ∑ f, ∑ g, b f g = 1 := sum_bornProb hψ LA LB
+    N.bornProb_nonneg (LA.op_nonneg f) (LB.op_nonneg g)
+  have hb1 : ∑ f, ∑ g, b f g = 1 := N.sum_bornProb hN LA LB
   -- the per-parameter identity
   have hsplit : ∀ t : F, ∑ a : F,
-      bornProb ψ (((LA.map fun f => LinePoly.eval f t).mats a).val)
-        (((LB.map fun f => LinePoly.eval f t).mats a).val)
+      N.bornProb ((LA.map fun f => LinePoly.eval f t).op a)
+        ((LB.map fun f => LinePoly.eval f t).op a)
       = ∑ f, b f f + ∑ f, ∑ g,
           (if f ≠ g ∧ LinePoly.eval f t = LinePoly.eval g t then (1 : ℝ) else 0) * b f g := by
     intro t
-    rw [sum_bornProb_map', ← Finset.sum_add_distrib]
+    rw [N.sum_bornProb_map, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun f _ => ?_
     have hterm : ∀ g, (if LinePoly.eval f t = LinePoly.eval g t then (1 : ℝ) else 0) * b f g
         = (if f = g then (1 : ℝ) else 0) * b f g
@@ -770,8 +854,8 @@ theorem one_sub_sum_bornProb_le_avg_eval {n : ℕ} {ψ : dA' × dB' → ℂ} (h�
           rw [hb1, mul_one]
   have hsum : (Fintype.card F : ℝ) * (1 - ∑ f, b f f)
       = ∑ t : F, (1 - ∑ a : F,
-          bornProb ψ (((LA.map fun f => LinePoly.eval f t).mats a).val)
-            (((LB.map fun f => LinePoly.eval f t).mats a).val))
+          N.bornProb ((LA.map fun f => LinePoly.eval f t).op a)
+            ((LB.map fun f => LinePoly.eval f t).op a))
         + ∑ t : F, ∑ f, ∑ g,
           (if f ≠ g ∧ LinePoly.eval f t = LinePoly.eval g t then (1 : ℝ) else 0) * b f g := by
     simp only [hsplit]
@@ -783,8 +867,8 @@ theorem one_sub_sum_bornProb_le_avg_eval {n : ℕ} {ψ : dA' × dB' → ℂ} (h�
     rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
   have hmain : 1 - ∑ f, b f f
       = (Fintype.card F : ℝ)⁻¹ * ((∑ t : F, (1 - ∑ a : F,
-          bornProb ψ (((LA.map fun f => LinePoly.eval f t).mats a).val)
-            (((LB.map fun f => LinePoly.eval f t).mats a).val)))
+          N.bornProb ((LA.map fun f => LinePoly.eval f t).op a)
+            ((LB.map fun f => LinePoly.eval f t).op a)))
         + ∑ t : F, ∑ f, ∑ g,
           (if f ≠ g ∧ LinePoly.eval f t = LinePoly.eval g t then (1 : ℝ) else 0) * b f g) := by
     rw [← hsum, inv_mul_cancel_left₀ hq.ne']

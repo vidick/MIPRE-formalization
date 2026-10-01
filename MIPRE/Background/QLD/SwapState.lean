@@ -5,6 +5,8 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.QLD.SwapUnitary
+public import MIPRE.Foundations.EPRContraction
+public import MIPRE.Foundations.Introspection.RegisterModel
 
 @[expose] public section
 
@@ -20,11 +22,26 @@ the arithmetic that turns two near-invariances into a closeness
 does not do is put them together on a state, because `twirl_mul_twirl` lives on the two ancilla
 halves alone and the state lives on all four registers.
 
-This file is that assembly. On the space `R x (T x T)` --- the two parties' non-ancilla registers
-as one index `R`, their two ancilla halves adjacent as `T x T` --- the twirls act through `bOp`,
-their product is `bOp eprProj` by `twirl_mul_twirl`, and the range of `bOp eprProj` is exactly the
-vectors of the form `aux (x) EPR` (`bOp_eprProj_mulVec`). So a state that is nearly invariant under
-both twirls is close to a product `aux (x) EPR`, which is item 1.
+This file is that assembly. On the space `(C^q)^{(x) n} (x) (C^q)^{(x) n} (x) H` --- the two
+ancilla halves adjacent as one register `T x T`, and everything else, the two parties' other
+registers and spaces, as one Hilbert space `H` --- the twirls act through `regAct`, their product
+is `regAct eprProj` by `twirl_mul_twirl`, and the range of `regAct eprProj` is exactly the vectors
+of the form `EPR (x) aux` (`bOp_eprProj_mulVec`). So a state that is nearly invariant under both
+twirls is close to a product `EPR (x) aux`, which is item 1.
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The state of item 1 is a vector
+`θ` of the `ℓ²` sum `Ampl (T x T) H` of an arbitrary complex Hilbert space `H` --- in use, a vector
+of the register model `N.reg T` of a bipartite model, whose space is `Ampl (T x T) N.H` --- and a
+matrix `P` of scalars on the two halves acts on it as `regAct P`
+(`MIPRE/Foundations/EPRContraction.lean`), which in a register model is the product of the two
+players' register operators (`BipartiteModel.expand_π_smulKron_one_mul`). The product state is
+`auxVec aux = EPR (x) aux`, with `aux` a vector of `H`, and at `aux = N.ψ` it is the register
+model's own state (`reg_ψ_eq_auxVec`). The contraction `∑_s EPR_s θ_s` is a finite sum of vectors of
+`H`, so nothing needs `H` to be finite-dimensional; the matrix statement on `R x (T x T) → ℂ` is the
+case `H = ℂ^R`, up to the order of the factors. The finite-register lemmas --- the twirl as a
+self-adjoint idempotent, the entangled projector, `syn_mul_syn` --- are unchanged.
 
 The self-consistency that supplies the two near-invariances --- `W~^e(u-tilde)` on one party agrees
 with `W~^e(u-tilde)` on the other, on average over a *uniform* `u-tilde` --- is the paper's second
@@ -168,116 +185,124 @@ end EprProj
 
 section Item1
 
-variable {R : Type*} [Fintype R] [DecidableEq R]
+open scoped InnerProductSpace
+open OperatorMatrix
 
-/-- The state the swap isometry lands on: an auxiliary vector on the two parties' non-ancilla
-registers, tensored with the maximally entangled pair. -/
-def auxVec (aux : R → ℂ) : R × ((n → F) × (n → F)) → ℂ := fun p => aux p.1 * epr p.2
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- The state the swap isometry lands on: the maximally entangled pair on the two ancilla halves,
+tensored with an auxiliary vector of everything else. -/
+def auxVec (aux : H) : Ampl ((n → F) × (n → F)) H :=
+  WithLp.toLp 2 fun t => epr (F := F) (n := n) t • aux
+
+omit [CompleteSpace H] in
+/-- The product state has the norm of its auxiliary vector, the entangled pair being a unit
+vector. -/
+theorem norm_auxVec (aux : H) : ‖auxVec (F := F) (n := n) aux‖ = ‖aux‖ := by
+  rw [auxVec, norm_toLp_smul, ← Introspection.registerEPR_eq_weyl,
+    Introspection.registerEPR_norm, one_mul]
+
+omit [Field F] [Algebra (ZMod 2) F] [CompleteSpace H] in
+theorem auxVec_smul (c : ℂ) (aux : H) :
+    auxVec (F := F) (n := n) (c • aux) = c • auxVec (F := F) (n := n) aux := by
+  ext t
+  rw [auxVec, auxVec, PiLp.toLp_apply, PiLp.smul_apply, PiLp.toLp_apply, smul_comm]
 
 omit [Field F] [Algebra (ZMod 2) F] in
-/-- **Applying `1 (x) |EPR><EPR|` produces a product vector**, which is where item 1's auxiliary
-state comes from: the second factor is the maximally entangled state and the first is the partial
+/-- **The product state of a register model is its own state**: `N.reg T` is `N` with the
+entangled pair adjoined. -/
+theorem reg_ψ_eq_auxVec {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜]
+    [StarRing 𝒜] [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
+    (N : BipartiteModel 𝒞 𝒜 ℬ) : (N.reg (n → F)).ψ = auxVec (F := F) (n := n) N.ψ :=
+  rfl
+
+omit [Field F] [Algebra (ZMod 2) F] in
+/-- The twirl acts on the register as the average of the products of the two halves' Weyl
+operators. -/
+theorem regAct_twirl (w : (n → F) → Matrix (n → F) (n → F) ℂ) :
+    regAct (H := H) (twirl w)
+      = (Fintype.card (n → F) : ℂ)⁻¹ • ∑ u : n → F, regAct (w u ⊗ₖ w u) := by
+  rw [twirl, regAct_smul, regAct_sum]
+
+omit [Field F] [Algebra (ZMod 2) F] in
+/-- **Applying `|EPR><EPR| (x) 1` produces a product vector**, which is where item 1's auxiliary
+state comes from: the first factor is the maximally entangled state and the second is the partial
 overlap with it. -/
-theorem bOp_eprProj_mulVec (θ : R × ((n → F) × (n → F)) → ℂ) (r : R) (t : (n → F) × (n → F)) :
-    ((bOp (eprProj (F := F) (n := n)) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ) (r, t)
-      = (∑ s, epr (F := F) (n := n) s * θ (r, s)) * epr t := by
-  classical
-  rw [Matrix.mulVec, dotProduct, Fintype.sum_prod_type,
-    Finset.sum_eq_single r (fun r' _ hr' => Finset.sum_eq_zero fun t' _ => by
-        rw [bOp, Matrix.kronecker_apply, Matrix.one_apply_ne (Ne.symm hr'), zero_mul, zero_mul])
-      fun hmem => absurd (mem_univ r) hmem,
-    Finset.sum_mul]
-  refine Finset.sum_congr rfl fun t' _ => ?_
-  rw [bOp, Matrix.kronecker_apply, Matrix.one_apply_eq, one_mul, eprProj, Matrix.vecMulVec_apply]
-  ring
+theorem bOp_eprProj_mulVec (θ : Ampl ((n → F) × (n → F)) H) :
+    regAct (eprProj (F := F) (n := n)) θ
+      = auxVec (F := F) (n := n) (∑ s, epr (F := F) (n := n) s • θ s) := by
+  rw [eprProj, regAct_vecMulVec]
+  rfl
 
 /-- **The state estimate of `lem:qld-swap`, item 1.**
 
 A unit state that is nearly invariant under both Weyl twirls on its two ancilla halves is close to
-a product `aux (x) EPR`. The two hypotheses are what the self-consistency of the exact Pauli
+a product `EPR (x) aux`. The two hypotheses are what the self-consistency of the exact Pauli
 observables supplies after conjugation by the swap map (`swapU_conj_wTilde_X`,
 `swapU_conj_wTilde_Z` carry `W~^e(u-tilde)` to `1 (x) tau^W(e u-tilde)` with no error), and they
 are hypotheses here rather than conclusions: that self-consistency, at a *uniform* `u-tilde`, is
-the paper's second item of `lem:qld-construct-the-paulis` and is what remains of stage 5.
+the paper's second item of `lem:qld-construct-the-paulis`.
 
 The estimate itself is the appendix's, in the repaired form: `2 - 2 sqrt(1 - eta)` with
-`eta = 2 sqrt(delta) + 2 delta`, which is `O(sqrt(delta))`. -/
-theorem exists_auxVec_close (θ : R × ((n → F) × (n → F)) → ℂ) (hθ : star θ ⬝ᵥ θ = 1)
+`eta = 2 sqrt(delta) + 2 delta`, which is `O(sqrt(delta))`. The state is any unit vector of
+`Ampl (T x T) H`, and `aux` is a unit vector of `H`: the normalized contraction of `θ` against the
+entangled pair. -/
+theorem exists_auxVec_close (θ : Ampl ((n → F) × (n → F)) H) (hθ : ‖θ‖ = 1)
     {δ : ℝ} (hδ : 0 ≤ δ) (hlt : 2 * Real.sqrt δ + 2 * δ < 1)
-    (hX : 1 - δ / 2
-      ≤ (star θ ⬝ᵥ ((bOp (twirl (wX (F := F) (n := n))) :
-          Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ)).re)
-    (hZ : 1 - δ / 2
-      ≤ (star θ ⬝ᵥ ((bOp (twirl (wZ (F := F) (n := n))) :
-          Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ)).re) :
-    ∃ aux : R → ℂ, ‖evec (auxVec (F := F) (n := n) aux)‖ = 1 ∧
-      ‖evec θ - evec (auxVec (F := F) (n := n) aux)‖ ^ 2
+    (hX : 1 - δ / 2 ≤ (⟪θ, regAct (twirl (wX (F := F) (n := n))) θ⟫_ℂ).re)
+    (hZ : 1 - δ / 2 ≤ (⟪θ, regAct (twirl (wZ (F := F) (n := n))) θ⟫_ℂ).re) :
+    ∃ aux : H, ‖aux‖ = 1 ∧
+      ‖θ - auxVec (F := F) (n := n) aux‖ ^ 2
         ≤ 2 - 2 * Real.sqrt (1 - (2 * Real.sqrt δ + 2 * δ)) := by
-  classical
-  have hθn : ‖evec θ‖ = 1 := by
-    have h : ‖evec θ‖ ^ 2 = 1 := by rw [norm_evec_sq, hθ, Complex.one_re]
-    nlinarith [norm_nonneg (evec θ)]
-  -- the two lifted twirls are projections
-  have hsa : ∀ {w : (n → F) → Matrix (n → F) (n → F) ℂ}, IsWeylFamily w →
-      (bOp (twirl w) : Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ)ᴴ
-        = bOp (twirl w) := fun hw => by rw [bOp_conjTranspose, twirl_conjTranspose hw]
-  have hid : ∀ {w : (n → F) → Matrix (n → F) (n → F) ℂ}, IsWeylFamily w →
-      (bOp (twirl w) : Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ)
-        * bOp (twirl w) = bOp (twirl w) := fun hw => by rw [← bOp_mul, twirl_mul_self hw]
-  have hXd : ‖evec θ - evec ((bOp (twirl (wX (F := F) (n := n))) :
-      Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ)‖ ^ 2 ≤ δ :=
-    norm_sub_sq_le_of_re_inner_ge hθn
-      (snorm_le_one_of_proj hθn (hsa isWeylFamily_wX) (hid isWeylFamily_wX))
-      (by rw [inner_evec]; exact hX)
-  have hZd : ‖evec θ - evec ((bOp (twirl (wZ (F := F) (n := n))) :
-      Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ)‖ ^ 2 ≤ δ :=
-    norm_sub_sq_le_of_re_inner_ge hθn
-      (snorm_le_one_of_proj hθn (hsa isWeylFamily_wZ) (hid isWeylFamily_wZ))
-      (by rw [inner_evec]; exact hZ)
-  have hin := re_inner_ge_of_two_close hδ hθn hXd hZd
+  -- the lifted twirls and the lifted entangled projector are orthogonal projections
+  have hPX : IsStarProjection (regAct (H := H) (twirl (wX (F := F) (n := n)))) :=
+    isStarProjection_regAct (twirl_conjTranspose isWeylFamily_wX)
+      (twirl_mul_self isWeylFamily_wX)
+  have hPZ : IsStarProjection (regAct (H := H) (twirl (wZ (F := F) (n := n)))) :=
+    isStarProjection_regAct (twirl_conjTranspose isWeylFamily_wZ)
+      (twirl_mul_self isWeylFamily_wZ)
+  have hPE : IsStarProjection (regAct (H := H) (eprProj (F := F) (n := n))) :=
+    isStarProjection_regAct eprProj_conjTranspose eprProj_mul_self
+  -- an orthogonal projection is a contraction, and its weight is the squared norm of the image
+  have hle : ∀ {P : Ampl ((n → F) × (n → F)) H →L[ℂ] Ampl ((n → F) × (n → F)) H},
+      IsStarProjection P → ‖P θ‖ ≤ 1 := fun hP => by
+    have h := Op.bnd_one_of_isStarProjection hP θ
+    rwa [hθ, mul_one] at h
+  have hsq : ∀ {P : Ampl ((n → F) × (n → F)) H →L[ℂ] Ampl ((n → F) × (n → F)) H},
+      IsStarProjection P → ‖P θ‖ ^ 2 = (⟪θ, P θ⟫_ℂ).re := fun {P} hP => by
+    have h := Op.snorm_sq_eq_qform θ P
+    rw [hP.isSelfAdjoint.star_eq, hP.isIdempotentElem.eq] at h
+    exact h
+  have hXd := norm_sub_sq_le_of_re_inner_ge hθ (hle hPX) hX
+  have hZd := norm_sub_sq_le_of_re_inner_ge hθ (hle hPZ) hZ
+  have hin := re_inner_ge_of_two_close hδ hθ hXd hZd
   -- the overlap of the two twirled states is the weight on the entangled projector
-  have hQ : (inner ℂ (evec ((bOp (twirl (wX (F := F) (n := n))) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ))
-        (evec ((bOp (twirl (wZ (F := F) (n := n))) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ)) : ℂ)
-      = star θ ⬝ᵥ ((bOp (eprProj (F := F) (n := n)) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ) := by
-    rw [inner_evec, star_mulVec_dotProduct, hsa isWeylFamily_wX, ← bOp_mul, twirl_mul_twirl]
-  obtain ⟨x, hxdef⟩ : ∃ x, x = (bOp (eprProj (F := F) (n := n)) :
-      Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ θ := ⟨_, rfl⟩
-  have hQsa : (bOp (eprProj (F := F) (n := n)) :
-      Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ)ᴴ = bOp eprProj := by
-    rw [bOp_conjTranspose, eprProj_conjTranspose]
-  have hQid : (bOp (eprProj (F := F) (n := n)) :
-      Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) * bOp eprProj
-      = bOp eprProj := by rw [← bOp_mul, eprProj_mul_self]
-  have hxsq : ‖evec x‖ ^ 2 = (inner ℂ (evec θ) (evec x) : ℂ).re := by
-    rw [inner_evec, norm_evec_sq, hxdef, star_mulVec_dotProduct, hQsa, hQid]
-  have hlow : 1 - (2 * Real.sqrt δ + 2 * δ) ≤ (inner ℂ (evec θ) (evec x) : ℂ).re := by
-    rw [inner_evec, hxdef, ← hQ]
+  have hQ : ⟪regAct (H := H) (twirl (wX (F := F) (n := n))) θ,
+        regAct (H := H) (twirl (wZ (F := F) (n := n))) θ⟫_ℂ
+      = ⟪θ, regAct (H := H) (eprProj (F := F) (n := n)) θ⟫_ℂ := by
+    rw [← ContinuousLinearMap.adjoint_inner_right, ← ContinuousLinearMap.star_eq_adjoint,
+      hPX.isSelfAdjoint.star_eq, ← mul_apply_eq_comp, ← regAct_mul, twirl_mul_twirl]
+  obtain ⟨x, hxdef⟩ : ∃ x, x = regAct (H := H) (eprProj (F := F) (n := n)) θ := ⟨_, rfl⟩
+  have hxsq : ‖x‖ ^ 2 = (⟪θ, x⟫_ℂ).re := by
+    rw [hxdef]
+    exact hsq hPE
+  have hlow : 1 - (2 * Real.sqrt δ + 2 * δ) ≤ (⟪θ, x⟫_ℂ).re := by
+    rw [hxdef, ← hQ]
     linarith
-  have hmain := norm_sub_normalize_sq_le hθn hxsq hlt hlow
-  have hxpos : 0 < ‖evec x‖ := by
-    have h2 : 0 < ‖evec x‖ ^ 2 := by rw [hxsq]; linarith
-    nlinarith [norm_nonneg (evec x)]
-  refine ⟨fun r => ((‖evec x‖⁻¹ : ℝ) : ℂ) * ∑ s, epr (F := F) (n := n) s * θ (r, s), ?_, ?_⟩
-  all_goals {
-    have heq : (auxVec (F := F) (n := n)
-        fun r => ((‖evec x‖⁻¹ : ℝ) : ℂ) * ∑ s, epr (F := F) (n := n) s * θ (r, s))
-        = ((‖evec x‖⁻¹ : ℝ) : ℂ) • x := by
-      funext p
-      obtain ⟨r, t⟩ := p
-      show (((‖evec x‖⁻¹ : ℝ) : ℂ) * ∑ s, epr (F := F) (n := n) s * θ (r, s)) * epr t
-        = ((‖evec x‖⁻¹ : ℝ) : ℂ) * x (r, t)
-      rw [hxdef, bOp_eprProj_mulVec]
-      ring
-    rw [heq, evec_smul]
-    first
-      | (rw [norm_smul, Complex.norm_real, Real.norm_eq_abs,
-          abs_of_nonneg (by positivity : (0:ℝ) ≤ ‖evec x‖⁻¹), inv_mul_cancel₀ hxpos.ne'])
-      | exact hmain
-  }
+  have hmain := norm_sub_normalize_sq_le hθ hxsq hlt hlow
+  have hxpos : 0 < ‖x‖ := by
+    have h2 : 0 < ‖x‖ ^ 2 := by rw [hxsq]; linarith
+    nlinarith [norm_nonneg x]
+  -- the projection is a product with the entangled pair, so its normalization is an `auxVec`
+  have hx : x = auxVec (F := F) (n := n) (∑ s, epr (F := F) (n := n) s • θ s) := by
+    rw [hxdef, bOp_eprProj_mulVec]
+  refine ⟨((‖x‖⁻¹ : ℝ) : ℂ) • ∑ s, epr (F := F) (n := n) s • θ s, ?_, ?_⟩
+  · rw [norm_smul, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_nonneg (inv_nonneg.mpr (norm_nonneg x)),
+      ← norm_auxVec (F := F) (n := n) (∑ s, epr (F := F) (n := n) s • θ s), ← hx,
+      inv_mul_cancel₀ hxpos.ne']
+  · rw [auxVec_smul, ← hx]
+    exact hmain
 
 end Item1
 

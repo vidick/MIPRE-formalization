@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 module
-public import MIPRE.Background.QLD.Soundness
+public import MIPRE.Background.QLD.QLDError
 public import MIPRE.Foundations.BlockOrder
 public import MIPRE.Foundations.Introspection.RegisterModel
 public import MIPRE.Foundations.POVMDomination
@@ -16,11 +16,11 @@ public import MIPRE.Foundations.TensorExpand
 # The Pauli basis test in a bipartite model
 
 Phase 4 of `planning/mipco-track.md`. Introspection's soundness uses one fact about the Pauli
-basis test, its soundness `thm:qld` (`MIPRE.QLD.qld_soundness`), and uses it only through its
-conclusion: local isometries into the EPR register and an ancilla, the state carried near
-`|EPR⟩ ⊗ |aux⟩`, and each player's Pauli measurements carried near the honest ones. This file
-states that conclusion for a bipartite model, and takes the theorem as a hypothesis on the model
-(`QLD.SoundIn ω M`), in the exact shape of `exists_le_qldErr` and at its error `qldErr`:
+basis test, its soundness `thm:qld`, and uses it only through its conclusion: a local isometry
+into the EPR register and an ancilla, the state carried near `|EPR⟩ ⊗ |aux⟩`, and each player's
+Pauli measurements carried near the honest ones. This file states that conclusion for a projective
+strategy in a bipartite model, as the property `QLD.SoundIn ω M` of the model, at the error
+`qldErr` of `thm:qld`:
 
 * **the ancilla** is a bipartite model `N` on a Hilbert space of `Type`, with ordered, proper
   algebras (`QLD.AncillaModel`), in place of the ancilla spaces `H_A`, `H_B` and the state
@@ -35,13 +35,13 @@ states that conclusion for a bipartite model, and takes the theorem as a hypothe
   (`ValueModel.DominatesPOVM`): the strategy introspection extracts lives there, and its value
   has to count in `ω`.
 
-**Its tensor-product instance** (`QLD.soundIn_tensor`) is `exists_le_qldErr`: the ancilla is the
-tensor-product model of `|aux⟩`, the local isometry is `V_A ⊗ V_B` followed by the reading of the
-flat state `registerState aux = expVec (registerEPR _) aux` as the register model
-(`BipartiteModel.tensorUnexpand`), and `val*` dominates the POVM strategies of a tensor-product
-model (`ValueModel.tensor_dominatesPOVM`). **Its commuting-operator form** (`QLD.SoundCo`: the
-test is sound in the model of every commuting-operator strategy, with `ω_co`) is the hypothesis on
-the Pauli basis test of `MIPRE.mipco_eq_core_of_stages`, and Phase 5 of the plan.
+**`thm:qld` is `SoundIn`** in every model in which the seeded low individual degree test is
+sound, in every extension by a unit vector, and whose extensions the value model dominates
+(`QLD.soundIn_of_lidt`, `MIPRE/Background/QLD/Soundness.lean`, Phase 5 of the plan). Its
+tensor-product instance (`QLD.soundIn_tensor`) is the one the main theorem uses, through
+introspection. **Its commuting-operator form** (`QLD.SoundCo`: the test is sound in the model of
+every commuting-operator strategy, with `ω_co`) is the hypothesis on the Pauli basis test of
+`MIPRE.mipco_eq_core_of_stages`, and follows from the seeded test's (`QLD.soundCo_of_lidt`).
 
 The constants of `thm:qld` in closed form (`exists_qldErr_le`) are a fact about the function
 `qldErr` alone, so the hypothesis at `qldErr` gives the introspection compiler's constants in any
@@ -95,6 +95,18 @@ attribute [instance] AncillaModel.instRing𝒞 AncillaModel.instStarRing𝒞 Anc
   AncillaModel.instStarProper𝒜 AncillaModel.instRingℬ AncillaModel.instStarRingℬ
   AncillaModel.instAlgebraℬ AncillaModel.instStarModuleℬ AncillaModel.instPartialOrderℬ AncillaModel.instStarOrderedRingℬ AncillaModel.instStarProperℬ
 
+/-- **A bipartite model as an ancilla model**: a model on a Hilbert space of `Type`, with ordered,
+proper algebras compatible with the scalars, in a unit state. -/
+abbrev AncillaModel.of {𝒞 𝒜 ℬ : Type} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+    [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [Ring ℬ]
+    [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
+    (N : BipartiteModel.{0} 𝒞 𝒜 ℬ) (h : ‖N.ψ‖ = 1) : AncillaModel where
+  𝒞 := 𝒞
+  𝒜 := 𝒜
+  ℬ := ℬ
+  N := N
+  unit := h
+
 /-! ## The conclusion of the Pauli basis test in a model -/
 
 section Extraction
@@ -140,9 +152,9 @@ end Extraction
 /-! ## Soundness in a model -/
 
 /-- **The Pauli basis test is sound in the bipartite model `M`** (`def:qld-sound-in`), with the
-value model `ω`, in the shape of `exists_le_qldErr`: for every admissible `(q, m, d)`, a
-projective strategy in `M` failing the test with probability at most `ε` has an extraction at
-error `qldErr ε m d q` whose ancilla model `ω` dominates. -/
+value model `ω`: for every admissible `(q, m, d)`, a projective strategy in `M` failing the test
+with probability at most `ε` has an extraction at error `qldErr ε m d q` whose ancilla model `ω`
+dominates. -/
 def SoundIn {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
     [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
     [PartialOrder ℬ] [StarOrderedRing ℬ] (ω : ValueModel) (M : BipartiteModel 𝒞 𝒜 ℬ) : Prop :=
@@ -151,108 +163,12 @@ def SoundIn {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ �
     ∀ (S : M.ProjStrat (qldGame (d := d) hm)) {ε : ℝ}, 0 ≤ ε → 1 - S.value ≤ ε →
       ∃ E : Extraction M hm S (qldErr ε m d (Fintype.card F)), ω.DominatesPOVM E.N.N
 
-/-! ## The tensor-product instance -/
-
-section Tensor
-
-variable {I : Type} [Fintype I] [DecidableEq I] {HA HB : Type} [Fintype HA] [DecidableEq HA]
-  [Fintype HB] [DecidableEq HB]
-
-/-- The tensor-product model of a unit vector, as an ancilla model. -/
-def tensorAncilla (aux : HA × HB → ℂ) (haux : ‖evec aux‖ = 1) : AncillaModel where
-  𝒞 := Matrix (HA × HB) (HA × HB) ℂ
-  𝒜 := Matrix HA HA ℂ
-  ℬ := Matrix HB HB ℂ
-  N := BipartiteModel.tensor aux
-  unit := haux
-
-variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-/-- The local isometry of the tensor-product instance, for any register `I`: `V_A ⊗ V_B`, followed
-by the reading of the flat register state as the register model. -/
-def tensorPhi (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (I × HA) dA ℂ)
-    (VB : Matrix (I × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1) :
-    LocalIsometry (BipartiteModel.tensor ψ) ((BipartiteModel.tensor aux).reg I) :=
-  (tensorUnexpand aux (Introspection.registerEPR I)).comp
-    (tensorIsometry ψ (Introspection.registerState I aux) VA VB hA hB)
-
-theorem tensorPhi_W_ψ (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (I × HA) dA ℂ)
-    (VB : Matrix (I × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1) :
-    ‖(tensorPhi ψ aux VA VB hA hB).W (BipartiteModel.tensor ψ).ψ -
-        ((BipartiteModel.tensor aux).reg I).ψ‖ =
-      ‖evec (Introspection.isometricState VA VB ψ - Introspection.registerState I aux)‖ := by
-  rw [← tensorUnexpand_W_ψ aux (Introspection.registerEPR I)]
-  show ‖(tensorUnexpand aux _).W ((tensorIsometry ψ _ VA VB hA hB).W (BipartiteModel.tensor ψ).ψ) -
-    (tensorUnexpand aux _).W (BipartiteModel.tensor (expVec _ aux)).ψ‖ = _
-  rw [← map_sub, LinearIsometry.norm_map]
-  rfl
-
-/-- The first player's error of the tensor-product instance is the matrix error. -/
-theorem tensorPhi_alice (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (I × HA) dA ℂ)
-    (VB : Matrix (I × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1)
-    (P : Matrix dA dA ℂ) (Q : Matrix I I ℂ) :
-    ((BipartiteModel.tensor aux).reg I).stateSqNorm
-        ((tensorPhi ψ aux VA VB hA hB).ΦA P - smulKron 1 Q) =
-      snorm (Introspection.registerState I aux)
-        (aOp (Introspection.isometricImage VA P - aOp Q)) ^ 2 := by
-  have hX : (tensorPhi ψ aux VA VB hA hB).ΦA P - smulKron 1 Q =
-      (tensorUnexpand aux (Introspection.registerEPR I)).ΦA
-        (Introspection.isometricImage VA P - aOp Q) := by
-    rw [map_sub, tensorUnexpand_ΦA, tensorUnexpand_ΦA, aOp, compSymmHom_kronecker_one]
-    rfl
-  rw [hX, LocalIsometry.stateSqNorm_of_W_ψ (tensorUnexpand_W_ψ _ _)]
-  rfl
-
-/-- The second player's error of the tensor-product instance is the matrix error. -/
-theorem tensorPhi_bob (ψ : dA × dB → ℂ) (aux : HA × HB → ℂ) (VA : Matrix (I × HA) dA ℂ)
-    (VB : Matrix (I × HB) dB ℂ) (hA : VAᴴ * VA = 1) (hB : VBᴴ * VB = 1)
-    (P : Matrix dB dB ℂ) (Q : Matrix I I ℂ) :
-    ((BipartiteModel.tensor aux).reg I).swap.stateSqNorm
-        ((tensorPhi ψ aux VA VB hA hB).ΦB P - smulKron 1 Q) =
-      snorm (Introspection.registerState I aux)
-        (bOp (Introspection.isometricImage VB P - aOp Q)) ^ 2 := by
-  have hY : (tensorPhi ψ aux VA VB hA hB).ΦB P - smulKron 1 Q =
-      (tensorUnexpand aux (Introspection.registerEPR I)).ΦB
-        (Introspection.isometricImage VB P - aOp Q) := by
-    rw [map_sub, tensorUnexpand_ΦB, tensorUnexpand_ΦB, aOp, compSymmHom_kronecker_one]
-    rfl
-  rw [hY, LocalIsometry.swap_stateSqNorm_of_W_ψ (tensorUnexpand_W_ψ _ _)]
-  rfl
-
-end Tensor
-
-/-- **The Pauli basis test is sound in the tensor-product model** of every state, with `val*`:
-`exists_le_qldErr`, read in the model. -/
-theorem soundIn_tensor {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-    (ψ : dA × dB → ℂ) : SoundIn .tensor (BipartiteModel.tensor ψ) := by
-  intro F _ _ _ _ m d _ hm hd S ε hε hS
-  have hψ : star ψ ⬝ᵥ ψ = 1 := star_dotProduct_self_eq_one S.ψ_unit
-  have hfail : 1 - povmValue (qldGame hm) ψ (fun q => (S.PA q).toPOVM)
-      (fun q => (S.PB q).toPOVM) ≤ ε := by
-    rw [povmValue_eq_tensor]
-    exact hS
-  obtain ⟨HA, HB, i1, i2, i3, i4, VA, VB, aux, hA, hB, haux, h1, h2⟩ :=
-    exists_le_qldErr hm hd hψ (fun q => (S.PA q).toPOVM) (fun q => (S.PB q).toPOVM) hε hfail
-  have hmapA : ∀ q h, ((S.PA q).map rdPauliVec).op h =
-      ((((S.PA q).toPOVM).map rdPauliVec).mats h).val := fun q h => by
-    rw [← POVM.toIn_op, POVM.toIn_map, POVMIn.toPOVM_toIn]
-  have hmapB : ∀ q h, ((S.PB q).map rdPauliVec).op h =
-      ((((S.PB q).toPOVM).map rdPauliVec).mats h).val := fun q h => by
-    rw [← POVM.toIn_op, POVM.toIn_map, POVMIn.toPOVM_toIn]
-  exact ⟨⟨tensorAncilla aux haux, tensorPhi ψ aux VA VB hA hB,
-    (tensorPhi_W_ψ ψ aux VA VB hA hB).trans_le h1,
-    fun W => le_of_eq_of_le (Finset.sum_congr rfl fun h _ => by
-      rw [hmapA]; exact tensorPhi_alice ψ aux VA VB hA hB _ _) (h2 W).1,
-    fun W => le_of_eq_of_le (Finset.sum_congr rfl fun h _ => by
-      rw [hmapB]; exact tensorPhi_bob ψ aux VA VB hA hB _ _) (h2 W).2⟩,
-    ValueModel.tensor_dominatesPOVM aux (star_dotProduct_self_eq_one haux)⟩
-
 /-! ## The commuting-operator model -/
 
-/-- **The Pauli basis test is sound in the commuting-operator model** (`def:qld-sound-co`): in the
-model of every commuting-operator strategy, with `ω_co`. This is Phase 5 of
-`planning/mipco-track.md`, and the hypothesis on the Pauli basis test of
-`MIPRE.mipco_eq_core_of_stages`. -/
+/-- **The Pauli basis test is sound in the commuting-operator model** (`def:qld-sound-in`): in the
+model of every commuting-operator strategy, with `ω_co`. It is the hypothesis on the Pauli basis
+test of `MIPRE.mipco_eq_core_of_stages`, and follows from the soundness of the seeded test in the
+commuting-operator model (`QLD.soundCo_of_lidt`, Phase 5 of `planning/mipco-track.md`). -/
 def SoundCo : Prop :=
   ∀ {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     (S : CommutingOperatorStrategy X Y A B), SoundIn .commuting S.toModel
@@ -263,8 +179,9 @@ def SoundCo : Prop :=
 is sound**: below the value of a game, and above `0`, lies the value of a projective strategy for
 it in a bipartite model on a Hilbert space of `Type` in which the test is sound with `ω`.
 Introspection applies the test inside the model of such a strategy. `val*` has it through the
-tensor-product models of tensor-product strategies (`approxSoundIn_tensor`), and `ω_co` whenever
-the test is sound in the model of every commuting-operator strategy (`approxSoundIn_commuting`). -/
+tensor-product models of tensor-product strategies (`approxSoundIn_tensor`, in
+`MIPRE/Background/QLD/Soundness.lean`), and `ω_co` whenever the test is sound in the model of every
+commuting-operator strategy (`approxSoundIn_commuting`). -/
 def ApproxSoundIn (ω : ValueModel) : Prop :=
   ∀ {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] (G : Game X Y A B) {t : ℝ},
     0 ≤ t → t < ω.val G →
@@ -273,18 +190,6 @@ def ApproxSoundIn (ω : ValueModel) : Prop :=
         (_ : PartialOrder 𝒜) (_ : StarOrderedRing 𝒜) (_ : PartialOrder ℬ)
         (_ : StarOrderedRing ℬ) (M : BipartiteModel.{0} 𝒞 𝒜 ℬ),
         SoundIn ω M ∧ ∃ S : M.ProjStrat G, t < S.value
-
-/-- **`val*` is approached in tensor-product models**, where the test is sound
-(`soundIn_tensor`): a tensor-product strategy near the supremum is a projective strategy of its
-model, of the same value. -/
-theorem approxSoundIn_tensor : ApproxSoundIn .tensor := fun G t ht h => by
-  rw [ValueModel.tensor_val, quantumValue] at h
-  rcases isEmpty_or_nonempty (TensorProductStrategy G) with hG | hG
-  · rw [Real.iSup_of_isEmpty] at h
-    exact absurd ht (not_le.mpr h)
-  obtain ⟨T, hT⟩ := exists_lt_of_lt_ciSup h
-  exact ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, BipartiteModel.tensor T.ψ,
-    soundIn_tensor T.ψ, T.toModel, by rwa [T.value_toModel]⟩
 
 /-- **`ω_co` is approached in the models of commuting-operator strategies**
 (`exists_projStrat_lt_commutingOperatorValue`), where the test is sound if it is sound in every

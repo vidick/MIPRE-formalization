@@ -35,9 +35,9 @@ distribution factors.
 
 ## Step two: each item is an agreement subtest
 
-`MIPRE.xSqNorm_sum_le_condFail` turns "the decider accepts iff `f a = g b`" into a bound on the
-cross-party deviation of the POVMs coarse-grained along `f` and `g`. So each item of the lemma
-is: name `f` and `g`, check the decider against them, and compose with `subtest_le`. That
+`BipartiteModel.xSqNorm_sum_le_condFail` turns "the decider accepts iff `f a = g b`" into a bound
+on the cross-party deviation of the POVMs coarse-grained along `f` and `g`. So each item of the
+lemma is: name `f` and `g`, check the decider against them, and compose with `subtest_le`. That
 composition is `agree_subtest_le`, and the seven items below are its instances --- the
 identity for the plain consistency check, a polynomial evaluation for the low-degree check, the
 low-degree encoding for Pauli-basis consistency, a projection for the commutation check, and the
@@ -46,6 +46,19 @@ trace probe `prb` for the two commutation- and Magic-Square-consistency checks.
 The Magic Square item itself is not of this shape --- it is a statement about the *value* of a
 conditional Magic Square strategy, which is what `lem:ms-direct-anticomm` consumes --- and it is
 in `MIPRE/Background/QLD/WinMS.lean`.
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The strategy is a model
+`M : BipartiteModel 𝒞 𝒜 ℬ` with `‖M.ψ‖ = 1` and two families of POVMs `PA`, `PB` in the players'
+ordered algebras (`POVMIn _ 𝒜`, `POVMIn _ ℬ`); its value is `M.povmValue`, its conditional
+failures `M.condFail`, and the cross-party deviation `M.xSqNorm a b = ‖(πA a - πB b) ψ‖²`. The
+matrix statements on a unit vector `ψ : dA × dB → ℂ` are the instances at the tensor-product
+model `BipartiteModel.tensor ψ` with the families `POVM.toIn`, through `povmValue_eq_tensor`,
+`condFail_eq_tensor`, `xSqNorm_eq_tensor` and `xPovmDist_eq_tensor`. Nothing here uses
+projectivity, so the families are arbitrary POVMs, and the projective strategies of the later
+files apply these statements as they are. The combinatorial half --- the size of the sample
+space, the readings, the gates, the format inversions --- mentions no state and is unchanged.
 -/
 
 noncomputable section
@@ -55,7 +68,10 @@ namespace MIPRE.QLD
 open Finset MIPRE MIPRE.LIDT MIPRE.LCS.MagicSquare
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  [NeZero m]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 /-! ## The size of the sample space -/
 
@@ -118,22 +134,22 @@ theorem le_qldGame_mu (hm : m ∣ Fintype.card F) {t u : Ty} (htu : adj t u = tr
 blueprint's "divided by the probability that the subtest is selected", with the probability
 computed. The sum is over any set `S` of contents, since a rule gated on `γ` fires only on part
 of the sample space; dropping the rest only decreases a sum of nonnegative terms. -/
-theorem subtest_le {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) {t u : Ty} (htu : adj t u = true)
+theorem subtest_le {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    (hM : ‖M.ψ‖ = 1) {ε : ℝ}
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) {t u : Ty} (htu : adj t u = true)
     (S : Finset (Content F m)) :
     ∑ c ∈ S, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        condFail (qldGame hm) ψ MA MB (c.question hm t) (c.question hm u) ≤ 86 * ε := by
+        M.condFail (qldGame hm) PA PB (c.question hm t) (c.question hm u) ≤ 86 * ε := by
   classical
-  have h := sum_condFail_le_of_pushforward (ι := Content F m) hψ hfail
+  have h := M.sum_condFail_le_of_pushforward (ι := Content F m) hM hfail
     (fun _ => (Fintype.card (Content F m) : ℝ)⁻¹)
     (fun c => (c.question hm t, c.question hm u))
     (c := (86 : ℝ)⁻¹) (by norm_num) fun p => le_qldGame_mu hm htu p
   rw [show (ε / (86 : ℝ)⁻¹) = 86 * ε from by field_simp] at h
   refine le_trans (Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ S)
     fun c _ _ => ?_) h
-  exact mul_nonneg (by positivity) (condFail_nonneg hψ _ _)
+  exact mul_nonneg (by positivity) (M.condFail_nonneg hM _ _)
 
 /-! ## Each item is an agreement subtest -/
 
@@ -148,42 +164,42 @@ throughout, so for a gated rule this is the *unconditional* average with the gat
 inside; the paper's conditional form is this divided by the gate's probability, which is where
 `fact:omega-anticomm-prob` and the hypothesis `6md ≤ q` enter.
 
-The `172` is `2 · 86`: the factor `2` of `xSqNorm_sum_le_condFail` and the selection probability
-`1/86` of `subtest_le`. -/
-theorem agree_subtest_le {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ}
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) {t u : Ty} (htu : adj t u = true)
+The `172` is `2 · 86`: the factor `2` of `BipartiteModel.xSqNorm_sum_le_condFail` and the
+selection probability `1/86` of `subtest_le`. -/
+theorem agree_subtest_le {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    (hM : ‖M.ψ‖ = 1) {ε : ℝ}
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) {t u : Ty} (htu : adj t u = true)
     {C : Type*} [Fintype C] [DecidableEq C] (S : Finset (Content F m))
     (f g : Content F m → Answer F m d → C)
     (hD : ∀ c ∈ S, ∀ a b, (qldGame hm).D (c.question hm t) (c.question hm u) a b = true →
       f c a = g c b) :
     ∑ c ∈ S, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ o : C, xSqNorm ψ ((((MA (c.question hm t)).map (f c)).mats o).val)
-          ((((MB (c.question hm u)).map (g c)).mats o).val)
+        ∑ o : C, M.xSqNorm (((PA (c.question hm t)).map (f c)).op o)
+          (((PB (c.question hm u)).map (g c)).op o)
       ≤ 172 * ε := by
   classical
   have hstep : ∀ c ∈ S,
       (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ o : C, xSqNorm ψ ((((MA (c.question hm t)).map (f c)).mats o).val)
-          ((((MB (c.question hm u)).map (g c)).mats o).val)
+        ∑ o : C, M.xSqNorm (((PA (c.question hm t)).map (f c)).op o)
+          (((PB (c.question hm u)).map (g c)).op o)
       ≤ 2 * ((Fintype.card (Content F m) : ℝ)⁻¹ *
-        condFail (qldGame hm) ψ MA MB (c.question hm t) (c.question hm u)) := by
+        M.condFail (qldGame hm) PA PB (c.question hm t) (c.question hm u)) := by
     intro c hc
-    have h2 := xSqNorm_sum_le_condFail (G := qldGame hm) (ψ := ψ) (MA := MA) (MB := MB)
-      hψ (f c) (g c) (hD c hc)
+    have h2 := M.xSqNorm_sum_le_condFail (G := qldGame hm) (MA := PA) (MB := PB)
+      hM (f c) (g c) (hD c hc)
     have hk : (0 : ℝ) ≤ (Fintype.card (Content F m) : ℝ)⁻¹ := by positivity
     calc (Fintype.card (Content F m) : ℝ)⁻¹ *
-          ∑ o : C, xSqNorm ψ ((((MA (c.question hm t)).map (f c)).mats o).val)
-            ((((MB (c.question hm u)).map (g c)).mats o).val)
+          ∑ o : C, M.xSqNorm (((PA (c.question hm t)).map (f c)).op o)
+            (((PB (c.question hm u)).map (g c)).op o)
         ≤ (Fintype.card (Content F m) : ℝ)⁻¹ *
-            (2 * condFail (qldGame hm) ψ MA MB (c.question hm t) (c.question hm u)) :=
+            (2 * M.condFail (qldGame hm) PA PB (c.question hm t) (c.question hm u)) :=
           mul_le_mul_of_nonneg_left h2 hk
       _ = 2 * ((Fintype.card (Content F m) : ℝ)⁻¹ *
-            condFail (qldGame hm) ψ MA MB (c.question hm t) (c.question hm u)) := by ring
+            M.condFail (qldGame hm) PA PB (c.question hm t) (c.question hm u)) := by ring
   refine le_trans (Finset.sum_le_sum hstep) ?_
   rw [← Finset.mul_sum, show (172 : ℝ) * ε = 2 * (86 * ε) from by ring]
-  exact mul_le_mul_of_nonneg_left (subtest_le hψ hfail htu S) (by norm_num)
+  exact mul_le_mul_of_nonneg_left (subtest_le hM hfail htu S) (by norm_num)
 
 /-! ## The readings each rule compares
 
@@ -285,8 +301,8 @@ Each is `agree_subtest_le` at a named edge with the two readings the rule compar
 
 section Items
 
-variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
   {ε : ℝ}
 
 /-- The three components of an acceptance. -/
@@ -301,16 +317,16 @@ cross-party consistent at error `172 ε`, and so is any *common* reading of thei
 rule accepts only when the answers are equal, and equal answers have equal readings. That is the
 data-processing inequality, and it comes for free from `agree_subtest_le` rather than as a
 separate fact. -/
-theorem item_consistency (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (t : Ty)
+theorem item_consistency (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (t : Ty)
     {C : Type*} [Fintype C] [DecidableEq C] (φ : Answer F m d → C) :
-    xPovmDist (fun _ : Content F m => (Fintype.card (Content F m) : ℝ)⁻¹) ψ
-        (fun c => (MA (c.question hm t)).map φ) (fun c => (MB (c.question hm t)).map φ)
+    M.xPovmDist (fun _ : Content F m => (Fintype.card (Content F m) : ℝ)⁻¹)
+        (fun c => (PA (c.question hm t)).map φ) (fun c => (PB (c.question hm t)).map φ)
       ≤ 172 * ε :=
-  agree_subtest_le hψ hfail (adj_self t) univ (fun _ => φ) (fun _ => φ)
+  agree_subtest_le hM hfail (adj_self t) univ (fun _ => φ) (fun _ => φ)
     fun c _ a b h => by
       have hs := (of_accepts h).2.2
-      rw [subtests, if_pos rfl] at hs
+      rw [subtests, ite_eq_left rfl] at hs
       exact congrArg φ (of_decide_eq_true hs)
 
 /-! ### Inverting the format check
@@ -369,14 +385,14 @@ theorem eval_eq_of_lowDeg {n : ℕ} {u₀ w y : Point F m} {p : LinePoly F n} {a
 /-- **Item 2a, the low-degree check against an axis-parallel line.** The line polynomial,
 evaluated at the parameter of the sampled point, agrees with the point answer, at error
 `172 ε`. This is the seeded CL decider's own check (`lowDeg_eq_cl`). -/
-theorem item_lowDeg_aline (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem item_lowDeg_aline (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
         ∑ o : F,
-          xSqNorm ψ ((((MA (c.question hm (.point W))).map rdVal).mats o).val)
-            ((((MB (c.question hm (.aline W))).map (rdALineAt hm W c)).mats o).val)
+          M.xSqNorm (((PA (c.question hm (.point W))).map rdVal).op o)
+            (((PB (c.question hm (.aline W))).map (rdALineAt hm W c)).op o)
       ≤ 172 * ε := by
-  refine agree_subtest_le hψ hfail (adj_point_aline W) univ (fun _ => rdVal) (rdALineAt hm W)
+  refine agree_subtest_le hM hfail (adj_point_aline W) univ (fun _ => rdVal) (rdALineAt hm W)
     fun c _ a b h => ?_
   obtain ⟨hfa, hfb, hs⟩ := of_accepts h
   obtain ⟨a', rfl⟩ := eq_val_of_fmtOk hfa
@@ -387,14 +403,14 @@ theorem item_lowDeg_aline (hψ : star ψ ⬝ᵥ ψ = 1)
   exact (eval_eq_of_lowDeg hs').symm
 
 /-- **Item 2b, the low-degree check against a diagonal line.** -/
-theorem item_lowDeg_dline (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem item_lowDeg_dline (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
         ∑ o : F,
-          xSqNorm ψ ((((MA (c.question hm (.point W))).map rdVal).mats o).val)
-            ((((MB (c.question hm (.dline W))).map (rdDLineAt hm W c)).mats o).val)
+          M.xSqNorm (((PA (c.question hm (.point W))).map rdVal).op o)
+            (((PB (c.question hm (.dline W))).map (rdDLineAt hm W c)).op o)
       ≤ 172 * ε := by
-  refine agree_subtest_le hψ hfail (adj_point_dline W) univ (fun _ => rdVal) (rdDLineAt hm W)
+  refine agree_subtest_le hM hfail (adj_point_dline W) univ (fun _ => rdVal) (rdDLineAt hm W)
     fun c _ a b h => ?_
   obtain ⟨hfa, hfb, hs⟩ := of_accepts h
   obtain ⟨a', rfl⟩ := eq_val_of_fmtOk hfa
@@ -407,14 +423,14 @@ theorem item_lowDeg_dline (hψ : star ψ ⬝ᵥ ψ = 1)
 
 /-- **Item 3, Pauli basis consistency.** The low-degree encoding of the full `(Pauli, W)`
 outcome, evaluated at the sampled point, agrees with the point answer. -/
-theorem item_pauli_consistency (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem item_pauli_consistency (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
         ∑ o : F,
-          xSqNorm ψ ((((MA (c.question hm (.point W))).map rdVal).mats o).val)
-            ((((MB (c.question hm (.pauli W))).map (rdPauli (c.pt W))).mats o).val)
+          M.xSqNorm (((PA (c.question hm (.point W))).map rdVal).op o)
+            (((PB (c.question hm (.pauli W))).map (rdPauli (c.pt W))).op o)
       ≤ 172 * ε := by
-  refine agree_subtest_le hψ hfail (adj_point_pauli W) univ (fun _ => rdVal)
+  refine agree_subtest_le hM hfail (adj_point_pauli W) univ (fun _ => rdVal)
     (fun c => rdPauli (c.pt W)) fun c _ a b h => ?_
   obtain ⟨hfa, hfb, hs⟩ := of_accepts h
   obtain ⟨a', rfl⟩ := eq_val_of_fmtOk hfa
@@ -426,14 +442,14 @@ theorem item_pauli_consistency (hψ : star ψ ⬝ᵥ ψ = 1)
 /-- **Item 4, the commutation check**, on the commuting tuples: the `(Pair, W)` bit agrees with
 the `W`-component of the `Pair` answer. On an anticommuting tuple the rule checks nothing, by
 design, which is why the average is restricted. -/
-theorem item_commutation (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem item_commutation (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     ∑ c ∈ commSet, (Fintype.card (Content F m) : ℝ)⁻¹ *
         ∑ o : ZMod 2,
-          xSqNorm ψ ((((MA (c.question hm (.pairB W))).map rdBit).mats o).val)
-            ((((MB (c.question hm .pair)).map (rdBitPair W)).mats o).val)
+          M.xSqNorm (((PA (c.question hm (.pairB W))).map rdBit).op o)
+            (((PB (c.question hm .pair)).map (rdBitPair W)).op o)
       ≤ 172 * ε := by
-  refine agree_subtest_le hψ hfail (adj_pairB_pair W) commSet (fun _ => rdBit)
+  refine agree_subtest_le hM hfail (adj_pairB_pair W) commSet (fun _ => rdBit)
     (fun _ => rdBitPair W) fun c hc a b h => ?_
   have hγ := gam_eq_zero_of_mem_commSet hc
   obtain ⟨hfa, hfb, hs⟩ := of_accepts h
@@ -450,14 +466,14 @@ def rdProbeAt (W : Bas) (c : Content F m) : Answer F m d → ZMod 2 :=
 
 /-- **Item 5, commutation consistency**, on the commuting tuples: the trace probe of the point
 answer agrees with the `(Pair, W)` bit. -/
-theorem item_commutation_consistency (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem item_commutation_consistency (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     ∑ c ∈ commSet, (Fintype.card (Content F m) : ℝ)⁻¹ *
         ∑ o : ZMod 2,
-          xSqNorm ψ ((((MA (c.question hm (.point W))).map (rdProbeAt W c)).mats o).val)
-            ((((MB (c.question hm (.pairB W))).map rdBit).mats o).val)
+          M.xSqNorm (((PA (c.question hm (.point W))).map (rdProbeAt W c)).op o)
+            (((PB (c.question hm (.pairB W))).map rdBit).op o)
       ≤ 172 * ε := by
-  refine agree_subtest_le hψ hfail (adj_point_pairB W) commSet (rdProbeAt W)
+  refine agree_subtest_le hM hfail (adj_point_pairB W) commSet (rdProbeAt W)
     (fun _ => rdBit) fun c hc a b h => ?_
   have hγ := gam_eq_zero_of_mem_commSet hc
   obtain ⟨hfa, hfb, hs⟩ := of_accepts h
@@ -470,14 +486,14 @@ theorem item_commutation_consistency (hψ : star ψ ⬝ᵥ ψ = 1)
 /-- **Item 7 for `X`, Magic Square consistency**, on the anticommuting tuples: the trace probe
 of the `(Point, X)` answer agrees with the `Variable_1` bit --- `var 0` at this file's
 `0`-indexing. -/
-theorem item_ms_consistency_X (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+theorem item_ms_consistency_X (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
     ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ *
         ∑ o : ZMod 2,
-          xSqNorm ψ ((((MA (c.question hm (.point .X))).map (rdProbeAt .X c)).mats o).val)
-            ((((MB (c.question hm (.var (v 0)))).map rdBit).mats o).val)
+          M.xSqNorm (((PA (c.question hm (.point .X))).map (rdProbeAt .X c)).op o)
+            (((PB (c.question hm (.var (v 0)))).map rdBit).op o)
       ≤ 172 * ε := by
-  refine agree_subtest_le hψ hfail adj_pointX_var0 acommSet (rdProbeAt .X)
+  refine agree_subtest_le hM hfail adj_pointX_var0 acommSet (rdProbeAt .X)
     (fun _ => rdBit) fun c hc a b h => ?_
   have hγ := gam_ne_zero_of_mem_acommSet hc
   obtain ⟨hfa, hfb, hs⟩ := of_accepts h
@@ -488,14 +504,14 @@ theorem item_ms_consistency_X (hψ : star ψ ⬝ᵥ ψ = 1)
   exact hs'
 
 /-- **Item 7 for `Z`.** -/
-theorem item_ms_consistency_Z (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+theorem item_ms_consistency_Z (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
     ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ *
         ∑ o : ZMod 2,
-          xSqNorm ψ ((((MA (c.question hm (.point .Z))).map (rdProbeAt .Z c)).mats o).val)
-            ((((MB (c.question hm (.var (v 4)))).map rdBit).mats o).val)
+          M.xSqNorm (((PA (c.question hm (.point .Z))).map (rdProbeAt .Z c)).op o)
+            (((PB (c.question hm (.var (v 4)))).map rdBit).op o)
       ≤ 172 * ε := by
-  refine agree_subtest_le hψ hfail adj_pointZ_var4 acommSet (rdProbeAt .Z)
+  refine agree_subtest_le hM hfail adj_pointZ_var4 acommSet (rdProbeAt .Z)
     (fun _ => rdBit) fun c hc a b h => ?_
   have hγ := gam_ne_zero_of_mem_acommSet hc
   obtain ⟨hfa, hfb, hs⟩ := of_accepts h

@@ -144,6 +144,39 @@ theorem degreeOne_fieldExtraction_exists {ω : ValueModel} {M : BipartiteModel �
   exact ⟨w.mono (le_of_eq (by
     simp only [QLD.errShape, PauliErrorParameters.qldError, Nat.cast_one, mul_one, neg_mul])), hw⟩
 
+variable {t ℓ : ℕ} {A : Type} [Fintype A] [Nonempty A]
+
+/-- **The extraction for the restricted strategy** (`lem:intro-pauli-extraction`). In a model where
+the Pauli basis test is sound with `ω`, let a projective strategy of the binary parsed introspection
+game fail with probability at most `ε`, and let its two full-register Pauli measurements have
+outcomes only at full-register answers. Then its restriction to the Pauli basis game has an
+extraction in binary coordinates at the error `δ_qld(Nε, m, d, q)` of the universal constants, with
+`N` the number of ordered edges of the typed graph, and its ancilla model is dominated by `ω`: the
+restriction fails with probability at most `Nε` (`PauliRestriction.strategy_failure_le`), keeps the
+support (`completePauliPOVM_invalid_of_supported`), so the test applies at the genuine answers
+(`fieldExtraction_exists`), and the register is relabelled as qubits along a self-dual basis
+(`FieldExtraction.toBinary`). -/
+theorem exists_extraction {ω : ValueModel} {M : BipartiteModel 𝒞 𝒜 ℬ} (hQ : QLD.SoundIn ω M)
+    (hm : m ∣ Fintype.card F) (hd : 1 ≤ d) (b : Module.Basis (Fin t) (ZMod 2) F)
+    (hb : LowDegree.IsSelfDualBasis b) (L : Bool → CL.CLFun (ZMod 2) (BinaryComplete.Coord m t) ℓ)
+    (D : BinaryComplete.Seed m t → BinaryComplete.Seed m t → A → A → Bool)
+    (S : M.ProjStrat (PauliRestriction.fullGame hm b L (BinaryComplete.project (d := d) b) D))
+    (hA : ParsedPauliSupported S.PA) (hB : ParsedPauliSupported S.PB) {ε : ℝ} (hε : 0 ≤ ε)
+    (hfail : 1 - S.value ≤ ε) :
+    ∃ E : Extraction M hm b (restriction hm b L D S)
+        (QLD.errShape qldCoefficient qldExponent (edgeCount ℓ * ε) m d (Fintype.card F)),
+      ω.DominatesPOVM E.N.N := by
+  have hA' : PauliSupported (restriction hm b L D S).PA := fun W a ha => by
+    rw [PauliRestriction.strategy_pauli_A]
+    exact completePauliPOVM_invalid_of_supported _ (hA W) W a ha
+  have hB' : PauliSupported (restriction hm b L D S).PB := fun W a ha => by
+    rw [PauliRestriction.strategy_pauli_B]
+    exact completePauliPOVM_invalid_of_supported _ (hB W) W a ha
+  have he : 0 ≤ edgeCount ℓ * ε := mul_nonneg (zero_le_one.trans (edgeCount_one_le ℓ)) hε
+  obtain ⟨w, hw⟩ := fieldExtraction_exists hQ hm hd (restriction hm b L D S) hA' hB' he
+    (PauliRestriction.strategy_failure_le hm b L (BinaryComplete.project b) D S _ _ hfail)
+  exact ⟨w.toBinary b hb, hw⟩
+
 end MIPRE.Introspection.RestrictedSoundness
 end
 

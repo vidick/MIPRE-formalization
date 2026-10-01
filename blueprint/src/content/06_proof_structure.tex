@@ -1652,9 +1652,9 @@ commute with the Pauli basis.
 
 \paragraph{Comments.} The formal route keeps the paper's estimates as distances instead of
 replacing the strategy: Lemma~\ref{lem:intro-pauli-extraction} is the application of
-Theorem~\ref{thm:qld}, through Corollary~\ref{cor:qld-binary}, that this proof makes, and
-Lemma~\ref{lem:intro-valid-isometric-soundness} accounts for the replacement. The statement above,
-with its exact state and exact Pauli operators, is not formalized as such.
+Theorem~\ref{thm:qld}, through Corollaries~\ref{cor:qld-valid} and~\ref{cor:qld-binary}, that this
+proof makes, and Lemma~\ref{lem:intro-valid-isometric-soundness} accounts for the replacement. The
+statement above, with its exact state and exact Pauli operators, is not formalized as such.
 
 \effortHard
 
@@ -3495,7 +3495,7 @@ coordinates, with dimension $2\cdot2^{2^m t}D$. The binary source functions
 need not be linear over the larger field.
 \end{lemma}
 \begin{proof}
-\uses{lem:intro-honest-full-auxiliary,lem:intro-honest-pauli-measurements}
+\uses{lem:intro-honest-full-auxiliary,lem:intro-honest-pauli-measurements,lem:cool-closeness-fact}
 \leanok
 Put the explicit Pauli PVMs, the auxiliary PVMs, the source strategy and
 one extra qubit on a common carrier. Check the X/Hide and Z/Sample anchor
@@ -3538,72 +3538,96 @@ answer, so its fibre contains only its original raw constructor.
 
 \begin{lemma}[Pauli extraction for the introspection game]
 \label{lem:intro-pauli-extraction}
-\uses{lem:intro-pauli-restriction,cor:qld-valid,cor:qld-binary}
-\lean{MIPRE.Introspection.PauliExtraction.exists_valid_extraction,
-  MIPRE.Introspection.PauliExtraction.binaryGame_eq_fullGame,
-  MIPRE.Introspection.PauliExtraction.binaryToFull,
-  MIPRE.Introspection.PauliExtraction.binaryToFull_value,
-  MIPRE.Introspection.PauliExtraction.fieldGame_eq_fullGame,
-  MIPRE.Introspection.PauliExtraction.fieldToFull,
-  MIPRE.Introspection.PauliExtraction.fieldToFull_value,
-  MIPRE.Introspection.PauliExtraction.exists_binary_extraction,
-  MIPRE.Introspection.PauliExtraction.exists_field_extraction}
+\uses{lem:intro-pauli-restriction,def:qld-sound-in,def:register-model,def:model-proj-strategy,
+  cor:qld-binary}
+\lean{MIPRE.Introspection.RestrictedSoundness.restriction,
+  MIPRE.Introspection.RestrictedSoundness.edgeCount,
+  MIPRE.Introspection.RestrictedSoundness.edgeCount_one_le,
+  MIPRE.Introspection.RestrictedSoundness.exists_extraction}
 \leanok
-There are constants $a \geq 1$ and $0 < b < 1$ such that the following holds. Let $N$ be the
-number of ordered edges of the typed graph, and let $T = \eps + 2\,\delta_{qld}(N\eps, m, d, q) +
-8/q$ with $\delta_{qld}$ at these constants. For every projective strategy of the full parsed
-introspection game failing with probability at most $\eps$, there are local isometries from the
-players' spaces onto the Pauli register tensored with auxiliary spaces, and a unit state
-$\ket{\xi}$, such that the image of the strategy's state is within $T$ of
-$\ket{\EPR} \ot \ket{\xi}$, and for both players and both bases the image of the strategy's own
-$(\pauli, W)$ measurement, summed over the valid full-register answers, is within $T$ of the
-honest Pauli readouts in the state-dependent distance. On the binary game the register is
-$\F_2^{M \times t}$, the state is $\ket{\EPR_2}^{\ot Mt} \ot \ket{\xi}$ and the readouts are
-qubit Paulis, for a self-dual basis; on the field-register game the register is $\F_q^M$ itself.
-The Lean proves it for a projective strategy in any bipartite model in which the Pauli basis
-test is sound (Definition~\ref{def:qld-sound-in}), with a local isometry into the register
-model of an ancilla model (Definition~\ref{def:register-model}); the statement above is its
-tensor-product instance.
+Let $N$ be the number of ordered edges of the typed graph, so that $N \geq 1$, let $\delta_{qld}$ be
+the error of Theorem~\ref{thm:qld}, and let $\omega$ be a value model. Let $\strategy$ be a
+projective strategy of the binary parsed introspection game in a bipartite model in which the Pauli
+basis test is sound with $\omega$ (Definitions~\ref{def:model-proj-strategy}
+and~\ref{def:qld-sound-in}), failing with probability at most $\eps$, whose two $(\pauli, W)$
+measurements have nonzero effects only at full-register Pauli answers. Then the restriction of
+$\strategy$ to the Pauli basis game (Lemma~\ref{lem:intro-pauli-restriction}), its malformed answers
+completed at a scalar answer, has an \emph{extraction in binary coordinates} at the error $T =
+\delta_{qld}(N\eps, m, d, q)$: an ancilla model, with state $\psi_{\aux}$, whose POVM strategies
+$\omega$ dominates, and a local isometry of the strategy's model into the register model of the
+ancilla model on $\F_2^{M \times t}$ (Definition~\ref{def:register-model}), which carries the
+strategy's state within $T$ of $\ket{\EPR_2}^{\ot Mt} \ot \psi_{\aux}$ and carries the first
+player's $X$ effects and the second player's $Z$ effects at the valid full-register answers within
+$T$ of the honest qubit readouts, in summed squared state norm. The valid answer at the qubit label
+$x$ is the Pauli answer at $\phi^{-1}(x)$, for the relabelling $\phi$ of
+Corollary~\ref{cor:qld-binary}, and it projects back to $x$. In the tensor-product model of a
+strategy's state the test is sound with $\valstar$ (Lemma~\ref{lem:qld-sound-in-tensor}), the
+ancilla model is, up to isomorphism, the tensor-product model of an auxiliary unit vector, and the
+local isometry is one between tensor-product models: the familiar form of the extraction, for
+tensor-product strategies.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:model-proj-strategy-values,lem:model-proj-strategy}
+\uses{lem:model-proj-strategy}
 \leanok
-Restrict the strategy to the actual Pauli basis game (Lemma~\ref{lem:intro-pauli-restriction}):
-same state, failure at most $N\eps$, and the same operators at valid answers. Apply
-Corollary~\ref{cor:qld-valid} to the restriction, and for the binary game relabel the register as
-in Corollary~\ref{cor:qld-binary}.
+Restrict the strategy to the actual Pauli basis game (Lemma~\ref{lem:intro-pauli-restriction}): same
+model and state, failure at most $N\eps$, and at a valid answer the same operators. The completion
+of the malformed answers carries no mass, the strategy having no malformed Pauli outcome, so the
+restriction's Pauli measurements are supported on the full-register answers too.
+Corollary~\ref{cor:qld-valid}, at the restriction, gives an extraction in field coordinates at the
+error $\delta_{qld}(N\eps, m, d, q)$, with an ancilla model that $\omega$ dominates, and
+Corollary~\ref{cor:qld-binary} relabels its register as qubits along the self-dual basis, at the
+same error. The valid answer at $x$ projects to $\phi(\phi^{-1}(x)) = x$. In Lean the extraction in
+binary coordinates is a structure (Corollary~\ref{cor:qld-binary}), and
+\texttt{exists\_extraction} composes these steps.
 \end{proof}
 
 \paragraph{Comments.} This is the paper's use of \texttt{cor:pauli-binary} in the proof of
 \texttt{lem:intro-pauli-strat} (Lemma~\ref{lem:intro-pauli-extract}): the conditioning on the
 Pauli block is the factor $N$, and the estimates are kept as distances, the form
 Lemma~\ref{lem:intro-valid-isometric-soundness} consumes, rather than used to replace the strategy
-by an exact one. All four Pauli estimates are proved, as the paper states them; the consumer uses
-Alice's $X$ and Bob's $Z$. \texttt{MIPRE/Background/Introspection/PauliExtraction.lean}.
+by an exact one. Theorem~\ref{thm:qld} gives all four Pauli estimates, as the paper states them;
+the extraction keeps the two the consumer uses, Alice's $X$ and Bob's $Z$. Reading the estimates at
+the valid answers costs nothing: the decoder of Lemma~\ref{lem:intro-ambient-kernel} makes the
+strategy's Pauli measurements supported on the full-register answers, so the answers read as one
+register label are that label's answer alone. Only the binary game is used for soundness; the
+field-register game of Lemma~\ref{lem:intro-full-typed-completeness} serves completeness.
+\texttt{MIPRE/Background/Introspection/RestrictedSoundness.lean} and
+\texttt{RestrictedProfileSoundness.lean}.
 
 \begin{lemma}[Introspection soundness from the extracted Pauli strategy]
 \label{lem:intro-extracted-soundness}
-\uses{lem:intro-pauli-extraction,lem:intro-valid-isometric-soundness}
-\lean{MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_binary,
-  MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_field}
+\uses{lem:intro-pauli-extraction,lem:intro-valid-isometric-soundness,def:povm-domination}
+\lean{MIPRE.Introspection.RestrictedSoundness.quantumValue_ge_of_extraction,
+  MIPRE.Introspection.RestrictedSoundness.profileCoefficient,
+  MIPRE.Introspection.RestrictedSoundness.profileCoefficient_one_le}
 \leanok
-Suppose the original game's CL functions are exact on the whole Pauli register. If the binary
-(respectively field-register) parsed introspection game has a projective strategy failing with
-probability at most $\eps$, then the original game has quantum value at least
-$1 - C\,\mathrm{root}_{6\ell+2}(T)$, with $T$ as in Lemma~\ref{lem:intro-pauli-extraction} and
-$C$ the coefficient of Lemma~\ref{lem:intro-valid-isometric-soundness}.
-In a bipartite model the same bound holds for the value of every value model dominating the
-ancilla model of the extraction (Definition~\ref{def:povm-domination}); quantum value is the
-tensor-product instance.
+Suppose the original game's CL functions are exact on the whole Pauli register. Let a projective
+strategy of the binary parsed introspection game, in a bipartite model, fail with probability at
+most $\eps$, and let its restriction to the Pauli basis game have an extraction in binary
+coordinates at an error $\delta \geq 0$ (Lemma~\ref{lem:intro-pauli-extraction}). Then every value
+model $\omega$ dominating the POVM strategies of the extraction's ancilla model
+(Definition~\ref{def:povm-domination}) gives the original game value at least $1 -
+C\,\mathrm{root}_{6\ell+2}(\max(\eps, \delta))$, with $C$ the coefficient of
+Lemma~\ref{lem:intro-valid-isometric-soundness} at the $N$ ordered edges of the typed graph. In the
+tensor-product model, with $\omega = \valstar$, this bounds the quantum value of the original game.
+For $a \geq 1$ and $0 < b \leq 1$, the coefficient $A = \max\{1, C' a^r, ar\}$, where $r =
+2^{-(6\ell+2)}$ and $C' = C\max(1, N^b)^r$, is at least $1$ and depends only on $\ell$, $a$ and $b$.
+It is the coefficient with which Lemma~\ref{lem:intro-error-absorption} turns this loss into the
+two-term profile $E(A, br, x, \eps)$ of that lemma when $\delta \leq E(a, b, x, N\eps)$ and $x \geq
+1$, which is how Lemma~\ref{lem:intro-numbered-transport} absorbs the error of
+Theorem~\ref{thm:qld}.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-sound-in-tensor}
+\uses{lem:intro-pauli-restriction}
 \leanok
-Lemma~\ref{lem:intro-valid-isometric-soundness} applied to the data of
-Lemma~\ref{lem:intro-pauli-extraction}; the Pauli question's sampler is constant, and the valid
-answer at a register label projects back to that label.
+Lemma~\ref{lem:intro-valid-isometric-soundness}, applied to the strategy with the local isometry
+and the ancilla model of the extraction, at the common error $\max(\eps, \delta)$. The Pauli
+question's sampler is constant, the valid answer at a register label projects back to that label,
+and at a valid answer the restriction's operators are the strategy's
+(Lemma~\ref{lem:intro-pauli-restriction}), so the extraction's estimates are the hypotheses of that
+lemma. The coefficient is a maximum of terms at least one.
 \end{proof}
 
 \paragraph{Comments.} The exactness hypothesis is the consumer's and covers all $M t = M \log q$
@@ -3870,7 +3894,7 @@ the raw soundness and honest encoding implications in both orientations.
 
 \begin{lemma}[Full question transport and actual QLD extraction]
 \label{lem:intro-numbered-transport}
-\uses{lem:intro-explicit-selector-questions,thm:qld,def:qld-sound-in}
+\uses{lem:intro-explicit-selector-questions,def:qld-sound-in,lem:intro-extracted-soundness}
 \lean{MIPRE.Introspection.ExplicitGame.game_mu,
   MIPRE.Introspection.ExplicitGame.game_D,
   MIPRE.Introspection.ExplicitGame.toLegacy_value,
@@ -5780,7 +5804,7 @@ averaged over the seed.
 \begin{lemma}[Common individual polynomial measurements]
 \label{lem:ar-common-polynomials}
 \ledgernode{1.3.4.6}
-\uses{thm:lidt-cl-soundness-one,lem:schwartz-zippel,def:lidt-sound-in}
+\uses{lem:schwartz-zippel,def:lidt-sound-in}
 \lean{MIPRE.AnswerReduction.exists_ext1, MIPRE.AnswerReduction.ext1_spec,
   MIPRE.AnswerReduction.sum_deltaSim1_le, MIPRE.LIDT.Simul.sum_deltaSim_le}
 \leanok
@@ -5801,7 +5825,7 @@ theorem itself (Lemma~\ref{lem:lidt-sound-in-tensor}).
 \end{lemma}
 
 \begin{proof}
-\uses{thm:lidt-cl-soundness-one,lem:ar-global-tests}
+\uses{lem:ar-global-tests}
 \leanok
 For each seed and copy, the seeded low-degree test's soundness extracts the measurements
 (\texttt{exists\_ext1}, \texttt{ext1\_spec}), with error $\delta_{\mathrm{sim}}$ at the copy's

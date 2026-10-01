@@ -2965,9 +2965,11 @@ approximation by projective ones, `lem:povm-domination` (`MIPRE/Foundations/POVM
 `MIPRE/Foundations/Introspection/SourcePaddingValue.lean`); reductions of POVM strategies,
 `lem:povm-reduction` (`MIPRE/Foundations/POVMReduction.lean`, `MIPRE/Foundations/ModelOver.lean`);
 the Pauli basis test sound in the tensor-product model, `lem:qld-sound-in-tensor`
-(`MIPRE/Background/QLD/ModelSoundness.lean`); and introspection sound in every value model where
-that test is, `thm:intro-sound-co` (`MIPRE/Background/Introspection/Compiler.lean`). The
-introspection analysis itself is restated in a model under its existing guards. -/
+(`MIPRE/Background/QLD/Soundness.lean` since Phase 5, as the tensor-product instance of `thm:qld`,
+with the definitions in `MIPRE/Background/QLD/ModelSoundness.lean`); and introspection sound in
+every value model where that test is, `thm:intro-sound-co`
+(`MIPRE/Background/Introspection/Compiler.lean`). The introspection analysis itself is restated in
+a model under its existing guards. -/
 #guard_sorry_free MIPRE.BipartiteModel.LocalIsometry.intertwine,
   MIPRE.BipartiteModel.LocalIsometry.bornProb_withState,
   MIPRE.BipartiteModel.LocalIsometry.stateSqNorm_withState,
@@ -3049,16 +3051,234 @@ introspection analysis itself is restated in a model under its existing guards. 
   MIPRE.ModelOver.norm_expandA_ψ,
   MIPRE.POVMIn.compress_op
 
-#guard_sorry_free MIPRE.QLD.soundIn_tensor,
-  MIPRE.QLD.tensorAncilla,
-  MIPRE.QLD.tensorPhi,
-  MIPRE.QLD.tensorPhi_W_ψ,
-  MIPRE.QLD.tensorPhi_alice,
-  MIPRE.QLD.tensorPhi_bob,
-  MIPRE.QLD.approxSoundIn_tensor,
-  MIPRE.QLD.approxSoundIn_commuting
+#guard_sorry_free MIPRE.QLD.soundIn_tensor, MIPRE.QLD.approxSoundIn_tensor,
+  MIPRE.QLD.approxSoundIn_commuting, MIPRE.BipartiteModel.LocalIsometry.withStates
 
-#guard_sorry_free MIPRE.Introspection.seven_soundIn,
-  MIPRE.Introspection.seven_soundIn_commuting
+#guard_sorry_free MIPRE.Introspection.seven_soundIn, MIPRE.Introspection.seven_soundIn_commuting
+
+/-! The Pauli extraction for the introspection game and the source bound from it, in a bipartite
+model: `lem:intro-pauli-extraction` and `lem:intro-extracted-soundness`
+(`MIPRE/Background/Introspection/RestrictedSoundness.lean`, `RestrictedProfileSoundness.lean`),
+which replace the tensor-product statements of the removed `PauliExtraction.lean`. -/
+#guard_sorry_free MIPRE.Introspection.RestrictedSoundness.restriction,
+  MIPRE.Introspection.RestrictedSoundness.edgeCount,
+  MIPRE.Introspection.RestrictedSoundness.edgeCount_one_le,
+  MIPRE.Introspection.RestrictedSoundness.exists_extraction,
+  MIPRE.Introspection.RestrictedSoundness.validAnswer,
+  MIPRE.Introspection.RestrictedSoundness.project_validAnswer,
+  MIPRE.Introspection.RestrictedSoundness.Extraction
+
+#guard_sorry_free MIPRE.Introspection.RestrictedSoundness.quantumValue_ge_of_extraction,
+  MIPRE.Introspection.RestrictedSoundness.profileCoefficient,
+  MIPRE.Introspection.RestrictedSoundness.profileCoefficient_one_le
+
+/-! The commuting-operator track, Phase 5 (`planning/mipco-track.md` §5): isomorphisms of bipartite
+models and what they carry, `lem:model-iso`, and those between extensions, `lem:extension-isos`
+(`MIPRE/Foundations/ModelIso.lean`); readings of an extension, `lem:model-reading`
+(`MIPRE/Foundations/ModelReading.lean`); embeddings, `lem:model-embedding`
+(`MIPRE/Foundations/ModelEmbedding.lean`); the seeded test moved between models,
+`lem:lidt-model-transport` (`MIPRE/Background/LIDT/ModelTransport.lean`); the commutant of a matrix
+amplification, `lem:ampl-commutant`, and the extension of a commuting-operator model,
+`lem:co-extension` (`MIPRE/Foundations/AmplCommutant.lean`); the seeded test in those extensions,
+`lem:lidt-sound-co-expand` (`MIPRE/Background/LIDT/CoExpand.lean`); scalar matrices on a register,
+`lem:register-action` (`MIPRE/Foundations/EPRContraction.lean`); the state calculus and Parseval in
+a model, `lem:model-state-calculus` and `lem:model-parseval`
+(`MIPRE/Foundations/ModelCalculus.lean`); the Pauli basis test sound in the commuting-operator model
+given the seeded test, `lem:qld-sound-co` (`MIPRE/Background/QLD/Soundness.lean`); and
+`MIP^co = coRE` from the seeded test alone, `cor:mipco-from-lidt` (`MIPRE/MIPCo.lean`). The Pauli
+basis analysis itself is restated in a model under the guards of
+`MIPRE/Background/QLD/Axioms.lean`. -/
+
+-- blueprint `lem:model-iso`
+#guard_sorry_free MIPRE.BipartiteModel.Iso.refl_ΦA, MIPRE.BipartiteModel.Iso.refl_ΦB,
+  MIPRE.BipartiteModel.Iso.symm_W, MIPRE.BipartiteModel.Iso.symm_ΦA,
+  MIPRE.BipartiteModel.Iso.symm_ΦB, MIPRE.BipartiteModel.Iso.trans_W,
+  MIPRE.BipartiteModel.Iso.trans_ΦA, MIPRE.BipartiteModel.Iso.trans_ΦB,
+  MIPRE.BipartiteModel.Iso.swap_W, MIPRE.BipartiteModel.Iso.swap_ΦA,
+  MIPRE.BipartiteModel.Iso.swap_ΦB, MIPRE.BipartiteModel.Iso.symm_symm,
+  MIPRE.BipartiteModel.Iso.swap_swap, MIPRE.BipartiteModel.Iso.toLocalIsometry_W,
+  MIPRE.BipartiteModel.Iso.toLocalIsometry_ΦA, MIPRE.BipartiteModel.Iso.toLocalIsometry_ΦB,
+  MIPRE.BipartiteModel.Iso.toLocalIsometry_W_ψ, MIPRE.BipartiteModel.Iso.toLocalIsometry_ΦA_one,
+  MIPRE.BipartiteModel.Iso.toLocalIsometry_ΦB_one, MIPRE.BipartiteModel.Iso.swap_toLocalIsometry,
+  MIPRE.BipartiteModel.Iso.bornProb_eq, MIPRE.BipartiteModel.Iso.stateSqNorm_eq,
+  MIPRE.BipartiteModel.Iso.swap_stateSqNorm_eq, MIPRE.BipartiteModel.Iso.xSqNorm_eq,
+  MIPRE.BipartiteModel.Iso.norm_ψ_eq, MIPRE.BipartiteModel.Iso.pushA,
+  MIPRE.BipartiteModel.Iso.pushA_op, MIPRE.BipartiteModel.Iso.isPVMIn_pushA,
+  MIPRE.BipartiteModel.Iso.symm_pushA_pushA, MIPRE.BipartiteModel.Iso.pushA_symm_pushA,
+  MIPRE.BipartiteModel.Iso.pushB, MIPRE.BipartiteModel.Iso.pushB_op,
+  MIPRE.BipartiteModel.Iso.isPVMIn_pushB, MIPRE.BipartiteModel.Iso.symm_pushB_pushB,
+  MIPRE.BipartiteModel.Iso.pushB_symm_pushB, MIPRE.BipartiteModel.Iso.povmValue_eq,
+  MIPRE.BipartiteModel.Iso.povmValue_push, MIPRE.BipartiteModel.Iso.pushStrat,
+  MIPRE.BipartiteModel.Iso.pushStrat_PA, MIPRE.BipartiteModel.Iso.pushStrat_PB,
+  MIPRE.BipartiteModel.Iso.value_pushStrat, MIPRE.BipartiteModel.Iso.dominates,
+  MIPRE.BipartiteModel.Iso.inconsistency_eq, MIPRE.BipartiteModel.Iso.inconsistency_push,
+  MIPRE.BipartiteModel.ProjStrat.swap, MIPRE.BipartiteModel.ProjStrat.swap_PA,
+  MIPRE.BipartiteModel.ProjStrat.swap_PB, MIPRE.BipartiteModel.ProjStrat.value_swap,
+  MIPRE.BipartiteModel.inconsistency_swap
+
+-- blueprint `lem:extension-isos`
+#guard_sorry_free MIPRE.OperatorMatrix.amplSubsingleton,
+  MIPRE.OperatorMatrix.amplSubsingleton_apply, MIPRE.norm_evec_comp_swap,
+  MIPRE.matrixUnitStarAlgEquiv, MIPRE.matrixUnitStarAlgEquiv_apply, MIPRE.submatrixStarAlgEquiv,
+  MIPRE.submatrixStarAlgEquiv_apply, MIPRE.submatrixStarAlgEquiv_symm_apply,
+  MIPRE.mapMatrixStarAlgEquiv, MIPRE.mapMatrixStarAlgEquiv_apply,
+  MIPRE.mapMatrixStarAlgEquiv_symm_apply, MIPRE.BipartiteModel.expandUnit,
+  MIPRE.BipartiteModel.expandUnit_ΦA, MIPRE.BipartiteModel.expandUnit_ΦB,
+  MIPRE.BipartiteModel.assocIso, MIPRE.BipartiteModel.assocIso_ΦA, MIPRE.BipartiteModel.assocIso_ΦB,
+  MIPRE.BipartiteModel.relabelIso, MIPRE.BipartiteModel.relabelIso_ΦA,
+  MIPRE.BipartiteModel.relabelIso_ΦB, MIPRE.BipartiteModel.swapExpandIso,
+  MIPRE.BipartiteModel.swapExpandIso_ΦA, MIPRE.BipartiteModel.swapExpandIso_ΦB,
+  MIPRE.BipartiteModel.Iso.expandCongrW, MIPRE.BipartiteModel.Iso.ampl_expandCongrW,
+  MIPRE.BipartiteModel.Iso.expandCongr, MIPRE.BipartiteModel.Iso.expandCongr_ΦA,
+  MIPRE.BipartiteModel.Iso.expandCongr_ΦB, MIPRE.BipartiteModel.tensorExpandIso,
+  MIPRE.BipartiteModel.tensorExpandIso_ΦA, MIPRE.BipartiteModel.tensorExpandIso_ΦB,
+  MIPRE.BipartiteModel.tensorReindexW, MIPRE.BipartiteModel.tensorReindexW_apply,
+  MIPRE.BipartiteModel.tensorReindexIso, MIPRE.BipartiteModel.tensorReindexIso_ΦA,
+  MIPRE.BipartiteModel.tensorReindexIso_ΦB
+
+-- blueprint `lem:model-reading`
+#guard_sorry_free MIPRE.reindexStarAlgHomR_apply, MIPRE.smulKron_eq_diagonal_mul,
+  MIPRE.compHom_smulKron_smulKron, MIPRE.compHom_smulKron_one, MIPRE.moveEquiv_apply,
+  MIPRE.moveEquiv_symm_apply, MIPRE.basisVec_apply, MIPRE.basisVec_swap, MIPRE.norm_basisVec,
+  MIPRE.BipartiteModel.recut_toStateModel, MIPRE.BipartiteModel.recut_πA_apply,
+  MIPRE.BipartiteModel.recut_πB_apply, MIPRE.BipartiteModel.expand_πA_apply,
+  MIPRE.BipartiteModel.expand_πB_apply, MIPRE.BipartiteModel.expand_πA_mul_πB_apply,
+  MIPRE.BipartiteModel.recut_move_πA, MIPRE.BipartiteModel.recut_move_πB,
+  MIPRE.BipartiteModel.recutAmpl, MIPRE.BipartiteModel.recutAmpl_apply,
+  MIPRE.BipartiteModel.recutIsom, MIPRE.BipartiteModel.recutAmpl_recutIsom_W,
+  MIPRE.BipartiteModel.recutIsom_ΦA, MIPRE.BipartiteModel.recutIsom_ΦB,
+  MIPRE.BipartiteModel.recutIsom_W_ψ, MIPRE.BipartiteModel.recutIso,
+  MIPRE.BipartiteModel.recutIso_ΦA, MIPRE.BipartiteModel.recutIso_ΦB,
+  MIPRE.BipartiteModel.recutIso_toLocalIsometry, MIPRE.BipartiteModel.bornProb_expand_basisVec
+
+-- blueprint `lem:model-embedding`
+#guard_sorry_free MIPRE.POVMIn.pushforward_comp, MIPRE.BipartiteModel.inconsistency_map_equiv,
+  MIPRE.BipartiteModel.star_πA_mul_πB_mul_self, MIPRE.BipartiteModel.LocalIsometry.toWithState_W,
+  MIPRE.BipartiteModel.LocalIsometry.toWithState_ΦA,
+  MIPRE.BipartiteModel.LocalIsometry.toWithState_ΦB,
+  MIPRE.BipartiteModel.LocalIsometry.intertwine_sum,
+  MIPRE.BipartiteModel.LocalIsometry.snorm_sum_mul_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.qform_sum_mul_of_W_ψ,
+  MIPRE.BipartiteModel.LocalIsometry.ofUnitary, MIPRE.BipartiteModel.LocalIsometry.ofUnitary_W,
+  MIPRE.BipartiteModel.LocalIsometry.ofUnitary_ΦA, MIPRE.BipartiteModel.LocalIsometry.ofUnitary_ΦB,
+  MIPRE.BipartiteModel.LocalIsometry.ofUnitary_ΦA_one,
+  MIPRE.BipartiteModel.LocalIsometry.ofUnitary_ΦB_one, MIPRE.BipartiteModel.Embedding.id_W,
+  MIPRE.BipartiteModel.Embedding.id_ΦA, MIPRE.BipartiteModel.Embedding.id_ΦB,
+  MIPRE.BipartiteModel.Embedding.comp_toLocalIsometry, MIPRE.BipartiteModel.Embedding.comp_W,
+  MIPRE.BipartiteModel.Embedding.comp_ΦA, MIPRE.BipartiteModel.Embedding.comp_ΦB,
+  MIPRE.BipartiteModel.Embedding.swap_toLocalIsometry, MIPRE.BipartiteModel.Embedding.swap_W,
+  MIPRE.BipartiteModel.Embedding.swap_ΦA, MIPRE.BipartiteModel.Embedding.swap_ΦB,
+  MIPRE.BipartiteModel.Embedding.swap_swap, MIPRE.BipartiteModel.Embedding.bornProb,
+  MIPRE.BipartiteModel.Embedding.stateSqNorm, MIPRE.BipartiteModel.Embedding.swap_stateSqNorm,
+  MIPRE.BipartiteModel.Embedding.xSqNorm, MIPRE.BipartiteModel.Embedding.norm_ψ,
+  MIPRE.BipartiteModel.Embedding.inconsistency_pushforward,
+  MIPRE.BipartiteModel.Embedding.povmValue_pushforward,
+  MIPRE.BipartiteModel.Iso.toEmbedding_toLocalIsometry, MIPRE.BipartiteModel.Iso.toEmbedding_W,
+  MIPRE.BipartiteModel.Iso.toEmbedding_ΦA, MIPRE.BipartiteModel.Iso.toEmbedding_ΦB,
+  MIPRE.BipartiteModel.inertEmb, MIPRE.BipartiteModel.inertEmb_toLocalIsometry,
+  MIPRE.BipartiteModel.inertEmb_ΦA, MIPRE.BipartiteModel.inertEmb_ΦB, MIPRE.BipartiteModel.assocEmb,
+  MIPRE.BipartiteModel.assocEmb_toLocalIsometry, MIPRE.BipartiteModel.assocEmb_ΦA,
+  MIPRE.BipartiteModel.assocEmb_ΦB, MIPRE.BipartiteModel.relabelEmb,
+  MIPRE.BipartiteModel.relabelEmb_toLocalIsometry, MIPRE.BipartiteModel.relabelEmb_ΦA,
+  MIPRE.BipartiteModel.relabelEmb_ΦB, MIPRE.BipartiteModel.swapExpandEmb,
+  MIPRE.BipartiteModel.swapExpandEmb_toLocalIsometry, MIPRE.BipartiteModel.swapExpandEmb_ΦA,
+  MIPRE.BipartiteModel.swapExpandEmb_ΦB, MIPRE.BipartiteModel.recutEmb,
+  MIPRE.BipartiteModel.recutEmb_toLocalIsometry, MIPRE.BipartiteModel.recutEmb_ΦA,
+  MIPRE.BipartiteModel.recutEmb_ΦB
+
+-- blueprint `lem:lidt-model-transport`
+#guard_sorry_free MIPRE.LIDT.CL.Sample.swapTy, MIPRE.LIDT.CL.Sample.swapTyEquiv,
+  MIPRE.LIDT.CL.subtests_swap, MIPRE.LIDT.CL.accepts_swap, MIPRE.LIDT.CL.clGame_μ_swap,
+  MIPRE.LIDT.CL.clGame_D_swap, MIPRE.LIDT.Simul.tuplePOVMAIn_pushStrat,
+  MIPRE.LIDT.Simul.tuplePOVMBIn_pushStrat, MIPRE.LIDT.Simul.evalTuplePOVMIn_symm_pushA,
+  MIPRE.LIDT.Simul.evalTuplePOVMIn_symm_pushB, MIPRE.LIDT.Simul.SoundIn.of_iso,
+  MIPRE.LIDT.Simul.SoundIn.iff_of_iso, MIPRE.LIDT.Simul.SoundIn.swap,
+  MIPRE.LIDT.Simul.soundIn_tensor_fintype, MIPRE.LIDT.Simul.soundIn_expand_tensor,
+  MIPRE.LIDT.Simul.soundIn_swap_expand, MIPRE.LIDT.Simul.soundIn_swap_expand_of_norm
+
+-- blueprint `lem:ampl-commutant`
+#guard_sorry_free MIPRE.OperatorMatrix.entries, MIPRE.OperatorMatrix.entries_apply,
+  MIPRE.OperatorMatrix.sum_emb, MIPRE.OperatorMatrix.toCLM_entries,
+  MIPRE.OperatorMatrix.entries_toCLM, MIPRE.OperatorMatrix.toCLM_injective,
+  MIPRE.OperatorMatrix.commute_toCLM_iff, MIPRE.commute_diagonal_const_iff,
+  MIPRE.liftLeft_diagonal_const, MIPRE.liftRight_diagonal_const, MIPRE.commute_liftLeft_liftRight,
+  MIPRE.mul_liftRight_single_apply, MIPRE.liftRight_single_mul_apply,
+  MIPRE.mul_liftLeft_single_apply, MIPRE.liftLeft_single_mul_apply, MIPRE.eq_liftLeft_of_commute,
+  MIPRE.eq_liftRight_of_commute, MIPRE.uniformProj, MIPRE.isStarProjection_uniformProj,
+  MIPRE.isStarProjection_single_one, MIPRE.single_eq_smul_mul_uniformProj_mul,
+  MIPRE.commute_liftRight_single_of_commute, MIPRE.OperatorMatrix.commute_toCLM_liftLeft_liftRight,
+  MIPRE.OperatorMatrix.exists_eq_toCLM_liftLeft, MIPRE.OperatorMatrix.exists_eq_toCLM_liftRight,
+  MIPRE.OperatorMatrix.toCLM_liftLeft_injective, MIPRE.OperatorMatrix.toCLM_liftRight_injective,
+  MIPRE.mem_centralizer_of_forall_commute, MIPRE.nonempty_of_norm_evec_eq_one, MIPRE.twoOutcome,
+  MIPRE.isStarProjection_twoOutcome, MIPRE.sum_twoOutcome
+
+-- blueprint `lem:co-extension`
+#guard_sorry_free MIPRE.CommutingOperatorStrategy.expandRegProj,
+  MIPRE.CommutingOperatorStrategy.isStarProjection_expandRegProj,
+  MIPRE.CommutingOperatorStrategy.expandBobMat,
+  MIPRE.CommutingOperatorStrategy.expandBobMat_inl_inl,
+  MIPRE.CommutingOperatorStrategy.expandBobMat_inr_inr,
+  MIPRE.CommutingOperatorStrategy.expandBobMat_inl_inr,
+  MIPRE.CommutingOperatorStrategy.expandBobMat_inr_inl,
+  MIPRE.CommutingOperatorStrategy.commute_expandBobMat_apply,
+  MIPRE.CommutingOperatorStrategy.isPositive_toCLM_liftRight_expandBobMat,
+  MIPRE.CommutingOperatorStrategy.sum_expandBobMat,
+  MIPRE.CommutingOperatorStrategy.sum_toCLM_liftRight_expandBobMat,
+  MIPRE.CommutingOperatorStrategy.expandStrategyAux, MIPRE.CommutingOperatorStrategy.expandStrategy,
+  MIPRE.CommutingOperatorStrategy.expandAliceRep, MIPRE.CommutingOperatorStrategy.expandBobRep,
+  MIPRE.CommutingOperatorStrategy.expandAliceRep_apply,
+  MIPRE.CommutingOperatorStrategy.expandBobRep_apply,
+  MIPRE.CommutingOperatorStrategy.expandAliceRep_eq,
+  MIPRE.CommutingOperatorStrategy.expandBobRep_eq,
+  MIPRE.CommutingOperatorStrategy.expandAliceRep_mem,
+  MIPRE.CommutingOperatorStrategy.exists_expandAliceRep_eq,
+  MIPRE.CommutingOperatorStrategy.expandAliceHom,
+  MIPRE.CommutingOperatorStrategy.expandAliceHom_bijective,
+  MIPRE.CommutingOperatorStrategy.expandAliceEquiv,
+  MIPRE.CommutingOperatorStrategy.coe_expandAliceEquiv,
+  MIPRE.CommutingOperatorStrategy.expandBobRep_mem,
+  MIPRE.CommutingOperatorStrategy.exists_expandBobRep_eq,
+  MIPRE.CommutingOperatorStrategy.expandBobHom,
+  MIPRE.CommutingOperatorStrategy.expandBobHom_bijective,
+  MIPRE.CommutingOperatorStrategy.expandBobEquiv,
+  MIPRE.CommutingOperatorStrategy.coe_expandBobEquiv,
+  MIPRE.CommutingOperatorStrategy.mem_expandStrategy_aliceAlg_iff,
+  MIPRE.CommutingOperatorStrategy.mem_expandStrategy_bobAlg_iff,
+  MIPRE.CommutingOperatorStrategy.expandIso, MIPRE.CommutingOperatorStrategy.expandIso_W,
+  MIPRE.CommutingOperatorStrategy.expandIso_ΦA, MIPRE.CommutingOperatorStrategy.expandIso_ΦB
+
+-- blueprint `lem:lidt-sound-co-expand`
+#guard_sorry_free MIPRE.LIDT.Simul.SoundCo.expand
+
+-- blueprint `lem:register-action`
+#guard_sorry_free MIPRE.OperatorMatrix.regActHom, MIPRE.OperatorMatrix.regAct,
+  MIPRE.OperatorMatrix.regActHom_apply, MIPRE.OperatorMatrix.regAct_eq_toCLM,
+  MIPRE.OperatorMatrix.regAct_mul, MIPRE.OperatorMatrix.regAct_one,
+  MIPRE.OperatorMatrix.regAct_conjTranspose, MIPRE.OperatorMatrix.regAct_add,
+  MIPRE.OperatorMatrix.regAct_smul, MIPRE.OperatorMatrix.regAct_sum,
+  MIPRE.OperatorMatrix.isStarProjection_regAct, MIPRE.OperatorMatrix.regAct_apply,
+  MIPRE.OperatorMatrix.regAct_toLp_smul, MIPRE.OperatorMatrix.regAct_vecMulVec,
+  MIPRE.OperatorMatrix.norm_toLp_smul, MIPRE.BipartiteModel.expand_π_πA_smulKron_one,
+  MIPRE.BipartiteModel.expand_π_πB_smulKron_one, MIPRE.BipartiteModel.expand_π_smulKron_one_mul
+
+-- blueprint `lem:model-state-calculus`
+#guard_sorry_free MIPRE.Op.abs_qform_sub_qform_le, MIPRE.StateModel.snorm_sq_sum_orthogonal,
+  MIPRE.StateModel.snorm_sq_sum_orthogonal', MIPRE.StateModel.sum_snorm_sq_chain_le,
+  MIPRE.StateModel.snorm_sq_obs_sub_le, MIPRE.StateModel.abs_qform_sub_qform_le,
+  MIPRE.StateModel.abs_qform_withState_sub_qform_le, MIPRE.BipartiteModel.sum_stateSqNorm_sub_le,
+  MIPRE.BipartiteModel.sum_stateSqNorm_sub_le_four_of_le,
+  MIPRE.BipartiteModel.sum_stateSqNorm_sub_le_four
+
+-- blueprint `lem:model-parseval`
+#guard_sorry_free MIPRE.sum_norm_charSum_sq, MIPRE.sum_sgn_trMul_eq_ite, MIPRE.sum_star_sgn_trMul,
+  MIPRE.sum_star_sgn_trMul2, MIPRE.sum_norm_trSum_sq, MIPRE.sum_norm_trSum2_sq,
+  MIPRE.sum_avg_norm_fibreSum_sq, MIPRE.StateModel.sum_avg_snorm_sq_fibre_eq,
+  MIPRE.BipartiteModel.sum_avg_stateSqNorm_fibre_eq, MIPRE.BipartiteModel.sum_avg_xSqNorm_fibre_eq
+
+-- blueprint `lem:qld-sound-co`
+#guard_sorry_free MIPRE.QLD.soundCo_of_lidt
+
+-- blueprint `cor:mipco-from-lidt`
+#guard_sorry_free MIPRE.mipco_eq_core_of_lidt
 
 end

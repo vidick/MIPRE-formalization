@@ -12,6 +12,8 @@ public import MIPRE.Background.QLD.SwapItemTwo
 /-!
 # The error of `thm:qld`, named once
 
+Blueprint `lem:qld-error`, with `MIPRE/Background/QLD/ErrorShape.lean`.
+
 `MirrorSimul.swap_isometry` (`MIPRE/Background/QLD/SwapItemTwo.lean`) closes the swap isometry
 lemma `lem:qld-swap` for a legal projective strategy, at the `MirrorSimul` that
 `exists_mirrorSimul` builds. Its two bounds, and the hypothesis it needs, are explicit expressions
@@ -30,17 +32,16 @@ Along the chain, with `q` standing for `Fintype.card F`:
   one (its hypothesis `hlt`);
 * `qldEta = etaItemOne qldDelta`, item 1's bound on the **squared** distance to the product state
   `|aux> ⊗ |EPR_q>^M`;
-* `qldBound = deltaItemTwo qldDelta … qldEta + 9 √qldEta`.
+* `qldBound = deltaItemTwo qldDelta … qldEta + √qldEta`.
 
 `qldBound` is chosen to dominate both items of the theorem at once. Item 1 of `thm:qld` bounds the
-distance itself, not its square, so it costs `√qldEta` (`sqrt_qldEta_le_qldBound`). Item 2 costs
-item 2 of `lem:qld-swap` plus the descent the paper makes after it, from conjugation by the swap
-unitary `V` on the projective dilation to conjugation of the original POVM by the embedding
-`φ = V ∘ (· ⊗ EPR ⊗ padding)`. That descent goes through the agreement with `τ^W` on the
-*opposite* half of the pair, which local isometries carry verbatim; it moves the pairing from the
-product state to the embedded state and back, at `2 r` each way with `r = √qldEta` the distance of
-item 1, and the conversions between closeness and agreement double that. So it costs `8 √qldEta`
-(`itemTwo_le_qldBound`), and the spare `√qldEta` is item 1's.
+distance itself, not its square, so it costs `√qldEta` (`sqrt_qldEta_le_qldBound`). Item 2 is
+item 2 of `lem:qld-swap` as it stands (`itemTwo_le_qldBound`): the swap isometry
+(`MirrorSimul.swapPhi`) is a local isometry of the strategy's own model, and the measurements item 2
+is about are the strategy's own, so nothing follows it. The matrix statement this replaces was about
+an arbitrary POVM strategy, conjugated by an embedding of its space, and paid `8 √qldEta` for the
+descent from its projective dilation to the POVM; a strategy in a model is projective, and that
+descent is gone.
 
 ## Outside the regime
 
@@ -48,9 +49,9 @@ Two hypotheses stand between a strategy and `swap_isometry`: the regime `48 m d 
 `exists_mirrorSimul` needs (the paper's appendix works under `16 m d ≤ q`; the constant `48` is
 where `lem:qld-global-separate` is formalized, `GlobalPair.one_sub_two_eta_ge`), and `qldHlt < 1`.
 Where either fails, `thm:qld` takes a trivial bound: the distance between two unit vectors is at
-most `2`, and so is the summed deviation of a sub-POVM from `τ^W` on a state that carries the pair.
-The cap is `4`, the paper's bound on the state-dependent distance between any two POVMs, which is
-above both. So `qldErr` is `min qldBound 4` inside and `4` outside (`qldErr_of_regime`,
+most `2`, and the summed squared distance between two projective measurements on a unit vector is
+at most `4` (`BipartiteModel.sum_stateSqNorm_sub_le_four`). The cap is `4`, the paper's bound on
+the state-dependent distance between any two POVMs. So `qldErr` is `min qldBound 4` inside and `4` outside (`qldErr_of_regime`,
 `qldErr_of_not`).
 
 That this costs nothing is `ErrSmall.of_cases` at the small quantity `g = 48 md/q + qldHlt`: where
@@ -92,9 +93,9 @@ def qldHlt (ε : ℝ) (m d q : ℕ) : ℝ :=
 def qldEta (ε : ℝ) (m d q : ℕ) : ℝ := etaItemOne (qldDelta ε m d q) ε m d q
 
 /-- **The bound on both items of `thm:qld` inside the regime**: item 2 of `lem:qld-swap` plus
-`9 √η`, which dominates item 1's `√η` and item 2's `deltaItemTwo + 8 √η`. -/
+`√η`, which dominates item 1's `√η` and item 2's `deltaItemTwo`. -/
 def qldBound (ε : ℝ) (m d q : ℕ) : ℝ :=
-  deltaItemTwo (qldDelta ε m d q) ε m d q (qldEta ε m d q) + 9 * Real.sqrt (qldEta ε m d q)
+  deltaItemTwo (qldDelta ε m d q) ε m d q (qldEta ε m d q) + Real.sqrt (qldEta ε m d q)
 
 /-- **`δ_qld`, the error of `thm:qld`.** Inside the regime `48 m d ≤ q` where `swap_isometry`'s
 hypothesis `qldHlt < 1` also holds, the chain's bound, capped at the trivial bound `4`; outside,
@@ -119,8 +120,8 @@ variable {ε : ℝ}
 
 theorem deltaLD_nonneg {q m d : ℕ} (hε : 0 ≤ ε) : 0 ≤ deltaLD q m d ε := by
   have hx := deltaGS_nonneg (q := q) (m := m) (d := d) hε
-  have hA : 0 ≤ clA := by linarith [one_le_clA]
-  unfold deltaLD deltaCL
+  have hA : 0 ≤ Simul.simA := by linarith [Simul.forty_le_simA]
+  unfold deltaLD Simul.deltaSim
   positivity
 
 theorem deltaS_nonneg {q : ℕ} {δ : ℝ} (hδ : 0 ≤ δ) (hε : 0 ≤ ε) : 0 ≤ deltaS q δ ε := by
@@ -181,11 +182,9 @@ theorem sqrt_qldEta_le_qldBound (hε : 0 ≤ ε) (m d q : ℕ) :
   unfold qldBound
   linarith
 
-/-- **Item 2 of `thm:qld`**: item 2 of `lem:qld-swap` plus `8 √η`, the price of passing to the
-embedding `φ` and down to the original strategy, is at most `qldBound`. -/
+/-- **Item 2 of `thm:qld`**: item 2 of `lem:qld-swap` is at most `qldBound`. -/
 theorem itemTwo_le_qldBound (ε : ℝ) (m d q : ℕ) :
-    deltaItemTwo (qldDelta ε m d q) ε m d q (qldEta ε m d q) + 8 * Real.sqrt (qldEta ε m d q)
-      ≤ qldBound ε m d q := by
+    deltaItemTwo (qldDelta ε m d q) ε m d q (qldEta ε m d q) ≤ qldBound ε m d q := by
   have hs := Real.sqrt_nonneg (qldEta ε m d q)
   unfold qldBound
   linarith
@@ -276,8 +275,7 @@ theorem errSmall_deltaItemTwo :
   errSmall_qldDelta.deltaItemTwo_comp errSmall_qldEta
 
 theorem errSmall_qldBound : ErrSmall qldBound :=
-  (errSmall_deltaItemTwo.add (errSmall_qldEta.sqrt.const_mul (c := 9) (by norm_num))).congr
-    fun _ _ _ _ _ _ _ _ _ => rfl
+  (errSmall_deltaItemTwo.add errSmall_qldEta.sqrt).congr fun _ _ _ _ _ _ _ _ _ => rfl
 
 /-- **`δ_qld` is of the shape of `thm:qld`.** `ErrSmall.of_cases` at `g = 48 md/q + qldHlt`:
 where `g < 1` both summands are below one, so the chain applies and `qldErr ≤ qldBound`; and

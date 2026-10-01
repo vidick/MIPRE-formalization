@@ -16,7 +16,9 @@ compiler. The theorem has passed a standalone Lean check, and its axiom audit
 contains only `propext`, `Classical.choice`, and `Quot.sound`. Its sampler,
 executable decision compiler, all-index resource contract, honest perfect-PCC
 completeness, and output-verifier soundness have passed targeted Lake builds.
-The soundness proof uses the proved `QLD.qld_soundness`, with no extraction
+The soundness proof uses the soundness of the Pauli basis test in the
+tensor-product model (`QLD.soundIn_tensor`, since Phase 5 of
+`planning/mipco-track.md` an instance of `QLD.soundIn_of_lidt`), with no extraction
 callback, and composes the numbered quotient game, legal decoded Pauli support,
 canonical error estimates, source-padding removal, and detyping loss.
 
@@ -767,6 +769,15 @@ narrowing the statement to projective strategies, are the last section of
 `m, d >= 1` only, and it depends on no axiom beyond Lean's three. Its shapes are the ones
 `quantumValue_ge_of_valid_isometric_images` (introspection) takes.
 
+**Restated in a bipartite model (2026-10-01).** Phase 5 of `planning/mipco-track.md` replaced the
+matrix theorem of the paragraph above and the files of the next one (`QLD/ValidAnswers.lean`,
+`QLD/BinaryForm.lean`, `Background/Introspection/PauliExtraction.lean` are gone): `thm:qld` is
+`MIPRE.QLD.soundIn_of_lidt`, for the projective strategies of a bipartite model in which the
+seeded LIDT test is sound in every unit extension, `QLD.soundIn_tensor` is its tensor-product
+instance, and the valid-answer and qubit forms are `FieldExtraction.ofQLD` and
+`FieldExtraction.toBinary`. The POVM form was dropped: its descent was matrix-specific, and
+introspection applies the theorem to projective strategies only.
+
 **And it is connected to introspection (2026-09-23).** The glue recorded here --- item 2 is about
 the cube-data reading, the consumer about the valid answers --- turned out to need no bound on the
 malformed mass: for a projective strategy the only differing outcome is `h = 0`, and the honest
@@ -1062,6 +1073,10 @@ bipartite model, the matrix analysis being its tensor-product instance
 (`lem:oracular-soundness-model`), and holds in `ω_co` (`lem:oracular-soundness-co`). Its
 verifier-level soundness clauses hold in every value model with `ValueModel.OracularSound`, which
 both models have (`thm:oracularization-in-model`): that is the input Phase 3 needs.
+Phases 3–5 are done (#249, #251, #253): answer reduction, introspection and the Pauli basis test
+are stated in a bipartite model, and `MIPRE.mipco_eq_core_of_lidt` proves `MIP^co = coRE` from
+the soundness of the low-individual-degree test in the commuting-operator model alone
+(`LIDT.Simul.SoundCo`, Phase 6). `planning/mipco-track.md` records each phase.
 
 ## Working rules for this track
 

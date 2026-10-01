@@ -172,7 +172,7 @@ theorem restrict_failure_le_povm {A B : Type*} [Fintype A] [Fintype B] {ℓ : �
   rw [restrict_failure_eq_povm M E hE hne P hP hℓ D MA MB, failure_povm M E P D MA MB]
   exact valid_average_le E hne _ (fun _ _ => M.condFail_nonneg hψ _ _)
 
-/-- **Same-state soundness of detyping, in a bipartite model** (`lem:detyping-model`): families of
+/-- **Same-state soundness of detyping, in a bipartite model** (`lem:transports-model`): families of
 value at least `1 - ε` for the detyped game, read at the fixed graph views, have value at least
 `1 - 16^{|T|} ε` for the typed game, in the same model. -/
 theorem restrict_povmValue_ge {A B : Type*} [Fintype A] [Fintype B] {ℓ : ℕ}

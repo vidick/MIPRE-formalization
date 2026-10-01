@@ -186,7 +186,7 @@ theorem exists_value_gt {X Y A₁ B₁ : Type*} [Fintype X] [Fintype Y] [Fintype
 
 set_option maxHeartbeats 1000000 in
 /-- **Soundness of answer reduction, for a projective strategy in a bipartite model**
-(`lem:ar-soundness-model`): in a model in which the low-individual-degree test is sound, a
+(`lem:ar-error-assembly`): in a model in which the low-individual-degree test is sound, a
 projective strategy of value at least `1 - ε` for the answer-reduced verifier's game at the answer
 cut puts `ω(𝒱_n)` at least `1 - δ(ε, n)`, past the threshold, for every value model `ω` in which
 oracularization is sound and which dominates the model. The typed strategy fails with probability
@@ -303,7 +303,7 @@ theorem arVerifier_soundness_tensor (R : Polynomial ℕ) (hF : ShoupField PD)
     ValueModel.tensor_oracularSound (ValueModel.tensor_dominates Rs.ψ) hC hn2 hlam hV hsz hε
     (Nat.one_le_iff_ne_zero.mpr hmu0) hε1 Rs.toModel (by rw [Rs.value_toModel]; exact hRs)
 
-/-- **Soundness of answer reduction in the commuting-operator value** (`lem:ar-soundness-co`),
+/-- **Soundness of answer reduction in the commuting-operator value** (`thm:ar-sound-co`),
 at the same constants as in the tensor-product value, given the soundness of the
 low-individual-degree test in the commuting-operator model (`LIDT.Simul.SoundCo`, Phase 6 of
 `planning/mipco-track.md`): `ω_co` of the answer-reduced verifier above `1 - ε` gives

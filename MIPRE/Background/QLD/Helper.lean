@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 module
-public import MIPRE.Background.QLD.Complete
+public import MIPRE.Background.QLD.Simul
+public import MIPRE.Background.QLD.Expanded
+public import MIPRE.Background.QLD.Uniform
 
 @[expose] public section
 
@@ -32,71 +34,69 @@ Bob, and `Φ` the state,
 `T ⊗ 1 · (1 - A ⊗ 1) = (1 - 1 ⊗ B)(T ⊗ 1 - 1 ⊗ B) - (T ⊗ 1)(A ⊗ 1 - 1 ⊗ B)`,
 
 because the cross terms `(T ⊗ 1)(1 ⊗ B)` cancel and `(1 - 1 ⊗ B)(1 ⊗ B) = 0` by projectivity of
-`B` (`snorm_proj_one_sub_le`). Both factors in front are contractions, so the deviation of the
-same-party product is at most the sum of the two cross-party deviations: the first is the
-consistency of the marginal with Bob's point measurement, the second the self-consistency of the
-point measurements. No positivity of the state is used beyond its being a unit vector.
+`B`. Both factors in front are contractions, so the deviation of the same-party product is at most
+the sum of the two cross-party deviations: the first is the consistency of the marginal with Bob's
+point measurement, the second the self-consistency of the point measurements. No positivity of the
+state is used beyond its being a unit vector.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The pair measurement is a
+`SimulPair M S K ι δ` of a projective strategy `S` of a bipartite model `M`: its measurements live
+in the model `K`, and the expanded point measurements, POVMs of the register model
+`M.reg (Anc F m)`, are read in `K` through the embedding `ι`. The identity above is an identity in
+`K`'s algebra, `T ⊗ 1` being `K.πA T` and `1 ⊗ B` being `K.πB B`; the expanded self-consistency
+of `lem:qld-expanded-points` is carried to `K` exactly along `ι` (`SimulPair.xSqNorm_aOp`). The
+projectivity of the strategy, a hypothesis of the matrix statements, is a field of `S`.
 -/
 
 noncomputable section
 
 namespace MIPRE
 
-open Finset Matrix
-open scoped Kronecker ComplexOrder MatrixOrder
+open Finset
 
 /-! ## The same-party deviation -/
 
 section SameParty
 
-variable {RA RB : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
 
 /-- **The key identity**: the same-party product `T (1 - A)` is a combination of the two
 cross-party deviations, `T ⊗ 1 - 1 ⊗ B` and `A ⊗ 1 - 1 ⊗ B`. -/
-theorem aOp_mul_one_sub_eq {T A : Matrix RA RA ℂ} {B : Matrix RB RB ℂ} (hBi : B * B = B) :
-    (aOp (T * (1 - A)) : Matrix (RA × RB) _ ℂ)
-      = ((1 : Matrix (RA × RB) _ ℂ) - bOp B) * ((aOp T : Matrix (RA × RB) _ ℂ) - bOp B)
-        - (aOp T : Matrix (RA × RB) _ ℂ) * ((aOp A : Matrix (RA × RB) _ ℂ) - bOp B) := by
-  have hBB : (bOp B : Matrix (RA × RB) _ ℂ) * bOp B = bOp B := by rw [← bOp_mul, hBi]
-  have hcomm : (aOp T : Matrix (RA × RB) _ ℂ) * bOp B = bOp B * aOp T := aOp_mul_bOp T B
-  simp only [aOp_mul, aOp_sub, aOp_one, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one,
-    Matrix.one_mul, hBB, hcomm]
+theorem aOp_mul_one_sub_eq (M : BipartiteModel 𝒞 𝒜 ℬ) {T A : 𝒜} {B : ℬ} (hBi : B * B = B) :
+    M.πA (T * (1 - A))
+      = (1 - M.πB B) * (M.πA T - M.πB B) - M.πA T * (M.πA A - M.πB B) := by
+  have hBB : M.πB B * M.πB B = M.πB B := by rw [← map_mul, hBi]
+  have hcomm : M.πA T * M.πB B = M.πB B * M.πA T := (M.commute T B).eq
+  rw [map_mul, map_sub, map_one]
+  simp only [mul_sub, sub_mul, mul_one, one_mul, hBB, hcomm]
   abel
 
 /-- **The same-party deviation is at most the two cross-party ones.** -/
-theorem snorm_aOp_mul_one_sub_le (Φ : RA × RB → ℂ) {T A : Matrix RA RA ℂ} {B : Matrix RB RB ℂ}
-    (hT : Tᴴ = T) (hTi : T * T = T) (hB : Bᴴ = B) (hBi : B * B = B) :
-    snorm Φ ((aOp (T * (1 - A)) : Matrix (RA × RB) _ ℂ)) ≤ xNorm Φ T B + xNorm Φ A B := by
-  have hbT : Bnd (aOp T : Matrix (RA × RB) _ ℂ) 1 :=
-    bnd_aOp (by rw [hT, hTi]; exact proj_le_one hT hTi)
-  have hbB : Bnd ((1 : Matrix (RA × RB) _ ℂ) - bOp B) 1 := by
-    have h1 : ((1 : Matrix RB RB ℂ) - B)ᴴ * ((1 : Matrix RB RB ℂ) - B) ≤ 1 := by
-      have hsa : ((1 : Matrix RB RB ℂ) - B)ᴴ = 1 - B := by
-        rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hB]
-      have hid : ((1 : Matrix RB RB ℂ) - B) * ((1 : Matrix RB RB ℂ) - B) = 1 - B := by
-        rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one,
-          Matrix.one_mul, hBi]
-        abel
-      rw [hsa, hid]
-      exact proj_le_one hsa hid
-    have := bnd_bOp (HA := RA) h1
-    rwa [bOp_sub, bOp_one] at this
-  rw [aOp_mul_one_sub_eq hBi, xNorm_eq_snorm, xNorm_eq_snorm]
-  refine le_trans (snorm_sub_le Φ _ _) (add_le_add ?_ ?_)
-  · have := snorm_mul_le (v := Φ) hbB ((aOp T : Matrix (RA × RB) _ ℂ) - bOp B)
+theorem snorm_aOp_mul_one_sub_le (M : BipartiteModel 𝒞 𝒜 ℬ) {T A : 𝒜} {B : ℬ}
+    (hT : star T = T) (hTi : T * T = T) (hB : star B = B) (hBi : B * B = B) :
+    M.snorm (M.πA (T * (1 - A))) ≤ M.xNorm T B + M.xNorm A B := by
+  have hbT : M.Bnd (M.πA T) 1 := M.bnd_πA_of_isStarProjection ⟨hTi, hT⟩
+  have hbB : M.Bnd (1 - M.πB B) 1 := by
+    have h := M.bnd_πB_of_isStarProjection (IsStarProjection.one_sub ⟨hBi, hB⟩)
+    rwa [map_sub, map_one] at h
+  rw [aOp_mul_one_sub_eq M hBi, BipartiteModel.xNorm, BipartiteModel.xNorm]
+  refine le_trans (M.snorm_sub_le _ _) (add_le_add ?_ ?_)
+  · have := M.snorm_mul_le hbB (M.πA T - M.πB B)
     rwa [one_mul] at this
-  · have := snorm_mul_le (v := Φ) hbT ((aOp A : Matrix (RA × RB) _ ℂ) - bOp B)
+  · have := M.snorm_mul_le hbT (M.πA A - M.πB B)
     rwa [one_mul] at this
 
 /-- The squared form, at the usual cost of a factor two. -/
-theorem snorm_sq_aOp_mul_one_sub_le (Φ : RA × RB → ℂ) {T A : Matrix RA RA ℂ} {B : Matrix RB RB ℂ}
-    (hT : Tᴴ = T) (hTi : T * T = T) (hB : Bᴴ = B) (hBi : B * B = B) :
-    snorm Φ ((aOp (T * (1 - A)) : Matrix (RA × RB) _ ℂ)) ^ 2
-      ≤ 2 * xSqNorm Φ T B + 2 * xSqNorm Φ A B := by
-  have h := snorm_aOp_mul_one_sub_le (A := A) Φ hT hTi hB hBi
-  have h0 := snorm_nonneg Φ ((aOp (T * (1 - A)) : Matrix (RA × RB) _ ℂ))
-  rw [xSqNorm_eq_sq, xSqNorm_eq_sq]
-  nlinarith [sq_nonneg (xNorm Φ T B - xNorm Φ A B), xNorm_nonneg Φ T B, xNorm_nonneg Φ A B]
+theorem snorm_sq_aOp_mul_one_sub_le (M : BipartiteModel 𝒞 𝒜 ℬ) {T A : 𝒜} {B : ℬ}
+    (hT : star T = T) (hTi : T * T = T) (hB : star B = B) (hBi : B * B = B) :
+    M.snorm (M.πA (T * (1 - A))) ^ 2 ≤ 2 * M.xSqNorm T B + 2 * M.xSqNorm A B := by
+  have h := snorm_aOp_mul_one_sub_le M (A := A) hT hTi hB hBi
+  have h0 := M.snorm_nonneg (M.πA (T * (1 - A)))
+  rw [M.xSqNorm_eq_sq, M.xSqNorm_eq_sq]
+  nlinarith [sq_nonneg (M.xNorm T B - M.xNorm A B), M.xNorm_nonneg T B, M.xNorm_nonneg A B]
 
 end SameParty
 
@@ -111,19 +111,20 @@ open scoped Kronecker ComplexOrder MatrixOrder
 
 section Agreement
 
-variable {X A dA dB : Type*} [Fintype X] [Fintype A] [DecidableEq A] [Fintype dA] [DecidableEq dA]
-  [Fintype dB] [DecidableEq dB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
+variable {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A]
 
 /-- **The inconsistency is one minus the agreement.** -/
-theorem sum_bornProb_diag_eq {μ : X → ℝ} (hμ : ∑ x, μ x = 1) {Φ : dA × dB → ℂ}
-    (hΦ : star Φ ⬝ᵥ Φ = 1) (M : X → POVM A dA) (N : X → POVM A dB) :
-    ∑ x, μ x * ∑ a, bornProb Φ (((M x).mats a).val) (((N x).mats a).val)
-      = 1 - inconsistency μ Φ M N := by
-  have hx : ∀ x, ∑ a, bornProb Φ (((M x).mats a).val) (((N x).mats a).val)
-      = 1 - pairInconsistency Φ (M x) (N x) := fun x => sum_diag_eq_one_sub hΦ (M x) (N x)
+theorem sum_bornProb_diag_eq {μ : X → ℝ} (hμ : ∑ x, μ x = 1) {M : BipartiteModel 𝒞 𝒜 ℬ}
+    (hM : ‖M.ψ‖ = 1) (P : X → POVMIn A 𝒜) (Q : X → POVMIn A ℬ) :
+    ∑ x, μ x * ∑ a, M.bornProb ((P x).op a) ((Q x).op a) = 1 - M.inconsistency μ P Q := by
+  have hx : ∀ x, ∑ a, M.bornProb ((P x).op a) ((Q x).op a)
+      = 1 - pairInconsistency M (P x) (Q x) := fun x => sum_diag_eq_one_sub hM (P x) (Q x)
   rw [Finset.sum_congr rfl fun x (_ : x ∈ univ) => by rw [hx x],
-    inconsistency_eq_sum_pairInconsistency,
-    Finset.sum_congr rfl fun x (_ : x ∈ univ) => mul_sub (μ x) 1 (pairInconsistency Φ (M x) (N x)),
+    show M.inconsistency μ P Q = ∑ x, μ x * pairInconsistency M (P x) (Q x) from rfl,
+    Finset.sum_congr rfl fun x (_ : x ∈ univ) => mul_sub (μ x) 1 (pairInconsistency M (P x) (Q x)),
     Finset.sum_sub_distrib]
   simp only [mul_one]
   rw [hμ]
@@ -131,16 +132,17 @@ theorem sum_bornProb_diag_eq {μ : X → ℝ} (hμ : ∑ x, μ x = 1) {Φ : dA �
 end Agreement
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
-  {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
+  [NeZero m]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+  [StarProper ℬ]
 
 /-! ## The self-consistency of the expanded point measurements, at a uniform point -/
 
 section SelfCons
 
-variable {hm : m ∣ Fintype.card F} {ε : ℝ}
-
+omit [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [StarProper ℬ] in
 /-- **The verifier's `W` block is uniform**: an average over contents of a function of the
 content's `W` point is the average over a uniform point. -/
 theorem sum_content_pt (W : Bas) (f : Point F m → ℝ) :
@@ -172,25 +174,15 @@ theorem sum_content_pt (W : Bas) (f : Point F m → ℝ) :
 
 /-- `lem:qld-expanded-points`, read at a uniform point rather than at the verifier's content: the
 content's `W` block is uniform, and the hatted measurement at a content is the one at its point. -/
-theorem sum_uniform_xSqNorm_hatMats_le (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem sum_uniform_xSqNorm_hatMats_le {M : BipartiteModel 𝒞 𝒜 ℬ} {hm : m ∣ Fintype.card F}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    {ε : ℝ} (hM : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     ∑ u, uniform (Point F m) u * ∑ a : F,
-        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA W u a) (hatMats MB W u a)
+        (M.reg (Anc F m)).xSqNorm (hatMats PA W u a) (hatMats PB W u a)
       ≤ 172 * ε := by
-  have h := hatPOVM_consistency (MB := MB) hψ hfail W
-  have hmats : ∀ c : Content F m,
-      (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
-        xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
-          (((hatPOVM hm MB W c).mats a).val)
-      = (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
-        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA W (c.pt W) a)
-          (hatMats MB W (c.pt W) a) := by
-    intro c
-    congr 1
-  rw [Finset.sum_congr rfl fun c (_ : c ∈ univ) => hmats c,
-    sum_content_pt W (fun u => ∑ a : F,
-      xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA W u a) (hatMats MB W u a))] at h
-  exact h
+  have h := sum_content_hatMats_consistency (PB := PB) hM hfail W
+  rwa [sum_content_pt W (fun u => ∑ a : F,
+    (M.reg (Anc F m)).xSqNorm (hatMats PA W u a) (hatMats PB W u a))] at h
 
 end SelfCons
 
@@ -198,103 +190,104 @@ end SelfCons
 
 namespace SimulPair
 
-variable (P : SimulPair ψ MA MB δ)
+variable {𝒞' 𝒜' ℬ' : Type*} [Ring 𝒞'] [StarRing 𝒞'] [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜']
+  [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ'] [PartialOrder 𝒜'] [StarOrderedRing 𝒜']
+  [PartialOrder ℬ'] [StarOrderedRing ℬ']
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {S : M.ProjStrat (qldGame (d := d) hm)} {K : BipartiteModel 𝒞' 𝒜' ℬ'}
+  {ι : (M.reg (Anc F m)).Embedding K} {δ : ℝ}
 
-theorem hatMats_conjTranspose {d' : Type} [Fintype d'] [DecidableEq d']
-    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) (a : F) :
-    (hatMats M W u a)ᴴ = hatMats M W u a := by
-  rw [hatMats, ← Matrix.star_eq_conjTranspose]
-  exact ((hatPtPOVM M W u).mats a).2
+omit [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ]
+  [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [StarProper ℬ] in
+/-- The elements of a hatted point measurement are self-adjoint. -/
+theorem hatMats_conjTranspose {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
+    [PartialOrder R] [StarOrderedRing R] [StarProper R]
+    (P : Question F m → POVMIn (Answer F m d) R) (W : Bas) (u : Point F m) (a : F) :
+    star (hatMats P W u a) = hatMats P W u a :=
+  (hatPtPOVM P W u).star_op a
+
+variable (P : SimulPair M S K ι δ)
 
 /-- **`lem:qld-helper`, item 1**: the evaluated marginal agrees with the opposite party's expanded
 point measurement with probability at least `1 - δ_S`, on average over a uniform point. -/
 theorem sum_bornProb_evalMarg_ge (W : Bas) :
     1 - δ ≤ ∑ u, uniform (Point F m) u * ∑ a : F,
-      bornProb P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a)) := by
-  have h := sum_bornProb_diag_eq (sum_uniform_eq_one (Point F m)) P.Φ_unit
-    (fun u => evalMarg P.SA W u) (fun u => (hatPtPOVM MB W u).aOp (E := P.EB))
+      K.bornProb ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a)) := by
+  have h := sum_bornProb_diag_eq (sum_uniform_eq_one (Point F m)) P.ψ_unit
+    (fun u => evalMarg P.SA W u) (fun u => (hatPtPOVM S.PB W u).pushforward ι.ΦB ι.ΦB_one)
   have hc := P.consA W
   rw [show (∑ u, uniform (Point F m) u * ∑ a : F,
-      bornProb P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a)))
+      K.bornProb ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a)))
       = ∑ u, uniform (Point F m) u * ∑ a : F,
-        bornProb P.Φ (((evalMarg P.SA W u).mats a).val)
-          ((((hatPtPOVM MB W u).aOp (E := P.EB)).mats a).val) from rfl, h]
+        K.bornProb ((evalMarg P.SA W u).op a)
+          (((hatPtPOVM S.PB W u).pushforward ι.ΦB ι.ΦB_one).op a) from rfl, h]
   linarith
 
 /-- The cross-party deviation of the marginal from the point measurement, from item 1. -/
 theorem sum_xSqNorm_evalMarg_le (W : Bas) :
     ∑ u, uniform (Point F m) u * ∑ a : F,
-        xSqNorm P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a))
+        K.xSqNorm ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a))
       ≤ 2 * δ := by
   have hterm : ∀ u : Point F m, ∑ a : F,
-      xSqNorm P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a))
-      ≤ 2 * (1 - ∑ a : F, bornProb P.Φ (((evalMarg P.SA W u).mats a).val)
-        (aOp (hatMats MB W u a))) := fun u =>
-    xSqNorm_sum_le_two_mul P.Φ_unit (evalMarg P.SA W u) ((hatPtPOVM MB W u).aOp (E := P.EB))
+      K.xSqNorm ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a))
+      ≤ 2 * (1 - ∑ a : F, K.bornProb ((evalMarg P.SA W u).op a)
+        (ι.ΦB (hatMats S.PB W u a))) := fun u =>
+    K.xSqNorm_sum_le_two_mul P.ψ_unit (evalMarg P.SA W u)
+      ((hatPtPOVM S.PB W u).pushforward ι.ΦB ι.ΦB_one)
   have hsum := Finset.sum_le_sum fun u (_ : u ∈ univ) =>
     mul_le_mul_of_nonneg_left (hterm u) (uniform_nonneg (Point F m) u)
   have hsplit : ∑ u, uniform (Point F m) u * (2 * (1 - ∑ a : F,
-      bornProb P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a))))
+      K.bornProb ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a))))
       = 2 * (∑ u, uniform (Point F m) u)
         - 2 * ∑ u, uniform (Point F m) u * ∑ a : F,
-          bornProb P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a)) := by
+          K.bornProb ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a)) := by
     rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]
     exact Finset.sum_congr rfl fun u _ => by ring
   rw [hsplit, sum_uniform_eq_one] at hsum
   linarith [P.sum_bornProb_evalMarg_ge W]
 
-/-- The cross-party deviation of the two parties' expanded point measurements, read on the padded
-state: `lem:qld-expanded-points`, transferred by the structure's reduced-state property. -/
-theorem sum_xSqNorm_hat_le {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+include P in
+/-- The cross-party deviation of the two parties' expanded point measurements, read in `K`:
+`lem:qld-expanded-points`, carried along the embedding. -/
+theorem sum_xSqNorm_hat_le {ε : ℝ} (hfail : 1 - S.value ≤ ε) (W : Bas) :
     ∑ u, uniform (Point F m) u * ∑ a : F,
-        xSqNorm P.Φ (aOp (hatMats MA W u a)) (aOp (hatMats MB W u a))
+        K.xSqNorm (ι.ΦA (hatMats S.PA W u a)) (ι.ΦB (hatMats S.PB W u a))
       ≤ 172 * ε := by
-  have htr : ∀ (u : Point F m) (a : F),
-      xSqNorm P.Φ (aOp (hatMats MA W u a)) (aOp (hatMats MB W u a))
-      = xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA W u a) (hatMats MB W u a) := fun u a =>
-    P.xSqNorm_aOp (hatMats_conjTranspose MA W u a) _
-  simp only [htr]
-  exact sum_uniform_xSqNorm_hatMats_le (hm := hm) hψ hfail W
+  simp only [P.xSqNorm_aOp]
+  exact sum_uniform_xSqNorm_hatMats_le (hm := hm) S.ψ_unit hfail W
 
 /-- **`lem:qld-helper`, item 2**: the same-party product of the marginal with the complement of
 *Alice's own* point measurement is small. -/
-theorem sum_snorm_sq_evalMarg_one_sub_le {hm : m ∣ Fintype.card F} {ε : ℝ}
-    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
-    ∑ u, uniform (Point F m) u * ∑ a : F, snorm P.Φ
-        (aOp ((((evalMarg P.SA W u).mats a).val)
-          * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2
+theorem sum_snorm_sq_evalMarg_one_sub_le {ε : ℝ} (hfail : 1 - S.value ≤ ε) (W : Bas) :
+    ∑ u, uniform (Point F m) u * ∑ a : F,
+        K.snorm (K.πA ((evalMarg P.SA W u).op a * (1 - ι.ΦA (hatMats S.PA W u a)))) ^ 2
       ≤ 4 * δ + 2 * (172 * ε) := by
-  have hT : ∀ (u : Point F m), IsPVM fun a => (((evalMarg P.SA W u).mats a).val) := fun u =>
+  have hT : ∀ u : Point F m, IsPVMIn (evalMarg P.SA W u).op := fun u =>
     isPVM_evalMarg P.SA_proj W u
-  have hB : ∀ (u : Point F m) (a : F),
-      IsPVM fun a => (aOp (hatMats MB W u a) : Matrix ((dB × Anc F m) × P.EB) _ ℂ) := fun u _ =>
-    (isPVM_hatMats hprojB W u).aOp
-  have hterm : ∀ (u : Point F m) (a : F), snorm P.Φ
-      (aOp ((((evalMarg P.SA W u).mats a).val)
-        * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2
-      ≤ 2 * xSqNorm P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a))
-        + 2 * xSqNorm P.Φ (aOp (hatMats MA W u a)) (aOp (hatMats MB W u a)) := by
-    intro u a
-    exact snorm_sq_aOp_mul_one_sub_le P.Φ ((hT u).isSelfAdjoint a) ((hT u).idem a)
-      ((hB u a).isSelfAdjoint a) ((hB u a).idem a)
+  have hB : ∀ u : Point F m, IsPVMIn fun a => ι.ΦB (hatMats S.PB W u a) := fun u =>
+    (isPVM_hatMats S.projB W u).pushforward ι.ΦB_one
+  have hterm : ∀ (u : Point F m) (a : F),
+      K.snorm (K.πA ((evalMarg P.SA W u).op a * (1 - ι.ΦA (hatMats S.PA W u a)))) ^ 2
+      ≤ 2 * K.xSqNorm ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a))
+        + 2 * K.xSqNorm (ι.ΦA (hatMats S.PA W u a)) (ι.ΦB (hatMats S.PB W u a)) := fun u a =>
+    snorm_sq_aOp_mul_one_sub_le K ((hT u).star_eq a) ((hT u).idem a) ((hB u).star_eq a)
+      ((hB u).idem a)
   have hsum := Finset.sum_le_sum fun u (_ : u ∈ univ) =>
     mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun a (_ : a ∈ univ) => hterm u a)
       (uniform_nonneg (Point F m) u)
   have hsplit : ∑ u, uniform (Point F m) u * ∑ a : F,
-      (2 * xSqNorm P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a))
-        + 2 * xSqNorm P.Φ (aOp (hatMats MA W u a)) (aOp (hatMats MB W u a)))
+      (2 * K.xSqNorm ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a))
+        + 2 * K.xSqNorm (ι.ΦA (hatMats S.PA W u a)) (ι.ΦB (hatMats S.PB W u a)))
       = 2 * (∑ u, uniform (Point F m) u * ∑ a : F,
-          xSqNorm P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a)))
+          K.xSqNorm ((evalMarg P.SA W u).op a) (ι.ΦB (hatMats S.PB W u a)))
         + 2 * ∑ u, uniform (Point F m) u * ∑ a : F,
-          xSqNorm P.Φ (aOp (hatMats MA W u a)) (aOp (hatMats MB W u a)) := by
+          K.xSqNorm (ι.ΦA (hatMats S.PA W u a)) (ι.ΦB (hatMats S.PB W u a)) := by
     rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun u _ => ?_
     rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
     ring
   rw [hsplit] at hsum
-  linarith [P.sum_xSqNorm_evalMarg_le W, P.sum_xSqNorm_hat_le (hm := hm) hψ hfail W]
+  linarith [P.sum_xSqNorm_evalMarg_le W, P.sum_xSqNorm_hat_le hfail W]
 
 end SimulPair
 

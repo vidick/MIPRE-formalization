@@ -7,7 +7,9 @@ module
 public import MIPRE.Background.QLD.Commutation
 public import MIPRE.Background.LIDT.Adapter.Geometry
 public import MIPRE.Foundations.Expanded
+public import MIPRE.Foundations.Introspection.RegisterModel
 public import MIPRE.Foundations.LowDegree.LineRestrict
+public import MIPRE.Foundations.ModelStrategy
 public import MIPRE.Foundations.WeylEPR
 
 @[expose] public section
@@ -39,10 +41,28 @@ commute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.
 
 Three facts, none of them about the Pauli test. The ancilla operator that survives the
 cancellation is *unitary*, so it is invisible to the state-norm
-(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on
-the expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state
-is a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of
+(`BipartiteModel.stateNorm_mul_of_isometry`); what is left has an **inert** ancilla, so it has the
+same norm on the expanded state as on the original one
+(`BipartiteModel.stateSqNorm_expand_smulKron_one`); and the ancilla state is a unit vector
+(`Introspection.registerEPR_norm`). The expansion therefore costs exactly the constant of
 `lem:qld-obs-commutation` and nothing more.
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The strategy is a model
+`M : BipartiteModel 𝒞 𝒜 ℬ` with `‖M.ψ‖ = 1` and two families of POVMs in the players' ordered
+algebras, and the expanded state `ψ ⊗ |EPR>` of the matrix route is the **register model**
+`M.reg (Anc F m)` (`MIPRE/Foundations/Introspection/RegisterModel.lean`): the EPR register on
+`Anc F m`, one half (`A'`) held by the first player, whose operators become the matrices
+`Matrix (Anc F m) (Anc F m) 𝒜`, and the other (`A''`) by the second, `Matrix (Anc F m) (Anc F m) ℬ`.
+A strategy's operator `X` tensored with an ancilla matrix `P` is `smulKron X P` (register outer),
+so the hatted observable is `smulKron (ptObs …) (weylOf …)` and the hatted measurements are
+convolutions of the strategy's POVM with the ancilla's syndrome measurement, POVMs in the
+register's matrices (`kronIn`, then `POVMIn.map`). The Born probability of a product measurement
+factorizes (`BipartiteModel.bornProb_expand_smulKron`), and the ancilla's factor is the matrix
+computation on the EPR vector it was before (`sum_bornProb_epr_synOfPOVM`), so every constant is
+kept. On a unit vector `ψ : dA × dB → ℂ` the statements are read at the tensor-product model
+`BipartiteModel.tensor ψ` with the families `POVM.toIn`.
 -/
 
 noncomputable section
@@ -53,7 +73,10 @@ open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT
 open scoped Kronecker ComplexOrder MatrixOrder
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  [NeZero m]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 set_option linter.unusedSectionVars false
 
@@ -106,15 +129,13 @@ theorem weylOf_prod_isUnitary (a b : Anc F m) :
 
 /-! ## The hatted observables and the expanded state -/
 
-/-- **The hatted point observable** `W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u))`. -/
-def hatObs (hm : m ∣ Fintype.card F) (MA : Question F m → POVM (Answer F m d) dA) (W : Bas)
-    (c : Content F m) : Matrix (dA × Anc F m) (dA × Anc F m) ℂ :=
-  ptObs hm MA W c ⊗ₖ weylOf W (ancVec c.omega W)
-
-/-- **The expanded state** on the registers `A A' | B A''`: the strategy's state with a
-maximally entangled pair adjoined, one half to each party. -/
-def hatVec (ψ : dA × dB → ℂ) : (dA × Anc F m) × (dB × Anc F m) → ℂ :=
-  expVec ψ (epr (F := F) (n := Fin m → Bool))
+/-- **The hatted point observable** `W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u))`: the strategy's
+observable, an element of the player's algebra `R`, tensored with the ancilla's generalized Pauli,
+as a matrix over `R` on the ancilla register (register outer). -/
+def hatObs {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [PartialOrder R] [StarOrderedRing R]
+    (hm : m ∣ Fintype.card F) (P : Question F m → POVMIn (Answer F m d) R) (W : Bas)
+    (c : Content F m) : Matrix (Anc F m) (Anc F m) R :=
+  smulKron (ptObs hm P W c) (weylOf W (ancVec c.omega W))
 
 theorem norm_evec_epr : ‖evec (epr (F := F) (n := Fin m → Bool))‖ = 1 := by
   have h : ‖evec (epr (F := F) (n := Fin m → Bool))‖ ^ 2 = 1 := by
@@ -122,17 +143,30 @@ theorem norm_evec_epr : ‖evec (epr (F := F) (n := Fin m → Bool))‖ = 1 := b
     norm_num
   nlinarith [norm_nonneg (evec (epr (F := F) (n := Fin m → Bool))), h]
 
+/-- **The expanded state is a unit vector** when the strategy's is: the state of the register
+model `M.reg (Anc F m)` is `ψ ⊗ |EPR>`, the model form of the matrix route's `hatVec ψ`. -/
+theorem hatVec_unit {M : BipartiteModel 𝒞 𝒜 ℬ} (hM : ‖M.ψ‖ = 1) :
+    ‖(M.reg (Anc F m)).ψ‖ = 1 := by
+  rw [BipartiteModel.norm_reg_ψ, hM]
+
 /-! ## The cancellation -/
+
+private theorem smulKron_smul_left_hat {R α : Type*} [Ring R] [Algebra ℂ R] (c : ℂ) (X : R)
+    (P : Matrix α α ℂ) : smulKron (c • X) P = c • smulKron X P := by
+  ext a b
+  simp only [smulKron_apply, Matrix.smul_apply]
+  exact smul_comm (P a b) c X
 
 /-- **The two signs cancel.** The commutator of the hatted observables is the *signed* commutator
 of the strategy's, tensored with a unitary: the ancilla's twisted commutation contributes exactly
 the sign `(-1)^{gamma(omega)}` that the strategy's carries. -/
-theorem hatObs_comm_eq (hm : m ∣ Fintype.card F) (MA : Question F m → POVM (Answer F m d) dA)
+theorem hatObs_comm_eq {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [PartialOrder R]
+    [StarOrderedRing R] (hm : m ∣ Fintype.card F) (P : Question F m → POVMIn (Answer F m d) R)
     (c : Content F m) :
-    hatObs hm MA .X c * hatObs hm MA .Z c - hatObs hm MA .Z c * hatObs hm MA .X c
-      = (ptObs hm MA .X c * ptObs hm MA .Z c
-          - sgn (gam c.omega) • (ptObs hm MA .Z c * ptObs hm MA .X c))
-        ⊗ₖ (weylOf .X (ancVec c.omega .X) * weylOf .Z (ancVec c.omega .Z)) := by
+    hatObs hm P .X c * hatObs hm P .Z c - hatObs hm P .Z c * hatObs hm P .X c
+      = smulKron (ptObs hm P .X c * ptObs hm P .Z c
+          - sgn (gam c.omega) • (ptObs hm P .Z c * ptObs hm P .X c))
+        (weylOf .X (ancVec c.omega .X) * weylOf .Z (ancVec c.omega .Z)) := by
   have htw : weylOf (F := F) (m := m) .Z (ancVec c.omega .Z) * weylOf .X (ancVec c.omega .X)
       = sgn (gam c.omega)
         • (weylOf (F := F) (m := m) .X (ancVec c.omega .X) * weylOf .Z (ancVec c.omega .Z)) := by
@@ -142,39 +176,47 @@ theorem hatObs_comm_eq (hm : m ∣ Fintype.card F) (MA : Question F m → POVM (
       = sgn (trDot (ancVec c.omega .X) (ancVec c.omega .Z))
         • (wX (ancVec c.omega .X) * wZ (ancVec c.omega .Z))
     rw [h, smul_smul, sgn_mul_self, one_smul]
-  rw [hatObs, hatObs, ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul, htw,
-    Matrix.kronecker_smul, ← Matrix.smul_kronecker, ← sub_kronecker_right]
+  rw [hatObs, hatObs, smulKron_mul, smulKron_mul, htw, smulKron_smul_right,
+    ← smulKron_smul_left_hat, smulKron_sub_left]
 
 /-- **The hatted observables commute on the expanded state, with no sign**, at exactly the
-constant of `lem:qld-obs-commutation`. -/
-theorem norm_hatVec_hatObs_comm (hm : m ∣ Fintype.card F)
-    (MA : Question F m → POVM (Answer F m d) dA) (ψ : dA × dB → ℂ) (c : Content F m) :
-    ‖stateVec (hatVec (F := F) (m := m) ψ) (hatObs hm MA .X c * hatObs hm MA .Z c
-        - hatObs hm MA .Z c * hatObs hm MA .X c)‖
-      = ‖stateVec ψ (ptObs hm MA .X c * ptObs hm MA .Z c
-          - sgn (gam c.omega) • (ptObs hm MA .Z c * ptObs hm MA .X c))‖ := by
-  rw [hatObs_comm_eq, hatVec,
-    norm_stateVec_kron_unitary _ _ (weylOf_prod_isUnitary (ancVec c.omega .X) (ancVec c.omega .Z)),
-    norm_stateVec_expVec_kron_one _ norm_evec_epr]
-
-theorem hatVec_unit {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) :
-    star (hatVec (F := F) (m := m) ψ) ⬝ᵥ hatVec ψ = 1 := by
-  rw [hatVec, expVec_unit hψ epr_unit]
+constant of `lem:qld-obs-commutation`: the state norm of their commutator on the register model is
+the state norm of the strategy's signed commutator on the model. -/
+theorem norm_hatVec_hatObs_comm [StarModule ℂ 𝒜] (hm : m ∣ Fintype.card F)
+    (PA : Question F m → POVMIn (Answer F m d) 𝒜) (M : BipartiteModel 𝒞 𝒜 ℬ) (c : Content F m) :
+    (M.reg (Anc F m)).stateSqNorm (hatObs hm PA .X c * hatObs hm PA .Z c
+        - hatObs hm PA .Z c * hatObs hm PA .X c)
+      = M.stateSqNorm (ptObs hm PA .X c * ptObs hm PA .Z c
+          - sgn (gam c.omega) • (ptObs hm PA .Z c * ptObs hm PA .X c)) := by
+  set D := ptObs hm PA .X c * ptObs hm PA .Z c
+    - sgn (gam c.omega) • (ptObs hm PA .Z c * ptObs hm PA .X c) with hD
+  set U := weylOf (F := F) (m := m) .X (ancVec c.omega .X) * weylOf .Z (ancVec c.omega .Z)
+    with hU
+  have hfac : smulKron D U = smulKron (1 : 𝒜) U * smulKron D 1 := by
+    rw [smulKron_mul, one_mul, Matrix.mul_one]
+  have hiso : star (smulKron (1 : 𝒜) U) * smulKron (1 : 𝒜) U = 1 := by
+    rw [star_smulKron, star_one, smulKron_mul, one_mul, hU,
+      weylOf_prod_isUnitary (ancVec c.omega .X) (ancVec c.omega .Z), smulKron_one_one]
+  rw [hatObs_comm_eq, ← hD, ← hU, hfac, BipartiteModel.stateSqNorm,
+    (M.reg (Anc F m)).stateNorm_mul_of_isometry hiso, ← BipartiteModel.stateSqNorm,
+    BipartiteModel.stateSqNorm_expand_smulKron_one, Introspection.registerEPR_norm, one_pow,
+    one_mul]
 
 /-- **The commutation half of `lem:qld-expanded-points`.** On the expanded state the `X`-side and
 `Z`-side hatted point observables commute --- with *no* sign, on average over the verifier's
 content, at the constant of `lem:qld-obs-commutation`. The sign the strategy carries is cancelled
-identically by the one the ancilla carries. -/
-theorem hatObs_commutation {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+identically by the one the ancilla carries. The first player's measurements are projective, as
+`signed_commutation` needs. -/
+theorem hatObs_commutation [StarModule ℂ 𝒜] {hm : m ∣ Fintype.card F}
+    {M : BipartiteModel 𝒞 𝒜 ℬ} {PA : Question F m → POVMIn (Answer F m d) 𝒜}
+    {PB : Question F m → POVMIn (Answer F m d) ℬ} {ε : ℝ} (hM : ‖M.ψ‖ = 1)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
     ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ‖stateVec (hatVec (F := F) (m := m) ψ) (hatObs hm MA .X c * hatObs hm MA .Z c
-          - hatObs hm MA .Z c * hatObs hm MA .X c)‖ ^ 2
+        (M.reg (Anc F m)).stateSqNorm (hatObs hm PA .X c * hatObs hm PA .Z c
+          - hatObs hm PA .Z c * hatObs hm PA .X c)
       ≤ 57676416 * ε := by
   refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ => ?_))
-    (signed_commutation (MB := MB) hψ hfail)
+    (signed_commutation hM hPA hfail)
   rw [norm_hatVec_hatObs_comm]
 
 /-! ## The hatted measurements, and their self-consistency
@@ -192,7 +234,7 @@ re-bipartitioned parties comes from three things, and nothing else:
   counterexample; the paper's `fact:data-processing` is the consistency form).
 
 So the whole estimate runs through Born probabilities and is converted to the distance exactly
-once, at the end, by `xSqNorm_sum_le_two_mul`.
+once, at the end, by `BipartiteModel.xSqNorm_sum_le_two_mul`.
 -/
 
 theorem isWeylFamily_weylOf (W : Bas) : IsWeylFamily (weylOf (F := F) (m := m) W) := by
@@ -221,6 +263,11 @@ def synPOVM (W : Bas) (u : Point F m) : POVM F (Anc F m) :=
 
 theorem synPOVM_mats (W : Bas) (u : Point F m) (a : F) :
     (((synPOVM W u).mats a).val) = syn (weylOf W) (indVec u) a := rfl
+
+/-- The syndrome measurement is projective. -/
+theorem isPVM_synPOVM (W : Bas) (u : Point F m) :
+    IsPVM fun a : F => (((synPOVM (F := F) (m := m) W u).mats a).val) :=
+  isPVM_synOfPOVM W _
 
 theorem weylOf_transpose (W : Bas) (a : Anc F m) : (weylOf W a)ᵀ = weylOf W a := by
   cases W
@@ -273,118 +320,185 @@ theorem sum_bornProb_epr_synPOVM (W : Bas) (u : Point F m) :
       (((synPOVM W u).mats a).val) = 1 :=
   sum_bornProb_epr_synOfPOVM W _
 
+/-! ### A POVM of the player times a projective measurement of the register -/
+
+section KronIn
+
+variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] [PartialOrder R]
+  [StarOrderedRing R] [StarProper R] {ι κ α : Type*} [Fintype ι] [Fintype κ] [Fintype α]
+  [DecidableEq α]
+
+/-- **A POVM in a player's algebra times a projective measurement of a register**, as a POVM in
+the register's matrices over the algebra (register outer): the element at `(i, k)` is
+`smulKron (P.op i) Q_k`. The model form of `POVM.kron` when the second factor is a projective
+measurement of a finite register; its elements are then projections, which is what makes the
+products nonnegative in the order of the matrices over `R` (`smulKron_nonneg_of_proj`). -/
+def kronIn (P : POVMIn ι R) (Q : POVM κ α) (hQ : IsPVM fun k => ((Q.mats k).val)) :
+    POVMIn (ι × κ) (Matrix α α R) where
+  mats p := ⟨smulKron (P.op p.1) ((Q.mats p.2).val), by
+    rw [selfAdjoint.mem_iff, star_smulKron, P.star_op, ← Matrix.star_eq_conjTranspose,
+      (Q.mats p.2).2]⟩
+  nonneg p := Subtype.coe_le_coe.mp (smulKron_nonneg_of_proj (P.op_nonneg p.1)
+    (by rw [← Matrix.star_eq_conjTranspose, (Q.mats p.2).2]; exact hQ.idem p.2))
+  normalized := by
+    apply Subtype.ext
+    rw [AddSubmonoidClass.coe_finsetSum]
+    change (∑ p : ι × κ, smulKron (P.op p.1) ((Q.mats p.2).val)) = 1
+    rw [Fintype.sum_prod_type]
+    simp_rw [← smulKron_sum_right, POVM.sum_val, ← smulKron_sum_left, P.sum_op,
+      smulKron_one_one]
+
+theorem kronIn_op (P : POVMIn ι R) (Q : POVM κ α) (hQ : IsPVM fun k => ((Q.mats k).val))
+    (p : ι × κ) : (kronIn P Q hQ).op p = smulKron (P.op p.1) ((Q.mats p.2).val) := rfl
+
+/-- **A product of projective measurements is projective.** -/
+theorem isPVMIn_kronIn {P : POVMIn ι R} (hP : IsPVMIn P.op) (Q : POVM κ α)
+    (hQ : IsPVM fun k => ((Q.mats k).val)) : IsPVMIn (kronIn P Q hQ).op := by
+  classical
+  exact hP.smulKron hQ.toIn
+
+/-- The product depends on the register's measurement only through its elements. -/
+theorem kronIn_congr (P : POVMIn ι R) {Q Q' : POVM κ α} (h : Q = Q')
+    (hQ : IsPVM fun k => ((Q.mats k).val)) (hQ' : IsPVM fun k => ((Q'.mats k).val)) :
+    kronIn P Q hQ = kronIn P Q' hQ' := by
+  subst h
+  rfl
+
+/-- **Relabelling the two factors is relabelling the product.** -/
+theorem kronIn_map {ι' κ' : Type*} [Fintype ι'] [DecidableEq ι'] [Fintype κ'] [DecidableEq κ']
+    (P : POVMIn ι R) (Q : POVM κ α) (hQ : IsPVM fun k => ((Q.mats k).val)) (f : ι → ι')
+    (g : κ → κ') (hQ' : IsPVM fun k => (((Q.map g).mats k).val)) :
+    kronIn (P.map f) (Q.map g) hQ' = (kronIn P Q hQ).map fun p => (f p.1, g p.2) := by
+  classical
+  refine POVMIn.ext' fun b => ?_
+  have hfil : (Finset.univ.filter fun p : ι × κ => (f p.1, g p.2) = b)
+      = (Finset.univ.filter fun i => f i = b.1) ×ˢ (Finset.univ.filter fun j => g j = b.2) := by
+    ext p
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_product, Prod.ext_iff]
+  rw [kronIn_op, POVMIn.map_op, POVMIn.map_op, POVM.map_mats, hfil, Finset.sum_product,
+    smulKron_sum_left]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [smulKron_sum_right]
+  rfl
+
+end KronIn
+
 /-! ### The hatted measurement -/
 
 /-- The point measurement read as a field element --- the same definition for either player. -/
-def ptValPOVM {d' : Type} [Fintype d'] [DecidableEq d'] (hm : m ∣ Fintype.card F)
-    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (c : Content F m) : POVM F d' :=
-  (M (c.question hm (.point W))).map rdVal
+def ptValPOVM {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    (hm : m ∣ Fintype.card F) (P : Question F m → POVMIn (Answer F m d) R) (W : Bas)
+    (c : Content F m) : POVMIn F R :=
+  (P (c.question hm (.point W))).map rdVal
 
 /-- **The hatted point measurement**: the product of the strategy's point measurement with the
 ancilla's syndrome measurement, coarse-grained by adding the two field elements. That convolution
-is the paper's `M-hat^{(Point,W),u}_a = sum_{a' + a'' = a} M_{a'} (x) tau^{W,u}_{a''}`. -/
-def hatPOVM {d' : Type} [Fintype d'] [DecidableEq d'] (hm : m ∣ Fintype.card F)
-    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (c : Content F m) :
-    POVM F (d' × Anc F m) :=
-  ((ptValPOVM hm M W c).kron (synPOVM W (c.omega.pt W))).map fun p => p.1 + p.2
+is the paper's `M-hat^{(Point,W),u}_a = sum_{a' + a'' = a} M_{a'} (x) tau^{W,u}_{a''}`, a POVM in
+the register's matrices over the player's algebra. -/
+def hatPOVM {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] [PartialOrder R]
+    [StarOrderedRing R] [StarProper R] (hm : m ∣ Fintype.card F)
+    (P : Question F m → POVMIn (Answer F m d) R) (W : Bas) (c : Content F m) :
+    POVMIn F (Matrix (Anc F m) (Anc F m) R) :=
+  (kronIn (ptValPOVM hm P W c) (synPOVM W (c.omega.pt W)) (isPVM_synPOVM W _)).map
+    fun p => p.1 + p.2
 
 /-- **The hatted measurements are cross-party consistent**, at one content: twice the conditional
 failure of the `(Point, W)` subtest, and nothing for the ancilla. The three inputs meet here --- the
 strategy's consistency, the ancilla's *perfect* consistency, and Born-level data processing for the
 convolution. -/
-theorem sum_xSqNorm_hatPOVM_le {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    (hψ : star ψ ⬝ᵥ ψ = 1) (W : Bas) (c : Content F m) :
-    ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
-        (((hatPOVM hm MB W c).mats a).val)
-      ≤ 2 * condFail (qldGame hm) ψ MA MB (c.question hm (.point W))
+theorem sum_xSqNorm_hatPOVM_le [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [StarProper ℬ]
+    {M : BipartiteModel 𝒞 𝒜 ℬ} {hm : m ∣ Fintype.card F}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    (hM : ‖M.ψ‖ = 1) (W : Bas) (c : Content F m) :
+    ∑ a : F, (M.reg (Anc F m)).xSqNorm ((hatPOVM hm PA W c).op a) ((hatPOVM hm PB W c).op a)
+      ≤ 2 * M.condFail (qldGame hm) PA PB (c.question hm (.point W))
           (c.question hm (.point W)) := by
   classical
   -- the agreement of the product measurement factorizes, and the ancilla factor is one
-  have hfac : ∀ p : F × F, bornProb (hatVec (F := F) (m := m) ψ)
-      ((((ptValPOVM hm MA W c).kron (synPOVM W (c.omega.pt W))).mats p).val)
-      ((((ptValPOVM hm MB W c).kron (synPOVM W (c.omega.pt W))).mats p).val)
-      = bornProb ψ (((ptValPOVM hm MA W c).mats p.1).val)
-          (((ptValPOVM hm MB W c).mats p.1).val)
+  have hfac : ∀ p : F × F, (M.reg (Anc F m)).bornProb
+      ((kronIn (ptValPOVM hm PA W c) (synPOVM W (c.omega.pt W)) (isPVM_synPOVM W _)).op p)
+      ((kronIn (ptValPOVM hm PB W c) (synPOVM W (c.omega.pt W)) (isPVM_synPOVM W _)).op p)
+      = M.bornProb ((ptValPOVM hm PA W c).op p.1) ((ptValPOVM hm PB W c).op p.1)
         * bornProb (epr (F := F) (n := Fin m → Bool))
           (((synPOVM W (c.omega.pt W)).mats p.2).val)
           (((synPOVM W (c.omega.pt W)).mats p.2).val) := by
     intro p
-    rw [POVM.kron_mats, POVM.kron_mats, hatVec]
-    exact bornProb_expVec_kron _ _ ((synPOVM W (c.omega.pt W)).posSemidef p.2)
-      ((synPOVM W (c.omega.pt W)).posSemidef p.2)
-  have hprod : ∑ p : F × F, bornProb (hatVec (F := F) (m := m) ψ)
-      ((((ptValPOVM hm MA W c).kron (synPOVM W (c.omega.pt W))).mats p).val)
-      ((((ptValPOVM hm MB W c).kron (synPOVM W (c.omega.pt W))).mats p).val)
-      = ∑ a : F, bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
-          (((ptValPOVM hm MB W c).mats a).val) := by
+    rw [kronIn_op, kronIn_op, BipartiteModel.bornProb_expand_smulKron _ _ _ _
+      ((synPOVM W (c.omega.pt W)).posSemidef p.2) ((synPOVM W (c.omega.pt W)).posSemidef p.2),
+      mul_comm]
+    rfl
+  have hprod : ∑ p : F × F, (M.reg (Anc F m)).bornProb
+      ((kronIn (ptValPOVM hm PA W c) (synPOVM W (c.omega.pt W)) (isPVM_synPOVM W _)).op p)
+      ((kronIn (ptValPOVM hm PB W c) (synPOVM W (c.omega.pt W)) (isPVM_synPOVM W _)).op p)
+      = ∑ a : F, M.bornProb ((ptValPOVM hm PA W c).op a) ((ptValPOVM hm PB W c).op a) := by
     rw [Finset.sum_congr rfl fun p (_ : p ∈ univ) => hfac p,
       sum_prod_mul
-        (fun a : F => bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
-          (((ptValPOVM hm MB W c).mats a).val))
+        (fun a : F => M.bornProb ((ptValPOVM hm PA W c).op a) ((ptValPOVM hm PB W c).op a))
         (fun a : F => bornProb (epr (F := F) (n := Fin m → Bool))
           (((synPOVM W (c.omega.pt W)).mats a).val)
           (((synPOVM W (c.omega.pt W)).mats a).val)),
       sum_bornProb_epr_synPOVM, mul_one]
   -- data processing for the convolution
-  have hdp := sum_bornProb_le_map (hatVec (F := F) (m := m) ψ)
-    ((ptValPOVM hm MA W c).kron (synPOVM W (c.omega.pt W)))
-    ((ptValPOVM hm MB W c).kron (synPOVM W (c.omega.pt W))) (fun p : F × F => p.1 + p.2)
+  have hdp := (M.reg (Anc F m)).sum_bornProb_le_map
+    (kronIn (ptValPOVM hm PA W c) (synPOVM W (c.omega.pt W)) (isPVM_synPOVM W _))
+    (kronIn (ptValPOVM hm PB W c) (synPOVM W (c.omega.pt W)) (isPVM_synPOVM W _))
+    (fun p : F × F => p.1 + p.2)
   rw [hprod] at hdp
   -- the strategy's own consistency, at the Born level
-  have hcons : 1 - ∑ a : F, bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
-      (((ptValPOVM hm MB W c).mats a).val)
-      ≤ condFail (qldGame hm) ψ MA MB (c.question hm (.point W))
+  have hcons : 1 - ∑ a : F, M.bornProb ((ptValPOVM hm PA W c).op a)
+      ((ptValPOVM hm PB W c).op a)
+      ≤ M.condFail (qldGame hm) PA PB (c.question hm (.point W))
           (c.question hm (.point W)) := by
-    refine one_sub_sum_bornProb_le_condFail (G := qldGame hm) (ψ := ψ) (MA := MA) (MB := MB)
+    refine M.one_sub_sum_bornProb_le_condFail (G := qldGame hm) (MA := PA) (MB := PB)
       rdVal rdVal fun a b h => ?_
     have hs := (of_accepts h).2.2
     rw [subtests, if_pos rfl] at hs
     exact congrArg rdVal (of_decide_eq_true hs)
-  refine le_trans (xSqNorm_sum_le_two_mul (hatVec_unit hψ) _ _) ?_
-  have h2 : (0 : ℝ) ≤ 2 := by norm_num
+  refine le_trans ((M.reg (Anc F m)).xSqNorm_sum_le_two_mul (hatVec_unit hM) _ _) ?_
   rw [hatPOVM, hatPOVM]
   linarith
 
 /-- **The self-consistency half of `lem:qld-expanded-points`.** On average over the verifier's
 content, the two players' hatted point measurements agree across the re-bipartitioned parties at
 `172 eps` --- the constant of item 1 of `lem:qld-win`, with the expansion contributing nothing. -/
-theorem hatPOVM_consistency {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem hatPOVM_consistency [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [StarProper ℬ]
+    {M : BipartiteModel 𝒞 𝒜 ℬ} {hm : m ∣ Fintype.card F}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    {ε : ℝ} (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
-          (((hatPOVM hm MB W c).mats a).val)
+        ∑ a : F, (M.reg (Anc F m)).xSqNorm ((hatPOVM hm PA W c).op a)
+          ((hatPOVM hm PB W c).op a)
       ≤ 172 * ε := by
   classical
   refine le_trans (Finset.sum_le_sum fun c (_ : c ∈ univ) =>
-    mul_le_mul_of_nonneg_left (sum_xSqNorm_hatPOVM_le (MB := MB) hψ W c) (by positivity)) ?_
+    mul_le_mul_of_nonneg_left (sum_xSqNorm_hatPOVM_le (PB := PB) hM W c) (by positivity)) ?_
   have heq : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        (2 * condFail (qldGame hm) ψ MA MB
+        (2 * M.condFail (qldGame hm) PA PB
           (c.question hm (.point W)) (c.question hm (.point W)))
       = 2 * ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
-          condFail (qldGame hm) ψ MA MB
+          M.condFail (qldGame hm) PA PB
             (c.question hm (.point W)) (c.question hm (.point W)) := by
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun c _ => by ring
   rw [heq, show (172 : ℝ) * ε = 2 * (86 * ε) from by ring]
-  exact mul_le_mul_of_nonneg_left (subtest_le hψ hfail (adj_self' (.point W)) univ) (by norm_num)
+  exact mul_le_mul_of_nonneg_left (subtest_le hM hfail (adj_self' (.point W)) univ) (by norm_num)
 
 /-- **`lem:qld-expanded-points`**: both items, on the expanded state. The measurements are the
 hatted ones; they are cross-party consistent at `172 eps`, and their `X`-side and `Z`-side
 observables commute at `57676416 eps` with no sign. -/
-theorem expanded_points {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :
+theorem expanded_points [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [StarProper ℬ]
+    {M : BipartiteModel 𝒞 𝒜 ℬ} {hm : m ∣ Fintype.card F}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    {ε : ℝ} (hM : ‖M.ψ‖ = 1) (hPA : ∀ q, IsPVMIn (PA q).op)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
     (∀ W : Bas, ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
-          (((hatPOVM hm MB W c).mats a).val) ≤ 172 * ε)
+        ∑ a : F, (M.reg (Anc F m)).xSqNorm ((hatPOVM hm PA W c).op a)
+          ((hatPOVM hm PB W c).op a) ≤ 172 * ε)
       ∧ ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-          ‖stateVec (hatVec (F := F) (m := m) ψ) (hatObs hm MA .X c * hatObs hm MA .Z c
-            - hatObs hm MA .Z c * hatObs hm MA .X c)‖ ^ 2 ≤ 57676416 * ε :=
-  ⟨fun W => hatPOVM_consistency (MB := MB) hψ hfail W, hatObs_commutation (MB := MB) hψ hfail⟩
+          (M.reg (Anc F m)).stateSqNorm (hatObs hm PA .X c * hatObs hm PA .Z c
+            - hatObs hm PA .Z c * hatObs hm PA .X c) ≤ 57676416 * ε :=
+  ⟨fun W => hatPOVM_consistency (PB := PB) hM hfail W, hatObs_commutation (PB := PB) hM hPA hfail⟩
 
 /-! ## The line measurements
 
@@ -402,8 +516,8 @@ Three things make it work, and all three are exact.
   same effect from "the exact consistency between the `tau^{W,line}` and `tau^{W,u}`
   measurements"; here the two families are literally the same family, relabelled.
 * `isPVM_hatLinePOVM`: the convolution is **projective**, from two closure properties of
-  projective measurements --- products and coarse-grainings (`isPVM_povm_kron`,
-  `isPVM_povm_map`). The paper checks the same thing by hand.
+  projective measurements --- products and coarse-grainings (`isPVMIn_kronIn`,
+  `POVMIn.isPVMIn_map`). The paper checks the same thing by hand.
 * The ancilla's agreement probability is again exactly `1`
   (`sum_bornProb_epr_synOfPOVM`), so the expansion costs nothing here either.
 
@@ -479,6 +593,11 @@ report the restriction to the line of the low-degree encoding of the outcome. -/
 def synLinePOVM (n : ℕ) (W : Bas) (u₀ w : Point F m) : POVM (LinePoly F n) (Anc F m) :=
   synOfPOVM W fun h => lineCoeffs n u₀ w (ldEnc h)
 
+/-- The ancilla's line measurement is projective. -/
+theorem isPVM_synLinePOVM (n : ℕ) (W : Bas) (u₀ w : Point F m) :
+    IsPVM fun f : LinePoly F n => (((synLinePOVM (F := F) (m := m) n W u₀ w).mats f).val) :=
+  isPVM_synOfPOVM W _
+
 /-- **The ancilla's line and point measurements are exactly compatible.** Relabelling a line
 outcome by its value at the point of parameter `t` gives precisely the point measurement at that
 point --- not approximately: the two families are the same coarse-graining of the same
@@ -502,29 +621,32 @@ theorem synLinePOVM_map_eval {n : ℕ} (hmn : m ≤ n) (W : Bas) (u₀ w : Point
 
 /-- The strategy's line measurement at a content, read as a polynomial of degree at most `n` ---
 the same definition for either player. -/
-def lineAnsPOVM {d' : Type} [Fintype d'] [DecidableEq d'] (n : ℕ) (hm : m ∣ Fintype.card F)
-    (M : Question F m → POVM (Answer F m d) d') (ty : Ty) (c : Content F m) :
-    POVM (LinePoly F n) d' :=
-  (M (c.question hm ty)).map (rdLine n)
+def lineAnsPOVM {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R] (n : ℕ)
+    (hm : m ∣ Fintype.card F) (P : Question F m → POVMIn (Answer F m d) R) (ty : Ty)
+    (c : Content F m) : POVMIn (LinePoly F n) R :=
+  (P (c.question hm ty)).map (rdLine n)
 
 /-- **The hatted line measurement** `M̂^{(Line,W),ℓ}_f = ∑_{f' + f'' = f} M^{(Line,W),ℓ}_{f'} ⊗
 τ^{W,ℓ}_{f''}`: the product of the strategy's line measurement with the ancilla's, coarse-grained
 by adding the two polynomials. -/
-def hatLinePOVM {d' : Type} [Fintype d'] [DecidableEq d'] (n : ℕ) (hm : m ∣ Fintype.card F)
-    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (ty : Ty)
+def hatLinePOVM {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
+    [PartialOrder R] [StarOrderedRing R] [StarProper R] (n : ℕ) (hm : m ∣ Fintype.card F)
+    (P : Question F m → POVMIn (Answer F m d) R) (W : Bas) (ty : Ty)
     (base dir : Content F m → Point F m) (c : Content F m) :
-    POVM (LinePoly F n) (d' × Anc F m) :=
-  ((lineAnsPOVM n hm M ty c).kron (synLinePOVM n W (base c) (dir c))).map fun p => p.1 + p.2
+    POVMIn (LinePoly F n) (Matrix (Anc F m) (Anc F m) R) :=
+  (kronIn (lineAnsPOVM n hm P ty c) (synLinePOVM n W (base c) (dir c))
+    (isPVM_synLinePOVM n W _ _)).map fun p => p.1 + p.2
 
 /-- **The hatted line measurement is projective** whenever the strategy's own line measurement is.
 Projectivity is closed under products and under coarse-graining, and that is all the convolution
 is; the paper checks the same thing by hand. -/
-theorem isPVM_hatLinePOVM {d' : Type} [Fintype d'] [DecidableEq d'] {n : ℕ}
-    {hm : m ∣ Fintype.card F} {M : Question F m → POVM (Answer F m d) d'} {W : Bas} {ty : Ty}
+theorem isPVM_hatLinePOVM {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
+    [PartialOrder R] [StarOrderedRing R] [StarProper R] {n : ℕ}
+    {hm : m ∣ Fintype.card F} {P : Question F m → POVMIn (Answer F m d) R} {W : Bas} {ty : Ty}
     {base dir : Content F m → Point F m} {c : Content F m}
-    (hM : IsPVM fun a => (((M (c.question hm ty)).mats a).val)) :
-    IsPVM fun f => (((hatLinePOVM n hm M W ty base dir c).mats f).val) :=
-  isPVM_povm_map _ (isPVM_povm_kron _ _ (isPVM_povm_map _ hM _) (isPVM_synOfPOVM W _)) _
+    (hP : IsPVMIn (P (c.question hm ty)).op) :
+    IsPVMIn (hatLinePOVM n hm P W ty base dir c).op :=
+  POVMIn.isPVMIn_map (isPVMIn_kronIn (POVMIn.isPVMIn_map hP _) _ _) _
 
 /-! ### Self-consistency of the hatted line measurement -/
 
@@ -532,91 +654,98 @@ theorem isPVM_hatLinePOVM {d' : Type} [Fintype d'] [DecidableEq d'] {n : ℕ}
 conditional failure of the line type's own consistency subtest, and nothing for the ancilla. The
 three inputs are the same three as in the point case --- the strategy's consistency, the ancilla's
 *perfect* consistency, and Born-level data processing for the convolution. -/
-theorem sum_xSqNorm_hatLinePOVM_le {n : ℕ} {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    (hψ : star ψ ⬝ᵥ ψ = 1) (W : Bas) (ty : Ty) (base dir : Content F m → Point F m)
+theorem sum_xSqNorm_hatLinePOVM_le [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+    [StarProper ℬ] {n : ℕ} {M : BipartiteModel 𝒞 𝒜 ℬ} {hm : m ∣ Fintype.card F}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    (hM : ‖M.ψ‖ = 1) (W : Bas) (ty : Ty) (base dir : Content F m → Point F m)
     (c : Content F m) :
-    ∑ f : LinePoly F n, xSqNorm (hatVec (F := F) (m := m) ψ)
-        (((hatLinePOVM n hm MA W ty base dir c).mats f).val)
-        (((hatLinePOVM n hm MB W ty base dir c).mats f).val)
-      ≤ 2 * condFail (qldGame hm) ψ MA MB (c.question hm ty) (c.question hm ty) := by
+    ∑ f : LinePoly F n, (M.reg (Anc F m)).xSqNorm
+        ((hatLinePOVM n hm PA W ty base dir c).op f)
+        ((hatLinePOVM n hm PB W ty base dir c).op f)
+      ≤ 2 * M.condFail (qldGame hm) PA PB (c.question hm ty) (c.question hm ty) := by
   classical
   -- the agreement of the product measurement factorizes, and the ancilla factor is one
-  have hfac : ∀ p : LinePoly F n × LinePoly F n, bornProb (hatVec (F := F) (m := m) ψ)
-      ((((lineAnsPOVM n hm MA ty c).kron (synLinePOVM n W (base c) (dir c))).mats p).val)
-      ((((lineAnsPOVM n hm MB ty c).kron (synLinePOVM n W (base c) (dir c))).mats p).val)
-      = bornProb ψ (((lineAnsPOVM n hm MA ty c).mats p.1).val)
-          (((lineAnsPOVM n hm MB ty c).mats p.1).val)
+  have hfac : ∀ p : LinePoly F n × LinePoly F n, (M.reg (Anc F m)).bornProb
+      ((kronIn (lineAnsPOVM n hm PA ty c) (synLinePOVM n W (base c) (dir c))
+        (isPVM_synLinePOVM n W _ _)).op p)
+      ((kronIn (lineAnsPOVM n hm PB ty c) (synLinePOVM n W (base c) (dir c))
+        (isPVM_synLinePOVM n W _ _)).op p)
+      = M.bornProb ((lineAnsPOVM n hm PA ty c).op p.1) ((lineAnsPOVM n hm PB ty c).op p.1)
         * bornProb (epr (F := F) (n := Fin m → Bool))
           (((synLinePOVM n W (base c) (dir c)).mats p.2).val)
           (((synLinePOVM n W (base c) (dir c)).mats p.2).val) := by
     intro p
-    rw [POVM.kron_mats, POVM.kron_mats, hatVec]
-    exact bornProb_expVec_kron _ _ ((synLinePOVM n W (base c) (dir c)).posSemidef p.2)
+    rw [kronIn_op, kronIn_op, BipartiteModel.bornProb_expand_smulKron _ _ _ _
       ((synLinePOVM n W (base c) (dir c)).posSemidef p.2)
+      ((synLinePOVM n W (base c) (dir c)).posSemidef p.2), mul_comm]
+    rfl
   have hanc : ∑ f : LinePoly F n, bornProb (epr (F := F) (n := Fin m → Bool))
       (((synLinePOVM n W (base c) (dir c)).mats f).val)
       (((synLinePOVM n W (base c) (dir c)).mats f).val) = 1 := by
     rw [synLinePOVM]
     exact sum_bornProb_epr_synOfPOVM W _
-  have hprod : ∑ p : LinePoly F n × LinePoly F n, bornProb (hatVec (F := F) (m := m) ψ)
-      ((((lineAnsPOVM n hm MA ty c).kron (synLinePOVM n W (base c) (dir c))).mats p).val)
-      ((((lineAnsPOVM n hm MB ty c).kron (synLinePOVM n W (base c) (dir c))).mats p).val)
-      = ∑ f : LinePoly F n, bornProb ψ (((lineAnsPOVM n hm MA ty c).mats f).val)
-          (((lineAnsPOVM n hm MB ty c).mats f).val) := by
+  have hprod : ∑ p : LinePoly F n × LinePoly F n, (M.reg (Anc F m)).bornProb
+      ((kronIn (lineAnsPOVM n hm PA ty c) (synLinePOVM n W (base c) (dir c))
+        (isPVM_synLinePOVM n W _ _)).op p)
+      ((kronIn (lineAnsPOVM n hm PB ty c) (synLinePOVM n W (base c) (dir c))
+        (isPVM_synLinePOVM n W _ _)).op p)
+      = ∑ f : LinePoly F n, M.bornProb ((lineAnsPOVM n hm PA ty c).op f)
+          ((lineAnsPOVM n hm PB ty c).op f) := by
     rw [Finset.sum_congr rfl fun p (_ : p ∈ univ) => hfac p,
       sum_prod_mul
-        (fun f : LinePoly F n => bornProb ψ (((lineAnsPOVM n hm MA ty c).mats f).val)
-          (((lineAnsPOVM n hm MB ty c).mats f).val))
+        (fun f : LinePoly F n => M.bornProb ((lineAnsPOVM n hm PA ty c).op f)
+          ((lineAnsPOVM n hm PB ty c).op f))
         (fun f : LinePoly F n => bornProb (epr (F := F) (n := Fin m → Bool))
           (((synLinePOVM n W (base c) (dir c)).mats f).val)
           (((synLinePOVM n W (base c) (dir c)).mats f).val)),
       hanc, mul_one]
   -- data processing for the convolution
-  have hdp := sum_bornProb_le_map (hatVec (F := F) (m := m) ψ)
-    ((lineAnsPOVM n hm MA ty c).kron (synLinePOVM n W (base c) (dir c)))
-    ((lineAnsPOVM n hm MB ty c).kron (synLinePOVM n W (base c) (dir c)))
+  have hdp := (M.reg (Anc F m)).sum_bornProb_le_map
+    (kronIn (lineAnsPOVM n hm PA ty c) (synLinePOVM n W (base c) (dir c))
+      (isPVM_synLinePOVM n W _ _))
+    (kronIn (lineAnsPOVM n hm PB ty c) (synLinePOVM n W (base c) (dir c))
+      (isPVM_synLinePOVM n W _ _))
     (fun p : LinePoly F n × LinePoly F n => p.1 + p.2)
   rw [hprod] at hdp
   -- the strategy's own consistency, at the Born level
-  have hcons : 1 - ∑ f : LinePoly F n, bornProb ψ (((lineAnsPOVM n hm MA ty c).mats f).val)
-      (((lineAnsPOVM n hm MB ty c).mats f).val)
-      ≤ condFail (qldGame hm) ψ MA MB (c.question hm ty) (c.question hm ty) := by
-    rw [lineAnsPOVM, lineAnsPOVM]
-    refine one_sub_sum_bornProb_le_condFail (G := qldGame hm) (ψ := ψ) (MA := MA) (MB := MB)
+  have hcons : 1 - ∑ f : LinePoly F n, M.bornProb ((lineAnsPOVM n hm PA ty c).op f)
+      ((lineAnsPOVM n hm PB ty c).op f)
+      ≤ M.condFail (qldGame hm) PA PB (c.question hm ty) (c.question hm ty) := by
+    refine M.one_sub_sum_bornProb_le_condFail (G := qldGame hm) (MA := PA) (MB := PB)
       (rdLine n) (rdLine n) fun a b h => ?_
     have hs := (of_accepts h).2.2
     rw [subtests, if_pos rfl] at hs
     exact congrArg (rdLine n) (of_decide_eq_true hs)
-  refine le_trans (xSqNorm_sum_le_two_mul (hatVec_unit hψ) _ _) ?_
+  refine le_trans ((M.reg (Anc F m)).xSqNorm_sum_le_two_mul (hatVec_unit hM) _ _) ?_
   rw [hatLinePOVM, hatLinePOVM]
   linarith
 
 /-- **The self-consistency item of `lem:qld-expanded-lines`.** On average over the verifier's
 content --- which is the line--point distribution, the line and the point being read off the same
 sample --- the two players' hatted line measurements agree at `172 eps`. -/
-theorem hatLinePOVM_consistency {n : ℕ} {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) (ty : Ty)
+theorem hatLinePOVM_consistency [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+    [StarProper ℬ] {n : ℕ} {M : BipartiteModel 𝒞 𝒜 ℬ} {hm : m ∣ Fintype.card F}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    {ε : ℝ} (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) (ty : Ty)
     (base dir : Content F m → Point F m) :
     ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ f : LinePoly F n, xSqNorm (hatVec (F := F) (m := m) ψ)
-          (((hatLinePOVM n hm MA W ty base dir c).mats f).val)
-          (((hatLinePOVM n hm MB W ty base dir c).mats f).val)
+        ∑ f : LinePoly F n, (M.reg (Anc F m)).xSqNorm
+          ((hatLinePOVM n hm PA W ty base dir c).op f)
+          ((hatLinePOVM n hm PB W ty base dir c).op f)
       ≤ 172 * ε := by
   classical
   refine le_trans (Finset.sum_le_sum fun c (_ : c ∈ univ) =>
-    mul_le_mul_of_nonneg_left (sum_xSqNorm_hatLinePOVM_le (MB := MB) hψ W ty base dir c)
+    mul_le_mul_of_nonneg_left (sum_xSqNorm_hatLinePOVM_le (PB := PB) hM W ty base dir c)
       (by positivity)) ?_
   have heq : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        (2 * condFail (qldGame hm) ψ MA MB (c.question hm ty) (c.question hm ty))
+        (2 * M.condFail (qldGame hm) PA PB (c.question hm ty) (c.question hm ty))
       = 2 * ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
-          condFail (qldGame hm) ψ MA MB (c.question hm ty) (c.question hm ty) := by
+          M.condFail (qldGame hm) PA PB (c.question hm ty) (c.question hm ty) := by
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun c _ => by ring
   rw [heq, show (172 : ℝ) * ε = 2 * (86 * ε) from by ring]
-  exact mul_le_mul_of_nonneg_left (subtest_le hψ hfail (adj_self' ty) univ) (by norm_num)
+  exact mul_le_mul_of_nonneg_left (subtest_le hM hfail (adj_self' ty) univ) (by norm_num)
 
 /-! ### Consistency with the expanded point measurements -/
 
@@ -626,14 +755,16 @@ theorem Content.omega_pt (c : Content F m) (W : Bas) : c.omega.pt W = c.pt W := 
 
 /-- **The hatted line measurement, relabelled by its value at a point of the line, is the product
 of the two relabelled factors.** Evaluation is additive, so it passes through the convolution. -/
-theorem hatLinePOVM_map_eval {d' : Type} [Fintype d'] [DecidableEq d'] {n : ℕ}
-    (hm : m ∣ Fintype.card F) (M : Question F m → POVM (Answer F m d) d') (W : Bas) (ty : Ty)
+theorem hatLinePOVM_map_eval {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
+    [PartialOrder R] [StarOrderedRing R] [StarProper R] {n : ℕ}
+    (hm : m ∣ Fintype.card F) (P : Question F m → POVMIn (Answer F m d) R) (W : Bas) (ty : Ty)
     (base dir : Content F m → Point F m) (c : Content F m) (t : F) :
-    (hatLinePOVM n hm M W ty base dir c).map (fun f => LinePoly.eval f t)
-      = (((lineAnsPOVM n hm M ty c).map fun f => LinePoly.eval f t).kron
-          ((synLinePOVM n W (base c) (dir c)).map fun f => LinePoly.eval f t)).map
+    (hatLinePOVM n hm P W ty base dir c).map (fun f => LinePoly.eval f t)
+      = (kronIn ((lineAnsPOVM n hm P ty c).map fun f => LinePoly.eval f t)
+          ((synLinePOVM n W (base c) (dir c)).map fun f => LinePoly.eval f t)
+          (isPVM_povm_map _ (isPVM_synLinePOVM n W _ _) _)).map
         fun p => p.1 + p.2 := by
-  rw [hatLinePOVM, POVM.map_map, POVM.kron_map, POVM.map_map]
+  rw [hatLinePOVM, POVMIn.map_map, kronIn_map _ _ (isPVM_synLinePOVM n W _ _), POVMIn.map_map]
   congr 1
   funext p
   exact LinePoly.eval_add p.1 p.2 t
@@ -644,21 +775,22 @@ measurements are *exactly* compatible (`synLinePOVM_map_eval`). This single ineq
 of the paper's two forms --- comparing a line outcome with a point outcome, and comparing the
 evaluation of the line polynomial at the point --- because at the Born level the coarse-graining
 that relates them is free. -/
-theorem sum_xSqNorm_hatLine_point_le {n : ℕ} (hmn : m ≤ n) {ψ : dA × dB → ℂ}
+theorem sum_xSqNorm_hatLine_point_le [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+    [StarProper ℬ] {n : ℕ} (hmn : m ≤ n) {M : BipartiteModel 𝒞 𝒜 ℬ}
     {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    (hψ : star ψ ⬝ᵥ ψ = 1) (W : Bas) (ty : Ty) (base dir : Content F m → Point F m)
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    (hM : ‖M.ψ‖ = 1) (W : Bas) (ty : Ty) (base dir : Content F m → Point F m)
     (hon : ∀ c : Content F m,
       base c + (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)) • dir c = c.pt W)
     (hsub : ∀ (c : Content F m) (a b : Answer F m d),
       accepts hm (c.question hm (.point W)) (c.question hm ty) a b = true →
         rdVal a = (rdLine n b).eval (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)))
     (c : Content F m) :
-    ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
-        ((((hatLinePOVM n hm MB W ty base dir c).map
+    ∑ a : F, (M.reg (Anc F m)).xSqNorm ((hatPOVM hm PA W c).op a)
+        (((hatLinePOVM n hm PB W ty base dir c).map
             (fun f => LinePoly.eval f
-              (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)))).mats a).val)
-      ≤ 2 * condFail (qldGame hm) ψ MA MB (c.question hm (.point W)) (c.question hm ty) := by
+              (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)))).op a)
+      ≤ 2 * M.condFail (qldGame hm) PA PB (c.question hm (.point W)) (c.question hm ty) := by
   classical
   set t := MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W) with ht
   -- the ancilla's two measurements are the same measurement
@@ -666,53 +798,56 @@ theorem sum_xSqNorm_hatLine_point_le {n : ℕ} (hmn : m ≤ n) {ψ : dA × dB �
       = synPOVM W (c.pt W) := by
     rw [synLinePOVM_map_eval hmn W (base c) (dir c) t, hon c]
   -- both players' measurements are convolutions of a strategy factor with that one
-  have hB : (hatLinePOVM n hm MB W ty base dir c).map (fun f => LinePoly.eval f t)
-      = (((lineAnsPOVM n hm MB ty c).map fun f => LinePoly.eval f t).kron
-          (synPOVM W (c.pt W))).map fun p => p.1 + p.2 := by
-    rw [hatLinePOVM_map_eval, hancEq]
-  have hA : hatPOVM hm MA W c
-      = ((ptValPOVM hm MA W c).kron (synPOVM W (c.pt W))).map fun p => p.1 + p.2 := by
-    rw [hatPOVM, Content.omega_pt]
+  have hB : (hatLinePOVM n hm PB W ty base dir c).map (fun f => LinePoly.eval f t)
+      = (kronIn ((lineAnsPOVM n hm PB ty c).map fun f => LinePoly.eval f t)
+          (synPOVM W (c.pt W)) (isPVM_synPOVM W _)).map fun p => p.1 + p.2 := by
+    rw [hatLinePOVM_map_eval, kronIn_congr _ hancEq _ (isPVM_synPOVM W (c.pt W))]
+  have hsyn : synPOVM W (c.omega.pt W) = synPOVM W (c.pt W) := by rw [Content.omega_pt]
+  have hA : hatPOVM hm PA W c
+      = (kronIn (ptValPOVM hm PA W c) (synPOVM W (c.pt W)) (isPVM_synPOVM W _)).map
+          fun p => p.1 + p.2 := by
+    rw [hatPOVM, kronIn_congr _ hsyn _ (isPVM_synPOVM W (c.pt W))]
   -- the agreement of the product measurement factorizes, and the ancilla factor is one
-  have hfac : ∀ p : F × F, bornProb (hatVec (F := F) (m := m) ψ)
-      ((((ptValPOVM hm MA W c).kron (synPOVM W (c.pt W))).mats p).val)
-      (((((lineAnsPOVM n hm MB ty c).map fun f => LinePoly.eval f t).kron
-          (synPOVM W (c.pt W))).mats p).val)
-      = bornProb ψ (((ptValPOVM hm MA W c).mats p.1).val)
-          ((((lineAnsPOVM n hm MB ty c).map fun f => LinePoly.eval f t).mats p.1).val)
+  have hfac : ∀ p : F × F, (M.reg (Anc F m)).bornProb
+      ((kronIn (ptValPOVM hm PA W c) (synPOVM W (c.pt W)) (isPVM_synPOVM W _)).op p)
+      ((kronIn ((lineAnsPOVM n hm PB ty c).map fun f => LinePoly.eval f t)
+          (synPOVM W (c.pt W)) (isPVM_synPOVM W _)).op p)
+      = M.bornProb ((ptValPOVM hm PA W c).op p.1)
+          (((lineAnsPOVM n hm PB ty c).map fun f => LinePoly.eval f t).op p.1)
         * bornProb (epr (F := F) (n := Fin m → Bool))
           (((synPOVM W (c.pt W)).mats p.2).val) (((synPOVM W (c.pt W)).mats p.2).val) := by
     intro p
-    rw [POVM.kron_mats, POVM.kron_mats, hatVec]
-    exact bornProb_expVec_kron _ _ ((synPOVM W (c.pt W)).posSemidef p.2)
-      ((synPOVM W (c.pt W)).posSemidef p.2)
-  have hprod : ∑ p : F × F, bornProb (hatVec (F := F) (m := m) ψ)
-      ((((ptValPOVM hm MA W c).kron (synPOVM W (c.pt W))).mats p).val)
-      (((((lineAnsPOVM n hm MB ty c).map fun f => LinePoly.eval f t).kron
-          (synPOVM W (c.pt W))).mats p).val)
-      = ∑ a : F, bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
-          ((((lineAnsPOVM n hm MB ty c).map fun f => LinePoly.eval f t).mats a).val) := by
+    rw [kronIn_op, kronIn_op, BipartiteModel.bornProb_expand_smulKron _ _ _ _
+      ((synPOVM W (c.pt W)).posSemidef p.2) ((synPOVM W (c.pt W)).posSemidef p.2), mul_comm]
+    rfl
+  have hprod : ∑ p : F × F, (M.reg (Anc F m)).bornProb
+      ((kronIn (ptValPOVM hm PA W c) (synPOVM W (c.pt W)) (isPVM_synPOVM W _)).op p)
+      ((kronIn ((lineAnsPOVM n hm PB ty c).map fun f => LinePoly.eval f t)
+          (synPOVM W (c.pt W)) (isPVM_synPOVM W _)).op p)
+      = ∑ a : F, M.bornProb ((ptValPOVM hm PA W c).op a)
+          (((lineAnsPOVM n hm PB ty c).map fun f => LinePoly.eval f t).op a) := by
     rw [Finset.sum_congr rfl fun p (_ : p ∈ univ) => hfac p,
       sum_prod_mul
-        (fun a : F => bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
-          ((((lineAnsPOVM n hm MB ty c).map fun f => LinePoly.eval f t).mats a).val))
+        (fun a : F => M.bornProb ((ptValPOVM hm PA W c).op a)
+          (((lineAnsPOVM n hm PB ty c).map fun f => LinePoly.eval f t).op a))
         (fun a : F => bornProb (epr (F := F) (n := Fin m → Bool))
           (((synPOVM W (c.pt W)).mats a).val) (((synPOVM W (c.pt W)).mats a).val)),
       sum_bornProb_epr_synPOVM, mul_one]
   -- data processing for the convolution
-  have hdp := sum_bornProb_le_map (hatVec (F := F) (m := m) ψ)
-    ((ptValPOVM hm MA W c).kron (synPOVM W (c.pt W)))
-    (((lineAnsPOVM n hm MB ty c).map fun f => LinePoly.eval f t).kron (synPOVM W (c.pt W)))
+  have hdp := (M.reg (Anc F m)).sum_bornProb_le_map
+    (kronIn (ptValPOVM hm PA W c) (synPOVM W (c.pt W)) (isPVM_synPOVM W _))
+    (kronIn ((lineAnsPOVM n hm PB ty c).map fun f => LinePoly.eval f t)
+      (synPOVM W (c.pt W)) (isPVM_synPOVM W _))
     (fun p : F × F => p.1 + p.2)
   rw [hprod] at hdp
   -- the strategy's own line-against-point agreement, at the Born level
-  have hcons : 1 - ∑ a : F, bornProb ψ (((ptValPOVM hm MA W c).mats a).val)
-      ((((lineAnsPOVM n hm MB ty c).map fun f => LinePoly.eval f t).mats a).val)
-      ≤ condFail (qldGame hm) ψ MA MB (c.question hm (.point W)) (c.question hm ty) := by
-    rw [ptValPOVM, lineAnsPOVM, POVM.map_map]
-    exact one_sub_sum_bornProb_le_condFail (G := qldGame hm) (ψ := ψ) (MA := MA) (MB := MB)
+  have hcons : 1 - ∑ a : F, M.bornProb ((ptValPOVM hm PA W c).op a)
+      (((lineAnsPOVM n hm PB ty c).map fun f => LinePoly.eval f t).op a)
+      ≤ M.condFail (qldGame hm) PA PB (c.question hm (.point W)) (c.question hm ty) := by
+    rw [ptValPOVM, lineAnsPOVM, POVMIn.map_map]
+    exact M.one_sub_sum_bornProb_le_condFail (G := qldGame hm) (MA := PA) (MB := PB)
       rdVal (fun b => LinePoly.eval (rdLine n b) t) fun a b h => hsub c a b h
-  refine le_trans (xSqNorm_sum_le_two_mul (hatVec_unit hψ) _ _) ?_
+  refine le_trans ((M.reg (Anc F m)).xSqNorm_sum_le_two_mul (hatVec_unit hM) _ _) ?_
   rw [hA, hB]
   linarith
 
@@ -789,11 +924,12 @@ theorem hsub_dline {hm : m ∣ Fintype.card F} (W : Bas) (c : Content F m) (a b 
   exact (eval_eq_of_lowDeg hs').symm
 
 /-- **The line-against-point item of `lem:qld-expanded-lines`, on average over the content.** -/
-theorem hatLinePOVM_point_consistency {n : ℕ} (hmn : m ≤ n) {ψ : dA × dB → ℂ}
+theorem hatLinePOVM_point_consistency [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+    [StarProper ℬ] {n : ℕ} (hmn : m ≤ n) {M : BipartiteModel 𝒞 𝒜 ℬ}
     {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) (ty : Ty)
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    {ε : ℝ} (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) (ty : Ty)
     (hadj : adj (.point W) ty = true) (base dir : Content F m → Point F m)
     (hon : ∀ c : Content F m,
       base c + (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)) • dir c = c.pt W)
@@ -801,24 +937,24 @@ theorem hatLinePOVM_point_consistency {n : ℕ} (hmn : m ≤ n) {ψ : dA × dB �
       accepts hm (c.question hm (.point W)) (c.question hm ty) a b = true →
         rdVal a = (rdLine n b).eval (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W))) :
     ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
-          ((((hatLinePOVM n hm MB W ty base dir c).map
+        ∑ a : F, (M.reg (Anc F m)).xSqNorm ((hatPOVM hm PA W c).op a)
+          (((hatLinePOVM n hm PB W ty base dir c).map
               (fun f => LinePoly.eval f
-                (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)))).mats a).val)
+                (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)))).op a)
       ≤ 172 * ε := by
   classical
   refine le_trans (Finset.sum_le_sum fun c (_ : c ∈ univ) =>
     mul_le_mul_of_nonneg_left
-      (sum_xSqNorm_hatLine_point_le (MB := MB) hmn hψ W ty base dir hon hsub c)
+      (sum_xSqNorm_hatLine_point_le (PB := PB) hmn hM W ty base dir hon hsub c)
       (by positivity)) ?_
   have heq : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        (2 * condFail (qldGame hm) ψ MA MB (c.question hm (.point W)) (c.question hm ty))
+        (2 * M.condFail (qldGame hm) PA PB (c.question hm (.point W)) (c.question hm ty))
       = 2 * ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
-          condFail (qldGame hm) ψ MA MB (c.question hm (.point W)) (c.question hm ty) := by
+          M.condFail (qldGame hm) PA PB (c.question hm (.point W)) (c.question hm ty) := by
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun c _ => by ring
   rw [heq, show (172 : ℝ) * ε = 2 * (86 * ε) from by ring]
-  exact mul_le_mul_of_nonneg_left (subtest_le hψ hfail hadj univ) (by norm_num)
+  exact mul_le_mul_of_nonneg_left (subtest_le hM hfail hadj univ) (by norm_num)
 
 /-! ### `lem:qld-expanded-lines` -/
 
@@ -828,44 +964,46 @@ line--point distribution at `172 eps`, and consistent with the expanded point me
 `lem:qld-expanded-points` at `172 eps` --- in the form that compares the *evaluation* of the line
 polynomial at the sampled point, which at the Born level is also the form that compares the
 outcomes. Projectivity is `isPVM_hatLinePOVM`, given a projective strategy. -/
-theorem expanded_lines_aline (hd : 1 ≤ d) {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem expanded_lines_aline [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [StarProper ℬ]
+    (hd : 1 ≤ d) {M : BipartiteModel 𝒞 𝒜 ℬ} {hm : m ∣ Fintype.card F}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    {ε : ℝ} (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     (∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ f : LinePoly F (m * d), xSqNorm (hatVec (F := F) (m := m) ψ)
-          (((hatLinePOVM (m * d) hm MA W (.aline W) (abaseOf hm W) (dirOf hm) c).mats f).val)
-          (((hatLinePOVM (m * d) hm MB W (.aline W) (abaseOf hm W) (dirOf hm) c).mats f).val)
+        ∑ f : LinePoly F (m * d), (M.reg (Anc F m)).xSqNorm
+          ((hatLinePOVM (m * d) hm PA W (.aline W) (abaseOf hm W) (dirOf hm) c).op f)
+          ((hatLinePOVM (m * d) hm PB W (.aline W) (abaseOf hm W) (dirOf hm) c).op f)
         ≤ 172 * ε)
       ∧ ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-          ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
-            ((((hatLinePOVM (m * d) hm MB W (.aline W) (abaseOf hm W) (dirOf hm) c).map
+          ∑ a : F, (M.reg (Anc F m)).xSqNorm ((hatPOVM hm PA W c).op a)
+            (((hatLinePOVM (m * d) hm PB W (.aline W) (abaseOf hm W) (dirOf hm) c).map
                 (fun f => LinePoly.eval f
-                  (MIPRE.LIDT.CL.lineParam (abaseOf hm W c) (dirOf hm c) (c.pt W)))).mats a).val)
+                  (MIPRE.LIDT.CL.lineParam (abaseOf hm W c) (dirOf hm c) (c.pt W)))).op a)
           ≤ 172 * ε :=
-  ⟨hatLinePOVM_consistency (MB := MB) hψ hfail W (.aline W) (abaseOf hm W) (dirOf hm),
-    hatLinePOVM_point_consistency (MB := MB) (m_le_mul hd) hψ hfail W (.aline W)
+  ⟨hatLinePOVM_consistency (PB := PB) hM hfail W (.aline W) (abaseOf hm W) (dirOf hm),
+    hatLinePOVM_point_consistency (PB := PB) (m_le_mul hd) hM hfail W (.aline W)
       (adj_point_aline W) (abaseOf hm W) (dirOf hm)
       (fun c => rep_add_lineParam_smul (dirOf hm c) (c.pt W)) (hsub_aline W)⟩
 
 /-- **`lem:qld-expanded-lines` for the diagonal line type**, the same two items. -/
-theorem expanded_lines_dline (hd : 1 ≤ d) {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}
-    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :
+theorem expanded_lines_dline [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [StarProper ℬ]
+    (hd : 1 ≤ d) {M : BipartiteModel 𝒞 𝒜 ℬ} {hm : m ∣ Fintype.card F}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    {ε : ℝ} (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
     (∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ f : LinePoly F (m * d), xSqNorm (hatVec (F := F) (m := m) ψ)
-          (((hatLinePOVM (m * d) hm MA W (.dline W) (dbaseOf hm W) (ddirOf hm) c).mats f).val)
-          (((hatLinePOVM (m * d) hm MB W (.dline W) (dbaseOf hm W) (ddirOf hm) c).mats f).val)
+        ∑ f : LinePoly F (m * d), (M.reg (Anc F m)).xSqNorm
+          ((hatLinePOVM (m * d) hm PA W (.dline W) (dbaseOf hm W) (ddirOf hm) c).op f)
+          ((hatLinePOVM (m * d) hm PB W (.dline W) (dbaseOf hm W) (ddirOf hm) c).op f)
         ≤ 172 * ε)
       ∧ ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-          ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)
-            ((((hatLinePOVM (m * d) hm MB W (.dline W) (dbaseOf hm W) (ddirOf hm) c).map
+          ∑ a : F, (M.reg (Anc F m)).xSqNorm ((hatPOVM hm PA W c).op a)
+            (((hatLinePOVM (m * d) hm PB W (.dline W) (dbaseOf hm W) (ddirOf hm) c).map
                 (fun f => LinePoly.eval f
-                  (MIPRE.LIDT.CL.lineParam (dbaseOf hm W c) (ddirOf hm c) (c.pt W)))).mats a).val)
+                  (MIPRE.LIDT.CL.lineParam (dbaseOf hm W c) (ddirOf hm c) (c.pt W)))).op a)
           ≤ 172 * ε :=
-  ⟨hatLinePOVM_consistency (MB := MB) hψ hfail W (.dline W) (dbaseOf hm W) (ddirOf hm),
-    hatLinePOVM_point_consistency (MB := MB) (m_le_mul hd) hψ hfail W (.dline W)
+  ⟨hatLinePOVM_consistency (PB := PB) hM hfail W (.dline W) (dbaseOf hm W) (ddirOf hm),
+    hatLinePOVM_point_consistency (PB := PB) (m_le_mul hd) hM hfail W (.dline W)
       (adj_point_dline W) (dbaseOf hm W) (ddirOf hm)
       (fun c => rep_add_lineParam_smul (ddirOf hm c) (c.pt W)) (hsub_dline W)⟩
 

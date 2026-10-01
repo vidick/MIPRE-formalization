@@ -37,14 +37,83 @@ The parameter of the sample's point is uniform on the line once the raw directio
 translating the point along the line is a bijection of the sample space that fixes the line
 (`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at
 most `1/q`.
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The padded strategy is a pair of
+families of POVMs in the expanded model `N₀ = M.reg (Anc F m)` (`padStrat`, in the players'
+`Matrix (Anc F m) (Anc F m) _`), and the stage-4a interface is `padStrat_value`:
+`1 - δ_GS ≤ N₀.povmValue (clGame hm4) (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)` for a legally
+supported projective strategy of value `1 - ε`. The point measurement *is* the sandwich, read along
+`(alpha, beta)`, so the identical-point subtest is the first agreement bound of
+`combined_points_pts` coarse-grained (`sum_bornProb_le_fibre`) and the line-point subtests are
+`padded_lines_consistency` verbatim: no compression is needed, and the matrix route's
+`bornProb_extHat_ptComb_left`/`_right` are gone. The decomposition of the failure probability into
+the nine type pairs is the model form of `one_sub_povmValue_clGame`
+(`BipartiteModel.one_sub_povmValue_clGame`, below); the per-sample families and the polynomial
+separation are stated in any bipartite model with the players' algebras of `N₀`. `deltaGS`, the
+error of `lem:qld-global-success`, is defined here (moved from `PaddedLIDT.lean`) so that the
+interface can be stated with it.
 -/
 
 noncomputable section
+
+namespace MIPRE.BipartiteModel
+
+open Finset MIPRE.LIDT
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [PartialOrder ℬ]
+
+/-- **The failure probability of a POVM strategy in the seeded test is the average over the
+verifier's samples of the conditional failure at the two questions the sample generates**, in a
+bipartite model: the model form of `MIPRE.LIDT.CL.one_sub_povmValue_clGame`. -/
+theorem one_sub_povmValue_clGame (N : BipartiteModel 𝒞 𝒜 ℬ) {F : Type*} [Field F] [Fintype F]
+    [DecidableEq F] {m d ldc : ℕ} [NeZero m] (hm : m ∣ Fintype.card F)
+    (PA : CL.Question F m → POVMIn (CL.Answer F m d ldc) 𝒜)
+    (PB : CL.Question F m → POVMIn (CL.Answer F m d ldc) ℬ) :
+    1 - N.povmValue (CL.clGame (d := d) (ldc := ldc) hm) PA PB
+      = (Fintype.card (CL.Sample F m) : ℝ)⁻¹ * ∑ sm : CL.Sample F m,
+          N.condFail (CL.clGame hm) PA PB (sm.question hm sm.tyA) (sm.question hm sm.tyB) := by
+  classical
+  rw [N.one_sub_povmValue_eq, Finset.mul_sum]
+  set c : ℝ := (Fintype.card (CL.Sample F m) : ℝ)⁻¹ with hc
+  set T : CL.Question F m → CL.Question F m → CL.Sample F m → ℝ := fun x y sm =>
+    (c * if (sm.question hm sm.tyA, sm.question hm sm.tyB) = (x, y) then 1 else 0)
+      * N.condFail (CL.clGame hm) PA PB x y with hT
+  have hμ : ∀ x y, (CL.clGame (d := d) (ldc := ldc) hm).μ x y
+      * N.condFail (CL.clGame hm) PA PB x y = ∑ sm : CL.Sample F m, T x y sm := fun x y => by
+    rw [hT]
+    show (∑ sm : CL.Sample F m, c * if (sm.question hm sm.tyA, sm.question hm sm.tyB) = (x, y)
+      then (1 : ℝ) else 0) * N.condFail (CL.clGame hm) PA PB x y = _
+    rw [Finset.sum_mul]
+  simp only [hμ]
+  calc ∑ x, ∑ y, ∑ sm, T x y sm
+      = ∑ x, ∑ sm, ∑ y, T x y sm := Finset.sum_congr rfl fun x _ => Finset.sum_comm
+    _ = ∑ sm, ∑ x, ∑ y, T x y sm := Finset.sum_comm
+    _ = _ := Finset.sum_congr rfl fun sm _ => ?_
+  rw [← Fintype.sum_prod_type' fun x y => T x y sm]
+  simp only [hT, mul_ite, mul_one, mul_zero, ite_mul, zero_mul, Prod.mk.eta, Finset.sum_ite_eq,
+    Finset.mem_univ, if_true]
+
+end MIPRE.BipartiteModel
 
 namespace MIPRE.QLD
 
 open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL
 open scoped Kronecker ComplexOrder MatrixOrder
+
+/-! ## The error of `lem:qld-global-success` -/
+
+/-- **`δ_GS`**, the error of `lem:qld-global-success`: the padded strategy's failure probability
+in the seeded test at `(q, 4m, d, 1)`. -/
+def deltaGS (q m d : ℕ) (ε : ℝ) : ℝ :=
+  5 * ((m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / q + (q : ℝ)⁻¹)) + 4 * deltaQ ε
+    + ((m : ℝ) * d + 1) / q
+
+theorem deltaGS_nonneg {q m d : ℕ} {ε : ℝ} (hε : 0 ≤ ε) : 0 ≤ deltaGS q m d ε := by
+  unfold deltaGS deltaPairs deltaPairsD kappaPairs deltaQ
+  positivity
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
   [NeZero m] (hm : m ∣ Fintype.card F) (hm4 : 4 * m ∣ Fintype.card F)
@@ -56,23 +125,23 @@ abbrev Amb (F : Type*) (m : ℕ) := Point F (4 * m) × F × Point F (4 * m)
 
 section Families
 
-variable {d' : Type} [Fintype d'] [DecidableEq d'] {M : Question F m → POVM (Answer F m d) d'}
+variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] [PartialOrder R]
+  [StarOrderedRing R] [StarProper R] {S : Question F m → POVMIn (Answer F m d) R}
 
 /-- The padded point measurement at the sample's point. -/
-def ptFam (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) :
-    Amb F m → POVM F ((d' × Anc F m) × (F × F)) :=
-  fun x => padPt hM x.1
+def ptFam (hS : ∀ q, IsPVMIn (S q).op) : Amb F m → POVMIn F (Matrix (Anc F m) (Anc F m) R) :=
+  fun x => padPt hS x.1
 
 /-- The strategy's line measurement of type `ty` at the line the sample generates. -/
-def lineFam (ty : CL.Ty) (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) :
-    Amb F m → POVM (LinePoly F (m * d + 1)) ((d' × Anc F m) × (F × F)) :=
-  fun x => lineMeas hm hm4 ty hM (CL.rep (lineDir hm4 ty x.2.1 x.2.2) x.1) x.2.1
+def lineFam (ty : CL.Ty) (hS : ∀ q, IsPVMIn (S q).op) :
+    Amb F m → POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) R) :=
+  fun x => lineMeas hm hm4 ty hS (CL.rep (lineDir hm4 ty x.2.1 x.2.2) x.1) x.2.1
     (rawSet hm4 ty x.2.1 x.2.2)
 
 /-- The line measurement read at the parameter of the sample's point. -/
-def lineEvalFam (ty : CL.Ty) (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) :
-    Amb F m → POVM F ((d' × Anc F m) × (F × F)) :=
-  fun x => (lineFam hm hm4 ty hM x).map fun f => LinePoly.eval f (lineTau hm4 ty x.1 x.2.1 x.2.2)
+def lineEvalFam (ty : CL.Ty) (hS : ∀ q, IsPVMIn (S q).op) :
+    Amb F m → POVMIn F (Matrix (Anc F m) (Anc F m) R) :=
+  fun x => (lineFam hm hm4 ty hS x).map fun f => LinePoly.eval f (lineTau hm4 ty x.1 x.2.1 x.2.2)
 
 end Families
 
@@ -127,65 +196,70 @@ theorem sum_rawSet_fiber (ty : CL.Ty) (s : F) (h : Point F (4 * m) → ℝ) :
 
 section LinePoint
 
-variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-  (hMA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-  (hMB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
-  (Ψ : ((dA × Anc F m) × (F × F)) × ((dB × Anc F m) × (F × F)) → ℂ)
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [Ring ℬ]
+  [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+  (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op)
+  (N : BipartiteModel 𝒞 (Matrix (Anc F m) (Anc F m) 𝒜) (Matrix (Anc F m) (Anc F m) ℬ))
 
-/-- Alice's pasted line measurement at the sample's data, coarse-grained by the combining map at the
-sample's point, against Bob's sandwich there, averaged over the fresh randomness. -/
-def lineTermL (MA : Question F m → POVM (Answer F m d) dA) (MB : Question F m → POVM (Answer F m d)
-    dB)
+/-- The first player's pasted line measurement at the sample's data, coarse-grained by the combining
+map at the sample's point, against the second player's sandwich there, averaged over the fresh
+randomness. -/
+def lineTermL (PA : Question F m → POVMIn (Answer F m d) 𝒜)
+    (PB : Question F m → POVMIn (Answer F m d) ℬ)
     (ty : CL.Ty) (u : Point F (4 * m)) (s : F) (raw' : Point F (4 * m)) : ℝ :=
   (Fintype.card (SubRand F m) : ℝ)⁻¹ * ∑ e : SubRand F m, ∑ a : F,
-    bornProb Ψ (lineComb (presOf hm ty .X) (presOf hm ty .Z) d MA
+    N.bornProb (lineComb (presOf hm ty .X) (presOf hm ty .Z) d PA
         (pairCX (subPair hm4 hm ty ⟨u, s, raw'⟩ e)) (pairCZ (subPair hm4 hm ty ⟨u, s, raw'⟩ e))
         (alph u) (bet u) a)
-      (aOp (ptComb (sand (hatMats MB .X (xBlk u)) (hatMats MB .Z (zBlk u))) (alph u) (bet u) a))
+      (ptComb (sand (hatMats PB .X (xBlk u)) (hatMats PB .Z (zBlk u))) (alph u) (bet u) a)
 
-/-- The same with the players exchanged: Alice's sandwich against Bob's pasted line. -/
-def lineTermR (MA : Question F m → POVM (Answer F m d) dA) (MB : Question F m → POVM (Answer F m d)
-    dB)
+/-- The same with the players exchanged: the first player's sandwich against the second player's
+pasted line. -/
+def lineTermR (PA : Question F m → POVMIn (Answer F m d) 𝒜)
+    (PB : Question F m → POVMIn (Answer F m d) ℬ)
     (ty : CL.Ty) (u : Point F (4 * m)) (s : F) (raw' : Point F (4 * m)) : ℝ :=
   (Fintype.card (SubRand F m) : ℝ)⁻¹ * ∑ e : SubRand F m, ∑ a : F,
-    bornProb Ψ
-      (aOp (ptComb (sand (hatMats MA .X (xBlk u)) (hatMats MA .Z (zBlk u))) (alph u) (bet u) a))
-      (lineComb (presOf hm ty .X) (presOf hm ty .Z) d MB
+    N.bornProb
+      (ptComb (sand (hatMats PA .X (xBlk u)) (hatMats PA .Z (zBlk u))) (alph u) (bet u) a)
+      (lineComb (presOf hm ty .X) (presOf hm ty .Z) d PB
         (pairCX (subPair hm4 hm ty ⟨u, s, raw'⟩ e)) (pairCZ (subPair hm4 hm ty ⟨u, s, raw'⟩ e))
         (alph u) (bet u) a)
 
-/-- The summand of `avgSubAB` for Alice's line against Bob's point. -/
-def padGL (MA : Question F m → POVM (Answer F m d) dA) (MB : Question F m → POVM (Answer F m d) dB)
+/-- The summand of `avgSubAB` for the first player's line against the second player's point. -/
+def padGL (PA : Question F m → POVMIn (Answer F m d) 𝒜)
+    (PB : Question F m → POVMIn (Answer F m d) ℬ)
     (ty : CL.Ty) (a b : F) (cX cZ : LPData F m) : ℝ :=
-  ∑ v : F, bornProb Ψ
-    (lineComb (presOf hm ty .X) (presOf hm ty .Z) d MA (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v)
-    (aOp (ptComb (sand (hatMats MB .X cX.pt) (hatMats MB .Z cZ.pt)) a b v))
+  ∑ v : F, N.bornProb
+    (lineComb (presOf hm ty .X) (presOf hm ty .Z) d PA (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v)
+    (ptComb (sand (hatMats PB .X cX.pt) (hatMats PB .Z cZ.pt)) a b v)
 
-/-- The summand of `avgSubAB` for Alice's point against Bob's line. -/
-def padGR (MA : Question F m → POVM (Answer F m d) dA) (MB : Question F m → POVM (Answer F m d) dB)
+/-- The summand of `avgSubAB` for the first player's point against the second player's line. -/
+def padGR (PA : Question F m → POVMIn (Answer F m d) 𝒜)
+    (PB : Question F m → POVMIn (Answer F m d) ℬ)
     (ty : CL.Ty) (a b : F) (cX cZ : LPData F m) : ℝ :=
-  ∑ v : F, bornProb Ψ
-    (aOp (ptComb (sand (hatMats MA .X cX.pt) (hatMats MA .Z cZ.pt)) a b v))
-    (lineComb (presOf hm ty .X) (presOf hm ty .Z) d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v)
+  ∑ v : F, N.bornProb
+    (ptComb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt)) a b v)
+    (lineComb (presOf hm ty .X) (presOf hm ty .Z) d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v)
 
 theorem sum_bornProb_lineEvalFam_ptFam (ty : CL.Ty) (hty : ty ≠ .point) (x : Amb F m) :
-    ∑ a, bornProb Ψ (((lineEvalFam hm hm4 ty hMA x).mats a).val) (((ptFam hMB x).mats a).val)
+    ∑ a, N.bornProb ((lineEvalFam hm hm4 ty hPA x).op a) ((ptFam hPB x).op a)
       = ((rawSet hm4 ty x.2.1 x.2.2).card : ℝ)⁻¹
-          * ∑ raw' ∈ rawSet hm4 ty x.2.1 x.2.2, lineTermL hm hm4 Ψ MA MB ty x.1 x.2.1 raw' := by
+          * ∑ raw' ∈ rawSet hm4 ty x.2.1 x.2.2, lineTermL hm hm4 N PA PB ty x.1 x.2.1 raw' := by
   obtain ⟨u, s, raw⟩ := x
-  simp only [lineEvalFam, lineFam, ptFam, lineMeas_map_eval_mats hm hm4 ty hty hMA, padPt_mats,
-    bornProb_smul_left, bornProb_sum_left, lineTermL, Finset.mul_sum]
+  simp only [lineEvalFam, lineFam, ptFam, lineMeas_map_eval_mats hm hm4 ty hty hPA, padPt_mats,
+    N.bornProb_smul_left, N.bornProb_sum_left, lineTermL, Finset.mul_sum]
   conv_lhs => rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun raw' _ => Finset.sum_comm
 
 theorem sum_bornProb_ptFam_lineEvalFam (ty : CL.Ty) (hty : ty ≠ .point) (x : Amb F m) :
-    ∑ a, bornProb Ψ (((ptFam hMA x).mats a).val) (((lineEvalFam hm hm4 ty hMB x).mats a).val)
+    ∑ a, N.bornProb ((ptFam hPA x).op a) ((lineEvalFam hm hm4 ty hPB x).op a)
       = ((rawSet hm4 ty x.2.1 x.2.2).card : ℝ)⁻¹
-          * ∑ raw' ∈ rawSet hm4 ty x.2.1 x.2.2, lineTermR hm hm4 Ψ MA MB ty x.1 x.2.1 raw' := by
+          * ∑ raw' ∈ rawSet hm4 ty x.2.1 x.2.2, lineTermR hm hm4 N PA PB ty x.1 x.2.1 raw' := by
   obtain ⟨u, s, raw⟩ := x
-  simp only [lineEvalFam, lineFam, ptFam, lineMeas_map_eval_mats hm hm4 ty hty hMB, padPt_mats,
-    bornProb_smul_right, bornProb_sum_right, lineTermR, Finset.mul_sum]
+  simp only [lineEvalFam, lineFam, ptFam, lineMeas_map_eval_mats hm hm4 ty hty hPB, padPt_mats,
+    N.bornProb_smul_right, N.bornProb_sum_right, lineTermR, Finset.mul_sum]
   conv_lhs => rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun raw' _ => Finset.sum_comm
 
@@ -204,21 +278,22 @@ theorem card_subRand : (Fintype.card (SubRand F m) : ℝ)
   push_cast
   ring
 
-/-- The inner sum of `avgSubAB` at a fixed padded point and raw direction, for Alice's line. -/
+/-- The inner sum of `avgSubAB` at a fixed padded point and raw direction, for the first player's
+line. -/
 theorem sum_padGL_eq (ty : CL.Ty) (s : F) (pt raw : Point F (4 * m)) :
     ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
-        padGL hm Ψ MA MB ty (alph pt) (bet pt) (subX hm4 hm ⟨pt, s, raw⟩ eX)
+        padGL hm N PA PB ty (alph pt) (bet pt) (subX hm4 hm ⟨pt, s, raw⟩ eX)
           (subZ hm4 hm ty ⟨pt, s, raw⟩ eZ)
-      = (Fintype.card (SubRand F m) : ℝ) * lineTermL hm hm4 Ψ MA MB ty pt s raw := by
+      = (Fintype.card (SubRand F m) : ℝ) * lineTermL hm hm4 N PA PB ty pt s raw := by
   have hcard : (Fintype.card (SubRand F m) : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   rw [lineTermL, mul_inv_cancel_left₀ hcard]
   set G : SubRand F m → ℝ := fun e => ∑ a : F,
-    bornProb Ψ (lineComb (presOf hm ty .X) (presOf hm ty .Z) d MA
+    N.bornProb (lineComb (presOf hm ty .X) (presOf hm ty .Z) d PA
         (pairCX (subPair hm4 hm ty ⟨pt, s, raw⟩ e)) (pairCZ (subPair hm4 hm ty ⟨pt, s, raw⟩ e))
         (alph pt) (bet pt) a)
-      (aOp (ptComb (sand (hatMats MB .X (xBlk pt)) (hatMats MB .Z (zBlk pt)))
-        (alph pt) (bet pt) a)) with hGdef
-  have hG : ∀ eX eZ : F × Point F m, padGL hm Ψ MA MB ty (alph pt) (bet pt)
+      (ptComb (sand (hatMats PB .X (xBlk pt)) (hatMats PB .Z (zBlk pt)))
+        (alph pt) (bet pt) a) with hGdef
+  have hG : ∀ eX eZ : F × Point F m, padGL hm N PA PB ty (alph pt) (bet pt)
       (subX hm4 hm ⟨pt, s, raw⟩ eX) (subZ hm4 hm ty ⟨pt, s, raw⟩ eZ) = G (eX, eZ) := by
     intro eX eZ
     simp only [hGdef, padGL, subX_pt, subZ_pt, subPair]
@@ -227,19 +302,19 @@ theorem sum_padGL_eq (ty : CL.Ty) (s : F) (pt raw : Point F (4 * m)) :
 
 theorem sum_padGR_eq (ty : CL.Ty) (s : F) (pt raw : Point F (4 * m)) :
     ∑ eX : F × Point F m, ∑ eZ : F × Point F m,
-        padGR hm Ψ MA MB ty (alph pt) (bet pt) (subX hm4 hm ⟨pt, s, raw⟩ eX)
+        padGR hm N PA PB ty (alph pt) (bet pt) (subX hm4 hm ⟨pt, s, raw⟩ eX)
           (subZ hm4 hm ty ⟨pt, s, raw⟩ eZ)
-      = (Fintype.card (SubRand F m) : ℝ) * lineTermR hm hm4 Ψ MA MB ty pt s raw := by
+      = (Fintype.card (SubRand F m) : ℝ) * lineTermR hm hm4 N PA PB ty pt s raw := by
   have hcard : (Fintype.card (SubRand F m) : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   rw [lineTermR, mul_inv_cancel_left₀ hcard]
   set G : SubRand F m → ℝ := fun e => ∑ a : F,
-    bornProb Ψ
-      (aOp (ptComb (sand (hatMats MA .X (xBlk pt)) (hatMats MA .Z (zBlk pt)))
-        (alph pt) (bet pt) a))
-      (lineComb (presOf hm ty .X) (presOf hm ty .Z) d MB
+    N.bornProb
+      (ptComb (sand (hatMats PA .X (xBlk pt)) (hatMats PA .Z (zBlk pt)))
+        (alph pt) (bet pt) a)
+      (lineComb (presOf hm ty .X) (presOf hm ty .Z) d PB
         (pairCX (subPair hm4 hm ty ⟨pt, s, raw⟩ e)) (pairCZ (subPair hm4 hm ty ⟨pt, s, raw⟩ e))
         (alph pt) (bet pt) a) with hGdef
-  have hG : ∀ eX eZ : F × Point F m, padGR hm Ψ MA MB ty (alph pt) (bet pt)
+  have hG : ∀ eX eZ : F × Point F m, padGR hm N PA PB ty (alph pt) (bet pt)
       (subX hm4 hm ⟨pt, s, raw⟩ eX) (subZ hm4 hm ty ⟨pt, s, raw⟩ eZ) = G (eX, eZ) := by
     intro eX eZ
     simp only [hGdef, padGR, subX_pt, subZ_pt, subPair]
@@ -247,26 +322,26 @@ theorem sum_padGR_eq (ty : CL.Ty) (s : F) (pt raw : Point F (4 * m)) :
   exact (Fintype.sum_prod_type G).symm
 
 theorem avgSubAB_padGL (ty : CL.Ty) (s : F) :
-    avgSubAB hm4 hm ty s (padGL hm Ψ MA MB ty)
+    avgSubAB hm4 hm ty s (padGL hm N PA PB ty)
       = ((Fintype.card F : ℝ) ^ (10 * m + 2))⁻¹ * ((Fintype.card (SubRand F m) : ℝ)
-          * ∑ pt : Point F (4 * m), ∑ raw : Point F (4 * m), lineTermL hm hm4 Ψ MA MB ty pt s raw)
+          * ∑ pt : Point F (4 * m), ∑ raw : Point F (4 * m), lineTermL hm hm4 N PA PB ty pt s raw)
           := by
   rw [avgSubAB, sumSubAB]
   congr 1
   simp only [sumSubAt, Finset.mul_sum]
   exact Finset.sum_congr rfl fun pt _ => Finset.sum_congr rfl fun raw _ =>
-    sum_padGL_eq hm hm4 Ψ ty s pt raw
+    sum_padGL_eq hm hm4 N ty s pt raw
 
 theorem avgSubAB_padGR (ty : CL.Ty) (s : F) :
-    avgSubAB hm4 hm ty s (padGR hm Ψ MA MB ty)
+    avgSubAB hm4 hm ty s (padGR hm N PA PB ty)
       = ((Fintype.card F : ℝ) ^ (10 * m + 2))⁻¹ * ((Fintype.card (SubRand F m) : ℝ)
-          * ∑ pt : Point F (4 * m), ∑ raw : Point F (4 * m), lineTermR hm hm4 Ψ MA MB ty pt s raw)
+          * ∑ pt : Point F (4 * m), ∑ raw : Point F (4 * m), lineTermR hm hm4 N PA PB ty pt s raw)
           := by
   rw [avgSubAB, sumSubAB]
   congr 1
   simp only [sumSubAt, Finset.mul_sum]
   exact Finset.sum_congr rfl fun pt _ => Finset.sum_congr rfl fun raw _ =>
-    sum_padGR_eq hm hm4 Ψ ty s pt raw
+    sum_padGR_eq hm hm4 N ty s pt raw
 
 omit [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
 /-- The normalizations agree: the uniform average over the ambient sample is the average over the
@@ -280,42 +355,42 @@ theorem inv_card_amb_eq :
   field_simp
   ring
 
-/-- **The agreement of Alice's line read at the sample's point with Bob's padded point measurement
-is the seed-average of the padded consistency quantity.** -/
+/-- **The agreement of the first player's line read at the sample's point with the second player's
+padded point measurement is the seed-average of the padded consistency quantity.** -/
 theorem agreeSum_lineEvalFam_ptFam (ty : CL.Ty) (hty : ty ≠ .point) :
-    agreeSum (uniform (Amb F m)) Ψ (lineEvalFam hm hm4 ty hMA) (ptFam hMB)
-      = (Fintype.card F : ℝ)⁻¹ * ∑ s : F, avgSubAB hm4 hm ty s (padGL hm Ψ MA MB ty) := by
+    N.agreeSum (uniform (Amb F m)) (lineEvalFam hm hm4 ty hPA) (ptFam hPB)
+      = (Fintype.card F : ℝ)⁻¹ * ∑ s : F, avgSubAB hm4 hm ty s (padGL hm N PA PB ty) := by
   classical
   have hsum : ∑ x : Amb F m, ((rawSet hm4 ty x.2.1 x.2.2).card : ℝ)⁻¹
-        * ∑ raw' ∈ rawSet hm4 ty x.2.1 x.2.2, lineTermL hm hm4 Ψ MA MB ty x.1 x.2.1 raw'
+        * ∑ raw' ∈ rawSet hm4 ty x.2.1 x.2.2, lineTermL hm hm4 N PA PB ty x.1 x.2.1 raw'
       = ∑ s : F, ∑ pt : Point F (4 * m), ∑ raw : Point F (4 * m),
-          lineTermL hm hm4 Ψ MA MB ty pt s raw := by
+          lineTermL hm hm4 N PA PB ty pt s raw := by
     rw [Fintype.sum_prod_type]
     simp only [Fintype.sum_prod_type]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun u _ => ?_
-    exact sum_rawSet_fiber hm4 ty s fun raw' => lineTermL hm hm4 Ψ MA MB ty u s raw'
-  simp only [avgSubAB_padGL hm hm4 Ψ ty, agreeSum, uniform,
-    sum_bornProb_lineEvalFam_ptFam hm hm4 hMA hMB Ψ ty hty]
+    exact sum_rawSet_fiber hm4 ty s fun raw' => lineTermL hm hm4 N PA PB ty u s raw'
+  simp only [avgSubAB_padGL hm hm4 N ty, BipartiteModel.agreeSum, uniform,
+    sum_bornProb_lineEvalFam_ptFam hm hm4 hPA hPB N ty hty]
   rw [← Finset.mul_sum, hsum, inv_card_amb_eq]
   simp only [← Finset.mul_sum]
   ring
 
 theorem agreeSum_ptFam_lineEvalFam (ty : CL.Ty) (hty : ty ≠ .point) :
-    agreeSum (uniform (Amb F m)) Ψ (ptFam hMA) (lineEvalFam hm hm4 ty hMB)
-      = (Fintype.card F : ℝ)⁻¹ * ∑ s : F, avgSubAB hm4 hm ty s (padGR hm Ψ MA MB ty) := by
+    N.agreeSum (uniform (Amb F m)) (ptFam hPA) (lineEvalFam hm hm4 ty hPB)
+      = (Fintype.card F : ℝ)⁻¹ * ∑ s : F, avgSubAB hm4 hm ty s (padGR hm N PA PB ty) := by
   classical
   have hsum : ∑ x : Amb F m, ((rawSet hm4 ty x.2.1 x.2.2).card : ℝ)⁻¹
-        * ∑ raw' ∈ rawSet hm4 ty x.2.1 x.2.2, lineTermR hm hm4 Ψ MA MB ty x.1 x.2.1 raw'
+        * ∑ raw' ∈ rawSet hm4 ty x.2.1 x.2.2, lineTermR hm hm4 N PA PB ty x.1 x.2.1 raw'
       = ∑ s : F, ∑ pt : Point F (4 * m), ∑ raw : Point F (4 * m),
-          lineTermR hm hm4 Ψ MA MB ty pt s raw := by
+          lineTermR hm hm4 N PA PB ty pt s raw := by
     rw [Fintype.sum_prod_type]
     simp only [Fintype.sum_prod_type]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun u _ => ?_
-    exact sum_rawSet_fiber hm4 ty s fun raw' => lineTermR hm hm4 Ψ MA MB ty u s raw'
-  simp only [avgSubAB_padGR hm hm4 Ψ ty, agreeSum, uniform,
-    sum_bornProb_ptFam_lineEvalFam hm hm4 hMA hMB Ψ ty hty]
+    exact sum_rawSet_fiber hm4 ty s fun raw' => lineTermR hm hm4 N PA PB ty u s raw'
+  simp only [avgSubAB_padGR hm hm4 N ty, BipartiteModel.agreeSum, uniform,
+    sum_bornProb_ptFam_lineEvalFam hm hm4 hPA hPB N ty hty]
   rw [← Finset.mul_sum, hsum, inv_card_amb_eq]
   simp only [← Finset.mul_sum]
   ring
@@ -324,75 +399,46 @@ end LinePoint
 
 /-! ## From the padded consistency to the agreement bounds
 
-On the padded state the Born rule sees only compressions, so the dilated point measurements of
-`lem:qld-padded-lines` and `lem:qld-combined-points` can be replaced by the sandwich extended by
-the identity, which is what the strategy measures. -/
+In the expanded model the padded point measurement is the first player's sandwich read along
+`(alpha, beta)`, which is exactly the point side of `padded_lines_consistency` and a coarse-graining
+of the sandwich whose agreement `combined_points_pts` bounds; nothing has to be compressed. -/
 
 section Transfer
 
-variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {ψ : dA × dB → ℂ}
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [Ring ℬ]
+  [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
+  {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
   {ε : ℝ}
 
-/-- A dilated point measurement on Bob's side, coarse-grained, against anything on Alice's: only
-its compression matters. -/
-theorem bornProb_extHat_ptComb_right {x z : Point F m}
-    (QB : F × F → Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ)
-    (hk : ∀ r, (ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))ᴴ
-        * (QB r * ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))
-      = sand (hatMats MB .X x) (hatMats MB .Z z) r)
-    (E : Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ) (a b v : F) :
-    bornProb (extHat (F := F) (m := m) ψ) E (ptComb QB a b v)
-      = bornProb (extHat (F := F) (m := m) ψ) E
-          (aOp (ptComb (sand (hatMats MB .X x) (hatMats MB .Z z)) a b v)) := by
-  rw [extHat, bornProb_extVec2, bornProb_extVec2, compress_aOp]
-  congr 1
-  rw [ptComb, Matrix.sum_mul, Matrix.mul_sum, ptComb]
-  exact Finset.sum_congr rfl fun r _ => hk r
-
-/-- The same on Alice's side. -/
-theorem bornProb_extHat_ptComb_left {x z : Point F m}
-    (QA : F × F → Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ)
-    (hk : ∀ r, (ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))ᴴ
-        * (QA r * ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))
-      = sand (hatMats MA .X x) (hatMats MA .Z z) r)
-    (G : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) (a b v : F) :
-    bornProb (extHat (F := F) (m := m) ψ) (ptComb QA a b v) G
-      = bornProb (extHat (F := F) (m := m) ψ)
-          (aOp (ptComb (sand (hatMats MA .X x) (hatMats MA .Z z)) a b v)) G := by
-  rw [extHat, bornProb_extVec2, bornProb_extVec2, compress_aOp]
-  congr 1
-  rw [ptComb, Matrix.sum_mul, Matrix.mul_sum, ptComb]
-  exact Finset.sum_congr rfl fun r _ => hk r
-
 /-- The two items of `lem:qld-expanded-lines` for the presentation of a line type. -/
-theorem presOf_items (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hd :
-    1 ≤ d) (ty : CL.Ty) (W : Bas) :
+theorem presOf_items (hM : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hd : 1 ≤ d) (ty : CL.Ty) (W : Bas) :
     (∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),
-        xSqNorm (hatVec (F := F) (m := m) ψ) ((presOf hm ty W).lineMats d MA c f)
-          ((presOf hm ty W).lineMats d MB c f) ≤ 172 * ε)
+        (M.reg (Anc F m)).xSqNorm ((presOf hm ty W).lineMats d PA c f)
+          ((presOf hm ty W).lineMats d PB c f) ≤ 172 * ε)
       ∧ ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
-          xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA W (c.pt W) a)
-            ((presOf hm ty W).lineEvalMats d MB c a) ≤ 172 * ε := by
+          (M.reg (Anc F m)).xSqNorm (hatMats PA W (c.pt W) a)
+            ((presOf hm ty W).lineEvalMats d PB c a) ≤ 172 * ε := by
   cases ty
-  · exact aPres_items (MB := MB) hd hψ hfail W
-  · exact aPres_items (MB := MB) hd hψ hfail W
-  · exact dPres_items (MB := MB) hd hψ hfail W
+  · exact aPres_items (PB := PB) hd hM hfail W
+  · exact aPres_items (PB := PB) hd hM hfail W
+  · exact dPres_items (PB := PB) hd hM hfail W
 
-/-- The second item with the players exchanged: Alice's line read at the point against Bob's
-point measurement. -/
-theorem presOf_items_swap (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
+/-- The second item with the players exchanged: the first player's line read at the point against
+the second player's point measurement. -/
+theorem presOf_items_swap (hM : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
     (hd : 1 ≤ d) (ty : CL.Ty) (W : Bas) :
     ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
-        xSqNorm (hatVec (F := F) (m := m) ψ) ((presOf hm ty W).lineEvalMats d MA c a)
-          (hatMats MB W (c.pt W) a) ≤ 172 * ε := by
-  have h := (presOf_items hm (MA := MB) (MB := MA) (ψ := swapVec ψ) (swapVec_unit hψ)
+        (M.reg (Anc F m)).xSqNorm ((presOf hm ty W).lineEvalMats d PA c a)
+          (hatMats PB W (c.pt W) a) ≤ 172 * ε := by
+  have h := (presOf_items hm (M := M.swap) (PA := PB) (PB := PA) (swapVec_unit hM)
     (povmValue_swapped_le hfail) hd ty W).2
   refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ =>
     congrArg (fun t : ℝ => (Fintype.card (Content F m) : ℝ)⁻¹ * t)
       (Finset.sum_congr rfl fun a _ => ?_))) h
-  rw [hatVec_swapVec, xSqNorm_swapVec]
+  exact (hatVec_swapVec_xSqNorm M _ _).symm
 
 /-- The collision probability of the `X` presentation of a line type is at most `md/q + 1/q`. -/
 theorem presOf_coll (ty : CL.Ty) :
@@ -405,40 +451,30 @@ theorem presOf_coll (ty : CL.Ty) :
     exact le_add_of_nonneg_right (inv_nonneg.mpr (Nat.cast_nonneg _))
   · exact sum_content_collProb_dPres hm .X d
 
-/-- **Alice's line against Bob's point, at a fixed seed**: `lem:qld-padded-lines` in the other
-register version, with the dilated point measurement replaced by the strategy's sandwich. -/
-theorem one_sub_avgSubAB_padGL_le (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA
-    MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (ty : CL.Ty) (s : F) :
-    1 - avgSubAB hm4 hm ty s (padGL hm (extHat (F := F) (m := m) ψ) MA MB ty)
-      ≤ (m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹) := by
-  obtain ⟨QB, -, hkB, hb⟩ := padded_lines_consistency_swap hm4 hψ hfail hprojA hprojB
+/-- **The first player's line against the second player's point, at a fixed seed**:
+`lem:qld-padded-lines` in the other register version, in the expanded model. -/
+theorem one_sub_avgSubAB_padGL_le (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op) (hd : 1 ≤ d) (ty : CL.Ty)
+    (s : F) :
+    1 - avgSubAB hm4 hm ty s (padGL hm (M.reg (Anc F m)) PA PB ty)
+      ≤ (m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹) :=
+  padded_lines_consistency_swap hm4 hM hfail hPA hPB
     (presOf hm ty .X) (presOf hm ty .Z) (factorsX_presOf hm ty) (factorsZ_presOf hm ty)
-    (presOf_items hm hψ hfail hd ty .X).1 (presOf_items_swap hm hψ hfail hd ty .X)
-    (presOf_items_swap hm hψ hfail hd ty .Z) (presOf_coll hm ty) ty s
-  refine le_trans (le_of_eq (congrArg (fun t : ℝ => 1 - t)
-    (congrArg (avgSubAB hm4 hm ty s) ?_))) hb
-  funext a b cX cZ
-  refine Finset.sum_congr rfl fun v _ => ?_
-  exact (bornProb_extHat_ptComb_right (QB (cX, cZ)) (hkB (cX, cZ)) _ a b v).symm
+    (presOf_items hm hM hfail hd ty .X).1 (presOf_items_swap hm hM hfail hd ty .X)
+    (presOf_items_swap hm hM hfail hd ty .Z) (presOf_coll hm ty) ty s
 
-/-- **Alice's point against Bob's line, at a fixed seed.** -/
-theorem one_sub_avgSubAB_padGR_le (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA
-    MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (ty : CL.Ty) (s : F) :
-    1 - avgSubAB hm4 hm ty s (padGR hm (extHat (F := F) (m := m) ψ) MA MB ty)
-      ≤ (m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹) := by
-  obtain ⟨QA, -, hkA, hb⟩ := padded_lines_consistency hm4 hψ hfail hprojA hprojB
+/-- **The first player's point against the second player's line, at a fixed seed.** -/
+theorem one_sub_avgSubAB_padGR_le (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op) (hd : 1 ≤ d) (ty : CL.Ty)
+    (s : F) :
+    1 - avgSubAB hm4 hm ty s (padGR hm (M.reg (Anc F m)) PA PB ty)
+      ≤ (m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹) :=
+  padded_lines_consistency hm4 hM hfail hPA hPB
     (presOf hm ty .X) (presOf hm ty .Z) (factorsX_presOf hm ty) (factorsZ_presOf hm ty)
-    (presOf_items hm hψ hfail hd ty .X).1 (presOf_items hm hψ hfail hd ty .X).2
-    (presOf_items hm hψ hfail hd ty .Z).2 (presOf_coll hm ty) ty s
-  refine le_trans (le_of_eq (congrArg (fun t : ℝ => 1 - t)
-    (congrArg (avgSubAB hm4 hm ty s) ?_))) hb
-  funext a b cX cZ
-  refine Finset.sum_congr rfl fun v _ => ?_
-  exact (bornProb_extHat_ptComb_left (QA (cX, cZ)) (hkA (cX, cZ)) _ a b v).symm
+    (presOf_items hm hM hfail hd ty .X).1 (presOf_items hm hM hfail hd ty .X).2
+    (presOf_items hm hM hfail hd ty .Z).2 (presOf_coll hm ty) ty s
 
 omit [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
 /-- Averaging a family of bounds over the seed. -/
@@ -457,32 +493,29 @@ theorem one_sub_inv_card_mul_sum_le {A : F → ℝ} {B : ℝ} (h : ∀ s, 1 - A 
   rw [h2, h3] at h1
   exact h1
 
-/-- **The line-point subtests, Alice's line**: the agreement of Alice's line measurement read at
-the sample's point with Bob's padded point measurement, averaged over the ambient sample. -/
-theorem one_sub_agreeSum_lineEval_pt_le (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm)
-    ψ MA MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (ty : CL.Ty)
+/-- **The line-point subtests, the first player's line**: the agreement of the first player's line
+measurement read at the sample's point with the second player's padded point measurement, averaged
+over the ambient sample, in the expanded model. -/
+theorem one_sub_agreeSum_lineEval_pt_le (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op) (hd : 1 ≤ d) (ty : CL.Ty)
     (hty : ty ≠ .point) :
-    1 - agreeSum (uniform (Amb F m)) (extHat (F := F) (m := m) ψ) (lineEvalFam hm hm4 ty hprojA)
-        (ptFam hprojB)
+    1 - (M.reg (Anc F m)).agreeSum (uniform (Amb F m)) (lineEvalFam hm hm4 ty hPA) (ptFam hPB)
       ≤ (m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹) := by
-  rw [agreeSum_lineEvalFam_ptFam hm hm4 hprojA hprojB _ ty hty]
+  rw [agreeSum_lineEvalFam_ptFam hm hm4 hPA hPB _ ty hty]
   exact one_sub_inv_card_mul_sum_le fun s =>
-    one_sub_avgSubAB_padGL_le hm hm4 hψ hfail hprojA hprojB hd ty s
+    one_sub_avgSubAB_padGL_le hm hm4 hM hfail hPA hPB hd ty s
 
-/-- **The line-point subtests, Bob's line.** -/
-theorem one_sub_agreeSum_pt_lineEval_le (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm)
-    ψ MA MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (ty : CL.Ty)
+/-- **The line-point subtests, the second player's line.** -/
+theorem one_sub_agreeSum_pt_lineEval_le (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op) (hd : 1 ≤ d) (ty : CL.Ty)
     (hty : ty ≠ .point) :
-    1 - agreeSum (uniform (Amb F m)) (extHat (F := F) (m := m) ψ) (ptFam hprojA)
-        (lineEvalFam hm hm4 ty hprojB)
+    1 - (M.reg (Anc F m)).agreeSum (uniform (Amb F m)) (ptFam hPA) (lineEvalFam hm hm4 ty hPB)
       ≤ (m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹) := by
-  rw [agreeSum_ptFam_lineEvalFam hm hm4 hprojA hprojB _ ty hty]
+  rw [agreeSum_ptFam_lineEvalFam hm hm4 hPA hPB _ ty hty]
   exact one_sub_inv_card_mul_sum_le fun s =>
-    one_sub_avgSubAB_padGR_le hm hm4 hψ hfail hprojA hprojB hd ty s
+    one_sub_avgSubAB_padGR_le hm hm4 hM hfail hPA hPB hd ty s
 
 /-! ### The identical-point subtest -/
 
@@ -501,65 +534,68 @@ theorem avg_amb_blocks (g : Point F m → Point F m → ℝ) :
   ring
 
 /-- **The identical-point subtest**: the two padded point measurements agree up to `δ_Q`, by the
-self-consistency item of `lem:qld-combined-points` read through the compressions. -/
-theorem one_sub_agreeSum_pt_pt_le (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA
-    MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) :
-    1 - agreeSum (uniform (Amb F m)) (extHat (F := F) (m := m) ψ) (ptFam hprojA) (ptFam hprojB)
-      ≤ deltaQ ε := by
+self-agreement item of `lem:qld-combined-points` (`combined_points_pts`), coarse-grained along
+`(alpha, beta)`: agreement only increases under a common coarse-graining. -/
+theorem one_sub_agreeSum_pt_pt_le (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op) :
+    1 - (M.reg (Anc F m)).agreeSum (uniform (Amb F m)) (ptFam hPA) (ptFam hPB) ≤ deltaQ ε := by
   classical
-  obtain ⟨QA, QB, hPA, hPB, hkA, hkB, h1, -, -⟩ :=
-    @combined_points_pts F _ _ _ m _ _ hm d dA dB _ _ _ _ ψ MA MB ε hψ hfail hprojA hprojB
-  have hΨ : ‖evec (extHat (F := F) (m := m) ψ)‖ = 1 :=
-    norm_evec_eq_one_of_unit (extVec2_unit (hatVec_unit hψ) _ _)
+  set N := M.reg (Anc F m) with hN
+  obtain ⟨h1, -, -⟩ := combined_points_pts (PA := PA) (PB := PB) hM hfail hPA hPB
   have hu : ∀ u : Point F (4 * m),
-      1 - ∑ a, bornProb (extHat (F := F) (m := m) ψ) (((padPt hprojA u).mats a).val)
-          (((padPt hprojB u).mats a).val)
-        ≤ (∑ p : F × F, xSqNorm (extHat (F := F) (m := m) ψ) (QA (xBlk u, zBlk u) p)
-            (QB (xBlk u, zBlk u) p)) / 2 := by
+      1 - ∑ a, N.bornProb ((padPt hPA u).op a) ((padPt hPB u).op a)
+        ≤ 1 - ∑ p : F × F, N.bornProb (sand (hatMats PA .X (xBlk u)) (hatMats PA .Z (zBlk u)) p)
+            (sand (hatMats PB .X (xBlk u)) (hatMats PB .Z (zBlk u)) p) := by
     intro u
-    have heq : ∀ a, bornProb (extHat (F := F) (m := m) ψ) (((padPt hprojA u).mats a).val)
-        (((padPt hprojB u).mats a).val)
-        = bornProb (extHat (F := F) (m := m) ψ) (ptComb (QA (xBlk u, zBlk u)) (alph u) (bet u) a)
-            (ptComb (QB (xBlk u, zBlk u)) (alph u) (bet u) a) := by
-      intro a
-      rw [padPt_mats, padPt_mats, bornProb_extHat_ptComb_left (QA _) (hkA _),
-        bornProb_extHat_ptComb_right (QB _) (hkB _)]
+    have h := sum_bornProb_le_fibre N (sand (hatMats PA .X (xBlk u)) (hatMats PA .Z (zBlk u)))
+      (sand (hatMats PB .X (xBlk u)) (hatMats PB .Z (zBlk u)))
+      (fun p => (padPtPair hPA u).op_nonneg p) (fun p => (padPtPair hPB u).op_nonneg p)
+      (padComb u)
+    have heq : ∀ a, N.bornProb ((padPt hPA u).op a) ((padPt hPB u).op a)
+        = N.bornProb
+            (∑ p ∈ univ.filter fun p => padComb u p = a,
+              sand (hatMats PA .X (xBlk u)) (hatMats PA .Z (zBlk u)) p)
+            (∑ p ∈ univ.filter fun p => padComb u p = a,
+              sand (hatMats PB .X (xBlk u)) (hatMats PB .Z (zBlk u)) p) := fun a => by
+      rw [padPt, padPt, POVMIn.map_op, POVMIn.map_op]
+      rfl
     simp only [heq]
-    have hA : IsPVM (ptComb (QA (xBlk u, zBlk u)) (alph u) (bet u)) :=
-      (hPA _).coarse fun r : F × F => alph u * r.1 + bet u * r.2
-    have hB : IsPVM (ptComb (QB (xBlk u, zBlk u)) (alph u) (bet u)) :=
-      (hPB _).coarse fun r : F × F => alph u * r.1 + bet u * r.2
-    rw [one_sub_sum_bornProb_eq hΨ hA hB]
-    exact div_le_div_of_nonneg_right
-      (sum_xSqNorm_fibSum_le hΨ (hPA _) (hPB _) fun r : F × F => alph u * r.1 + bet u * r.2)
-      zero_le_two
+    linarith
   have hμ : ∑ x : Amb F m, uniform (Amb F m) x = 1 := by
     simp only [uniform, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     exact mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
-  have hexp : 1 - agreeSum (uniform (Amb F m)) (extHat (F := F) (m := m) ψ) (ptFam hprojA) (ptFam
-      hprojB)
-      = ∑ x : Amb F m, uniform (Amb F m) x * (1 - ∑ a, bornProb (extHat (F := F) (m := m) ψ)
-          (((padPt hprojA x.1).mats a).val) (((padPt hprojB x.1).mats a).val)) := by
-    rw [agreeSum]
+  have hexp : 1 - N.agreeSum (uniform (Amb F m)) (ptFam hPA) (ptFam hPB)
+      = ∑ x : Amb F m, uniform (Amb F m) x * (1 - ∑ a, N.bornProb
+          ((padPt hPA x.1).op a) ((padPt hPB x.1).op a)) := by
+    rw [BipartiteModel.agreeSum]
     simp only [mul_sub, mul_one, Finset.sum_sub_distrib, hμ]
     rfl
+  have hpts : ∑ y : Point F m × Point F m, (Fintype.card (Point F m × Point F m) : ℝ)⁻¹
+        * (1 - ∑ p : F × F, N.bornProb (sand (hatMats PA .X y.1) (hatMats PA .Z y.2) p)
+            (sand (hatMats PB .X y.1) (hatMats PB .Z y.2) p))
+      = 1 - ∑ y : Point F m × Point F m, (Fintype.card (Point F m × Point F m) : ℝ)⁻¹
+          * ∑ p : F × F, N.bornProb (sand (hatMats PA .X y.1) (hatMats PA .Z y.2) p)
+            (sand (hatMats PB .X y.1) (hatMats PB .Z y.2) p) := by
+    simp only [mul_sub, mul_one, Finset.sum_sub_distrib, sum_uniform_pts]
   rw [hexp]
-  calc ∑ x : Amb F m, uniform (Amb F m) x * (1 - ∑ a, bornProb (extHat (F := F) (m := m) ψ)
-          (((padPt hprojA x.1).mats a).val) (((padPt hprojB x.1).mats a).val))
+  calc ∑ x : Amb F m, uniform (Amb F m) x * (1 - ∑ a, N.bornProb
+          ((padPt hPA x.1).op a) ((padPt hPB x.1).op a))
       ≤ ∑ x : Amb F m, (Fintype.card (Amb F m) : ℝ)⁻¹
-          * ((∑ p : F × F, xSqNorm (extHat (F := F) (m := m) ψ) (QA (xBlk x.1, zBlk x.1) p)
-              (QB (xBlk x.1, zBlk x.1) p)) / 2) :=
+          * (1 - ∑ p : F × F, N.bornProb
+              (sand (hatMats PA .X (xBlk x.1)) (hatMats PA .Z (zBlk x.1)) p)
+              (sand (hatMats PB .X (xBlk x.1)) (hatMats PB .Z (zBlk x.1)) p)) :=
         Finset.sum_le_sum fun x _ => mul_le_mul_of_nonneg_left (hu x.1)
           (inv_nonneg.mpr (Nat.cast_nonneg _))
-    _ = (∑ y : Point F m × Point F m, (Fintype.card (Point F m × Point F m) : ℝ)⁻¹
-          * ∑ p : F × F, xSqNorm (extHat (F := F) (m := m) ψ) (QA y p) (QB y p)) / 2 := by
-        rw [avg_amb_blocks fun x z => (∑ p : F × F,
-          xSqNorm (extHat (F := F) (m := m) ψ) (QA (x, z) p) (QB (x, z) p)) / 2, Finset.sum_div]
-        exact Finset.sum_congr rfl fun y _ => by rw [mul_div_assoc]
-    _ ≤ 2 * deltaQ ε / 2 := div_le_div_of_nonneg_right h1 zero_le_two
-    _ = deltaQ ε := by ring
+    _ = ∑ y : Point F m × Point F m, (Fintype.card (Point F m × Point F m) : ℝ)⁻¹
+          * (1 - ∑ p : F × F, N.bornProb (sand (hatMats PA .X y.1) (hatMats PA .Z y.2) p)
+            (sand (hatMats PB .X y.1) (hatMats PB .Z y.2) p)) :=
+        avg_amb_blocks fun x z => 1 - ∑ p : F × F,
+          N.bornProb (sand (hatMats PA .X x) (hatMats PA .Z z) p)
+            (sand (hatMats PB .X x) (hatMats PB .Z z) p)
+    _ ≤ deltaQ ε := by
+        rw [hpts]
+        exact h1
 
 end Transfer
 
@@ -572,11 +608,13 @@ line is a bijection of the sample space that fixes the line and shifts the param
 
 section Lines
 
-variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-  (hMA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-  (hMB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
-  (Ψ : ((dA × Anc F m) × (F × F)) × ((dB × Anc F m) × (F × F)) → ℂ)
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [Ring ℬ]
+  [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+  (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op)
+  {𝒞' : Type*} [Ring 𝒞'] [StarRing 𝒞'] [Algebra ℂ 𝒞']
+  (N : BipartiteModel 𝒞' (Matrix (Anc F m) (Anc F m) 𝒜) (Matrix (Anc F m) (Anc F m) ℬ))
 
 omit [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
 /-- **The parameter is uniform on the line.** For a quantity that depends on the sample's point
@@ -606,62 +644,62 @@ theorem sum_shift_param {n : ℕ} {α β : Type*} (w : Point F n) (LA : Point F 
         rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
 
 /-- The disagreement of two polynomial measurements read at the parameter `t`. -/
-def evDef (LA : POVM (LinePoly F (m * d + 1)) ((dA × Anc F m) × (F × F)))
-    (LB : POVM (LinePoly F (m * d + 1)) ((dB × Anc F m) × (F × F))) (t : F) : ℝ :=
-  1 - ∑ a : F, bornProb Ψ (((LA.map fun f => LinePoly.eval f t).mats a).val)
-    (((LB.map fun f => LinePoly.eval f t).mats a).val)
+def evDef (LA : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) 𝒜))
+    (LB : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) ℬ)) (t : F) : ℝ :=
+  1 - ∑ a : F, N.bornProb ((LA.map fun f => LinePoly.eval f t).op a)
+    ((LB.map fun f => LinePoly.eval f t).op a)
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
-theorem evDef_nonneg (hΨ : star Ψ ⬝ᵥ Ψ = 1) (LA : POVM (LinePoly F (m * d + 1)) ((dA × Anc F m) ×
-    (F × F)))
-    (LB : POVM (LinePoly F (m * d + 1)) ((dB × Anc F m) × (F × F))) (t : F) :
-    0 ≤ evDef Ψ LA LB t :=
-  sub_nonneg.mpr (sum_bornProb_diag_le_one hΨ _ _ (fun a => POVM.posSemidef _ a)
-    (fun a => POVM.posSemidef _ a) (POVM.sum_val _) (POVM.sum_val _))
+omit [Algebra (ZMod 2) F] [NeZero m] [StarModule ℂ 𝒜] [StarModule ℂ ℬ] in
+theorem evDef_nonneg (hN : ‖N.ψ‖ = 1)
+    (LA : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) 𝒜))
+    (LB : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) ℬ)) (t : F) :
+    0 ≤ evDef N LA LB t :=
+  sub_nonneg.mpr (sum_bornProb_diag_le_one hN _ _ (fun a => POVMIn.op_nonneg _ a)
+    (fun a => POVMIn.op_nonneg _ a) (POVMIn.sum_op _) (POVMIn.sum_op _))
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
-theorem evDef_le_one (LA : POVM (LinePoly F (m * d + 1)) ((dA × Anc F m) × (F × F)))
-    (LB : POVM (LinePoly F (m * d + 1)) ((dB × Anc F m) × (F × F))) (t : F) :
-    evDef Ψ LA LB t ≤ 1 := by
-  have : 0 ≤ ∑ a : F, bornProb Ψ (((LA.map fun f => LinePoly.eval f t).mats a).val)
-      (((LB.map fun f => LinePoly.eval f t).mats a).val) :=
-    Finset.sum_nonneg fun a _ => bornProb_nonneg Ψ (POVM.posSemidef _ a) (POVM.posSemidef _ a)
+omit [Algebra (ZMod 2) F] [NeZero m] [StarModule ℂ 𝒜] [StarModule ℂ ℬ] in
+theorem evDef_le_one (LA : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) 𝒜))
+    (LB : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) ℬ)) (t : F) :
+    evDef N LA LB t ≤ 1 := by
+  have : 0 ≤ ∑ a : F, N.bornProb ((LA.map fun f => LinePoly.eval f t).op a)
+      ((LB.map fun f => LinePoly.eval f t).op a) :=
+    Finset.sum_nonneg fun a _ => N.bornProb_nonneg (POVMIn.op_nonneg _ a) (POVMIn.op_nonneg _ a)
   unfold evDef
   linarith
 
 /-- The disagreement of the two line measurements read at the sample's point is the disagreement of
 the evaluated families. -/
 theorem evDef_lineTau (ty : CL.Ty) (x : Amb F m) :
-    evDef Ψ (lineFam hm hm4 ty hMA x) (lineFam hm hm4 ty hMB x) (lineTau hm4 ty x.1 x.2.1 x.2.2)
-      = 1 - ∑ a : F, bornProb Ψ (((lineEvalFam hm hm4 ty hMA x).mats a).val)
-          (((lineEvalFam hm hm4 ty hMB x).mats a).val) := rfl
+    evDef N (lineFam hm hm4 ty hPA x) (lineFam hm hm4 ty hPB x) (lineTau hm4 ty x.1 x.2.1 x.2.2)
+      = 1 - ∑ a : F, N.bornProb ((lineEvalFam hm hm4 ty hPA x).op a)
+          ((lineEvalFam hm hm4 ty hPB x).op a) := rfl
 
 /-- **At a fixed seed and raw direction, averaging the evaluated disagreement over the parameter
 is averaging it over the point**, unless the direction is degenerate, in which case the average is
 at most one. -/
-theorem sum_avg_evDef_le (hΨ : star Ψ ⬝ᵥ Ψ = 1) (ty : CL.Ty) (s : F) (raw : Point F (4 * m)) :
+theorem sum_avg_evDef_le (hN : ‖N.ψ‖ = 1) (ty : CL.Ty) (s : F) (raw : Point F (4 * m)) :
     ∑ u : Point F (4 * m), (Fintype.card F : ℝ)⁻¹ * ∑ t : F,
-        evDef Ψ (lineFam hm hm4 ty hMA (u, s, raw)) (lineFam hm hm4 ty hMB (u, s, raw)) t
-      ≤ ∑ u : Point F (4 * m), evDef Ψ (lineFam hm hm4 ty hMA (u, s, raw))
-          (lineFam hm hm4 ty hMB (u, s, raw)) (lineTau hm4 ty u s raw)
+        evDef N (lineFam hm hm4 ty hPA (u, s, raw)) (lineFam hm hm4 ty hPB (u, s, raw)) t
+      ≤ ∑ u : Point F (4 * m), evDef N (lineFam hm hm4 ty hPA (u, s, raw))
+          (lineFam hm hm4 ty hPB (u, s, raw)) (lineTau hm4 ty u s raw)
         + (if lineDir hm4 ty s raw = 0 then (Fintype.card (Point F (4 * m)) : ℝ) else 0) := by
   have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   by_cases hdir : lineDir hm4 ty s raw = 0
   · rw [if_pos hdir]
     have h1 : ∑ u : Point F (4 * m), (Fintype.card F : ℝ)⁻¹ * ∑ t : F,
-        evDef Ψ (lineFam hm hm4 ty hMA (u, s, raw)) (lineFam hm hm4 ty hMB (u, s, raw)) t
+        evDef N (lineFam hm hm4 ty hPA (u, s, raw)) (lineFam hm hm4 ty hPB (u, s, raw)) t
         ≤ ∑ _u : Point F (4 * m), (1 : ℝ) := by
       refine Finset.sum_le_sum fun u _ => ?_
       calc (Fintype.card F : ℝ)⁻¹ * ∑ t : F,
-            evDef Ψ (lineFam hm hm4 ty hMA (u, s, raw)) (lineFam hm hm4 ty hMB (u, s, raw)) t
+            evDef N (lineFam hm hm4 ty hPA (u, s, raw)) (lineFam hm hm4 ty hPB (u, s, raw)) t
           ≤ (Fintype.card F : ℝ)⁻¹ * ∑ _t : F, (1 : ℝ) :=
-            mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun t _ => evDef_le_one Ψ _ _ t)
+            mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun t _ => evDef_le_one N _ _ t)
               (inv_nonneg.mpr (Nat.cast_nonneg _))
         _ = 1 := by
             rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, inv_mul_cancel₀ hq]
-    have h2 : 0 ≤ ∑ u : Point F (4 * m), evDef Ψ (lineFam hm hm4 ty hMA (u, s, raw))
-        (lineFam hm hm4 ty hMB (u, s, raw)) (lineTau hm4 ty u s raw) :=
-      Finset.sum_nonneg fun u _ => evDef_nonneg Ψ hΨ _ _ _
+    have h2 : 0 ≤ ∑ u : Point F (4 * m), evDef N (lineFam hm hm4 ty hPA (u, s, raw))
+        (lineFam hm hm4 ty hPB (u, s, raw)) (lineTau hm4 ty u s raw) :=
+      Finset.sum_nonneg fun u _ => evDef_nonneg N hN _ _ _
     rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one] at h1
     linarith
   · rw [if_neg hdir, add_zero, ← Finset.mul_sum]
@@ -669,21 +707,21 @@ theorem sum_avg_evDef_le (hΨ : star Ψ ⬝ᵥ Ψ = 1) (ty : CL.Ty) (s : F) (raw
       by_contra h
       exact hdir (funext fun j => not_not.mp fun hj => h ⟨j, hj⟩)
     have hLA : ∀ (u : Point F (4 * m)) (t : F),
-        lineFam hm hm4 ty hMA (u + t • lineDir hm4 ty s raw, s, raw)
-          = lineFam hm hm4 ty hMA (u, s, raw) := by
+        lineFam hm hm4 ty hPA (u + t • lineDir hm4 ty s raw, s, raw)
+          = lineFam hm hm4 ty hPA (u, s, raw) := by
       intro u t
       simp only [lineFam, rep_add_smul]
     have hLB : ∀ (u : Point F (4 * m)) (t : F),
-        lineFam hm hm4 ty hMB (u + t • lineDir hm4 ty s raw, s, raw)
-          = lineFam hm hm4 ty hMB (u, s, raw) := by
+        lineFam hm hm4 ty hPB (u + t • lineDir hm4 ty s raw, s, raw)
+          = lineFam hm hm4 ty hPB (u, s, raw) := by
       intro u t
       simp only [lineFam, rep_add_smul]
     have hτ : ∀ (u : Point F (4 * m)) (t : F),
         lineTau hm4 ty (u + t • lineDir hm4 ty s raw) s raw = lineTau hm4 ty u s raw + t :=
       fun u t => lineParam_rep_add_smul hw u t
-    rw [sum_shift_param (lineDir hm4 ty s raw) (fun u => lineFam hm hm4 ty hMA (u, s, raw))
-      (fun u => lineFam hm hm4 ty hMB (u, s, raw)) (fun u => lineTau hm4 ty u s raw) hLA hLB hτ
-      (fun LA LB t => evDef Ψ LA LB t), ← mul_assoc, inv_mul_cancel₀ hq, one_mul]
+    rw [sum_shift_param (lineDir hm4 ty s raw) (fun u => lineFam hm hm4 ty hPA (u, s, raw))
+      (fun u => lineFam hm hm4 ty hPB (u, s, raw)) (fun u => lineTau hm4 ty u s raw) hLA hLB hτ
+      (fun LA LB t => evDef N LA LB t), ← mul_assoc, inv_mul_cancel₀ hq, one_mul]
 
 omit [Algebra (ZMod 2) F] in
 /-- **Degenerate lines are rare**: over the seed and the raw direction, a line type other than
@@ -725,27 +763,28 @@ theorem sum_uniform_amb : ∑ x : Amb F m, uniform (Amb F m) x = 1 := by
   simp only [uniform, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
   exact mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
+omit [Algebra (ZMod 2) F] [NeZero m] [StarModule ℂ 𝒜] [StarModule ℂ ℬ] in
 /-- The disagreement of two families, as the uniform average of the per-sample disagreements. -/
-theorem one_sub_agreeSum_uniform_eq (M : Amb F m → POVM F ((dA × Anc F m) × (F × F)))
-    (N : Amb F m → POVM F ((dB × Anc F m) × (F × F))) :
-    1 - agreeSum (uniform (Amb F m)) Ψ M N
+theorem one_sub_agreeSum_uniform_eq
+    (P : Amb F m → POVMIn F (Matrix (Anc F m) (Anc F m) 𝒜))
+    (Q : Amb F m → POVMIn F (Matrix (Anc F m) (Anc F m) ℬ)) :
+    1 - N.agreeSum (uniform (Amb F m)) P Q
       = ∑ x : Amb F m, uniform (Amb F m) x
-          * (1 - ∑ a : F, bornProb Ψ (((M x).mats a).val) (((N x).mats a).val)) := by
-  rw [agreeSum]
+          * (1 - ∑ a : F, N.bornProb ((P x).op a) ((Q x).op a)) := by
+  rw [BipartiteModel.agreeSum]
   simp only [mul_sub, mul_one, Finset.sum_sub_distrib, sum_uniform_amb]
 
-/-- **The identical-line agreement, through the triangle**: Alice's line read at the sample's point
-agrees with Bob's, because each agrees with the padded point measurements there. -/
-theorem one_sub_agreeSum_lineEval_lineEval_le {ψ : dA × dB → ℂ} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hε : 0 ≤ ε) (hd : 1 ≤ d) (ty : CL.Ty)
-    (hty : ty ≠ .point) :
-    1 - agreeSum (uniform (Amb F m)) (extHat (F := F) (m := m) ψ) (lineEvalFam hm hm4 ty hMA)
-        (lineEvalFam hm hm4 ty hMB)
+/-- **The identical-line agreement, through the triangle**: the first player's line read at the
+sample's point agrees with the second player's, because each agrees with the padded point
+measurements there. -/
+theorem one_sub_agreeSum_lineEval_lineEval_le {M : BipartiteModel 𝒞 𝒜 ℬ} {ε : ℝ}
+    (hM : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (hε : 0 ≤ ε)
+    (hd : 1 ≤ d) (ty : CL.Ty) (hty : ty ≠ .point) :
+    1 - (M.reg (Anc F m)).agreeSum (uniform (Amb F m)) (lineEvalFam hm hm4 ty hPA)
+        (lineEvalFam hm hm4 ty hPB)
       ≤ 11 * ((m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹)
           + deltaQ ε) := by
-  have hΨ : star (extHat (F := F) (m := m) ψ) ⬝ᵥ extHat (F := F) (m := m) ψ = 1 :=
-    extVec2_unit (hatVec_unit hψ) _ _
+  have hΨ : ‖(M.reg (Anc F m)).ψ‖ = 1 := hatVec_unit hM
   have hQ0 : 0 ≤ deltaQ ε := by
     unfold deltaQ
     positivity
@@ -753,12 +792,12 @@ theorem one_sub_agreeSum_lineEval_lineEval_le {ψ : dA × dB → ℂ} {ε : ℝ}
       := by
     unfold deltaPairs deltaPairsD kappaPairs deltaQ
     positivity
-  refine agreeSum_triangle uniform_amb_nonneg sum_uniform_amb hΨ (lineEvalFam hm hm4 ty hMA)
-    (ptFam hMA) (ptFam hMB) (lineEvalFam hm hm4 ty hMB) ?_ ?_ ?_
-  · exact le_trans (one_sub_agreeSum_lineEval_pt_le hm hm4 hψ hfail hMA hMB hd ty hty)
+  refine (M.reg (Anc F m)).agreeSum_triangle uniform_amb_nonneg sum_uniform_amb hΨ
+    (lineEvalFam hm hm4 ty hPA) (ptFam hPA) (ptFam hPB) (lineEvalFam hm hm4 ty hPB) ?_ ?_ ?_
+  · exact le_trans (one_sub_agreeSum_lineEval_pt_le hm hm4 hM hfail hPA hPB hd ty hty)
       (le_add_of_nonneg_right hQ0)
-  · exact le_trans (one_sub_agreeSum_pt_pt_le hm hψ hfail hMA hMB) (le_add_of_nonneg_left hP0)
-  · exact le_trans (one_sub_agreeSum_pt_lineEval_le hm hm4 hψ hfail hMA hMB hd ty hty)
+  · exact le_trans (one_sub_agreeSum_pt_pt_le hm hM hfail hPA hPB) (le_add_of_nonneg_left hP0)
+  · exact le_trans (one_sub_agreeSum_pt_lineEval_le hm hm4 hM hfail hPA hPB hd ty hty)
       (le_add_of_nonneg_right hQ0)
 
 end Lines
@@ -767,94 +806,95 @@ end Lines
 
 section Assembly
 
-variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [Ring ℬ]
+  [StarRing ℬ] [Algebra ℂ ℬ] [StarModule ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ]
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
   {ε : ℝ}
 
 /-- The failure weight of one ordered pair of types: the conditional failure of the padded strategy
-at the questions of the two types, averaged over the ambient sample. -/
-def padW (ψ : dA × dB → ℂ) (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (tA tB : CL.Ty) : ℝ :=
+in the expanded model at the questions of the two types, averaged over the ambient sample. -/
+def padW (M : BipartiteModel 𝒞 𝒜 ℬ) (hPA : ∀ q, IsPVMIn (PA q).op)
+    (hPB : ∀ q, IsPVMIn (PB q).op) (tA tB : CL.Ty) : ℝ :=
   ∑ x : Amb F m, uniform (Amb F m) x
-    * condFail (clGame (d := d) (ldc := 1) hm4) (extHat (F := F) (m := m) ψ)
-        (padStrat hm hm4 hprojA) (padStrat hm hm4 hprojB)
+    * (M.reg (Anc F m)).condFail (clGame (d := d) (ldc := 1) hm4)
+        (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
         (lineQ hm4 tA x.1 x.2.1 x.2.2) (lineQ hm4 tB x.1 x.2.1 x.2.2)
 
-variable {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
-  (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-  (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-  (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+variable {M : BipartiteModel 𝒞 𝒜 ℬ} (hM : ‖M.ψ‖ = 1)
+  (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+  (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op)
 
-include hψ hfail in
-theorem padW_point_point_le : padW hm hm4 ψ hprojA hprojB .point .point ≤ deltaQ ε := by
-  have h := one_sub_agreeSum_pt_pt_le hm hψ hfail hprojA hprojB
+include hM hfail in
+theorem padW_point_point_le : padW hm hm4 M hPA hPB .point .point ≤ deltaQ ε := by
+  have h := one_sub_agreeSum_pt_pt_le hm hM hfail hPA hPB
   rw [one_sub_agreeSum_uniform_eq] at h
   refine le_trans (Finset.sum_le_sum fun x _ =>
     mul_le_mul_of_nonneg_left ?_ (uniform_amb_nonneg x)) h
-  exact condFail_point_point_le hm hm4 hprojA hprojB _ x.1
+  exact condFail_point_point_le hm hm4 hPA hPB _ x.1
 
-include hψ hfail in
-theorem padW_line_point_le (hd : 1 ≤ d) (hlegA : LegalSupport MA) (ty : CL.Ty) (hty : ty ≠ .point) :
-    padW hm hm4 ψ hprojA hprojB ty .point
+include hM hfail in
+theorem padW_line_point_le (hd : 1 ≤ d) (hlegA : LegalSupport PA) (ty : CL.Ty)
+    (hty : ty ≠ .point) :
+    padW hm hm4 M hPA hPB ty .point
       ≤ (m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹) := by
-  have h := one_sub_agreeSum_lineEval_pt_le hm hm4 hψ hfail hprojA hprojB hd ty hty
+  have h := one_sub_agreeSum_lineEval_pt_le hm hm4 hM hfail hPA hPB hd ty hty
   rw [one_sub_agreeSum_uniform_eq] at h
   refine le_trans (Finset.sum_le_sum fun x _ =>
     mul_le_mul_of_nonneg_left ?_ (uniform_amb_nonneg x)) h
-  exact condFail_lineQ_point_le hm hm4 hprojA hprojB _ ty hty hd hlegA x.1 x.2.1 x.2.2
+  exact condFail_lineQ_point_le hm hm4 hPA hPB _ ty hty hd hlegA x.1 x.2.1 x.2.2
 
-include hψ hfail in
-theorem padW_point_line_le (hd : 1 ≤ d) (hlegB : LegalSupport MB) (ty : CL.Ty) (hty : ty ≠ .point) :
-    padW hm hm4 ψ hprojA hprojB .point ty
+include hM hfail in
+theorem padW_point_line_le (hd : 1 ≤ d) (hlegB : LegalSupport PB) (ty : CL.Ty)
+    (hty : ty ≠ .point) :
+    padW hm hm4 M hPA hPB .point ty
       ≤ (m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹) := by
-  have h := one_sub_agreeSum_pt_lineEval_le hm hm4 hψ hfail hprojA hprojB hd ty hty
+  have h := one_sub_agreeSum_pt_lineEval_le hm hm4 hM hfail hPA hPB hd ty hty
   rw [one_sub_agreeSum_uniform_eq] at h
   refine le_trans (Finset.sum_le_sum fun x _ =>
     mul_le_mul_of_nonneg_left ?_ (uniform_amb_nonneg x)) h
-  exact condFail_point_lineQ_le hm hm4 hprojA hprojB _ ty hty hd hlegB x.1 x.2.1 x.2.2
+  exact condFail_point_lineQ_le hm hm4 hPA hPB _ ty hty hd hlegB x.1 x.2.1 x.2.2
 
-include hψ in
-theorem padW_aline_dline_le : padW hm hm4 ψ hprojA hprojB .aline .dline ≤ 0 := by
-  have hΨ : star (extHat (F := F) (m := m) ψ) ⬝ᵥ extHat (F := F) (m := m) ψ = 1 :=
-    extVec2_unit (hatVec_unit hψ) _ _
+include hM in
+theorem padW_aline_dline_le : padW hm hm4 M hPA hPB .aline .dline ≤ 0 := by
+  have hΨ : ‖(M.reg (Anc F m)).ψ‖ = 1 := hatVec_unit hM
   refine le_trans (Finset.sum_le_sum fun x _ => mul_le_mul_of_nonneg_left
-    (condFail_aline_dline_le hm hm4 hprojA hprojB _ hΨ x.1 x.2.1 x.2.2 x.1 x.2.1 x.2.2)
+    (condFail_aline_dline_le hm hm4 hPA hPB _ hΨ x.1 x.2.1 x.2.2 x.1 x.2.1 x.2.2)
     (uniform_amb_nonneg x)) ?_
   simp
 
-include hψ in
-theorem padW_dline_aline_le : padW hm hm4 ψ hprojA hprojB .dline .aline ≤ 0 := by
-  have hΨ : star (extHat (F := F) (m := m) ψ) ⬝ᵥ extHat (F := F) (m := m) ψ = 1 :=
-    extVec2_unit (hatVec_unit hψ) _ _
+include hM in
+theorem padW_dline_aline_le : padW hm hm4 M hPA hPB .dline .aline ≤ 0 := by
+  have hΨ : ‖(M.reg (Anc F m)).ψ‖ = 1 := hatVec_unit hM
   refine le_trans (Finset.sum_le_sum fun x _ => mul_le_mul_of_nonneg_left
-    (condFail_dline_aline_le hm hm4 hprojA hprojB _ hΨ x.1 x.2.1 x.2.2 x.1 x.2.1 x.2.2)
+    (condFail_dline_aline_le hm hm4 hPA hPB _ hΨ x.1 x.2.1 x.2.2 x.1 x.2.1 x.2.2)
     (uniform_amb_nonneg x)) ?_
   simp
 
-include hψ hfail in
+include hM hfail in
 /-- **The identical-line subtests.** -/
 theorem padW_line_line_le (hε : 0 ≤ ε) (hd : 1 ≤ d) (ty : CL.Ty) (hty : ty ≠ .point) :
-    padW hm hm4 ψ hprojA hprojB ty ty
+    padW hm hm4 M hPA hPB ty ty
       ≤ 11 * ((m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹)
             + deltaQ ε)
         + ((m : ℝ) * d + 1) / Fintype.card F + (Fintype.card F : ℝ)⁻¹ := by
-  set Ψ := extHat (F := F) (m := m) ψ with hΨdef
-  have hΨ : star Ψ ⬝ᵥ Ψ = 1 := extVec2_unit (hatVec_unit hψ) _ _
+  set Ψ := M.reg (Anc F m) with hΨdef
+  have hΨ : ‖Ψ.ψ‖ = 1 := hatVec_unit hM
   have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   have hcA : (Fintype.card (Amb F m) : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   have hP0 : (0 : ℝ) ≤ Fintype.card (Point F (4 * m)) := Nat.cast_nonneg _
   have hcAinv : (0 : ℝ) ≤ (Fintype.card (Amb F m) : ℝ)⁻¹ := inv_nonneg.mpr (Nat.cast_nonneg _)
   -- the per-sample bound, by polynomial separation
   have h1 : ∀ x : Amb F m,
-      condFail (clGame (d := d) (ldc := 1) hm4) Ψ (padStrat hm hm4 hprojA) (padStrat hm hm4 hprojB)
+      Ψ.condFail (clGame (d := d) (ldc := 1) hm4) (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
           (lineQ hm4 ty x.1 x.2.1 x.2.2) (lineQ hm4 ty x.1 x.2.1 x.2.2)
         ≤ (Fintype.card F : ℝ)⁻¹ * ∑ t : F,
-            evDef Ψ (lineFam hm hm4 ty hprojA x) (lineFam hm hm4 ty hprojB x) t
+            evDef Ψ (lineFam hm hm4 ty hPA x) (lineFam hm hm4 ty hPB x) t
           + ((m : ℝ) * d + 1) / Fintype.card F := by
     intro x
-    refine le_trans (condFail_lineQ_lineQ_le hm hm4 hprojA hprojB Ψ ty hty x.1 x.2.1 x.2.2) ?_
-    have h := one_sub_sum_bornProb_le_avg_eval hΨ (lineFam hm hm4 ty hprojA x)
-      (lineFam hm hm4 ty hprojB x)
+    refine le_trans (condFail_lineQ_lineQ_le hm hm4 hPA hPB Ψ ty hty x.1 x.2.1 x.2.2) ?_
+    have h := one_sub_sum_bornProb_le_avg_eval hΨ (lineFam hm hm4 ty hPA x)
+      (lineFam hm hm4 ty hPB x)
     push_cast at h
     exact h
   -- the degenerate lines
@@ -869,18 +909,18 @@ theorem padW_line_line_le (hε : 0 ≤ ε) (hd : 1 ≤ d) (ty : CL.Ty) (hty : ty
     rw [← hc]
     exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left (sum_deg_le hm4 ty hty) hP0)
       (inv_nonneg.mpr (Nat.cast_nonneg _))
-  calc padW hm hm4 ψ hprojA hprojB ty ty
+  calc padW hm hm4 M hPA hPB ty ty
       ≤ ∑ x : Amb F m, uniform (Amb F m) x * ((Fintype.card F : ℝ)⁻¹ * ∑ t : F,
-            evDef Ψ (lineFam hm hm4 ty hprojA x) (lineFam hm hm4 ty hprojB x) t
+            evDef Ψ (lineFam hm hm4 ty hPA x) (lineFam hm hm4 ty hPB x) t
           + ((m : ℝ) * d + 1) / Fintype.card F) :=
         Finset.sum_le_sum fun x _ => mul_le_mul_of_nonneg_left (h1 x) (uniform_amb_nonneg x)
     _ = (Fintype.card (Amb F m) : ℝ)⁻¹ * ∑ x : Amb F m, ((Fintype.card F : ℝ)⁻¹ * ∑ t : F,
-            evDef Ψ (lineFam hm hm4 ty hprojA x) (lineFam hm hm4 ty hprojB x) t)
+            evDef Ψ (lineFam hm hm4 ty hPA x) (lineFam hm hm4 ty hPB x) t)
           + ((m : ℝ) * d + 1) / Fintype.card F := by
         simp only [uniform, mul_add, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const,
           Finset.card_univ, nsmul_eq_mul, ← mul_assoc, inv_mul_cancel₀ hcA, one_mul]
     _ ≤ (Fintype.card (Amb F m) : ℝ)⁻¹ * (∑ x : Amb F m,
-            evDef Ψ (lineFam hm hm4 ty hprojA x) (lineFam hm hm4 ty hprojB x)
+            evDef Ψ (lineFam hm hm4 ty hPA x) (lineFam hm hm4 ty hPB x)
               (lineTau hm4 ty x.1 x.2.1 x.2.2)
           + (Fintype.card (Point F (4 * m)) : ℝ)
             * ∑ s : F, ∑ raw : Point F (4 * m), (if lineDir hm4 ty s raw = 0 then (1 : ℝ) else 0))
@@ -893,22 +933,22 @@ theorem padW_line_line_le (hε : 0 ≤ ε) (hd : 1 ≤ d) (ty : CL.Ty) (hty : ty
         rw [← Finset.sum_add_distrib]
         refine Finset.sum_le_sum fun raw _ => ?_
         rw [mul_ite, mul_one, mul_zero]
-        exact sum_avg_evDef_le hm hm4 hprojA hprojB Ψ hΨ ty s raw
+        exact sum_avg_evDef_le hm hm4 hPA hPB Ψ hΨ ty s raw
     _ ≤ (Fintype.card (Amb F m) : ℝ)⁻¹ * ∑ x : Amb F m,
-            evDef Ψ (lineFam hm hm4 ty hprojA x) (lineFam hm hm4 ty hprojB x)
+            evDef Ψ (lineFam hm hm4 ty hPA x) (lineFam hm hm4 ty hPB x)
               (lineTau hm4 ty x.1 x.2.1 x.2.2)
           + (Fintype.card F : ℝ)⁻¹ + ((m : ℝ) * d + 1) / Fintype.card F := by
         rw [mul_add]
         linarith
-    _ = (1 - agreeSum (uniform (Amb F m)) Ψ (lineEvalFam hm hm4 ty hprojA)
-          (lineEvalFam hm hm4 ty hprojB))
+    _ = (1 - Ψ.agreeSum (uniform (Amb F m)) (lineEvalFam hm hm4 ty hPA)
+          (lineEvalFam hm hm4 ty hPB))
           + (Fintype.card F : ℝ)⁻¹ + ((m : ℝ) * d + 1) / Fintype.card F := by
         rw [one_sub_agreeSum_uniform_eq]
         simp only [uniform, ← Finset.mul_sum, evDef_lineTau]
     _ ≤ 11 * ((m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹)
             + deltaQ ε)
         + ((m : ℝ) * d + 1) / Fintype.card F + (Fintype.card F : ℝ)⁻¹ := by
-        have := one_sub_agreeSum_lineEval_lineEval_le hm hm4 hprojA hprojB hψ hfail hε hd ty hty
+        have := one_sub_agreeSum_lineEval_lineEval_le hm hm4 hPA hPB hM hfail hε hd ty hty
         linarith
 
 omit [DecidableEq F] [Algebra (ZMod 2) F] in
@@ -933,10 +973,10 @@ theorem sum_ty (f : CL.Ty → ℝ) : ∑ t, f t = f .point + f .aline + f .dline
 /-- **The failure probability of the padded strategy is the average over the nine ordered type
 pairs of their failure weights.** -/
 theorem one_sub_povmValue_padStrat_eq :
-    1 - povmValue (clGame (d := d) (ldc := 1) hm4) (extHat (F := F) (m := m) ψ)
-        (padStrat hm hm4 hprojA) (padStrat hm hm4 hprojB)
-      = (9 : ℝ)⁻¹ * ∑ tA : CL.Ty, ∑ tB : CL.Ty, padW hm hm4 ψ hprojA hprojB tA tB := by
-  rw [one_sub_povmValue_clGame hm4, sum_sample_eq, card_sample]
+    1 - (M.reg (Anc F m)).povmValue (clGame (d := d) (ldc := 1) hm4)
+        (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
+      = (9 : ℝ)⁻¹ * ∑ tA : CL.Ty, ∑ tB : CL.Ty, padW hm hm4 M hPA hPB tA tB := by
+  rw [(M.reg (Anc F m)).one_sub_povmValue_clGame hm4, sum_sample_eq, card_sample]
   simp only [Sample.question_fst_eq_lineQ, Sample.question_snd_eq_lineQ, padW, uniform,
     Finset.mul_sum]
   push_cast
@@ -944,26 +984,33 @@ theorem one_sub_povmValue_padStrat_eq :
     Finset.sum_congr rfl fun x _ => ?_
   rw [mul_inv, mul_assoc]
 
-include hψ hfail in
+include hM hfail in
 /-- **`lem:qld-global-success`: the padded strategy wins the seeded low individual degree test at
-`(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`**, with
-`δ_combine = m² δ_P(ε, md/q + 1/q)`. -/
-theorem padStrat_value (hε : 0 ≤ ε) (hlegA : LegalSupport MA) (hlegB : LegalSupport MB)
+`(q, 4m, d, 1)` with probability at least `1 - δ_GS`**, in the expanded model `M.reg (Anc F m)`,
+with `δ_GS = 5 δ_combine + 4 δ_Q + (md + 1)/q` and `δ_combine = m² δ_P(ε, md/q + 1/q)`: the
+stage-4a interface. For a projective strategy `S : M.ProjStrat (qldGame hm)` the hypotheses are
+`S.ψ_unit`, `hfail : 1 - S.value ≤ ε`, `S.projA`, `S.projB`. -/
+theorem padStrat_value (hε : 0 ≤ ε) (hlegA : LegalSupport PA) (hlegB : LegalSupport PB)
     (hd : 1 ≤ d) :
-    1 - povmValue (clGame (d := d) (ldc := 1) hm4) (extHat (F := F) (m := m) ψ)
-        (padStrat hm hm4 hprojA) (padStrat hm hm4 hprojB)
+    1 - deltaGS (Fintype.card F) m d ε
+      ≤ (M.reg (Anc F m)).povmValue (clGame (d := d) (ldc := 1) hm4)
+          (padStrat hm hm4 hPA) (padStrat hm hm4 hPB) := by
+  suffices h : 1 - (M.reg (Anc F m)).povmValue (clGame (d := d) (ldc := 1) hm4)
+        (padStrat hm hm4 hPA) (padStrat hm hm4 hPB)
       ≤ 5 * ((m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹))
-        + 4 * deltaQ ε + ((m : ℝ) * d + 1) / Fintype.card F := by
-  rw [one_sub_povmValue_padStrat_eq hm hm4 hprojA hprojB, sum_ty, sum_ty, sum_ty, sum_ty]
-  have hpp := padW_point_point_le hm hm4 hψ hfail hprojA hprojB
-  have hap := padW_line_point_le hm hm4 hψ hfail hprojA hprojB hd hlegA .aline (by decide)
-  have hdp := padW_line_point_le hm hm4 hψ hfail hprojA hprojB hd hlegA .dline (by decide)
-  have hpa := padW_point_line_le hm hm4 hψ hfail hprojA hprojB hd hlegB .aline (by decide)
-  have hpd := padW_point_line_le hm hm4 hψ hfail hprojA hprojB hd hlegB .dline (by decide)
-  have haa := padW_line_line_le hm hm4 hψ hfail hprojA hprojB hε hd .aline (by decide)
-  have hdd := padW_line_line_le hm hm4 hψ hfail hprojA hprojB hε hd .dline (by decide)
-  have had := padW_aline_dline_le hm hm4 hψ hprojA hprojB
-  have hda := padW_dline_aline_le hm hm4 hψ hprojA hprojB
+        + 4 * deltaQ ε + ((m : ℝ) * d + 1) / Fintype.card F by
+    unfold deltaGS
+    linarith
+  rw [one_sub_povmValue_padStrat_eq hm hm4 hPA hPB, sum_ty, sum_ty, sum_ty, sum_ty]
+  have hpp := padW_point_point_le hm hm4 hM hfail hPA hPB
+  have hap := padW_line_point_le hm hm4 hM hfail hPA hPB hd hlegA .aline (by decide)
+  have hdp := padW_line_point_le hm hm4 hM hfail hPA hPB hd hlegA .dline (by decide)
+  have hpa := padW_point_line_le hm hm4 hM hfail hPA hPB hd hlegB .aline (by decide)
+  have hpd := padW_point_line_le hm hm4 hM hfail hPA hPB hd hlegB .dline (by decide)
+  have haa := padW_line_line_le hm hm4 hM hfail hPA hPB hε hd .aline (by decide)
+  have hdd := padW_line_line_le hm hm4 hM hfail hPA hPB hε hd .dline (by decide)
+  have had := padW_aline_dline_le hm hm4 hM hPA hPB
+  have hda := padW_dline_aline_le hm hm4 hM hPA hPB
   have hQ0 : 0 ≤ deltaQ ε := by
     unfold deltaQ
     positivity

@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 public import MIPRE.Background.Introspection.CanonicalComplete
 public import MIPRE.Background.Introspection.CompiledSoundness
+public import MIPRE.Background.QLD.Soundness
 
 @[expose] public section
 

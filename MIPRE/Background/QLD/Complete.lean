@@ -6,7 +6,6 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.QLD.Separate
 public import MIPRE.Background.QLD.Simul
-public import MIPRE.Foundations.RegisterReindex
 public import MIPRE.Background.LIDT.BlockPoly
 
 @[expose] public section
@@ -19,8 +18,8 @@ Stage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projecti
 with outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are
 consistent with the opposite party's expanded point measurements. This file builds it from a
 global measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded
-point) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and
-two projective families `X x`, `Z z` on Bob's.
+point) and the estimates of stage 4b, abstractly: for a projective `G` of the first player and
+two projective families `X x`, `Z z` of the second.
 
 ## The completion
 
@@ -41,70 +40,22 @@ diagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes car
 `δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`
 (`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form
 (`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.
-The register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the
-instance itself are in `PaddedLIDT.lean`.
+The instance of `SimulPair` is in `PaddedLIDT.lean`.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The state is that of a
+bipartite model `K` (the model in which the global measurements live), the global measurement is
+a POVM `G` in the first player's algebra with `IsPVMIn G.op`, the families `X x`, `Z z` are
+projective families of the second player's algebra, a Born probability is `K.bornProb`, and a
+squared norm `K.snorm (K.πA (G.op g) * K.πB B) ^ 2`. The completed pair measurement is the
+coarse-graining `G.map (pairOf hd)` in the same algebra, so it needs no transport to the shape of
+`SimulPair`: the matrix associativity reindexing of the doubly extended registers
+(`isPVM_reindex`, `isPVM_reindex_povm`, `reindex_aOp_aOp`, `POVM.aOp_aOp_reindex`) and the
+matrix projective-measurement packaging (`ProjectiveMeasurement.isPVM_M`) are gone.
 -/
 
 noncomputable section
-
-namespace MIPRE
-
-open Finset Matrix
-open scoped Kronecker ComplexOrder MatrixOrder
-
-/-! ## Reindexing a projective family, and the identity extension along associativity -/
-
-section Reindex
-
-variable {d d' Λ : Type*} [Fintype d] [DecidableEq d] [Fintype d'] [DecidableEq d'] [Fintype Λ]
-
-/-- A reindexed projective family is projective. -/
-theorem isPVM_reindex (e : d ≃ d') {P : Λ → Matrix d d ℂ} (h : IsPVM P) :
-    IsPVM fun a => Matrix.reindex e e (P a) where
-  isSelfAdjoint a := by rw [Matrix.conjTranspose_reindex, h.isSelfAdjoint]
-  idem a := by
-    rw [← reindexStarAlgEquiv_apply, ← map_mul, h.idem]
-  sum_eq_one := by
-    simp only [← reindexStarAlgEquiv_apply]
-    rw [← map_sum, h.sum_eq_one, map_one]
-
-/-- A reindexed projective POVM is projective. -/
-theorem isPVM_reindex_povm {A : Type*} [Fintype A] (e : d ≃ d') {M : POVM A d}
-    (h : IsPVM fun a => ((M.mats a).val)) : IsPVM fun a => (((M.reindex e).mats a).val) := by
-  simp only [POVM.reindex_mats]
-  exact isPVM_reindex e h
-
-variable {E E' : Type*} [Fintype E] [DecidableEq E] [Fintype E'] [DecidableEq E']
-
-omit [Fintype d] [DecidableEq d] [Fintype E] [Fintype E'] in
-/-- Extending twice by the identity and reassociating is extending once by the product ancilla. -/
-theorem reindex_aOp_aOp (X : Matrix d d ℂ) :
-    Matrix.reindex (Equiv.prodAssoc d E E') (Equiv.prodAssoc d E E')
-        (aOp (aOp X : Matrix (d × E) (d × E) ℂ) : Matrix ((d × E) × E') ((d × E) × E') ℂ)
-      = (aOp X : Matrix (d × (E × E')) (d × (E × E')) ℂ) := by
-  simp only [aOp]
-  rw [Matrix.kronecker_assoc, Matrix.one_kronecker_one]
-
-/-- The POVM form of `reindex_aOp_aOp`. -/
-theorem POVM.aOp_aOp_reindex {A : Type*} [Fintype A] (M : POVM A d) :
-    ((M.aOp (E := E)).aOp (E := E')).reindex (Equiv.prodAssoc d E E') = M.aOp (E := E × E') :=
-  POVM.ext' fun a => by
-    rw [POVM.reindex_mats, POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats, reindex_aOp_aOp]
-
-end Reindex
-
-section PVM
-
-variable {R A : Type*} [Fintype R] [DecidableEq R] [Fintype A]
-
-/-- A projective measurement's family is a projective family. -/
-theorem ProjectiveMeasurement.isPVM_M (G : ProjectiveMeasurement Unit A (Matrix R R ℂ)) :
-    IsPVM fun a => G.M () a :=
-  ⟨fun a => G.selfAdjoint () a, fun a => G.projective () a, G.normalized ()⟩
-
-end PVM
-
-end MIPRE
 
 namespace MIPRE.QLD
 
@@ -152,7 +103,7 @@ theorem not_depOutside_gA_of_isGood (hd : 1 ≤ d)
       · by_cases hkb : k = bIdx m
         · exact hek (by rw [hkb]; exact hcond.1 _ (mem_abSet.mpr (Or.inr rfl)))
         · have := hrest k hk hka
-          rw [patch, if_neg (fun h => (mem_abSet.mp h).elim hka hkb)] at this
+          rw [patch, ite_eq_right (fun h => (mem_abSet.mp h).elim hka hkb)] at this
           exact hek this
     · rw [patch_abSet_aIdx, patAB_aIdx] at h0
       exact absurd h0 (by simp [oneD])
@@ -174,7 +125,7 @@ theorem not_depOutside_gB_of_isGood (hd : 1 ≤ d)
       · by_cases hkb : k = bIdx m
         · exact hek (by rw [hkb]; exact hcond.1 _ (mem_abSet.mpr (Or.inr rfl)))
         · have := hrest k hk hkb
-          rw [patch, if_neg (fun h => (mem_abSet.mp h).elim hka hkb)] at this
+          rw [patch, ite_eq_right (fun h => (mem_abSet.mp h).elim hka hkb)] at this
           exact hek this
   · exact he rfl
 
@@ -209,43 +160,34 @@ def pairOf (hd : 1 ≤ d) (g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)) : P
 
 omit [Fintype F] in
 theorem pairOf_of_isGood (hd : 1 ≤ d) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
-    (hg : IsGood g) : pairOf hd g = (gX hd g, gZ hd g) := if_pos hg
+    (hg : IsGood g) : pairOf hd g = (gX hd g, gZ hd g) := ite_eq_left hg
 
-variable {R : Type*} [Fintype R] [DecidableEq R]
+variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
 
 /-- **The completed pair measurement**: the global measurement coarse-grained by the relabelling.
 The non-good outcomes are absorbed into the pair `(0, 0)`: the paper's complement `R`, added to a
 fixed legal outcome. -/
-def pairMeas (hd : 1 ≤ d)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix R R ℂ)) : POVM (PolyPair F m d) R :=
-  (G.toPOVM ()).map (pairOf hd)
+def pairMeas (hd : 1 ≤ d) (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) R) :
+    POVMIn (PolyPair F m d) R :=
+  G.map (pairOf hd)
 
-theorem pairMeas_mats (hd : 1 ≤ d)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix R R ℂ)) (p : PolyPair F m d) :
-    (((pairMeas hd G).mats p).val)
-      = ∑ g ∈ univ.filter fun g => pairOf hd g = p, G.M () g :=
-  POVM.map_mats _ _ _
+theorem pairMeas_mats (hd : 1 ≤ d) (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) R)
+    (p : PolyPair F m d) :
+    (pairMeas hd G).op p = ∑ g ∈ univ.filter fun g => pairOf hd g = p, G.op g :=
+  POVMIn.map_op _ _ _
 
 /-- **The completed pair measurement is projective.** -/
 theorem isPVM_pairMeas (hd : 1 ≤ d)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix R R ℂ)) : IsPVM fun p => (((pairMeas hd G).mats p).val) := by
-  have hfun : (fun p => (((pairMeas hd G).mats p).val))
-      = fun p => ∑ g ∈ univ.filter fun g => pairOf hd g = p, G.M () g :=
-    funext fun p => pairMeas_mats hd G p
-  rw [hfun]
-  exact G.isPVM_M.coarse _
+    {G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) R} (hG : IsPVMIn G.op) :
+    IsPVMIn (pairMeas hd G).op :=
+  POVMIn.isPVMIn_map hG _
 
 /-- The evaluated marginal of the completed measurement is the global measurement coarse-grained
 by the evaluated component of the pair. -/
 theorem evalMarg_pairMeas (hd : 1 ≤ d)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix R R ℂ)) (W : Bas) (u : Point F m) :
-    evalMarg (pairMeas hd G) W u
-      = (G.toPOVM ()).map fun g => (PolyPair.proj W (pairOf hd g)).eval u := by
-  rw [evalMarg, pairMeas, POVM.map_map]
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) R) (W : Bas) (u : Point F m) :
+    evalMarg (pairMeas hd G) W u = G.map fun g => (PolyPair.proj W (pairOf hd g)).eval u := by
+  rw [evalMarg, pairMeas, POVMIn.map_map]
 
 end Pairs
 
@@ -253,30 +195,31 @@ end Pairs
 
 section Coarse
 
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ} {RA RB : Type*} [Fintype RA]
-  [DecidableEq RA] [Fintype RB] [DecidableEq RB]
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ}
+  {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ]
 
 omit [Field F] in
-/-- **The inconsistency of a coarse-graining of a projective measurement**, against a family of
+/-- **The inconsistency of a coarse-graining of a global measurement**, against a family of
 POVMs indexed by the same questions: one minus the average agreement, outcome by outcome of the
 original measurement. `inconsistency_evalPOVM_eq` is the case of evaluation at the point. -/
 theorem inconsistency_map_eq {Q : Type*} [Fintype Q] (μ : Q → ℝ) (hμ : ∑ q, μ q = 1)
-    {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := n) (d := d)) (Matrix RA RA ℂ))
-    (f : Q → LowIndDegPoly (F := F) (m := n) (d := d) → F) (P : Q → POVM F RB) :
-    inconsistency μ Φ (fun q => (G.toPOVM ()).map (f q)) P
-      = 1 - ∑ q, μ q * ∑ g, bornProb Φ (G.M () g) (((P q).mats (f q g)).val) := by
+    {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := n) (d := d)) 𝒜)
+    (f : Q → LowIndDegPoly (F := F) (m := n) (d := d) → F) (P : Q → POVMIn F ℬ) :
+    K.inconsistency μ (fun q => G.map (f q)) P
+      = 1 - ∑ q, μ q * ∑ g, K.bornProb (G.op g) ((P q).op (f q g)) := by
   have hfib : ∀ q, (∑ a : F, ∑ b : F, if a = b then 0 else
-      bornProb Φ ((((G.toPOVM ()).map (f q)).mats a).val) (((P q).mats b).val))
-      = ∑ g, ∑ b : F, if f q g = b then 0 else
-          bornProb Φ (G.M () g) (((P q).mats b).val) := by
+      K.bornProb ((G.map (f q)).op a) ((P q).op b))
+      = ∑ g, ∑ b : F, if f q g = b then 0 else K.bornProb (G.op g) ((P q).op b) := by
     intro q
     have h1 : ∀ a b : F, (if a = b then (0 : ℝ) else
-        bornProb Φ ((((G.toPOVM ()).map (f q)).mats a).val) (((P q).mats b).val))
+        K.bornProb ((G.map (f q)).op a) ((P q).op b))
         = ∑ g ∈ univ.filter fun g : LowIndDegPoly (F := F) (m := n) (d := d) => f q g = a,
-            if a = b then 0 else bornProb Φ (G.M () g) (((P q).mats b).val) := by
+            if a = b then 0 else K.bornProb (G.op g) ((P q).op b) := by
       intro a b
-      rw [POVM.map_mats, bornProb_sum_left]
+      rw [POVMIn.map_op, K.bornProb_sum_left]
       split_ifs
       · simp
       · rfl
@@ -287,13 +230,13 @@ theorem inconsistency_map_eq {Q : Type*} [Fintype Q] (μ : Q → ℝ) (hμ : ∑
     refine Finset.sum_congr rfl fun g hg => ?_
     rw [(mem_filter.mp hg).2]
   have hsum : ∀ q, (∑ g, ∑ b : F, if f q g = b then 0 else
-      bornProb Φ (G.M () g) (((P q).mats b).val))
-      = 1 - ∑ g, bornProb Φ (G.M () g) (((P q).mats (f q g)).val) := by
+      K.bornProb (G.op g) ((P q).op b))
+      = 1 - ∑ g, K.bornProb (G.op g) ((P q).op (f q g)) := by
     intro q
-    simp_rw [sum_ite_eq_zero_sub, ← bornProb_sum_right, POVM.sum_val]
-    rw [Finset.sum_sub_distrib, ← bornProb_sum_left, G.normalized, bornProb_one_one hΦ]
-  unfold inconsistency
-  simp only [bornProb_def, hfib, hsum, mul_sub, mul_one, Finset.sum_sub_distrib, hμ]
+    simp_rw [sum_ite_eq_zero_sub, ← K.bornProb_sum_right, (P q).sum_op]
+    rw [Finset.sum_sub_distrib, ← K.bornProb_sum_left, G.sum_op, K.bornProb_one_one hK]
+  unfold BipartiteModel.inconsistency
+  simp only [hfib, hsum, mul_sub, mul_one, Finset.sum_sub_distrib, hμ]
 
 end Coarse
 
@@ -331,11 +274,12 @@ end BlockMarg
 
 section Marginals
 
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}
-  [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]
+  {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
-omit [Field F] [Fintype F] [DecidableEq F] [NeZero m] [Fintype RA] [DecidableEq RA] [Fintype RB]
-  [DecidableEq RB] in
+omit [Field F] [Fintype F] [DecidableEq F] [NeZero m] in
 /-- `a ≤ c + b` for nonnegative reals gives `a² - 2ab ≤ c²`. -/
 theorem sq_sub_two_mul_le_sq {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (h : a ≤ c + b) :
     a ^ 2 - 2 * (a * b) ≤ c ^ 2 := by
@@ -346,223 +290,210 @@ theorem sq_sub_two_mul_le_sq {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0
     have h2 : 0 ≤ a - b := by linarith
     nlinarith [mul_le_mul h1 h1 h2 hc, sq_nonneg b]
 
-omit [DecidableEq F] [NeZero m] in
+omit [DecidableEq F] [NeZero m] [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] in
 /-- **The products estimate bounds the weight through `B` from below**: from
 `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality and Cauchy--Schwarz give
 `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`. -/
-theorem one_sub_two_sqrt_le_sum_snorm_sq {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (B : Point F (4 * m) → F → Matrix RB RB ℂ) {Δ : ℝ}
-    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))) ^ 2 ≤ Δ) :
-    1 - 2 * Real.sqrt Δ ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2 := by
-  have hsa : ∀ g, (G.M () g)ᴴ = G.M () g := fun g => G.selfAdjoint () g
-  have hidem : ∀ g, G.M () g * G.M () g = G.M () g := fun g => G.projective () g
+theorem one_sub_two_sqrt_le_sum_snorm_sq {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (B : Point F (4 * m) → F → ℬ) {Δ : ℝ}
+    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2 ≤ Δ) :
+    1 - 2 * Real.sqrt Δ ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (B u (g.eval u))) ^ 2 := by
   have hterm : ∀ (u : Point F (4 * m)) g,
-      snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1) ^ 2
-        - 2 * (snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1)
-          * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))))
-      ≤ snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2 := by
+      K.snorm (K.πA (G.op g) * K.πB 1) ^ 2
+        - 2 * (K.snorm (K.πA (G.op g) * K.πB 1)
+          * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))))
+      ≤ K.snorm (K.πA (G.op g) * K.πB (B u (g.eval u))) ^ 2 := by
     intro u g
-    refine sq_sub_two_mul_le_sq (snorm_nonneg _ _) (snorm_nonneg _ _) (snorm_nonneg _ _) ?_
-    have h := snorm_add_le Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u)))
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u)))
-    rwa [← Matrix.mul_add, ← bOp_add,
-      show B u (g.eval u) + (1 - B u (g.eval u)) = (1 : Matrix RB RB ℂ) by abel] at h
-  have hone : ∀ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1) ^ 2
-      = bornProb Φ (G.M () g) 1 := fun g => by
-    rw [snorm_sq_aOp_mul_bOp Φ (hsa g) (hidem g), Matrix.conjTranspose_one, Matrix.one_mul]
+    refine sq_sub_two_mul_le_sq (K.snorm_nonneg _) (K.snorm_nonneg _) (K.snorm_nonneg _) ?_
+    have h := K.snorm_add_le (K.πA (G.op g) * K.πB (B u (g.eval u)))
+      (K.πA (G.op g) * K.πB (1 - B u (g.eval u)))
+    rwa [← mul_add, ← map_add,
+      show B u (g.eval u) + (1 - B u (g.eval u)) = (1 : ℬ) by abel] at h
+  have hone : ∀ g, K.snorm (K.πA (G.op g) * K.πB 1) ^ 2 = K.bornProb (G.op g) 1 := fun g => by
+    rw [K.snorm_sq_πA_mul_πB (hG.isStarProjection g), star_one, one_mul]
   have hsum1 : ∑ u, uniform (Point F (4 * m)) u
-      * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1) ^ 2 = 1 := by
-    simp_rw [hone, sum_bornProb_M_one hΦ G, mul_one]
+      * ∑ g, K.snorm (K.πA (G.op g) * K.πB 1) ^ 2 = 1 := by
+    simp_rw [hone, sum_bornProb_M_one hK G, mul_one]
     exact sum_uniform_eq_one _
   have hCS : ∑ u, uniform (Point F (4 * m)) u
-      * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1)
-        * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u)))
+      * ∑ g, K.snorm (K.πA (G.op g) * K.πB 1)
+        * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u)))
       ≤ Real.sqrt Δ := by
     have h := sum_weighted_mul_le_sqrt
       (fun p : Point F (4 * m) × LowIndDegPoly (F := F) (m := 4 * m) (d := d) =>
         uniform (Point F (4 * m)) p.1)
-      (fun p => snorm Φ ((aOp (G.M () p.2) : Matrix (RA × RB) _ ℂ) * bOp 1))
-      (fun p => snorm Φ ((aOp (G.M () p.2) : Matrix (RA × RB) _ ℂ)
-        * bOp (1 - B p.1 (p.2.eval p.1))))
+      (fun p => K.snorm (K.πA (G.op p.2) * K.πB 1))
+      (fun p => K.snorm (K.πA (G.op p.2) * K.πB (1 - B p.1 (p.2.eval p.1))))
       (fun p => uniform_nonneg _ _)
     rw [Fintype.sum_prod_type, Fintype.sum_prod_type, Fintype.sum_prod_type] at h
     simp only [← Finset.mul_sum] at h
     rw [hsum1, Real.sqrt_one, one_mul] at h
     exact h.trans (Real.sqrt_le_sqrt hprod)
   have hu : ∀ u : Point F (4 * m),
-      (∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1) ^ 2)
-        - 2 * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1)
-          * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u)))
-      ≤ ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2 := by
+      (∑ g, K.snorm (K.πA (G.op g) * K.πB 1) ^ 2)
+        - 2 * ∑ g, K.snorm (K.πA (G.op g) * K.πB 1)
+          * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u)))
+      ≤ ∑ g, K.snorm (K.πA (G.op g) * K.πB (B u (g.eval u))) ^ 2 := by
     intro u
     have := Finset.sum_le_sum fun g (_ : g ∈ univ) => hterm u g
     rwa [Finset.sum_sub_distrib, ← Finset.mul_sum] at this
   have hfinal := Finset.sum_le_sum fun u (_ : u ∈ univ) =>
     mul_le_mul_of_nonneg_left (hu u) (uniform_nonneg (Point F (4 * m)) u)
   have hsplit : ∑ u, uniform (Point F (4 * m)) u
-      * ((∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1) ^ 2)
-        - 2 * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1)
-          * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))))
+      * ((∑ g, K.snorm (K.πA (G.op g) * K.πB 1) ^ 2)
+        - 2 * ∑ g, K.snorm (K.πA (G.op g) * K.πB 1)
+          * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))))
       = (∑ u, uniform (Point F (4 * m)) u
-          * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1) ^ 2)
+          * ∑ g, K.snorm (K.πA (G.op g) * K.πB 1) ^ 2)
         - 2 * ∑ u, uniform (Point F (4 * m)) u
-          * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1)
-            * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))) := by
+          * ∑ g, K.snorm (K.πA (G.op g) * K.πB 1)
+            * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) := by
     rw [Finset.mul_sum univ (fun u => uniform (Point F (4 * m)) u
-      * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp 1)
-        * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u)))) 2,
+      * ∑ g, K.snorm (K.πA (G.op g) * K.πB 1)
+        * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u)))) 2,
       ← Finset.sum_sub_distrib]
     exact Finset.sum_congr rfl fun u _ => by ring
   rw [hsplit, hsum1] at hfinal
   linarith
 
-variable {X Z : Point F m → F → Matrix RB RB ℂ}
+variable {X Z : Point F m → F → ℬ}
 
-/-- **The `Z` marginal of the completed measurement tracks Bob's `Z` point measurement**: from
-the products estimate for the order `X_a Z_b` and the weight `δ_G` of the non-good outcomes,
-`E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`, where `g_Z` is the second component of
-the relabelled outcome. -/
-theorem marg_Z_ge (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {Δ δG : ℝ}
-    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2
-      ≤ Δ)
-    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 ≤ δG) :
+/-- **The `Z` marginal of the completed measurement tracks the second player's `Z` point
+measurement**: from the products estimate for the order `X_a Z_b` and the weight `δ_G` of the
+non-good outcomes, `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`, where `g_Z` is the
+second component of the relabelled outcome. -/
+theorem marg_Z_ge (hd : 1 ≤ d) {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z)) {Δ δG : ℝ}
+    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2 ≤ Δ)
+    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1 ≤ δG) :
     1 - 2 * Real.sqrt Δ - 2 / Fintype.card F - δG
       ≤ ∑ z, uniform (Point F m) z
-          * ∑ g, bornProb Φ (G.M () g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z)) := by
-  have hsa : ∀ g, (G.M () g)ᴴ = G.M () g := fun g => G.selfAdjoint () g
-  have hidem : ∀ g, G.M () g * G.M () g = G.M () g := fun g => G.projective () g
-  have hW0 : ∀ g, 0 ≤ bornProb Φ (G.M () g) 1 := fun g =>
-    bornProb_nonneg Φ (posSemidef_of_proj (hsa g) (hidem g)) Matrix.PosSemidef.one
+          * ∑ g, K.bornProb (G.op g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z)) := by
+  have hW0 : ∀ g, 0 ≤ K.bornProb (G.op g) 1 := fun g =>
+    K.bornProb_nonneg (hG.nonneg g) zero_le_one
   have hq0 : (0 : ℝ) ≤ 2 / Fintype.card F := by positivity
-  have h1 := one_sub_two_sqrt_le_sum_snorm_sq hΦ G (ordComb ordXZ X Z) hprod
-  have hswap : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2
-      = ∑ g, ∑ u, uniform (Point F (4 * m)) u * snorm Φ
-        ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2 := by
+  have h1 := one_sub_two_sqrt_le_sum_snorm_sq hK G hG (ordComb ordXZ X Z) hprod
+  have hswap : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (ordComb ordXZ X Z u (g.eval u))) ^ 2
+      = ∑ g, ∑ u, uniform (Point F (4 * m)) u * K.snorm
+        (K.πA (G.op g) * K.πB (ordComb ordXZ X Z u (g.eval u))) ^ 2 := by
     simp_rw [Finset.mul_sum]
     exact Finset.sum_comm
-  have hg : ∀ g, ∑ u, uniform (Point F (4 * m)) u * snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2
-      ≤ 2 / Fintype.card F * bornProb Φ (G.M () g) 1
+  have hg : ∀ g, ∑ u, uniform (Point F (4 * m)) u * K.snorm
+      (K.πA (G.op g) * K.πB (ordComb ordXZ X Z u (g.eval u))) ^ 2
+      ≤ 2 / Fintype.card F * K.bornProb (G.op g) 1
         + ∑ z, uniform (Point F m) z
-          * bornProb Φ (G.M () g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z))
-        + (if IsGood g then (0 : ℝ) else bornProb Φ (G.M () g) 1) := by
+          * K.bornProb (G.op g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z))
+        + (if IsGood g then (0 : ℝ) else K.bornProb (G.op g) 1) := by
     intro g
     have hM0 : 0 ≤ ∑ z, uniform (Point F m) z
-        * bornProb Φ (G.M () g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z)) :=
+        * K.bornProb (G.op g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z)) :=
       Finset.sum_nonneg fun z _ => mul_nonneg (uniform_nonneg _ _)
-        (bornProb_nonneg Φ (posSemidef_of_proj (hsa g) (hidem g)) ((hZ z).posSemidef _))
+        (K.bornProb_nonneg (hG.nonneg g) ((hZ z).nonneg _))
     by_cases hgood : IsGood g
-    · rw [if_pos hgood, add_zero]
-      have h := sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB hd Φ (hsa g) (hidem g) hX hZ
+    · rw [ite_eq_left hgood, add_zero]
+      have h := sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB hd K (hG.isStarProjection g) hX hZ
         (isLinAB_of_isGood hgood)
-      have hre : ∀ u₀ : Point F (4 * m), bornProb Φ (G.M () g) (Z (zBlk u₀) ((gB hd g).eval u₀))
-          = bornProb Φ (G.M () g)
+      have hre : ∀ u₀ : Point F (4 * m), K.bornProb (G.op g) (Z (zBlk u₀) ((gB hd g).eval u₀))
+          = K.bornProb (G.op g)
             (Z (zBlk u₀) ((PolyPair.proj .Z (pairOf hd g)).eval (zBlk u₀))) := fun u₀ => by
         rw [pairOf_of_isGood hd hgood, PolyPair.proj_Z, eval_gZ hd hgood]
       simp_rw [hre] at h
-      rw [sum_uniform_zBlk (fun z => bornProb Φ (G.M () g)
+      rw [sum_uniform_zBlk (fun z => K.bornProb (G.op g)
         (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z)))] at h
       exact h
-    · rw [if_neg hgood]
-      have hle : ∀ u : Point F (4 * m), snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2 ≤ bornProb Φ (G.M () g) 1 := fun u =>
-        snorm_sq_ordComb_ordXZ_le Φ (hsa g) (hidem g) (hX _) (hZ _) _ _ _
-      calc _ ≤ ∑ u, uniform (Point F (4 * m)) u * bornProb Φ (G.M () g) 1 :=
+    · rw [ite_eq_right hgood]
+      have hle : ∀ u : Point F (4 * m), K.snorm (K.πA (G.op g)
+          * K.πB (ordComb ordXZ X Z u (g.eval u))) ^ 2 ≤ K.bornProb (G.op g) 1 := fun u =>
+        snorm_sq_ordComb_ordXZ_le K (hG.isStarProjection g) (hX _) (hZ _) _ _ _
+      calc _ ≤ ∑ u, uniform (Point F (4 * m)) u * K.bornProb (G.op g) 1 :=
             Finset.sum_le_sum fun u _ => mul_le_mul_of_nonneg_left (hle u) (uniform_nonneg _ _)
-        _ = bornProb Φ (G.M () g) 1 := by rw [← Finset.sum_mul, sum_uniform_eq_one, one_mul]
+        _ = K.bornProb (G.op g) 1 := by rw [← Finset.sum_mul, sum_uniform_eq_one, one_mul]
         _ ≤ _ := by nlinarith [mul_nonneg hq0 (hW0 g)]
   have hsumg := Finset.sum_le_sum fun g (_ : g ∈ univ) => hg g
-  have hA : ∑ g, 2 / Fintype.card F * bornProb Φ (G.M () g) 1 = 2 / Fintype.card F := by
-    rw [← Finset.mul_sum, sum_bornProb_M_one hΦ G, mul_one]
+  have hA : ∑ g, 2 / Fintype.card F * K.bornProb (G.op g) 1 = 2 / Fintype.card F := by
+    rw [← Finset.mul_sum, sum_bornProb_M_one hK G, mul_one]
   have hB : ∑ g, ∑ z, uniform (Point F m) z
-      * bornProb Φ (G.M () g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z))
+      * K.bornProb (G.op g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z))
       = ∑ z, uniform (Point F m) z
-        * ∑ g, bornProb Φ (G.M () g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z)) := by
+        * ∑ g, K.bornProb (G.op g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z)) := by
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun z _ => (Finset.mul_sum _ _ _).symm
-  have hC : ∑ g, (if IsGood g then (0 : ℝ) else bornProb Φ (G.M () g) 1)
-      = ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 := by
+  have hC : ∑ g, (if IsGood g then (0 : ℝ) else K.bornProb (G.op g) 1)
+      = ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1 := by
     rw [Finset.sum_filter]
     simp only [ite_not]
   rw [Finset.sum_add_distrib, Finset.sum_add_distrib, hA, hB, hC] at hsumg
   linarith
 
 /-- **The `X` marginal**, from the order `Z_b X_a`: the mirror image. -/
-theorem marg_X_ge (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {Δ δG : ℝ}
-    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordZX X Z u (g.eval u))) ^ 2
-      ≤ Δ)
-    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 ≤ δG) :
+theorem marg_X_ge (hd : 1 ≤ d) {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z)) {Δ δG : ℝ}
+    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - ordComb ordZX X Z u (g.eval u))) ^ 2 ≤ Δ)
+    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1 ≤ δG) :
     1 - 2 * Real.sqrt Δ - 2 / Fintype.card F - δG
       ≤ ∑ x, uniform (Point F m) x
-          * ∑ g, bornProb Φ (G.M () g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x)) := by
-  have hsa : ∀ g, (G.M () g)ᴴ = G.M () g := fun g => G.selfAdjoint () g
-  have hidem : ∀ g, G.M () g * G.M () g = G.M () g := fun g => G.projective () g
-  have hW0 : ∀ g, 0 ≤ bornProb Φ (G.M () g) 1 := fun g =>
-    bornProb_nonneg Φ (posSemidef_of_proj (hsa g) (hidem g)) Matrix.PosSemidef.one
+          * ∑ g, K.bornProb (G.op g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x)) := by
+  have hW0 : ∀ g, 0 ≤ K.bornProb (G.op g) 1 := fun g =>
+    K.bornProb_nonneg (hG.nonneg g) zero_le_one
   have hq0 : (0 : ℝ) ≤ 2 / Fintype.card F := by positivity
-  have h1 := one_sub_two_sqrt_le_sum_snorm_sq hΦ G (ordComb ordZX X Z) hprod
-  have hswap : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2
-      = ∑ g, ∑ u, uniform (Point F (4 * m)) u * snorm Φ
-        ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2 := by
+  have h1 := one_sub_two_sqrt_le_sum_snorm_sq hK G hG (ordComb ordZX X Z) hprod
+  have hswap : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (ordComb ordZX X Z u (g.eval u))) ^ 2
+      = ∑ g, ∑ u, uniform (Point F (4 * m)) u * K.snorm
+        (K.πA (G.op g) * K.πB (ordComb ordZX X Z u (g.eval u))) ^ 2 := by
     simp_rw [Finset.mul_sum]
     exact Finset.sum_comm
-  have hg : ∀ g, ∑ u, uniform (Point F (4 * m)) u * snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2
-      ≤ 2 / Fintype.card F * bornProb Φ (G.M () g) 1
+  have hg : ∀ g, ∑ u, uniform (Point F (4 * m)) u * K.snorm
+      (K.πA (G.op g) * K.πB (ordComb ordZX X Z u (g.eval u))) ^ 2
+      ≤ 2 / Fintype.card F * K.bornProb (G.op g) 1
         + ∑ x, uniform (Point F m) x
-          * bornProb Φ (G.M () g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x))
-        + (if IsGood g then (0 : ℝ) else bornProb Φ (G.M () g) 1) := by
+          * K.bornProb (G.op g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x))
+        + (if IsGood g then (0 : ℝ) else K.bornProb (G.op g) 1) := by
     intro g
     have hM0 : 0 ≤ ∑ x, uniform (Point F m) x
-        * bornProb Φ (G.M () g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x)) :=
+        * K.bornProb (G.op g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x)) :=
       Finset.sum_nonneg fun x _ => mul_nonneg (uniform_nonneg _ _)
-        (bornProb_nonneg Φ (posSemidef_of_proj (hsa g) (hidem g)) ((hX x).posSemidef _))
+        (K.bornProb_nonneg (hG.nonneg g) ((hX x).nonneg _))
     by_cases hgood : IsGood g
-    · rw [if_pos hgood, add_zero]
-      have h := sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB hd Φ (hsa g) (hidem g) hX hZ
+    · rw [ite_eq_left hgood, add_zero]
+      have h := sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB hd K (hG.isStarProjection g) hX hZ
         (isLinAB_of_isGood hgood)
-      have hre : ∀ u₀ : Point F (4 * m), bornProb Φ (G.M () g) (X (xBlk u₀) ((gA hd g).eval u₀))
-          = bornProb Φ (G.M () g)
+      have hre : ∀ u₀ : Point F (4 * m), K.bornProb (G.op g) (X (xBlk u₀) ((gA hd g).eval u₀))
+          = K.bornProb (G.op g)
             (X (xBlk u₀) ((PolyPair.proj .X (pairOf hd g)).eval (xBlk u₀))) := fun u₀ => by
         rw [pairOf_of_isGood hd hgood, PolyPair.proj_X, eval_gX hd hgood]
       simp_rw [hre] at h
-      rw [sum_uniform_xBlk (fun x => bornProb Φ (G.M () g)
+      rw [sum_uniform_xBlk (fun x => K.bornProb (G.op g)
         (X x ((PolyPair.proj .X (pairOf hd g)).eval x)))] at h
       exact h
-    · rw [if_neg hgood]
-      have hle : ∀ u : Point F (4 * m), snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2 ≤ bornProb Φ (G.M () g) 1 := fun u => by
+    · rw [ite_eq_right hgood]
+      have hle : ∀ u : Point F (4 * m), K.snorm (K.πA (G.op g)
+          * K.πB (ordComb ordZX X Z u (g.eval u))) ^ 2 ≤ K.bornProb (G.op g) 1 := fun u => by
         rw [ordComb, ptComb_ordZX_eq]
-        exact snorm_sq_ordComb_ordXZ_le Φ (hsa g) (hidem g) (hZ _) (hX _) _ _ _
-      calc _ ≤ ∑ u, uniform (Point F (4 * m)) u * bornProb Φ (G.M () g) 1 :=
+        exact snorm_sq_ordComb_ordXZ_le K (hG.isStarProjection g) (hZ _) (hX _) _ _ _
+      calc _ ≤ ∑ u, uniform (Point F (4 * m)) u * K.bornProb (G.op g) 1 :=
             Finset.sum_le_sum fun u _ => mul_le_mul_of_nonneg_left (hle u) (uniform_nonneg _ _)
-        _ = bornProb Φ (G.M () g) 1 := by rw [← Finset.sum_mul, sum_uniform_eq_one, one_mul]
+        _ = K.bornProb (G.op g) 1 := by rw [← Finset.sum_mul, sum_uniform_eq_one, one_mul]
         _ ≤ _ := by nlinarith [mul_nonneg hq0 (hW0 g)]
   have hsumg := Finset.sum_le_sum fun g (_ : g ∈ univ) => hg g
-  have hA : ∑ g, 2 / Fintype.card F * bornProb Φ (G.M () g) 1 = 2 / Fintype.card F := by
-    rw [← Finset.mul_sum, sum_bornProb_M_one hΦ G, mul_one]
+  have hA : ∑ g, 2 / Fintype.card F * K.bornProb (G.op g) 1 = 2 / Fintype.card F := by
+    rw [← Finset.mul_sum, sum_bornProb_M_one hK G, mul_one]
   have hB : ∑ g, ∑ x, uniform (Point F m) x
-      * bornProb Φ (G.M () g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x))
+      * K.bornProb (G.op g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x))
       = ∑ x, uniform (Point F m) x
-        * ∑ g, bornProb Φ (G.M () g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x)) := by
+        * ∑ g, K.bornProb (G.op g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x)) := by
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun x _ => (Finset.mul_sum _ _ _).symm
-  have hC : ∑ g, (if IsGood g then (0 : ℝ) else bornProb Φ (G.M () g) 1)
-      = ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 := by
+  have hC : ∑ g, (if IsGood g then (0 : ℝ) else K.bornProb (G.op g) 1)
+      = ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1 := by
     rw [Finset.sum_filter]
     simp only [ite_not]
   rw [Finset.sum_add_distrib, Finset.sum_add_distrib, hA, hB, hC] at hsumg
@@ -570,39 +501,35 @@ theorem marg_X_ge (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ �
 
 /-- **`lem:qld-global-sandwich`, the `Z` marginal in consistency form**: the evaluated `Z`
 marginal of the completed measurement against a family `N` whose elements are the `Z z a`. -/
-theorem inconsistency_evalMarg_Z_le (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) (N : Point F m → POVM F RB)
-    (hN : ∀ z a, ((N z).mats a).val = Z z a) {Δ δG : ℝ}
-    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2
-      ≤ Δ)
-    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 ≤ δG) :
-    inconsistency (uniform (Point F m)) Φ (fun z => evalMarg (pairMeas hd G) .Z z) N
+theorem inconsistency_evalMarg_Z_le (hd : 1 ≤ d) {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z)) (N : Point F m → POVMIn F ℬ)
+    (hN : ∀ z a, (N z).op a = Z z a) {Δ δG : ℝ}
+    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2 ≤ Δ)
+    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1 ≤ δG) :
+    K.inconsistency (uniform (Point F m)) (fun z => evalMarg (pairMeas hd G) .Z z) N
       ≤ 2 * Real.sqrt Δ + 2 / Fintype.card F + δG := by
-  have h := marg_Z_ge hd hΦ G hX hZ hprod hbad
+  have h := marg_Z_ge hd hK G hG hX hZ hprod hbad
   simp_rw [evalMarg_pairMeas]
-  rw [inconsistency_map_eq _ (sum_uniform_eq_one _) hΦ G
+  rw [inconsistency_map_eq _ (sum_uniform_eq_one _) hK G
     (fun z g => (PolyPair.proj .Z (pairOf hd g)).eval z) N]
   simp_rw [hN]
   linarith
 
 /-- **`lem:qld-global-sandwich`, the `X` marginal in consistency form.** -/
-theorem inconsistency_evalMarg_X_le (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) (N : Point F m → POVM F RB)
-    (hN : ∀ x a, ((N x).mats a).val = X x a) {Δ δG : ℝ}
-    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordZX X Z u (g.eval u))) ^ 2
-      ≤ Δ)
-    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 ≤ δG) :
-    inconsistency (uniform (Point F m)) Φ (fun x => evalMarg (pairMeas hd G) .X x) N
+theorem inconsistency_evalMarg_X_le (hd : 1 ≤ d) {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z)) (N : Point F m → POVMIn F ℬ)
+    (hN : ∀ x a, (N x).op a = X x a) {Δ δG : ℝ}
+    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - ordComb ordZX X Z u (g.eval u))) ^ 2 ≤ Δ)
+    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1 ≤ δG) :
+    K.inconsistency (uniform (Point F m)) (fun x => evalMarg (pairMeas hd G) .X x) N
       ≤ 2 * Real.sqrt Δ + 2 / Fintype.card F + δG := by
-  have h := marg_X_ge hd hΦ G hX hZ hprod hbad
+  have h := marg_X_ge hd hK G hG hX hZ hprod hbad
   simp_rw [evalMarg_pairMeas]
-  rw [inconsistency_map_eq _ (sum_uniform_eq_one _) hΦ G
+  rw [inconsistency_map_eq _ (sum_uniform_eq_one _) hK G
     (fun x g => (PolyPair.proj .X (pairOf hd g)).eval x) N]
   simp_rw [hN]
   linarith

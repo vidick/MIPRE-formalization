@@ -82,7 +82,6 @@ public import MIPRE.Background.Introspection.HonestPauliMeasurements
 public import MIPRE.Background.Introspection.HonestPauliObservables
 public import MIPRE.Background.Introspection.NumberedComplete
 public import MIPRE.Background.Introspection.NumberedSoundness
-public import MIPRE.Background.Introspection.PauliExtraction
 public import MIPRE.Background.Introspection.PauliRestriction
 public import MIPRE.Background.Introspection.PauliSampler
 public import MIPRE.Background.Introspection.PauliSamplerCost
@@ -95,7 +94,6 @@ public import MIPRE.Background.Introspection.RestrictedSoundness
 public import MIPRE.Background.LIDT.Adapter.Geometry
 public import MIPRE.Background.LIDT.Adapter.Parameters
 public import MIPRE.Background.LIDT.Adapter.Reduction
-public import MIPRE.Background.LIDT.Adapter.Registers
 public import MIPRE.Background.LIDT.Adapter.Reparam
 public import MIPRE.Background.LIDT.Adapter.Seeds
 public import MIPRE.Background.LIDT.Adapter.Strategy
@@ -113,6 +111,7 @@ public import MIPRE.Background.LIDT.Bridge.Strategy
 public import MIPRE.Background.LIDT.Bridge.Value
 public import MIPRE.Background.LIDT.CLGame
 public import MIPRE.Background.LIDT.CLHonest
+public import MIPRE.Background.LIDT.CoExpand
 public import MIPRE.Background.LIDT.Coefficients
 public import MIPRE.Background.LIDT.Extraction
 public import MIPRE.Background.LIDT.Game
@@ -439,6 +438,7 @@ public import MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing
 public import MIPRE.Background.LIDT.MIPStarRE.Quantum.Measurement
 public import MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB
 public import MIPRE.Background.LIDT.ModelSoundness
+public import MIPRE.Background.LIDT.ModelTransport
 public import MIPRE.Background.LIDT.Padding
 public import MIPRE.Background.LIDT.Presentation
 public import MIPRE.Background.LIDT.PresentationEmbed
@@ -507,7 +507,6 @@ public import MIPRE.Background.QLD.AncTransport
 public import MIPRE.Background.QLD.Anticomm
 public import MIPRE.Background.QLD.Axioms
 public import MIPRE.Background.QLD.BinaryBlocks
-public import MIPRE.Background.QLD.BinaryForm
 public import MIPRE.Background.QLD.CLBinary
 public import MIPRE.Background.QLD.CLExplicitSeed
 public import MIPRE.Background.QLD.CLExplicitTransport
@@ -515,13 +514,12 @@ public import MIPRE.Background.QLD.CLPresentation
 public import MIPRE.Background.QLD.CLTransport
 public import MIPRE.Background.QLD.Chain
 public import MIPRE.Background.QLD.ChainAssembly
+public import MIPRE.Background.QLD.ChainPhysical
 public import MIPRE.Background.QLD.ChainProbe
 public import MIPRE.Background.QLD.Combine
 public import MIPRE.Background.QLD.Combined
 public import MIPRE.Background.QLD.Commutation
 public import MIPRE.Background.QLD.Complete
-public import MIPRE.Background.QLD.Consistency
-public import MIPRE.Background.QLD.Descent
 public import MIPRE.Background.QLD.Dummy
 public import MIPRE.Background.QLD.ErrorShape
 public import MIPRE.Background.QLD.ExactPauli
@@ -538,7 +536,6 @@ public import MIPRE.Background.QLD.MirrorExists
 public import MIPRE.Background.QLD.ModelSoundness
 public import MIPRE.Background.QLD.Multilinear
 public import MIPRE.Background.QLD.NonMultilinear
-public import MIPRE.Background.QLD.Ortho
 public import MIPRE.Background.QLD.Padded
 public import MIPRE.Background.QLD.PaddedLIDT
 public import MIPRE.Background.QLD.PaddedLines
@@ -563,13 +560,12 @@ public import MIPRE.Background.QLD.PauliFullAnswerPrograms
 public import MIPRE.Background.QLD.PauliQuestionPrograms
 public import MIPRE.Background.QLD.PauliRowPrograms
 public import MIPRE.Background.QLD.PauliStagePrograms
-public import MIPRE.Background.QLD.PhysEmbed
+public import MIPRE.Background.QLD.PhysModel
 public import MIPRE.Background.QLD.Product
 public import MIPRE.Background.QLD.Products
 public import MIPRE.Background.QLD.Pulling
 public import MIPRE.Background.QLD.QLDError
 public import MIPRE.Background.QLD.Regime
-public import MIPRE.Background.QLD.RegisterForm
 public import MIPRE.Background.QLD.SamplerQueryProgram
 public import MIPRE.Background.QLD.SeededLinePrograms
 public import MIPRE.Background.QLD.SelfCons
@@ -583,9 +579,8 @@ public import MIPRE.Background.QLD.SwapItemTwo
 public import MIPRE.Background.QLD.SwapMeasure
 public import MIPRE.Background.QLD.SwapState
 public import MIPRE.Background.QLD.SwapUnitary
-public import MIPRE.Background.QLD.TwoPairs
 public import MIPRE.Background.QLD.TypeEncoding
-public import MIPRE.Background.QLD.ValidAnswers
+public import MIPRE.Background.QLD.Uniform
 public import MIPRE.Background.QLD.Win
 public import MIPRE.Background.QLD.WinMS
 public import MIPRE.Background.Repetition.Axioms
@@ -739,6 +734,7 @@ public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
+public import MIPRE.Foundations.AmplCommutant
 public import MIPRE.Foundations.AncillaDilation
 public import MIPRE.Foundations.AncillaIsometry
 public import MIPRE.Foundations.AncillaModel
@@ -839,6 +835,7 @@ public import MIPRE.Foundations.CrossConsistency
 public import MIPRE.Foundations.Dilation
 public import MIPRE.Foundations.Disagreement
 public import MIPRE.Foundations.Distances
+public import MIPRE.Foundations.EPRContraction
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.GNS
 public import MIPRE.Foundations.GameAdapt
@@ -1229,7 +1226,11 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.Measurement
+public import MIPRE.Foundations.ModelCalculus
+public import MIPRE.Foundations.ModelEmbedding
+public import MIPRE.Foundations.ModelIso
 public import MIPRE.Foundations.ModelOver
+public import MIPRE.Foundations.ModelReading
 public import MIPRE.Foundations.ModelStrategy
 public import MIPRE.Foundations.NCPoly.Basic
 public import MIPRE.Foundations.NCPoly.Cone
