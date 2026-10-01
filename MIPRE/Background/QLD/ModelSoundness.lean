@@ -165,7 +165,7 @@ def SoundIn {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ �
 
 /-! ## The commuting-operator model -/
 
-/-- **The Pauli basis test is sound in the commuting-operator model** (`def:qld-sound-co`): in the
+/-- **The Pauli basis test is sound in the commuting-operator model** (`def:qld-sound-in`): in the
 model of every commuting-operator strategy, with `ω_co`. It is the hypothesis on the Pauli basis
 test of `MIPRE.mipco_eq_core_of_stages`, and follows from the soundness of the seeded test in the
 commuting-operator model (`QLD.soundCo_of_lidt`, Phase 5 of `planning/mipco-track.md`). -/

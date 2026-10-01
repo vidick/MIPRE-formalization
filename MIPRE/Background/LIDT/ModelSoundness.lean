@@ -144,7 +144,7 @@ theorem soundIn_tensor {a b : ℕ} (ψ : Fin a × Fin b → ℂ) :
 
 /-! ## The commuting-operator model -/
 
-/-- **The seeded CL test is sound in the commuting-operator model** (`def:lidt-sound-co`): in the
+/-- **The seeded CL test is sound in the commuting-operator model** (`def:lidt-sound-in`): in the
 model of every commuting-operator strategy, whose algebras are the commutant of the second
 player's operators and its commutant. This is Phase 6 of `planning/mipco-track.md`, and the
 hypothesis on the low-individual-degree test of `MIPRE.mipco_eq_core_of_stages`. -/

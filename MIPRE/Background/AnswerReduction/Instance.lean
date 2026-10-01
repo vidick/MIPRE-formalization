@@ -149,7 +149,7 @@ def answerReduction : MIPRE.AnswerReduction 5 where
 
 /-! ## Soundness in the commuting-operator value -/
 
-/-- **Answer reduction is sound in the commuting-operator value** (`lem:ar-sound-co`), at the
+/-- **Answer reduction is sound in the commuting-operator value** (`thm:ar-sound-co`), at the
 constants of `answerReduction`, given the soundness of the low-individual-degree test in the
 commuting-operator model: `arVerifier_soundness_commuting` at the output bound, which is above the
 answer cut. -/

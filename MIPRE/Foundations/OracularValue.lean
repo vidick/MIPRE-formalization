@@ -65,7 +65,7 @@ theorem tensor_oracularSound : tensor.OracularSound where
   oracular S _ hε h := S.quantumValue_ge_of_oracular hε h
   detype E _ hE hne P hP hℓ D := CL.Detyping.quantumValue_typedGame_ge E hE hne P hP hℓ D
 
-/-- **Oracularization is sound in the commuting-operator model** (`lem:oracular-sound-co`). -/
+/-- **Oracularization is sound in the commuting-operator model** (`thm:oracularization-in-model`). -/
 theorem commuting_oracularSound : commuting.OracularSound where
   le_postprocess G G' rA rB hμ hD := commutingOperatorValue_le_postprocess G G' rA rB hμ hD
   oracular S _ hε h := S.commutingOperatorValue_ge_of_oracular hε h
