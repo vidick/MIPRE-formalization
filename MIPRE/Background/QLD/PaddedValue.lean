@@ -51,9 +51,9 @@ supported projective strategy of value `1 - ε`. The point measurement *is* the 
 `bornProb_extHat_ptComb_left`/`_right` are gone. The decomposition of the failure probability into
 the nine type pairs is the model form of `one_sub_povmValue_clGame`
 (`BipartiteModel.one_sub_povmValue_clGame`, below); the per-sample families and the polynomial
-separation are stated in any bipartite model with the players' algebras of `N₀`. `deltaGS`, the error
-of `lem:qld-global-success`, is defined here (moved from `PaddedLIDT.lean`) so that the interface
-can be stated with it.
+separation are stated in any bipartite model with the players' algebras of `N₀`. `deltaGS`, the
+error of `lem:qld-global-success`, is defined here (moved from `PaddedLIDT.lean`) so that the
+interface can be stated with it.
 -/
 
 noncomputable section
@@ -440,7 +440,6 @@ theorem presOf_items_swap (hM : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue (qldGam
       (Finset.sum_congr rfl fun a _ => ?_))) h
   exact (hatVec_swapVec_xSqNorm M _ _).symm
 
-omit [Algebra (ZMod 2) F] in
 /-- The collision probability of the `X` presentation of a line type is at most `md/q + 1/q`. -/
 theorem presOf_coll (ty : CL.Ty) :
     ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * collProb (presOf hm ty .X) d c
@@ -650,7 +649,7 @@ def evDef (LA : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) 𝒜
   1 - ∑ a : F, N.bornProb ((LA.map fun f => LinePoly.eval f t).op a)
     ((LB.map fun f => LinePoly.eval f t).op a)
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
+omit [Algebra (ZMod 2) F] [NeZero m] [StarModule ℂ 𝒜] [StarModule ℂ ℬ] in
 theorem evDef_nonneg (hN : ‖N.ψ‖ = 1)
     (LA : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) 𝒜))
     (LB : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) ℬ)) (t : F) :
@@ -658,7 +657,7 @@ theorem evDef_nonneg (hN : ‖N.ψ‖ = 1)
   sub_nonneg.mpr (sum_bornProb_diag_le_one hN _ _ (fun a => POVMIn.op_nonneg _ a)
     (fun a => POVMIn.op_nonneg _ a) (POVMIn.sum_op _) (POVMIn.sum_op _))
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
+omit [Algebra (ZMod 2) F] [NeZero m] [StarModule ℂ 𝒜] [StarModule ℂ ℬ] in
 theorem evDef_le_one (LA : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) 𝒜))
     (LB : POVMIn (LinePoly F (m * d + 1)) (Matrix (Anc F m) (Anc F m) ℬ)) (t : F) :
     evDef N LA LB t ≤ 1 := by
@@ -764,7 +763,7 @@ theorem sum_uniform_amb : ∑ x : Amb F m, uniform (Amb F m) x = 1 := by
   simp only [uniform, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
   exact mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
+omit [Algebra (ZMod 2) F] [NeZero m] [StarModule ℂ 𝒜] [StarModule ℂ ℬ] in
 /-- The disagreement of two families, as the uniform average of the per-sample disagreements. -/
 theorem one_sub_agreeSum_uniform_eq
     (P : Amb F m → POVMIn F (Matrix (Anc F m) (Anc F m) 𝒜))
@@ -987,9 +986,9 @@ theorem one_sub_povmValue_padStrat_eq :
 
 include hM hfail in
 /-- **`lem:qld-global-success`: the padded strategy wins the seeded low individual degree test at
-`(q, 4m, d, 1)` with probability at least `1 - δ_GS`**, in the expanded model `M.reg (Anc F m)`, with
-`δ_GS = 5 δ_combine + 4 δ_Q + (md + 1)/q` and `δ_combine = m² δ_P(ε, md/q + 1/q)`: the stage-4a
-interface. For a projective strategy `S : M.ProjStrat (qldGame hm)` the hypotheses are
+`(q, 4m, d, 1)` with probability at least `1 - δ_GS`**, in the expanded model `M.reg (Anc F m)`,
+with `δ_GS = 5 δ_combine + 4 δ_Q + (md + 1)/q` and `δ_combine = m² δ_P(ε, md/q + 1/q)`: the
+stage-4a interface. For a projective strategy `S : M.ProjStrat (qldGame hm)` the hypotheses are
 `S.ψ_unit`, `hfail : 1 - S.value ≤ ε`, `S.projA`, `S.projB`. -/
 theorem padStrat_value (hε : 0 ≤ ε) (hlegA : LegalSupport PA) (hlegB : LegalSupport PB)
     (hd : 1 ≤ d) :

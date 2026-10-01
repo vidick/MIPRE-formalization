@@ -28,22 +28,22 @@ are elements of `Matrix (Anc F m) (Anc F m) R` over the player's algebra `R` (th
 algebra and the expansion's ancilla, register outer). There is no register for the combining
 coefficients: it was inert in every padded measurement. The point measurement is the *sandwich*
 `M^Z_b M^X_a M^Z_b` of the hatted point measurements (`POVMIn.sand`), coarse-grained along
-`(a, b) ↦ α a + β b`; its line measurements are the padded line measurements `padLineMats`, averaged
-over the raw directions. Both are POVMs --- the point elements are coarse-grainings of Gram elements
-`(X_a Z_b)⋆ (X_a Z_b)`, the line elements averages of pasted sandwiches --- and neither is projective,
-so the strategy is a family of POVMs, and one Halmos dilation at the end makes it the projective
-strategy the soundness theorem takes. The dilated point measurement of `lem:qld-padded-points` is not
-used: every bound of stage 3 is stated for the sandwich itself (`combined_points_pts`,
-`padded_lines_consistency`).
+`(a, b) ↦ α a + β b`; its line measurements are the padded line measurements `padLineMats`,
+averaged over the raw directions. Both are POVMs --- the point elements are coarse-grainings of Gram
+elements `(X_a Z_b)⋆ (X_a Z_b)`, the line elements averages of pasted sandwiches --- and neither is
+projective, so the strategy is a family of POVMs, and one Halmos dilation at the end makes it the
+projective strategy the soundness theorem takes. The dilated point measurement of
+`lem:qld-padded-points` is not used: every bound of stage 3 is stated for the sandwich itself
+(`combined_points_pts`, `padded_lines_consistency`).
 
 ## In a bipartite model
 
 Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The strategy of each player is
 `padStrat hm hm4 hS` for a projective family `S : Question F m → POVMIn (Answer F m d) R` (the
-design's `padStratIn`; the cited names `padStrat`, `padPt`, `padPtPair`, `padLinePOVM`, `lineMeas` are
-the model versions), the conditional failures are those of any bipartite model whose algebras are
-the two players' `Matrix (Anc F m) (Anc F m) _` (in particular `M.reg (Anc F m)`), and polynomial
-separation holds in any bipartite model. The model forms of the matrix helpers `POVM.ofPosSemidef`,
+design's `padStratIn`; the cited names `padStrat`, `padPt`, `padPtPair`, `padLinePOVM`, `lineMeas`
+are the model versions), the conditional failures are those of any bipartite model whose algebras
+are the two players' `Matrix (Anc F m) (Anc F m) _` (in particular `M.reg (Anc F m)`), and
+polynomial separation holds in any bipartite model. The model forms of the matrix helpers `POVM.ofPosSemidef`,
 `POVM.avgOn` and the support lemmas of coarse-grainings are `POVMIn.ofNonneg`, `POVMIn.avgOn`,
 `POVMIn.map_congr_of_support`, `POVMIn.map_op_eq_zero_of_forall_ne` and `POVMIn.map_const_op`
 below.
