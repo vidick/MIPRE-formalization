@@ -1077,6 +1077,11 @@ Phases 3–5 are done (#249, #251, #253): answer reduction, introspection and th
 are stated in a bipartite model, and `MIPRE.mipco_eq_core_of_lidt` proves `MIP^co = coRE` from
 the soundness of the low-individual-degree test in the commuting-operator model alone
 (`LIDT.Simul.SoundCo`, Phase 6). `planning/mipco-track.md` records each phase.
+Phase 6's paper trail and the vendored proof have been audited (#255, `reports/lidt-co-audit.md`).
+No source proves `SoundCo` in its generality. The audit recommends a weaker hypothesis that
+suffices: soundness in the models whose two algebras carry faithful normal traces, reached
+through the vendored tracial density. It also recommends a port of the vendored proof to those
+models, of about 70–120k lines.
 
 ## Working rules for this track
 
