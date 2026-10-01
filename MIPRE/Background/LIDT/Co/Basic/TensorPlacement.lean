@@ -25,7 +25,7 @@ they are the ⋆-homomorphisms `S.L` and `S.R` of a symmetric model `S`, so each
 `map_*` lemma of a ⋆-homomorphism (linearity in a real or complex scalar, additivity over a
 finite sum), and the product placement `S.opTensor A B = S.L A * S.R B` is linear in each factor
 by the keystone's `opTensor_*` lemmas. Statements drop the normalization hypothesis
-`hnorm : ψ.IsNormalized`, which is a theorem of the model (`SymModel.ev_one_of_isNormalized`).
+`hnorm : ψ.IsNormalized`, which is a theorem of the model (`VecState.ev_one_of_isNormalized`).
 
 ## Ported elsewhere
 

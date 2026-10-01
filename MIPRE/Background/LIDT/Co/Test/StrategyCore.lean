@@ -31,10 +31,24 @@ vendored file lose their hypothesis `hfix`.
 
 The covariance predicates and the answer families are generic over the ordered `⋆`-ring `R` of
 `Co/Basic/SubMeasurementCore.lean` (the vendored `Op ι`), with `[StarOrderedRing R]` where they
-postprocess. The two-space `ProjStrat` keeps its two local algebras `𝒜`, `ℬ`; its state is a
-bipartite model of the repository, `MIPRE.BipartiteModel 𝒞 𝒜 ℬ`
-(`MIPRE/Foundations/BipartiteModel.lean`), and its field `isNormalized` is `‖state.ψ‖ = 1`,
-since a bipartite model carries no normalization (`reports/c6b-paper-proofs.md`, §4.1).
+postprocess. The two-space `ProjStrat` keeps its two local algebras `𝒜`, `ℬ`, star-ordered as
+in `MIPRE.LIDT.Simul.SoundIn`; its state is a bipartite model of the repository,
+`MIPRE.BipartiteModel 𝒞 𝒜 ℬ` (`MIPRE/Foundations/BipartiteModel.lean`), and its field
+`isNormalized` is `‖state.ψ‖ = 1`, since a bipartite model carries no normalization
+(`reports/c6b-paper-proofs.md`, §4.1).
+
+**The consistency of a `ProjStrat` is not stated by the ported defects.** The bipartite defects
+of the port (`qBipartiteMatchMass`, `qBipartiteConsDefect`, `bipartiteConsError`, `ConsRel` and
+their lemmas, `Co/Test/Defs.lean` and `Co/Preliminaries/ComparisonCore.lean`) are `SymModel`
+declarations, so they do not apply to `strategy.state : MIPRE.BipartiteModel 𝒞 𝒜 ℬ`, whereas the
+vendored ones hold for any state on `ιA × ιB` and the vendored `Test/MainTheorem/MainFormal.lean`
+states `ConsRel strategy.state …` of a `ProjStrat`. In the port that two-space route goes through
+the doubling (`planning/c6b-plan.md`, M2 and M13): a `ProjStrat` on `M` becomes a symmetric
+strategy on the doubled model `D(M)`, where the ported `ConsRel` applies, and the consistency it
+yields on `M` itself is the repository's `MIPRE.BipartiteModel.inconsistency`, the form
+`MIPRE.LIDT.Simul.SoundIn` asks for (for measurements, `bipartiteConsError` is that
+inconsistency, `SymModel.bipartiteConsError_eq_inconsistency`). So the vendored
+`ConsRel strategy.state` statements of `MainFormal` are replaced, not ported, by M13 and M14.
 
 The classical declarations of the vendored file (the test samples, `extendRestrictedDirection`,
 `lastDirectionLine`, the `Fintype Role` instance) are not ported: this file imports the vendored
@@ -55,10 +69,12 @@ file and names them through an explicit `open MIPStarRE.LDT (…)` list.
 - `RestrictedDiagonalSample`: classical, imported.
 - `restrictedDiagonalSampleNonempty`: classical, imported.
 - `lastDirectionLine`: classical, imported.
-
-The structure fields `permInvState` and `densityFixed` of the vendored `SymStrat` and
-`AnswerSymStrat` are not fields here: they are theorems of `strategy.state`, `ev_flip` and
-`ev_L_eq_ev_R` (and `S.ev_opTensor_swap_of_density_fixed` for the bipartite form).
+- `SymStrat.permInvState`: not a field; the vendored `PermInvState strategy.state` is a theorem of
+  every symmetric model, `strategy.state.ev_flip` and `strategy.state.ev_L_eq_ev_R`.
+- `SymStrat.densityFixed`: not a field; the fixed density is `strategy.state.ev_flip`, and its
+  bipartite form `strategy.state.ev_opTensor_swap_of_density_fixed`.
+- `AnswerSymStrat.permInvState`: as `SymStrat.permInvState`.
+- `AnswerSymStrat.densityFixed`: as `SymStrat.densityFixed`.
 
 ## Ported elsewhere
 
@@ -375,6 +391,7 @@ structure AxisParallelCovariantMeasurement (params : Parameters)
   transportInvariant :
     AxisParallelMeasurementTransportInvariant params toIdxProjMeas
 
+/-- A covariant measurement is applied as its measurement family. -/
 instance {params : Parameters} [FieldModel params.q] {R : Type*}
     [Ring R] [StarRing R] [PartialOrder R] :
     CoeFun (AxisParallelCovariantMeasurement params R)
@@ -402,6 +419,7 @@ structure DiagonalCovariantMeasurement (params : Parameters)
   transportInvariant :
     DiagonalMeasurementTransportInvariant params toIdxProjMeas
 
+/-- A covariant measurement is applied as its measurement family. -/
 instance {params : Parameters} [FieldModel params.q] {R : Type*}
     [Ring R] [StarRing R] [PartialOrder R] :
     CoeFun (DiagonalCovariantMeasurement params R)
@@ -442,6 +460,7 @@ structure DiagonalAnswerCovariantMeasurement (params : Parameters)
   transportInvariant :
     DiagonalAnswerMeasurementTransportInvariant params toIdxProjMeas
 
+/-- A covariant measurement is applied as its measurement family. -/
 instance {params : Parameters} [FieldModel params.q] {R : Type*}
     [Ring R] [StarRing R] [PartialOrder R] :
     CoeFun (DiagonalAnswerCovariantMeasurement params R)
@@ -718,8 +737,8 @@ descend from chosen affine parametrizations to geometric lines; transport and
 zero-coordinate evaluation are equivalent consequences. -/
 structure ProjStrat (params : Parameters) [FieldModel params.q]
     (𝒞 : Type*) [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞]
-    (𝒜 : Type*) [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜] [PartialOrder 𝒜]
-    (ℬ : Type*) [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder ℬ] where
+    (𝒜 : Type*) [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+    (ℬ : Type*) [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder ℬ] [StarOrderedRing ℬ] where
   /-- The bipartite state: a vector state with commuting representations of `𝒜` and `ℬ`. -/
   state : MIPRE.BipartiteModel.{u} 𝒞 𝒜 ℬ
   /-- The state is a unit vector. -/

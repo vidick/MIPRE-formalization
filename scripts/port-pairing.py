@@ -16,16 +16,17 @@ under a heading `Not ported`, one name per bullet:
 
 Names are compared after removing the root namespaces (`MIPStarRE.LDT.` and `MIPStarRE.` on the
 vendored side, `MIPRE.LIDT.Co.` on the ported side) and the namespaces of the state, which the
-port renames (`QuantumState`, `PureState` and `SymModel` are dropped wherever they occur): so the
-vendored `QuantumState.IsNormalized` is paired with the ported `SymModel.IsNormalized`, and
-`ev_add` with `SymModel.ev_add`. A vendored declaration is then
+port renames (`QuantumState`, `PureState`, `SymModel` and `VecState` are dropped wherever they
+occur): so the vendored `QuantumState.IsNormalized` is paired with the ported
+`VecState.IsNormalized`, and `leftTensor_one` with `SymModel.leftTensor_one`. A vendored
+declaration is then
 
 * **ported** when a declaration of the ported file has the same normalized name;
 * **ported elsewhere** when a declaration of another file under `Co/` has it (the port moves
   some declarations, e.g. every operator-positivity lemma into `Co/Basic/QuantumState.lean`);
 * **listed** when a `Not ported` bullet names it: the bullet's first backticked name equals the
   vendored name, normalized or not, or is a dotted suffix of it (`` `basis` `` covers
-  `PureState.basis`);
+  `PureState.basis`); a field of a structure that is listed is listed with it;
 * **loose** when only the last name components agree with a declaration of the ported file that
   pairs with nothing else (a namespace changed); reported, so that a person can look;
 * **missing** otherwise.
@@ -39,6 +40,15 @@ Declarations are read from the source, with comments and strings removed: `theor
 `def`, `abbrev`, `structure`, `class`, `inductive`, `opaque`, `axiom`, `alias` and named
 `instance`s, at any indentation, with their names resolved against the enclosing `namespace`
 blocks (`_root_.` honoured). Anonymous instances and `example`s cannot be paired and are skipped.
+The fields of a `structure` or `class` (the lines at the first indentation after its `where`,
+`name : type`, `name (binders) : type` or `[name : Class]`) are declarations too, `Struct.field`,
+so that a field dropped or renamed by the port is reported like any other name; a ported
+structure keeps the vendored field names, and a field that becomes a theorem (a vendored
+`isNormalized` field, say) pairs with the theorem.
+
+A `private` declaration of the ported file cannot be used by an importer, so it never counts as
+the counterpart of a public vendored declaration: it pairs only with a private vendored one of the
+same name, and is otherwise reported on a `private` line, not as new.
 
     python3 scripts/port-pairing.py MIPRE/Background/LIDT/Co/Basic/QuantumState.lean
     python3 scripts/port-pairing.py MIPRE/Background/LIDT/Co          # every ported file
@@ -62,7 +72,7 @@ VENDOR_TREE = "MIPRE/Background/LIDT/MIPStarRE"
 VENDOR_PREFIXES = ("MIPStarRE.LDT.", "MIPStarRE.")
 PORT_PREFIXES = ("MIPRE.LIDT.Co.",)
 # Namespaces of the state, renamed by the port; dropped from names before comparing.
-MODEL_NS = {"QuantumState", "PureState", "SymModel"}
+MODEL_NS = {"QuantumState", "PureState", "SymModel", "VecState"}
 
 KINDS = (
     r"theorem|lemma|def|abbrev|structure|class\s+inductive|class|inductive|opaque|axiom|"
@@ -70,8 +80,15 @@ KINDS = (
 )
 MODIFIERS = r"(?:(?:private|protected|noncomputable|nonrec|partial|unsafe|scoped|local|public|meta)\s+)*"
 DECL_RE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)*" + MODIFIERS + r"(?P<kind>" + KINDS + r")\b(?P<rest>.*)$"
+    r"^\s*(?:@\[[^\]]*\]\s*)*(?P<mods>" + MODIFIERS + r")(?P<kind>" + KINDS + r")\b(?P<rest>.*)$"
 )
+# A structure field: `name : T`, `a b : T`, `name (x : α) : T`, `[name : C]`; not `name :=`
+# (a default for an inherited field) nor `mk ::` (the constructor).
+FIELD_RE = re.compile(
+    r"^\s*(?:\[\s*(?P<inst>[^\s:\[\](){}]+)\s*:"
+    r"|(?P<names>[^\s:\[\](){}⦃,]+(?:\s+[^\s:\[\](){}⦃,]+)*)\s*(?P<sep>::|:=|:|\(|\{|\[|⦃))"
+)
+WHERE_RE = re.compile(r"(?:^|\s)where(?:\s|$)")
 NAME_RE = re.compile(r"^\s*(?:\(priority\s*:=\s*[^)]*\)\s*)?(?P<name>[^\s(){}\[\]:⦃,]+)")
 NAMESPACE_RE = re.compile(r"^\s*namespace\s+(?P<name>\S+)")
 SECTION_RE = re.compile(
@@ -125,13 +142,40 @@ def strip_comments(src: str) -> str:
     return "".join(out)
 
 
-def declarations(path: str) -> list[tuple[str, str, int]]:
-    """The named declarations of a Lean file: (full name, kind, line)."""
+def declarations(path: str) -> list[tuple[str, str, int, bool, str]]:
+    """The named declarations of a Lean file: (full name, kind, line, private, parent), where
+    `parent` is the structure of a field (kind `field`) and empty otherwise."""
     with open(path, encoding="utf-8") as f:
         text = strip_comments(f.read())
     stack: list[tuple[str, list[str]]] = []  # ("ns" | "sec", namespace components)
     decls = []
+    # The structure whose fields are being read: [full name, indent, seen `where`, field indent].
+    struct: list | None = None
     for lineno, line in enumerate(text.split("\n"), start=1):
+        if struct is not None and line.strip():
+            indent = len(line) - len(line.lstrip())
+            if indent <= struct[1]:
+                struct = None
+            elif not struct[2]:
+                if WHERE_RE.search(line):
+                    struct[2] = True
+                continue
+            else:
+                if struct[3] is None:
+                    struct[3] = indent
+                if indent == struct[3]:
+                    fm = FIELD_RE.match(line)
+                    if fm and fm.group("inst"):
+                        names = [fm.group("inst")]
+                    elif fm and fm.group("sep") not in ("::", ":="):
+                        names = fm.group("names").split()
+                    else:
+                        names = []
+                    for nm_ in names:
+                        if nm_ not in ("deriving", "extends", "where"):
+                            decls.append((struct[0] + "." + nm_, "field", lineno, False,
+                                          struct[0]))
+                continue
         m = NAMESPACE_RE.match(line)
         if m:
             stack.append(("ns", m.group("name").split(".")))
@@ -148,6 +192,7 @@ def declarations(path: str) -> list[tuple[str, str, int]]:
         if not m:
             continue
         kind = re.sub(r"\s+", " ", m.group("kind"))
+        private = "private" in m.group("mods").split()
         rest = m.group("rest")
         if kind == "instance" and re.match(r"^\s*(?:\(priority\s*:=\s*[^)]*\)\s*)?[:\[{(⦃]", rest):
             continue  # anonymous instance
@@ -162,7 +207,9 @@ def declarations(path: str) -> list[tuple[str, str, int]]:
         else:
             prefix = [c for kind_, comps in stack for c in comps]
             full = ".".join(prefix + [name])
-        decls.append((full, kind, lineno))
+        decls.append((full, kind, lineno, private, ""))
+        if kind in ("structure", "class"):
+            struct = [full, len(line) - len(line.lstrip()), bool(WHERE_RE.search(rest)), None]
     return decls
 
 
@@ -229,12 +276,13 @@ def main() -> int:
     # Every ported declaration, for 'ported elsewhere'.
     port_index: dict[str, str] = {}
     for f in lean_files(os.path.join(ROOT, PORT_DIR)) if os.path.isdir(os.path.join(ROOT, PORT_DIR)) else []:
-        for full, _, _ in declarations(f):
-            port_index.setdefault(normalize(relative(full, PORT_PREFIXES)), rel_to_root(f))
+        for full, _, _, private, _ in declarations(f):
+            if not private:
+                port_index.setdefault(normalize(relative(full, PORT_PREFIXES)), rel_to_root(f))
     # Every vendored declaration (the whole MIPStarRE tree), for 'moved in'.
     vendor_index: dict[str, str] = {}
     for f in lean_files(os.path.join(ROOT, VENDOR_TREE)):
-        for full, _, _ in declarations(f):
+        for full, _, _, _, _ in declarations(f):
             comps = normalize(relative(full, VENDOR_PREFIXES)).split(".")
             for i in range(len(comps)):  # every dotted suffix, the full name first
                 vendor_index.setdefault(".".join(comps[i:]),
@@ -248,7 +296,8 @@ def main() -> int:
         return 2
 
     total_missing = 0
-    totals = dict(vendored=0, ported=0, elsewhere=0, listed=0, loose=0, missing=0, new=0)
+    totals = dict(vendored=0, ported=0, elsewhere=0, listed=0, loose=0, missing=0, new=0,
+                  private=0)
     for f in files:
         rf = rel_to_root(f)
         if not rf.startswith(PORT_DIR + "/"):
@@ -259,10 +308,17 @@ def main() -> int:
         if not os.path.isfile(vf):
             print(f"{rf}: no vendored counterpart {VENDOR_DIR}/{sub} (a new file)\n")
             continue
-        vdecls = [(relative(n, VENDOR_PREFIXES), k, ln) for n, k, ln in declarations(vf)]
-        pdecls = [(relative(n, PORT_PREFIXES), k, ln) for n, k, ln in declarations(f)]
+        vfull = declarations(vf)
+        vdecls = [(relative(n, VENDOR_PREFIXES), k, ln) for n, k, ln, _, _ in vfull]
+        vprivate = {relative(n, VENDOR_PREFIXES) for n, _, _, p, _ in vfull if p}
+        vparent = {relative(n, VENDOR_PREFIXES): relative(par, VENDOR_PREFIXES)
+                   for n, _, _, _, par in vfull if par}
+        pfull = declarations(f)
+        pdecls = [(relative(n, PORT_PREFIXES), k, ln) for n, k, ln, p, _ in pfull if not p]
+        pprivate = [(relative(n, PORT_PREFIXES), k, ln) for n, k, ln, p, _ in pfull if p]
         bullets = not_ported_bullets(f)
         pnorm = {normalize(r): r for r, _, _ in pdecls}
+        pnorm_private = {normalize(r): r for r, _, _ in pprivate}
         vnorm = {normalize(r) for r, _, _ in vdecls}
 
         status: dict[str, tuple[str, str]] = {}
@@ -272,9 +328,16 @@ def main() -> int:
             if n in pnorm:
                 status[r] = ("ported", pnorm[n])
                 used_ported.add(pnorm[n])
+            elif r in vprivate and n in pnorm_private:
+                status[r] = ("ported", pnorm_private[n])
+                used_ported.add(pnorm_private[n])
             elif n in port_index and port_index[n] != rf:
                 status[r] = ("elsewhere", port_index[n])
             elif any(bullet_covers(b, r) for b in bullets):
+                status[r] = ("listed", "")
+        # A field of a structure that is not ported is not ported either.
+        for r, _, _ in vdecls:
+            if r not in status and status.get(vparent.get(r, ""), ("",))[0] == "listed":
                 status[r] = ("listed", "")
         # Loose pairing: same last component, ported declaration otherwise unpaired.
         free_by_last: dict[str, list[str]] = {}
@@ -295,6 +358,7 @@ def main() -> int:
         for st, _ in status.values():
             counts[st] += 1
         new = [(r, ln) for r, _, ln in pdecls if r not in used_ported]
+        private_unpaired = [(r, ln) for r, _, ln in pprivate if r not in used_ported]
         stale = [b for b in bullets if not any(bullet_covers(b, r) for r, _, _ in vdecls)]
         contradicted = [b for b in bullets
                         if any(bullet_covers(b, r) and status.get(r, ("",))[0] == "ported"
@@ -304,7 +368,9 @@ def main() -> int:
         print(f"  vendored {len(vdecls)}: ported {counts['ported']}, loose {counts['loose']}, "
               f"ported elsewhere {counts['elsewhere']}, listed as not ported {counts['listed']}, "
               f"missing {counts['missing']}")
-        print(f"  ported file {len(pdecls)}: paired {len(pdecls) - len(new)}, new {len(new)}")
+        print(f"  ported file {len(pdecls) + len(pprivate)}: paired "
+              f"{len(pdecls) + len(pprivate) - len(new) - len(private_unpaired)}, new {len(new)}, "
+              f"private {len(private_unpaired)}")
         for r, _, ln in vdecls:
             st, other = status[r]
             if st == "missing":
@@ -322,6 +388,8 @@ def main() -> int:
         for r, ln in new:
             src = vendor_index.get(normalize(r))
             print(f"  new        {r}" + (f"  [from vendored {src}]" if src else ""))
+        for r, ln in private_unpaired:
+            print(f"  private    {r}  (line {ln})")
         for b in stale:
             print(f"  stale 'Not ported' bullet `{b}`: names no vendored declaration")
         for b in contradicted:
@@ -332,6 +400,7 @@ def main() -> int:
         for k in counts:
             totals[k] += counts[k]
         totals["new"] += len(new)
+        totals["private"] += len(private_unpaired)
 
     if len(files) > 1:
         print("total: " + ", ".join(f"{k} {v}" for k, v in totals.items()))

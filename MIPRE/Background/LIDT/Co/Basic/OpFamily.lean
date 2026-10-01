@@ -70,6 +70,7 @@ def toOpFamily {α : Type*} {R : Type*} [Fintype α] [Ring R] [StarRing R] [Part
 
 end SubMeas
 
+/-- A submeasurement is a raw operator family. -/
 instance {α : Type*} {R : Type*} [Fintype α] [Ring R] [StarRing R] [PartialOrder R] :
     Coe (SubMeas α R) (OpFamily α R) where
   coe := SubMeas.toOpFamily
@@ -93,10 +94,12 @@ def map {α : Type*} {R T : Type*} (f : R → T) (A : OpFamily α R) : OpFamily 
   outcome a := f (A.outcome a)
   total := f A.total
 
+/-- The outcome operators of the image are the images of the outcome operators. -/
 @[simp] theorem map_outcome {α : Type*} {R T : Type*} (f : R → T) (A : OpFamily α R) (a : α) :
     (A.map f).outcome a = f (A.outcome a) :=
   rfl
 
+/-- The total of the image is the image of the total. -/
 @[simp] theorem map_total {α : Type*} {R T : Type*} (f : R → T) (A : OpFamily α R) :
     (A.map f).total = f A.total :=
   rfl

@@ -31,7 +31,8 @@ the vendored state `ψ` where the vendored declaration has one (`agreementProbab
 
 Local families (the vendored `IdxSubMeas Question Outcome ι`) have their operators in `𝔓`, and
 the placed and sandwich families, which act on the joint space, in `K →L[ℂ] K`. The vendored
-`CompTransferStmt` is about a state on a single space `ι`, so its families are joint here.
+`CompTransferStmt` is about a state on a single space `ι`, so it takes a vector state
+`V : VecState K` (`Co/Basic/QuantumState.lean`) and joint families.
 
 In the symmetric model both tensor factors are `𝔓`, so the "two-space" declarations
 (`heterogeneousDiagonalSandwichFamily`, `heterogeneousTotalSandwichFamily`,
@@ -301,15 +302,16 @@ structure SwitchSandwichStmt {Question Outcome : Type*} [Fintype Outcome]
 
 /-- Conclusion statement for `prop:completeness-transfer-projective-P`.
 
-The vendored statement is about a state on a single space, so `A` and `P` are families of
-joint operators here. -/
+The vendored statement is about a state on a single space, so the state is a vector state
+`V : VecState K` (a symmetric model is accepted through its coercion) and `A` and `P` are
+families of joint operators. -/
 structure CompTransferStmt {Question Outcome : Type*} [Fintype Outcome]
-    (S : SymModel 𝔓 K) (𝒟 : Distribution Question)
+    (V : VecState K) (𝒟 : Distribution Question)
     (A : IdxSubMeas Question Outcome (K →L[ℂ] K))
     (P : IdxProjSubMeas Question Outcome (K →L[ℂ] K)) (ε : ℝ) : Prop where
   completenessTransfer :
-    S.idxSubMeasMass 𝒟 A ≥
-      S.idxSubMeasMass 𝒟
+    V.idxSubMeasMass 𝒟 A ≥
+      V.idxSubMeasMass 𝒟
         (IdxProjSubMeas.toIdxSubMeas P)
         - 2 * Real.sqrt ε
 

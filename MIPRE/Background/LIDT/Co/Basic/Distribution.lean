@@ -31,8 +31,10 @@ here for any real module `R`, and each lemma asks for exactly the structure its 
 
 Every C*-algebra with its order (`[CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]`), in
 particular `K →L[ℂ] K`, has all of these instances, with `Module ℝ` the restriction of scalars of
-its complex structure. For `K →L[ℂ] K` this file also declares shortcut instances
-(`instPosSMulMonoRealCLM` and three others), because synthesizing those classes there is slow.
+its complex structure. For `K →L[ℂ] K` this file also declares shortcut instances for the real
+scalars (see "Shortcut instances for the joint operators" below), because synthesizing those
+classes there is slow; they are `scoped` to `MIPRE.LIDT.Co`, so in force in every port file and
+nowhere else.
 
 The classical part of the vendored file (`Distribution`, `avgOver`, the uniform distributions,
 the push-forward, `toPMF`, the total variation distance) is not ported: it is imported, and named
@@ -96,29 +98,53 @@ real ordered-module structure of `K →L[ℂ] K` takes 0.6–1.9 s per class (`P
 `Mathlib/Algebra/Order/Star/Basic.lean`'s `IsOrderedModule` instance for star-ordered rings, and
 `IsScalarTower ℝ`/`SMulCommClass ℝ` through `Algebra.complexToReal`), paid again at every use of
 an order lemma below on joint operators. These shortcuts, found first, cut such a use from about
-2 s to 0.3 s. They are `Prop`-valued, so they create no diamond. The local C*-algebra `𝔓` does
-not need them (0.1–0.2 s per use). -/
+2 s to 0.3 s. The real scalar structure itself is slow too: `SMulZeroClass ℝ` (reached through
+`smul_nonneg`) and `Algebra ℝ` (reached by `simp [smul_mul_assoc]`) take about 0.5 s each, and
+`SMul ℝ` 0.1 s at every elaboration of `c • X` with `c : ℝ`; their shortcuts carry data, but each
+is `inferInstance`, the instance the search finds anyway, so it is the same term and creates no
+diamond. The local C*-algebra `𝔓` does not need any of them (0.1–0.2 s per use).
+
+They are `scoped` instances of `MIPRE.LIDT.Co`: in force in every file of the port (each works
+inside that namespace) and in no importer outside it. A new shortcut for the joint operators goes
+here. -/
 
 section JointShortcuts
 
 variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
+/-- Shortcut: the real scalar action on `K →L[ℂ] K`. -/
+noncomputable scoped instance (priority := high) instSMulRealCLM : SMul ℝ (K →L[ℂ] K) :=
+  inferInstance
+
+/-- Shortcut: the real scalar action on `K →L[ℂ] K` fixes zero. -/
+noncomputable scoped instance (priority := high) instSMulZeroClassRealCLM :
+    SMulZeroClass ℝ (K →L[ℂ] K) :=
+  inferInstance
+
+/-- Shortcut: `K →L[ℂ] K` is a real vector space. -/
+noncomputable scoped instance (priority := high) instModuleRealCLM : Module ℝ (K →L[ℂ] K) :=
+  inferInstance
+
+/-- Shortcut: `K →L[ℂ] K` is a real algebra. -/
+noncomputable scoped instance (priority := high) instAlgebraRealCLM : Algebra ℝ (K →L[ℂ] K) :=
+  inferInstance
+
 /-- Shortcut: real scalars associate with the product of `K →L[ℂ] K`. -/
-instance (priority := high) instIsScalarTowerRealCLM :
+scoped instance (priority := high) instIsScalarTowerRealCLM :
     IsScalarTower ℝ (K →L[ℂ] K) (K →L[ℂ] K) :=
   inferInstance
 
 /-- Shortcut: real scalars commute with the product of `K →L[ℂ] K`. -/
-instance (priority := high) instSMulCommClassRealCLM :
+scoped instance (priority := high) instSMulCommClassRealCLM :
     SMulCommClass ℝ (K →L[ℂ] K) (K →L[ℂ] K) :=
   inferInstance
 
 /-- Shortcut: real scalars act monotonically on the Loewner order of `K →L[ℂ] K`. -/
-instance (priority := high) instPosSMulMonoRealCLM : PosSMulMono ℝ (K →L[ℂ] K) :=
+scoped instance (priority := high) instPosSMulMonoRealCLM : PosSMulMono ℝ (K →L[ℂ] K) :=
   inferInstance
 
 /-- Shortcut: a nonnegative operator of `K →L[ℂ] K` scales monotonically in a real scalar. -/
-instance (priority := high) instSMulPosMonoRealCLM : SMulPosMono ℝ (K →L[ℂ] K) :=
+scoped instance (priority := high) instSMulPosMonoRealCLM : SMulPosMono ℝ (K →L[ℂ] K) :=
   PosSMulMono.toSMulPosMono
 
 end JointShortcuts

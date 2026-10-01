@@ -105,11 +105,13 @@ noncomputable def SubMeas.transport {α β : Type*} [Fintype α] [Fintype β]
   sum_eq_total := (Equiv.sum_comp e.symm A.outcome).trans A.sum_eq_total
   total_le_one := A.total_le_one
 
+/-- The outcome operator of the transport at `b` is the original one at `e.symm b`. -/
 @[simp] theorem SubMeas.transport_outcome {α β : Type*} [Fintype α] [Fintype β]
     (e : α ≃ β) (A : SubMeas α R) (b : β) :
     (SubMeas.transport e A).outcome b = A.outcome (e.symm b) :=
   rfl
 
+/-- Transport keeps the total operator. -/
 @[simp] theorem SubMeas.transport_total {α β : Type*} [Fintype α] [Fintype β]
     (e : α ≃ β) (A : SubMeas α R) :
     (SubMeas.transport e A).total = A.total :=
@@ -133,6 +135,8 @@ noncomputable def ProjMeas.transport {α β : Type*} [Fintype α] [Fintype β]
   toMeasurement := Measurement.transport e A.toMeasurement
   proj := fun b => A.proj (e.symm b)
 
+/-- The transport of a projective measurement, as a submeasurement, is the transport of its
+submeasurement. -/
 @[simp] theorem ProjMeas.transport_toSubMeas {α β : Type*} [Fintype α] [Fintype β]
     (e : α ≃ β) (A : ProjMeas α R) :
     (ProjMeas.transport e A).toSubMeas = SubMeas.transport e A.toSubMeas :=
@@ -263,6 +267,8 @@ noncomputable def completeSubMeas {α : Type*} [Fintype α] (A : SubMeas α R) :
   }
   total_eq_one := rfl
 
+/-- Transporting the trivial measurement at `a₀` along `e` gives the trivial measurement at
+`e a₀`. -/
 @[simp] theorem ProjMeas.transport_trivialDistinguishedOutcome {α : Type*} [Fintype α]
     (e : α ≃ α) (a₀ : α) :
     ProjMeas.transport e (ProjMeas.trivialDistinguishedOutcome (R := R) a₀) =
@@ -304,6 +310,8 @@ noncomputable def ProjMeas.postprocess {α β : Type*} [Fintype α] [Fintype β]
   }
   proj := fun b => ProjSubMeas.postprocess_outcome_proj ⟨A.toSubMeas, A.proj⟩ f b
 
+/-- The postprocessed projective measurement, as a submeasurement, is the postprocessed
+submeasurement. -/
 @[simp] theorem ProjMeas.postprocess_toSubMeas {α β : Type*} [Fintype α] [Fintype β]
     (A : ProjMeas α R) (f : α → β) :
     (ProjMeas.postprocess A f).toSubMeas = MIPRE.LIDT.Co.postprocess A.toSubMeas f :=

@@ -21,10 +21,13 @@ expectation values in a symmetric model `S : SymModel 𝔓 K`: the counterpart o
 does **not** register any global `@[positivity]` extensions: callers must import this module
 and invoke the tactic at the proof sites where they want the controlled automation.
 
-The vendored tactic is called `quantum_nonneg`. That syntax is in the import closure of every
-port file and keeps calling the vendored matrix lemmas, so the port's macro has a name of its
-own; it is the vendored macro with each lemma replaced by its fully qualified
-`MIPRE.LIDT.Co` counterpart (the placement lemmas of `Co/Basic/QuantumState.lean`, the
+The vendored tactic is called `quantum_nonneg`, and the port's macro has a name of its own as a
+precaution. No file of M0 imports the vendored syntax (only the vendored
+`LDT/Preliminaries/Defs.lean` imports it), but 228 of the 312 vendored LDT modules have it in
+their import closure (every vendored module from `Preliminaries/Defs.lean` on); a later stage
+that imports one of them for its classical content would see two `quantum_nonneg` syntaxes, the
+vendored one calling the matrix lemmas, and every call would be an ambiguous parse. The macro
+is the vendored one with each lemma replaced by its fully qualified `MIPRE.LIDT.Co` counterpart (the placement lemmas of `Co/Basic/QuantumState.lean`, the
 submeasurement lemmas of `Co/Basic/SubMeasurementCore.lean`), plus one fallback, `map_nonneg`,
 for a positive operator pushed along an order-preserving map other than the two placements
 (a `SubMeas.map` along any ⋆-homomorphism, for instance).
@@ -39,9 +42,9 @@ here is harmless).
 ## Not ported
 
 The vendored file declares no theorem or definition, only the syntax node `quantumNonneg` of
-`quantum_nonneg`; its counterpart is the syntax node `symNonneg` of `sym_nonneg`, renamed
-because the vendored syntax is in the import closure. The vendored example is translated below,
-with the call sites listed there.
+`quantum_nonneg`; its counterpart is the syntax node `symNonneg` of `sym_nonneg`, renamed so
+that a port file may import vendored modules that have the vendored syntax in their closure
+(above). The vendored example is translated below, with the call sites listed there.
 -/
 
 /--
@@ -49,8 +52,8 @@ with the call sites listed there.
 layer of the symmetric model.
 
 It is meant for goals built from:
-* positive expectation lemmas (`SymModel.ev_adjoint_self_nonneg`,
-  `SymModel.ev_nonneg_of_psd`),
+* positive expectation lemmas (`VecState.ev_adjoint_self_nonneg`,
+  `VecState.ev_nonneg_of_psd`),
 * tensor positivity (`SymModel.opTensor_nonneg`, `SymModel.leftTensor_nonneg`,
   `SymModel.rightTensor_nonneg`, and `map_nonneg` for any other order-preserving map),
 * Hermitian sandwich positivity (`IsSelfAdjoint.conjugate_nonneg`),
@@ -67,8 +70,8 @@ macro_rules
   | `(tactic| sym_nonneg) => `(tactic|
     first
     | assumption
-    | with_reducible apply _root_.MIPRE.LIDT.Co.SymModel.ev_nonneg_of_psd; sym_nonneg
-    | with_reducible exact _root_.MIPRE.LIDT.Co.SymModel.ev_adjoint_self_nonneg _ _
+    | with_reducible apply _root_.MIPRE.LIDT.Co.VecState.ev_nonneg_of_psd; sym_nonneg
+    | with_reducible exact _root_.MIPRE.LIDT.Co.VecState.ev_adjoint_self_nonneg _ _
     | with_reducible exact star_mul_self_nonneg _
     | with_reducible apply _root_.MIPRE.LIDT.Co.SymModel.opTensor_nonneg <;> sym_nonneg
     | with_reducible apply _root_.MIPRE.LIDT.Co.SymModel.leftTensor_nonneg; sym_nonneg

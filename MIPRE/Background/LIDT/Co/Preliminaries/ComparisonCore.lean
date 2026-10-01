@@ -24,14 +24,15 @@ As in `Co/Preliminaries/Defs.lean`, the declarations live in `MIPRE.LIDT.Co.Prel
 take the symmetric model `S : SymModel 𝔓 K` as an ordinary explicit argument in place of the
 vendored state `ψ` (`simeqToApprox S 𝒟 A B δ`); `ConsRel.mono` lives in the namespace of the
 ported relation, `MIPRE.LIDT.Co.SymModel.ConsRel`, so that `h.mono hδ` works on
-`h : S.ConsRel 𝒟 A B δ`. Local families have their operators in `𝔓`; the same-space statement
-`questionSDD_le_two_questionConsistency` is about joint measurements, in `K →L[ℂ] K`, and
-`conjTranspose_mul_mono` holds in any star-ordered ring.
+`h : S.ConsRel 𝒟 A B δ`. Local families have their operators in `𝔓`; the same-space statements
+`questionSDD_le_two_questionConsistency` and `qSDDOp_symm` are about joint operators, in
+`K →L[ℂ] K`, and take a vector state `S : VecState K` (`Co/Basic/QuantumState.lean`; a symmetric
+model is accepted through its coercion); `conjTranspose_mul_mono` holds in any star-ordered ring.
 
 The vendored proof of `simeqToApprox` lifts the two measurements to the joint space and applies
 the same-space bound. Here its per-question core is the repository's cross-party bound
 `MIPRE.BipartiteModel.xSqNorm_sum_le_two_mul` (`MIPRE/Foundations/CrossConsistency.lean`) on
-`S.toBipartite`, through `SymModel.qSDDCore_eq_sum_snorm_sq` of `Co/Test/Defs.lean`: this is
+`S.toBipartite`, through `VecState.qSDDCore_eq_sum_snorm_sq` of `Co/Test/Defs.lean`: this is
 `questionSDD_liftLeft_liftRight_le_two_questionConsistency`. In the symmetric model the
 "heterogeneous" placements `IdxSubMeas.placeLeft`, `placeRight` are the lifts, so the
 heterogeneous statements follow from the same-space ones by `rfl`.
@@ -110,7 +111,7 @@ theorem simeqForMeasurements {Question Outcome : Type*}
 is at most `2 * qConsDefect`. -/
 theorem questionSDD_le_two_questionConsistency {Outcome : Type*}
     [Fintype Outcome]
-    (S : SymModel 𝔓 K) (A B : Measurement Outcome (K →L[ℂ] K)) :
+    (S : VecState K) (A B : Measurement Outcome (K →L[ℂ] K)) :
     S.qSDD A.toSubMeas B.toSubMeas ≤
       2 * S.qConsDefect A.toSubMeas B.toSubMeas := by
   have hsq (M : Measurement Outcome (K →L[ℂ] K)) :
@@ -131,8 +132,8 @@ theorem questionSDD_le_two_questionConsistency {Outcome : Type*}
   have hqSDD : S.qSDD A.toSubMeas B.toSubMeas =
       ∑ a, S.ev (A.outcome a * A.outcome a) + ∑ a, S.ev (B.outcome a * B.outcome a) -
         2 * S.qMatchMass A.toSubMeas B.toSubMeas := by
-    rw [SymModel.qSDD, SymModel.qSDDCore, Finset.sum_congr rfl fun a _ => h_expand a,
-      Finset.sum_sub_distrib, Finset.sum_add_distrib, SymModel.qMatchMass, Finset.mul_sum]
+    rw [VecState.qSDD, VecState.qSDDCore, Finset.sum_congr rfl fun a _ => h_expand a,
+      Finset.sum_sub_distrib, Finset.sum_add_distrib, VecState.qMatchMass, Finset.mul_sum]
   have htot : S.ev (A.total * B.total) = 1 := by
     rw [A.total_eq_one, B.total_eq_one, mul_one, S.ev_one_of_isNormalized]
   have h0 := S.qSDD_nonneg A.toSubMeas B.toSubMeas
@@ -363,7 +364,7 @@ theorem consRel_uniform_equiv
 squared-distance sum. -/
 theorem qSDDOp_symm
     {Outcome : Type*} [Fintype Outcome]
-    (S : SymModel 𝔓 K) (A B : OpFamily Outcome (K →L[ℂ] K)) :
+    (S : VecState K) (A B : OpFamily Outcome (K →L[ℂ] K)) :
     S.qSDDOp A B = S.qSDDOp B A :=
   Finset.sum_congr rfl fun a _ => by
     rw [← neg_sub (B.outcome a), star_neg, neg_mul_neg]

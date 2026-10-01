@@ -23,20 +23,32 @@ matching mass, consistency defect, and test-passing predicates. This is the coun
 
 The evaluation families (`evaluateAt`, `polynomialEvaluationFamily`, ...) are generic over the
 ordered `⋆`-ring `R` of `Co/Basic/SubMeasurementCore.lean`. The ev-level defects and relations
-are `SymModel` declarations, used with dot notation on `S : SymModel 𝔓 K`: the vendored
-`qSDD ψ A B` is `S.qSDD A B`, `SDDRel ψ 𝒟 A B δ` is `S.SDDRel 𝒟 A B δ`. A same-space quantity
-(`qMatchMass`, `qSDD`, `sddError`, ...) is about joint operators, so its families have their
-operators in `K →L[ℂ] K`; a bipartite one (`qBipartiteMatchMass`, `bipartiteConsError`,
-`ConsRel`, ...) places local families in `𝔓` on the two factors through `S.opTensor`. As
-everywhere in the port, the normalization hypothesis `hψ : ψ.IsNormalized` of the vendored
-bounds is dropped: `S.ev 1 = 1` is a theorem of the model.
+are used with dot notation on the state: the vendored `qSDD ψ A B` is `S.qSDD A B`,
+`SDDRel ψ 𝒟 A B δ` is `S.SDDRel 𝒟 A B δ`.
+
+* A **same-space** quantity (`qMatchMass`, `qConsDefect`, `qSDDCore`, `qSDD`, `qSDDOp`,
+  `qSSCDefect`, `consError`, `sddError`, `sddErrorOp`, `sscError`, `subMeasMass`,
+  `idxSubMeasMass`, `bndError`, `SDDRel`, `SDDOpRel`, `SSCRel`, `CompletenessAtLeast`,
+  `BoundedByOperator`) uses only the state, so it is a `VecState` declaration
+  (`Co/Basic/QuantumState.lean`), about joint operators in `K →L[ℂ] K`. It applies to any vector
+  state, with no swap symmetry: the vendored uses with a state on one space, a reduced state or a
+  state tensored with an ancilla (`MakingMeasurementsProjective`) port without building a
+  symmetric model; and `S.qSDD A B` for `S : SymModel 𝔓 K` is `S.toVecState.qSDD A B`.
+* A **bipartite** quantity (`qBipartiteMatchMass`, `qBipartiteConsDefect`, `bipartiteConsError`,
+  `ConsRel`, `qBipartiteSSCDefect`, `bipartiteSSCError`, `BipartiteSSCRel`) places local
+  families in `𝔓` on the two factors through `S.opTensor`, so it is a `SymModel` declaration.
+  The two-space `ProjStrat` of `Co/Test/StrategyCore.lean` has no counterpart of these: see
+  there.
+
+As everywhere in the port, the normalization hypothesis `hψ : ψ.IsNormalized` of the vendored
+bounds is dropped: `V.ev 1 = 1` is a theorem of every vector state.
 
 ## New here
 
-Three bridges to the repository calculus, through `S.toBipartite`
+Three bridges to the repository calculus, through `V.toStateModel` and `S.toBipartite`
 (`Co/Basic/QuantumState.lean`):
 
-* `SymModel.qSDDCore_eq_sum_snorm_sq`: `qSDDCore` is `∑ₐ ‖(Aₐ - Bₐ) Ψ‖²`;
+* `VecState.qSDDCore_eq_sum_snorm_sq`: `qSDDCore` is `∑ₐ ‖(Aₐ - Bₐ) Ψ‖²`;
 * `SymModel.bipartiteConsError_eq_inconsistency`: for measurements, the bipartite consistency
   error is `MIPRE.BipartiteModel.inconsistency` (`MIPRE/Foundations/ModelStrategy.lean`) of the
   model, weighted by the distribution; its per-question form, for sub-measurements, is
@@ -135,34 +147,40 @@ theorem postprocess_total {α β : Type*} [Fintype α] [Fintype β]
 
 end Evaluation
 
-namespace SymModel
+/-- An average against a distribution, written over the whole question type. -/
+private theorem avgOver_eq_sum_weight {Question : Type*} [Fintype Question]
+    (𝒟 : Distribution Question) (f : Question → ℝ) :
+    avgOver 𝒟 f = ∑ q, 𝒟.weight q * f q :=
+  (MIPStarRE.LDT.Distribution.sum_univ_eq_sum_support 𝒟 _ fun q hq => by
+    rw [𝒟.outsideSupport q hq, zero_mul]).symm
 
-variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
-  {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
-  (S : SymModel 𝔓 K)
+namespace VecState
+
+variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+  (V : VecState K)
 
 /-! ### Questionwise defects -/
 
 /-- Questionwise matching mass `∑_a ⟨Ψ, A_a B_a Ψ⟩`, summed over outcomes. -/
 noncomputable def qMatchMass {Outcome : Type*} [Fintype Outcome]
     (A B : SubMeas Outcome (K →L[ℂ] K)) : ℝ :=
-  ∑ a, S.ev (A.outcome a * B.outcome a)
+  ∑ a, V.ev (A.outcome a * B.outcome a)
 
 /-- Questionwise off-diagonal mass surrogate for consistency. -/
 noncomputable def qConsDefect {Outcome : Type*} [Fintype Outcome]
     (A B : SubMeas Outcome (K →L[ℂ] K)) : ℝ :=
-  let totalOverlap := S.ev (A.total * B.total)
-  max 0 (totalOverlap - S.qMatchMass A B)
+  let totalOverlap := V.ev (A.total * B.total)
+  max 0 (totalOverlap - V.qMatchMass A B)
 
 /-- Questionwise squared-distance defect. -/
 noncomputable def qSDDCore {Outcome : Type*} [Fintype Outcome]
     (A B : Outcome → K →L[ℂ] K) : ℝ :=
-  ∑ a, S.ev (star (A a - B a) * (A a - B a))
+  ∑ a, V.ev (star (A a - B a) * (A a - B a))
 
 /-- Questionwise squared-distance defect. -/
 noncomputable def qSDD {Outcome : Type*} [Fintype Outcome]
     (A B : SubMeas Outcome (K →L[ℂ] K)) : ℝ :=
-  S.qSDDCore A.outcome B.outcome
+  V.qSDDCore A.outcome B.outcome
 
 /-- State-dependent distance for raw operator families.
 Matches the paper's `≈_δ` for arbitrary operator families.
@@ -170,13 +188,13 @@ This keeps the raw-family API separate while sharing the same core formula as
 `qSDD`. -/
 noncomputable def qSDDOp {Outcome : Type*} [Fintype Outcome]
     (A B : OpFamily Outcome (K →L[ℂ] K)) : ℝ :=
-  S.qSDDCore A.outcome B.outcome
+  V.qSDDCore A.outcome B.outcome
 
 /-- Questionwise strong self-consistency defect. -/
 noncomputable def qSSCDefect {Outcome : Type*} [Fintype Outcome]
     (A : SubMeas Outcome (K →L[ℂ] K)) : ℝ :=
-  let totalMass := S.ev A.total
-  let diagonalMass := ∑ a, S.ev (A.outcome a * A.outcome a)
+  let totalMass := V.ev A.total
+  let diagonalMass := ∑ a, V.ev (A.outcome a * A.outcome a)
   max 0 (totalMass - diagonalMass)
 
 /-! ### Averaged defects -/
@@ -184,37 +202,124 @@ noncomputable def qSSCDefect {Outcome : Type*} [Fintype Outcome]
 /-- Averaged off-diagonal mass for consistency statements. -/
 noncomputable def consError {Question Outcome : Type*} [Fintype Outcome]
     (𝒟 : Distribution Question) (A B : IdxSubMeas Question Outcome (K →L[ℂ] K)) : ℝ :=
-  avgOver 𝒟 (fun q => S.qConsDefect (A q) (B q))
+  avgOver 𝒟 (fun q => V.qConsDefect (A q) (B q))
 
 /-- Averaged squared distance for `≈_δ`. -/
 noncomputable def sddError {Question Outcome : Type*} [Fintype Outcome]
     (𝒟 : Distribution Question) (A B : IdxSubMeas Question Outcome (K →L[ℂ] K)) : ℝ :=
-  avgOver 𝒟 (fun q => S.qSDD (A q) (B q))
+  avgOver 𝒟 (fun q => V.qSDD (A q) (B q))
 
 /-- Averaged squared distance for raw operator families. -/
 noncomputable def sddErrorOp {Question Outcome : Type*} [Fintype Outcome]
     (𝒟 : Distribution Question) (A B : IdxOpFamily Question Outcome (K →L[ℂ] K)) : ℝ :=
-  avgOver 𝒟 (fun q => S.qSDDOp (A q) (B q))
+  avgOver 𝒟 (fun q => V.qSDDOp (A q) (B q))
 
 /-- Averaged defect in strong self-consistency. -/
 noncomputable def sscError {Question Outcome : Type*} [Fintype Outcome]
     (𝒟 : Distribution Question) (A : IdxSubMeas Question Outcome (K →L[ℂ] K)) : ℝ :=
-  avgOver 𝒟 (fun q => S.qSSCDefect (A q))
+  avgOver 𝒟 (fun q => V.qSSCDefect (A q))
 
 /-- Total mass of a submeasurement on the state, computed from the concrete total operator. -/
 noncomputable def subMeasMass {Outcome : Type*} [Fintype Outcome]
     (A : SubMeas Outcome (K →L[ℂ] K)) : ℝ :=
-  S.ev A.total
+  V.ev A.total
 
 /-- Averaged total mass of an indexed submeasurement. -/
 noncomputable def idxSubMeasMass {Question Outcome : Type*} [Fintype Outcome]
     (𝒟 : Distribution Question) (A : IdxSubMeas Question Outcome (K →L[ℂ] K)) : ℝ :=
-  avgOver 𝒟 (fun q => S.subMeasMass (A q))
+  avgOver 𝒟 (fun q => V.subMeasMass (A q))
 
 /-- Defect in domination by an operator witness, measured at the expectation-value level. -/
 noncomputable def bndError {Outcome : Type*} [Fintype Outcome]
     (A : SubMeas Outcome (K →L[ℂ] K)) (Z : K →L[ℂ] K) : ℝ :=
-  max 0 (S.subMeasMass A - S.ev Z)
+  max 0 (V.subMeasMass A - V.ev Z)
+
+/-! ### Relations -/
+
+/-- State-dependent distance relation. -/
+structure SDDRel {Question Outcome : Type*} [Fintype Outcome]
+    (𝒟 : Distribution Question) (A B : IdxSubMeas Question Outcome (K →L[ℂ] K)) (δ : ℝ) :
+    Prop where
+  squaredDistanceBound : V.sddError 𝒟 A B ≤ δ
+
+/-- State-dependent distance relation for raw operator families. -/
+structure SDDOpRel {Question Outcome : Type*} [Fintype Outcome]
+    (𝒟 : Distribution Question) (A B : IdxOpFamily Question Outcome (K →L[ℂ] K)) (δ : ℝ) :
+    Prop where
+  squaredDistanceBound : V.sddErrorOp 𝒟 A B ≤ δ
+
+/-- Strong self-consistency relation. -/
+structure SSCRel {Question Outcome : Type*} [Fintype Outcome]
+    (𝒟 : Distribution Question) (A : IdxSubMeas Question Outcome (K →L[ℂ] K)) (δ : ℝ) :
+    Prop where
+  diagonalOverlapBound : V.sscError 𝒟 A ≤ δ
+
+/-- Completeness statement for a submeasurement. -/
+structure CompletenessAtLeast {Outcome : Type*} [Fintype Outcome]
+    (A : SubMeas Outcome (K →L[ℂ] K)) (r : ℝ) : Prop where
+  lowerBound : V.subMeasMass A ≥ r
+
+/-- Boundedness statement witnessed by an operator. -/
+structure BoundedByOperator {Outcome : Type*} [Fintype Outcome]
+    (A : SubMeas Outcome (K →L[ℂ] K)) (Z : K →L[ℂ] K) (δ : ℝ) : Prop where
+  witnessOpPSD : 0 ≤ Z
+  upperBound : V.bndError A Z ≤ δ
+
+/-! ### Nonnegativity lemmas for defect measures -/
+
+/-- The squared-distance defect is nonneg since each summand is `⟨Ψ, M†M Ψ⟩ ≥ 0`. -/
+theorem qSDD_nonneg {Outcome : Type*} [Fintype Outcome]
+    (A B : SubMeas Outcome (K →L[ℂ] K)) :
+    0 ≤ V.qSDD A B :=
+  Finset.sum_nonneg fun _ _ => V.ev_adjoint_self_nonneg _
+
+/-- The averaged squared-distance error is nonneg. -/
+theorem sddError_nonneg {Question Outcome : Type*} [Fintype Outcome]
+    (𝒟 : Distribution Question) (A B : IdxSubMeas Question Outcome (K →L[ℂ] K)) :
+    0 ≤ V.sddError 𝒟 A B :=
+  avgOver_nonneg 𝒟 _ fun _ => V.qSDD_nonneg _ _
+
+/-! ### Self-distance -/
+
+/-- The self-distance `qSDD A A` is zero. -/
+theorem qSDD_self {Outcome : Type*} [Fintype Outcome] (A : SubMeas Outcome (K →L[ℂ] K)) :
+    V.qSDD A A = 0 :=
+  Finset.sum_eq_zero fun _ _ => by rw [sub_self, mul_zero, V.ev_zero]
+
+/-- The averaged self-distance `sddError 𝒟 A A` is zero. -/
+theorem sddError_self {Question Outcome : Type*} [Fintype Outcome]
+    (𝒟 : Distribution Question) (A : IdxSubMeas Question Outcome (K →L[ℂ] K)) :
+    V.sddError 𝒟 A A = 0 := by
+  unfold sddError
+  have : (fun q => V.qSDD (A q) (A q)) = fun _ => 0 :=
+    funext fun q => V.qSDD_self (A q)
+  rw [this]; exact avgOver_zero 𝒟
+
+/- The naive monotonicity statement
+`V.qConsDefect (postprocess A f) (postprocess B f) ≤ V.qConsDefect A B`
+is false for arbitrary submeasurements: without opposite-side / commuting
+hypotheses, the extra cross terms created by postprocessing need not be
+nonnegative. The paper's data-processing proposition is therefore recorded in
+the bipartite form `Preliminaries.simeqDataProcessing`, not as a generic fact
+about `qConsDefect`. -/
+
+/-! ### Bridges to the repository calculus -/
+
+/-- **The squared-distance defect is a sum of squared state norms**:
+`qSDDCore A B = ∑ₐ ‖(Aₐ - Bₐ) Ψ‖²`, each term being `V.toStateModel.snorm (Aₐ - Bₐ) ^ 2`
+(`toStateModel_snorm`). -/
+theorem qSDDCore_eq_sum_snorm_sq {Outcome : Type*} [Fintype Outcome]
+    (A B : Outcome → K →L[ℂ] K) :
+    V.qSDDCore A B = ∑ a, ‖(A a - B a) V.Ψ‖ ^ 2 :=
+  Finset.sum_congr rfl fun a _ => V.ev_adjoint_self_eq_norm_sq (A a - B a)
+
+end VecState
+
+namespace SymModel
+
+variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
+  {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+  (S : SymModel 𝔓 K)
 
 /-! ### Bipartite defects -/
 
@@ -271,24 +376,6 @@ structure ConsRel {Question Outcome : Type*} [Fintype Outcome]
     (𝒟 : Distribution Question) (A B : IdxSubMeas Question Outcome 𝔓) (δ : ℝ) : Prop where
   offDiagonalBound : S.bipartiteConsError 𝒟 A B ≤ δ
 
-/-- State-dependent distance relation. -/
-structure SDDRel {Question Outcome : Type*} [Fintype Outcome]
-    (𝒟 : Distribution Question) (A B : IdxSubMeas Question Outcome (K →L[ℂ] K)) (δ : ℝ) :
-    Prop where
-  squaredDistanceBound : S.sddError 𝒟 A B ≤ δ
-
-/-- State-dependent distance relation for raw operator families. -/
-structure SDDOpRel {Question Outcome : Type*} [Fintype Outcome]
-    (𝒟 : Distribution Question) (A B : IdxOpFamily Question Outcome (K →L[ℂ] K)) (δ : ℝ) :
-    Prop where
-  squaredDistanceBound : S.sddErrorOp 𝒟 A B ≤ δ
-
-/-- Strong self-consistency relation. -/
-structure SSCRel {Question Outcome : Type*} [Fintype Outcome]
-    (𝒟 : Distribution Question) (A : IdxSubMeas Question Outcome (K →L[ℂ] K)) (δ : ℝ) :
-    Prop where
-  diagonalOverlapBound : S.sscError 𝒟 A ≤ δ
-
 /-- Bipartite questionwise strong self-consistency defect.
 This is the paper's SSC condition (Definition 4.3/4.4):
   `max 0 (∑ₐ ev (Aₐ ⊗ I) − ∑ₐ ev (Aₐ ⊗ Aₐ))`.
@@ -312,30 +399,7 @@ structure BipartiteSSCRel {Question Outcome : Type*} [Fintype Outcome]
     (𝒟 : Distribution Question) (A : IdxSubMeas Question Outcome 𝔓) (δ : ℝ) : Prop where
   overlapBound : S.bipartiteSSCError 𝒟 A ≤ δ
 
-/-- Completeness statement for a submeasurement. -/
-structure CompletenessAtLeast {Outcome : Type*} [Fintype Outcome]
-    (A : SubMeas Outcome (K →L[ℂ] K)) (r : ℝ) : Prop where
-  lowerBound : S.subMeasMass A ≥ r
-
-/-- Boundedness statement witnessed by an operator. -/
-structure BoundedByOperator {Outcome : Type*} [Fintype Outcome]
-    (A : SubMeas Outcome (K →L[ℂ] K)) (Z : K →L[ℂ] K) (δ : ℝ) : Prop where
-  witnessOpPSD : 0 ≤ Z
-  upperBound : S.bndError A Z ≤ δ
-
 /-! ### Nonnegativity lemmas for defect measures -/
-
-/-- The squared-distance defect is nonneg since each summand is `⟨Ψ, M†M Ψ⟩ ≥ 0`. -/
-theorem qSDD_nonneg {Outcome : Type*} [Fintype Outcome]
-    (A B : SubMeas Outcome (K →L[ℂ] K)) :
-    0 ≤ S.qSDD A B :=
-  Finset.sum_nonneg fun _ _ => S.ev_adjoint_self_nonneg _
-
-/-- The averaged squared-distance error is nonneg. -/
-theorem sddError_nonneg {Question Outcome : Type*} [Fintype Outcome]
-    (𝒟 : Distribution Question) (A B : IdxSubMeas Question Outcome (K →L[ℂ] K)) :
-    0 ≤ S.sddError 𝒟 A B :=
-  avgOver_nonneg 𝒟 _ fun _ => S.qSDD_nonneg _ _
 
 /-- The bipartite consistency defect is nonneg by definition (`max 0 _`). -/
 theorem qBipartiteConsDefect_nonneg {Outcome : Type*} [Fintype Outcome]
@@ -398,46 +462,7 @@ theorem bipartiteSSCError_nonneg {Question Outcome : Type*} [Fintype Outcome]
     0 ≤ S.bipartiteSSCError 𝒟 A :=
   avgOver_nonneg 𝒟 _ fun _ => S.qBipartiteSSCDefect_nonneg _
 
-/-! ### Self-distance -/
-
-/-- The self-distance `qSDD A A` is zero. -/
-theorem qSDD_self {Outcome : Type*} [Fintype Outcome] (A : SubMeas Outcome (K →L[ℂ] K)) :
-    S.qSDD A A = 0 :=
-  Finset.sum_eq_zero fun _ _ => by rw [sub_self, mul_zero, S.ev_zero]
-
-/-- The averaged self-distance `sddError 𝒟 A A` is zero. -/
-theorem sddError_self {Question Outcome : Type*} [Fintype Outcome]
-    (𝒟 : Distribution Question) (A : IdxSubMeas Question Outcome (K →L[ℂ] K)) :
-    S.sddError 𝒟 A A = 0 := by
-  unfold sddError
-  have : (fun q => S.qSDD (A q) (A q)) = fun _ => 0 :=
-    funext fun q => S.qSDD_self (A q)
-  rw [this]; exact avgOver_zero 𝒟
-
-/- The naive monotonicity statement
-`S.qConsDefect (postprocess A f) (postprocess B f) ≤ S.qConsDefect A B`
-is false for arbitrary submeasurements: without opposite-side / commuting
-hypotheses, the extra cross terms created by postprocessing need not be
-nonnegative. The paper's data-processing proposition is therefore recorded in
-the bipartite form `Preliminaries.simeqDataProcessing`, not as a generic fact
-about `qConsDefect`. -/
-
 /-! ### Bridges to the repository calculus -/
-
-/-- **The squared-distance defect is a sum of squared state norms**:
-`qSDDCore A B = ∑ₐ ‖(Aₐ - Bₐ) Ψ‖²`, each term being `S.toBipartite.snorm (Aₐ - Bₐ) ^ 2`
-(`toBipartite_snorm`). -/
-theorem qSDDCore_eq_sum_snorm_sq {Outcome : Type*} [Fintype Outcome]
-    (A B : Outcome → K →L[ℂ] K) :
-    S.qSDDCore A B = ∑ a, ‖(A a - B a) S.Ψ‖ ^ 2 :=
-  Finset.sum_congr rfl fun a _ => S.ev_adjoint_self_eq_norm_sq (A a - B a)
-
-/-- An average against a distribution, written over the whole question type. -/
-private theorem avgOver_eq_sum_weight {Question : Type*} [Fintype Question]
-    (𝒟 : Distribution Question) (f : Question → ℝ) :
-    avgOver 𝒟 f = ∑ q, 𝒟.weight q * f q :=
-  (MIPStarRE.LDT.Distribution.sum_univ_eq_sum_support 𝒟 _ fun q hq => by
-    rw [𝒟.outsideSupport q hq, zero_mul]).symm
 
 /-- **The bipartite consistency defect is the off-diagonal Born mass**
 `∑_{a ≠ b} ⟨Ψ, (A_a ⊗ B_b) Ψ⟩`, for any two sub-measurements: the `max 0` of the definition
@@ -484,7 +509,7 @@ theorem sddError_liftLeft_liftRight_eq_xPovmDist {Question Outcome : Type*} [Fin
     S.sddError 𝒟 (IdxSubMeas.liftLeft S (IdxMeas.toIdxSubMeas A))
         (IdxSubMeas.liftRight S (IdxMeas.toIdxSubMeas B)) =
       S.toBipartite.xPovmDist 𝒟.weight (fun q => (A q).toPOVMIn) (fun q => (B q).toPOVMIn) := by
-  rw [sddError, avgOver_eq_sum_weight]
+  rw [VecState.sddError, avgOver_eq_sum_weight]
   exact Finset.sum_congr rfl fun q _ => congrArg (𝒟.weight q * ·)
     (S.qSDDCore_eq_sum_snorm_sq (fun a => S.L ((A q).outcome a))
       (fun a => S.R ((B q).outcome a)))

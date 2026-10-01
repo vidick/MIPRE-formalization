@@ -43,20 +43,42 @@ the structure (`reports/c6b-paper-proofs.md`, §4.1 and Theorem B):
 * `ev_L_mul_R_comm : ev (L x * R y) = ev (L y * R x)`, the vendored
   `ev_opTensor_swap_of_density_fixed`.
 
-The model is a bipartite model of the repository (`toBipartite`, with `H := K`, `π := id`,
-`πA := L`, `πB := R`), so the state calculus of `MIPRE/Foundations/` applies to it unchanged.
+The state alone is a **vector state** `VecState K` (the fields `Ψ`, `Ψ_norm`), the parent
+structure of `SymModel`. Everything that uses only the state, and not the placements or the flip,
+is a `VecState` declaration: `ev` and its linear and positivity lemmas here, and downstream the
+same-space defects and relations (`qSDD`, `sddError`, `SDDRel`, …, `Co/Test/Defs.lean`). They
+apply to a state with no swap symmetry (the vendored `QuantumState ι` on one space, the reduced
+or tensored states of `MakingMeasurementsProjective`), and are reached from `S : SymModel 𝔓 K` by
+the same dot notation, `S.ev X` being `S.toVecState.ev X`; an explicit argument
+`(V : VecState K)` accepts `S` through a coercion.
 
-Every operator-positivity lemma of the port is proved here, in a file that imports only
-Foundations and the Mathlib they import, and is applied downstream: positivity on `K →L[ℂ] K`
-is the expensive part of elaboration, and it roughly doubles under the wholesale `import Mathlib`
-of the vendored classical layer (`planning/c6b-plan.md`, §5).
+The vector state is a state model of the repository (`VecState.toStateModel`, with `H := K`,
+`π := id`), and the symmetric model a bipartite model (`toBipartite`, with in addition
+`πA := L`, `πB := R`), so the state calculus of `MIPRE/Foundations/` applies to both unchanged.
+
+Every positivity lemma on the joint operators `K →L[ℂ] K` is proved here, in a file that imports
+only Foundations and the Mathlib they import, and is applied downstream: positivity on
+`K →L[ℂ] K` is the expensive part of elaboration, and it roughly doubles under the wholesale
+`import Mathlib` of the vendored classical layer (`planning/c6b-plan.md`, §5). Positivity in the
+local algebra `𝔓`, or in a generic ordered `⋆`-ring, stays with its vendored file.
 
 ## Translation
 
 `QuantumState (ι × ι)` ψ ↦ `S : SymModel 𝔓 K`; `ev ψ X` ↦ `S.ev X`; `leftTensor A` ↦ `S.L A`;
 `rightTensor A` ↦ `S.R A`; `opTensor A B` ↦ `S.opTensor A B = S.L A * S.R B`; `ᴴ` ↦ `star`;
-`swapDensity` ↦ `S.flip`. Lemmas keep their vendored names, as `SymModel` lemmas
-(`S.leftTensor_mul_leftTensor`, stated with `S.L`).
+`swapDensity` ↦ `S.flip`; a state on one space ↦ `V : VecState K`. Lemmas keep their vendored
+names, as `SymModel` lemmas (`S.leftTensor_mul_leftTensor`, stated with `S.L`) or, when they use
+only the state, `VecState` lemmas (`S.ev_add`, `V.ev_add`).
+
+## New here
+
+- `VecState`, `VecState.toStateModel` (with `toStateModel_qform`, `toStateModel_snorm`), the
+  coercion of a `SymModel` to its `VecState`;
+- the flip and its lemmas (`flip`, `R_apply`, `J_symm`, `flip_apply`, `flip_flip`, `flip_L`,
+  `flip_R`, `L_comm_R`), the swap symmetry (`ev_flip`, `ev_L_eq_ev_R`, `ev_L_mul_R_comm`);
+- `toBipartite` and its `simp` lemmas;
+- `leftTensor_real_smul`, `rightTensor_real_smul`: placement of a real scalar multiple;
+- `opTensor_le_one`: a product placement of two effects is an effect.
 
 ## Ported here from other vendored files
 
@@ -75,7 +97,8 @@ the counterparts of their vendored files: from `LDT/Basic/OperatorExpectations.l
 
 Matrix-only or density-only declarations of the vendored file, each replaced by the model:
 
-- `QuantumState`: replaced by `SymModel`; the state is the vector `Ψ`, not a density matrix.
+- `QuantumState`: replaced by `VecState` (a state on one space) and `SymModel` (a symmetric state
+  on two); the state is the vector `Ψ`, not a density matrix.
 - `QuantumState.IsNormalized.nonempty`: supplies `Nonempty ι` to the normalized trace, which
   the model does not have; `K` contains the unit vector `Ψ`.
 - `pureDensity`: the scaled rank-one density of a vector; the state is a vector here.
@@ -107,16 +130,25 @@ namespace MIPRE.LIDT.Co
 
 open scoped InnerProductSpace
 
-/-- **A symmetric model**: a unit vector `Ψ` in a Hilbert space `K`, a ⋆-homomorphism `L` from a
-C*-algebra `𝔓` of local operators into the operators on `K` (the first player's placement), and
-a self-inverse isometry `J` of `K` fixing `Ψ` whose conjugation carries `L` to an operator family
-commuting with `L` (the second player's placement `R`). -/
-structure SymModel (𝔓 : Type*) [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
-    (K : Type*) [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K] where
+/-- **A vector state**: a unit vector `Ψ` in a Hilbert space `K`, acting on the operators of `K`
+by `X ↦ Re ⟪Ψ, X Ψ⟫`. It is the vendored `QuantumState ι` of a state on one space, as a vector
+state; it is the parent of `SymModel`, and the same-space quantities of the port (`ev`, `qSDD`,
+`SDDRel`, …) are `VecState` declarations, reached from `S : SymModel 𝔓 K` by the same dot
+notation (`S.ev X` is `S.toVecState.ev X`). -/
+structure VecState (K : Type*) [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+    where
   /-- The state. -/
   Ψ : K
   /-- The state is a unit vector (the vendored `QuantumState.IsNormalized`). -/
   Ψ_norm : ‖Ψ‖ = 1
+
+/-- **A symmetric model**: a vector state `Ψ` in a Hilbert space `K`, a ⋆-homomorphism `L` from a
+C*-algebra `𝔓` of local operators into the operators on `K` (the first player's placement), and
+a self-inverse isometry `J` of `K` fixing `Ψ` whose conjugation carries `L` to an operator family
+commuting with `L` (the second player's placement `R`). -/
+structure SymModel (𝔓 : Type*) [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
+    (K : Type*) [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+    extends VecState K where
   /-- The first player's placement (the vendored `leftTensor`). -/
   L : 𝔓 →⋆ₐ[ℂ] (K →L[ℂ] K)
   /-- The flip of the two players (the vendored `swapVector`). -/
@@ -137,11 +169,117 @@ theorem sq_le_self {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRin
   rw [mul_sub, mul_one] at hnonneg
   exact sub_nonneg.1 hnonneg
 
+namespace VecState
+
+variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+  (V : VecState K)
+
+/-! ## The expectation -/
+
+/-- The expectation `Re ⟪Ψ, X Ψ⟫` of a joint operator (the vendored `ev ψ X = Re τ(ρ X)`). -/
+noncomputable def ev (X : K →L[ℂ] K) : ℝ := Op.qform V.Ψ X
+
+/-- The expectation is the real part of the inner product (the vendored
+`PureState.ev_eq_re_inner`). -/
+theorem ev_eq_re_inner (X : K →L[ℂ] K) : V.ev X = (⟪V.Ψ, X V.Ψ⟫_ℂ).re := rfl
+
+/-- `ev` distributes over addition. -/
+theorem ev_add (X Y : K →L[ℂ] K) : V.ev (X + Y) = V.ev X + V.ev Y := Op.qform_add _ X Y
+
+/-- `ev` distributes over subtraction. -/
+theorem ev_sub (X Y : K →L[ℂ] K) : V.ev (X - Y) = V.ev X - V.ev Y := Op.qform_sub _ X Y
+
+/-- `ev` commutes with complex scalar multiplication by a real number. -/
+theorem ev_scale (c : ℝ) (X : K →L[ℂ] K) : V.ev ((c : ℂ) • X) = c * V.ev X :=
+  Op.qform_smul_real _ c X
+
+/-- `ev` commutes with the real scalar action on operators. -/
+theorem ev_real_smul (c : ℝ) (X : K →L[ℂ] K) : V.ev (c • X) = c * V.ev X := by
+  rw [← Complex.coe_smul]
+  exact V.ev_scale c X
+
+/-- `ev` of the zero operator is zero. -/
+theorem ev_zero : V.ev 0 = 0 := Op.qform_zero _
+
+/-- `ev` distributes over finite sums. -/
+theorem ev_finset_sum {α : Type*} (s : Finset α) (f : α → K →L[ℂ] K) :
+    V.ev (∑ a ∈ s, f a) = ∑ a ∈ s, V.ev (f a) := Op.qform_sum _ s f
+
+/-- `ev` distributes over univ sums. -/
+theorem ev_sum {α : Type*} [Fintype α] (f : α → K →L[ℂ] K) :
+    V.ev (∑ a, f a) = ∑ a, V.ev (f a) := V.ev_finset_sum Finset.univ f
+
+/-- The state has unit expectation on the identity (the vendored `QuantumState.IsNormalized`,
+`τ(ρ) = 1`). -/
+def IsNormalized : Prop := V.ev 1 = 1
+
+/-- A normalized state has unit expectation on the identity operator. -/
+@[simp] theorem ev_one_of_isNormalized : V.ev 1 = 1 := Op.qform_one _ V.Ψ_norm
+
+/-- A vector state is normalized. -/
+theorem isNormalized : V.IsNormalized := V.ev_one_of_isNormalized
+
+/-- `ev` of a positive operator is nonnegative. -/
+theorem ev_nonneg_of_psd (X : K →L[ℂ] K) (hX : 0 ≤ X) : 0 ≤ V.ev X :=
+  Op.qform_nonneg_of_nonneg _ hX
+
+/-- `ev` is monotone. -/
+theorem ev_mono (X Y : K →L[ℂ] K) (h : X ≤ Y) : V.ev X ≤ V.ev Y := Op.qform_mono _ h
+
+/-- `ev (M* M) = ‖M Ψ‖²`. -/
+theorem ev_adjoint_self_eq_norm_sq (M : K →L[ℂ] K) : V.ev (star M * M) = ‖M V.Ψ‖ ^ 2 :=
+  (Op.snorm_sq_eq_qform V.Ψ M).symm
+
+/-- For any operator `M`, `ev (M* M) ≥ 0`. -/
+theorem ev_adjoint_self_nonneg (M : K →L[ℂ] K) : 0 ≤ V.ev (star M * M) := by
+  rw [ev_adjoint_self_eq_norm_sq]
+  positivity
+
+/-- The vector state as a state model of the repository (`MIPRE/Foundations/StateModel.lean`):
+`H := K`, `ψ := Ψ`, `π := id`. Its quadratic form is `ev` and its state norm `‖X Ψ‖`, both by
+`rfl`. -/
+noncomputable def toStateModel : StateModel (K →L[ℂ] K) where
+  H := K
+  ψ := V.Ψ
+  π := StarAlgHom.id ℂ (K →L[ℂ] K)
+
+/-- The quadratic form of the state model is `ev`. -/
+theorem toStateModel_qform (X : K →L[ℂ] K) : V.toStateModel.qform X = V.ev X := rfl
+
+/-- The state norm of the state model is `‖X Ψ‖`. -/
+theorem toStateModel_snorm (X : K →L[ℂ] K) : V.toStateModel.snorm X = ‖X V.Ψ‖ := rfl
+
+/-- Taking the adjoint does not change `ev`. -/
+theorem ev_conjTranspose (X : K →L[ℂ] K) : V.ev (star X) = V.ev X :=
+  V.toStateModel.qform_star X
+
+/-- `ev (A B) = ev (B A)` for self-adjoint `A` and `B`. -/
+theorem ev_mul_comm_of_hermitian (A B : K →L[ℂ] K) (hA : star A = A) (hB : star B = B) :
+    V.ev (A * B) = V.ev (B * A) := by
+  rw [← V.ev_conjTranspose (A * B), star_mul, hA, hB]
+
+/-- `ev` commutes on positive operators. -/
+theorem ev_mul_comm_of_psd (A B : K →L[ℂ] K) (hA : 0 ≤ A) (hB : 0 ≤ B) :
+    V.ev (A * B) = V.ev (B * A) :=
+  V.ev_mul_comm_of_hermitian A B (IsSelfAdjoint.of_nonneg hA).star_eq
+    (IsSelfAdjoint.of_nonneg hB).star_eq
+
+/-- Cross-term identity: `ev (B* A) = ev (A* B)`. -/
+theorem ev_conjTranspose_mul_comm (A B : K →L[ℂ] K) :
+    V.ev (star B * A) = V.ev (star A * B) := by
+  rw [← V.ev_conjTranspose (star A * B), star_mul, star_star]
+
+end VecState
+
 namespace SymModel
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
   (S : SymModel 𝔓 K)
+
+/-- A symmetric model is a vector state: an explicit argument `(V : VecState K)` accepts
+`S : SymModel 𝔓 K`. -/
+instance : CoeOut (SymModel 𝔓 K) (VecState K) := ⟨SymModel.toVecState⟩
 
 /-! ## The flip and the second placement -/
 
@@ -151,107 +289,55 @@ noncomputable def flip : (K →L[ℂ] K) ≃⋆ₐ[ℂ] (K →L[ℂ] K) := S.J.c
 /-- The second player's placement `R x = J (L x) J` (the vendored `rightTensor`). -/
 noncomputable def R : 𝔓 →⋆ₐ[ℂ] (K →L[ℂ] K) := S.flip.toStarAlgHom.comp S.L
 
+/-- The second placement is the flip of the first. -/
 theorem R_apply (x : 𝔓) : S.R x = S.flip (S.L x) := rfl
 
+/-- The flip is its own inverse. -/
 theorem J_symm (v : K) : S.J.symm v = S.J v := by
   rw [LinearIsometryEquiv.symm_apply_eq, S.J_J]
 
+/-- The flip of an operator, applied to a vector: `(J X J) v`. -/
 theorem flip_apply (X : K →L[ℂ] K) (v : K) : S.flip X v = S.J (X (S.J v)) := by
   simp [flip, S.J_symm]
 
+/-- The flip of the joint operators is an involution. -/
 theorem flip_flip (X : K →L[ℂ] K) : S.flip (S.flip X) = X := by
   ext v
   simp [flip_apply, S.J_J]
 
+/-- The flip carries the first placement to the second. -/
 theorem flip_L (x : 𝔓) : S.flip (S.L x) = S.R x := rfl
 
+/-- The flip carries the second placement to the first. -/
 theorem flip_R (x : 𝔓) : S.flip (S.R x) = S.L x := by
   rw [R_apply, flip_flip]
 
 /-- The two placements commute. -/
 theorem L_comm_R (x y : 𝔓) : Commute (S.L x) (S.R y) := S.commute x y
 
-/-! ## The expectation -/
-
-/-- The expectation `Re ⟪Ψ, X Ψ⟫` of a joint operator (the vendored `ev ψ X = Re τ(ρ X)`). -/
-noncomputable def ev (X : K →L[ℂ] K) : ℝ := Op.qform S.Ψ X
-
-/-- The expectation is the real part of the inner product (the vendored
-`PureState.ev_eq_re_inner`). -/
-theorem ev_eq_re_inner (X : K →L[ℂ] K) : S.ev X = (⟪S.Ψ, X S.Ψ⟫_ℂ).re := rfl
-
-/-- `ev` distributes over addition. -/
-theorem ev_add (X Y : K →L[ℂ] K) : S.ev (X + Y) = S.ev X + S.ev Y := Op.qform_add _ X Y
-
-/-- `ev` distributes over subtraction. -/
-theorem ev_sub (X Y : K →L[ℂ] K) : S.ev (X - Y) = S.ev X - S.ev Y := Op.qform_sub _ X Y
-
-/-- `ev` commutes with complex scalar multiplication by a real number. -/
-theorem ev_scale (c : ℝ) (X : K →L[ℂ] K) : S.ev ((c : ℂ) • X) = c * S.ev X :=
-  Op.qform_smul_real _ c X
-
-/-- `ev` commutes with the real scalar action on operators. -/
-theorem ev_real_smul (c : ℝ) (X : K →L[ℂ] K) : S.ev (c • X) = c * S.ev X := by
-  rw [← Complex.coe_smul]
-  exact S.ev_scale c X
-
-/-- `ev` of the zero operator is zero. -/
-theorem ev_zero : S.ev 0 = 0 := Op.qform_zero _
-
-/-- `ev` distributes over finite sums. -/
-theorem ev_finset_sum {α : Type*} (s : Finset α) (f : α → K →L[ℂ] K) :
-    S.ev (∑ a ∈ s, f a) = ∑ a ∈ s, S.ev (f a) := Op.qform_sum _ s f
-
-/-- `ev` distributes over univ sums. -/
-theorem ev_sum {α : Type*} [Fintype α] (f : α → K →L[ℂ] K) :
-    S.ev (∑ a, f a) = ∑ a, S.ev (f a) := S.ev_finset_sum Finset.univ f
-
-/-- The state has unit expectation on the identity (the vendored `QuantumState.IsNormalized`,
-`τ(ρ) = 1`). -/
-def IsNormalized : Prop := S.ev 1 = 1
-
-/-- A normalized state has unit expectation on the identity operator. -/
-@[simp] theorem ev_one_of_isNormalized : S.ev 1 = 1 := Op.qform_one _ S.Ψ_norm
-
-/-- The state of a symmetric model is normalized. -/
-theorem isNormalized : S.IsNormalized := S.ev_one_of_isNormalized
-
-/-- `ev` of a positive operator is nonnegative. -/
-theorem ev_nonneg_of_psd (X : K →L[ℂ] K) (hX : 0 ≤ X) : 0 ≤ S.ev X :=
-  Op.qform_nonneg_of_nonneg _ hX
-
-/-- `ev` is monotone. -/
-theorem ev_mono (X Y : K →L[ℂ] K) (h : X ≤ Y) : S.ev X ≤ S.ev Y := Op.qform_mono _ h
-
-/-- `ev (M* M) = ‖M Ψ‖²`. -/
-theorem ev_adjoint_self_eq_norm_sq (M : K →L[ℂ] K) : S.ev (star M * M) = ‖M S.Ψ‖ ^ 2 :=
-  (Op.snorm_sq_eq_qform S.Ψ M).symm
-
-/-- For any operator `M`, `ev (M* M) ≥ 0`. -/
-theorem ev_adjoint_self_nonneg (M : K →L[ℂ] K) : 0 ≤ S.ev (star M * M) := by
-  rw [ev_adjoint_self_eq_norm_sq]
-  positivity
-
 /-! ## The model as a bipartite model -/
 
 /-- The symmetric model as a bipartite model of the repository: `H := K`, `π := id`,
 `πA := L`, `πB := R`. -/
 noncomputable def toBipartite : BipartiteModel (K →L[ℂ] K) 𝔓 𝔓 where
-  H := K
-  ψ := S.Ψ
-  π := StarAlgHom.id ℂ (K →L[ℂ] K)
+  toStateModel := S.toStateModel
   πA := S.L
   πB := S.R
   commute := S.L_comm_R
 
+/-- The state of the bipartite model is `Ψ`. -/
 @[simp] theorem toBipartite_ψ : S.toBipartite.ψ = S.Ψ := rfl
 
+/-- The state of the bipartite model is a unit vector. -/
 theorem toBipartite_ψ_norm : ‖S.toBipartite.ψ‖ = 1 := S.Ψ_norm
 
+/-- The representation of the bipartite model is the identity. -/
 @[simp] theorem toBipartite_π (X : K →L[ℂ] K) : S.toBipartite.π X = X := rfl
 
+/-- The bipartite model's first placement is `L`. -/
 @[simp] theorem toBipartite_πA (x : 𝔓) : S.toBipartite.πA x = S.L x := rfl
 
+/-- The bipartite model's second placement is `R`. -/
 @[simp] theorem toBipartite_πB (x : 𝔓) : S.toBipartite.πB x = S.R x := rfl
 
 /-- The quadratic form of the bipartite model is `ev`. -/
@@ -260,31 +346,11 @@ theorem toBipartite_qform (X : K →L[ℂ] K) : S.toBipartite.qform X = S.ev X :
 /-- The state norm of the bipartite model is `‖X Ψ‖`. -/
 theorem toBipartite_snorm (X : K →L[ℂ] K) : S.toBipartite.snorm X = ‖X S.Ψ‖ := rfl
 
-/-- Taking the adjoint does not change `ev`. -/
-theorem ev_conjTranspose (X : K →L[ℂ] K) : S.ev (star X) = S.ev X :=
-  S.toBipartite.qform_star X
-
-/-- `ev (A B) = ev (B A)` for self-adjoint `A` and `B`. -/
-theorem ev_mul_comm_of_hermitian (A B : K →L[ℂ] K) (hA : star A = A) (hB : star B = B) :
-    S.ev (A * B) = S.ev (B * A) := by
-  rw [← S.ev_conjTranspose (A * B), star_mul, hA, hB]
-
-/-- `ev` commutes on positive operators. -/
-theorem ev_mul_comm_of_psd (A B : K →L[ℂ] K) (hA : 0 ≤ A) (hB : 0 ≤ B) :
-    S.ev (A * B) = S.ev (B * A) :=
-  S.ev_mul_comm_of_hermitian A B (IsSelfAdjoint.of_nonneg hA).star_eq
-    (IsSelfAdjoint.of_nonneg hB).star_eq
-
-/-- Cross-term identity: `ev (B* A) = ev (A* B)`. -/
-theorem ev_conjTranspose_mul_comm (A B : K →L[ℂ] K) :
-    S.ev (star B * A) = S.ev (star A * B) := by
-  rw [← S.ev_conjTranspose (star A * B), star_mul, star_star]
-
 /-! ## The swap symmetry -/
 
 /-- **The flip fixes the state**: `ev (J X J) = ev X`. -/
 theorem ev_flip (X : K →L[ℂ] K) : S.ev (S.flip X) = S.ev X := by
-  rw [ev_eq_re_inner, ev_eq_re_inner, flip_apply, S.J_Ψ]
+  rw [VecState.ev_eq_re_inner, VecState.ev_eq_re_inner, flip_apply, S.J_Ψ]
   have h : ⟪S.Ψ, S.J (X S.Ψ)⟫_ℂ = ⟪S.J S.Ψ, S.J (X S.Ψ)⟫_ℂ := by rw [S.J_Ψ]
   rw [h, LinearIsometryEquiv.inner_map_map]
 
@@ -367,6 +433,16 @@ theorem opTensor_mul (A₁ A₂ B₁ B₂ : 𝔓) :
 /-- Scalar multiplication commutes with left placement. -/
 theorem leftTensor_smul (c : ℂ) (A : 𝔓) : c • S.L A = S.L (c • A) := (map_smul S.L c A).symm
 
+/-- Left placement commutes with real scalar multiplication. Mathlib's `map_smul` does not apply
+to a real scalar on a `ℂ`-algebra homomorphism, so a `simp` call meeting `S.L (c • A)` with
+`c : ℝ` needs this lemma. -/
+@[simp high] theorem leftTensor_real_smul (c : ℝ) (A : 𝔓) : S.L (c • A) = c • S.L A :=
+  map_smul S.L (c : ℂ) A
+
+/-- Right placement commutes with real scalar multiplication (as `leftTensor_real_smul`). -/
+@[simp high] theorem rightTensor_real_smul (c : ℝ) (A : 𝔓) : S.R (c • A) = c • S.R A :=
+  map_smul S.R (c : ℂ) A
+
 /-- Powers commute with left placement. -/
 theorem leftTensor_pow (A : 𝔓) (n : ℕ) : S.L A ^ n = S.L (A ^ n) := (map_pow S.L A n).symm
 
@@ -396,13 +472,13 @@ theorem rightTensor_sub (A B : 𝔓) : S.R A - S.R B = S.R (A - B) := (map_sub S
 
 /-- `opTensor` is linear in the left factor: real scalar multiplication. -/
 theorem opTensor_smul_left_error (c : ℝ) (A B : 𝔓) :
-    S.opTensor (c • A) B = c • S.opTensor A B := by
-  rw [← Complex.coe_smul, ← Complex.coe_smul, opTensor, opTensor, map_smul, smul_mul_assoc]
+    S.opTensor (c • A) B = c • S.opTensor A B :=
+  (congrArg (· * S.R B) (map_smul S.L (c : ℂ) A)).trans (smul_mul_assoc (c : ℂ) _ _)
 
 /-- `opTensor` is linear in the right factor: real scalar multiplication. -/
 theorem opTensor_smul_right_error (c : ℝ) (A B : 𝔓) :
-    S.opTensor A (c • B) = c • S.opTensor A B := by
-  rw [← Complex.coe_smul, ← Complex.coe_smul, opTensor, opTensor, map_smul, mul_smul_comm]
+    S.opTensor A (c • B) = c • S.opTensor A B :=
+  (congrArg (S.L A * ·) (map_smul S.R (c : ℂ) B)).trans (mul_smul_comm (c : ℂ) _ _)
 
 /-- `opTensor` is additive in the left factor. -/
 theorem opTensor_add_left_local (A B C : 𝔓) :

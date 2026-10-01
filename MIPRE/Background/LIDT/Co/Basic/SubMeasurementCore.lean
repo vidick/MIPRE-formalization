@@ -182,11 +182,13 @@ def SubMeas.singleOutcome (A : R) (hA_pos : 0 ≤ A) (hA_le_one : A ≤ 1) :
   sum_eq_total := Fintype.sum_unique fun _ => A
   total_le_one := hA_le_one
 
+/-- The single outcome operator of `singleOutcome A` is `A`. -/
 @[simp] theorem SubMeas.singleOutcome_outcome (A : R) (hA_pos : 0 ≤ A) (hA_le_one : A ≤ 1)
     (u : Unit) :
     (SubMeas.singleOutcome A hA_pos hA_le_one).outcome u = A :=
   rfl
 
+/-- The total of `singleOutcome A` is `A`. -/
 @[simp] theorem SubMeas.singleOutcome_total (A : R) (hA_pos : 0 ≤ A) (hA_le_one : A ≤ 1) :
     (SubMeas.singleOutcome A hA_pos hA_le_one).total = A :=
   rfl
@@ -206,10 +208,12 @@ def SubMeas.toMeasurement (A : SubMeas α R) (hcomplete : A.total = 1) :
   toSubMeas := A
   total_eq_one := hcomplete
 
+/-- Promoting a complete submeasurement and forgetting completeness gives it back. -/
 @[simp] theorem SubMeas.toMeasurement_toSubMeas (A : SubMeas α R) (hcomplete : A.total = 1) :
     (A.toMeasurement hcomplete).toSubMeas = A :=
   rfl
 
+/-- Promotion to a measurement keeps the outcome operators. -/
 @[simp] theorem SubMeas.toMeasurement_outcome (A : SubMeas α R) (hcomplete : A.total = 1)
     (a : α) :
     (A.toMeasurement hcomplete).outcome a = A.outcome a :=
@@ -377,10 +381,12 @@ def SubMeas.map (f : R →⋆ₐ[ℂ] T) (A : SubMeas α R) : SubMeas α T where
   sum_eq_total := by rw [← map_sum, A.sum_eq_total]
   total_le_one := (OrderHomClass.mono f A.total_le_one).trans_eq (map_one f)
 
+/-- The outcome operators of the image are the images of the outcome operators. -/
 @[simp] theorem SubMeas.map_outcome (f : R →⋆ₐ[ℂ] T) (A : SubMeas α R) (a : α) :
     (A.map f).outcome a = f (A.outcome a) :=
   rfl
 
+/-- The total of the image is the image of the total. -/
 @[simp] theorem SubMeas.map_total (f : R →⋆ₐ[ℂ] T) (A : SubMeas α R) :
     (A.map f).total = f A.total :=
   rfl
@@ -390,10 +396,12 @@ def Measurement.map (f : R →⋆ₐ[ℂ] T) (M : Measurement α R) : Measuremen
   toSubMeas := M.toSubMeas.map f
   total_eq_one := (congrArg f M.total_eq_one).trans (map_one f)
 
+/-- The image of a measurement, as a submeasurement, is the image of its submeasurement. -/
 @[simp] theorem Measurement.map_toSubMeas (f : R →⋆ₐ[ℂ] T) (M : Measurement α R) :
     (M.map f).toSubMeas = M.toSubMeas.map f :=
   rfl
 
+/-- The outcome operators of the image measurement are the images of the outcome operators. -/
 @[simp] theorem Measurement.map_outcome (f : R →⋆ₐ[ℂ] T) (M : Measurement α R) (a : α) :
     (M.map f).outcome a = f (M.outcome a) :=
   rfl
@@ -403,6 +411,8 @@ def ProjSubMeas.map (f : R →⋆ₐ[ℂ] T) (P : ProjSubMeas α R) : ProjSubMea
   toSubMeas := P.toSubMeas.map f
   proj a := (map_mul f _ _).symm.trans (congrArg f (P.proj a))
 
+/-- The image of a projective submeasurement, as a submeasurement, is the image of its
+submeasurement. -/
 @[simp] theorem ProjSubMeas.map_toSubMeas (f : R →⋆ₐ[ℂ] T) (P : ProjSubMeas α R) :
     (P.map f).toSubMeas = P.toSubMeas.map f :=
   rfl
@@ -412,6 +422,7 @@ def ProjMeas.map (f : R →⋆ₐ[ℂ] T) (P : ProjMeas α R) : ProjMeas α T wh
   toMeasurement := P.toMeasurement.map f
   proj a := (map_mul f _ _).symm.trans (congrArg f (P.proj a))
 
+/-- The image of a projective measurement, as a measurement, is the image of its measurement. -/
 @[simp] theorem ProjMeas.map_toMeasurement (f : R →⋆ₐ[ℂ] T) (P : ProjMeas α R) :
     (P.map f).toMeasurement = P.toMeasurement.map f :=
   rfl
@@ -437,6 +448,7 @@ def Measurement.ofPOVMIn (P : POVMIn α R) : Measurement α R where
   total_le_one := le_rfl
   total_eq_one := rfl
 
+/-- The outcome operators of `ofPOVMIn P` are the operators of `P`. -/
 @[simp] theorem Measurement.ofPOVMIn_outcome (P : POVMIn α R) (a : α) :
     (Measurement.ofPOVMIn P).outcome a = P.op a :=
   rfl
@@ -452,14 +464,17 @@ def Measurement.toPOVMIn (M : Measurement α R) : POVMIn α R where
     rw [AddSubmonoidClass.coe_finsetSum]
     exact M.sum_eq
 
+/-- The operators of `toPOVMIn M` are the outcome operators of `M`. -/
 @[simp] theorem Measurement.toPOVMIn_op (M : Measurement α R) (a : α) :
     M.toPOVMIn.op a = M.outcome a :=
   rfl
 
+/-- `ofPOVMIn` is a left inverse of `toPOVMIn`. -/
 @[simp] theorem Measurement.ofPOVMIn_toPOVMIn (M : Measurement α R) :
     Measurement.ofPOVMIn M.toPOVMIn = M :=
   Measurement.ext fun _ => rfl
 
+/-- `toPOVMIn` is a left inverse of `ofPOVMIn`. -/
 @[simp] theorem Measurement.toPOVMIn_ofPOVMIn (P : POVMIn α R) :
     (Measurement.ofPOVMIn P).toPOVMIn = P :=
   POVMIn.ext' fun _ => rfl
@@ -475,6 +490,7 @@ def ProjMeas.ofIsPVMIn (P : α → R) (h : IsPVMIn P) : ProjMeas α R where
   total_eq_one := rfl
   proj := h.idem
 
+/-- The outcome operators of `ofIsPVMIn P h` are the `P a`. -/
 @[simp] theorem ProjMeas.ofIsPVMIn_outcome (P : α → R) (h : IsPVMIn P) (a : α) :
     (ProjMeas.ofIsPVMIn P h).outcome a = P a :=
   rfl
