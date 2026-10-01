@@ -18,24 +18,39 @@ answer back. This file is the part of that computation that is about the product
 
 ## What an operator on the ancilla pair does to a product state
 
-`auxVec aux` is a product: the first factor is arbitrary, the second is the maximally entangled
-pair. So an operator acting on the pair alone acts on the second factor and leaves the first, and
-two operators that agree on `|EPR_q>` agree on the whole product. That is the last line of display
+`auxVec aux` is a product: one factor is the maximally entangled pair, the other is arbitrary. So
+an operator acting on the pair alone acts on the pair's factor and leaves the other, and two
+operators that agree on `|EPR_q>` agree on the whole product. That is the last line of display
 `eq:qld-unitary-7`, where a generalized Pauli's spectral projector is moved from one half of the
 pair to the other: the projectors are symmetric matrices, so `stateVec_epr_proj` moves them across
 the pair, and `mulVec_auxVec_congr` carries that to the product state.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The product state is
+`auxVec aux`, a vector of the `ℓ²` sum `Ampl (T x T) H` for a vector `aux` of an arbitrary complex
+Hilbert space `H`, and a matrix of scalars on the pair acts on it as `regAct`
+(`MIPRE/Foundations/EPRContraction.lean`); in a register model, whose state is such a product, the
+transport across the pair is the mirror identity `reg_mirror`. The endgame's arithmetic is stated in
+a state model (`sum_snorm_sq_sub_le_of_agree`) and its Schwartz--Zippel step in a bipartite model
+(`sum_uniform_bornProb_fibre_le`), with the matrix constants. Item 1's cut is the register model
+`tgt` of `MIPRE/Background/QLD/PhysModel.lean`, into which the physical registers are regrouped by
+the local isometry `unassoc`, with no reindexing of the players' spaces: the matrix regrouping
+`endEquiv`, its state `endVec` and its reindexing lemma are gone, and what they were for --- the
+norm and the Born probabilities of a regrouped vector --- is read off `unassoc` (`endVec_unit`,
+`qform_endVec`). The twirl's expectation on any vector of `Ampl (T x T) H` is the uniform average of
+the per-probe ones (`qform_bOp_twirl`).
 -/
 
 noncomputable section
 
 namespace MIPRE.QLD
 
-open Finset Matrix MIPRE MIPRE.Weyl
-open scoped Kronecker ComplexOrder MatrixOrder
+open Finset Matrix MIPRE MIPRE.Weyl OperatorMatrix
+open scoped Kronecker ComplexOrder MatrixOrder InnerProductSpace
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
 variable {n : Type*} [Fintype n] [DecidableEq n]
-variable {R : Type*} [Fintype R] [DecidableEq R]
 
 set_option linter.unusedSectionVars false
 
@@ -43,51 +58,36 @@ set_option linter.unusedSectionVars false
 
 section Aux
 
-/-- **An operator on the ancilla pair acts on the second factor of the product and leaves the
-first.** One entry computation. -/
-theorem bOp_mulVec_auxVec (aux : R → ℂ)
-    (P : Matrix ((n → F) × (n → F)) ((n → F) × (n → F)) ℂ) (r : R)
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- **An operator on the ancilla pair acts on the pair's factor of the product and leaves the
+auxiliary vector.** One component computation. -/
+theorem bOp_mulVec_auxVec (aux : H) (P : Matrix ((n → F) × (n → F)) ((n → F) × (n → F)) ℂ)
     (t : (n → F) × (n → F)) :
-    ((bOp P : Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ
-        auxVec (F := F) (n := n) aux) (r, t)
-      = aux r * (P *ᵥ (epr (F := F) (n := n))) t := by
-  rw [Matrix.mulVec, dotProduct, Fintype.sum_prod_type,
-    Finset.sum_eq_single r (fun r' _ hr' => Finset.sum_eq_zero fun t' _ => by
-        rw [bOp, Matrix.kronecker_apply, Matrix.one_apply_ne (Ne.symm hr'), zero_mul, zero_mul])
-      fun hmem => absurd (mem_univ r) hmem,
-    Matrix.mulVec, dotProduct, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun t' _ => ?_
-  rw [bOp, Matrix.kronecker_apply, Matrix.one_apply_eq, one_mul, auxVec]
-  ring
+    regAct P (auxVec (F := F) (n := n) aux) t = (P *ᵥ epr (F := F) (n := n)) t • aux := by
+  rw [auxVec, regAct_toLp_smul, PiLp.toLp_apply]
 
 /-- **Two operators that agree on the entangled pair agree on the product state.** -/
-theorem mulVec_auxVec_congr (aux : R → ℂ)
+theorem mulVec_auxVec_congr (aux : H)
     {P Q : Matrix ((n → F) × (n → F)) ((n → F) × (n → F)) ℂ}
     (h : P *ᵥ (epr (F := F) (n := n)) = Q *ᵥ epr) :
-    (bOp P : Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ auxVec aux
-      = (bOp Q : Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ auxVec aux := by
-  funext p
-  obtain ⟨r, t⟩ := p
-  rw [bOp_mulVec_auxVec, bOp_mulVec_auxVec, h]
+    regAct P (auxVec (F := F) (n := n) aux) = regAct Q (auxVec (F := F) (n := n) aux) := by
+  rw [auxVec, regAct_toLp_smul, regAct_toLp_smul, h]
 
 /-- **Display `eq:qld-unitary-7`'s last line, on the product state.** A generalized Pauli's
 spectral projector moves from one half of the entangled pair to the other at no cost: the
 projectors are symmetric, being real Fourier averages of a symmetric family. -/
-theorem mulVec_auxVec_proj (aux : R → ℂ) {w : (n → F) → Matrix (n → F) (n → F) ℂ}
+theorem mulVec_auxVec_proj (aux : H) {w : (n → F) → Matrix (n → F) (n → F) ℂ}
     (hw : ∀ a, (w a)ᵀ = w a) (e : n → F) :
-    (bOp (aOp (proj w e)) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ auxVec aux
-      = (bOp (bOp (proj w e)) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ auxVec aux :=
+    regAct (proj w e ⊗ₖ (1 : Matrix (n → F) (n → F) ℂ)) (auxVec (F := F) (n := n) aux)
+      = regAct ((1 : Matrix (n → F) (n → F) ℂ) ⊗ₖ proj w e) (auxVec (F := F) (n := n) aux) :=
   mulVec_auxVec_congr aux (congrArg WithLp.ofLp (stateVec_epr_proj hw e))
 
 /-- **And so does a syndrome projector**, being a sum of spectral projectors over a level set. -/
-theorem mulVec_auxVec_syn (aux : R → ℂ) {w : (n → F) → Matrix (n → F) (n → F) ℂ}
+theorem mulVec_auxVec_syn (aux : H) {w : (n → F) → Matrix (n → F) (n → F) ℂ}
     (hw : ∀ a, (w a)ᵀ = w a) (v : n → F) (a : F) :
-    (bOp (aOp (syn w v a)) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ auxVec aux
-      = (bOp (bOp (syn w v a)) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ) *ᵥ auxVec aux :=
+    regAct (syn w v a ⊗ₖ (1 : Matrix (n → F) (n → F) ℂ)) (auxVec (F := F) (n := n) aux)
+      = regAct ((1 : Matrix (n → F) (n → F) ℂ) ⊗ₖ syn w v a) (auxVec (F := F) (n := n) aux) :=
   mulVec_auxVec_congr aux (congrArg WithLp.ofLp (stateVec_epr_syn hw v a))
 
 end Aux
@@ -100,14 +100,15 @@ lemma asks about is twice its deficit, and no more. -/
 
 section Arithmetic
 
-variable {N Λ : Type*} [Fintype N] [DecidableEq N] [Fintype Λ] [DecidableEq Λ]
+variable {𝒞 : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] {Λ : Type*} [Fintype Λ]
+  [DecidableEq Λ]
 
-/-- **Display `eq:qld-unitary-7`, read as a bound.** Once the agreement is at least `1 - c`, the
-summed deviation is at most `2c`. -/
-theorem sum_snorm_sq_sub_le_of_agree {v : N → ℂ} (hv : ‖evec v‖ = 1) {A T : Λ → Matrix N N ℂ}
-    (hA : IsPVM A) (hT : IsPVM T) {c : ℝ} (hagree : 1 - c ≤ ∑ h, qform v (A h * T h)) :
-    ∑ h, snorm v (A h - T h) ^ 2 ≤ 2 * c := by
-  rw [sum_snorm_sq_sub_eq_two_sub hv hA hT]
+/-- **Display `eq:qld-unitary-7`, read as a bound.** Once the agreement of two projective families
+on one party is at least `1 - c`, their summed deviation is at most `2c`. -/
+theorem sum_snorm_sq_sub_le_of_agree {M : StateModel 𝒞} (hM : ‖M.ψ‖ = 1) {A T : Λ → 𝒞}
+    (hA : IsPVMIn A) (hT : IsPVMIn T) {c : ℝ} (hagree : 1 - c ≤ ∑ h, M.qform (A h * T h)) :
+    ∑ h, M.snorm (A h - T h) ^ 2 ≤ 2 * c := by
+  rw [sum_snorm_sq_sub_eq_two_sub hM hA hT]
   linarith
 
 end Arithmetic
@@ -123,19 +124,22 @@ section Coarse
 
 open MIPRE.LIDT MIPRE.LowDegree
 
-variable {m d : ℕ} [NeZero m] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]
-  [DecidableEq dB]
+variable {m d : ℕ} [NeZero m] {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜]
+  [StarRing 𝒜] [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜]
+  [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ]
 
-/-- **Display `eq:qld-unitary-8`.** -/
+/-- **Display `eq:qld-unitary-8`.** For two projective families of the two players, indexed
+injectively by low-individual-degree polynomials, the agreement of their coarse-grainings by the
+value at a uniform point exceeds their own agreement by at most `md/q`. -/
 theorem sum_uniform_bornProb_fibre_le {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
-    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    {A : Λ → Matrix dA dA ℂ} {T : Λ → Matrix dB dB ℂ} (hA : IsPVM A) (hT : IsPVM T)
+    {M : BipartiteModel 𝒞 𝒜 ℬ} (hM : ‖M.ψ‖ = 1)
+    {A : Λ → 𝒜} {T : Λ → ℬ} (hA : IsPVMIn A) (hT : IsPVMIn T)
     {enc : Λ → LowIndDegPoly (F := F) (m := m) (d := d)}
     (hinj : ∀ h h' : Λ, h ≠ h' → (enc h).toMv ≠ (enc h').toMv) :
     ∑ u, uniform (Point F m) u * ∑ a : F,
-        bornProb ψ (∑ h ∈ univ.filter fun h => (enc h).eval u = a, A h)
+        M.bornProb (∑ h ∈ univ.filter fun h => (enc h).eval u = a, A h)
           (∑ h ∈ univ.filter fun h => (enc h).eval u = a, T h)
-      ≤ (∑ h, bornProb ψ (A h) (T h)) + (m : ℝ) * d / Fintype.card F := by
+      ≤ (∑ h, M.bornProb (A h) (T h)) + (m : ℝ) * d / Fintype.card F := by
   classical
   -- the agreeing pairs at `u`, fibred by the common value
   have hset : ∀ (u : Point F m) (a : F),
@@ -153,29 +157,29 @@ theorem sum_uniform_bornProb_fibre_le {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
       exact ⟨h1.trans h2.symm, h1⟩
   -- at each `u`, the coarse agreement is the sum over agreeing pairs
   have hu : ∀ u : Point F m, (∑ a : F,
-        bornProb ψ (∑ h ∈ univ.filter fun h => (enc h).eval u = a, A h)
+        M.bornProb (∑ h ∈ univ.filter fun h => (enc h).eval u = a, A h)
           (∑ h ∈ univ.filter fun h => (enc h).eval u = a, T h))
       = ∑ p ∈ univ.filter fun p : Λ × Λ => (enc p.1).eval u = (enc p.2).eval u,
-          bornProb ψ (A p.1) (T p.2) := by
+          M.bornProb (A p.1) (T p.2) := by
     intro u
     rw [← Finset.sum_fiberwise (univ.filter fun p : Λ × Λ =>
       (enc p.1).eval u = (enc p.2).eval u) (fun p => (enc p.1).eval u)
-      fun p => bornProb ψ (A p.1) (T p.2)]
+      fun p => M.bornProb (A p.1) (T p.2)]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [bornProb_sum_sum, hset u a, Finset.sum_product]
+    rw [M.bornProb_sum_sum, hset u a, Finset.sum_product]
   -- and that sum splits into its diagonal and the off-diagonal Schwartz--Zippel mass
   have hsplit : ∀ u : Point F m,
       (∑ p ∈ univ.filter fun p : Λ × Λ => (enc p.1).eval u = (enc p.2).eval u,
-          bornProb ψ (A p.1) (T p.2))
-        = (∑ h, bornProb ψ (A h) (T h))
+          M.bornProb (A p.1) (T p.2))
+        = (∑ h, M.bornProb (A h) (T h))
           + ∑ p ∈ univ.filter fun p : Λ × Λ => (enc p.1).eval u = (enc p.2).eval u,
-              (if p.1 = p.2 then (0 : ℝ) else bornProb ψ (A p.1) (T p.2)) := by
+              (if p.1 = p.2 then (0 : ℝ) else M.bornProb (A p.1) (T p.2)) := by
     intro u
     rw [show (∑ p ∈ univ.filter fun p : Λ × Λ => (enc p.1).eval u = (enc p.2).eval u,
-          bornProb ψ (A p.1) (T p.2))
+          M.bornProb (A p.1) (T p.2))
         = ∑ p ∈ univ.filter fun p : Λ × Λ => (enc p.1).eval u = (enc p.2).eval u,
-            ((if p.1 = p.2 then bornProb ψ (A p.1) (T p.2) else 0)
-              + (if p.1 = p.2 then (0 : ℝ) else bornProb ψ (A p.1) (T p.2))) from
+            ((if p.1 = p.2 then M.bornProb (A p.1) (T p.2) else 0)
+              + (if p.1 = p.2 then (0 : ℝ) else M.bornProb (A p.1) (T p.2))) from
       Finset.sum_congr rfl fun p _ => by split_ifs <;> ring, Finset.sum_add_distrib]
     congr 1
     rw [Finset.sum_filter, Fintype.sum_prod_type]
@@ -187,73 +191,52 @@ theorem sum_uniform_bornProb_fibre_le {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
     Finset.sum_congr rfl fun u (_ : u ∈ univ) =>
       mul_add (uniform (Point F m) u) _ _, Finset.sum_add_distrib, ← Finset.sum_mul,
     sum_uniform_eq_one (Point F m), one_mul]
-  linarith [sum_uniform_agree_bornProb_le hψ hA hT hinj]
+  linarith [sum_uniform_agree_bornProb_le hM hA hT hinj]
 
 end Coarse
 
 /-! ## Item 1's cut, as a regrouping
 
 `exists_auxVec_close` reads the state along a cut of its own: the two parties' non-ancilla
-registers as one index, their two ancilla halves adjacent. The padded state is grouped by party,
-`((dA x Anc) x EA) x ((dB x Anc) x EB)`, so the two are a permutation of four factors apart. This
-is that permutation, in the shape `qform_comp_equiv` consumes --- the same pattern as
-`regroupEquiv`, which moves one ancilla half across the party cut, but moving both out of it.
+registers as one space, their two far halves `A''`, `B''` adjacent as one register. The physical
+state groups the registers by party, `(A'', (Ea, A'))` against `(B'', (Eb, B'))`, so the two are a
+regrouping of the finite registers apart: item 1's cut is the register model `tgt` (the extension
+of the strategy's model by the padded registers `((Ea, A'), (Eb, B'))`, with the EPR register
+`(A'', B'')` outside), and `unassoc` regroups the physical model into it --- moving both far halves
+out of the party grouping, where the first cut moved one across it.
 
 Nothing here is an estimate. It is what the threading of item 2 has to say before any of the
 endgame's steps can be pointed at the same vector. -/
 
 section EndCut
 
-variable {A B T T' E E' : Type*} [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
-  [Fintype T] [DecidableEq T] [Fintype T'] [DecidableEq T'] [Fintype E] [DecidableEq E]
-  [Fintype E'] [DecidableEq E']
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
+variable {I : Type*} [Fintype I] [DecidableEq I] {m d K : ℕ} {N : BipartiteModel 𝒞 𝒜 ℬ}
 
-/-- **The regrouping onto item 1's cut**: the two parties' non-ancilla registers together, the two
-ancilla halves together. -/
-def endEquiv : ((A × T) × E) × ((B × T') × E') ≃ ((A × E) × (B × E')) × (T × T') where
-  toFun p := (((p.1.1.1, p.1.2), (p.2.1.1, p.2.2)), (p.1.1.2, p.2.1.2))
-  invFun q := (((q.1.1.1, q.2.1), q.1.1.2), ((q.1.2.1, q.2.2), q.1.2.2))
-  left_inv _ := rfl
-  right_inv _ := rfl
+omit [Algebra (ZMod 2) F] in
+/-- **A regrouped unit vector is a unit vector**: `unassoc` is isometric. -/
+theorem endVec_unit {φ : (phys I F m d N K).H} (hφ : ‖φ‖ = 1) :
+    ‖(unassoc I F m d N K).W φ‖ = 1 := by
+  rw [LinearIsometry.norm_map, hφ]
 
-/-- The state, read along it. -/
-def endVec (ψ : ((A × T) × E) × ((B × T') × E') → ℂ) :
-    ((A × E) × (B × E')) × (T × T') → ℂ :=
-  ψ ∘ (endEquiv (A := A) (B := B) (T := T) (T' := T') (E := E) (E' := E')).symm
-
-omit [DecidableEq A] [DecidableEq B] [DecidableEq T] [DecidableEq T'] [DecidableEq E]
-  [DecidableEq E'] in
-/-- A regrouped unit vector is a unit vector. -/
-theorem endVec_unit {ψ : ((A × T) × E) × ((B × T') × E') → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) :
-    star (endVec ψ) ⬝ᵥ endVec ψ = 1 := by
-  rw [← hψ]
-  exact Equiv.sum_comp
-    (endEquiv (A := A) (B := B) (T := T) (T' := T') (E := E) (E' := E')).symm
-    fun p => star ψ p * ψ p
-
-/-- **The same operator, grouped the two ways.** A product across the four factors --- one operator
-per party's non-ancilla register and one on each ancilla half --- is carried by the regrouping to
-the product of the two pairs. -/
-theorem reindex_endEquiv (XA : Matrix A A ℂ) (XB : Matrix B B ℂ) (YA : Matrix T T ℂ)
-    (YB : Matrix T' T' ℂ) (ZA : Matrix E E ℂ) (ZB : Matrix E' E' ℂ) :
-    Matrix.reindex (endEquiv (A := A) (B := B) (T := T) (T' := T') (E := E) (E' := E'))
-        (endEquiv (A := A) (B := B) (T := T) (T' := T') (E := E) (E' := E'))
-        (((XA ⊗ₖ YA) ⊗ₖ ZA) ⊗ₖ ((XB ⊗ₖ YB) ⊗ₖ ZB))
-      = (((XA ⊗ₖ ZA) ⊗ₖ (XB ⊗ₖ ZB)) ⊗ₖ (YA ⊗ₖ YB)) := by
-  ext p q
-  obtain ⟨⟨⟨a, e⟩, b, e'⟩, t, t'⟩ := p
-  obtain ⟨⟨⟨a', e''⟩, b', e'''⟩, s, s'⟩ := q
-  simp only [Matrix.reindex_apply, Matrix.submatrix_apply, endEquiv, Equiv.coe_fn_symm_mk,
-    kroneckerMap_apply]
-  ring
-
-/-- **And so is the quadratic form.** -/
-theorem qform_endVec (ψ : ((A × T) × E) × ((B × T') × E') → ℂ)
-    (XA : Matrix A A ℂ) (XB : Matrix B B ℂ) (YA : Matrix T T ℂ) (YB : Matrix T' T' ℂ)
-    (ZA : Matrix E E ℂ) (ZB : Matrix E' E' ℂ) :
-    qform (endVec ψ) (((XA ⊗ₖ ZA) ⊗ₖ (XB ⊗ₖ ZB)) ⊗ₖ (YA ⊗ₖ YB))
-      = qform ψ (((XA ⊗ₖ YA) ⊗ₖ ZA) ⊗ₖ ((XB ⊗ₖ YB) ⊗ₖ ZB)) := by
-  rw [qform, qform, endVec, ← reindex_endEquiv, qform_comp_equiv]
+omit [Algebra (ZMod 2) F] in
+/-- **The same Born probability, read on the two cuts.** A product of an operator of each player of
+item 1's cut, on a vector regrouped by `unassoc`, has the expectation the two regrouped-back
+operators have on the vector itself in the physical model: each player's operator is a block matrix
+over that player's far half, and `compHom` flattens it onto the player's physical registers. -/
+theorem qform_endVec (φ : (phys I F m d N K).H)
+    (X : Matrix I I (Matrix (PadAnc F m d K × I) (PadAnc F m d K × I) 𝒜))
+    (Y : Matrix I I (Matrix (PadAnc F m d K × I) (PadAnc F m d K × I) ℬ)) :
+    ((tgt I F m d N K).withState ((unassoc I F m d N K).W φ)).bornProb X Y
+      = ((phys I F m d N K).withState φ).bornProb (compHom X) (compHom Y) := by
+  have h := (unassoc I F m d N K).intertwine (compHom X) (compHom Y) φ
+  rw [unassoc_ΦA, unassoc_ΦB, uncompHom_compHom, uncompHom_compHom] at h
+  show (⟪(unassoc I F m d N K).W φ, (tgt I F m d N K).π
+      ((tgt I F m d N K).πA X * (tgt I F m d N K).πB Y) ((unassoc I F m d N K).W φ)⟫_ℂ).re
+    = (⟪φ, (phys I F m d N K).π ((phys I F m d N K).πA (compHom X)
+      * (phys I F m d N K).πB (compHom Y)) φ⟫_ℂ).re
+  rw [h, LinearIsometry.inner_map_map]
 
 end EndCut
 
@@ -267,18 +250,19 @@ explicit. -/
 
 section Twirl
 
-variable {R : Type*} [Fintype R] [DecidableEq R]
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- **The twirl's expectation is the uniform average of the per-probe ones.** -/
-theorem qform_bOp_twirl (θ : R × ((n → F) × (n → F)) → ℂ)
+omit [Field F] [Algebra (ZMod 2) F] in
+/-- **The twirl's expectation is the uniform average of the per-probe ones**, on any vector of
+`Ampl (T x T) H`. -/
+theorem qform_bOp_twirl (θ : Ampl ((n → F) × (n → F)) H)
     (w : (n → F) → Matrix (n → F) (n → F) ℂ) :
-    qform θ (bOp (twirl w) :
-        Matrix (R × ((n → F) × (n → F))) (R × ((n → F) × (n → F))) ℂ)
-      = ∑ u, uniform (n → F) u * qform θ (bOp (w u ⊗ₖ w u)) := by
+    Op.qform θ (regAct (twirl w))
+      = ∑ u, uniform (n → F) u * Op.qform θ (regAct (w u ⊗ₖ w u)) := by
   have hsc : ((Fintype.card (n → F) : ℂ))⁻¹ = ((((Fintype.card (n → F) : ℝ))⁻¹ : ℝ) : ℂ) := by
     push_cast
     ring
-  rw [twirl, hsc, bOp_smul, qform_smul_real, bOp_sum, qform_sum, Finset.mul_sum]
+  rw [regAct_twirl, hsc, Op.qform_smul_real, Op.qform_sum, Finset.mul_sum]
   exact Finset.sum_congr rfl fun u _ => rfl
 
 end Twirl
