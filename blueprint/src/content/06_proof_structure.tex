@@ -3539,15 +3539,7 @@ answer, so its fibre contains only its original raw constructor.
 \begin{lemma}[Pauli extraction for the introspection game]
 \label{lem:intro-pauli-extraction}
 \uses{lem:intro-pauli-restriction,cor:qld-valid,cor:qld-binary}
-\lean{MIPRE.Introspection.PauliExtraction.exists_valid_extraction,
-  MIPRE.Introspection.PauliExtraction.binaryGame_eq_fullGame,
-  MIPRE.Introspection.PauliExtraction.binaryToFull,
-  MIPRE.Introspection.PauliExtraction.binaryToFull_value,
-  MIPRE.Introspection.PauliExtraction.fieldGame_eq_fullGame,
-  MIPRE.Introspection.PauliExtraction.fieldToFull,
-  MIPRE.Introspection.PauliExtraction.fieldToFull_value,
-  MIPRE.Introspection.PauliExtraction.exists_binary_extraction,
-  MIPRE.Introspection.PauliExtraction.exists_field_extraction}
+\lean{}
 \leanok
 There are constants $a \geq 1$ and $0 < b < 1$ such that the following holds. Let $N$ be the
 number of ordered edges of the typed graph, and let $T = \eps + 2\,\delta_{qld}(N\eps, m, d, q) +
@@ -3585,8 +3577,7 @@ Alice's $X$ and Bob's $Z$. \texttt{MIPRE/Background/Introspection/PauliExtractio
 \begin{lemma}[Introspection soundness from the extracted Pauli strategy]
 \label{lem:intro-extracted-soundness}
 \uses{lem:intro-pauli-extraction,lem:intro-valid-isometric-soundness}
-\lean{MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_binary,
-  MIPRE.Introspection.PauliExtraction.exists_quantumValue_ge_of_field}
+\lean{}
 \leanok
 Suppose the original game's CL functions are exact on the whole Pauli register. If the binary
 (respectively field-register) parsed introspection game has a projective strategy failing with

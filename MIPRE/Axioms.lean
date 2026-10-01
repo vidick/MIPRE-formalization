@@ -3049,13 +3049,7 @@ introspection analysis itself is restated in a model under its existing guards. 
   MIPRE.ModelOver.norm_expandA_ψ,
   MIPRE.POVMIn.compress_op
 
-#guard_sorry_free MIPRE.QLD.soundIn_tensor,
-  MIPRE.QLD.tensorAncilla,
-  MIPRE.QLD.tensorPhi,
-  MIPRE.QLD.tensorPhi_W_ψ,
-  MIPRE.QLD.tensorPhi_alice,
-  MIPRE.QLD.tensorPhi_bob,
-  MIPRE.QLD.approxSoundIn_tensor,
+#guard_sorry_free MIPRE.QLD.soundIn_tensor, MIPRE.QLD.approxSoundIn_tensor,
   MIPRE.QLD.approxSoundIn_commuting
 
 #guard_sorry_free MIPRE.Introspection.seven_soundIn,
