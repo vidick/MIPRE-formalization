@@ -5,7 +5,9 @@ Phase 2 done (#247); Phase 3 done (#249); Phase 4 done (#251); Phase 5 done (#25
 one new theorem, open: its paper trail and the vendored proof audited (#255,
 `reports/lidt-co-audit.md`), its hypothesis reduced to finite pairs (C6a,
 `MIPRE.mipco_eq_core_of_lidtFin`) and narrowed to dyadic pairs, with the orthonormalization tier
-done (C6b, T1–T5); the port of the soundness proof open.** The conditional theorem — `MIP^co = coRE` given the commuting-operator
+done (C6b, T1–T5); the port of the soundness proof begun, its base layer over a symmetric model
+and the commutativity of points done (C6b M0–M1, 8.7k lines), the rest (M2–M14, re-estimated at
+77–94k lines) open.** The conditional theorem — `MIP^co = coRE` given the commuting-operator
 soundness of gap compression — is in, with all of its plumbing, written once for both values.
 Since Phase 5 it follows from the soundness of the low-individual-degree test in the
 commuting-operator model alone (`MIPRE.mipco_eq_core_of_lidt`, hypothesis `LIDT.Simul.SoundCo`):
@@ -22,7 +24,8 @@ vendored tracial density and an amplification by the twisted Pauli algebra
 (`MIPRE.mipco_eq_core_of_lidtFin`, §5, Phase 6). What remains is `SoundFin` itself (C6b), planned
 in `planning/c6b-plan.md` with the II₁ orthonormalization tier. The tier is done: de la Salle's
 Theorem 1.2 holds unconditionally in algebras without abelian projections, and dyadic pairs have
-none; the port of the vendored soundness proof is open.
+none. The port of the vendored soundness proof has begun: M0 and M1 are done, at the vendored
+elaboration time, and M2–M14 are open.
 
 Written 2026-09-28, after the explicit separation (#222) and the paper's class (#230–#233).
 Target: Lin's theorem `MIP^co = coRE` (`Lin25`, arXiv:2510.07162, STOC 2026), proved by
@@ -117,7 +120,7 @@ Piece by piece:
 | tracial value at most bipartite value | `lem:tracial-le-co`, #29 | not on the critical path (§5); open for the Tsirelson chapter |
 | Pauli basis rigidity, model `co` | `thm:qld` in a bipartite model from the LIDT hypothesis (`QLD.soundIn_of_lidt`), `QLD.soundCo_of_lidt` | done (Phase 5) |
 | introspection soundness, model `co` | `Introspection.seven`, finite-dimensional; generalized over the model | Phase 4 |
-| low-individual-degree test soundness, model `co` | not formalized; no source proves it for an arbitrary vector state; the vendored proof is dimension-free except at three isolated steps (`reports/lidt-co-audit.md`); the theorem needs it only in dyadic pairs (`LIDT.Simul.SoundFin`, `cor:mipco-from-lidt-fin`) | Phase 6, the one new theorem; audited (#255); reduced to finite pairs (C6a) and narrowed to dyadic pairs (C6b's tier); the port open (#259) |
+| low-individual-degree test soundness, model `co` | not formalized; no source proves it for an arbitrary vector state; the vendored proof is dimension-free except at three isolated steps (`reports/lidt-co-audit.md`); the theorem needs it only in dyadic pairs (`LIDT.Simul.SoundFin`, `cor:mipco-from-lidt-fin`) | Phase 6, the one new theorem; audited (#255); reduced to finite pairs (C6a) and narrowed to dyadic pairs (C6b's tier); the port begun (#259), M0–M1 done |
 | oracularization soundness, model `co` | generalized over the model (`OracularModel.lean`, `SeededGame.povmValue_sound_ge`), with `OracularTensor.lean` its tensor instance; `SeededGame.commutingOperatorValue_ge_of_oracular` | done (Phase 2) |
 
 ## 3. The dual criterion, and why co-completeness is not needed
@@ -826,7 +829,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | done (#249): ≈ 0.55k new, the ≈ 4k-line chain restated; the LIDT adapter deferred to C6 |
 | C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | done (#251): ≈ 3k new, ≈ 110 modules restated; `mipco_eq_core` conditional on the Pauli basis and LIDT tests in the commuting model |
 | C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | done (#253): ≈ 5.2k new, ≈ 50 modules restated; `mipco_eq_core_of_lidt` conditional on `LIDT.Simul.SoundCo` alone |
-| C6 | Phase 6: the low-individual-degree test in the commuting-operator model. C6a: `SoundFin → MIPCo = IsCoRE` with the adapters; C6b: the core theorem on class C | C6a 2–3k; C6b 70–120k new, plus an orthonormalization tier (4–8k with a II₁ restriction) | audit done (#255, `reports/lidt-co-audit.md`); C6a done (#258): target `SoundFin`, `mipco_eq_core_of_lidtFin`, ≈ 0.8k new lines; C6b planned (#259, `planning/c6b-plan.md`): II₁ tier chosen and done, ≈ 3.0k — the orthonormalization core (T1, ≈ 1.25k), the dyadic class, the twisted Pauli algebra, the amplification and C6a restated to the class (T2–T5, ≈ 1.75k), so `SoundFin` asks only for dyadic pairs and Theorem 1.2 is unconditional in them; the port (M0–M14) open |
+| C6 | Phase 6: the low-individual-degree test in the commuting-operator model. C6a: `SoundFin → MIPCo = IsCoRE` with the adapters; C6b: the core theorem on class C | C6a 2–3k; C6b 70–120k new, plus an orthonormalization tier (4–8k with a II₁ restriction) | audit done (#255, `reports/lidt-co-audit.md`); C6a done (#258): target `SoundFin`, `mipco_eq_core_of_lidtFin`, ≈ 0.8k new lines; C6b planned (#259, `planning/c6b-plan.md`): II₁ tier chosen and done, ≈ 3.0k — the orthonormalization core (T1, ≈ 1.25k), the dyadic class, the twisted Pauli algebra, the amplification and C6a restated to the class (T2–T5, ≈ 1.75k), so `SoundFin` asks only for dyadic pairs and Theorem 1.2 is unconditional in them; the port begun: M0, the base layer over a symmetric model (`SymModel 𝔓 K`, 18 modules, 5.7k lines), and M1, `CommutativityPoints` over it (7 modules, 3.0k lines, `Co.CommutativityPoints.commutativityPoints`, blueprint `lem:co-commutativity-points`), done at 1.02× the vendored elaboration time; M2–M14 open, re-estimated at 77–94k lines (the port 85–103k) |
 | C7 | Phase 7: the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
 
 C1 is the prerequisite of everything after it; C3 and C4 need only C1 and are independent

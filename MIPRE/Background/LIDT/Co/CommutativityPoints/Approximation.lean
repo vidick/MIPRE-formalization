@@ -47,8 +47,11 @@ declarations through an explicit `open MIPStarRE.LDT.CommutativityPoints (…)` 
 
 ## References
 
+In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
 - `references/ldt-paper/commutativity-points.tex`
 - `blueprint/src/chapter/ch08_commutativity.tex`
+
+In this repository: `lem:co-commutativity-points` in `blueprint/src/content/08_downstream.tex`.
 -/
 
 open scoped BigOperators

@@ -34,8 +34,11 @@ Every declaration of the vendored file has a counterpart here.
 
 ## References
 
+In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
 - `references/ldt-paper/commutativity-points.tex`
 - `blueprint/src/chapter/ch08_commutativity.tex`
+
+In this repository: `lem:co-commutativity-points` in `blueprint/src/content/08_downstream.tex`.
 -/
 
 open scoped BigOperators
@@ -52,6 +55,9 @@ open MIPStarRE.LDT.CommutativityPoints (PointPairOutcome PointPairDiagonalLineQu
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
+/-- Third replacement step: for a good strategy, over the shared-diagonal-line distribution,
+the reversed line product `I ⊗ (L^ℓ_[f(u)=a] · L^ℓ_[f(v)=b])` and the right mixed bridge
+`A^v_b ⊗ L^ℓ_[f(u)=a]` are `pointDiagonalLineApproxError params gamma`-close (`SDDOpRel`). -/
 theorem reversedDropFromLineComparison
     (params : Parameters)
     [FieldModel params.q]
@@ -174,6 +180,10 @@ theorem reversedDropFromLineComparison
               (pointDiagonalLineMixedProductRight_outcome params strategy q a b).symm)
     hreindexed
 
+/-- The third replacement step for the ordered line product: the ordered line product
+`I ⊗ (L^ℓ_[f(v)=b] · L^ℓ_[f(u)=a])` and the right mixed bridge `A^v_b ⊗ L^ℓ_[f(u)=a]` are
+`pointDiagonalLineApproxError params gamma`-close (`SDDOpRel`), the two line evaluations
+commuting as postprocessings of one diagonal-line measurement. -/
 theorem orderedDropFromLineComparison
     (params : Parameters)
     [FieldModel params.q]
@@ -201,6 +211,9 @@ theorem orderedDropFromLineComparison
     (fun _ _ => rfl)
     (reversedDropFromLineComparison params strategy eps delta gamma hgood)
 
+/-- Final replacement step: for a good strategy, over the shared-diagonal-line distribution,
+the right mixed bridge `A^v_b ⊗ L^ℓ_[f(u)=a]` and the reversed point product
+`(A^v_b A^u_a) ⊗ I` are `pointDiagonalLineApproxError params gamma`-close (`SDDOpRel`). -/
 theorem reversedDropToPointsComparison
     (params : Parameters)
     [FieldModel params.q]

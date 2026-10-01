@@ -33,8 +33,11 @@ Every declaration of the vendored file has a counterpart here.
 
 ## References
 
+In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
 - `references/ldt-paper/commutativity-points.tex`
 - `blueprint/src/chapter/ch08_commutativity.tex`
+
+In this repository: `lem:co-commutativity-points` in `blueprint/src/content/08_downstream.tex`.
 -/
 
 open scoped BigOperators
@@ -48,6 +51,7 @@ variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing
 
 /-! ## Shared reindexing and tensor-placement helpers -/
 
+/-- `SDDOpRel` of a vector state is symmetric in its two operator families. -/
 theorem sddOpRel_symm
     {Question Outcome : Type*}
     [Fintype Outcome]
@@ -140,6 +144,7 @@ theorem sddOpRel_congr_outcome
           rw [hA q a, hB q a]
     _ ≤ δ := h
 
+/-- For a submeasurement `A` in the C*-algebra `𝔓`, `∑ a, star (A a) * A a ≤ 1`. -/
 theorem subMeas_sum_adjoint_mul_le_one
     {Outcome : Type*}
     [Fintype Outcome]

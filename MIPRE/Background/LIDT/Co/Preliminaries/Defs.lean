@@ -63,6 +63,7 @@ Every declaration of the vendored file has a counterpart here.
 
 ## References
 
+In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
 - `references/ldt-paper/preliminaries.tex`
 -/
 

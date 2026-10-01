@@ -37,8 +37,11 @@ Every declaration of the vendored file has a counterpart here.
 
 ## References
 
+In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
 - `references/ldt-paper/commutativity-points.tex`
 - `blueprint/src/chapter/ch08_commutativity.tex`
+
+In this repository: `lem:co-commutativity-points` in `blueprint/src/content/08_downstream.tex`.
 -/
 
 open scoped BigOperators
@@ -184,6 +187,9 @@ noncomputable def answerPointDiagonalLineMixedProductRight
     let Lu := answerSampledDiagonalLineEvaluation params strategy (ℓ, tu)
     postprocess (tensorProductSubMeas strategy.state Av Lu) Prod.swap
 
+/-- Outcome `(a, b)` of the left mixed bridge: it is `A^u_a ⊗ L^ℓ_[f(v)=b]`, the point
+measurement at `u` and the answer-valued diagonal-line evaluation at `t_v`, placed by
+`strategy.state.opTensor`. -/
 theorem answerPointDiagonalLineMixedProductLeft_outcome
     (params : Parameters)
     [FieldModel params.q]
@@ -197,6 +203,9 @@ theorem answerPointDiagonalLineMixedProductLeft_outcome
         ((answerSampledDiagonalLineEvaluation params strategy (q.1, q.2.2)).outcome b) :=
   rfl
 
+/-- Outcome `(a, b)` of the right mixed bridge: it is `A^v_b ⊗ L^ℓ_[f(u)=a]`, the point
+measurement at `v` and the answer-valued diagonal-line evaluation at `t_u`, placed by
+`strategy.state.opTensor`, the post-processing having swapped the outcome pair back. -/
 theorem answerPointDiagonalLineMixedProductRight_outcome
     (params : Parameters)
     [FieldModel params.q]
@@ -227,6 +236,10 @@ theorem answerPointDiagonalLineMixedProductRight_outcome
   rw [hfilter]
   simp
 
+/-- For a good answer-valued strategy, over the shared-diagonal-line distribution, the point
+measurement at the second point `v`, placed left, and the answer-valued diagonal-line evaluation at
+`t_v`, placed right, are `pointDiagonalLineApproxError params gamma`-close (`SDDOpRel`): the
+first point is ignored, `(ℓ, t_v)` having the law of `pointWithDiagonalLineDistribution`. -/
 theorem answerSampledDiagonalLineApproximation_ignore_first
     (params : Parameters)
     [FieldModel params.q]
@@ -283,6 +296,10 @@ theorem answerSampledDiagonalLineApproximation_ignore_first
             (answerSampledDiagonalLineEvaluation params strategy)) := rfl
     _ ≤ pointDiagonalLineApproxError params gamma := happrox
 
+/-- For a good answer-valued strategy, over the shared-diagonal-line distribution, the point
+measurement at the first point `u`, placed left, and the answer-valued diagonal-line evaluation at
+`t_u`, placed right, are `pointDiagonalLineApproxError params gamma`-close (`SDDOpRel`): the
+second point is ignored, `(ℓ, t_u)` having the law of `pointWithDiagonalLineDistribution`. -/
 theorem answerSampledDiagonalLineApproximation_ignore_second
     (params : Parameters)
     [FieldModel params.q]
@@ -342,10 +359,10 @@ theorem answerSampledDiagonalLineApproximation_ignore_second
 /-- **Lean-only:** A local tensor-placement comparison in the answer-valued
 point-commutativity chain.
 
-Paper origin: `references/ldt-paper/commutativity_points.tex`; this is one of
+Paper origin: upstream `references/ldt-paper/commutativity_points.tex`; this is one of
 the formal transport steps used to realize the mixed point/diagonal comparison
 appearing in the paper.  It is internal to the answer-valued implementation
-tracked in issue #1507 and is not a source theorem.  Discharge: proved here from
+tracked in upstream issue #1507 and is not a source theorem.  Discharge: proved here from
 the already formalized point-to-diagonal-line approximation and tensor-ordering
 identities. -/
 theorem answerOrderedLiftToMixedLine
@@ -456,9 +473,9 @@ theorem answerOrderedLiftToMixedLine
 /-- **Lean-only:** A local tensor-placement comparison from the mixed product to
 the ordered diagonal-line product.
 
-Paper origin: `references/ldt-paper/commutativity_points.tex`; this is an
+Paper origin: upstream `references/ldt-paper/commutativity_points.tex`; this is an
 internal reindexing and tensor-ordering step in the answer-valued
-point-commutativity route tracked in issue #1507.  Discharge: proved here by
+point-commutativity route tracked in upstream issue #1507.  Discharge: proved here by
 transporting the point-to-line comparison through the explicit ordered product
 identities. -/
 theorem answerOrderedLiftToLineProduct
@@ -559,9 +576,9 @@ theorem answerOrderedLiftToLineProduct
 /-- **Lean-only:** A local tensor-placement comparison from the ordered
 diagonal-line product to the reversed mixed product.
 
-Paper origin: `references/ldt-paper/commutativity_points.tex`; this is an
+Paper origin: upstream `references/ldt-paper/commutativity_points.tex`; this is an
 internal answer-valued implementation step for the point-commutativity argument
-tracked in issue #1507.  Discharge: proved here from the reversed
+tracked in upstream issue #1507.  Discharge: proved here from the reversed
 point-to-line comparison and the explicit ordered/reversed product equality. -/
 theorem answerOrderedDropFromLineComparison
     (params : Parameters)
@@ -705,9 +722,9 @@ theorem answerOrderedDropFromLineComparison
 /-- **Lean-only:** A local tensor-placement comparison from the reversed mixed
 product back to the reversed point product.
 
-Paper origin: `references/ldt-paper/commutativity_points.tex`; this is the last
+Paper origin: upstream `references/ldt-paper/commutativity_points.tex`; this is the last
 internal answer-valued transport step in the point-commutativity chain tracked
-in issue #1507.  Discharge: proved here from the line-to-point comparison and
+in upstream issue #1507.  Discharge: proved here from the line-to-point comparison and
 the explicit tensor-placement identities. -/
 theorem answerReversedDropToPointsComparison
     (params : Parameters)

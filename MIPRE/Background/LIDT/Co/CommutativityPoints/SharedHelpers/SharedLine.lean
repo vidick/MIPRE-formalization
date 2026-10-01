@@ -41,8 +41,11 @@ declarations through an explicit `open MIPStarRE.LDT.CommutativityPoints (…)` 
 
 ## References
 
+In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
 - `references/ldt-paper/commutativity-points.tex`
 - `blueprint/src/chapter/ch08_commutativity.tex`
+
+In this repository: `lem:co-commutativity-points` in `blueprint/src/content/08_downstream.tex`.
 -/
 
 open scoped BigOperators
@@ -59,6 +62,8 @@ open MIPStarRE.LDT.CommutativityPoints (PointPairDiagonalLineQuestion
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
+/-- Outcome `(a, b)` of the shared-line point product, at a question `(ℓ, (t_u, t_v))` with
+`u = ℓ(t_u)` and `v = ℓ(t_v)`: it is `(A^u_a A^v_b) ⊗ I`, `strategy.state.L` of the product. -/
 theorem pointMeasurementProductAlongSharedLine_outcome
     (params : Parameters)
     [FieldModel params.q]
@@ -71,6 +76,8 @@ theorem pointMeasurementProductAlongSharedLine_outcome
           (strategy.pointMeasurement (q.1.pointAt q.2.2)).outcome b) :=
   rfl
 
+/-- Outcome `(a, b)` of the reversed shared-line point product: it is `(A^v_b A^u_a) ⊗ I`,
+`strategy.state.L` of the product in the opposite order. -/
 theorem pointMeasurementProductAlongSharedLineReversed_outcome
     (params : Parameters)
     [FieldModel params.q]
@@ -83,6 +90,9 @@ theorem pointMeasurementProductAlongSharedLineReversed_outcome
           (strategy.pointMeasurement (q.1.pointAt q.2.1)).outcome a) :=
   rfl
 
+/-- Outcome `(a, b)` of the left mixed bridge: it is `A^u_a ⊗ L^ℓ_[f(v)=b]`, the point
+measurement at `u` and the diagonal-line evaluation at `t_v`, placed by
+`strategy.state.opTensor`. -/
 theorem pointDiagonalLineMixedProductLeft_outcome
     (params : Parameters)
     [FieldModel params.q]
@@ -96,6 +106,9 @@ theorem pointDiagonalLineMixedProductLeft_outcome
         ((sampledDiagonalLineEvaluation params strategy (q.1, q.2.2)).outcome b) :=
   rfl
 
+/-- Outcome `(a, b)` of the right mixed bridge: it is `A^v_b ⊗ L^ℓ_[f(u)=a]`, the point
+measurement at `v` and the diagonal-line evaluation at `t_u`, placed by
+`strategy.state.opTensor`, the post-processing having swapped the outcome pair back. -/
 theorem pointDiagonalLineMixedProductRight_outcome
     (params : Parameters)
     [FieldModel params.q]
@@ -126,6 +139,8 @@ theorem pointDiagonalLineMixedProductRight_outcome
   rw [hfilter]
   simp
 
+/-- Outcome `(a, b)` of the ordered diagonal-line product: it is
+`I ⊗ (L^ℓ_[f(v)=b] · L^ℓ_[f(u)=a])`, `strategy.state.R` of the product. -/
 theorem diagonalLineProductOrdered_outcome
     (params : Parameters)
     [FieldModel params.q]
@@ -138,6 +153,8 @@ theorem diagonalLineProductOrdered_outcome
           (sampledDiagonalLineEvaluation params strategy (q.1, q.2.1)).outcome a) :=
   rfl
 
+/-- Outcome `(a, b)` of the reversed diagonal-line product: it is
+`I ⊗ (L^ℓ_[f(u)=a] · L^ℓ_[f(v)=b])`, `strategy.state.R` of the product. -/
 theorem diagonalLineProductReversed_outcome
     (params : Parameters)
     [FieldModel params.q]
@@ -150,6 +167,10 @@ theorem diagonalLineProductReversed_outcome
           (sampledDiagonalLineEvaluation params strategy (q.1, q.2.2)).outcome b) :=
   rfl
 
+/-- For a good strategy, over the shared-diagonal-line distribution, the point
+measurement at the second point `v`, placed left, and the diagonal-line evaluation at
+`t_v`, placed right, are `pointDiagonalLineApproxError params gamma`-close (`SDDOpRel`): the
+first point is ignored, `(ℓ, t_v)` having the law of `pointWithDiagonalLineDistribution`. -/
 theorem sampledDiagonalLineApproximation_ignore_first
     (params : Parameters)
     [FieldModel params.q]
@@ -204,6 +225,10 @@ theorem sampledDiagonalLineApproximation_ignore_first
             (sampledDiagonalLineEvaluation params strategy)) := rfl
     _ ≤ pointDiagonalLineApproxError params gamma := happrox
 
+/-- For a good strategy, over the shared-diagonal-line distribution, the point
+measurement at the first point `u`, placed left, and the diagonal-line evaluation at
+`t_u`, placed right, are `pointDiagonalLineApproxError params gamma`-close (`SDDOpRel`): the
+second point is ignored, `(ℓ, t_u)` having the law of `pointWithDiagonalLineDistribution`. -/
 theorem sampledDiagonalLineApproximation_ignore_second
     (params : Parameters)
     [FieldModel params.q]
