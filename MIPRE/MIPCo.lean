@@ -7,6 +7,8 @@ module
 public import MIPRE.MainTheorem
 public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Foundations.ClassMIPCo
+public import MIPRE.Background.Repetition.TracialApprox
+public import MIPRE.Background.QLD.FinSoundness
 
 @[expose] public section
 
@@ -31,11 +33,23 @@ the low-individual-degree test in the commuting-operator model
 the soundness of the Pauli basis test in the commuting-operator model
 (`Introspection.seven_soundIn_commuting`, Phase 4). The first follows from the second
 (`QLD.soundCo_of_lidt`, Phase 5), so `mipco_eq_core_of_lidt` states the theorem with the one
-hypothesis `LIDT.Simul.SoundCo`. It goes through `gapCompressionCo`, the main
-theorem's pipeline with the number of repetitions chosen against the smaller of the two
-repetition constants (`repetitionCo`), since the commuting-operator repetition theorem has a
-constant of its own; any gap compression sound in `ω_co` gives the theorem
-(`Halting.mipco_eq_core_of`).
+hypothesis `LIDT.Simul.SoundCo`.
+
+No source proves `LIDT.Simul.SoundCo` (`reports/lidt-co-audit.md`), and Phase 6 replaces it by
+`LIDT.Simul.SoundFin`, the soundness of the seeded test in every finite pair: a model whose two
+algebras are each other's commutants and carry faithful tracial states
+(`BipartiteModel.IsFinitePair`). The two hypotheses are incomparable. What `SoundFin` buys is a
+trace on both algebras, which a port of the vendored finite-dimensional proof needs for its
+semidefinite step and for orthonormalization, and which an arbitrary vector state does not supply.
+`mipco_eq_core_of_lidtFin` states the theorem with it: below `ω_co(G)` lies the value of a
+projective strategy in a finite pair (`Repetition.commutingFinitePairApprox`, from Lin's tracial
+density), so answer reduction and the Pauli basis test, which use the hypothesis only in the model
+of one near-optimal strategy and in its ancilla extensions, need it only there.
+
+Both conditional theorems go through `gapCompressionCo`, the main theorem's pipeline with the
+number of repetitions chosen against the smaller of the two repetition constants
+(`repetitionCo`), since the commuting-operator repetition theorem has a constant of its own; any
+gap compression sound in `ω_co` gives the theorem (`Halting.mipco_eq_core_of`).
 
 This module sits beside `MIPRE/MainTheorem.lean`, which `MIPRE/Foundations/` does not import,
 because the hypothesis is about its `gapCompression`.
@@ -90,6 +104,21 @@ commuting-operator model (`QLD.soundCo_of_lidt`, Phase 5 of `planning/mipco-trac
 hypotheses of `mipco_eq_core_of_stages` are one. -/
 theorem mipco_eq_core_of_lidt (hL : LIDT.Simul.SoundCo) : MIPCo = IsCoRE :=
   mipco_eq_core_of_stages (QLD.soundCo_of_lidt hL) hL
+
+/-- **`MIP^co = coRE` from the soundness of the low-individual-degree test in finite pairs**
+(blueprint `cor:mipco-from-lidt-fin`), the target of Phase 6 of `planning/mipco-track.md`:
+`ω_co` is approached by projective strategies in finite pairs
+(`Repetition.commutingFinitePairApprox`), and finite pairs are closed under ancilla extensions, so
+the Pauli basis test is sound in the model of each approximating strategy
+(`QLD.approxSoundIn_commuting_of_fin`), which is what introspection uses of it, and answer
+reduction is sound in `ω_co` (`AnswerReduction.answerReduction_soundIn_commuting_fin`). -/
+theorem mipco_eq_core_of_lidtFin (h : LIDT.Simul.SoundFin) : MIPCo = IsCoRE :=
+  Halting.mipco_eq_core_of gapCompressionCo Cost.selfUniversal
+    (GapCompression.ofPipeline_sound
+      (Introspection.seven_soundIn .commuting ValueModel.commuting_projApprox
+        (QLD.approxSoundIn_commuting_of_fin Repetition.commutingFinitePairApprox h))
+      (AnswerReduction.answerReduction_soundIn_commuting_fin Repetition.commutingFinitePairApprox h)
+      (repetitionCo_soundIn_commuting 7))
 
 end MIPRE
 

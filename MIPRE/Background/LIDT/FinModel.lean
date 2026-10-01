@@ -21,8 +21,10 @@ models whose two algebras are each other's commutants and both carry a faithful 
 
 The answer-reduction analysis applies the hypothesis inside the model of one near-optimal
 projective strategy, so what it needs of a value model `ω` is that `ω` be approached by projective
-strategies of models in which the test is sound and which `ω` dominates (`ApproxSoundIn ω`). Both
-hypotheses give it for `ω_co`: `SoundCo` through the commuting-operator models
+strategies of models in which the test is sound and which `ω` dominates (`ApproxSoundIn ω`).
+`val*` has it through the tensor-product models of tensor-product strategies
+(`approxSoundIn_tensor`). Both hypotheses give it for `ω_co`: `SoundCo` through the
+commuting-operator models
 (`approxSoundIn_commuting`), and `SoundFin` through finite pairs, given that `ω_co` is approached
 in finite pairs (`approxSoundIn_commuting_of_fin`; the approximation is
 `MIPRE.Repetition.commutingFinitePairApprox`, from Lin's tracial density).
@@ -52,17 +54,33 @@ def ApproxSoundIn (ω : ValueModel) : Prop :=
         (_ : StarOrderedRing ℬ) (M : BipartiteModel.{0} 𝒞 𝒜 ℬ),
         SoundIn M ∧ ω.Dominates M ∧ ∃ S : M.ProjStrat G, t < S.value
 
+/-- **`val*` is approached in tensor-product models**, where the test is sound
+(`soundIn_tensor`) and which `val*` dominates (`ValueModel.tensor_dominates`): a tensor-product
+strategy near the supremum is a projective strategy of its model, of the same value. -/
+theorem approxSoundIn_tensor : ApproxSoundIn .tensor := fun G t ht h => by
+  rw [ValueModel.tensor_val, quantumValue] at h
+  rcases isEmpty_or_nonempty (TensorProductStrategy G) with hG | hG
+  · rw [Real.iSup_of_isEmpty] at h
+    exact absurd ht (not_le.mpr h)
+  obtain ⟨T, hT⟩ := exists_lt_of_lt_ciSup h
+  exact ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, BipartiteModel.tensor T.ψ,
+    soundIn_tensor T.ψ, ValueModel.tensor_dominates T.ψ, T.toModel, by rwa [T.value_toModel]⟩
+
 /-- **`ω_co` is approached in the models of commuting-operator strategies**
 (`exists_projStrat_lt_commutingOperatorValue`), where the test is sound if `SoundCo` holds. -/
-theorem approxSoundIn_commuting (h : SoundCo) : ApproxSoundIn .commuting := by
-  sorry
+theorem approxSoundIn_commuting (h : SoundCo) : ApproxSoundIn .commuting := fun G t ht hv => by
+  obtain ⟨S, R, hR⟩ := exists_projStrat_lt_commutingOperatorValue ht hv
+  exact ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, S.toModel, h S,
+    ValueModel.commuting_dominates _, R, hR⟩
 
 /-- **`ω_co` is approached in finite pairs**, where the test is sound if `SoundFin` holds, as soon
 as `ω_co` is approached by projective strategies in finite pairs (`CommutingFinitePairApprox`,
 proved as `MIPRE.Repetition.commutingFinitePairApprox`). -/
 theorem approxSoundIn_commuting_of_fin (hV : CommutingFinitePairApprox) (h : SoundFin) :
-    ApproxSoundIn .commuting := by
-  sorry
+    ApproxSoundIn .commuting := fun G t ht hv => by
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, M, hM, S, hS⟩ := hV G ht hv
+  exact ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, M, h M hM,
+    ValueModel.commuting_dominates M, S, hS⟩
 
 end MIPRE.LIDT.Simul
 

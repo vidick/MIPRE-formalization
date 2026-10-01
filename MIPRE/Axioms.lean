@@ -2951,7 +2951,9 @@ chain itself is restated in a model under its existing guards. -/
   MIPRE.LIDT.Simul.evalTuplePOVM_toIn
 
 #guard_sorry_free MIPRE.AnswerReduction.arVerifier_soundness_commuting,
-  MIPRE.AnswerReduction.answerReduction_soundIn_commuting
+  MIPRE.AnswerReduction.answerReduction_soundIn_commuting,
+  MIPRE.AnswerReduction.arVerifier_soundness_of_approx,
+  MIPRE.AnswerReduction.answerReduction_soundIn_of_approx, MIPRE.LIDT.Simul.approxSoundIn_commuting
 
 /-! The commuting-operator track, Phase 4 (`planning/mipco-track.md` §5): local isometries of
 bipartite models, `lem:local-isometry` (`MIPRE/Foundations/LocalIsometry.lean`); moving registers
@@ -3280,5 +3282,28 @@ basis analysis itself is restated in a model under the guards of
 
 -- blueprint `cor:mipco-from-lidt`
 #guard_sorry_free MIPRE.mipco_eq_core_of_lidt
+
+/-! The commuting-operator track, Phase 6 (`planning/mipco-track.md` §5, C6a): finite pairs and
+their ancilla extensions, `lem:finite-pair-expand` (`MIPRE/Foundations/FinitePairExpand.lean`);
+`ω_co` approached in finite pairs, `lem:co-value-finite-pair`
+(`MIPRE/Background/Repetition/TracialApprox.lean`); answer reduction and the Pauli basis test from
+the seeded test in finite pairs, `thm:ar-sound-co-fin` and `lem:qld-approx-co-fin`; and the
+conditional theorem, `cor:mipco-from-lidt-fin` (`MIPRE/MIPCo.lean`). -/
+
+-- blueprint `lem:finite-pair-expand`
+#guard_sorry_free MIPRE.BipartiteModel.IsFinitePair.expand, MIPRE.BipartiteModel.IsFinitePair.swap
+
+-- blueprint `lem:co-value-finite-pair`
+#guard_sorry_free MIPRE.Repetition.commutingFinitePairApprox
+
+-- blueprint `thm:ar-sound-co-fin`
+#guard_sorry_free MIPRE.AnswerReduction.answerReduction_soundIn_commuting_fin,
+  MIPRE.LIDT.Simul.approxSoundIn_commuting_of_fin
+
+-- blueprint `lem:qld-approx-co-fin`
+#guard_sorry_free MIPRE.QLD.approxSoundIn_commuting_of_fin
+
+-- blueprint `cor:mipco-from-lidt-fin`
+#guard_sorry_free MIPRE.mipco_eq_core_of_lidtFin
 
 end

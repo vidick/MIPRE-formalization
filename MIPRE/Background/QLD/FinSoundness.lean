@@ -30,8 +30,13 @@ namespace MIPRE.QLD
 low-individual-degree test is sound in every finite pair and that `ω_co` is approached by
 projective strategies in finite pairs (`lem:qld-approx-co-fin`). -/
 theorem approxSoundIn_commuting_of_fin (hV : CommutingFinitePairApprox)
-    (h : LIDT.Simul.SoundFin) : ApproxSoundIn .commuting := by
-  sorry
+    (h : LIDT.Simul.SoundFin) : ApproxSoundIn .commuting := fun G t ht hv => by
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, M, hM, S, hS⟩ := hV G ht hv
+  refine ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, M, soundIn_of_lidt (fun e he => ?_)
+    fun _ _ _ hw => ValueModel.commuting_dominatesPOVM _ hw, S, hS⟩
+  have := (nonempty_of_norm_evec_eq_one he).1
+  have := (nonempty_of_norm_evec_eq_one he).2
+  exact h _ (hM.expand e)
 
 end MIPRE.QLD
 
