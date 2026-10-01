@@ -26,9 +26,12 @@ ask of the PCP decider hold for it:
 The contract's clauses are then `arVerifier_bounds` (the complexity clause and the answer cut
 below the output bound), `arVerifier_hasPerfectPCC` (completeness at the cut, hence at the bound)
 and `arVerifier_soundness_tensor` (at the output bound), at the explicit soundness constants
-`soundA`, `clB / 2`, `soundC`. At the same constants, the clause holds in the commuting-operator
-value once the low-individual-degree test is sound in the commuting-operator model
-(`answerReduction_soundIn_commuting`, Phase 3 of `planning/mipco-track.md`).
+`soundA`, `clB / 2`, `soundC`. At the same constants, the clause holds in every value model
+approached in models where the low-individual-degree test is sound
+(`answerReduction_soundIn_of_approx`), so in the commuting-operator value once the test is sound
+in the commuting-operator model (`answerReduction_soundIn_commuting`, Phase 3 of
+`planning/mipco-track.md`), or in every finite pair (`answerReduction_soundIn_commuting_fin`,
+Phase 6).
 -/
 
 noncomputable section
@@ -149,19 +152,39 @@ def answerReduction : MIPRE.AnswerReduction 5 where
 
 /-! ## Soundness in the commuting-operator value -/
 
-/-- **Answer reduction is sound in the commuting-operator value** (`thm:ar-sound-co`), at the
-constants of `answerReduction`, given the soundness of the low-individual-degree test in the
-commuting-operator model: `arVerifier_soundness_commuting` at the output bound, which is above the
-answer cut. -/
-theorem answerReduction_soundIn_commuting (hLD : LIDT.Simul.SoundCo) :
-    answerReduction.SoundIn .commuting := by
+/-- **Answer reduction is sound in a value model approached in sound models**, at the constants
+of `answerReduction`: in a value model where oracularization is sound and which is approached by
+projective strategies of models it dominates where the low-individual-degree test is sound
+(`LIDT.Simul.ApproxSoundIn`), `arVerifier_soundness_of_approx` at the output bound, which is above
+the answer cut. -/
+theorem answerReduction_soundIn_of_approx {ω : ValueModel} (hA : LIDT.Simul.ApproxSoundIn ω)
+    (hω : ω.OracularSound) : answerReduction.SoundIn ω := by
   intro V lam mu sigma n ε hC hn2 hlam hV hsz hε h
   have ha : answerReduction.a = (soundA classicalR : ℝ) := rfl
   have hb : answerReduction.b = LIDT.clB / 2 := rfl
   rw [ha, hb]
-  exact arVerifier_soundness_commuting classicalPcpDecider classicalR shoupField_classical
-    classicalR_spec fieldLarge_classical hLD V lam mu sigma n ε _ hC hn2 hlam hV hsz hε
+  exact arVerifier_soundness_of_approx classicalPcpDecider classicalR shoupField_classical
+    classicalR_spec fieldLarge_classical hA hω V lam mu sigma n ε _ hC hn2 hlam hV hsz hε
     (arBounds_spec.2 lam mu sigma n) h
+
+/-- **Answer reduction is sound in the commuting-operator value** (`thm:ar-sound-co`), at the
+constants of `answerReduction`, given the soundness of the low-individual-degree test in the
+commuting-operator model: `ω_co` is approached in the models of commuting-operator strategies
+(`LIDT.Simul.approxSoundIn_commuting`). -/
+theorem answerReduction_soundIn_commuting (hLD : LIDT.Simul.SoundCo) :
+    answerReduction.SoundIn .commuting :=
+  answerReduction_soundIn_of_approx (LIDT.Simul.approxSoundIn_commuting hLD)
+    ValueModel.commuting_oracularSound
+
+/-- **Answer reduction is sound in the commuting-operator value, from finite pairs**
+(`thm:ar-sound-co-fin`), at the constants of `answerReduction`, given the soundness of the
+low-individual-degree test in every finite pair (`LIDT.Simul.SoundFin`) and the approximation of
+`ω_co` by projective strategies in finite pairs (`CommutingFinitePairApprox`): `ω_co` is then
+approached in finite pairs (`LIDT.Simul.approxSoundIn_commuting_of_fin`). -/
+theorem answerReduction_soundIn_commuting_fin (hV : CommutingFinitePairApprox)
+    (h : LIDT.Simul.SoundFin) : answerReduction.SoundIn .commuting :=
+  answerReduction_soundIn_of_approx (LIDT.Simul.approxSoundIn_commuting_of_fin hV h)
+    ValueModel.commuting_oracularSound
 
 end MIPRE.AnswerReduction
 

@@ -1078,10 +1078,11 @@ are stated in a bipartite model, and `MIPRE.mipco_eq_core_of_lidt` proves `MIP^c
 the soundness of the low-individual-degree test in the commuting-operator model alone
 (`LIDT.Simul.SoundCo`, Phase 6). `planning/mipco-track.md` records each phase.
 Phase 6's paper trail and the vendored proof have been audited (#255, `reports/lidt-co-audit.md`).
-No source proves `SoundCo` in its generality. The audit recommends a weaker hypothesis that
-suffices: soundness in the models whose two algebras carry faithful normal traces, reached
-through the vendored tracial density. It also recommends a port of the vendored proof to those
-models, of about 70–120k lines.
+No source proves `SoundCo` in its generality. On the audit's recommendation the theorem now also
+follows from a different hypothesis, `LIDT.Simul.SoundFin`: soundness in every finite pair, two
+algebras that are each other's commutants and carry faithful tracial states, reached through the
+vendored tracial density (C6a, `MIPRE.mipco_eq_core_of_lidtFin`). What remains is `SoundFin`
+itself, by a port of the vendored proof to finite pairs of about 70–120k lines (C6b).
 
 ## Working rules for this track
 

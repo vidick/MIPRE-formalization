@@ -114,6 +114,7 @@ public import MIPRE.Background.LIDT.CLHonest
 public import MIPRE.Background.LIDT.CoExpand
 public import MIPRE.Background.LIDT.Coefficients
 public import MIPRE.Background.LIDT.Extraction
+public import MIPRE.Background.LIDT.FinModel
 public import MIPRE.Background.LIDT.Game
 public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.AxisParallelLine
 public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DiagonalLine
@@ -524,6 +525,7 @@ public import MIPRE.Background.QLD.Dummy
 public import MIPRE.Background.QLD.ErrorShape
 public import MIPRE.Background.QLD.ExactPauli
 public import MIPRE.Background.QLD.Expanded
+public import MIPRE.Background.QLD.FinSoundness
 public import MIPRE.Background.QLD.Game
 public import MIPRE.Background.QLD.Helper
 public import MIPRE.Background.QLD.Legalize
@@ -728,6 +730,7 @@ public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Pa
 public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part07
 public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part08
 public import MIPRE.Background.Repetition.TensorPower
+public import MIPRE.Background.Repetition.TracialApprox
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
@@ -837,6 +840,8 @@ public import MIPRE.Foundations.Disagreement
 public import MIPRE.Foundations.Distances
 public import MIPRE.Foundations.EPRContraction
 public import MIPRE.Foundations.Expanded
+public import MIPRE.Foundations.FinitePair
+public import MIPRE.Foundations.FinitePairExpand
 public import MIPRE.Foundations.GNS
 public import MIPRE.Foundations.GameAdapt
 public import MIPRE.Foundations.GameDescription

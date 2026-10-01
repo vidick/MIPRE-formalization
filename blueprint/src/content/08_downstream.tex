@@ -1051,8 +1051,9 @@ low-individual-degree test is (Lemma~\ref{lem:qld-sound-co}). So what remains is
 the soundness of the seeded CL test (Theorem~\ref{thm:lidt-cl-soundness}) in the
 commuting-operator model (Definition~\ref{def:lidt-sound-in}), from which $\MIPco = \coRE$ follows
 (Corollary~\ref{cor:mipco-from-lidt}). No source proves that statement for an arbitrary vector
-state. The audit \texttt{reports/lidt-co-audit.md} records what the literature does prove, and a
-weaker hypothesis that would suffice. Each stage, and the Pauli basis test, was proved by
+state (\texttt{reports/lidt-co-audit.md}), and Corollary~\ref{cor:mipco-from-lidt-fin} replaces it
+by its restriction to \emph{finite pairs}, the models whose two algebras are each other's commutants
+and carry faithful tracial states (Section~\ref{sec:ds-mipco-phase6}). Each stage, and the Pauli basis test, was proved by
 generalizing the existing analysis over the projective commuting-operator model of
 Section~\ref{sec:ds-mipco-projective} rather than by re-proving it, with the tensor-product
 strategies as an instance: the operator calculus (Remark~\ref{rem:model-calculus}),
@@ -1061,6 +1062,7 @@ oracularization (Section~\ref{sec:ds-mipco-phase2}), answer reduction
 Pauli basis test (Section~\ref{sec:ds-mipco-phase5}). The low-individual-degree test is Phase 6,
 the one item that is new mathematics rather than a generalization: the only proof of its soundness
 here is the vendored finite-dimensional one, whose mechanisms use the finite dimension throughout.
+So far Phase 6 has reduced the hypothesis to finite pairs (Section~\ref{sec:ds-mipco-phase6}).
 Sizes, phases and the delicate points are in \texttt{planning/mipco-track.md}, and the audit that
 fixed the model is \texttt{reports/co-generalization-audit.md}.
 \end{remark}
@@ -1680,7 +1682,7 @@ statements are Lemma~\ref{lem:model-strategy-co}.
 \label{def:lidt-sound-in}
 \uses{def:model-proj-strategy,def:lidt-cl,lem:lidt-ldc-adapter,lem:lidt-ldc-error}
 \lean{MIPRE.LIDT.Simul.SoundIn, MIPRE.LIDT.Simul.SoundCo, MIPRE.LIDT.Simul.tuplePOVMAIn,
-  MIPRE.LIDT.Simul.tuplePOVMBIn, MIPRE.LIDT.Simul.evalTuplePOVMIn}
+  MIPRE.LIDT.Simul.tuplePOVMBIn, MIPRE.LIDT.Simul.evalTuplePOVMIn, MIPRE.LIDT.Simul.ApproxSoundIn}
 \leanok
 The seeded CL test is \emph{sound in the bipartite model} if the conclusion of
 Theorem~\ref{thm:lidt-cl-soundness} holds for the projective strategies in the model, with the
@@ -1692,7 +1694,10 @@ at most $d$, whose evaluations at a uniform point are consistent with the other 
 measurement, and which are consistent with each other, all with error at most
 $\delta_{\mathrm{CL}}(\eps, q, m, d, \mathrm{ldc})$. It is \emph{sound in the commuting-operator
 model} if it is sound in the model of every commuting-operator strategy
-(Definition~\ref{def:bipartite-model}).
+(Definition~\ref{def:bipartite-model}). A value model $\omega$ is \emph{approached in models where
+the test is sound} if for every game $\game$ and every $0 \leq t < \omega(\game)$ there is a
+projective strategy for $\game$ of value greater than $t$ in a bipartite model on a Hilbert space in
+which the test is sound and which $\omega$ dominates.
 \end{definition}
 
 \begin{lemma}[The low-individual-degree test is sound in the tensor-product model]
@@ -1718,28 +1723,31 @@ matrix inconsistencies it bounds are the model's.
 \label{thm:ar-sound-co}
 \uses{lem:ar-error-assembly,def:lidt-sound-in,lem:model-proj-strategy-values,
   thm:oracularization-in-model,def:stage-sound-in,thm:answer-reduction}
-\lean{MIPRE.AnswerReduction.arVerifier_soundness_commuting,
-  MIPRE.AnswerReduction.answerReduction_soundIn_commuting}
+\lean{MIPRE.AnswerReduction.arVerifier_soundness_of_approx,
+  MIPRE.AnswerReduction.answerReduction_soundIn_of_approx,
+  MIPRE.AnswerReduction.arVerifier_soundness_commuting,
+  MIPRE.AnswerReduction.answerReduction_soundIn_commuting, MIPRE.LIDT.Simul.approxSoundIn_commuting}
 \leanok
-If the seeded CL test is sound in the commuting-operator model
-(Definition~\ref{def:lidt-sound-in}), then the answer reduction of
-Theorem~\ref{thm:answer-reduction} is sound in the model $\omegaco$
+The answer reduction of Theorem~\ref{thm:answer-reduction} is sound
 (Definition~\ref{def:stage-sound-in}), at the constants $a$, $b$ and threshold of its soundness
-clause in $\valstar$.
+clause in $\valstar$, in every value model in which oracularization is sound
+(Definition~\ref{def:oracular-sound-in}) and which is approached in models where the seeded CL test
+is sound (Definition~\ref{def:lidt-sound-in}). In particular, if the seeded CL test is sound in the
+commuting-operator model, answer reduction is sound in $\omegaco$.
 \end{theorem}
 
 \begin{proof}
 \leanok
-Let $\omegaco$ of the answer-reduced verifier exceed $1 - \eps$, with $\mu \geq 1$ and
+Let $\omega$ of the answer-reduced verifier exceed $1 - \eps$, with $\mu \geq 1$ and
 $\eps < 1$; otherwise the loss is at least $1$. The output verifier rejects answers longer than
-the answer cut, so $\omegaco$ at the cut exceeds $1 - \eps$, and
-Lemma~\ref{lem:model-proj-strategy-values} gives a commuting-operator strategy with a projective
-strategy in its model of value at least $1 - \eps$ for the game at the cut. The test is sound in
-that model, oracularization is sound in $\omegaco$
-(Theorem~\ref{thm:oracularization-in-model}), and $\omegaco$ dominates the model, so the analysis
-of Lemma~\ref{lem:ar-error-assembly}, which is stated for a projective strategy in any such model,
-gives $\omegaco(\verifier_n) \geq 1 - \delta(\eps, n)$ at the constants of the clause in
-$\valstar$, which are explicit.
+the answer cut, so $\omega$ at the cut exceeds $1 - \eps$, and the hypothesis gives a projective
+strategy of value greater than $1 - \eps$ for the game at the cut, in a model where the test is
+sound and which $\omega$ dominates. The analysis of Lemma~\ref{lem:ar-error-assembly}, which is
+stated for a projective strategy in any such model, gives $\omega(\verifier_n) \geq 1 - \delta(\eps,
+n)$ at the constants of the clause in $\valstar$, which are explicit. For $\omegaco$,
+oracularization is sound (Theorem~\ref{thm:oracularization-in-model}), and
+Lemma~\ref{lem:model-proj-strategy-values} gives, below $\omegaco$, a projective strategy in the
+model of a commuting-operator strategy, which $\omegaco$ dominates.
 \end{proof}
 
 \subsubsection{Introspection in the model, given the Pauli basis test}
@@ -2751,14 +2759,183 @@ The Pauli basis test is then sound in the commuting-operator model (Lemma~\ref{l
 so both hypotheses of Corollary~\ref{cor:mipco-from-stages} hold.
 \end{proof}
 
+\subsubsection{The hypothesis in finite pairs}
+\label{sec:ds-mipco-phase6}
+
 The hypothesis of Corollary~\ref{cor:mipco-from-lidt} is Theorem~\ref{thm:lidt-cl-soundness} in the
-model of every commuting-operator strategy. It is Phase 6 of \texttt{planning/mipco-track.md}, and
-it is the one step of the track that is not a generalization of an analysis already formalized:
-the only proof of the seeded test's soundness here is the vendored finite-dimensional one, whose
-mechanisms use the finite dimension throughout. No transfer principle supplies it, since the
-correlations that approximate those of commuting-operator strategies by density are those of
-tracially embeddable strategies, which are still infinite-dimensional, and approximation by
-finite-dimensional strategies is what fails.
+model of every commuting-operator strategy, with an arbitrary vector state. It is Phase 6 of
+\texttt{planning/mipco-track.md}, the one step of the track that is not a generalization of an
+analysis already formalized: the only proof of the seeded test's soundness here is the vendored
+finite-dimensional one, whose mechanisms use the finite dimension throughout. No transfer principle
+supplies it, since the correlations that approximate those of commuting-operator strategies by
+density are those of tracially embeddable strategies, which are still infinite-dimensional, and
+approximation by finite-dimensional strategies is what fails. No source proves it either
+(\texttt{reports/lidt-co-audit.md}).
+
+Phase 6 therefore replaces it by its restriction to \emph{finite pairs}: models whose two players'
+algebras are each other's commutants and both carry a faithful tracial state, with an arbitrary
+vector state (Definition~\ref{def:finite-pair}). The two hypotheses are incomparable. What the
+restriction buys is a trace on both algebras, which is what a port of the vendored proof needs where
+it uses the dimension: the symmetrization of the two players, the semidefinite step, and
+orthonormalization, which in a finite von Neumann algebra is de la Salle's theorem. That port is
+still to be done. This subsection proves that the restriction suffices
+(Corollary~\ref{cor:mipco-from-lidt-fin}). Answer reduction and the Pauli basis test use the
+hypothesis only in the model of one near-optimal projective strategy and in its ancilla extensions,
+and by Lin's tracial density (Theorem~\ref{thm:tracial-density}) the near-optimal strategies can be
+taken in finite pairs, a class closed under ancilla extensions.
+
+\begin{definition}[Finite pairs]
+\label{def:finite-pair}
+\uses{def:bipartite-model,def:model-proj-strategy}
+\lean{MIPRE.VecTrace, MIPRE.BipartiteModel.opsA, MIPRE.BipartiteModel.opsB,
+  MIPRE.BipartiteModel.IsFinitePair, MIPRE.CommutingFinitePairApprox}
+\leanok
+A \emph{vector trace} on a set $s$ of bounded operators on a Hilbert space $\mH$ is a finite family
+of vectors $g_1, \dots, g_n \in \mH$ with $\sum_k \|g_k\|^2 = 1$ such that $\tau(x) = \sum_k \langle
+g_k, x g_k \rangle$ is tracial on $s$, $\tau(xy) = \tau(yx)$ for $x, y \in s$, and the family
+separates $s$: an $x \in s$ with $x g_k = 0$ for every $k$ is zero. On a $*$-closed $s$ the
+separation is the faithfulness of $\tau$, since $\tau(x^* x) = \sum_k \|x g_k\|^2$. A bipartite
+model (Definition~\ref{def:bipartite-model}) is a \emph{finite pair} if both players'
+representations are injective, the operators of each player are exactly the operators commuting
+with all of the other player's, and each player's operators carry a vector trace. The state is an
+arbitrary unit vector. $\omegaco$ is \emph{approached in finite pairs} if for every game $\game$ and
+every $0 \leq t < \omegaco(\game)$ there is a projective strategy for $\game$ of value greater than
+$t$ in a finite pair.
+
+Two features of the class matter for the port of the soundness proof to it. The trace is a finite
+sum of vector states, so the class is narrower than that of all pairs with faithful normal tracial
+states; the standard form of a tracial algebra needs one vector, and ancilla extensions, the
+doubling $\mH \oplus \mH$ and amplification by a type $\mathrm{II}_1$ factor stay in the class,
+while corners do not. And the class contains type $\mathrm{I}$ pairs with diffuse centre, such as
+$L^\infty[0,1]$ acting on $L^2[0,1]$, so soundness in finite pairs includes them: a port that
+orthonormalizes only in type $\mathrm{II}_1$ algebras would have to narrow the class and amplify in
+Lemma~\ref{lem:co-value-finite-pair}.
+\end{definition}
+
+\begin{lemma}[Finite pairs are closed under ancilla extensions]
+\label{lem:finite-pair-expand}
+\uses{def:finite-pair,def:ancilla-extension,lem:ampl-commutant}
+\lean{MIPRE.BipartiteModel.IsFinitePair.expand, MIPRE.BipartiteModel.IsFinitePair.swap}
+\leanok
+An ancilla extension of a finite pair (Definition~\ref{def:ancilla-extension}) with nonempty
+registers is a finite pair, and so is a finite pair with the players exchanged.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Let the registers be $\alpha$ and $\beta$. The first player's operators of the extension are the
+$X \otimes \Id_\beta$ for matrices $X$ over the first player's operators, and the second player's
+the $\Id_\alpha \otimes Y$. An operator commuting with every $\Id_\alpha \otimes Y$ commutes with the
+matrix units of the second register and with the amplifications of the second player's operators,
+so it is an $X \otimes \Id_\beta$ whose entries commute with the second player's operators
+(Lemma~\ref{lem:ampl-commutant}), and these entries are the first player's operators; symmetrically
+for the second player. If $g_1, \dots, g_n$ is a vector trace of the first player's operators, the
+vectors $\abs{\alpha}^{-1/2}\, g_k \otimes e_i \otimes e_{b_0}$, for $k \leq n$, $i \in \alpha$ and a
+fixed $b_0 \in \beta$, give $X \otimes \Id_\beta$ the normalized trace $\abs{\alpha}^{-1} \sum_i
+\tau(X_{ii})$. It is tracial because $\tau$ is, and the family separates because $X \otimes
+\Id_\beta$ kills the vector of $(k, i)$ only if $X_{ji} g_k = 0$ for every $j$. Exchanging the
+players exchanges the conditions.
+\end{proof}
+
+\begin{lemma}[$\omegaco$ is approached in finite pairs]
+\label{lem:co-value-finite-pair}
+\uses{def:finite-pair,lem:finite-pair-expand,lem:kraus-dilation,lem:qld-global-pvm}
+\lean{MIPRE.Repetition.commutingFinitePairApprox}
+\leanok
+For every game $\game$ and every $0 \leq t < \omegaco(\game)$ there is a projective strategy for
+$\game$ of value greater than $t$ in a finite pair.
+\end{lemma}
+
+\begin{proof}
+\leanok
+If an alphabet is empty, $\omegaco(\game) = 0$ and there is nothing to prove. Otherwise the
+vendored development's strict form of Lin's tracial density for game values gives a tracially
+embeddable strategy (Theorem~\ref{thm:tracial-density}) of winning probability greater than $t$: a
+tracial algebra $\alg$ in standard form on $L^2(\alg, \tau)$, a density $\sigma$, and the two
+players' POVMs acting on the left and on the right, in the state $\iota\sigma$. Let $\cal{N}$ be
+the commutant of the right action. Then $\cal{N}$ and its commutant $\cal{N}'$, as the
+players' algebras, form a finite pair: the trace vector $\iota 1$ is tracial on $\cal{N}$ and,
+through the conjugation $J$ of the standard form, on $\cal{N}'$, and it separates both, being
+cyclic for the left and for the right actions. The left action lies in $\cal{N}$ and the right
+action in $\cal{N}'$, so the strategy is a POVM strategy in this model, of the same value. Each
+player's POVMs dilate to projective measurements in the matrices over the player's algebra,
+compressed to one basis vector (Lemma~\ref{lem:kraus-dilation}); in the ancilla extension at that
+basis vector they form a projective strategy of the same value (Lemma~\ref{lem:qld-global-pvm}),
+and the extension is a finite pair (Lemma~\ref{lem:finite-pair-expand}).
+\end{proof}
+
+\begin{definition}[The low-individual-degree test is sound in finite pairs]
+\label{def:lidt-sound-fin}
+\uses{def:lidt-sound-in,def:finite-pair}
+\lean{MIPRE.LIDT.Simul.SoundFin}
+\leanok
+The seeded CL test is \emph{sound in finite pairs} if it is sound (Definition~\ref{def:lidt-sound-in})
+in every finite pair (Definition~\ref{def:finite-pair}).
+\end{definition}
+
+\begin{theorem}[Answer reduction is sound in $\omegaco$, given the test in finite pairs]
+\label{thm:ar-sound-co-fin}
+\uses{thm:ar-sound-co,def:lidt-sound-fin,lem:model-proj-strategy-values}
+\lean{MIPRE.AnswerReduction.answerReduction_soundIn_commuting_fin,
+  MIPRE.LIDT.Simul.approxSoundIn_commuting_of_fin}
+\leanok
+If $\omegaco$ is approached in finite pairs (Definition~\ref{def:finite-pair}) and the seeded CL
+test is sound in finite pairs (Definition~\ref{def:lidt-sound-fin}), then the answer reduction of
+Theorem~\ref{thm:answer-reduction} is sound in $\omegaco$, at the constants of
+Theorem~\ref{thm:ar-sound-co}. The first hypothesis is Lemma~\ref{lem:co-value-finite-pair}.
+\end{theorem}
+
+\begin{proof}
+\leanok
+$\omegaco$ is then approached by projective strategies in finite pairs, where the test is sound,
+and it dominates every model on a Hilbert space (Lemma~\ref{lem:model-proj-strategy-values}). So
+Theorem~\ref{thm:ar-sound-co} applies.
+\end{proof}
+
+\begin{lemma}[The Pauli basis test, given the seeded test in finite pairs]
+\label{lem:qld-approx-co-fin}
+\uses{thm:qld,def:qld-sound-in,def:lidt-sound-fin,lem:finite-pair-expand,lem:povm-domination}
+\lean{MIPRE.QLD.approxSoundIn_commuting_of_fin}
+\leanok
+If $\omegaco$ is approached in finite pairs (Definition~\ref{def:finite-pair},
+Lemma~\ref{lem:co-value-finite-pair}) and the seeded CL test is sound in finite pairs
+(Definition~\ref{def:lidt-sound-fin}), then $\omegaco$ is approached by projective strategies of
+models in which the Pauli basis test is sound with $\omegaco$ (Definition~\ref{def:qld-sound-in}).
+\end{lemma}
+
+\begin{proof}
+\leanok
+Theorem~\ref{thm:qld} applies in each finite pair approaching $\omegaco$, with
+$\omega = \omegaco$. Its first hypothesis holds because an extension of a finite pair by a unit
+vector has nonempty registers and so is a finite pair (Lemma~\ref{lem:finite-pair-expand}), in
+which the seeded test is sound. Its second holds because $\omegaco$ dominates the POVM strategies of
+every model on a Hilbert space in a unit state (Lemma~\ref{lem:povm-domination}).
+\end{proof}
+
+\begin{corollary}[$\MIPco = \coRE$, from the soundness of the low-individual-degree test in finite pairs]
+\label{cor:mipco-from-lidt-fin}
+\uses{cor:mipco-from-stages,thm:ar-sound-co-fin,lem:qld-approx-co-fin,lem:co-value-finite-pair}
+\lean{MIPRE.mipco_eq_core_of_lidtFin}
+\leanok
+If the seeded CL test is sound in finite pairs (Definition~\ref{def:lidt-sound-fin}), then
+$\MIPco = \coRE$.
+\end{corollary}
+
+\begin{proof}
+\leanok
+$\omegaco$ is approached in finite pairs (Lemma~\ref{lem:co-value-finite-pair}). Introspection is
+sound in $\omegaco$ as soon as $\omegaco$ is approached by projective strategies of models in which
+the Pauli basis test is sound (Theorem~\ref{thm:intro-sound-co}), which
+Lemma~\ref{lem:qld-approx-co-fin} then provides. Answer reduction is sound in $\omegaco$ by
+Theorem~\ref{thm:ar-sound-co-fin}, and parallel repetition is
+(Theorem~\ref{thm:parallel-repetition-co}). So the compression of
+Corollary~\ref{cor:mipco-from-stages} is sound in $\omegaco$, which gives $\MIPco = \coRE$.
+\end{proof}
+
+What remains is the hypothesis of Corollary~\ref{cor:mipco-from-lidt-fin}:
+Theorem~\ref{thm:lidt-cl-soundness} in every finite pair. That is the port of the vendored proof
+described above, C6b of \texttt{planning/mipco-track.md}; \texttt{reports/lidt-co-audit.md},
+Section~5, sizes it and lists what it needs.
 
 \subsection{Further directions}
 
@@ -2773,8 +2950,8 @@ the halting games), which need the entanglement form of the pipeline
 (Remark~\ref{rem:entanglement-form}) rather than the value form adopted here; the
 commuting-operator counterpart $\MIPco = \coRE$~\cite{Lin23,Lin25}, stated and proved
 conditionally in Section~\ref{sec:ds-mipco} (Theorem~\ref{thm:mipco-eq-core}), where what
-remains is the soundness of the low-individual-degree test in the commuting-operator model
-(Corollary~\ref{cor:mipco-from-lidt}); and, more speculatively,
+remains is the soundness of the low-individual-degree test in finite pairs
+(Corollary~\ref{cor:mipco-from-lidt-fin}); and, more speculatively,
 connections
 to the undecidability of the spectral gap and to the existence of non-hyperlinear
 groups, the latter being \emph{not} implied by CEP's failure and best recorded as an
