@@ -207,6 +207,7 @@ public import MIPRE.Foundations.Tsirelson.Conditional
 public import MIPRE.Tsirelson
 public import MIPRE.MIPCo
 public import MIPRE.Background.Orthonormalization.FinitePairOrtho
+public import MIPRE.Background.Orthonormalization.DyadicOrtho
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
@@ -3286,16 +3287,17 @@ basis analysis itself is restated in a model under the guards of
 
 /-! The commuting-operator track, Phase 6 (`planning/mipco-track.md` §5, C6a): finite pairs and
 their ancilla extensions, `lem:finite-pair-expand` (`MIPRE/Foundations/FinitePairExpand.lean`);
-`ω_co` approached in finite pairs, `lem:co-value-finite-pair`
-(`MIPRE/Background/Repetition/TracialApprox.lean`); answer reduction and the Pauli basis test from
-the seeded test in finite pairs, `thm:ar-sound-co-fin` and `lem:qld-approx-co-fin`; and the
-conditional theorem, `cor:mipco-from-lidt-fin` (`MIPRE/MIPCo.lean`). -/
+`ω_co` approached in dyadic pairs since C6b, `lem:co-value-finite-pair`
+(`MIPRE/Background/Repetition/{TracialApprox,DyadicApprox}.lean`); answer reduction and the Pauli
+basis test from the seeded test in dyadic pairs, `thm:ar-sound-co-fin` and `lem:qld-approx-co-fin`;
+and the conditional theorem, `cor:mipco-from-lidt-fin` (`MIPRE/MIPCo.lean`). -/
 
 -- blueprint `lem:finite-pair-expand`
 #guard_sorry_free MIPRE.BipartiteModel.IsFinitePair.expand, MIPRE.BipartiteModel.IsFinitePair.swap
 
 -- blueprint `lem:co-value-finite-pair`
-#guard_sorry_free MIPRE.Repetition.commutingFinitePairApprox
+#guard_sorry_free MIPRE.Repetition.nonempty_of_lt_commutingOperatorValue,
+  MIPRE.Repetition.exists_projStrat_expand_stdModel, MIPRE.Repetition.commutingFinitePairApprox
 
 -- blueprint `thm:ar-sound-co-fin`
 #guard_sorry_free MIPRE.AnswerReduction.answerReduction_soundIn_commuting_fin,
@@ -3327,5 +3329,57 @@ CenterComparison}.lean`); de la Salle's Theorem 1.2 without abelian projections,
 -- blueprint `cor:orthonormalization-finite-pair`
 #guard_sorry_free MIPRE.Orthonormalization.vnA, MIPRE.Orthonormalization.mem_vnA_iff,
   MIPRE.Orthonormalization.povm_orthogonalization_finitePair
+
+/-! The commuting-operator track, the rest of C6b's II₁ tier (`planning/c6b-plan.md`, T2–T5):
+unital dyadic matrix units and Pauli sites, `lem:dyadic-units-closure` and `lem:pauli-sites-units`
+(`MIPRE/Foundations/MatUnits.lean`); no abelian projections under dyadic units and a vector trace,
+`thm:no-abelian-dyadic`, and the closure of dyadic pairs, `lem:dyadic-pair-closure`
+(`MIPRE/Foundations/DyadicPair.lean`); the twisted Pauli algebra, `lem:pauli-algebra`
+(`MIPRE/Background/Repetition/PauliAlgebra.lean`); amplification by it, `lem:amplification-dyadic`
+(`Amplify.lean`); and orthonormalization in a dyadic pair, `cor:orthonormalization-dyadic-pair`
+(`MIPRE/Background/Orthonormalization/DyadicOrtho.lean`). The value lemma restated to dyadic pairs
+keeps its guard in the C6a block above. -/
+
+-- blueprint `lem:dyadic-units-closure`
+#guard_sorry_free MIPRE.IsMatUnits.mul_cancel, MIPRE.IsMatUnits.map, MIPRE.IsMatUnits.op,
+  MIPRE.IsMatUnits.diagonal, MIPRE.IsMatUnits.prod, MIPRE.HasDyadicUnits.map,
+  MIPRE.HasDyadicUnits.op, MIPRE.HasDyadicUnits.matrix, MIPRE.HasDyadicUnits.prod
+
+-- blueprint `lem:pauli-sites-units`
+#guard_sorry_free MIPRE.PauliSites, MIPRE.PauliSites.proj, MIPRE.PauliSites.xpow,
+  MIPRE.PauliSites.unit, MIPRE.PauliSites.isMatUnits_unit, MIPRE.PauliSites.commute_unit,
+  MIPRE.PauliSites.units, MIPRE.PauliSites.units_mul, MIPRE.PauliSites.star_units,
+  MIPRE.PauliSites.sum_units_diag, MIPRE.PauliSites.isMatUnits_units,
+  MIPRE.PauliSites.hasDyadicUnits
+
+-- blueprint `thm:no-abelian-dyadic`
+#guard_sorry_free MIPRE.mul_star_le_mul_of_commute, MIPRE.VecTrace.tr, MIPRE.VecTrace.tr_one,
+  MIPRE.VecTrace.tr_mul_comm, MIPRE.VecTrace.re_tr_nonneg, MIPRE.VecTrace.re_tr_mono,
+  MIPRE.VecTrace.tr_star_mul_self, MIPRE.VecTrace.card_mul_re_tr_le_one,
+  MIPRE.VecTrace.eq_zero_of_dyadicUnits, MIPRE.BipartiteModel.mul_mem_opsA,
+  MIPRE.BipartiteModel.star_mem_opsA, MIPRE.BipartiteModel.IsFinitePair.eq_zero_of_abelianA,
+  MIPRE.BipartiteModel.IsFinitePair.eq_zero_of_abelianB
+
+-- blueprint `lem:dyadic-pair-closure`
+#guard_sorry_free MIPRE.BipartiteModel.IsDyadicPair.swap, MIPRE.BipartiteModel.IsDyadicPair.expand,
+  MIPRE.BipartiteModel.IsDyadicPair.eq_zero_of_abelianA,
+  MIPRE.BipartiteModel.IsDyadicPair.eq_zero_of_abelianB
+
+-- blueprint `lem:pauli-algebra`
+#guard_sorry_free MIPRE.Repetition.Pauli.pauliA, MIPRE.Repetition.Pauli.pauliTrace,
+  MIPRE.Repetition.Pauli.pauliStd, MIPRE.Repetition.Pauli.pauliSites,
+  MIPRE.Repetition.Pauli.pauliStd_hasDyadicUnits
+
+-- blueprint `lem:amplification-dyadic`
+#guard_sorry_free MIPRE.Repetition.leftVNHom, MIPRE.Repetition.rightVNHom,
+  MIPRE.Repetition.isDyadicPair_stdModel, MIPRE.Repetition.hasDyadicUnits_tensorStep,
+  MIPRE.Repetition.isDyadicPair_stdModel_tensorStep, MIPRE.Repetition.inclLeft,
+  MIPRE.Repetition.τ_inclLeft, MIPRE.Repetition.isPosElem_map, MIPRE.Repetition.amplify,
+  MIPRE.Repetition.amplify_correlation, MIPRE.Repetition.isDyadicPair_stdModel_amplify,
+  MIPRE.Repetition.exists_tracialStrategy_isDyadicPair
+
+-- blueprint `cor:orthonormalization-dyadic-pair`
+#guard_sorry_free MIPRE.Orthonormalization.povm_orthogonalization_dyadicPair,
+  MIPRE.Orthonormalization.povm_orthogonalization_dyadicPairB
 
 end

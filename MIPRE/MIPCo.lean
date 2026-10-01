@@ -7,7 +7,7 @@ module
 public import MIPRE.MainTheorem
 public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Foundations.ClassMIPCo
-public import MIPRE.Background.Repetition.TracialApprox
+public import MIPRE.Background.Repetition.DyadicApprox
 public import MIPRE.Background.QLD.FinSoundness
 
 @[expose] public section
@@ -36,15 +36,18 @@ the soundness of the Pauli basis test in the commuting-operator model
 hypothesis `LIDT.Simul.SoundCo`.
 
 No source proves `LIDT.Simul.SoundCo` (`reports/lidt-co-audit.md`), and Phase 6 replaces it by
-`LIDT.Simul.SoundFin`, the soundness of the seeded test in every finite pair: a model whose two
-algebras are each other's commutants and carry faithful tracial states
-(`BipartiteModel.IsFinitePair`). The two hypotheses are incomparable. What `SoundFin` buys is a
+`LIDT.Simul.SoundFin`, the soundness of the seeded test in every dyadic pair: a model whose two
+algebras are each other's commutants, carry faithful tracial states
+(`BipartiteModel.IsFinitePair`) and have unital dyadic matrix units
+(`BipartiteModel.IsDyadicPair`). The two hypotheses are incomparable. What `SoundFin` buys is a
 trace on both algebras, which a port of the vendored finite-dimensional proof needs for its
-semidefinite step and for orthonormalization, and which an arbitrary vector state does not supply.
+semidefinite step and for orthonormalization, and which an arbitrary vector state does not supply,
+and, through the matrix units, no abelian projections, which orthonormalization needs too.
 `mipco_eq_core_of_lidtFin` states the theorem with it: below `ω_co(G)` lies the value of a
-projective strategy in a finite pair (`Repetition.commutingFinitePairApprox`, from Lin's tracial
-density), so answer reduction and the Pauli basis test, which use the hypothesis only in the model
-of one near-optimal strategy and in its ancilla extensions, need it only there.
+projective strategy in a dyadic pair (`Repetition.commutingFinitePairApprox`, from Lin's tracial
+density and an amplification by the twisted Pauli algebra), so answer reduction and the Pauli
+basis test, which use the hypothesis only in the model of one near-optimal strategy and in its
+ancilla extensions, need it only there.
 
 Both conditional theorems go through `gapCompressionCo`, the main theorem's pipeline with the
 number of repetitions chosen against the smaller of the two repetition constants
@@ -105,10 +108,10 @@ hypotheses of `mipco_eq_core_of_stages` are one. -/
 theorem mipco_eq_core_of_lidt (hL : LIDT.Simul.SoundCo) : MIPCo = IsCoRE :=
   mipco_eq_core_of_stages (QLD.soundCo_of_lidt hL) hL
 
-/-- **`MIP^co = coRE` from the soundness of the low-individual-degree test in finite pairs**
+/-- **`MIP^co = coRE` from the soundness of the low-individual-degree test in dyadic pairs**
 (blueprint `cor:mipco-from-lidt-fin`), the target of Phase 6 of `planning/mipco-track.md`:
-`ω_co` is approached by projective strategies in finite pairs
-(`Repetition.commutingFinitePairApprox`), and finite pairs are closed under ancilla extensions, so
+`ω_co` is approached by projective strategies in dyadic pairs
+(`Repetition.commutingFinitePairApprox`), and dyadic pairs are closed under ancilla extensions, so
 the Pauli basis test is sound in the model of each approximating strategy
 (`QLD.approxSoundIn_commuting_of_fin`), which is what introspection uses of it, and answer
 reduction is sound in `ω_co` (`AnswerReduction.answerReduction_soundIn_commuting_fin`). -/

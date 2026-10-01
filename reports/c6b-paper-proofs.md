@@ -69,12 +69,12 @@ Paths:
 
 **The trace.** Fix `g : Fin d → H` and put `τ(a) := Σ_k ⟪g_k, a g_k⟫` for every `a ∈ B(H)`.
 This is a `ℂ`-linear map `B(H) → ℂ` (`vecFunctional` in `CenterTrace.lean`). The hypotheses are
-those of `VecTrace` (`MIPRE/Foundations/FinitePair.lean:61-73`):
+those of `VecTrace` (`MIPRE/Foundations/FinitePair.lean:64-76`):
 
-- **tracial on `M`:** `τ(xy) = τ(yx)` for `x, y ∈ M` (field `trace_mul_comm`, `:70`);
-- **separating:** `x ∈ M` and `x g_k = 0` for all `k` imply `x = 0` (field `separating`, `:73`).
+- **tracial on `M`:** `τ(xy) = τ(yx)` for `x, y ∈ M` (field `trace_mul_comm`, `:73`);
+- **separating:** `x ∈ M` and `x g_k = 0` for all `k` imply `x = 0` (field `separating`, `:76`).
 
-The normalization `Σ_k ‖g_k‖² = 1` (`:68`) is never used.
+The normalization `Σ_k ‖g_k‖² = 1` (`:71`) is never used.
 
 **Notation.**
 
@@ -713,14 +713,14 @@ code outside `MIPRE/Background/Orthonormalization/` can use it. `FinitePairOrtho
 1. **The algebra.** `vnA M` is the `VonNeumannAlgebra` on `M.H` whose carrier is the commutant of
    the second player's operators `M.opsB`. Its field `M″ = M` is `S‴ = S′`, as for
    `matrixAlgebra`. `mem_vnA_iff` says that in a finite pair, `T ∈ vnA M ↔ T ∈ M.opsA`:
-   - one direction is `commutantA` (`FinitePair.lean:98`);
+   - one direction is `commutantA` (`FinitePair.lean:101`);
    - the other is the commutation of the two players' operators.
-2. **The trace.** The `VecTrace` of `traceA` (`FinitePair.lean:102`) gives the vector functional.
+2. **The trace.** The `VecTrace` of `traceA` (`FinitePair.lean:105`) gives the vector functional.
    Its fields `trace_mul_comm` and `separating` are the two hypotheses of §2.1.
 3. **The POVM.** For `P : POVMIn Λ 𝒜`, `a_i := π(πA(P_i))` is a POVM in `vnA M`. Positivity needs
    `StarOrderedRing 𝒜`.
 4. **The PVM back.** Each output `p_i` lies in `M.opsA`, so `p_i = π(πA(Q_i))`. Injectivity
-   (`injA`, `FinitePair.lean:94`) makes `Q` a PVM in `𝒜`.
+   (`injA`, `FinitePair.lean:97`) makes `Q` a PVM in `𝒜`.
 5. **No abelian projection**, stated on the operators: if `r ∈ M.opsA` is a projection with
    `(rxr)(ryr) = (ryr)(rxr)` for all `x, y ∈ M.opsA`, then `r = 0`.
 
@@ -771,11 +771,11 @@ these modules. For cluster points in closed sets, the modules use Mathlib's
 
 **Recorded.**
 
-- The axiom guards are in `MIPRE/Axioms.lean:3317-3329`.
+- The axiom guards are in `MIPRE/Axioms.lean:3319-3331`.
 - The blueprint has three nodes:
-  - `lem:center-valued-trace` (`blueprint/src/content/03_background_results.tex:305`);
-  - `thm:orthonormalization-no-abelian` (`:342`);
-  - `cor:orthonormalization-finite-pair` (`blueprint/src/content/08_downstream.tex:2944`).
+  - `lem:center-valued-trace` (`blueprint/src/content/03_background_results.tex:353`);
+  - `thm:orthonormalization-no-abelian` (`:390`);
+  - `cor:orthonormalization-finite-pair` (`blueprint/src/content/08_downstream.tex:3183`).
 - `rem:orthonormalization-scope` (`03_background_results.tex:268-303`) now records the new case.
   It says that a type I part with diffuse centre still needs the general case.
 
@@ -783,11 +783,11 @@ these modules. For cluster points in closed sets, the modules use Mathlib's
 
 - **H3 for general `p`.** The interface field (`MvN/Interface.lean:76-78`) is not proved; only
   `p = 1` is. That is enough for the II₁ tier, but not to instantiate the full interface.
-- **The class must lack abelian projections.** `IsFinitePair` (`FinitePair.lean:92-104`) has no
-  such field, and type I pairs with diffuse centre are finite pairs (`FinitePair.lean:47-51`). So
+- **The class must lack abelian projections.** `IsFinitePair` (`FinitePair.lean:95-107`) has no
+  such field, and type I pairs with diffuse centre are finite pairs (`FinitePair.lean:49-54`). So
   the hypothesis of §2.8 item 5 has to come from somewhere. The C6b plan takes it from unital
   dyadic matrix units, by restricting the class and amplifying in the value lemma
-  (`planning/c6b-plan.md:34-46`; §3 of this report). This section proves none of that.
+  (`planning/c6b-plan.md:38-52`; §3 of this report). This section proves none of that.
 - **A trace on an amplified algebra.** Suppose the class is made type II₁ by amplifying `M` by a
   II₁ factor `R`. Then H3₁ has to be applied to the amplified algebra, which needs a faithful
   tracial vector functional of its own. This section does not provide one.
@@ -806,8 +806,8 @@ these modules. For cluster points in closed sets, the modules use Mathlib's
     (`MIPRE/Background/Repetition/CommutingRepetition/VN/Density.lean:102`), with a one-vector
     form at `:210`.
   - The C6b plan avoids the question by amplifying at the level of the standard tracial algebra
-    (`tensorStep M B`, `planning/c6b-plan.md:38-43`). Its standard model is a finite pair by
-    `isFinitePair_stdModel` (`MIPRE/Background/Repetition/TracialApprox.lean:148`), which carries
+    (`tensorStep M B`, `planning/c6b-plan.md:45-49`). Its standard model is a finite pair by
+    `isFinitePair_stdModel` (`MIPRE/Background/Repetition/TracialApprox.lean:155`), which carries
     a `VecTrace`; see §3.
 
   This item has not been sized here.
@@ -830,8 +830,10 @@ units of every size `2ⁿ`. The proof is a trace estimate that uses no compariso
 In C6b these results are work packages T2 and T3 of `planning/c6b-plan.md`. They supply the
 hypothesis `hII` of `povm_orthogonalization_finitePair`
 (`MIPRE/Background/Orthonormalization/FinitePairOrtho.lean:65-71`, `hII` at `:67-68`) and narrow
-`SoundFin` to the class. The algebra `B` itself (T4) is not constructed; §3.8 compares the
-candidates.
+`SoundFin` to the class. The algebra `B` (T4) is the twisted Pauli algebra; §3.8 compares the
+candidates. Theorems K, K′, A and T, Theorem Cl except the doubling's `IsFinitePair` half, and the
+algebra `B` are committed; Theorems B1, B1′, B2 and C, Lemma 15, and the `IsAbelianProj` forms of
+K2 and A1 are not (§3.9, §3.10).
 
 ### 3.1 Conventions
 
@@ -855,8 +857,8 @@ candidates.
 * **The class.** For a bipartite model `M` with algebras `𝒜` and `ℬ`, the class is
   `IsDyadicPair M := M.IsFinitePair ∧ HasDyadicUnits 𝒜 ∧ HasDyadicUnits ℬ`. It is a condition on
   the abstract algebras of the model. `IsFinitePair` is defined at
-  `MIPRE/Foundations/FinitePair.lean:92-104`.
-* **The trace functional.** Let `τ : VecTrace s` (`FinitePair.lean:61-73`) have vectors
+  `MIPRE/Foundations/FinitePair.lean:95-107`.
+* **The trace functional.** Let `τ : VecTrace s` (`FinitePair.lean:64-76`) have vectors
   `g₁, …, g_d`. Put `tr T := ∑ₖ ⟪gₖ, T gₖ⟫`. It is defined for every operator `T`, and `Re`
   denotes the real part.
 
@@ -901,8 +903,8 @@ Likewise NA(`M.opsB`) holds if `HasDyadicUnits ℬ`.
   - `M.swap`;
   - `M.expand e` for nonempty registers. This covers every model operation at the `SoundFin`
     boundary: basis-vector ancillas, the `|t₀t₀⟩` pad and the `M_K` dilation all enter through
-    `expand` (`MIPRE/Background/Repetition/TracialApprox.lean:249-256`,
-    `MIPRE/Background/LIDT/FinModel.lean:50-57`);
+    `expand` (`MIPRE/Background/Repetition/TracialApprox.lean:265-270`,
+    `MIPRE/Background/LIDT/FinModel.lean:53-60`);
   - at the level of the algebras, the `H ⊕ H` doubling of §4. Its algebras are `𝒜 × ℬ` and
     `ℬ × 𝒜` (audit §4.1).
 
@@ -912,7 +914,7 @@ Likewise NA(`M.opsB`) holds if `HasDyadicUnits ℬ`.
   for `R(M⊗B)″ = rightVN T`, both as operator sets and as `VonNeumannAlgebra`s.
 - **(A2)** For all nonempty `α, β` and every `e`, NA holds on both sides of
   `(stdModel T ψ).expand e`. This is the shape of model that the value lemma produces
-  (`TracialApprox.lean:251-256`).
+  (`TracialApprox.lean:256-261`).
 
 **Theorem T (value transport).** Let `T : TracialStrategy.{0} X Y A₀ B₀` be a tracial strategy
 with answer sets `A₀` and `B₀`, and let `B : StdTracialAlgebra.{0}`. The strategy `amplify T B` on
@@ -941,8 +943,8 @@ character.
 ### 3.3 Proofs
 
 Lean names are those of the prototypes described in §3.9. They were compiled sorry-free against
-the repository, with axioms `propext`, `Classical.choice` and `Quot.sound` only, and they are not
-committed.
+the repository, with axioms `propext`, `Classical.choice` and `Quot.sound` only; §3.9 gives the
+names they were committed under.
 
 **Lemma 1 (Cauchy–Schwarz in a commuting corner; `cs_eps`, `cs_comm`).** Let `x, y ∈ B(H)` and
 put `α = x*x`, `β = y*y`, `γ = x*y`. If `αβ = βα` and `βγ = γβ`, then `γγ* ≤ αβ`.
@@ -1024,9 +1026,9 @@ The `VonNeumannAlgebra` form takes `s = N`, which is closed under products and a
 Each item lifts to `HasDyadicUnits`. ∎
 
 **Lemma 6 (= Theorem K′; `hII_of_hasDyadicUnits`, `hII_B_of_hasDyadicUnits`).**
-1. `M.opsA` is the range of the ∗-homomorphism `π ∘ πA` (`FinitePair.lean:81-82`), so it is
+1. `M.opsA` is the range of the ∗-homomorphism `π ∘ πA` (`FinitePair.lean:84-85`), so it is
    closed under products and adjoints.
-2. `hM.traceA` supplies a `VecTrace M.opsA` (`FinitePair.lean:102`).
+2. `hM.traceA` supplies a `VecTrace M.opsA` (`FinitePair.lean:105`).
 3. Dyadic units `e` in `𝒜` map to units `π(πA eᵢⱼ) ∈ M.opsA` (Lemma 5.1).
 4. Lemma 4 then gives NA(`M.opsA`), in exactly the binder form of `FinitePairOrtho.lean:67-68`.
 5. The second side is the same theorem for `M.swap`, through `IsFinitePair.swap`
@@ -1038,7 +1040,7 @@ The composition with the consumer was checked against the built `FinitePairOrtho
 report was written. The check, not committed, elaborates the term
 `povm_orthogonalization_finitePair M hM hψ (hII_of_hasDyadicUnits hM hU) P ε hε`, with axioms
 `propext`, `Classical.choice` and `Quot.sound` only. The consumer also needs
-`[PartialOrder 𝒜] [StarOrderedRing 𝒜]`, which `SoundFin` already carries (`FinModel.lean:40-43`).
+`[PartialOrder 𝒜] [StarOrderedRing 𝒜]`, which `SoundFin` already carries (`FinModel.lean:43-46`).
 
 **Lemma 7 (= Theorem Cl; `IsDyadicPair.swap`, `IsDyadicPair.expand`).**
 - *Swap.* Exchange the two components and use `IsFinitePair.swap`.
@@ -1050,12 +1052,12 @@ report was written. The check, not committed, elaborates the term
 
 *Why `expand` suffices at the boundary.* The C6a consumers apply `SoundFin` only to a model `M`
 handed over by `CommutingFinitePairApprox` and to `M.expand e`:
-- `FinModel.lean:50-57` and `:94-98`;
+- `FinModel.lean:53-60` and `:97-101`;
 - `MIPRE/Background/QLD/FinSoundness.lean:31-36`;
 - `MIPRE/Background/AnswerReduction/Instance.lean:184-186`.
 
 The value lemma's model is itself `(stdModel …).expand (basisVec …)`, with the `M_K` dilation
-inside the matrix algebra (`TracialApprox.lean:249-256`). So pads, one-sided ancillas and
+inside the matrix algebra (`TracialApprox.lean:265-270`). So pads, one-sided ancillas and
 dilations are all instances of `expand`.
 
 **Lemma 8 (= Theorem A; `isDyadicPair_stdModel_tensorStep`, `hII_expand_stdModel_tensorStep`).**
@@ -1064,10 +1066,10 @@ dilations are all instances of `expand`.
    `b ↦ 1 ⊗ b`, a unital ∗-homomorphism.
 2. The corestriction of `T.L` to `T.vnAlg` gives `HasDyadicUnits T.vnAlg`. The corestriction exists
    by `L_mem_vnAlg` (`VN/ConcreteVN.lean:167`).
-3. The corestriction of `T.R` to `rightVN T` exists by `Rop_mem_rightVN` (`TracialApprox.lean:77`).
+3. The corestriction of `T.R` to `rightVN T` exists by `Rop_mem_rightVN` (`TracialApprox.lean:84`).
    Applied to the units of `T.Aᵐᵒᵖ` given by Lemma 5.2, it gives `HasDyadicUnits (rightVN T)`.
-4. The algebras of `stdModel T ψ` are `T.vnAlg` and `rightVN T` (`TracialApprox.lean:125-132`).
-   With `isFinitePair_stdModel` (`TracialApprox.lean:148`), this gives A1.
+4. The algebras of `stdModel T ψ` are `T.vnAlg` and `rightVN T` (`TracialApprox.lean:132-139`).
+   With `isFinitePair_stdModel` (`TracialApprox.lean:155`), this gives A1.
 5. A2 is Lemma 7 (expand) followed by Lemma 6 on both sides.
 6. *`VonNeumannAlgebra` form.* NA of `T.vnAlg` and `rightVN T`, packaged as `VonNeumannAlgebra`s,
    is Lemma 4 with the restricted `VecTrace` (`VecTrace.mono`, `FinitePairExpand.lean:61`).
@@ -1087,7 +1089,7 @@ dilations are all instances of `expand`.
 5. The correlation is `Re τ(σ*(Eₓᵃ σ F_yᵇ))` (`Tracial/Strategy.lean:60-62`). It is preserved,
    because `inclL` is multiplicative and ∗-preserving and `τ ∘ inclL = τ`. ∎
 
-So `povmValue_stdModel` (`TracialApprox.lean:213`) gives `amplify T B` the same winning
+So `povmValue_stdModel` (`TracialApprox.lean:220`) gives `amplify T B` the same winning
 probability. `commutingFinitePairApprox` can be rerun on `amplify T B` unchanged, except for its
 class-membership proof, which is Lemma 8.
 
@@ -1153,15 +1155,15 @@ no Lean representation yet.
 `Ω` for the trace vector.
 1. For `x, y ∈ R′`: `JxJ(yΩ) = yx*Ω` (`J_apply_traceVector`, `VN/ConcreteVN.lean:184`).
 2. Hence for `g ∈ R′`: `(JxJ)g(yΩ) = g(JxJ)(yΩ)`.
-3. The vectors `L(a)Ω = ι a` are dense (`L_traceVector`, `TracialApprox.lean:86`; `ι_induction`,
+3. The vectors `L(a)Ω = ι a` are dense (`L_traceVector`, `TracialApprox.lean:93`; `ι_induction`,
    `VN/ConcreteVN.lean:47`). So `JxJ` commutes with `R′`, that is, it lies in `R″`
-   (`mem_rightVN_iff`, `TracialApprox.lean:72`). ∎
+   (`mem_rightVN_iff`, `TracialApprox.lean:79`). ∎
 
 **Proof of Theorem C (`noAbelian_iff`).** `conjJ` is involutive, additive, multiplicative and
 ∗-preserving: `conjJ_conjJ`, `conjJ_add`, `conjJ_mul` and `conjJ_star` (`VN/ConjJCalc.lean:47`,
 `:55`, `:60`, `:72`). It maps
 - `R″ → R′`, by `conjJ_mem_vnAlg` (`Tracial/CommutantPullback.lean:99`) together with
-  `L_mul_eq_of_mem_rightVN` (`TracialApprox.lean:81`);
+  `L_mul_eq_of_mem_rightVN` (`TracialApprox.lean:88`);
 - `R′ → R″`, by Lemma 14.
 
 So if `q` is abelian in one algebra, `JqJ` is abelian in the other, and `q = J(JqJ)J`. ∎
@@ -1193,14 +1195,14 @@ So a group algebra, with its augmentation character, cannot be `B.A`.
 The lift of Theorem T is made at the level of `StdTracialAlgebra`, not at the level of models. It
 goes through the vendored `tensorStep` (`VN/TensorStep.lean:640-654`). Its carrier is
 `M.A ⊗[ℂ] B.A` and its trace is `stepτ`, with `stepτ (a ⊗ b) = τ(a) τ_B(b)` (`:55-57`).
-- After the lift, the rest of `commutingFinitePairApprox` (`TracialApprox.lean:224-263`) runs
-  unchanged: the standard model, `isFinitePair_stdModel` (`:148`), the Halmos dilation
-  (`:249-250`) and `IsFinitePair.expand`. So the finite-pair property of the amplified model costs
-  nothing.
+- After the lift, the rest of `commutingFinitePairApprox` (`DyadicApprox.lean:36-46`, with the
+  steps after the lift in `TracialApprox.lean:256-275`) runs unchanged: the standard model,
+  `isFinitePair_stdModel` (`:155`), the Halmos dilation (`:265-266`) and `IsFinitePair.expand`.
+  So the finite-pair property of the amplified model costs nothing.
 - A model-level tensor product would instead need the commutation theorem for tensor products.
 - `tensorStep` needs both factors in the same universe (`VN/TensorStep.lean:44-46`). The
-  reduction's strategy lives in `TracialStrategy.{0}` (`TracialApprox.lean:180`, `:247`). So
-  `B : StdTracialAlgebra.{0}`, and `B` must be built in `Type`.
+  reduction's strategy lives in `TracialStrategy.{0}` (`TracialApprox.lean:187`,
+  `Amplify.lean:152`). So `B : StdTracialAlgebra.{0}`, and `B` must be built in `Type`.
 
 ### 3.5 Why a trace estimate rather than comparison
 
@@ -1252,25 +1254,27 @@ The class predicate is to be `IsDyadicPair`:
 - C6b's use of de la Salle's theorem gets `hII` from Theorem K′.
 
 The C6a declarations to restate are:
-- `SoundFin` and `SoundFin.expand` (`FinModel.lean:40-57`);
-- `approxSoundIn_commuting_of_fin` (`FinModel.lean:94-98`);
-- `CommutingFinitePairApprox` (`FinitePair.lean:111-119`);
-- `commutingFinitePairApprox`, now on `amplify T B` (`TracialApprox.lean:224-263`);
+- `SoundFin` and `SoundFin.expand` (`FinModel.lean:43-60`);
+- `approxSoundIn_commuting_of_fin` (`FinModel.lean:97-101`);
+- `CommutingFinitePairApprox` (`Foundations/DyadicPair.lean:429-437`);
+- `commutingFinitePairApprox`, now on `amplify T B` (`DyadicApprox.lean:36-46`, through
+  `exists_projStrat_expand_stdModel`, `TracialApprox.lean:256-275`);
 - `QLD.approxSoundIn_commuting_of_fin` (`MIPRE/Background/QLD/FinSoundness.lean:31-36`);
 - `answerReduction_soundIn_commuting_fin`
   (`MIPRE/Background/AnswerReduction/Instance.lean:184-186`).
 
 What else changes, and what does not:
-- Their guards keep their names (`MIPRE/Axioms.lean:3298`, `:3301-3302`, `:3305`).
+- Their guards keep their names (`MIPRE/Axioms.lean:3299-3300`, `:3303-3304`, `:3307`).
 - The blueprint nodes `def:finite-pair`, `lem:finite-pair-expand`, `lem:co-value-finite-pair` and
-  `def:lidt-sound-fin` change (`blueprint/src/content/08_downstream.tex:2788`, `:2816`, `:2841`,
-  `:2868`).
-- `mipco_eq_core_of_lidtFin` (`MIPRE/MIPCo.lean:115-121`) keeps its text.
+  `def:lidt-sound-fin` change (`blueprint/src/content/08_downstream.tex:2794`, `:2822`, `:3074`,
+  `:3105`).
+- `mipco_eq_core_of_lidtFin` (`MIPRE/MIPCo.lean:118-124`) keeps its text.
 - Each consumer proof is 3–10 lines and gains one closure call (Lemma 7).
 - Until `B` exists, `commutingFinitePairApprox` gains a hypothesis `∃ B, HasDyadicUnits B.A`. Its
   proof changes only in `T ↦ amplify T B` (Lemma 9) and in the membership witness (Lemma 8).
 
-Estimate: 80–150 Lean lines plus the blueprint edits, not compiled.
+Estimate: 80–150 Lean lines plus the blueprint edits, not compiled. Done, with `B` constructed
+and no extra hypothesis left on the value lemma (§3.10).
 
 ### 3.8 The algebra `B`
 
@@ -1425,29 +1429,42 @@ None of this is compiled; the survey sized the transports at 200–300 lines.
 
 ### 3.9 Prototype and sizes
 
-None of the prototypes is committed. All were compiled with `lake env lean` against the
-repository, sorry-free, with axioms `propext`, `Classical.choice` and `Quot.sound` only.
+The prototypes of Theorems K, K′, Cl, A and T (Lemmas 1–9) and of the algebra `B` are now committed
+modules, work packages T2–T5 of the plan:
+- `MIPRE/Foundations/MatUnits.lean`: `IsMatUnits`, `HasDyadicUnits` and their transports, and
+  `PauliSites`, whose `hasDyadicUnits` is the algebraic half of `B`;
+- `MIPRE/Foundations/DyadicPair.lean`: Lemmas 1–4, 6 and 7, and `CommutingFinitePairApprox`, moved
+  from `FinitePair.lean` and restated to the class;
+- `MIPRE/Background/Repetition/Amplify.lean`: Lemmas 8 and 9;
+- `MIPRE/Background/Repetition/PauliAlgebra.lean`: the twisted Pauli algebra, `Pauli.pauliStd`;
+- `MIPRE/Background/Repetition/DyadicApprox.lean`: the value lemma on the amplified strategy;
+- `MIPRE/Background/Orthonormalization/DyadicOrtho.lean`: the composition of Theorem K′ with
+  `povm_orthogonalization_finitePair`, on both sides.
+
+They build sorry-free, with axioms `propext`, `Classical.choice` and `Quot.sound` only, and every
+declaration of their blueprint nodes is guarded in `MIPRE/Axioms.lean`. The prototypes were
+compiled with `lake env lean` against the repository, under the same axioms:
 - **Theorems K, K′, Cl, A and T (Lemmas 1–9).** One file of 494 lines, importing only
   `TracialApprox`, `VN/TensorPower` and `MvN/Defs`. The axioms were checked for
   `hII_expand_stdModel_tensorStep`, `amplify_correlation`, `eq_zero_of_isAbelianProj`,
   `IsDyadicPair.expand` and `HasDyadicUnits.prod`.
 - **Theorems B1 and C (Lemmas 10–14).** Two earlier prototype files of 178 and 82 lines, each
-  each recompiled independently three times during the review.
+  recompiled independently three times during the review. Not committed: optional under the class.
 - **The `VonNeumannAlgebra` form of A1 (Lemma 8.6).** A third earlier file of 365 lines, with units
-  indexed by `Fin (2ⁿ)`.
+  indexed by `Fin (2ⁿ)`. Not committed: nothing consumes it.
 
 | item | lines | status |
 |---|---|---|
-| `IsMatUnits`, `HasDyadicUnits` and transports (Lemma 5) | 75–90 | compiled, 76; goes to `MIPRE/Foundations/` |
-| Lemma 1 (`cs_eps`, `cs_comm`) | 72–90 | compiled, 72 |
-| Lemma 2 (trace calculus) | 45–60 | compiled, 47 |
-| Lemma 3 (`card_mul_re_tr_le_one`, on a set, any index) | 105–120 | compiled, 106 |
-| Lemma 4 (`eq_zero_of_dyadic`, `eq_zero_of_isAbelianProj`) | 35–40 | compiled, 34 |
-| Lemmas 6–7 (`hII_of_hasDyadicUnits`, both sides; `IsDyadicPair` with `swap`, `expand`) | 45–55 | compiled, 45; `Foundations` side |
-| Lemma 8 (Theorem A) | 35–45 | compiled, 33; `Background` side (names `CommutingRepetition`) |
-| Lemma 9 (Theorem T) | 50–60 | compiled, about 50 |
-| restatement of C6a to the class (§3.7) | 80–150 + blueprint | not compiled |
-| the algebra `B` (§3.8) | 750–850 | prototyped (twisted Pauli algebra, 688) |
+| `IsMatUnits`, `HasDyadicUnits` and transports (Lemma 5) | 75–90 | committed (`MatUnits.lean`, ≈ 150 with docstrings); `IsMatUnits.mul_cancel` and `IsMatUnits.prod` added |
+| Lemma 1 (`cs_eps`, `cs_comm`) | 72–90 | committed: `cs_comm` as `mul_star_le_mul_of_commute`, with `cs_eps` committed as the private theorem `sub_mul_star_nonneg_of_commute` |
+| Lemma 2 (trace calculus) | 45–60 | committed as `VecTrace.tr`, a linear functional (so `map_add`, `map_sum`, … in place of `tr_add`, `tr_sum`, …), and its lemmas `tr_one`, …, `tr_star_mul_self` |
+| Lemma 3 (`card_mul_re_tr_le_one`, on a set, any index) | 105–120 | committed as `VecTrace.card_mul_re_tr_le_one` |
+| Lemma 4 (`eq_zero_of_dyadic`, `eq_zero_of_isAbelianProj`) | 35–40 | committed as `VecTrace.eq_zero_of_dyadicUnits`; the `IsAbelianProj` form not committed |
+| Lemmas 6–7 (`hII_of_hasDyadicUnits`, both sides; `IsDyadicPair` with `swap`, `expand`) | 45–55 | committed as `IsFinitePair.eq_zero_of_abelianA`, `…B`, taking the hypothesis's binders as arguments, and `BipartiteModel.IsDyadicPair`, a structure, with `swap`, `expand`, `eq_zero_of_abelianA`, `…B`; `DyadicPair.lean` is 441 lines with docstrings |
+| Lemma 8 (Theorem A) | 35–45 | committed (`Amplify.lean`): `isDyadicPair_stdModel`, `hasDyadicUnits_tensorStep`, `isDyadicPair_stdModel_tensorStep`; its ancilla extensions through `IsDyadicPair.expand` |
+| Lemma 9 (Theorem T) | 50–60 | committed (`Amplify.lean`, 157 lines with Lemma 8): `amplify`, `amplify_correlation`, and `exists_tracialStrategy_isDyadicPair` |
+| restatement of C6a to the class (§3.7) | 80–150 + blueprint | done: `DyadicApprox.lean` (50), `DyadicOrtho.lean` (57), about 0.1k lines changed in C6a's files |
+| the algebra `B` (§3.8) | 750–850 | committed: `PauliSites` (`MatUnits.lean`, ≈ 230) and `PauliAlgebra.lean` (683) |
 | Theorem B1 with Lemmas 10–13 | 125–140 | compiled; optional under `IsDyadicPair` |
 | Theorem C, `mem_rightVN_of_commute_L` | 60–80 | compiled; optional |
 | Theorem B1′ and the NA form of B2 | 150–250 + 40–60 | not compiled; not needed under `IsDyadicPair` |
@@ -1455,30 +1472,27 @@ repository, sorry-free, with axioms `propext`, `Classical.choice` and `Quot.soun
 
 ### 3.10 Status and open points
 
-Compiled in prototypes: Theorems K, K′, A, T, B1 and C, and Theorem Cl except the doubling's
-`IsFinitePair` half. Proved on paper only: Lemma 15 and the NA form of Theorem B2.
-
-The composition of Theorem K′ with `povm_orthogonalization_finitePair` now elaborates (Lemma 6).
-At design time, before the consumer module was built, it could be checked only as a textual match
-of the hypothesis. H3 at `p = 1`, which the tier also needs, is supplied by the
-modules `CenterTrace.lean`, `CenterTraceClauses.lean` and `CenterComparison.lean` (§2, §3.6).
+Committed (T2–T5 of the plan, §3.9): Theorems K, K′, A and T, Theorem Cl except the doubling's
+`IsFinitePair` half, and the algebra `B`. With them C6a is restated to the class (§3.7):
+`SoundFin` asks only for dyadic pairs, the value lemma `commutingFinitePairApprox` lands in them by
+amplifying with `Pauli.pauliStd`, and `mipco_eq_core_of_lidtFin` keeps its text. The orthonormalization
+sites of the port call `povm_orthogonalization_dyadicPair` (and `…B`), whose only hypothesis beyond
+the class is the state's norm. Compiled in prototypes only: Theorems B1 and C. Proved on paper
+only: Lemma 15 and the NA form of Theorem B2. H3 at `p = 1`, which the tier also needs, is supplied
+by the modules `CenterTrace.lean`, `CenterTraceClauses.lean` and `CenterComparison.lean` (§2, §3.6).
 
 Open:
-- **The construction of `B`.** Chosen and prototyped, not yet in the repository: the twisted
-  Pauli algebra (§3.8), about 0.75–0.85k lines once split into `MIPRE/Foundations/MatUnits.lean`
-  and a `Background` module that names `CommutingRepetition`.
-- **The restatement of C6a** to `IsDyadicPair` (§3.7): not done.
 - **The `IsFinitePair` half of the doubled `H ⊕ H` model.** It belongs to the doubling (§4); only
-  the algebra-level closure (Lemma 5.4) is done.
+  the algebra-level closure (`HasDyadicUnits.prod`) is done.
 - **Universe.** Theorems A and T are stated at universe `0`, because `stdModel`, `rightVN` and
   `isFinitePair_stdModel` live in a section with `M : StdTracialAlgebra.{0}`
-  (`TracialApprox.lean:55-57`). So `B` must be built in `Type`.
+  (`TracialApprox.lean:62-64`). So `B` is built in `Type`, as `pauliStd : StdTracialAlgebra.{0}`.
 - **Theorem B1′ and the general finite-pair Theorem C.** Not proved. Both are unnecessary under
   the two-sided class `IsDyadicPair`; under a one-sided or NA-only class they would be needed.
 - **Confidence.**
-  - High for Theorems K, K′, Cl, A and T, and for B1 and C (compiled).
+  - High for Theorems K, K′, Cl, A and T and the algebra `B` (committed), and for B1 and C
+    (compiled).
   - Medium for the uncompiled NA form of B2, which is elementary and not needed.
-  - Medium for the size of `B` (prototyped, not yet modularized).
 
 ## 4. The H ⊕ H doubling
 
@@ -1506,10 +1520,10 @@ Path conventions in this section:
 It is built over the state model of `Foundations/StateModel.lean:46-55`. It has these properties:
 - `‖ψ‖ = 1`.
 - `𝒜` and `ℬ` are partially ordered, as `POVMIn` requires (`Foundations/Measurement.lean:260`), and
-  are star-ordered rings, as `SoundFin` assumes (`MIPRE/Background/LIDT/FinModel.lean:40-43`).
-- Where stated, `M` is a finite pair (`Foundations/FinitePair.lean:92-104`), with the fields
+  are star-ordered rings, as `SoundFin` assumes (`MIPRE/Background/LIDT/FinModel.lean:43-46`).
+- Where stated, `M` is a finite pair (`Foundations/FinitePair.lean:95-107`), with the fields
   `injA`, `injB`, `commutantA`, `commutantB`, `traceA` and `traceB`. `VecTrace` is at
-  `FinitePair.lean:61-73`, and `opsA` and `opsB` are at `:81-86`.
+  `FinitePair.lean:64-76`, and `opsA` and `opsB` are at `:84-89`.
 
 Write `ā := π(πA a)` for `a ∈ 𝒜` and `b̄ := π(πB b)` for `b ∈ ℬ`. Further:
 - `qform(T) = Re⟪ψ, π(T)ψ⟫` (`Foundations/StateModel.lean:70`);
@@ -1627,7 +1641,7 @@ The proof uses the tier `povm_orthogonalization_finitePair` (`Ortho/FinitePairOr
 as a black box. When the derivation was made the tier was an unproved interface. It is now proved:
 - the modules are `Ortho/{CenterTrace,CenterTraceClauses,CenterComparison,NoAbelian,FinitePairOrtho}.lean`,
   §2 of this report, T1 of `planning/c6b-plan.md`;
-- `#guard_sorry_free` guards it at `MIPRE/Axioms.lean:3328-3329`.
+- `#guard_sorry_free` guards it at `MIPRE/Axioms.lean:3330-3331`.
 
 So Theorem G holds unconditionally under its stated hypotheses. Supplying the hypothesis `ζ > 0` at
 the call site is an open point (§4.7).
@@ -1753,7 +1767,7 @@ This is a sanity check only; nothing rests on it.
 `commutantB` of `D(M)` follows by the mirror argument, with `x = (1, 0)`.
 
 **Lemma 9 (traces).** Let `τ_𝒜 = (g_k)_{k<n}` and `τ_ℬ = (h_l)_{l<n'}` (`VecTrace`,
-`Foundations/FinitePair.lean:61-73`). On `opsA D`, take the vectors `emb₀(g_k/√2)` and
+`Foundations/FinitePair.lean:64-76`). On `opsA D`, take the vectors `emb₀(g_k/√2)` and
 `emb₁(h_l/√2)`, indexed by `Fin n ⊕ Fin n'`, through `VecTrace.ofFintype`
 (`Foundations/FinitePairExpand.lean:45`).
 - **Normalization:** `½ + ½ = 1`.
@@ -1763,7 +1777,7 @@ This is a sanity check only; nothing rests on it.
 - **Separation:** `L(a, b) emb₀ ξ = emb₀(āξ)` and `L(a, b) emb₁ ξ = emb₁(b̄ξ)`, by
   `toCLM_diagonal_apply` (`Foundations/OperatorMatrix.lean:67`); `toCLM_diagonal_emb` (`:239`) is
   the constant-diagonal case. So if `L(a, b)` vanishes at every vector, then `ā = 0` and `b̄ = 0`,
-  by the `separating` field of each trace (`Foundations/FinitePair.lean:73`).
+  by the `separating` field of each trace (`Foundations/FinitePair.lean:76`).
 
 On `opsB D`, swap the roles of the two families.
 
@@ -2078,7 +2092,7 @@ port-base containers and the model bridge.
 ### 4.7 Status and open points
 
 **Resolved since the design.** The orthonormalization tier that Theorem G calls,
-`povm_orthogonalization_finitePair`, is proved and guarded (`MIPRE/Axioms.lean:3328-3329`). It
+`povm_orthogonalization_finitePair`, is proved and guarded (`MIPRE/Axioms.lean:3330-3331`). It
 goes through `povm_orthogonalization_vecTrace` (`Ortho/NoAbelian.lean:99-105`) and the
 centre-valued trace `exists_isCenterValuedTrace` (`Ortho/CenterComparison.lean:355`). The doubling
 reduces in-core orthonormalization to that one interface, which T1 of `planning/c6b-plan.md`
@@ -2116,8 +2130,8 @@ provides.
 - **`StarModule ℂ 𝒩`.** It follows from Mathlib's product instance
   (`Mathlib/Algebra/Star/Prod.lean:46-48`) once `𝒜` and `ℬ` are `StarModule ℂ`, and that inference
   has been checked. The factor instances are not available, though. `SoundFin`
-  (`MIPRE/Background/LIDT/FinModel.lean:40-43`) does not assume them, unlike
-  `CommutingFinitePairApprox` (`Foundations/FinitePair.lean:117`). They must be either added as
+  (`MIPRE/Background/LIDT/FinModel.lean:43-46`) does not assume them, unlike
+  `CommutingFinitePairApprox` (`Foundations/DyadicPair.lean:435`). They must be either added as
   hypotheses or derived, for instance from `injA` and `injB`; neither option has been checked.
 - **CFC classification.** `LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean:11`
   imports `QXPLayerIdentities.ProjectorApprox`. Whether that module applies CFC to retained operands
@@ -2155,23 +2169,25 @@ vendored. It needs no σ-weak topology, no normal-trace API and no predual.
 - `≤` is the operator order of `B(H)`.
 
 **Finite pairs satisfy (S), on both sides.** Let `M` be a finite pair
-(`MIPRE/Foundations/FinitePair.lean:92-104`).
+(`MIPRE/Foundations/FinitePair.lean:95-107`).
 
-- Take `t := opsB` (`FinitePair.lean:85-86`). `opsB` is star-closed, because it is the range of
+- Take `t := opsB` (`FinitePair.lean:88-89`). `opsB` is star-closed, because it is the range of
   the ⋆-homomorphism `π ∘ πB` (`MIPRE/Foundations/BipartiteModel.lean:63`,
   `MIPRE/Foundations/StateModel.lean:55`).
 - So `StarSubalgebra.centralizer ℂ opsB = opsA` as sets. The inclusion `⊆` is `commutantA`
-  (`FinitePair.lean:98`), and `⊇` is `commute` (`BipartiteModel.lean:65`). This equality is
+  (`FinitePair.lean:101`), and `⊇` is `commute` (`BipartiteModel.lean:65`). This equality is
   proved as `mem_vnA_iff` (`MIPRE/Background/Orthonormalization/FinitePairOrtho.lean:51-59`).
   There `vnA` (`:41-46`) is the first player's algebra as a Mathlib `VonNeumannAlgebra`.
-- (Tr) and (F) are the fields `trace_mul_comm` and `separating` (`FinitePair.lean:70-73`) of
-  `traceA` (`:102`).
-- Symmetrically, `t := opsA` gives `M = opsB`, using `commutantB` (`:100`) and `traceB` (`:104`).
+- (Tr) and (F) are the fields `trace_mul_comm` and `separating` (`FinitePair.lean:73-76`) of
+  `traceA` (`:105`).
+- Symmetrically, `t := opsA` gives `M = opsB`, using `commutantB` (`:103`) and `traceB` (`:107`).
   Alternatively, apply the first player's result to `M.swap` (`IsFinitePair.swap`,
   `MIPRE/Foundations/FinitePairExpand.lean:172`).
 - The II₁ tier changes nothing here. Theorem 10 needs only (S), so it applies to any amplified
-  pair that is again a finite pair. The docstring at `FinitePair.lean:41-46` says that
-  amplification by a II₁ factor stays in the class, but no lemma in the repository proves this.
+  pair that is again a finite pair. When this was written the docstring at `FinitePair.lean`
+  said that amplification by a II₁ factor stays in the class, with no lemma proving it; it now
+  (`:42-48`) names the amplification of a tracial algebra in standard form, which
+  `isFinitePair_stdModel` and `Amplify.lean` do prove (Theorem A).
 
 ### 5.2 What the consumers use (Lemma 0)
 
@@ -2496,13 +2512,13 @@ The `ℬ` side follows by `swap`.
    `π_πA_nonneg` (`MIPRE/Foundations/POVMValue.lean:173`).
 2. **(⇐)** Let `x := π(πA a) ≥ 0`.
    - `x` commutes with every `π(πB b)` (`commute`), so `√x` does too (`Commute.cfcₙ_nnreal`).
-     Hence `√x = π(πA c)` for some `c ∈ 𝒜` (`commutantA`, `FinitePair.lean:98`).
+     Hence `√x = π(πA c)` for some `c ∈ 𝒜` (`commutantA`, `FinitePair.lean:101`).
    - `π(πA c) = √x` is self-adjoint, so `π(πA(c* c)) = √x √x = x = π(πA a)`.
-   - `injA` (`FinitePair.lean:94`) gives `a = c* c ≥ 0`.
+   - `injA` (`FinitePair.lean:97`) gives `a = c* c ≥ 0`.
 3. **Pull-back.** Each `T_g ∈ opsA` is `π(πA a_g)` for a unique `a_g`. By step 2, `a_g ≥ 0`, and
    `Σ_g a_g = 1` by injectivity. The same argument applies to `Z` and to `Z − A_g ≥ 0`. ∎
 
-This settles the order question left open at `FinitePair.lean:33-36`. That docstring says the
+This settles the order question left open at `FinitePair.lean:36-39`. That docstring says the
 orders agree, but that "no lemma here states this yet".
 
 ### 5.7 Approximate forms (not chosen)
@@ -2530,7 +2546,7 @@ some unit vector `ψ`.
 
 - Take `M = L^∞[0,1]` acting on `L²[0,1]`, with trace vector `1`. `M` is maximal abelian, so it is
   its own commutant, and `1` is a separating trace vector. It is the type I example of a finite
-  pair given in the docstring at `FinitePair.lean:47-49`.
+  pair given in the docstring at `FinitePair.lean:49-50`.
 - Let `0 < η ≤ 1`, `G = {1, 2}`, `A_1 = 1_{[0,η]}` and `A_2 = 0`. Then `sup f = τ(A_1) = η`.
 - Take `T = (0, 1)`. Then `f(T) = 0 ≥ sup f − η`, and `Σ_g T_g A_g = 0`.
 - Let `ψ = η^{-1/2} 1_{[0,η]}`, a unit vector. Every `Z ≥ A_1` satisfies
@@ -2680,7 +2696,7 @@ uses this figure in row M9.
   rather than over block operators on `H ⊕ H`.
 - The amplified pair is a finite pair: it is the standard-form model of the standard tracial
   algebra `tensorStep M B`, and `isFinitePair_stdModel`
-  (`MIPRE/Background/Repetition/TracialApprox.lean:148`) applies to every such model. What the
+  (`MIPRE/Background/Repetition/TracialApprox.lean:155`) applies to every such model. What the
   amplification adds, the absence of abelian projections, is Theorem A of §3, and Theorem T
   there keeps the correlation.
 

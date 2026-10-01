@@ -45,8 +45,8 @@ namespace MIPRE
 
 /-! ## Unital matrix units -/
 
-/-- **Unital matrix units** in a `⋆`-ring, indexed by a finite type `ι`: `eᵢⱼ eₗₘ = [j = l] eᵢₘ`,
-`eᵢⱼ⋆ = eⱼᵢ` and `∑ᵢ eᵢᵢ = 1`. -/
+/-- **Unital matrix units** (`def:dyadic-units`) in a `⋆`-ring, indexed by a finite type `ι`:
+`eᵢⱼ eₗₘ = [j = l] eᵢₘ`, `eᵢⱼ⋆ = eⱼᵢ` and `∑ᵢ eᵢᵢ = 1`. -/
 structure IsMatUnits {A : Type*} [Ring A] [StarRing A] {ι : Type*} [Fintype ι] [DecidableEq ι]
     (e : ι → ι → A) : Prop where
   /-- The multiplication rule `eᵢⱼ eₗₘ = [j = l] eᵢₘ`. -/
@@ -65,14 +65,15 @@ variable {A : Type*} [Ring A] [StarRing A] {ι : Type*} [Fintype ι] [DecidableE
 theorem mul_cancel (he : IsMatUnits e) (i j m : ι) : e i j * e j m = e i m := by
   rw [he.mul, ite_eq_left rfl]
 
-/-- **Matrix units pass along a unital `⋆`-homomorphism.** -/
+/-- **Matrix units pass along a unital `⋆`-homomorphism** (`lem:dyadic-units-closure`). -/
 theorem map (he : IsMatUnits e) {B F : Type*} [Ring B] [StarRing B] [FunLike F A B]
     [RingHomClass F A B] [StarHomClass F A B] (φ : F) : IsMatUnits fun i j => φ (e i j) where
   mul i j l m := by rw [← map_mul, he.mul]; split_ifs <;> simp
   star_eq i j := by rw [← map_star, he.star_eq]
   sum_diag := by rw [← map_sum, he.sum_diag, map_one]
 
-/-- **Transposed matrix units in the opposite ring**: `eᵢⱼ ↦ op eⱼᵢ`. -/
+/-- **Transposed matrix units in the opposite ring** (`lem:dyadic-units-closure`):
+`eᵢⱼ ↦ op eⱼᵢ`. -/
 theorem op (he : IsMatUnits e) : IsMatUnits fun i j => MulOpposite.op (e j i) where
   mul i j l m := by
     rw [← MulOpposite.op_mul, he.mul]
@@ -82,7 +83,8 @@ theorem op (he : IsMatUnits e) : IsMatUnits fun i j => MulOpposite.op (e j i) wh
   star_eq i j := by rw [← MulOpposite.op_star, he.star_eq]
   sum_diag := by rw [← Finset.op_sum, he.sum_diag, MulOpposite.op_one]
 
-/-- **Scalar-diagonal amplification**: `eᵢⱼ ↦ diag(eᵢⱼ, …, eᵢⱼ)` in the `α × α` matrices. -/
+/-- **Scalar-diagonal amplification** (`lem:dyadic-units-closure`): `eᵢⱼ ↦ diag(eᵢⱼ, …, eᵢⱼ)` in
+the `α × α` matrices. -/
 theorem diagonal (he : IsMatUnits e) (α : Type*) [Fintype α] [DecidableEq α] :
     IsMatUnits fun i j => Matrix.diagonal fun _ : α => e i j where
   mul i j l m := by
@@ -100,7 +102,8 @@ theorem diagonal (he : IsMatUnits e) (α : Type*) [Fintype α] [DecidableEq α] 
     · rw [he.sum_diag]
     · simp
 
-/-- **Componentwise matrix units in a product**: `eᵢⱼ ↦ (eᵢⱼ, fᵢⱼ)`. -/
+/-- **Componentwise matrix units in a product** (`lem:dyadic-units-closure`):
+`eᵢⱼ ↦ (eᵢⱼ, fᵢⱼ)`. -/
 theorem prod (he : IsMatUnits e) {B : Type*} [Ring B] [StarRing B] {f : ι → ι → B}
     (hf : IsMatUnits f) : IsMatUnits fun i j => (e i j, f i j) where
   mul i j l m := by rw [Prod.mk_mul_mk, he.mul, hf.mul]; split_ifs <;> rfl
@@ -114,8 +117,8 @@ end IsMatUnits
 
 /-! ## Dyadic matrix units -/
 
-/-- **Unital dyadic matrix units**: a `⋆`-ring has unital matrix units of size `2ⁿ` for every `n`,
-indexed by the bit strings `Fin n → Fin 2`. -/
+/-- **Unital dyadic matrix units** (`def:dyadic-units`): a `⋆`-ring has unital matrix units of size
+`2ⁿ` for every `n`, indexed by the bit strings `Fin n → Fin 2`. -/
 def HasDyadicUnits (A : Type*) [Ring A] [StarRing A] : Prop :=
   ∀ n : ℕ, ∃ e : (Fin n → Fin 2) → (Fin n → Fin 2) → A, IsMatUnits e
 
@@ -123,21 +126,22 @@ namespace HasDyadicUnits
 
 variable {A : Type*} [Ring A] [StarRing A]
 
-/-- **Dyadic units pass along a unital `⋆`-homomorphism.** -/
+/-- **Dyadic units pass along a unital `⋆`-homomorphism** (`lem:dyadic-units-closure`). -/
 theorem map (h : HasDyadicUnits A) {B F : Type*} [Ring B] [StarRing B] [FunLike F A B]
     [RingHomClass F A B] [StarHomClass F A B] (φ : F) : HasDyadicUnits B :=
   fun n => by obtain ⟨e, he⟩ := h n; exact ⟨_, he.map φ⟩
 
-/-- **Dyadic units pass to the opposite ring.** -/
+/-- **Dyadic units pass to the opposite ring** (`lem:dyadic-units-closure`). -/
 theorem op (h : HasDyadicUnits A) : HasDyadicUnits Aᵐᵒᵖ :=
   fun n => by obtain ⟨e, he⟩ := h n; exact ⟨_, he.op⟩
 
-/-- **Dyadic units pass to square matrices over the ring**, as scalar diagonals. -/
+/-- **Dyadic units pass to square matrices over the ring** (`lem:dyadic-units-closure`), as scalar
+diagonals. -/
 theorem matrix (h : HasDyadicUnits A) (α : Type*) [Fintype α] [DecidableEq α] :
     HasDyadicUnits (Matrix α α A) :=
   fun n => by obtain ⟨e, he⟩ := h n; exact ⟨_, he.diagonal α⟩
 
-/-- **Dyadic units pass to products**, componentwise. -/
+/-- **Dyadic units pass to products** (`lem:dyadic-units-closure`), componentwise. -/
 theorem prod (h : HasDyadicUnits A) {B : Type*} [Ring B] [StarRing B] (hB : HasDyadicUnits B) :
     HasDyadicUnits (A × B) := fun n => by
   obtain ⟨e, he⟩ := h n
@@ -148,8 +152,8 @@ end HasDyadicUnits
 
 /-! ## Dyadic units from Pauli sites -/
 
-/-- **Pauli sites** in a `⋆`-ring: at each site `k : ℕ` a self-adjoint anticommuting pair of
-symmetries `(x k, z k)`, the pairs at distinct sites commuting. -/
+/-- **Pauli sites** (`lem:pauli-sites-units`) in a `⋆`-ring: at each site `k : ℕ` a self-adjoint
+anticommuting pair of symmetries `(x k, z k)`, the pairs at distinct sites commuting. -/
 structure PauliSites (R : Type*) [Ring R] [StarRing R] where
   /-- The `X` symmetry at each site. -/
   x : ℕ → R
@@ -186,14 +190,17 @@ def xpow (k : ℕ) (a : Fin 2) : R := if a = 0 then 1 else S.x k
 noncomputable def unit (k : ℕ) (a b : Fin 2) : R := S.xpow k a * S.proj k * S.xpow k b
 
 omit [StarModule ℂ R] in
+/-- `pₖ` is idempotent. -/
 theorem proj_mul_self (k : ℕ) : S.proj k * S.proj k = S.proj k := by
   simp only [proj, smul_mul_smul, add_mul, mul_add, one_mul, mul_one, S.z_mul_self]
   module
 
+/-- `pₖ` is self-adjoint. -/
 theorem star_proj (k : ℕ) : star (S.proj k) = S.proj k := by
   simp [proj, star_add, S.star_z]
 
 omit [StarModule ℂ R] in
+/-- Conjugating by `xₖ` exchanges `pₖ` and `1 - pₖ`. -/
 theorem x_mul_proj_mul_x (k : ℕ) : S.x k * S.proj k * S.x k = 1 - S.proj k := by
   have hxzx : S.x k * S.z k * S.x k = -S.z k := by
     rw [mul_assoc, S.z_mul_x, mul_neg, ← mul_assoc, S.x_mul_self, one_mul]
@@ -201,6 +208,7 @@ theorem x_mul_proj_mul_x (k : ℕ) : S.x k * S.proj k * S.x k = 1 - S.proj k := 
   module
 
 omit [StarModule ℂ R] in
+/-- `pₖ xₖ pₖ = 0`. -/
 theorem proj_mul_x_mul_proj (k : ℕ) : S.proj k * S.x k * S.proj k = 0 := by
   calc S.proj k * S.x k * S.proj k = S.x k * (S.x k * S.proj k * S.x k) * S.proj k := by
         simp only [← mul_assoc, S.x_mul_self, one_mul]
@@ -208,10 +216,12 @@ theorem proj_mul_x_mul_proj (k : ℕ) : S.proj k * S.x k * S.proj k = 0 := by
         rw [x_mul_proj_mul_x, mul_assoc, sub_mul, one_mul, S.proj_mul_self, sub_self, mul_zero]
 
 omit [Algebra ℂ R] [StarModule ℂ R] in
+/-- `(xₖᵃ)² = 1`. -/
 theorem xpow_mul_self (k : ℕ) (a : Fin 2) : S.xpow k a * S.xpow k a = 1 := by
   unfold xpow; split_ifs <;> simp [S.x_mul_self]
 
 omit [Algebra ℂ R] [StarModule ℂ R] in
+/-- `xₖᵃ xₖᵇ = xₖ` for distinct bits. -/
 theorem xpow_mul_xpow_of_ne (k : ℕ) {a b : Fin 2} (h : a ≠ b) :
     S.xpow k a * S.xpow k b = S.x k := by
   unfold xpow
@@ -222,10 +232,12 @@ theorem xpow_mul_xpow_of_ne (k : ℕ) {a b : Fin 2} (h : a ≠ b) :
   · exfalso; omega
 
 omit [Algebra ℂ R] [StarModule ℂ R] in
+/-- `xₖᵃ` is self-adjoint. -/
 theorem star_xpow (k : ℕ) (a : Fin 2) : star (S.xpow k a) = S.xpow k a := by
   unfold xpow; split_ifs <;> simp [S.star_x]
 
 omit [StarModule ℂ R] in
+/-- The multiplication rule of the single-site units. -/
 theorem unit_mul (k : ℕ) (a b c d : Fin 2) :
     S.unit k a b * S.unit k c d = if b = c then S.unit k a d else 0 := by
   unfold unit
@@ -237,10 +249,12 @@ theorem unit_mul (k : ℕ) (a b c d : Fin 2) :
   · subst h; rw [xpow_mul_self, mul_one, proj_mul_self]
   · rw [xpow_mul_xpow_of_ne _ _ h, proj_mul_x_mul_proj, mul_zero, zero_mul]
 
+/-- The adjoint rule of the single-site units. -/
 theorem star_unit (k : ℕ) (a b : Fin 2) : star (S.unit k a b) = S.unit k b a := by
   simp [unit, star_mul, star_xpow, star_proj, mul_assoc]
 
 omit [StarModule ℂ R] in
+/-- The single-site units are unital: `pₖ + xₖ pₖ xₖ = 1`. -/
 theorem sum_unit_diag (k : ℕ) : ∑ a, S.unit k a a = 1 := by
   have h0 : S.unit k 0 0 = S.proj k := by simp [unit, xpow]
   have h1 : S.unit k 1 1 = S.x k * S.proj k * S.x k := by simp [unit, xpow]
@@ -251,18 +265,22 @@ theorem isMatUnits_unit (k : ℕ) : IsMatUnits (S.unit k) :=
   ⟨S.unit_mul k, S.star_unit k, S.sum_unit_diag k⟩
 
 omit [StarModule ℂ R] in
+/-- `xₖ` commutes with the projection at another site. -/
 theorem commute_x_proj {k l : ℕ} (h : k ≠ l) : Commute (S.x k) (S.proj l) :=
   ((Commute.one_right _).add_right (S.commute_x_z k l h)).smul_right _
 
 omit [StarModule ℂ R] in
+/-- `zₖ` commutes with the projection at another site. -/
 theorem commute_z_proj {k l : ℕ} (h : k ≠ l) : Commute (S.z k) (S.proj l) :=
   ((Commute.one_right _).add_right (S.commute_z_z k l h)).smul_right _
 
 omit [StarModule ℂ R] in
+/-- The projections at distinct sites commute. -/
 theorem commute_proj_proj {k l : ℕ} (h : k ≠ l) : Commute (S.proj k) (S.proj l) :=
   ((Commute.one_left _).add_left (S.commute_z_proj h)).smul_left _
 
 omit [Algebra ℂ R] [StarModule ℂ R] in
+/-- The powers of `x` at distinct sites commute. -/
 theorem commute_xpow_xpow {k l : ℕ} (h : k ≠ l) (a b : Fin 2) :
     Commute (S.xpow k a) (S.xpow l b) := by
   unfold xpow; split_ifs
@@ -272,6 +290,7 @@ theorem commute_xpow_xpow {k l : ℕ} (h : k ≠ l) (a b : Fin 2) :
   · exact S.commute_x_x k l h
 
 omit [StarModule ℂ R] in
+/-- A power of `xₖ` commutes with the projection at another site. -/
 theorem commute_xpow_proj {k l : ℕ} (h : k ≠ l) (a : Fin 2) :
     Commute (S.xpow k a) (S.proj l) := by
   unfold xpow; split_ifs
@@ -298,6 +317,7 @@ noncomputable def units : (n : ℕ) → (Fin n → Fin 2) → (Fin n → Fin 2) 
   | n + 1, i, j => S.unit n (i 0) (j 0) * units n (Fin.tail i) (Fin.tail j)
 
 omit [StarModule ℂ R] in
+/-- A single-site unit at site `m` commutes with the units on the sites below `n ≤ m`. -/
 theorem commute_unit_units : ∀ n m, n ≤ m → ∀ (a b : Fin 2) (i j : Fin n → Fin 2),
     Commute (S.unit m a b) (S.units n i j)
   | 0, _, _, _, _, _, _ => Commute.one_right _
@@ -312,6 +332,7 @@ private theorem fin_tuple_eq_iff {n : ℕ} (j k : Fin (n + 1) → Fin 2) :
     rw [← Fin.cons_self_tail j, ← Fin.cons_self_tail k, h0, ht]
 
 omit [StarModule ℂ R] in
+/-- The multiplication rule of the `2ⁿ × 2ⁿ` units. -/
 theorem units_mul : ∀ (n : ℕ) (i j k l : Fin n → Fin 2),
     S.units n i j * S.units n k l = if j = k then S.units n i l else 0
   | 0, i, j, k, l => by simp [units, Subsingleton.elim j k]
@@ -330,6 +351,7 @@ theorem units_mul : ∀ (n : ℕ) (i j k l : Fin n → Fin 2),
           by_cases h0 : j 0 = k 0 <;> by_cases ht : Fin.tail j = Fin.tail k <;>
             simp [h0, ht, units, fin_tuple_eq_iff j k]
 
+/-- The adjoint rule of the `2ⁿ × 2ⁿ` units. -/
 theorem star_units : ∀ (n : ℕ) (i j : Fin n → Fin 2), star (S.units n i j) = S.units n j i
   | 0, _, _ => by simp [units]
   | n + 1, i, j => by
@@ -337,6 +359,7 @@ theorem star_units : ∀ (n : ℕ) (i j : Fin n → Fin 2), star (S.units n i j)
     exact (S.commute_unit_units n n le_rfl _ _ _ _).eq.symm
 
 omit [StarModule ℂ R] in
+/-- The `2ⁿ × 2ⁿ` units are unital. -/
 theorem sum_units_diag : ∀ n : ℕ, ∑ i, S.units n i i = 1
   | 0 => by simp [units]
   | n + 1 => by
@@ -351,7 +374,7 @@ theorem isMatUnits_units (n : ℕ) : IsMatUnits (S.units n) :=
   ⟨S.units_mul n, S.star_units n, S.sum_units_diag n⟩
 
 include S in
-/-- **A `⋆`-algebra with Pauli sites has unital dyadic matrix units.** -/
+/-- **A `⋆`-algebra with Pauli sites has unital dyadic matrix units** (`lem:pauli-sites-units`). -/
 theorem hasDyadicUnits : HasDyadicUnits R := fun n => ⟨S.units n, S.isMatUnits_units n⟩
 
 end PauliSites
