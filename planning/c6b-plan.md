@@ -152,3 +152,124 @@ norm balls is already vendored (`MvN/WOTCompact.lean:114`).
   To be decided by the M1 measurement.
 - **Upstream.** H3 could instead go to `vidick/commuting-repetition` and be vendored; the port's
   base layer could go to `LionSR/MIPStarRE`.
+
+## Port conventions
+
+Settled with the keystone of M0 (`MIPRE/Background/LIDT/Co/Basic/QuantumState.lean`,
+`scripts/port-pairing.py`), 2026-10-01. Every stage M0–M14 follows them; a stage that has to
+depart from one records the departure here.
+
+**Paths, namespaces, names.**
+- A ported file has the vendored file's relative path, under `MIPRE/Background/LIDT/Co/` in place
+  of `MIPRE/Background/LIDT/MIPStarRE/LDT/`: `LDT/Basic/SubMeasurementCore.lean` →
+  `Co/Basic/SubMeasurementCore.lean`. New files that have no vendored counterpart (the doubling of
+  M2, the summed form of M9) get names of their own and are reported as new by the script.
+- Namespaces mirror: `MIPStarRE.LDT` → `MIPRE.LIDT.Co`, `MIPStarRE.LDT.X` → `MIPRE.LIDT.Co.X`.
+- Declarations keep their vendored names. Lemmas about the state become `SymModel` lemmas and are
+  applied with dot notation, `S.leftTensor_mul_leftTensor`, stated with `S.L`. The namespaces
+  `QuantumState` and `PureState` become `SymModel`.
+- Arguments keep their vendored explicitness, with the state as the receiver: the vendored
+  `ev_mono ψ X Y h` is `S.ev_mono X Y h`. Named carrier arguments (`(ι₂ := ι)`, 72 sites in CP)
+  are deleted: the model fixes both carriers.
+- The header of a ported file credits the upstream authors and says it is a port, not a vendored
+  file (see the keystone); it is an ordinary module of this repository, so `scripts/modularize.py`
+  applies and the vendor scripts do not.
+
+**The model and the translation.** `SymModel 𝔓 K` (keystone): a C*-algebra `𝔓` with its order (the
+vendored `Op ι`), a Hilbert space `K`, fields `Ψ`, `Ψ_norm`, `L : 𝔓 →⋆ₐ[ℂ] (K →L[ℂ] K)`,
+`J : K ≃ₗᵢ[ℂ] K`, `J_J`, `J_Ψ`, `commute`; derived `flip := J.conjStarAlgEquiv`,
+`R := flip ∘ L`, `opTensor A B := L A * R B` (a `noncomputable abbrev`, as the vendored one is an
+`abbrev`), `ev X := Op.qform Ψ X` (a `def`), and `toBipartite`, the model as a
+`MIPRE.BipartiteModel (K →L[ℂ] K) 𝔓 𝔓` with `H := K`, `π := id`, `πA := L`, `πB := R`, whose
+`qform` is `ev` and whose `snorm X` is `‖X Ψ‖`, both by `rfl`.
+
+| vendored | port |
+|---|---|
+| `ψ : QuantumState (ι × ι)` | `S : SymModel 𝔓 K` |
+| `Op ι` (local) | `𝔓` |
+| `Op (ι × ι)` (joint) | `K →L[ℂ] K` |
+| `ev ψ X` | `S.ev X` |
+| `leftTensor A` | `S.L A` |
+| `rightTensor A` | `S.R A` |
+| `opTensor A B` | `S.opTensor A B` (`= S.L A * S.R B` by `rfl`) |
+| `Xᴴ` | `star X` |
+| `swapDensity` | `S.flip` |
+| `Error` | `ℝ` (the vendored `Error` is `abbrev Error := ℝ`; either may be written) |
+| `SubMeas.liftLeft (ιB := ι) A` | `A.map S.L` (`liftLeft S := map S.L`) |
+| `SubMeas.liftRight (ιA := ι) A` | `A.map S.R` |
+
+**Swap symmetry is a theorem.** `S.ev_flip`, `S.ev_L_eq_ev_R` (the vendored
+`PermInvState.swap_ev`) and `S.ev_L_mul_R_comm`, with the vendored-named
+`S.ev_swapDensity_of_density_fixed`, `S.ev_opTensor_swap_of_density_fixed` and
+`S.swapDensity_opTensor`, all in the keystone. Ported statements drop the hypotheses
+`hfix : swapDensity ψ.density = ψ.density`, `hperm : PermInvState ψ` and `hψ : ψ.IsNormalized`;
+the fields `permInvState`, `densityFixed` and `isNormalized` of the vendored `SymStrat` are not
+fields of the ported one (each is a theorem of its `state`), and are listed as not ported with that
+reason. `S.ev_one_of_isNormalized : S.ev 1 = 1` takes no hypothesis; `S.IsNormalized` and
+`S.isNormalized` exist for statements that still mention normalization.
+
+**Measurements** (`SubMeas`, `Measurement`, `ProjMeas`, `IdxSubMeas`, `OpFamily`, …) are generic
+over a ring `R` (`[Ring R] [StarRing R] [PartialOrder R]`, C*-structure only where a proof needs
+it), with the vendored field names verbatim; local families take `R = 𝔓`, joint ones
+`R = K →L[ℂ] K`; placement is `map` along a ⋆-homomorphism.
+
+**The vendored classical layer is imported, never ported**, and named only through explicit lists,
+`open MIPStarRE.LDT (Parameters Distribution avgOver …)`. A wholesale `open MIPStarRE.LDT` is
+forbidden: the classical layer imports the vendored matrix layer (§5), so `SubMeas`, `ev`, … exist
+under both namespaces. Only `MIPRE/Background/` may name `MIPStarRE`, which is where the port lives.
+
+**Where positivity lives.** Every operator-positivity fact is proved once, in
+`Co/Basic/QuantumState.lean`, whose only import is `MIPRE.Foundations.Pasting` (Foundations and the
+targeted Mathlib they import; no vendored module), and downstream files apply it. The keystone
+holds: `sq_le_self` (any C*-algebra), `S.leftTensor_nonneg`, `S.rightTensor_nonneg`,
+`S.leftTensor_mono`, `S.rightTensor_mono`, `S.leftTensor_le_one`, `S.rightTensor_le_one`,
+`S.opTensor_nonneg`, `S.opTensor_mono_left`, `S.opTensor_mono_right`, `S.opTensor_le_leftTensor`,
+`S.opTensor_le_one`, `S.ev_nonneg_of_psd`, `S.ev_mono`, `S.ev_adjoint_self_nonneg`,
+`S.ev_adjoint_self_eq_norm_sq`. Reaching for `Commute.mul_nonneg` on `K →L[ℂ] K` again costs about
+0.7 s a proof (the continuous functional calculus instances); a new positivity fact that the
+keystone lacks goes into the keystone, not into the file that needs it.
+
+**Moved declarations.** To keep positivity in one file, the keystone also holds declarations whose
+vendored home is elsewhere: from `OperatorExpectations`, `ev_add`, `ev_sub`, `ev_scale`,
+`ev_real_smul`, `ev_zero`, `ev_opTensor`, `ev_one_of_isNormalized`, `ev_adjoint_self_nonneg`,
+`ev_finset_sum`, `ev_sum`, `ev_nonneg_of_psd`, `ev_mono`, `ev_conjTranspose`,
+`ev_mul_comm_of_hermitian`, `ev_mul_comm_of_psd`, `ev_conjTranspose_mul_comm`; from
+`TensorPlacement`, `leftTensor_finset_sum`, `rightTensor_finset_sum`, `leftTensor_nonneg`,
+`rightTensor_nonneg`, `leftTensor_le_one`, `rightTensor_le_one`; from `Test/StrategyCore`, the three
+swap lemmas above; `sq_le_self` from `Quantum/FiniteMatrix/Order`. The counterparts of those files
+do not redeclare them (the names would clash in `MIPRE.LIDT.Co`); the pairing script reports them
+as "ported elsewhere". The rest of `OperatorExpectations` (Cauchy–Schwarz, the sandwich lemmas) is
+its own stage's, through `StateModel.abs_qform_star_mul_le` (`Foundations/Sandwich.lean`) on
+`S.toBipartite`, as `ev_conjTranspose` goes through `StateModel.qform_star`.
+
+**The positivity tactic is `sym_nonneg`**, in `Co/Tactic/QuantumNonneg.lean` (the mirrored path):
+the vendored `quantum_nonneg` syntax is in every port file's import closure and keeps calling the
+vendored matrix lemmas, so the port's macro needs a name of its own. It is the vendored macro with
+each lemma replaced by its fully qualified `MIPRE.LIDT.Co.SymModel` counterpart.
+
+**Not ported, and the pairing script.** Every vendored declaration of a file has a counterpart of
+the same name in the ported file, is ported elsewhere (above), or is listed in the ported file's
+module docstring under a heading `Not ported`, one name per bullet with its reason:
+
+    ## Not ported
+
+    - `normalizedTrace_opTensor`: the model has no trace.
+
+Matrix-only content (normalized trace, density, entrywise Kronecker identities, PSD-matrix facts)
+is not ported but replaced by the model's lemmas. `python3 scripts/port-pairing.py <file or
+directory>` pairs a ported file with its vendored one (names compared without the root and state
+namespaces) and reports, per file, the ported, loosely paired, ported-elsewhere, listed and missing
+vendored names, the new ported names (with the vendored file a moved one comes from) and stale
+`Not ported` bullets; `--check` exits 1 if a vendored name is missing. Each stage runs it on its
+files and reports the output.
+
+**Elaboration, measured on the keystone.** 86 declarations, about 8 s of non-import elaboration
+(minimum of three runs, all profiler categories; typeclass inference 4.9 s of it), against 2.4 s for
+the vendored file's 58; no declaration over 1 s, the largest `S.opTensor_nonneg` (0.67 s). Most of
+the cost is synthesizing the coercion classes of `𝔓 →⋆ₐ[ℂ] (K →L[ℂ] K)` (about 60 ms per generic
+`map_*` lemma), so:
+- prefer the structure's own lemmas (`S.L.map_add`, `S.L.map_mul`) and term-mode `congrArg`
+  proofs to `rw [map_add]` (measured 2.5× faster);
+- for real scalars rewrite with `← Complex.coe_smul` rather than `RCLike.real_smul_eq_coe_smul`;
+- do not mark `star (S.L A) = S.L (star A)` `@[simp]` (the vendored `leftTensor_conjTranspose` is
+  `@[simp]`): it loops with `map_star`.
