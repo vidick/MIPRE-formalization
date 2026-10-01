@@ -46,14 +46,13 @@ the model statement in `StateModel.mat v` or `BipartiteModel.tensor ψ`.
   `M.swap`), and for a cross-party deviation of two families summing to one,
   `BipartiteModel.sum_avg_xSqNorm_fibre_eq`.
 
-The matrix lemmas these are the model forms of: `snorm_sq_sum_orthogonal` (`QLD/Pulling.lean`),
-`snorm_sq_sum_orthogonal'`, `sum_snorm_sq_chain_le` (`QLD/Chain.lean`), `snorm_sq_obs_sub_le`
-(`QLD/SelfCons.lean`), `abs_qform_sub_qform_le` (`QLD/SwapMeasure.lean`), and for Parseval
-`sum_avg_normSq_stateVecB_fibre_eq` (`QLD/Products.lean`) and `sum_avg_xSqNorm_fibre_eq`
-(`QLD/Combined.lean`). The trivial bound replaces `sum_snorm_sq_registerState_alice_le_two` and
-`_bob_le_two` (`QLD/Soundness.lean`), with the constant `4` that `le_qldErr` allows in place of
-their `2`. The model form of the triangle inequality `sum_snorm_sq_triangle'` was already
-`StateModel.sum_snorm_sq_triangle`.
+These replace matrix lemmas the QLD chain used before it was stated in a bipartite model (Phase 5
+of `planning/mipco-track.md`): `snorm_sq_sum_orthogonal`, `snorm_sq_sum_orthogonal'`,
+`sum_snorm_sq_chain_le`, `snorm_sq_obs_sub_le`, `abs_qform_sub_qform_le`, and for Parseval
+`sum_avg_normSq_stateVecB_fibre_eq` and `sum_avg_xSqNorm_fibre_eq`. The trivial bound replaces the
+matrix bounds `sum_snorm_sq_registerState_alice_le_two` and `_bob_le_two` of the matrix `thm:qld`,
+with the constant `4` that `le_qldErr` allows in place of their `2`. The model form of the
+triangle inequality `sum_snorm_sq_triangle'` was already `StateModel.sum_snorm_sq_triangle`.
 -/
 
 noncomputable section
@@ -144,8 +143,8 @@ theorem sum_snorm_sq_chain_le {ι : Type*} (s : Finset ι) (n : ℕ) (T : ℕ �
 
 /-- **From measurement elements to weighted sums of them**: weighting both families by
 coefficients of modulus at most one costs a factor the size of the outcome set, by the triangle
-inequality over the outcomes and then Cauchy--Schwarz against the constant one. The model form of
-the matrix `snorm_sq_obs_sub_le` of `QLD/SelfCons.lean` (`lem:qld-povm-to-obs`). -/
+inequality over the outcomes and then Cauchy--Schwarz against the constant one. It replaces the
+matrix `snorm_sq_obs_sub_le` of the QLD chain (`lem:qld-povm-to-obs`). -/
 theorem snorm_sq_obs_sub_le {Λ : Type*} [Fintype Λ] (α : Λ → ℂ) (hα : ∀ a, ‖α a‖ ≤ 1)
     (A B : Λ → 𝒞) :
     M.snorm ((∑ a, α a • A a) - ∑ a, α a • B a) ^ 2
@@ -205,9 +204,9 @@ theorem sum_stateSqNorm_sub_le_four_of_le {Λ : Type*} [Fintype Λ] {A B : Λ �
   linarith
 
 /-- **Two projective measurements on a unit vector are at summed squared distance at most
-four**: the trivial bound of the second item of `thm:qld`, in place of the matrix
-`sum_snorm_sq_registerState_alice_le_two` and `_bob_le_two` of `QLD/Soundness.lean` (the second
-player's is this in `M.swap`). The matrix bound `2` uses that on the register state the honest
+four**: the trivial bound of the second item of `thm:qld` (the second player's is this in
+`M.swap`), in place of the bounds `sum_snorm_sq_registerState_alice_le_two` and `_bob_le_two` of
+the matrix `thm:qld`. The matrix bound `2` uses that on the register state the honest
 projector on one party is the same projector on the other; `4` needs nothing, and is what
 `le_qldErr` asks for. -/
 theorem sum_stateSqNorm_sub_le_four (hψ : ‖M.ψ‖ = 1) {Λ : Type*} [Fintype Λ] {A B : Λ → 𝒜}

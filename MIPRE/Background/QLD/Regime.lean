@@ -64,9 +64,8 @@ theorem four_mul_dvd_card {m : ℕ} (hm : m ∣ Fintype.card F) (h4 : 4 * m ≤ 
   exact pow_dvd_pow 2 hle
 
 /-- **Inside the regime, stage 4's divisibility holds.** `48 m d <= q` with `d >= 1` gives
-`4m <= q`, which is the size condition `four_mul_dvd_card` needs. This is the form
-`MIPRE.QLD.exists_mirrorSimul` consumes: it takes `4m | q` and `48 m d <= q` as separate
-hypotheses, and the first is a consequence of the second together with `m | q`. -/
+`4m <= q`, which is the size condition `four_mul_dvd_card` needs. `MIPRE.QLD.exists_mirrorSimul`
+derives `4m | q` this way, from `48 m d <= q` together with `m | q`. -/
 theorem four_mul_dvd_card_of_regime {m d : ℕ} (hm : m ∣ Fintype.card F) (hd : 1 ≤ d)
     (hq : 48 * m * d ≤ Fintype.card F) : 4 * m ∣ Fintype.card F := by
   refine four_mul_dvd_card hm ?_

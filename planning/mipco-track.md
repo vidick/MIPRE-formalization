@@ -1,16 +1,16 @@
 # The commuting-operator class, `MIP^co = coRE`: plan
 
 **Status: Phase 0 done (#235, #236), made generic in #239; Phase 1 done (#241, #243, #245);
-Phase 2 done (#247); Phase 3 done (#249); Phase 4 done (#251); Phases 5–6 planned around
-generalizing the existing analyses (`reports/co-generalization-audit.md`).** The conditional
-theorem — `MIP^co = coRE` given the commuting-operator soundness of gap compression — is in, with
-all of its plumbing, written once for both values. Since Phase 4 it follows from the soundness of
-the Pauli basis test and of the low-individual-degree test in the commuting-operator model
-(`MIPRE.mipco_eq_core_of_stages`, hypotheses `QLD.SoundCo` and `LIDT.Simul.SoundCo`): parallel
-repetition's clause is proved, answer reduction's is proved from the second test and
-introspection's from the first. The operator calculus of the stage analyses is proved once over a
-bipartite model, with the matrix layer as its tensor-product instance, and so are the soundness of
-oracularization, of answer reduction and of introspection.
+Phase 2 done (#247); Phase 3 done (#249); Phase 4 done (#251); Phase 5 done (#253); Phase 6, the
+one new theorem, open.** The conditional theorem — `MIP^co = coRE` given the commuting-operator
+soundness of gap compression — is in, with all of its plumbing, written once for both values.
+Since Phase 5 it follows from the soundness of the low-individual-degree test in the
+commuting-operator model alone (`MIPRE.mipco_eq_core_of_lidt`, hypothesis `LIDT.Simul.SoundCo`):
+parallel repetition's clause is proved, answer reduction's is proved from that test, and
+introspection's from the Pauli basis test, which is proved from it (`QLD.soundCo_of_lidt`). The
+operator calculus of the stage analyses is proved once over a bipartite model, with the matrix
+layer as its tensor-product instance, and so are the soundness of oracularization, of answer
+reduction, of introspection and of the Pauli basis test.
 
 Written 2026-09-28, after the explicit separation (#222) and the paper's class (#230–#233).
 Target: Lin's theorem `MIP^co = coRE` (`Lin25`, arXiv:2510.07162, STOC 2026), proved by
@@ -100,7 +100,7 @@ Piece by piece:
 | tracial density | `thm:tracial-density`, vendored (`MIPRE.Repetition.tracialDensity`) | done; not needed on the route of §5 |
 | rounding, model `co` | not formalized; `thm:almost-sync` is #22 (finite dimension) and #23 (commuting) | not needed on the route of §5: the analyses assume nothing synchronous |
 | tracial value at most bipartite value | `lem:tracial-le-co`, #29 | not on the critical path (§5); open for the Tsirelson chapter |
-| Pauli basis rigidity, model `co` | `thm:qld`, finite-dimensional; generalized over the model | Phase 5 |
+| Pauli basis rigidity, model `co` | `thm:qld` in a bipartite model from the LIDT hypothesis (`QLD.soundIn_of_lidt`), `QLD.soundCo_of_lidt` | done (Phase 5) |
 | introspection soundness, model `co` | `Introspection.seven`, finite-dimensional; generalized over the model | Phase 4 |
 | low-individual-degree test soundness, model `co` | not formalized; the vendored proof is finite-dimensional through and through | Phase 6, the one new theorem |
 | oracularization soundness, model `co` | generalized over the model (`OracularModel.lean`, `SeededGame.povmValue_sound_ge`), with `OracularTensor.lean` its tensor instance; `SeededGame.commutingOperatorValue_ge_of_oracular` | done (Phase 2) |
@@ -550,7 +550,56 @@ relying on it; the fallback is the vendored `B(H)` tier, unconditional); M3:
 `PaddedLIDT.lean` consumes `LIDTSoundness`; M4: the statement shape. The ancilla-side EPR
 and Weyl material is unchanged. **After: `MIPRE.mipco_eq_core` is conditional on exactly one
 named theorem, `thm:lidt-cl-soundness-one` in the commuting-operator model.** Touched:
-≈ 25k lines.
+≈ 25k lines. (Corrected when it was done: the one theorem is the simultaneous contract
+`LIDT.Simul.SoundCo`, the commuting form of `thm:lidt-cl-soundness`. The chain applies it at
+`r = 1` in the padded model, and answer reduction already needed it at every `r`.)
+
+*Done (#253).* `thm:qld` is proved for the projective strategies of a bipartite model
+(`QLD.soundIn_of_lidt`) from two hypotheses on the model: the seeded LIDT test is sound
+(`LIDT.Simul.SoundIn`) in every extension of the model by a unit vector, and the value model
+dominates every such extension in every unit state. Its tensor-product instance
+(`QLD.soundIn_tensor`) is what the main theorem now uses, through introspection; its
+commuting-operator instance (`QLD.soundCo_of_lidt : LIDT.Simul.SoundCo → QLD.SoundCo`) gives
+`MIPRE.mipco_eq_core_of_lidt`, `MIP^co = coRE` conditional on `LIDT.Simul.SoundCo` alone. What the
+setting changed:
+
+- *Models and their maps* (`Foundations/ModelIso.lean`, `ModelEmbedding.lean`,
+  `ModelReading.lean`): isomorphisms of bipartite models (`BipartiteModel.Iso`), embeddings (local
+  isometries carrying the state and both units), and recuts, which read one extended state as
+  models with the finite registers distributed differently between the players. Every regrouping
+  that the matrix chain did by `Matrix.reindex` on an explicit state vector is one of these, and no
+  state is computed pointwise.
+- *The hypothesis in extensions* (`LIDT/ModelTransport.lean`, `LIDT/CoExpand.lean`,
+  `Foundations/AmplCommutant.lean`): `LIDT.Simul.SoundIn` passes along isomorphisms and along the
+  exchange of the players (the seeded game is symmetric); it holds in every extension of a
+  tensor-product model; and `LIDT.Simul.SoundCo` gives it in every extension of a
+  commuting-operator model by a unit vector, which is again the model of a commuting-operator
+  strategy (the commutant of an amplification is the amplified commutant).
+- *The strategy is projective* throughout, as introspection's interface `QLD.SoundIn` asks. The de
+  la Salle orthogonalization (M2: `Ortho.lean`, `cor:ortho-from-consistency`), the top-level
+  Naimark dilation and the descent from the dilation back to the POVM are gone (M1), and so is the
+  matrix statement for POVM strategies (`qld_soundness`), whose descent was matrix-specific and
+  which nothing else used. The one dilation left, of the padded strategy in stage 4, is Phase 4's
+  Halmos dilation (`exists_pvm_dilation_ge`).
+- *The physical model* (`QLD/PhysModel.lean`): stage 5's padded and paired state is an extension of
+  the model, read along two cuts, the second the mirror of the first on `M.swap` through
+  `blockSwapIso`; `MirrorSimul` needs no field relating the two cuts' states. The swap isometry is a
+  local isometry of the model into the register model over the padded extension in an auxiliary
+  state (`MirrorSimul.swapPhi`), which is directly an extraction.
+- *The errors*: the seeded theorem enters at `δ_sim(q, 4m, d, 1)` (`simA = 40·clA·4^clA`) instead of
+  `δ_CL` (M3), and `qldBound` loses the descent's `8√η`; `qldErr` keeps its closed form
+  (`exists_qldErr_le`), so introspection's constants do not move.
+
+Deleted: `Descent.lean`, `PhysEmbed.lean`, `RegisterForm.lean`, `ValidAnswers.lean`,
+`BinaryForm.lean`, `Introspection/PauliExtraction.lean`, `LIDT/Adapter/Registers.lean`,
+`TwoPairs.lean`, `Consistency.lean` and `Ortho.lean`. The valid-answer and qubit forms of
+`thm:qld` are the model ones introspection already used (`FieldExtraction.ofQLD`,
+`FieldExtraction.toBinary`). Left for a follow-up: `LocalIsometry.withStates` is declared in
+`QLD/Soundness.lean`, its one user, rather than beside `toWithState` in `ModelEmbedding.lean`.
+
+Measured: ≈ 5.2k lines in eleven new files; ≈ 50 modules of the chain restated in place (71
+files, ≈ 16k lines inserted, 15k removed, 3.2k of them in the ten deleted files); blueprint
+section `sec:ds-mipco-phase5`, and the nodes of chapter 3 restated.
 
 **Phase 6 — the low-individual-degree test in the commuting-operator model.** The only new
 mathematics, and the item on which the track can fail. What exists: the vendored
@@ -654,7 +703,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 | C2 | Phase 2: oracularization, repetition and the composition in the model; `mipco_eq_core` conditional on the introspection and answer-reduction clauses in `ω_co` | 2k–3k | done (#247) |
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | done (#249): ≈ 0.55k new, the ≈ 4k-line chain restated; the LIDT adapter deferred to C6 |
 | C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | done (#251): ≈ 3k new, ≈ 110 modules restated; `mipco_eq_core` conditional on the Pauli basis and LIDT tests in the commuting model |
-| C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | open |
+| C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | done (#253): ≈ 5.2k new, ≈ 50 modules restated; `mipco_eq_core_of_lidt` conditional on `LIDT.Simul.SoundCo` alone |
 | C6 | Phase 6: the low-individual-degree test in the commuting-operator model | unknown; 40k–130k by analogy | open; verify Lin's paper trail first |
 | C7 | Phase 7: the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
 

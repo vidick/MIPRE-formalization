@@ -25,8 +25,8 @@ space (the algebra `𝒜`), `A'` and `A''` the two halves of the pair, `Ea` the 
 
 ## Stated in a bipartite model
 
-Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The matrix analysis builds each
-of these states as an explicit vector on a product of index sets and moves between them by
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The matrix analysis built each
+of these states as an explicit vector on a product of index sets and moved between them by
 `Matrix.reindex` along regroupings of those sets (`PadReg`, `padState`, `extVec2`, `mirrorVec`,
 `physLiftEquiv`, `outerPairEquiv`, `endEquiv`). Here every state is an extension `N.expand e` of
 the bipartite model by finite registers in a joint vector `e`, only the finite registers are ever
@@ -557,10 +557,6 @@ theorem ι₁_ΦB (Z : Matrix I I ℬ) :
     BipartiteModel.assocEmb_ΦB, BipartiteModel.relabelEmb_ΦB, BipartiteModel.recutEmb_ΦB,
     submatrix_apply, compHom_apply, cutRelabel, Equiv.coe_fn_mk, Matrix.map_apply]
   by_cases hb : b = b' <;> by_cases hc : c = c' <;> by_cases he : e = e' <;> simp [hb, hc, he]
-
--- `CutSimul N S K δ := SimulPair N S (cut1 I F m d N K) (ι₁ I F m d N K) δ`, the simultaneous
--- pair measurement on the first cut, goes here once the model `SimulPair` of
--- `MIPRE/Background/QLD/Simul.lean` is stated.
 
 end Embeddings
 
