@@ -333,9 +333,12 @@ bound into a strict one. A compactness argument in finite dimension would retain
 constant $9$ at the non-strict bound --- apply the theorem at every larger error, then
 pass to a convergent subsequence of projective measurements and use continuity --- and
 would also cover zero defect. Corollary~\ref{cor:ortho-from-consistency}, the one
-application in this project, does not need it: its Cauchy--Schwarz step produces slack
+application in this chapter, does not need it: its Cauchy--Schwarz step produces slack
 $\gamma^2$ over the bound it has to clear, so the strict hypothesis holds as stated. The
-comments after that corollary record the repair.
+comments after that corollary record the repair. That corollary is no longer on the formalized
+route: the analysis of the Pauli basis test is stated for projective strategies in a bipartite
+model, whose measurements need no orthonormalization, so nothing outside the vendored tree
+applies this theorem at present.
 
 \subsection{Magic Square rigidity}
 \label{sec:rr-magic-square}
@@ -379,31 +382,35 @@ Mermin--Peres magic square. The form above is~\cite[Section 8]{JNVWY20}.
   MIPRE.QLD.MS.ms_direct_anticomm_avg, MIPRE.QLD.MS.isPVMIn_repPOVM, MIPRE.QLD.MS.refl_eq_sum,
   MIPRE.QLD.MS.bnd_one_sub_sq_of_sub, MIPRE.QLD.MS.isometry_πA, MIPRE.QLD.MS.povmValue_swap}
 \leanok
-Let $\ket{\psi}$ be a unit vector on $\C^{d_\alice} \ot \C^{d_\bob}$ and let $A, B$ be
-arbitrary POVM families for the Magic Square game (Definition~\ref{def:lcs-game} at the
-magic square's layout), failing it with probability at most $\eps \geq 0$. Write $B_j$ for the
-$\pm 1$-observable of the player who receives variable $\Variable_j$ --- the difference of the
-two \emph{bit} outcomes, every other answer contributing zero --- and $A_j$ for the other
-player's. Then
+Let $\ket{\psi}$ be a unit vector on $\C^{d_\alice} \ot \C^{d_\bob}$ and let $A, B$ be POVM
+families for the Magic Square game (Definition~\ref{def:lcs-game} at the magic square's layout),
+failing it with probability at most $\eps \geq 0$. Write $B_j$ for the second player's
+$\pm 1$-observable for variable $\Variable_j$ --- the difference of the two \emph{bit} outcomes,
+every other answer contributing zero --- and $A_j$ for the first player's. If the first player's
+measurements are projective, then
 \begin{equation*}
-  \norm{ (\{ B_1, B_5 \} \ot \Id) \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
-  \qquad
-  \norm{ (\{ A_1, A_5 \} \ot \Id) \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
+  \norm{ (\Id \ot \{ B_1, B_5 \}) \ket{\psi} }^2 \;\leq\; 186624\, \eps\;,
 \end{equation*}
-where $\{X, Y\} = XY + YX$. The bound holds on the \emph{original} observables: no isometry,
-no projectivity, no full Schmidt rank and no extracted EPR pairs are required. It averages
-without loss: for a family indexed by $\omega$ on the same pair of spaces, with weights
-$\nu_\omega \geq 0$,
-$\sum_\omega \nu_\omega \norm{(\{B_{1,\omega}, B_{5,\omega}\} \ot \Id)\ket{\psi_\omega}}^2
+and if the second player's are, then
+$\norm{ (\{ A_1, A_5 \} \ot \Id) \ket{\psi} }^2 \leq 186624\, \eps$, where
+$\{X, Y\} = XY + YX$. The bound holds on the \emph{original} observables: no isometry, no full
+Schmidt rank and no extracted EPR pairs are required, and of projectivity only the other player's.
+It averages without loss: for a family indexed by $\omega$ on the same pair of spaces, the first
+player's measurements projective, with weights $\nu_\omega \geq 0$,
+$\sum_\omega \nu_\omega \norm{(\Id \ot \{B_{1,\omega}, B_{5,\omega}\})\ket{\psi_\omega}}^2
 \leq 186624 \sum_\omega \nu_\omega \eps_\omega$.
+The Lean proves it for two families of POVMs in the players' algebras of any bipartite model
+(Definition~\ref{def:bipartite-model}) in a unit state; the statement above is its
+tensor-product instance.
 \end{lemma}
 
 \begin{proof}
 \leanok
-\uses{def:generalized-pauli,lem:naimark-dilation,def:bipartite-model}
-Dilate each constraint POVM, after repairing invalid outcomes to a fixed parity-valid triple,
-to a projective measurement on one ancilla; its outcome PVM gives commuting reflections
-$C_{c,j}$ whose product over a constraint is exactly that constraint's sign. Bob's original
+\uses{def:generalized-pauli,def:bipartite-model}
+Repair each of the first player's constraint measurements, sending every outcome that violates the
+constraint's parity to a fixed parity-valid triple. The repaired measurement is a coarse-graining
+of a projective measurement, hence projective, and its signed sums are commuting reflections
+$C_{c,j}$ whose product over a constraint is exactly that constraint's sign. The second player's
 POVMs are untouched. Uniformity of the $36$ oriented question incidences bounds each
 conditional loss by $36\eps$, and
 $\norm{(C_{c,j} - B_j)\ket{\psi}}^2 \leq 2 - 2(1 - 2\ell_{c,j}) \leq 4 \ell_{c,j}$ using
@@ -439,9 +446,21 @@ strictly stronger and is \emph{not} proved by this route --- but the pipeline ne
 what the Pauli basis test consumes is one anticommutation bound on the original observables,
 and the argument above delivers it from the game alone, with an explicit constant and without
 any of the structural hypotheses rigidity would impose. For a formalization this is a much
-better target than Theorem~\ref{thm:ms-rigidity}: the ingredients are a Naimark dilation, a
-telescoping substitution bound, and one six-step word identity in a group generated by nine
-reflections with six relations.
+better target than Theorem~\ref{thm:ms-rigidity}: the ingredients are the projectivity of one
+player's measurements, a telescoping substitution bound, and one six-step word identity in a group
+generated by nine reflections with six relations.
+
+\textbf{One player is projective, which is a choice, not a correction.} An earlier statement here,
+following the paper, allowed arbitrary POVM families on both sides, and its proof dilated the
+constraint measurements to projective ones on one ancilla shared by the six constraints
+(Lemma~\ref{lem:naimark-dilation}). The formalization is now stated in a bipartite model, where
+every strategy of the Pauli basis test is projective from the start
+(Definition~\ref{def:model-proj-strategy}), and Lemma~\ref{lem:qld-win}, the one consumer, applies
+the bound with the constraint player projective; so the repaired measurement is used as it is,
+on the model's own state, and the dilation has no consumer. The POVM form would follow from the
+projective one by dilating the constraint player alone on a one-sided ancilla extension
+(Definition~\ref{def:one-sided-extension}, Lemma~\ref{lem:kraus-dilation}), which changes neither
+the other player's observables nor their norms on the state; that step is not formalized. The paper was not consulted for this revision.
 
 \paragraph{Comments.} The direct bound is the elementary anticommutation input that
 the Pauli test amplifies to many qubits. Its bipartite form already matches the
@@ -1271,7 +1290,7 @@ with error $\delta$. It does not select independent single-codeword measurements
 
 \begin{proof}
 \leanok
-\uses{lem:schwartz-zippel,lem:qld-global-linear}
+\uses{lem:schwartz-zippel}
 Fix $y$, the original answer $b$ and the outcome $g$, and average over $x$ alone: the Born
 probabilities do not depend on $x$, since the original point measurement is asked $y$ and $R$
 is asked nothing. If $g$ is exactly linear in $x$ and its tuple at $y$ is not $b$, then
@@ -1520,7 +1539,9 @@ bits too long is a statement about a different verifier.
 \begin{theorem}[Pauli basis test / quantum low individual degree test]
 \label{thm:qld}
 \ledgernode{1.2.2, 1.2.2.17}
-\uses{def:qld-game,def:q-value,lem:ms-direct-anticomm,def:register-model}
+\uses{def:qld-game,def:q-value,lem:ms-direct-anticomm,def:register-model,def:local-isometry,
+  def:ancilla-extension,def:model-proj-strategy,def:lidt-sound-in,def:povm-domination,
+  def:value-model}
 \lean{MIPRE.QLD.errShape, MIPRE.QLD.ErrSmall, MIPRE.QLD.errSum, MIPRE.QLD.errShape_eq,
   MIPRE.QLD.errSum_nonneg, MIPRE.QLD.one_le_md_real, MIPRE.QLD.one_le_q_real, MIPRE.QLD.errSum_anti,
   MIPRE.QLD.errSum_le_three, MIPRE.QLD.errSum_rpow_le, MIPRE.QLD.errShape_nonneg,
@@ -1553,40 +1574,88 @@ bits too long is a statement about a different verifier.
   MIPRE.QLD.le_qldErr, MIPRE.QLD.ErrSmall.deltaLegs_comp, MIPRE.QLD.ErrSmall.deltaItemTwo_comp,
   MIPRE.QLD.errSmall_qldDelta, MIPRE.QLD.errSmall_qldHlt, MIPRE.QLD.errSmall_qldEta,
   MIPRE.QLD.errSmall_deltaLegs, MIPRE.QLD.errSmall_deltaItemTwo, MIPRE.QLD.errSmall_qldBound,
-  MIPRE.QLD.errSmall_qldErr, MIPRE.QLD.exists_qldErr_le, MIPRE.QLD.rdPauliVec_legalize_pauli,
-  MIPRE.QLD.MirrorSimul.isPVM_bobConjPauli, MIPRE.QLD.deltaSim_four_mul_le,
-  MIPRE.QLD.ErrSmall.deltaSim_comp}
+  MIPRE.QLD.errSmall_qldErr, MIPRE.QLD.exists_qldErr_le, MIPRE.QLD.deltaSim_four_mul_le,
+  MIPRE.QLD.ErrSmall.deltaSim_comp, MIPRE.QLD.rdPauliVec_legalize_pauli, MIPRE.QLD.legalStrat,
+  MIPRE.QLD.legalStrat_PA, MIPRE.QLD.legalStrat_PB, MIPRE.QLD.one_sub_value_legalStrat_le,
+  MIPRE.QLD.legalSupport_legalStrat_A, MIPRE.QLD.legalSupport_legalStrat_B,
+  MIPRE.QLD.legalStrat_pauli_A, MIPRE.QLD.legalStrat_pauli_B,
+  MIPRE.QLD.sum_stateSqNorm_alice_le_four, MIPRE.QLD.sum_stateSqNorm_bob_le_four,
+  MIPRE.QLD.norm_inert_reg_sub_le_four, MIPRE.QLD.inert_reg_ΦA_one, MIPRE.QLD.inert_reg_ΦB_one,
+  MIPRE.QLD.Extraction.trivial, MIPRE.QLD.norm_evec_unitPoint, MIPRE.QLD.dominatesPOVM_of_expand,
+  MIPRE.QLD.MirrorSimul.swapPhi_ΦA_one, MIPRE.QLD.MirrorSimul.swapPhi_ΦB_one,
+  MIPRE.QLD.exists_extraction_of_regime, MIPRE.QLD.soundIn_of_lidt}
 \leanok
 There exists a function
 \begin{equation*}
   \delta_{qld}(\eps, m, d, q) = a (md)^a \bigl( \eps^b + q^{-b} + 2^{-bmd} \bigr)
 \end{equation*}
-for universal constants $a \geq 1$ and $0 < b < 1$ such that the following holds. For
-all admissible parameter tuples $\qldparams = (q, m, d)$ and all strategies
-$\strategy = (\ket{\psi}, A, B)$ for the game $\game^{\pauli}_{\qldparams}$ that
-succeed with probability at least $1 - \eps$, there exist local isometries
-$\phi_\alice, \phi_\bob$ mapping into $\mH' \ot (\C^q)^{\ot M}$ with $M = 2^m$, and a
-state $\ket{\aux}$, such that
+for universal constants $a \geq 1$ and $0 < b < 1$ such that the following holds. Let $\cal{M}$ be a
+bipartite model (Definition~\ref{def:bipartite-model}) whose two players' algebras are ordered,
+proper and compatible with the scalars, and let $\omega$ be a value model
+(Definition~\ref{def:value-model}). Suppose (L) that the seeded CL test is sound
+(Definition~\ref{def:lidt-sound-in}) in every ancilla extension of $\cal{M}$ by a unit vector
+(Definition~\ref{def:ancilla-extension}), and (V) that $\omega$ dominates the POVM strategies
+(Definition~\ref{def:povm-domination}) of every such extension with its state replaced by any unit
+vector. Then for all admissible parameter tuples $\qldparams = (q, m, d)$ and every projective
+strategy in $\cal{M}$ (Definition~\ref{def:model-proj-strategy}) for the game
+$\game^{\pauli}_{\qldparams}$ that succeeds with probability at least $1 - \eps$, there are an
+ancilla model $\cal{N}$, a bipartite model in a unit state $\ket{\aux}$ whose POVM strategies
+$\omega$ dominates, and a local isometry (Definition~\ref{def:local-isometry}) from $\cal{M}$ to the
+register model of $\cal{N}$ on the register $\F_q^M$, $M = 2^m$, each player holding a copy of
+$(\C^q)^{\ot M}$ (Definition~\ref{def:register-model}), such that
+\begin{enumerate}
+\item the image of the strategy's state is within $\delta_{qld}$ of
+  $\ket{\EPR_q}^{\ot M} \ot \ket{\aux}$, the state of the register model; and
+\item for each $W \in \{X, Z\}$ and each player, the image of that player's own measurement for the
+  question $(\pauli, W)$, read as cube data, is within $\delta_{qld}$ of the Pauli basis
+  measurement $\tau^W_h$, $h \in \F_q^M$, on that player's half of the register, in summed squared
+  state-dependent distance on that state.
+\end{enumerate}
+That is, the Pauli basis test is sound in $\cal{M}$ with $\omega$
+(Definition~\ref{def:qld-sound-in}). The pipeline uses two instances. In the tensor-product model of
+a state $\ket{\psi}$ on $\C^{d_\alice} \ot \C^{d_\bob}$, with $\valstar$, both hypotheses hold, and
+the conclusion is the matrix statement: local isometries $\phi_\alice, \phi_\bob$ into
+$\mH' \ot (\C^q)^{\ot M}$ and a state $\ket{\aux}$ with
 $\norm{\phi_\alice \ot \phi_\bob \ket{\psi} - \ket{\aux} \ot \ket{\EPR_q}^{\ot M}}
-\leq \delta_{qld}$, and for $W \in \{X, Z\}$ the measurements for the questions
-$(\pauli, W)$ are $\delta_{qld}$-close to the Pauli basis measurements $\tau^W_u$, $u
-\in \F_q^M$, acting on $\ket{\EPR_q}^{\ot M}$.
+\leq \delta_{qld}$, and for $W \in \{X, Z\}$ the measurements for the questions $(\pauli, W)$
+$\delta_{qld}$-close to the Pauli basis measurements $\tau^W_u$, $u \in \F_q^M$, acting on
+$\ket{\EPR_q}^{\ot M}$ (Lemma~\ref{lem:qld-sound-in-tensor}). In the model of every
+commuting-operator strategy, with $\omegaco$, the second hypothesis always holds and the first
+follows from the soundness of the seeded CL test in the commuting-operator model
+(Lemma~\ref{lem:qld-sound-co}).
 \end{theorem}
 
 \begin{proof}
-\uses{lem:qld-swap,lem:qld-global-setup,lem:naimark-dilation,lem:qld-axis-degree,lem:pauli-mixing}
+\uses{lem:qld-swap,lem:qld-pauli-selfcons,lem:qld-axis-degree,lem:pauli-mixing,
+  def:qld-physical-model}
 \leanok
-Outside the regime $48md \leq q$, or where item~1 of Lemma~\ref{lem:qld-swap} has no content,
-take the trivial bounds, which the shape dominates once $a$ is large. Inside it, legalize the
-strategy's answers (Lemma~\ref{lem:qld-axis-degree}'s \texttt{legalizeStrat}, which does not
-change the Pauli measurements' cube data) and dilate it to a projective one
-(Lemma~\ref{lem:naimark-dilation}); apply Lemma~\ref{lem:qld-swap}; take for $\phi$ the swap
-unitary after the embedding $\ket{\theta} \mapsto \ket{\theta} \ot \ket{\EPR_q}^{\ot M}$ with
-the padding at a basis vector, after the dilation's embedding. The passage from the lemma's
-$V$-conjugation to $\phi$-conjugation, and from the dilated measurements down to the original
-POVMs, both go through the agreement with $\tau^W$ on the \emph{other} half of the entangled
-pair, which is linear in each party's operators; each state transfer costs twice item~1's
-distance, and item~1 bounds the squared norm, whence the fourth root.
+Two cases. Inside the regime --- $48md \leq q$, and $2\sqrt{X} + 2X < 1$ at the constant $X$ of
+Lemma~\ref{lem:qld-pauli-selfcons}, which is what item~1 of Lemma~\ref{lem:qld-swap} needs ---
+three steps, and no dilation.
+\begin{enumerate}
+\item \textbf{Legalize} (Lemma~\ref{lem:qld-axis-degree}): send every answer of the wrong format
+  to its question's default. The legalized strategy is projective, fails with probability at most
+  $\eps$, and is legally supported, which stage~4 needs; and its coarse $(\pauli, W)$ measurements
+  are the strategy's, a malformed Pauli answer and the default both reading as the cube
+  datum~$0$.
+\item \textbf{Both cuts on one state}: stage~4 (Lemma~\ref{lem:qld-simultaneous}) at the legalized
+  strategy and at the legalized strategy with the players exchanged, at one padding size. This is
+  where hypothesis (L) is used: the padded models of $\cal{M}$ and of $\cal{M}$ with the players
+  exchanged are ancilla extensions of $\cal{M}$ up to associativity, and the two runs' pair
+  measurements are the two cuts of one physical model (Definition~\ref{def:qld-physical-model}).
+\item \textbf{The swap isometry} of Lemma~\ref{lem:qld-swap} is a local isometry of $\cal{M}$ into
+  the register model of the extension of $\cal{M}$ by the padded registers in an auxiliary unit
+  state; that extension, in that state, is the ancilla model, and hypothesis (V) is that
+  $\omega$ dominates it. Item~2 is item~2 of the lemma as it stands, the measurements it carries
+  being the strategy's own, and item~1 is the square root of the lemma's bound on the squared
+  distance.
+\end{enumerate}
+Both items are also at most the trivial bound $4$, which caps the error. Outside the regime the
+error is $4$, and the model itself, with the EPR register adjoined inertly, is an extraction at
+that bound: the state is carried exactly to the state of the register model, and two projective
+measurements on a unit vector are within $4$ of each other in summed squared state-dependent
+distance. Its ancilla model is $\cal{M}$ itself, which $\omega$ dominates by (V) at the
+extension by one-point registers.
 \end{proof}
 
 \paragraph{Source.} The pinned paper~\cite{AuditSync26}, \texttt{qld-appendix.tex}
@@ -1597,9 +1666,11 @@ Lemma~\ref{lem:ms-direct-anticomm} supplies the base anticommutation directly.
 
 \paragraph{Comments.} This is the
 workhorse of question reduction: introspection certifies the players' sampling of
-their own questions against Pauli basis measurements. The reduction uses direct
+their own questions against Pauli basis measurements. The paper's reduction uses direct
 Magic Square anticommutation, linearity and orthonormalization, together with the
-seeded CL theorem. The available canonical-line theorem can replace the paper's
+seeded CL theorem; the formalized one uses neither linearity (Theorem~\ref{thm:linearity}) nor
+orthonormalization (Corollary~\ref{cor:ortho-from-consistency}), its strategies being projective.
+The available canonical-line theorem can replace the paper's
 classical route through Remark~\ref{rem:lidt-cl-adapter}'s adapter, which supplies the
 $\mathrm{ldc}=1$ case this reduction uses (Theorem~\ref{thm:lidt-cl-soundness-one}).
 
@@ -1608,63 +1679,83 @@ interface, so its uses require no additional synchronous-value transport. The ve
 campaign~\cite{Audit26} further reports three corrections in the tensor-code material the
 proof passes through --- $\kappa$-convexity requires $c_1 \leq 1$, the synchronicity
 defect obeys $\delta_{\mathrm{sync}} \leq 4\eps$ rather than $3\eps$, and one corner block
-pairs with a transpose --- none affecting the statement above. The formal proof below is
-checked end to end with no assumption beyond Lean's standard axioms, so it does not rest on the
-paper's account of that material.
+pairs with a transpose --- none affecting the statement above. The formal proof is
+checked end to end with no assumption beyond Lean's standard axioms --- in the tensor-product
+model hypothesis (L) is discharged by Lemma~\ref{lem:lidt-sound-in-tensor} --- so it does not rest
+on the paper's account of that material.
 
-\emph{The formalization.} \texttt{MIPRE.QLD.qld\_soundness}
-(\texttt{MIPRE/Background/QLD/Soundness.lean}) is the theorem: there are $a \geq 1$ and
-$0 < b < 1$ such that for every field $\F_q$ of characteristic two, every $m \geq 1$ with
-$m \mid q$, every $d \geq 1$, and every POVM strategy for $\game^{\pauli}_{\qldparams}$ that
-fails with probability at most $\eps$, there are isometries $V_\alice$, $V_\bob$ into
-$(\C^q)^{\ot M} \ot \mH'$ and a unit $\ket{\aux}$ with both items at
-$\delta_{qld} = a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$. Item 2 is stated for both parties and both
-bases, relative to the one state $\ket{\EPR_q}^{\ot M} \ot \ket{\aux}$, as the summed squared
-state-dependent distance. The shapes are those the introspection consumer takes
-(\texttt{quantumValue\_ge\_of\_valid\_isometric\_images} in
-\texttt{MIPRE/Foundations/Introspection/ValidPauliSoundness.lean}): register-first isometries,
-\texttt{isometricState}, \texttt{registerState}, \texttt{isometricImage}, and an unsquared
-distance in item~1. Three points of the statement are worth knowing.
+\emph{The formalization.} \texttt{MIPRE.QLD.soundIn\_of\_lidt}
+(\texttt{MIPRE/Background/QLD/Soundness.lean}) is the theorem: for a bipartite model $\cal{M}$ with
+ordered, proper algebras compatible with the scalars and a value model $\omega$, the two
+hypotheses give \texttt{QLD.SoundIn} $\omega$ $\cal{M}$ (Definition~\ref{def:qld-sound-in}). For
+every field $\F_q$ of characteristic two, every $m \geq 1$ with $m \mid q$, every $d \geq 1$ and
+every projective strategy in $\cal{M}$ failing with probability at most $\eps$, it provides an
+extraction (\texttt{QLD.Extraction}) at error \texttt{qldErr}: an ancilla model, which $\omega$
+dominates, a local isometry of $\cal{M}$ into its register model, the state error, and both
+players' summed squared errors for both bases. Its tensor-product instance
+(\texttt{soundIn\_tensor}) and its commuting-operator instance (\texttt{soundCo\_of\_lidt}) are
+recorded in Chapter~\ref{ch:downstream}, as Lemmas~\ref{lem:qld-sound-in-tensor}
+and~\ref{lem:qld-sound-co}, where their consumers are. Four points of the statement are worth
+knowing, the first two of them differences from the paper's.
 \begin{itemize}
-\item It asks less than admissibility: characteristic two, $m \mid q$ and $d \geq 1$. The
-  regime $48md \leq q$ and the divisibility $4m \mid q$ are discharged inside the proof, not
-  assumed (\texttt{MIPRE/Background/QLD/Regime.lean}).
-\item The strategy is arbitrary: not projective, not legal. Legalization is free because it
-  does not change the cube data a Pauli answer carries (\texttt{rdPauliVec\_legalize\_pauli}),
-  and the Naimark descent is \texttt{sum\_snorm\_sq\_descent\_isometry\_aOp} and its Bob
-  form in \texttt{MIPRE/Background/QLD/Descent.lean}: closeness on the product state is turned
-  into agreement with $\tau^W$ on the other half of the pair, which is linear in the measurement
-  and so reads the same on the dilated and the original strategy, then turned back, at a cost of
-  $8\sqrt{\eta}$ for item~1's bound $\eta$. This is the paper's argument, made exact.
-\item Item 2 is about the strategy's Pauli measurement read as cube data,
-  \texttt{(MA (.pauli W)).map rdPauliVec}, which puts every malformed Pauli answer at $h = 0$,
-  as the game's reading does. The introspection consumer sums over the \emph{valid} answers
-  only; passing between the two needs a bound on the malformed mass. That bridge belongs to
-  the consumer and is not part of this theorem.
+\item \textbf{The strategy is projective, in a model.} The paper states the theorem for POVM
+  strategies on a tensor product of finite-dimensional spaces; here it is about the projective
+  strategies of a bipartite model satisfying the two hypotheses. The restriction is deliberate.
+  The matrix theorem this replaces did cover POVM strategies, by dilating the strategy to a
+  projective one, running the chain on the dilation and carrying item~2 back down to the
+  original POVM through its agreement with $\tau^W$ on the other half of the pair, at a cost of
+  $8\sqrt{\eta}$ for item~1's bound $\eta$. That descent was specific to matrices, and its one
+  consumer, introspection, applies the theorem to projective strategies only
+  (Lemma~\ref{lem:intro-pauli-extraction}); so the POVM form is not restated. This is a choice of
+  the formalization, not a discrepancy with the paper, which was not consulted for this revision.
+\item \textbf{The conclusion is a local isometry of models} into the register model of an ancilla
+  model, in place of a pair of isometries $\phi_\alice \ot \phi_\bob$ into
+  $\mH' \ot (\C^q)^{\ot M}$ and a state $\ket{\aux}$. The players' operators move by its
+  homomorphisms, as $X \mapsto \phi_\alice X \phi_\alice^\dagger$ does, and the errors are the
+  model's state norms; in the tensor-product model the two forms coincide
+  (Lemma~\ref{lem:qld-sound-in-tensor}).
+\item \textbf{It asks less than admissibility}: characteristic two, $m \mid q$ and $d \geq 1$. The
+  regime where the chain runs is $48md \leq q$ rather than the paper's $16md \leq q$, $48$ being
+  where Lemma~\ref{lem:qld-global-separate} is formalized; the regime and the divisibility
+  $4m \mid q$ are discharged inside the proof, not assumed
+  (\texttt{MIPRE/Background/QLD/Regime.lean}), and outside the regime the error absorbs the trivial
+  bound, as the paper's own enlargement of $a$ does.
+\item \textbf{Item 2 is about the strategy's Pauli measurement read as cube data},
+  \texttt{(S.PA (.pauli W)).map rdPauliVec}, which puts every malformed Pauli answer at $h = 0$,
+  as the game's reading does. The paper assumes well-formatted answers; this is a relabelling of
+  outcomes, not a restriction, and it is why legalizing the strategy is free
+  (\texttt{rdPauliVec\_legalize\_pauli}). Read at the genuine answers instead, item~2 is
+  Corollary~\ref{cor:qld-valid}.
 \end{itemize}
-The explicit isometry is \texttt{physEmb} (\texttt{MIPRE/Background/QLD/PhysEmbed.lean}):
-\texttt{physVec\_mirrorOfGlobalPairs} says the state the whole of stage~5 works on is the
-strategy's state under it. \texttt{MIPRE/Background/QLD/RegisterForm.lean} moves the register
-to the front, and also identifies the consumer's honest readouts with the spectral projectors
-(\texttt{proj\_weylOf\_X}, \texttt{proj\_weylOf\_Z}).
+Inside the regime the proof is \texttt{exists\_extraction\_of\_regime}: the extraction is the swap
+isometry \texttt{MirrorSimul.swapPhi} at the \texttt{MirrorSimul} that \texttt{exists\_mirrorSimul}
+builds for the legalized strategy (\texttt{legalStrat}), with the padded extension in the swap
+lemma's auxiliary state as its ancilla model. Outside it the proof is \texttt{Extraction.trivial}.
+Nothing follows the swap isometry, so the matrix route's explicit embedding of the strategy's space
+into the physical state, its descent from the dilation, and its reading of the isometries with the
+register first are all gone.
 
-\emph{The error.} \texttt{MIPRE/Background/QLD/QLDError.lean} names the bound the proof
-produces, \texttt{qldErr}: $\min(\texttt{qldBound}, 4)$ inside the regime and $4$ outside,
-with \texttt{qldBound} item~2's constant plus $9\sqrt{\eta}$, and shows it is in the class
-below. \texttt{MIPRE/Background/QLD/ErrorShape.lean} is the error shape:
-\texttt{ErrSmall} says a family of error terms is dominated by
-$a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$ with $a \geq 1$ and $0 < b < 1$ chosen \emph{before} the
-parameters, on the range $0 \leq \eps \leq 1$, $m, d \geq 1$, $q \geq 2$. The class is closed
-under sums, constant multiples, products, square roots, real powers $t^B$ for $0 < B \leq 1$
-(by subadditivity) and polynomial prefactors in $md$, and every link of the chain the appendix
-produces is in it --- from $\delta_{\mathrm{CL}}$ at $(q, 4m, d)$ through $\delta_{\mathrm{ld}}$,
-$\delta_S$ and the constant of Lemma~\ref{lem:qld-pauli-selfcons} to item~1 of
-Lemma~\ref{lem:qld-swap}, whose bound $2 - 2\sqrt{1 - \eta}$ is at most $2\eta$ for every
-$\eta \geq 0$. \texttt{not\_errSmall\_one} guards the definition: a positive constant is not in
-the class. \texttt{ErrSmall.of\_regime} and \texttt{ErrSmall.of\_cases} are the paper's move of
-taking the trivial bound outside the regime, needed for $48md \leq q$ and for item~1's
-smallness hypothesis. \texttt{MIPRE/Background/QLD/Regime.lean} discharges $4m \mid q$ inside the
-regime; Lemma~\ref{lem:qld-global-setup}'s comments say why the size condition cannot be dropped.
+\emph{The error.} \texttt{MIPRE/Background/QLD/QLDError.lean} names the bound the proof produces,
+\texttt{qldErr}: $\min(\texttt{qldBound}, 4)$ inside the regime and $4$ outside. Here
+\texttt{qldBound} is item~2's constant of Lemma~\ref{lem:qld-swap} plus $\sqrt{\eta}$, for item~1's
+bound $\eta$ on the squared distance: item~2 is the lemma's on the nose and $\sqrt{\eta}$ is
+item~1's distance, so \texttt{qldBound} dominates both. The cap $4$ is the trivial bound: two unit
+vectors are within $2$ of each other, and two projective measurements on a unit vector within $4$ in
+summed squared state-dependent distance (\texttt{BipartiteModel.sum\_stateSqNorm\_sub\_le\_four}).
+\texttt{MIPRE/Background/QLD/ErrorShape.lean} is the error shape: \texttt{ErrSmall} says a family of
+error terms is dominated by $a(md)^a(\eps^b + q^{-b} + 2^{-bmd})$ with $a \geq 1$ and $0 < b < 1$
+chosen \emph{before} the parameters, on the range $0 \leq \eps \leq 1$, $m, d \geq 1$, $q \geq 2$.
+The class is closed under sums, constant multiples, products, square roots, real powers $t^B$ for
+$0 < B \leq 1$ (by subadditivity) and polynomial prefactors in $md$, and every link of the chain the
+appendix produces is in it --- from the seeded soundness error $\delta_{\mathrm{sim}}$ at
+$(q, 4m, d, 1)$ (\texttt{ErrSmall.deltaSim\_comp}) through $\delta_{\mathrm{ld}}$, $\delta_S$ and
+the constant of Lemma~\ref{lem:qld-pauli-selfcons} to item~1 of Lemma~\ref{lem:qld-swap}, whose
+bound $2 - 2\sqrt{1 - \eta}$ is at most $2\eta$ for every $\eta \geq 0$. \texttt{not\_errSmall\_one}
+guards the definition: a positive constant is not in the class. \texttt{ErrSmall.of\_regime} and
+\texttt{ErrSmall.of\_cases} are the paper's move of taking the trivial bound outside the regime,
+needed for $48md \leq q$ and for item~1's smallness hypothesis.
+\texttt{MIPRE/Background/QLD/Regime.lean} discharges $4m \mid q$ inside the regime;
+Lemma~\ref{lem:qld-global-setup}'s comments say why the size condition cannot be dropped.
 
 The ledger node $1.2.2$ also records completeness of the game. That is
 Lemma~\ref{lem:intro-honest-full-pauli}, formalized separately; this theorem is the soundness
@@ -1680,59 +1771,117 @@ constants the proof produces.
 
 \begin{corollary}[Theorem~\ref{thm:qld} on the valid answers]
 \label{cor:qld-valid}
-\uses{thm:qld}
-\lean{}
+\uses{thm:qld,def:qld-sound-in}
+\lean{MIPRE.Introspection.RestrictedSoundness.PauliSupported,
+  MIPRE.Introspection.RestrictedSoundness.rdPauliVec_op_of_supported,
+  MIPRE.Introspection.RestrictedSoundness.ParsedPauliSupported,
+  MIPRE.Introspection.RestrictedSoundness.completePauliPOVM_invalid_of_supported,
+  MIPRE.Introspection.RestrictedSoundness.qldCoefficient,
+  MIPRE.Introspection.RestrictedSoundness.qldExponent,
+  MIPRE.Introspection.RestrictedSoundness.qldCoefficient_one_le,
+  MIPRE.Introspection.RestrictedSoundness.qldExponent_pos,
+  MIPRE.Introspection.RestrictedSoundness.qldExponent_lt_one,
+  MIPRE.Introspection.RestrictedSoundness.qldErr_le_errShape,
+  MIPRE.Introspection.RestrictedSoundness.FieldExtraction,
+  MIPRE.Introspection.RestrictedSoundness.FieldExtraction.mono,
+  MIPRE.Introspection.RestrictedSoundness.FieldExtraction.ofQLD,
+  MIPRE.Introspection.RestrictedSoundness.fieldExtraction_exists,
+  MIPRE.Introspection.RestrictedSoundness.degreeOne_fieldExtraction_exists}
 \leanok
-In the setting of Theorem~\ref{thm:qld}, suppose in addition that the strategy's two Pauli
-measurements $A^{(\pauli,W)}$ and $B^{(\pauli,W)}$ are projective. Then item~2 holds with the
-sum over $h \in \F_q^M$ taken over the answer $h$ itself rather than over every answer the game
-reads as $h$, at $2\delta_{qld} + 8/q$ in place of $\delta_{qld}$, with the same isometries and
-the same $\ket{\aux}$.
+In the setting of Theorem~\ref{thm:qld}, suppose in addition that the strategy's measurements for
+the questions $(\pauli, W)$ are \emph{supported on correctly formatted answers}: for both players
+and both bases, the measurement has no element at an answer that is not of the form
+$h \in \F_q^M$. Then for the first player's $X$ measurement and the second player's $Z$
+measurement, the two that introspection uses, item~2 holds with the sum over $h \in \F_q^M$ taken
+at the answer $h$ itself rather than over every answer the game reads as $h$, with the same local
+isometry, the same ancilla model and the same $\delta_{qld}$. The constants $a$, $b$ of
+$\delta_{qld}$ are fixed once, before the parameters, and at every $\eps \geq 0$ the error is
+$\delta_{qld}(\eps, m, d, q)$. The support hypothesis holds for the restriction to the Pauli basis
+test (Lemma~\ref{lem:intro-pauli-restriction}) of a strategy of the parsed introspection game whose
+measurements at the Pauli questions have nonzero elements only at genuine full-register answers.
+The Lean proves it for a projective strategy in any bipartite model in which the Pauli basis test
+is sound (Definition~\ref{def:qld-sound-in}); the statement above is its tensor-product instance.
 \end{corollary}
 
 \begin{proof}
+\uses{thm:qld,def:qld-sound-in}
 \leanok
-For $h \neq 0$ the only answer read as $h$ is $h$ itself, so the two sums agree term by term. At
-$h = 0$ the answer $0$ is one element of a projective family, so its image is dominated by the
-image of everything read as $0$, and the triangle inequality costs twice the norm of $\tau^W_0$
-applied to $\ket{\EPR_q}^{\ot M} \ot \ket{\aux}$. That projector has rank one, so its weight on the
-maximally entangled state is $q^{-M} \leq 1/q$.
+When a measurement has no element at a malformed answer, the coarse measurement that reads every
+answer as cube data has at $h$ exactly the element of the answer $h$: the fibre of $h$ holds $h$
+and malformed answers, which contribute nothing --- including at $h = 0$, where the game's reading
+puts every malformed answer. So the two sums agree term by term, and item~2 of
+Theorem~\ref{thm:qld} is the statement. The constants are those of the closed form of the error of
+Theorem~\ref{thm:qld}; the theorem is applied at $\min(\eps, 1)$, which bounds the failure
+probability too, the value being nonnegative. For the restriction of a parsed strategy, completing
+the malformed outer answers at a scalar answer moves no mass onto a malformed Pauli answer, every
+nonzero element at a Pauli question being a genuine full-register answer.
 \end{proof}
 
 \paragraph{Comments.} The paper's game has no other answers to a $(\pauli, W)$ question; the formal
 game has one answer type for all questions, and Theorem~\ref{thm:qld} reads every answer that is
 not a Pauli answer as the outcome $0$, as the game does. The introspection consumer
 (Lemma~\ref{lem:intro-valid-isometric-soundness}) sums over the valid answers only, and this
-corollary is the bridge. It needs no bound on how often the malformed answers occur: the rank-one
-projector at $0$ pays for them. \texttt{MIPRE/Background/QLD/ValidAnswers.lean}.
+corollary is the bridge, in \texttt{MIPRE/Background/Introspection/QLDExtractionAdapter.lean}.
+\texttt{FieldExtraction} (\texttt{MIPRE/Background/Introspection/BinaryExtraction.lean}) is the
+conclusion at the genuine answers: the ancilla model, the local isometry, the state error, and the
+two estimates introspection uses, the first player's $X$ and the second player's $Z$.
+\texttt{FieldExtraction.ofQLD} reads an extraction of Theorem~\ref{thm:qld} there under the support
+hypothesis (\texttt{PauliSupported}, through \texttt{rdPauliVec\_op\_of\_supported}),
+\texttt{fieldExtraction\_exists} is the corollary, and \texttt{degreeOne\_fieldExtraction\_exists}
+is its case $d = 1$, at the error the canonical parameter estimates use.
+
+\textbf{It costs nothing.} The matrix corollary this replaces assumed only that the two Pauli
+measurements were projective, and paid at $h = 0$: the answer $0$ is one element of everything the
+game reads as $0$, so the triangle inequality cost twice the weight of the rank-one projector
+$\tau^W_0$ on $\ket{\EPR_q}^{\ot M} \ot \ket{\aux}$, at most $1/q$, and the error became
+$2\delta_{qld} + 8/q$. The support hypothesis removes the malformed answers instead, so the fibre
+at $0$ is the answer $0$ alone. It is free where the corollary is used: the decoder of the
+introspection game leaves only genuine full-register answers at the Pauli questions
+(\texttt{ParsedPauliSupported}), and the restriction to the Pauli basis test keeps that
+(\texttt{completePauliPOVM\_invalid\_of\_supported}). The universal constants are fixed once
+(\texttt{qldCoefficient}, \texttt{qldExponent}), from the closed form \texttt{exists\_qldErr\_le}
+of the error, a fact about that function alone, so they are the same in every model
+(\texttt{qldErr\_le\_errShape}).
 
 \begin{corollary}[Theorem~\ref{thm:qld} on qubits]
 \label{cor:qld-binary}
-\uses{thm:qld,lem:pauli-binary}
-\lean{}
+\uses{cor:qld-valid,lem:pauli-binary}
+\lean{MIPRE.Introspection.RestrictedSoundness.binaryX,
+  MIPRE.Introspection.RestrictedSoundness.binaryZ,
+  MIPRE.Introspection.RestrictedSoundness.FieldExtraction.toBinary}
 \leanok
 Let $q = 2^k$, let $\{e_1, \ldots, e_k\}$ be a self-dual basis of $\F_q$ over $\F_2$, and let
 $\phi : \F_q^M \to \F_2^{M \times k}$ be the relabelling of Lemma~\ref{lem:pauli-binary}. Then
-Theorem~\ref{thm:qld} holds with the same $\delta_{qld}$ and with the register
-$(\C^q)^{\ot M}$ read as $M k$ qubits: the isometries map into
-$(\C^2)^{\ot Mk} \ot \mH'$, item~1 compares with $\ket{\EPR_2}^{\ot Mk} \ot \ket{\aux}$, and in
-item~2 the honest measurement at the outcome $\phi(u)$ is the qubit Pauli measurement
-$\sigma^W_{\phi(u)}$, for both parties and both bases.
+Corollary~\ref{cor:qld-valid} holds with the same $\delta_{qld}$ and with the register
+$(\C^q)^{\ot M}$ read as $M k$ qubits: the local isometry maps into the register model on
+$\F_2^{M \times k}$, item~1 compares with $\ket{\EPR_2}^{\ot Mk} \ot \ket{\aux}$, and in item~2 the
+honest measurement at the outcome $\phi(u)$, for the genuine answer $u$, is the qubit Pauli $X$
+measurement $\sigma^X_{\phi(u)}$ for the first player and the computational-basis measurement
+$\sigma^Z_{\phi(u)}$ for the second. The Lean proves it for a projective strategy in any bipartite
+model, the relabelling acting on the register of the ancilla model's register model after the
+local isometry; the statement above is its tensor-product instance.
 \end{corollary}
 
 \begin{proof}
 \uses{lem:register-model}
 \leanok
-The relabelling is a bijection of basis index sets, so the transport is a reindexing and no
-quantity changes: the maximally entangled state is preserved by any simultaneous relabelling of
-both halves, the $Z$ readouts are computational-basis projectors on both sides, and the $X$
-readouts correspond by Lemma~\ref{lem:pauli-binary}, which is where self-duality is used.
+The relabelling is a bijection of basis index sets, so the transport relabels the register of the
+register model, a local isometry carrying the state of one register model exactly to the state of
+the other (Lemma~\ref{lem:register-model}); composed after the extraction's local isometry it
+changes no quantity. The state error is unchanged, and the two error sums are reindexed along
+$\phi$: the $Z$ readouts are computational-basis projectors on both sides, and the $X$ readouts
+correspond by Lemma~\ref{lem:pauli-binary}, which is where self-duality is used.
 \end{proof}
 
 \paragraph{Comments.} The paper's \texttt{cor:pauli-binary} (\texttt{ldt.tex}), and the form the
 binary introspection game consumes (Lemma~\ref{lem:intro-pauli-extraction}).
-\texttt{MIPRE/Background/QLD/BinaryForm.lean}; the transport is proved for an arbitrary relabelling
-of the register first (\texttt{relabelFirst}) and specialized to the self-dual one.
+\texttt{FieldExtraction.toBinary} (\texttt{MIPRE/Background/Introspection/BinaryExtraction.lean})
+composes the extraction's local isometry with the relabelling of the register along the binary
+basis (\texttt{BipartiteModel.regRelabel}), and \texttt{binaryX} and \texttt{binaryZ} identify the
+relabelled honest projectors. Like Corollary~\ref{cor:qld-valid} it carries the first player's $X$
+estimate and the second player's $Z$ estimate, the two introspection uses; the matrix form, which
+covered both players and both bases for an arbitrary relabelling of the register, was removed
+with the matrix theorem.
 
 \subsubsection{The shape of the soundness proof}
 
@@ -1745,7 +1894,7 @@ architecture is worth stating before its pieces, because the pieces are unreadab
 There are five stages.
 \begin{enumerate}
 \item \textbf{Preliminaries}: three utility lemmas about closeness, one of which
-  (Corollary~\ref{cor:ortho-from-consistency}) is used on almost every page.
+  (Corollary~\ref{cor:ortho-from-consistency}) the paper uses on almost every page.
 \item \textbf{Win implications}: unpack ``succeeds with probability $1 - \eps$'' into one
   consistency or commutation statement per subtest (Lemma~\ref{lem:qld-win}).
 \item \textbf{Expansion}: adjoin EPR ancillas and replace the strategy's measurements by ones
@@ -1759,12 +1908,25 @@ There are five stages.
   (Lemmas~\ref{lem:qld-exact-paulis} and~\ref{lem:qld-swap}).
 \end{enumerate}
 Stage 4 consumes Theorem~\ref{thm:lidt-cl-soundness} at $(q,4m,d,1)$, after
-constructing a strategy for the seeded CL game and projectivizing its line POVMs.
+constructing a strategy for the seeded CL game and dilating it to a projective one.
 Theorem~\ref{thm:lidt-soundness} justifies this application through
 Theorem~\ref{thm:lidt-cl-soundness-one}, the $\mathrm{ldc}=1$ case being exactly what stage 4
 consumes; what stage 4 must still supply is the padding itself. Stage 5 recovers the Pauli group
 relations exactly, which permits the standard swap isometry; the expanded
 measurements in stage 3 satisfy only approximate commutation.
+
+\emph{In the formalization} every stage is stated for a strategy in a bipartite model
+(Definition~\ref{def:bipartite-model}), and the tensor-product model is the instance in which each
+statement below is written. A strategy of the model is projective from the start
+(Definition~\ref{def:model-proj-strategy}), so the orthonormalization of stage~1 is used nowhere:
+where the paper replaces a POVM by a nearby projective measurement, the formalization's measurement
+is projective already. The registers the later stages adjoin are ancilla extensions of the model
+(Definition~\ref{def:ancilla-extension}): the expanded state of stage~3 is its register model
+(Definition~\ref{def:register-model}), and the padded and physical states of stages~4 and~5 are
+the models of Definition~\ref{def:qld-physical-model}, between which registers move by local
+isometries. The seeded CL theorem enters as a hypothesis on the model, its soundness in every
+ancilla extension by a unit vector (Definition~\ref{def:lidt-sound-in}), and is applied once per
+player orientation, in the padded model, to the projective dilation of the padded strategy.
 \end{remark}
 
 \subsubsection{Preliminaries}
@@ -1877,8 +2039,6 @@ than an $O(\cdot)$.
 \label{cor:ortho-from-consistency}
 \ledgernode{1.2.2.3, 1.2.2.3.1}
 \uses{def:state-distance}
-\lean{}
-\leanok
 Let $\delta > 0$, let $\{Q_a\}$ be a POVM on $\mH_\alice$ and $\{R_a\}$ a POVM on $\mH_\bob$
 whose inconsistency on the unit vector $\ket{\psi}$ is at most $\delta$. Then there is a
 \emph{projective} measurement $\{P_a\}$ on $\mH_\alice$ with
@@ -1891,9 +2051,7 @@ Theorem~\ref{thm:orthonormalization} permits.
 \end{corollary}
 
 \begin{proof}
-\uses{def:bipartite-model}
-\leanok
-
+\uses{thm:orthonormalization}
 This is not Theorem~\ref{thm:orthonormalization} restated: that theorem requires strict
 near-projectivity in a normal state, while what the appendix has is
 bipartite consistency. The bridge is a Cauchy--Schwarz step. Write
@@ -1931,6 +2089,14 @@ $\ket{\psi}$ exactly. Nothing downstream uses it: every invocation carries a pos
 bound. The statement above is therefore weaker only at $\delta = 0$ and stronger elsewhere,
 both in being strict and in naming the constant.
 
+\textbf{Not formalized, and off the formalized route.} This corollary was formalized for matrices
+(\texttt{exists\_projective\_of\_consistent}, through Theorem~\ref{thm:orthonormalization}), and the
+formalization was removed when the analysis of the Pauli basis test was restated in a bipartite
+model: a strategy there is projective from the start (Definition~\ref{def:model-proj-strategy}),
+and its one consumer, the commuting case of Lemma~\ref{lem:qld-obs-commutation}, now uses the
+strategy's own projective $\mathtt{Pair}$ measurement (Lemma~\ref{lem:qld-obs-commutation-comm}).
+It is kept as the paper's statement, with the repair above, and carries no formalization marks.
+
 \subsubsection{What winning implies}
 
 \effortHard
@@ -1949,7 +2115,8 @@ both in being strict and in naming the constant.
 \leanok
 Let $\strategy = (\ket{\psi}, M)$ be a POVM strategy succeeding with probability at least
 $1 - \eps$ in the Pauli basis test $\game^\pauli_\qldparams$ of
-Definition~\ref{def:qld-game}. Let $\gamma(\omega)$ be as in
+Definition~\ref{def:qld-game}, $M$ standing for either player's measurements. Let
+$\gamma(\omega)$ be as in
 Lemma~\ref{fact:omega-anticomm-prob}, write $g_h$ for the low-degree encoding of
 Definition~\ref{def:ld-encoding}, and let every average below be over the verifier's content,
 each content carrying the same weight, restricted where indicated to the contents whose tuple
@@ -1974,8 +2141,9 @@ with $\simeq_\delta$ the cross-party distance of Definition~\ref{def:cross-dista
     \Id \ot M^{(\mathtt{Pair}, W), \omega}_b$;
 \item (\textbf{Magic square}) on average over \emph{anticommuting} $\omega$, the
   $\mathtt{Constraint}$ and $\mathtt{Variable}$ measurements at $\omega$ form a strategy for the
-  Magic Square game of value $1 - O(\eps)$; consequently, by
-  Lemma~\ref{lem:ms-direct-anticomm},
+  Magic Square game of value $1 - O(\eps)$; consequently, if the first player's measurements are
+  projective, Lemma~\ref{lem:ms-direct-anticomm} gives, for the second player's
+  $\pm 1$-observables $B^{\mathtt{Variable}_j, \omega}$,
   \begin{equation*}
     \E_{\omega \,:\, \gamma(\omega) \neq 0}
       \norm{\bigl(\Id \ot \{B^{\mathtt{Variable}_1, \omega},
@@ -1986,6 +2154,10 @@ with $\simeq_\delta$ the cross-party distance of Definition~\ref{def:cross-dista
     \Id \ot M^{\mathtt{Variable}_1, \omega}_b$, and the same with $Z$, $r_Z$ and
   $\mathtt{Variable}_5$.
 \end{enumerate}
+The Lean proves it for a strategy in any bipartite model (Definition~\ref{def:bipartite-model})
+--- a unit state and, for each player, a family of POVMs in that player's algebra --- items 1--5
+and~7 for any such families and item~6 with the first player's measurements projective; the
+statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -2008,12 +2180,14 @@ relabelling outcomes is data processing, so that strategy wins whenever the Paul
 would have accepted. Its failure is therefore at most the Magic Square game's own
 question-weighted sum of the Pauli test's conditional failures at the corresponding question
 pairs, which is $86\eps$ on average over anticommuting $\omega$ --- one factor of $86$ and not
-thirty-six, because $\game^\MS$'s distribution is itself normalized. Lemma~\ref{lem:ms-direct-anticomm}
-applied to each such conditional strategy and averaged gives $186624 \cdot 86 = 16049664$. This
-uses the strategy's own observables and invokes no Magic Square rigidity.
+thirty-six, because $\game^\MS$'s distribution is itself normalized. The conditional strategy's
+constraint measurements are coarse-grainings of the first player's, hence projective when those
+are, and Lemma~\ref{lem:ms-direct-anticomm} applied to each conditional strategy and averaged gives
+$186624 \cdot 86 = 16049664$. This uses the strategy's own observables and invokes no Magic Square
+rigidity.
 \end{proof}
 
-\paragraph{Comments.} Three departures from the paper's statement
+\paragraph{Comments.} Four departures from the paper's statement
 (\cite{AuditSync26}, \texttt{qld-commutation.tex}, \texttt{lem:qld-win-implications}), and one
 from this blueprint's own earlier text.
 
@@ -2033,6 +2207,12 @@ paper reads $\E \Lambda_\omega = 1 - O(\eps)$; that intermediate form is
 \texttt{one\_sub\_povmValue\_ms\_le} together with \texttt{sum\_msEps\_le}, and the item above
 states the composition with Lemma~\ref{lem:ms-direct-anticomm} because that is what the
 expansion stage consumes.
+
+That composition asks the first player's measurements to be projective, where the paper's strategy
+is arbitrary: it inherits the hypothesis of Lemma~\ref{lem:ms-direct-anticomm}, which is stated
+with the constraint player projective, and whose comments say why. The strategies the later stages
+apply it to are projective in both players (Definition~\ref{def:model-proj-strategy}), so nothing
+downstream pays for it; the other six items hold for arbitrary POVM families.
 
 The paper's item 2 quantifies over the line--point distribution of a separate definition; here it
 is the two line types of Definition~\ref{def:qld-game} separately, at the questions the content
@@ -2068,6 +2248,8 @@ average over the verifier's content,
 \begin{equation*}
   W^r(u) \ot \Id_\bob \;\approx_{344\eps}\; \Id_\alice \ot W^r(u)\;.
 \end{equation*}
+As Lemma~\ref{lem:qld-win}, the Lean proves it for a strategy in any bipartite model, with no
+projectivity.
 \end{lemma}
 
 \begin{proof}
@@ -2086,23 +2268,24 @@ $2 \cdot 172\eps$.
 
 \begin{lemma}[Signed commutation of the point observables]
 \label{lem:qld-obs-commutation}
-\uses{lem:qld-win,fact:omega-anticomm-prob,cor:ortho-from-consistency,lem:commutation-analysis,
-  def:cross-distance}
+\uses{lem:qld-win,fact:omega-anticomm-prob,lem:commutation-analysis,def:cross-distance}
 \lean{MIPRE.QLD.signed_commutation}
 \leanok
-Under the hypotheses of Lemma~\ref{lem:qld-win}, on average over uniformly random
-$\omega = (u_X, u_Z, r_X, r_Z)$,
+Under the hypotheses of Lemma~\ref{lem:qld-win}, with the first player's measurements projective,
+on average over uniformly random $\omega = (u_X, u_Z, r_X, r_Z)$,
 \begin{equation}
   \label{eq:qld-obs-commutation-bp}
   X^{r_X}(u_X)\, Z^{r_Z}(u_Z) \ot \Id_\bob
     \;\approx_{57676416\,\eps}\;
   (-1)^{\gamma(\omega)}\; Z^{r_Z}(u_Z)\, X^{r_X}(u_X) \ot \Id_\bob\;.
 \end{equation}
+The Lean proves it for a strategy in any bipartite model (Definition~\ref{def:bipartite-model}),
+the first player's measurements projective; the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,lem:commutation-analysis,def:cross-distance,cor:ortho-from-consistency}
+\uses{lem:qld-win,lem:commutation-analysis,def:cross-distance}
 Two cases, and the sign is the branch. The content distribution is uniform and the two cases
 partition it, so the statement is the sum of the two restricted ones:
 Lemma~\ref{lem:qld-obs-commutation-comm} at $9519168\,\eps$ and
@@ -2113,7 +2296,7 @@ Lemma~\ref{lem:qld-obs-commutation-acomm} at $48157248\,\eps$.
 
 \begin{lemma}[Signed commutation, the commuting case]
 \label{lem:qld-obs-commutation-comm}
-\uses{lem:qld-win,cor:ortho-from-consistency,lem:commutation-analysis,def:cross-distance}
+\uses{lem:qld-win,lem:commutation-analysis,def:cross-distance}
 \lean{MIPRE.QLD.pairPOVM, MIPRE.QLD.pairPOVMB, MIPRE.QLD.ptPOVM, MIPRE.QLD.ptPOVMB,
   MIPRE.QLD.ptObsB, MIPRE.QLD.ptObs_eq_obs2, MIPRE.QLD.ptObsB_mul_self_le_one,
   MIPRE.QLD.sum_pairPOVM_X, MIPRE.QLD.sum_pairPOVM_Z, MIPRE.QLD.adj_pairB_point,
@@ -2128,8 +2311,8 @@ Lemma~\ref{lem:qld-obs-commutation-acomm} at $48157248\,\eps$.
   MIPRE.POVMIn.obs2_commutator_eq, MIPRE.QLD.pairInconsistency, MIPRE.QLD.sum_diag_eq_one_sub,
   MIPRE.QLD.isPVMIn_pairPOVM}
 \leanok
-Under the hypotheses of Lemma~\ref{lem:qld-win}, summed over the \emph{commuting} tuples with the
-uniform weight $\abs{\mC}^{-1}$,
+Under the hypotheses of Lemma~\ref{lem:qld-win}, with the first player's measurements projective,
+summed over the \emph{commuting} tuples with the uniform weight $\abs{\mC}^{-1}$,
 \begin{equation*}
   \sum_{\omega \,:\, \gamma(\omega) = 0} \frac{1}{\abs{\mC}}
     \norm{\bigl( [X^{r_X}(u_X),\, Z^{r_Z}(u_Z)] \bigr) \ot \Id_\bob \ket{\psi}}^2
@@ -2139,27 +2322,39 @@ uniform weight $\abs{\mC}^{-1}$,
 
 \begin{proof}
 \leanok
-\uses{lem:qld-win,cor:ortho-from-consistency,lem:commutation-analysis,def:cross-distance}
+\uses{lem:qld-win,lem:commutation-analysis,def:cross-distance}
 Items 5, 4 and 1 chain each point probe to a \emph{marginal} of the $\mathtt{Pair}$ measurement on
 the other side: three links at $172\eps$ each, so $1548\eps$ after a three-term triangle
-inequality. Corollary~\ref{cor:ortho-from-consistency} replaces that measurement by a projective
-one at $18$ times the inconsistency of the two players' $\mathtt{Pair}$ measurements, which item 1
-bounds at the Born level by $86\eps$; marginalizing costs a factor two per marginal. Then
-Lemma~\ref{lem:commutation-analysis} applies, and \eqref{eq:anticomm-transfer-bp}'s commutator form
-with Lemma~\ref{lem:qld-obs-consistency}'s probe carries the conclusion to the observables. The
-constant is $12 \cdot 344 + 12 \cdot 344 + 768 \cdot (2 \cdot 1548 + 2 \cdot 1548 + 72 \cdot 86)$.
+inequality. The first player's $\mathtt{Pair}$ measurement is projective, and so is its reading as
+the pair $(\beta_X, \beta_Z)$, a coarse-graining of it, whose marginals are the two one-basis
+readings; that is the projective measurement Lemma~\ref{lem:commutation-analysis} needs, and the
+lemma applies. Then \eqref{eq:anticomm-transfer-bp}'s commutator form with
+Lemma~\ref{lem:qld-obs-consistency}'s probe carries the conclusion to the observables. The constant
+is $12 \cdot 344 + 12 \cdot 344 + 768 \cdot (2 \cdot 1548 + 2 \cdot 1548 + 72 \cdot 86)$; its last
+term is the inconsistency of the two players' $\mathtt{Pair}$ measurements, $86\eps$ at the Born
+level by item 1, which no step now needs and which is kept as slack.
 \end{proof}
 
-\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Commutation.lean}. Two departures
-from the paper's bookkeeping, both forced by which side an object lives on.
+\paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Commutation.lean}. One departure
+from the paper's route, and two from its bookkeeping, both forced by which side an object lives on.
+
+\textbf{No orthonormalization.} The paper's strategy is a POVM strategy, and it makes the
+$\mathtt{Pair}$ measurement projective with Corollary~\ref{cor:ortho-from-consistency}, at $18$
+times the inconsistency of the two players' $\mathtt{Pair}$ measurements and a factor two per
+marginal. Here the first player's measurements are projective, as a strategy of a bipartite model
+is, and so is the joint $\mathtt{Pair}$ reading, a coarse-graining of hers
+(\texttt{isPVMIn\_pairPOVM}). The inconsistency term is kept at the weight $72$ the
+orthonormalization charged, with its bound \texttt{sum\_incQty\_le}, so that the constant is the
+matrix formalization's, unchanged; the strict positivity the corollary asks of its error bound, and
+the limit that discharged it in the matrix formalization, are gone.
 
 \textbf{The analysis is run on Bob's observables and carried back.}
 Lemma~\ref{lem:commutation-analysis} wants the two commuting families on one side and the joint
-projective measurement on the \emph{other}, and Corollary~\ref{cor:ortho-from-consistency} produces
-a projective measurement on \emph{Alice's} factor. So the analysis is applied to Bob's point
-measurements against Alice's projectivized $\mathtt{Pair}$ measurement, and the conclusion is
-carried to Alice's observables by the order-reversal rule. The alternative --- a Bob-side
-orthonormalization corollary --- would duplicate \texttt{Ortho.lean} through the swap.
+projective measurement on the \emph{other}, and the projective $\mathtt{Pair}$ measurement is
+\emph{Alice's}. So the analysis is applied to Bob's point measurements against Alice's
+$\mathtt{Pair}$ measurement, and the conclusion is carried to Alice's observables by the
+order-reversal rule. Running it on Alice's side instead would ask Bob's measurements to be
+projective too.
 
 \textbf{The chain is run in the mirrored orientation.} Every rule of \texttt{fig:decider\_pauli} is
 stated in both orientations, so items 5 and 1 are available with the players exchanged and item 4 is
@@ -2171,13 +2366,6 @@ state-dependent distance only after the coarse-grainings are taken, because $\ap
 remark following it gives a counterexample for $\approx_\delta$. The paper's
 \texttt{fact:data-processing} is the $\simeq$ form, correctly; a formalization that reached for the
 $\approx$ form would be proving something false.
-
-\textbf{The slack in Corollary~\ref{cor:ortho-from-consistency} is discharged by a limit.} That
-corollary needs a \emph{strictly positive} bound $\delta$ on the inconsistency. Here it is applied
-at $\delta = \text{(the inconsistency)} + \eta$ for arbitrary $\eta > 0$; $\eta$ survives the
-averaging as an additive constant and is sent to zero at the end
-(\texttt{le\_of\_forall\_pos\_le\_add}). No compactness is needed, which is the same observation the
-corollary's own file records.
 
 \effortMedium
 
@@ -2191,8 +2379,9 @@ corollary's own file records.
   MIPRE.QLD.bobs_msPOVM, MIPRE.QLD.anti_eq_varObs, MIPRE.QLD.sq_norm_ptObs_anticomm_le,
   MIPRE.QLD.acomm_signed_commutation}
 \leanok
-Under the hypotheses of Lemma~\ref{lem:qld-win}, summed over the \emph{anticommuting} tuples with
-the uniform weight $\abs{\mC}^{-1}$ on the verifier's content,
+Under the hypotheses of Lemma~\ref{lem:qld-win}, with the first player's measurements projective,
+summed over the \emph{anticommuting} tuples with the uniform weight $\abs{\mC}^{-1}$ on the
+verifier's content,
 \begin{equation*}
   \sum_{\omega \,:\, \gamma(\omega) = 1} \frac{1}{\abs{\mC}}
     \norm{\bigl( X^{r_X}(u_X)\, Z^{r_Z}(u_Z) + Z^{r_Z}(u_Z)\, X^{r_X}(u_X) \bigr) \ot \Id_\bob
@@ -2234,7 +2423,8 @@ $(a+b+c)^2 \leq 3(a^2+b^2+c^2)$, so nothing introduces a square root. \emph{Corr
 earlier reading of this:} the square root in~\eqref{eq:qld-obs-commutation-bp} as the paper writes
 it does \emph{not} belong to the commuting case either --- that case is $O(\eps)$ too
 (Lemma~\ref{lem:qld-obs-commutation-comm}), since \eqref{eq:commutation-analysis-bp} is linear in
-its hypothesis and Corollary~\ref{cor:ortho-from-consistency} is linear in the inconsistency. The
+its hypothesis and the paper's orthonormalization, Corollary~\ref{cor:ortho-from-consistency}, is
+linear in the inconsistency, while the formalization needs no orthonormalization at all. The
 paper's $\sqrt{\eps}$ is a uniform \emph{weakening}, and its own text says so where the
 anticommuting case is proved: ``direct averaging proves the anticommutation relation with squared
 error $O(\eps)$. In particular it implies the following weaker bound, retained in the form used
@@ -2254,15 +2444,17 @@ Lemma~\ref{lem:qld-expanded-points} cancels against the ancillas.
 \begin{lemma}[Expanded point measurements]
 \label{lem:qld-expanded-points}
 \ledgernode{1.2.2.5}
-\uses{lem:qld-win,cor:ortho-from-consistency,def:expanded-state,lem:qld-expanded-commutation,
-  lem:qld-expanded-consistency}
+\uses{lem:qld-win,def:expanded-state,lem:qld-expanded-commutation,lem:qld-expanded-consistency}
 \lean{MIPRE.QLD.expanded_points}
 \leanok
 Adjoin EPR ancilla registers to $\ket{\psi}$. There are measurements
 $\widehat{M}^{(\mathtt{Point}, W), u}$ on each player's space together with its ancilla such
 that, with $\delta_{\mathrm{acom}}(\eps) = O(\sqrt{\eps})$: they are self-consistent across
-the two sides at error $\eps$, and the $X$-side and $Z$-side coarse observables
-\emph{approximately commute} on the expanded state at error $\delta_{\mathrm{acom}}$.
+the two sides at error $\eps$, and, the first player's measurements being projective, the
+$X$-side and $Z$-side coarse observables \emph{approximately commute} on the expanded state at
+error $\delta_{\mathrm{acom}}$. The Lean proves it for a strategy in any bipartite model, the
+expanded state being its register model on $\F_q^M$ (Definition~\ref{def:register-model}); the
+statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -2300,6 +2492,8 @@ Then, on average over the verifier's content,
   \widehat{M}^{(\mathtt{Point},W),u}_a \ot \Id \;\simeq_{172\eps}\;
     \Id \ot \widehat{M}^{(\mathtt{Point},W),u}_a\;.
 \end{equation*}
+The Lean proves it for a strategy in any bipartite model, with no projectivity, on its register
+model (Definition~\ref{def:register-model}); the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -2333,13 +2527,16 @@ makes the ancilla's contribution visible as an exact $1$.
 \leanok
 Let $\ket{\hat\psi} = \ket{\psi} \ot \ket{\EPR_q}^{\ot M}$ with the ancilla halves split between
 the two parties, and let
-$\widehat{W}^{r}(u) = W^{r}(u) \ot \qp^W(r \cdot \ind_m(u))$. Then, on average over the verifier's
-content and with \emph{no sign},
+$\widehat{W}^{r}(u) = W^{r}(u) \ot \qp^W(r \cdot \ind_m(u))$. If the first player's measurements
+are projective then, on average over the verifier's content and with \emph{no sign},
 \begin{equation*}
   \sum_\omega \frac{1}{\abs{\mC}}
     \norm{\bigl[ \widehat{X}^{r_X}(u_X),\, \widehat{Z}^{r_Z}(u_Z) \bigr]
       \ot \Id \ket{\hat\psi}}^2 \;\leq\; 57676416\, \eps\;.
 \end{equation*}
+The Lean proves it for a strategy in any bipartite model, $\ket{\hat\psi}$ being the state of its
+register model on $\F_q^M$ (Definition~\ref{def:register-model}); the statement above is its
+tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -2412,7 +2609,10 @@ distribution, the line and the point being read off the same sample:
   $\ell$ at the parameter of $u$.
 \end{enumerate}
 Moreover $\{\widehat{M}^{(\mathtt{Line}, W), \ell}_f\}_f$ is \emph{projective} whenever the
-strategy's own line measurement is, which is without loss of generality by Naimark dilation.
+strategy's own line measurement is, as it is for a strategy of a bipartite model
+(Definition~\ref{def:model-proj-strategy}). The Lean proves the two items for a strategy in any
+bipartite model, with no projectivity, on its register model (Definition~\ref{def:register-model});
+the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -2634,17 +2834,17 @@ Same-side operator comparisons use Definition~\ref{def:state-distance}.
   MIPRE.QLD.hatVec_swapVec_bornProb}
 \leanok
 Let $\ket{\hat\psi}$ be as in Lemma~\ref{lem:qld-expanded-points}, and suppose both players'
-measurements are projective --- without loss of generality, by
-Lemma~\ref{lem:naimark-dilation}. Put
+measurements are projective, as they are for a strategy of a bipartite model
+(Definition~\ref{def:model-proj-strategy}). Put
 \begin{equation*}
   \delta_Q(\eps) \;=\; 2\sqrt{57676416\,\eps} \;+\; \sqrt{86\,\eps} \;+\; 86\,\eps
   \;=\; \poly(\eps)\;.
 \end{equation*}
-Then for every pair $(x, z) \in \F_q^m \times \F_q^m$ and each player there is a
-\emph{projective} measurement $\{\widehat{Q}^{x, z}_{a, b}\}_{a, b \in \F_q}$, acting on that
-player's expanded space enlarged by one $\F_q \times \F_q$ ancilla register held in the state
-$\ket{0, 0}$, which jointly returns the $X$-value at $x$ and the $Z$-value at $z$ and satisfies,
-on average over the verifier's content:
+Then for every pair $(x, z) \in \F_q^m \times \F_q^m$ and each player there is a \emph{projective}
+measurement $\{\widehat{Q}^{x, z}_{a, b}\}_{a, b \in \F_q}$, acting on that player's expanded space
+enlarged by one ancilla register, two copies of $\F_q \times \F_q$, held in the basis state
+$\ket{0, 0}$ of the first copy, which jointly returns the $X$-value at $x$ and the $Z$-value at $z$
+and satisfies, on average over the verifier's content:
 \begin{enumerate}
 \item (\textbf{Self-consistency})
   $\widehat{Q}^{x, z}_{a, b} \ot \Id \;\simeq_{2 \delta_Q}\; \Id \ot \widehat{Q}^{x, z}_{a, b}$;
@@ -2663,11 +2863,15 @@ $\widehat{R}^{x, z}_{a, b} = \widehat{M}^{(\mathtt{Point}, Z), z}_b
 depend on the content only through $(x, z)$, whose marginal is uniform, so ``on average over the
 content'' is ``on average over uniform $(x, z)$''. The marginals of $\widehat{Q}^{x,z}$ are not
 claimed here; they are obtained in Lemma~\ref{lem:qld-pairs-of-lines}.
+The Lean proves it for a strategy in any bipartite model, on the ancilla extension of its register
+model by that register on each side (Definition~\ref{def:ancilla-extension}), and states the
+estimates also for the sandwich itself on the register model, as agreements; the statement above
+is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
 \leanok
-\uses{lem:naimark-dilation,def:expanded-state,def:generalized-pauli,lem:commutation-analysis}
+\uses{lem:kraus-dilation,def:expanded-state,def:generalized-pauli,lem:commutation-analysis}
 The sandwich, its Naimark dilation, and one five-link chain.
 
 \textbf{The sandwich is a POVM, exactly.} With $\{\widehat{M}^{(\mathtt{Point}, Z), z}_b\}$
@@ -2680,10 +2884,12 @@ projective,
 \end{equation*}
 and each term is $(\widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b)^\dagger
 (\widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b)$, hence positive. No approximate commutation is used
-here, and no orthonormalization is needed afterwards: Lemma~\ref{lem:naimark-dilation} dilates
-$\{\widehat{R}^{x, z}_{a, b}\}$ to a \emph{projective} measurement on one extra
-$\F_q \times \F_q$ register, compressed back by the isometry that adjoins $\ket{0, 0}$, and one
-isometry serves every $(x, z)$ at once. Projectivity of $\widehat{M}$ itself is two closure
+here, and no orthonormalization is needed afterwards: the family
+$(a, b) \mapsto \widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b$ is a Kraus family of
+$\{\widehat{R}^{x, z}_{a, b}\}$, and the Halmos unitary of its Naimark column dilates it to a
+\emph{projective} measurement on one extra register, two copies of $\F_q \times \F_q$, which
+compresses to the sandwich at $\ket{0, 0}$ (as in Lemma~\ref{lem:kraus-dilation}); one reference
+state serves every $(x, z)$ at once. Projectivity of $\widehat{M}$ itself is two closure
 properties of projective measurements --- products and coarse-grainings --- applied to the
 convolution of Definition~\ref{def:expanded-state}.
 
@@ -2750,8 +2956,9 @@ now proved rather than imported, not because anything downstream needs it.
 
 The \textbf{extra register is explicit}. The paper writes ``by assuming that $\ket{\hat\psi}$ has
 sufficiently many ancilla zero qubits, we do not need to extend the state further''; here the
-$\F_q \times \F_q$ register the dilation needs is adjoined to each party by name, which is the
-same device with the bookkeeping visible. It is adjoined to \emph{both} parties, unlike the
+register the dilation needs, two copies of $\F_q \times \F_q$, is adjoined to each party by name
+(the ancilla extension \texttt{BipartiteModel.jointModel}), which is the same device with the
+bookkeeping visible. It is adjoined to \emph{both} parties, unlike the
 one-sided extension of Theorem~\ref{thm:linearity}, because item 1 compares the two players'
 copies of the same construction.
 
@@ -2799,6 +3006,9 @@ $(q,4m,d,1)$.
 The original strategy's axis-line answers have degree at most $d$ by their legal format.
 Expansion convolves that outcome with the restriction of a multilinear Pauli encoding. The
 latter has degree at most one on an axis line, so addition preserves the bound for $d\geq1$.
+The Lean proves it for a strategy in any bipartite model, the expanded and padded measurements
+living in the players' algebras of its register model; the legalized strategy is the one the
+assembly of Theorem~\ref{thm:qld} runs the chain on.
 \end{lemma}
 
 \begin{proof}
@@ -2889,6 +3099,10 @@ verifier's content,
 \end{equation}
 with $\delta_P = \poly(\eps, \eps_c)$ where $\eps_c$ is the average collision probability of the
 $X$-side evaluation map: $md/q$ for an axis-parallel line and $md/q + 1/q$ for a diagonal one.
+The Lean proves it for a strategy in any bipartite model, on the extension of its register model
+that $\widehat{Q}$ acts on; from the game it states the estimate in agreement form, for the
+sandwich $\widehat{R}^{x,z}$ to which $\widehat{Q}^{x,z}$ compresses, on the register model. The
+statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -2910,7 +3124,7 @@ against Bob's line).
 
 \textbf{The fine-grained self-consistency of the $X$-line measurement} is item 1 of
 Lemma~\ref{lem:qld-expanded-lines} verbatim. The joint measurement lives on each party's space
-enlarged by one $\F_q \times \F_q$ register and the line measurements do not, so both inputs are
+enlarged by the dilation register and the line measurements do not, so both inputs are
 transported by the fact that an operator with an inert ancilla has the same cross-party deviation
 on the extended state as the operator itself.
 
@@ -2924,13 +3138,17 @@ univariate case of Lemma~\ref{lem:schwartz-zippel}.
 \end{proof}
 
 \paragraph{Comments.} Formalized in \texttt{MIPRE/Background/QLD/Lines.lean}, on top of
-Lemma~\ref{lem:pasting-updated} in \texttt{MIPRE/Foundations/Pasting.lean}. The headline
-declaration \texttt{qld\_pairs\_of\_lines} takes only game-level hypotheses --- a strategy, its
-projectivity, and $1 - \val \leq \eps$ --- and produces the joint measurement together
-with~\eqref{eq:qld-pairs-of-lines-bp} at the axis-parallel line of each side;
-\texttt{pairs\_of\_lines\_of\_items} is the same statement for any pair of presentations, and
-\texttt{aPres\_items}, \texttt{dPres\_items} and \texttt{sum\_content\_collProb\_dPres} are what
-the other three pairs of line types need.
+Lemma~\ref{lem:pasting-updated} in \texttt{MIPRE/Foundations/Pasting.lean}. The headline declaration
+\texttt{qld\_pairs\_of\_lines} takes only game-level hypotheses --- a strategy, its projectivity,
+and $1 - \val \leq \eps$ --- and bounds by $\delta_P$ the probability that the first player's
+sandwich and the second player's $T$, read at the sampled points, disagree on the register model, at
+the axis-parallel line of each side. That is~\eqref{eq:qld-pairs-of-lines-bp} in agreement form:
+$\widehat{Q}$ compresses to the sandwich, so its Born probabilities against $T$ on the extended
+state are the sandwich's on the register model, and~\eqref{eq:cross-from-agreement} converts.
+\texttt{pairs\_of\_lines\_gen} and \texttt{pairs\_of\_lines} state the distance form for the dilated
+$\widehat{Q}$ itself. \texttt{pairs\_of\_lines\_of\_items} is the agreement form for any pair of
+presentations, and \texttt{aPres\_items}, \texttt{dPres\_items} and
+\texttt{sum\_content\_collProb\_dPres} are what the other three pairs of line types need.
 
 \textbf{The question distribution is a parameter.} \texttt{pairs\_of\_lines\_gen} proves the lemma
 over any finite nonempty sample space carrying a content per side --- $k_X$ presenting the $X$ line,
@@ -3010,6 +3228,9 @@ $\{\widehat{Q}^{u}_c\}_{c \in \F_q}$ is \emph{projective}, and
         \widehat{M}^{(\mathtt{Point}, Z), z}_b\;.
   \end{gather*}
 \end{enumerate}
+The Lean proves it for a strategy in any bipartite model, on the extension of its register model
+that $\widehat{Q}$ acts on (Lemma~\ref{lem:qld-combined-points}); the statement above is its
+tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -3279,6 +3500,9 @@ On an axis line, either an $x$ or $z$ coordinate varies with constant
 $\alpha,\beta$, or only one coefficient varies, giving degree at most $d$
 for $d\geq1$. The general bound $md+1\leq4md$ and the separate axis bound
 make these legal answers for the seeded test at $(q,4m,d,1)$.
+The Lean proves it for a strategy in any bipartite model, the measurement being a family in the
+players' algebras of its register model, with the consistency in agreement form against the padded
+sandwich combination; the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -3299,7 +3523,7 @@ $(r_1,r_2)\mapsto \alpha r_1 + \beta r_2$ only increases agreement, and $\alpha$
 sampled point are uniform and independent of both sublines, because translating the padded point in
 those two coordinates alone leaves both sublines fixed. Chaining the three gives
 $\delta_{\mathrm{combine}} = m^2\,\delta_P$. The other register version is this one applied to the
-swapped strategy on the swapped state.
+strategy with the players exchanged, in the model with the players exchanged.
 
 The paper instead chains three Cauchy--Schwarz claims, because it takes the joint law to be
 correlated; that is so given the padded \emph{line}, but the quantity conditions on the two
@@ -3437,12 +3661,96 @@ $\delta_P$ itself: $\delta_P \approx 7\cdot10^3\,\eps^{1/4} + 1.5\sqrt{md/q}$, s
 vacuous unless $\eps \leq 4\cdot 10^{-16}$ --- a property of the whole chain's constants, not of
 this step.
 
+\effortMedium
+
+\begin{definition}[The models of stages 4 and 5]
+\label{def:qld-physical-model}
+\uses{def:register-model,def:ancilla-extension,lem:ancilla-isometries,def:model-reading,
+  def:model-embedding,def:model-iso,lem:kraus-dilation,def:lidt-sound-in,def:lidt-cl}
+\lean{MIPRE.QLD.ansZero, MIPRE.QLD.PadAnc, MIPRE.QLD.t₀, MIPRE.QLD.instFintypePadAnc,
+  MIPRE.QLD.instDecidableEqPadAnc, MIPRE.QLD.padE, MIPRE.QLD.padE_apply,
+  MIPRE.QLD.padE_eq_expVec, MIPRE.QLD.norm_padE, MIPRE.QLD.padModel, MIPRE.QLD.soundIn_padModel,
+  MIPRE.QLD.soundIn_padModel_swap, MIPRE.QLD.PhysReg, MIPRE.QLD.instFintypePhysReg,
+  MIPRE.QLD.instDecidableEqPhysReg, MIPRE.QLD.physE, MIPRE.QLD.physE_apply, MIPRE.QLD.physE_symm,
+  MIPRE.QLD.physSplit, MIPRE.QLD.physE_eq_comp, MIPRE.QLD.norm_physE,
+  MIPRE.QLD.physE_mulVec_mirror_A, MIPRE.QLD.physE_mulVec_mirror_B, MIPRE.QLD.phys,
+  MIPRE.QLD.physE_mirror_smulKron_A, MIPRE.QLD.physE_mirror_smulKron_B, MIPRE.QLD.physE_mirror_A,
+  MIPRE.QLD.physE_mirror_B, MIPRE.QLD.cut1, MIPRE.QLD.cut1_πA, MIPRE.QLD.cut1_πB,
+  MIPRE.QLD.pair2, MIPRE.QLD.norm_pair2, MIPRE.QLD.pairPadE, MIPRE.QLD.pairPadE_apply,
+  MIPRE.QLD.cutRelabel, MIPRE.QLD.physE_comp_moveEquiv_symm, MIPRE.QLD.j₁, MIPRE.QLD.ι₁,
+  MIPRE.QLD.j₁_ΦA, MIPRE.QLD.ι₁_ΦA, MIPRE.QLD.ι₁_ΦB, MIPRE.QLD.tgt, MIPRE.QLD.unassocIsometry,
+  MIPRE.QLD.ampl_unassocIsometry, MIPRE.QLD.assoc_W_unassocIsometry, MIPRE.QLD.unassoc,
+  MIPRE.QLD.unassoc_W, MIPRE.QLD.unassoc_ΦA, MIPRE.QLD.unassoc_ΦB, MIPRE.QLD.blockSwapIso,
+  MIPRE.QLD.blockSwapIso_ΦA, MIPRE.QLD.blockSwapIso_ΦB, MIPRE.QLD.ampl_blockSwapIso_W}
+\leanok
+Let $\cal{N}$ be a bipartite model and $I$ a finite set, the register of the analysis
+($I = \F_q^{\{0,1\}^m}$, so that $\C^I = (\C^q)^{\ot M}$). Let $T$ be the ancilla of the projective
+dilation of Lemma~\ref{lem:kraus-dilation} for POVMs whose outcomes are the answers of the seeded
+CL test at $(q, 4m, d, 1)$, with $K + 1$ Kraus terms, and $t_0 \in T$ its reference state, at the
+zero answer. The registers are named as in the paper: $A$ is the first player's own space, $A'$ and
+$A''$ the two halves of an EPR pair on $I$, and $E_A$ a copy of $T$; likewise $B$, $B'$, $B''$ and
+$E_B$ for the second player. Every model below depends on the padding size $K$.
+\begin{enumerate}
+\item The \emph{padded model} is the register model of $\cal{N}$ on $I$
+  (Definition~\ref{def:register-model}) extended by $E_A$ for the first player and $E_B$ for the
+  second, in the basis state $\ket{t_0} \ot \ket{t_0}$ (Definition~\ref{def:ancilla-extension}).
+  Up to the associativity of extensions it is the extension of $\cal{N}$ by the registers
+  $(E_A, A')$ and $(E_B, A'')$ in the unit vector $\ket{t_0 t_0} \ot \ket{\EPR_I}$, so the seeded
+  CL test is sound in it (Definition~\ref{def:lidt-sound-in}) whenever it is sound in every
+  extension of $\cal{N}$ by a unit vector, and then also in the padded model of $\cal{N}$ with the
+  players exchanged.
+\item The \emph{physical model} is the extension of $\cal{N}$ in which each player holds three
+  registers, $(A'', E_A, A')$ and $(B'', E_B, B')$, in the \emph{physical state}: each player's
+  own EPR pair, $(A'', A')$ and $(B'', B')$, and the two padding registers in
+  $\ket{t_0} \ot \ket{t_0}$. The physical state is a unit vector, symmetric under the exchange of
+  the two players' blocks, and each pair satisfies the mirror identity: an operator $P$ on the near
+  half $A'$ acts on the state as $P^{\mathsf T}$ on the far half $A''$, whatever the other player
+  applies, and likewise for $B'$ and $B''$.
+\item The \emph{first cut} is the physical model read (Definition~\ref{def:model-reading}) with the
+  first player's far half $A''$ handed to the second player: the same Hilbert space, state and
+  representation, the first player's
+  operators being those of $(E_A, A')$ and the second player's those of $(A'', B'', E_B, B')$. The
+  \emph{second cut} is the first cut of $\cal{N}$ with the players exchanged, a reading of the same
+  state.
+\item The padded model and the register model embed in the first cut, along embeddings $j_1$ and
+  $\iota_1$ (Definition~\ref{def:model-embedding}), local isometries that carry the state to the
+  state and keep both units: $\iota_1$ is the inert extension of the register model by
+  $\ket{t_0 t_0}$ followed by $j_1$, and it sends a first-player operator $Z$ of $A'$ to
+  $\Id_{E_A} \ot Z$.
+\item \emph{Item~1's cut} is the register model on $I$, its pair being $(A'', B'')$, of the
+  extension of $\cal{N}$ by the padded registers $(E_A, A')$ and $(E_B, B')$. Regrouping the
+  physical registers into it is a local isometry (Definition~\ref{def:local-isometry}) from the
+  physical model, with no condition on the state.
+\item The physical model of $\cal{N}$ with the players exchanged is the physical model of $\cal{N}$
+  with the players exchanged: the exchange of the two blocks of registers is an isomorphism of
+  models between them (Definition~\ref{def:model-iso}), the identity on the players' algebras,
+  because the physical state is symmetric.
+\end{enumerate}
+\end{definition}
+
+\paragraph{Comments.} \texttt{MIPRE/Background/QLD/PhysModel.lean}: the padding register is
+\texttt{PadAnc}, the padded model \texttt{padModel} with \texttt{soundIn\_padModel} and
+\texttt{soundIn\_padModel\_swap}, the physical model \texttt{phys} on the state \texttt{physE}, the
+first cut \texttt{cut1} with its reading lemmas for the two players, the
+embeddings $j_1$ and $\iota_1$, item~1's cut \texttt{tgt} with the regrouping \texttt{unassoc}, and
+the exchange of the blocks \texttt{blockSwapIso}. The matrix analysis built each of these states as
+an explicit vector on a product of index sets --- the twice-padded state, the appended second pair,
+item~1's regrouped state --- and moved between them by reindexing whole spaces. Here every state is
+an ancilla extension of the strategy's model by finite registers in a joint vector, only the finite
+registers are regrouped, and a regrouping is a local isometry or an isomorphism of models. The two
+cuts are two readings of one state model, so that nothing has to be proved about their states
+agreeing, and both players' dilations are taken on one padding register at one common size, so
+that the two runs of stage~4 read one physical state. The padded model is where stage~4 applies the
+seeded CL test (Lemma~\ref{lem:qld-global-pvm}); the first cut is where stage~5 reads its output
+(Lemma~\ref{lem:qld-simultaneous}); and the physical model is where the two parties' exact Pauli
+objects are compared (Lemmas~\ref{lem:qld-pauli-selfcons} and~\ref{lem:qld-swap}).
+
 \effortHard
 
 \begin{lemma}[The simultaneous global measurement]
 \label{lem:qld-simultaneous}
 \ledgernode{1.2.2.13}
-\uses{lem:qld-global-robustness}
+\uses{lem:qld-global-robustness,def:qld-physical-model}
 \lean{MIPRE.QLD.PolyPair, MIPRE.QLD.PolyPair.proj, MIPRE.QLD.evalMarg, MIPRE.QLD.evalMarg_mats,
   MIPRE.QLD.isPVM_evalMarg, MIPRE.QLD.SimulPair, MIPRE.QLD.SimulPair.mono,
   MIPRE.QLD.SimulPair.bornProb_aOp_aOp, MIPRE.QLD.GlobalPair.toSimulPair,
@@ -3457,6 +3765,10 @@ marginals are consistent with the opposite expanded point measurements,
 with error at most
 $\delta_S=a(md)^a(\eps^b+q^{-b}+2^{-bmd})$.
 Both register versions are required; no symmetric-strategy hypothesis is added.
+The Lean proves it for a legal projective strategy in any bipartite model in which the seeded CL
+test is sound in every ancilla extension by a unit vector, the pair measurements living in the
+padded model of Definition~\ref{def:qld-physical-model}, for every padding size beyond a threshold;
+the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -3466,26 +3778,31 @@ Lemma~\ref{lem:qld-global-pvm} supplies the pair $(G_A, G_B)$ with error $\delta
 Lemmas~\ref{lem:qld-global-dummy}--\ref{lem:qld-global-robustness} complete it to a projective
 measurement of pairs whose evaluated marginals track the opposite party's expanded point
 measurements with error $\delta_S = 2\sqrt{\Delta} + 2/q + 8\Delta$,
-$\Delta = 2\delta_{\mathrm{ld}} + 2 \cdot 57676416\,\eps$, and carry it to the register shape of
-the structure. The displayed functional form is reached in the assembly of
+$\Delta = 2\delta_{\mathrm{ld}} + 2 \cdot 57676416\,\eps$, in the same model, so no register has
+to be moved. The displayed functional form is reached in the assembly of
 Theorem~\ref{thm:qld}, where $\delta_{\mathrm{ld}}$ is the seeded soundness theorem's error and
 the square root halves the exponent $b$.
 \end{proof}
 
 \paragraph{Comments.} The conclusion is formalized as the structure \texttt{SimulPair}
-(\texttt{MIPRE/Background/QLD/Simul.lean}): for a strategy $(\psi, M_A, M_B)$ and an error
-$\delta$, ancilla types $E_A$, $E_B$, a unit state $\Phi$ on
-$((d_A \times \mathrm{Anc}) \times E_A) \times ((d_B \times \mathrm{Anc}) \times E_B)$ that
-reduces to the expanded state on the two hat registers, projective pair measurements $S_A$, $S_B$
-with outcomes in pairs of individual-degree-$d$ polynomials, and the two evaluated-marginal
-consistencies. The lemma is the existence of a \texttt{SimulPair} at error $\delta_S$
-(\texttt{exists\_simulPair}); stage 5 is proved against the structure. Two departures from the
-paper's statement. The sandwiched joint estimate it also announces is not carried in the
+(\texttt{MIPRE/Background/QLD/Simul.lean}): for a projective strategy of a bipartite model and an
+error $\delta$, a model $K$ into which the register model embeds
+(Definition~\ref{def:model-embedding}) --- a local isometry carrying the state to the state and
+keeping both units, along which every expectation of the expanded measurements transfers exactly ---
+projective pair measurements $S_A$, $S_B$ in $K$'s algebras, with outcomes in pairs of
+individual-degree-$d$ polynomials, and the two evaluated-marginal consistencies against the opposite
+party's expanded point measurements carried to $K$. The lemma is the existence of a
+\texttt{SimulPair} at error $\delta_S$ in the padded model, along the inert embedding
+(\texttt{exists\_simulPair}). A \texttt{SimulPair} moves along any further embedding
+(\texttt{SimulPair.transport}), and stage~5 uses it on the first cut of the physical model, along
+the embedding $\iota_1$ of Definition~\ref{def:qld-physical-model} (\texttt{CutSimul}); the
+transport along $j_1$ of the padded model's \texttt{SimulPair} is one by definition. Two departures
+from the paper's statement. The sandwiched joint estimate it also announces is not carried in the
 structure: stage 5 consumes only the two evaluated marginals, and the sandwich is what
 Lemma~\ref{lem:qld-global-sandwich} passes through on the way to them. And the hypothesis is
-$48md \leq q$ rather than the standing $16md \leq q$, which is what makes the factor $1 - 2\eta$
-of Lemma~\ref{lem:qld-global-separate} at least $1/2$; as with $16md > q$, the regime
-$48md > q$ is absorbed in the assembly by enlarging the universal constant.
+$48md \leq q$ rather than the standing $16md \leq q$, which is what makes the factor $1 - 2\eta$ of
+Lemma~\ref{lem:qld-global-separate} at least $1/2$; as with $16md > q$, the regime $48md > q$ is
+absorbed in the assembly by enlarging the universal constant.
 
 \begin{lemma}[Admissible padded setup]
 \label{lem:qld-global-setup}
@@ -3528,7 +3845,7 @@ strategy for the Pauli basis test whose answers are in the format its questions 
 (Lemma~\ref{lem:qld-axis-degree} makes this a normalization). Write a point of the padded space
 $\F_q^{4m}$ as $u = (x, z, \alpha, \beta, w)$ with $2m - 2$ dummy coordinates $w$. The
 \emph{padded strategy} is a strategy for the seeded low individual degree test
-(Definition~\ref{def:lidt-cl}) at parameters $(q, 4m, d, 1)$, played on the padded state
+(Definition~\ref{def:lidt-cl}) at parameters $(q, 4m, d, 1)$, played on the expanded state
 $\hat{\psi}$ of Lemma~\ref{lem:qld-padded-lines}. Each player answers a point question $u$ with
 the sandwich $\widehat{M}^{X, x}_a \widehat{M}^{Z, z}_b \widehat{M}^{X, x}_a$ of their expanded
 point measurements, coarse-grained along $(a, b) \mapsto \alpha a + \beta b$ and extended by the
@@ -3541,7 +3858,10 @@ dilation to a projective strategy is performed once, when the soundness theorem 
 (Lemma~\ref{lem:qld-global-pvm}). Moving the base point of a line question to the sampled point
 along the line does not change the padded line measurement, so what the decider reads is the
 padded line measurement at the sample's own data, coarse-grained by evaluation at the parameter
-of the sample's point --- the quantity Lemma~\ref{lem:qld-padded-lines} controls.
+of the sample's point --- the quantity Lemma~\ref{lem:qld-padded-lines} controls. The Lean
+constructs it for a projective strategy in any bipartite model, the padded strategy being a pair of
+families of POVMs in the players' algebras of its register model; the statement above is its
+tensor-product instance.
 \end{lemma}
 \begin{proof}
 \uses{lem:qld-padded-lines,lem:qld-padded-points,lem:qld-axis-degree,lem:qld-sublines}
@@ -3555,19 +3875,21 @@ genuine padding.
 \end{proof}
 
 \paragraph{Comments.} The ledger node dilates the line POVMs to projective measurements at this
-point, ``using fresh local product ancillas''. The formalization keeps the strategy as a family
-of POVMs and dilates once, at the application of the soundness theorem, through the seeded
-soundness for POVM strategies (\texttt{MIPRE.LIDT.CL.clSoundness\_ldc\_one\_deltaCL\_of\_povm}):
-on the twice-extended state the Born rule sees only compressions, so nothing has to be proved
-about the dilation beyond Naimark's theorem. The node's ``$16md > q$'' clause belongs to the
-assembly of Theorem~\ref{thm:qld}, where the trivial bound is used instead of the padded theorem.
-So does the assumption $4m \mid q$, and it is worth saying what discharges it, because the obvious
-reading is false: $m \mid q$ with $q$ a power of two gives only that $m$ is a power of two, and at
-$m = q$ the conclusion fails. What gives $4m \mid q$ is $m \mid q$ together with $4m \leq q$, which
-the regime $48md \leq q$ supplies (\texttt{MIPRE.QLD.four\_mul\_dvd\_card\_of\_regime}); outside
-it the trivial bound is used and the divisibility is never needed. Nor is admissibility what the
-step uses --- the oddness of the degree is for the self-dual basis --- since a finite field of
-characteristic two has power-of-two size already.
+point, ``using fresh local product ancillas''. The formalization keeps the strategy as a family of
+POVMs and dilates once, at the application of the soundness theorem
+(Lemma~\ref{lem:qld-global-pvm}), on the padding register of
+Definition~\ref{def:qld-physical-model}: on the padded model the Born rule sees only the reference
+entries of the dilated measurements, which are the padded strategy's, so nothing has to be proved
+about the dilation beyond its compression (Lemma~\ref{lem:kraus-dilation}). The node's
+``$16md > q$'' clause belongs to the assembly of Theorem~\ref{thm:qld}, where the trivial bound is
+used instead of the padded theorem. So does the assumption $4m \mid q$, and it is worth saying what
+discharges it, because the obvious reading is false: $m \mid q$ with $q$ a power of two gives only
+that $m$ is a power of two, and at $m = q$ the conclusion fails. What gives $4m \mid q$ is
+$m \mid q$ together with $4m \leq q$, which the regime $48md \leq q$ supplies
+(\texttt{MIPRE.QLD.four\_mul\_dvd\_card\_of\_regime}); outside it the trivial bound is used and the
+divisibility is never needed. Nor is admissibility what the step uses --- the oddness of the degree
+is for the self-dual basis --- since a finite field of characteristic two has power-of-two size
+already.
 
 \begin{lemma}[All padded subtests succeed]
 \label{lem:qld-global-success}
@@ -3614,7 +3936,8 @@ Lemma~\ref{lem:qld-combined-points}; that is, $\delta' = C(\delta_{\mathrm{combi
 + md/q)$ for a universal $C$, with $\delta_{\mathrm{combine}} = m^2 \delta_P$ as in
 Lemma~\ref{lem:qld-padded-lines}. The bound covers the line--point, identical-point and
 identical-line subtests under their actual seeded distributions; line equality uses polynomial
-separation.
+separation. The Lean proves it for a strategy in any bipartite model, the padded strategy's value
+being computed on its register model; the statement above is its tensor-product instance.
 \end{lemma}
 \begin{proof}
 \uses{lem:qld-global-setup,lem:qld-padded-lines,lem:qld-combined-points,lem:qld-axis-degree}
@@ -3651,50 +3974,65 @@ variables rather than a conditioning.
 \begin{lemma}[A global padded polynomial PVM]
 \label{lem:qld-global-pvm}
 \ledgernode{1.2.2.13.3}
-\uses{lem:qld-global-success,thm:lidt-cl-soundness-one,lem:naimark-dilation}
-\lean{MIPRE.QLD.ansZero, MIPRE.QLD.padPt_aOp_mats, MIPRE.QLD.deltaGS, MIPRE.QLD.deltaLD,
+\uses{lem:qld-global-success,def:lidt-sound-in,def:qld-physical-model}
+\lean{MIPRE.QLD.padPt_aOp_mats, MIPRE.QLD.deltaGS, MIPRE.QLD.deltaLD,
   MIPRE.QLD.deltaGS_nonneg, MIPRE.QLD.exists_global_pvm, MIPRE.QLD.exists_global_pvm_hat,
   MIPRE.QLD.GlobalPair, MIPRE.QLD.exists_globalPair, MIPRE.BipartiteModel.povmValue_expand_basisVec,
   MIPRE.BipartiteModel.inconsistency_expand_basisVec_congr, MIPRE.QLD.GlobalPair.ψ_unit,
   MIPRE.QLD.exists_padDilation, MIPRE.QLD.exists_globalPair_swap,
   MIPRE.QLD.GlobalPair.toSimulPair_SA, MIPRE.QLD.GlobalPair.toSimulPair_SB}
 \leanok
-The single-codeword theorem at $(q,4m,d,1)$, applied to a projective dilation of the padded
-strategy of Lemma~\ref{lem:qld-global-setup}, supplies projective global polynomial measurements
-$G_A$, $G_B$ on the two dilated registers, with both point-consistency estimates and the
-full-polynomial consistency, on the twice-padded state (the expanded state with the combining
-ancillas in $\ket{0,0}$ and the dilation's answer ancillas in the zero answer). Their common error
-is $\delta_{\mathrm{ld}} := \delta_{\mathrm{CL}}(q, 4m, d, \delta_{\mathrm{GS}})$, where
+Suppose that the seeded CL test is sound (Definition~\ref{def:lidt-sound-in}) in every ancilla
+extension of the strategy's model by a unit vector. Then, for every padding size beyond a
+threshold, the test's soundness in the padded model of Definition~\ref{def:qld-physical-model},
+applied at $(q,4m,d,1)$, one codeword, to a projective dilation of the padded strategy of
+Lemma~\ref{lem:qld-global-setup} on the two padding registers, supplies projective global
+polynomial measurements $G_A$, $G_B$ in the padded model's two algebras, with both
+point-consistency estimates and the full-polynomial consistency. Their common error is
+$\delta_{\mathrm{ld}} := \delta_{\mathrm{sim}}(q, 4m, d, 1, \delta_{\mathrm{GS}})$, the error of
+Lemma~\ref{lem:lidt-ldc-error} at one codeword, where
 $\delta_{\mathrm{GS}} = 5 m^2 \delta_P(\eps, md/q + 1/q) + 4 \delta_Q(\eps) + (md+1)/q$ is the
 bound of Lemma~\ref{lem:qld-global-success}; it has the form
 $A(md)^A((\delta_{\mathrm{GS}})^b+q^{-b}+2^{-bmd})$ for universal $A,b$. The point-consistency
 estimates hold against the padded point measurements of the \emph{original} strategy --- the
-expanded sandwich combinations, extended by the identity on both ancillas --- so no dilation
-appears in the conclusion, and no further dilation of the projective outputs is required. The
-conclusion is packaged as the structure \texttt{GlobalPair}, which the rest of stage 4 is stated
-on.
+expanded sandwich combinations, carried to the padded model by the inert embedding of the
+register model --- so no dilation appears in the conclusion, and no further dilation of the
+projective outputs is required. The conclusion is packaged as the structure \texttt{GlobalPair},
+which the rest of stage 4 is stated on. The same holds for the strategy with the players
+exchanged, in the model with the players exchanged, the test being symmetric in the players, and
+the two hold at any common padding size beyond both thresholds. The Lean proves it for a legal
+projective strategy in any bipartite model; the statement above is its tensor-product instance,
+where the hypothesis holds by Lemma~\ref{lem:lidt-sound-in-tensor}.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-global-success,thm:lidt-cl-soundness-one,lem:naimark-dilation}
+\uses{lem:qld-global-success,def:lidt-sound-in,lem:kraus-dilation,def:qld-physical-model}
 \leanok
-Lemma~\ref{lem:qld-global-success} is the value hypothesis of
-Theorem~\ref{thm:lidt-cl-soundness-one} for the padded strategy at $(q, 4m, d, 1)$. The theorem,
-in its form for POVM strategies, dilates the strategy projectively
-(Lemma~\ref{lem:naimark-dilation}), adjoining to each party an ancilla indexed by the test's
-answers and prepared in the zero answer, and returns projective low-degree measurements on the
-dilated registers together with the three consistency estimates against the dilation's own point
-measurements, on the twice-padded state. The dilation's point measurement compresses to the padded
-point measurement of Lemma~\ref{lem:qld-global-setup}. On a product state the Born probability of
-an operator on one party's dilated register depends on the operator only through its compression
-by the ancilla vector, so in each inconsistency the dilation's point measurement may be replaced,
-term by term, by the identity extension of the padded point measurement, and the number does not
-change. Expectations of doubly extended operators on the twice-padded state are their expectations
-on the expanded state, so the conclusions of Lemmas~\ref{lem:qld-expanded-points}
-and~\ref{lem:qld-combined-points} transfer to it.
+Lemma~\ref{lem:qld-global-success} is the value hypothesis of the seeded test for the padded
+strategy at $(q, 4m, d, 1)$. Each player's family of POVMs is dilated to a projective family on that
+player's padding register, both at one common size beyond the two thresholds
+(Lemma~\ref{lem:kraus-dilation}), with reference state $t_0$ at the zero answer: the dilated
+families are a projective strategy of the padded model whose reference entries are the padded
+strategy's, and since a Born probability of the padded model is that of the reference entries, it
+has the padded strategy's value. The padded model is an ancilla extension of the strategy's model up
+to associativity, so the test is sound in it (Definition~\ref{def:qld-physical-model}); applied at
+one codeword, it returns projective low-degree measurements in the padded model's algebras and the
+three consistency estimates against the dilation's own point measurements, a tuple of one value
+being read as that value. In each inconsistency the dilation's point measurement may then be
+replaced by the padded point measurement carried along the inert embedding: the two have the same
+reference entry, and the number does not change. Expectations of operators carried along that
+embedding are their expectations on the expanded state, so the conclusions of
+Lemmas~\ref{lem:qld-expanded-points} and~\ref{lem:qld-combined-points} transfer to the padded model.
 \end{proof}
 
-\paragraph{Comments.} The second Naimark dilation of the paper's proof, applied to the recovered
+\paragraph{Comments.} The seeded test enters as a hypothesis on the model, its soundness in every
+ancilla extension by a unit vector, rather than as Theorem~\ref{thm:lidt-cl-soundness-one} applied
+to matrices; in the tensor-product model the hypothesis is Lemma~\ref{lem:lidt-sound-in-tensor},
+which rests on that theorem, and its error $\delta_{\mathrm{sim}}$ is the one of the model
+statement, whose constant is $40 a_1 4^{a_1}$ for the constant $a_1$ of
+Theorem~\ref{thm:lidt-cl-soundness-one} (Lemma~\ref{lem:lidt-ldc-error}). The dilation is the one
+of Lemma~\ref{lem:kraus-dilation}, in the players' algebras, so it needs neither finite dimension
+nor a square root. The second Naimark dilation of the paper's proof, applied to the recovered
 polynomial measurement, is not needed: the soundness theorem already returns projective
 measurements (as the ledger's challenge history of node 1.2.2.13 records). The recovered
 polynomials are functions on $\F_q^{4m}$, while the padded point measurements read only the
@@ -3732,7 +4070,9 @@ the dummy coordinates, then the state weight $W$ of the outcomes that are not $w
 satisfies $(1 - 8md/q)\,W \leq 2\delta$; under the standing assumption $16md \leq q$,
 $W \leq 4\delta$. For the measurements of Lemma~\ref{lem:qld-global-pvm}, on either side,
 $W \leq 4\delta_{\mathrm{ld}}$. The bad set is empty for $m = 1$. Retaining the other outcomes
-gives a projective submeasurement.
+gives a projective submeasurement. The Lean proves it in any bipartite model in a unit state, for a
+global measurement in one player's algebra against a point measurement in the other's, and for a
+\texttt{GlobalPair} in any model; the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -3788,17 +4128,19 @@ outcomes, and its complement's weight is the bound above.
   MIPRE.QLD.GlobalPair.products_XZ_B, MIPRE.IsPVMIn.le_one}
 \leanok
 Let $(G_A, G_B)$ be the global measurements of Lemma~\ref{lem:qld-global-pvm}, with error
-$\delta$, on the twice-padded state $\Phi$. For an outcome $g$ put
+$\delta$, in the padded model, whose state is $\Phi$. For an outcome $g$ put
 $v_g = (G_{A,g} \otimes \Id)\Phi$, and for a padded point $u = (x, z, \alpha, \beta, w)$ let
-$B_u(c)$ sum Bob's expanded ordered products $\widehat M^Z_b \widehat M^X_a$, extended by the
-identity to the dilated register, over $\alpha a + \beta b = c$. Then, on average over a uniform
-padded point,
+$B_u(c)$ sum Bob's expanded ordered products $\widehat M^Z_b \widehat M^X_a$, carried to the
+padded model by the inert embedding of the register model, over $\alpha a + \beta b = c$. Then, on
+average over a uniform padded point,
 $\sum_g \mathbb E_u \|v_g - (\Id \otimes B_u(g(u))) v_g\|^2 \leq 2\delta + 2\kappa$, where
 $\kappa = 57676416\,\eps$ is the commutator weight of Lemma~\ref{lem:qld-combined-points}. The
 estimate holds for every outcome, with the product order reversed
 ($\widehat M^X_a \widehat M^Z_b$), and with the parties exchanged ($G_B$ against Alice's ordered
-products, on the swapped state); retaining a subset of outcomes only decreases the left-hand side.
-These ordered products need not be POVMs.
+products, in the padded model with the players exchanged); retaining a subset of outcomes only
+decreases the left-hand side. These ordered products need not be POVMs. The Lean proves it for a
+\texttt{GlobalPair} in any model into which the register model embeds; the statement above is its
+tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -3819,9 +4161,9 @@ fibre sums into $(1 - 1/q) \sum_{a,b} \|(\Id \otimes D(a, b))\Phi\|^2$, with no 
 each deviation is a contraction of a commutator:
 $D(a, b) = \widehat M^Z_b [\widehat M^X_a, \widehat M^Z_b]$ for this order and
 $-(\Id - \widehat M^Z_b)[\widehat M^X_a, \widehat M^Z_b]$ for the other. The commutator weight is
-the one of Lemma~\ref{lem:qld-combined-points}, read on the twice-padded state, where doubly
-extended operators have their expanded-state norms. Bob's version applies the same argument to
-the swapped state.
+the one of Lemma~\ref{lem:qld-combined-points}, read in the padded model, where operators carried
+along the embedding have their expanded-state norms. Bob's version applies the same argument with
+the players exchanged.
 \end{proof}
 
 \paragraph{Comments.} The paper restricts to $w$-independent outcomes and goes through the
@@ -3857,18 +4199,19 @@ $2\delta_{\mathrm{ld}} + 2 \cdot 57676416\,\eps$, linear in both.
   MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB, MIPRE.QLD.sum_bad_linear_mass_le,
   MIPRE.QLD.GlobalPair.sum_bad_linear_mass_A_le, MIPRE.QLD.GlobalPair.sum_bad_linear_mass_B_le}
 \leanok
-Let $(G_A, G_B)$ be the global measurements of Lemma~\ref{lem:qld-global-pvm}, with error
-$\delta$, on the twice-padded state $\Phi$, and let $\Delta = 2\delta + 2 \cdot 57676416\,\eps$
-be the bound of Lemma~\ref{lem:qld-global-products} for the order
-$\widehat M^X_a \widehat M^Z_b$. Call an outcome $g$ linear in $(\alpha, \beta)$ if every
-monomial of $g$ has exponents $(1, 0)$ or $(0, 1)$ on the two combining coordinates, that is
-$g = \alpha g_1(x, z, w) + \beta g_2(x, z, w)$, and let $L$ be the set of such outcomes. Then,
-with $\eta = (1 + 2d + 4md)/q$,
+Let $(G_A, G_B)$ be the global measurements of Lemma~\ref{lem:qld-global-pvm}, with error $\delta$,
+in the padded model, with state $\Phi$, and let $\Delta = 2\delta + 2 \cdot 57676416\,\eps$ be the
+bound of Lemma~\ref{lem:qld-global-products} for the order $\widehat M^X_a \widehat M^Z_b$. Call an
+outcome $g$ linear in $(\alpha, \beta)$ if every monomial of $g$ has exponents $(1, 0)$ or $(0, 1)$
+on the two combining coordinates, that is $g = \alpha g_1(x, z, w) + \beta g_2(x, z, w)$, and let
+$L$ be the set of such outcomes. Then, with $\eta = (1 + 2d + 4md)/q$,
 \[
   (1 - 2\eta) \sum_{g \notin L} \langle G_{A,g} \otimes \Id \rangle_\Phi \leq 2\Delta ,
 \]
 and likewise for $G_B$. Under $16md \leq q$ this is $O(\Delta)$, linear in $\delta$ and in
-$\eps$; the sum over outcomes introduces no factor $q^2$.
+$\eps$; the sum over outcomes introduces no factor $q^2$. The Lean proves it for a global
+measurement in any bipartite model in a unit state, and for a \texttt{GlobalPair} in any model;
+the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -3904,8 +4247,8 @@ $W(a, b) = \|(S \otimes \widehat M^X_a \widehat M^Z_b)\Phi\|^2$, weights that do
 $(\alpha, \beta)$ and sum to $\langle S \otimes \Id \rangle$. Exchanging the two sums, each
 $W(a, b)$ is counted with the probability that $p_{u_0}(\alpha, \beta) = \alpha a + \beta b$ at a
 uniform $(\alpha, \beta)$, which is at most $2d/q$ by Schwartz--Zippel in two variables.
-Altogether $\eta = 1/q + 2d/q + 4md/q$. Bob's version applies the same argument to the swapped
-state.
+Altogether $\eta = 1/q + 2d/q + 4md/q$. Bob's version applies the same argument with the players
+exchanged.
 \end{proof}
 
 \paragraph{Comments.} The paper (\texttt{eq:qld-g-prime-bound}) states the bound as
@@ -3958,7 +4301,9 @@ $\eta = (2 + 2d + 8md)/q$,
 \]
 and likewise for $G_B$. In particular a good outcome reads no dummy coordinate, and the good
 outcomes are in bijection with the pairs $(g_X, g_Z)$ of polynomials of individual degree at most
-$d$ on $\F_q^m$.
+$d$ on $\F_q^m$. The Lean proves it for a global measurement in any bipartite model in a unit
+state, and for a \texttt{GlobalPair} in any model; the statement above is its tensor-product
+instance.
 \end{lemma}
 
 \begin{proof}
@@ -3995,8 +4340,8 @@ using $\sum_b \widehat M^Z_b(z) = \Id$. Altogether $\eta \geq 2/q + 8md/q$. For 
 coordinate outside the $x$ block, exchange the roles of $(\widehat M^X, a, \alpha)$ and
 $(\widehat M^Z, b, \beta)$: the order $\widehat M^Z_b \widehat M^X_a$ along $(\alpha, \beta)$ is
 the order $\widehat M^X_a \widehat M^Z_b$ along $(\beta, \alpha)$ with the two families exchanged,
-and the base point is read as a uniform $x$ block. Bob's version applies the same argument to the
-swapped state.
+and the base point is read as a uniform $x$ block. Bob's version applies the same argument with
+the players exchanged.
 \end{proof}
 
 \paragraph{Comments.} The paper states the excluded weight as
@@ -4030,7 +4375,7 @@ by the fixed pair $(0, 0)$. The result is a complete projective measurement of p
 operator it assigns to $(0, 0)$ beyond the good outcomes with that pair is the paper's complement
 $R$, of weight at most $\delta_G$ by Lemma~\ref{lem:qld-global-separate}. Consequently each
 consistency estimate stated for the good outcomes holds for the completed measurement with its
-error increased by $\delta_G$.
+error increased by $\delta_G$. The Lean proves it for a global measurement in any bipartite model.
 \end{lemma}
 
 \begin{proof}
@@ -4058,7 +4403,8 @@ Let $\Delta$ be the bound of Lemma~\ref{lem:qld-global-products} and $\delta_G$ 
 outcomes that are not of the separated form. Then the evaluated $Z$ marginal of the completed pair
 measurement is consistent with Bob's expanded $(\mathtt{Point}, Z)$ measurement at a uniform
 $z \in \F_q^m$, with error at most $2\sqrt{\Delta} + 2/q + \delta_G$, and likewise the $X$
-marginal with the $X$ measurement at a uniform $x$.
+marginal with the $X$ measurement at a uniform $x$. The Lean proves it in any bipartite model in a
+unit state; the statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -4078,7 +4424,7 @@ marginal is the same computation from the other product order. No complex interm
 every quantity estimated here is a squared norm or a Born probability of a positive operator.
 \end{proof}
 
-\begin{lemma}[Global robustness and register transport]
+\begin{lemma}[Global robustness in both register versions]
 \label{lem:qld-global-robustness}
 \ledgernode{1.2.2.13.10}
 \uses{lem:qld-global-sandwich,lem:qld-global-separate,lem:qld-global-setup}
@@ -4094,11 +4440,12 @@ $\delta_G = 8\Delta$ the weight of the outcomes that are not of the separated fo
 $\delta_S = 2\sqrt{\Delta} + 2/q + \delta_G$ the marginal error. The bound
 $\delta_G = 8\Delta$ holds under $48md \leq q$, where the factor $1 - 2\eta$ of
 Lemma~\ref{lem:qld-global-separate} is at least $1/2$. Both register versions are obtained by
-running the same estimates against the swapped padded state; no symmetry of the strategy is
-assumed. Finally the measurements are carried from the dilated registers
-$((d_A \times \mathrm{Anc}) \times \F_q^2) \times \mathrm{Ans}$ to the shape
-$(d_A \times \mathrm{Anc}) \times E_A$ of Lemma~\ref{lem:qld-simultaneous} by the associativity
-reindexing, which preserves projectivity, the Born rule and every inconsistency.
+running the same estimates in the model with the players exchanged; no symmetry of the strategy is
+assumed. The marginal consistencies hold in the model of the global measurements, against the
+expanded point measurements carried there by the embedding of the register model, which is the
+form Lemma~\ref{lem:qld-simultaneous} states them in, so no register is moved. The Lean proves it
+for a \texttt{GlobalPair} in any model into which the register model embeds; the statement above
+is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -4106,12 +4453,10 @@ reindexing, which preserves projectivity, the Born rule and every inconsistency.
 \leanok
 For the arithmetic: $2 + 2d + 8md \leq 12md$ for $m, d \geq 1$, so $48md \leq q$ gives
 $\eta = (2 + 2d + 8md)/q \leq 1/4$ and $1 - 2\eta \geq 1/2$; since the weight is nonnegative,
-Lemma~\ref{lem:qld-global-separate} then reads $\delta_G \leq 8\Delta$. For the transport:
-reindexing a register along an equivalence is a $*$-isomorphism of the matrix algebra, so it takes
-projective measurements to projective measurements, and conjugating the state by the same
-equivalence leaves every quadratic form unchanged; extending an operator by the identity twice
-and reassociating is extending it once by the product ancilla. Bob's versions are Alice's applied
-to the swapped state, which the inconsistency and the Born rule exchange.
+Lemma~\ref{lem:qld-global-separate} then reads $\delta_G \leq 8\Delta$. The expanded point
+measurements enter carried along the embedding (\texttt{liftPt}), whose Born probabilities are
+their expanded-state ones. Bob's versions are Alice's applied in the model with the players
+exchanged, which the inconsistency and the Born rule exchange.
 \end{proof}
 
 \subsubsection{Separation and the swap isometry}
@@ -4130,8 +4475,9 @@ to the swapped state, which the inconsistency and the Born rule exchange.
   MIPRE.QLD.SimulPair.sum_bornProb_evalMarg_ge, MIPRE.QLD.SimulPair.sum_xSqNorm_evalMarg_le,
   MIPRE.QLD.SimulPair.sum_xSqNorm_hat_le, MIPRE.QLD.SimulPair.sum_snorm_sq_evalMarg_one_sub_le}
 \leanok
-Let $(\Phi, S_A, S_B)$ be a simultaneous pair measurement of error $\delta_S$
-(Lemma~\ref{lem:qld-simultaneous}) for a strategy of failure $\eps$. For $W \in \{X, Z\}$ and on
+Let $(S_A, S_B)$ be a simultaneous pair measurement of error $\delta_S$
+(Lemma~\ref{lem:qld-simultaneous}) for a strategy of failure $\eps$, in a model with state $\Phi$
+into which the register model embeds. For $W \in \{X, Z\}$ and on
 average over a uniform $u \in \F_q^m$, with $\widehat S^W_a$ the evaluated $W$ marginal,
 \begin{equation*}
   1 - \mathbb E_u \sum_a \bigl\langle \widehat{S}^W_a \ot
@@ -4143,7 +4489,10 @@ the opposite party's measurement being the one on the right, and
     ( \Id - \widehat{M}^{(\mathtt{Point}, W), u}_{a} ) \ot \Id \bigr) \Phi \bigr\|^2
   \leq 4 \delta_S + 344\,\eps ,
 \end{equation*}
-in which \emph{both} factors sit on the same party. All symmetric equivalents hold.
+in which \emph{both} factors sit on the same party, the point measurements being carried to that
+model by the embedding. All symmetric equivalents hold. The Lean proves it for a \texttt{SimulPair}
+of a projective strategy in any bipartite model; the statement above is its tensor-product
+instance.
 \end{lemma}
 
 \begin{proof}
@@ -4167,8 +4516,9 @@ is the deviation of the marginal from the opposite party's point measurement, wh
 display bounds by $2\delta_S$ after summing, and the second is the self-consistency of the
 expanded point measurements, $172\eps$ by Lemma~\ref{lem:qld-expanded-points}. Squaring costs a
 factor two on each. The self-consistency is stated at the verifier's content and used at a
-uniform point; the content's $W$ block is uniform, and it transfers to the padded state because
-doubly extended operators keep their expanded-state expectations.
+uniform point; the content's $W$ block is uniform, and it transfers to the model of the pair
+measurement because operators carried along the embedding keep their expanded-state
+expectations.
 \end{proof}
 
 \paragraph{Comments.} The paper absorbs the $\eps$ of the second item into $\delta_S$; here both
@@ -4181,7 +4531,7 @@ same sum, grouped differently, and the outcome form is what the Pauli constructi
 \begin{lemma}[Exact Pauli operators]
 \label{lem:qld-exact-paulis}
 \ledgernode{1.2.2.15}
-\uses{lem:qld-simultaneous,lem:qld-helper,lem:qld-win,lem:schwartz-zippel}
+\uses{lem:qld-simultaneous,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,def:qld-physical-model}
 \lean{MIPRE.QLD.sCoarse, MIPRE.QLD.isPVM_sCoarse, MIPRE.QLD.sum_sCoarse_kron, MIPRE.QLD.mTilde,
   MIPRE.QLD.mTilde_eq_sum, MIPRE.QLD.cdPhase, MIPRE.QLD.wTilde, MIPRE.QLD.wTilde_eq,
   MIPRE.QLD.wTilde_conjTranspose, MIPRE.QLD.wTilde_mul_self, MIPRE.QLD.wTilde_mul_wTilde,
@@ -4224,7 +4574,11 @@ binary observables on the expanded space which satisfy the Pauli group relations
 \emph{exactly} --- linearity in the argument, and $XZ$ commutation or anticommutation with the
 phase $(-1)^{\fieldtr(e e' (\tilde{u} \cdot \tilde{v}))}$ at the two combining field elements ---
 and which are $\delta$-close to the strategy's $(\mathtt{Point}, W)$ measurements on the expanded
-state.
+state. The Lean proves it for a simultaneous pair measurement of a projective strategy in any
+bipartite model; the closeness is stated on the physical model of
+Definition~\ref{def:qld-physical-model}, for the pair measurement on its first cut and the
+strategy's measurements with the registers inert. The statement above is its tensor-product
+instance.
 \end{lemma}
 
 \begin{proof}
@@ -4355,24 +4709,24 @@ and
 statement grouped differently: expanding $\tilde{M}$ and contracting the generalized Pauli against
 the point measurement is \texttt{sum\_kron\_syn\_eq\_hatMats}, one characteristic-two shift.
 
-\emph{The second entangled pair was never needed.} The obstacle recorded here until this point was
-that the paper's expanded state $\ket{\hat\psi} = \ket{\psi}_{\alice\bob} \ot
-\ket{\EPR}_{\alice'\alice''} \ot \ket{\EPR}_{\bob'\bob''}$ carries \emph{two} entangled
-pairs, each local to one party, and is read along two cuts ---
-$\alice\alice' \mid \bob\alice''$ for one orientation of Lemma~\ref{lem:qld-simultaneous} and
-$\bob\bob' \mid \alice\bob''$ for the other --- while \texttt{MIPRE.QLD.hatVec} is one such
-cut, with one pair. That is right, and it is all Lemmas~\ref{lem:qld-simultaneous}
-and~\ref{lem:qld-helper} need. What it does \emph{not} imply is that
+\emph{The second entangled pair is not needed here.} The paper's expanded state
+$\ket{\hat\psi} = \ket{\psi}_{\alice\bob} \ot \ket{\EPR}_{\alice'\alice''} \ot
+\ket{\EPR}_{\bob'\bob''}$ carries \emph{two} entangled pairs, each local to one party, and is read
+along two cuts --- $\alice\alice' \mid \bob\alice''$ for one orientation of
+Lemma~\ref{lem:qld-simultaneous} and $\bob\bob' \mid \alice\bob''$ for the other --- while the
+register model of the strategy's model has one pair, along one such cut. That is all
+Lemmas~\ref{lem:qld-simultaneous} and~\ref{lem:qld-helper} need. Writing
 $\tilde{M}^{W,\tilde{u}} = \sum_g \widehat S^W_g \ot \tau^W_{\coded(g) \cdot \tilde{u} -
-a}(\tilde{u})$, which wants $\widehat S^W$ and the generalized Pauli on the disjoint registers
-$\alice\alice'$ and $\alice''$, needs a new pair: the register $\alice''$ is already there, on
-the far side of the cut, and writing $\tilde{M}$ as one matrix is a \emph{regrouping} of the same
-six registers along a third cut, $\alice\alice'\alice'' \mid \bob$. Every Born probability
-transports across it by \texttt{bornProb\_regroupVec}, which is one entry computation
-(\texttt{reindex\_regroupEquiv}) and one invariance of the quadratic form
-(\texttt{qform\_comp\_equiv}, the unary companion of \texttt{quadForm\_reindex}, which reindexes
-the two parties separately and so cannot move a factor between them). No second pair, no transport
-between cuts, and no new estimate.
+a}(\tilde{u})$ as one operator wants $\widehat S^W$ and the generalized Pauli on the disjoint
+registers $\alice\alice'$ and $\alice''$, and needs no new pair: the register $\alice''$ is
+already there, on the far side of the cut. In the formalization $\widehat S^W$ is an operator of
+the first player of the first cut, on $(E_A, A')$, and $\tilde{M}$ one of the first player of the
+physical model, on $(A'', E_A, A')$ with the Pauli register outermost
+(Definition~\ref{def:qld-physical-model}). The first cut and the physical model are two readings
+of one state model, so every Born probability is read on the physical model by the reading lemmas
+(\texttt{phys\_bornProb\_compHom\_smulKron}), the strategy's own measurements entering with the
+registers inert (\texttt{physInert}). No second pair, no transport between cuts, and no new
+estimate.
 
 \emph{A ledger discrepancy worth recording.} Node $1.2.2.15$ declares its dependencies as
 $\{1.2.2.13, 1.2.2.14, 1.2.2.7\}$ --- the last being Theorem~\ref{thm:linearity} --- and does not
@@ -4386,7 +4740,8 @@ above follows the paper. \texttt{reports/qld-stage5-blueprint-repairs.md} record
 \begin{lemma}[Self-consistency of the exact Pauli observables]
 \label{lem:qld-pauli-selfcons}
 \ledgernode{1.2.2.15}
-\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,def:cross-distance}
+\uses{lem:qld-exact-paulis,lem:qld-helper,lem:qld-win,lem:schwartz-zippel,def:cross-distance,
+  def:qld-physical-model}
 \lean{MIPRE.QLD.syn_mul_syn, MIPRE.QLD.stateVec_hatVec_syn, MIPRE.QLD.xSqNorm_hatVec_syn,
   MIPRE.QLD.SimulPair.stateVec_ancSyn, MIPRE.QLD.SimulPair.sum_ancSyn_mulVec,
   MIPRE.QLD.SimulPair.snorm_sq_evalMarg_eq_sum_polyMarg,
@@ -4528,6 +4883,11 @@ $O(\sqrt\eps)$ and $O(md/q)$ terms are absorbed into $\delta_S$, as the paper sa
 does. Two departures from the paper's phrasing, both in the direction of a stronger statement:
 the bound holds at \emph{every} probe rather than on average over a uniform one --- the chain
 never averages over the probe, only over the sampled point --- and the constant is explicit.
+The Lean proves it for the two cuts of one physical state (\texttt{MirrorSimul}) of a projective
+strategy in any bipartite model, $\ket{\widehat\psi}$ being the state of the physical model of
+Definition~\ref{def:qld-physical-model}; the two cuts exist for every legal projective strategy in
+the regime $48md \leq q$ of a model in which the seeded CL test is sound in every ancilla extension
+by a unit vector. The statement above is its tensor-product instance.
 \end{lemma}
 
 \begin{proof}
@@ -4567,10 +4927,11 @@ eigenvalue patterns in both level sets survive.
 \texttt{SimulPair.stateVec\_ancSyn} is \texttt{eq:qld-pulling-3a}: a generalized Pauli moves from
 one party's ancilla half to the other's at no cost, the two halves being maximally entangled and
 the syndrome projectors symmetric. The point worth recording is that this is available at all.
-Lemma~\ref{lem:qld-simultaneous} does not say that the padded state \emph{is} an expanded state,
-only that it reproduces its expectations, so a \emph{vector} identity about it looks out of reach.
-It is not: the identity to be proved is the vanishing of a squared norm, and a squared norm is an
-expectation, so \texttt{SimulPair.xSqNorm\_aOp} carries it across with no loss.
+Lemma~\ref{lem:qld-simultaneous} does not say that the model of the pair measurement \emph{is} the
+register model, only that the register model embeds in it, carrying its expectations, so a
+\emph{vector} identity about its state looks out of reach. It is not: the identity to be proved is
+the vanishing of a squared norm, and a squared norm is an expectation, so
+\texttt{SimulPair.xSqNorm\_aOp} carries it across with no loss.
 
 \texttt{SimulPair.sum\_ancSyn\_mulVec} is \texttt{eq:qld-pulling-4}: summing the matched pairs of
 syndrome projectors, one on each party, leaves the state unchanged, since by the transport each
@@ -4658,31 +5019,24 @@ Lemma~\ref{lem:qld-exact-paulis}'s, and \texttt{swapU\_conj\_mTildeAnc} says tha
 the swap unitary strips the pair measurement off it whatever the probe --- the cancellation is
 between the outcome's shift and the conjugation's, and both are written with the same pairing.
 
-\emph{And a strategy has one.} \texttt{MirrorSimul} was introduced as an interface, and for
-several steps of this campaign nothing constructed one --- so everything stated against it was
-conditional on a structure no strategy had been shown to have.
-\texttt{exists\_mirrorSimul} closes that: a legal projective strategy of value $1 - \eps$ has
-both cuts, on one state.
+\emph{And a strategy has one.} \texttt{MirrorSimul} is the pair of cuts the chain runs on, and
+\texttt{exists\_mirrorSimul} constructs it: a legal projective strategy of value $1 - \eps$, in a
+model in which the seeded CL test is sound in every ancilla extension by a unit vector, has both
+cuts, on one state, in the regime $48md \leq q$. The construction is two runs of
+Lemma~\ref{lem:qld-simultaneous}, one at the strategy and one at the strategy with the players
+exchanged, in the model with the players exchanged, at one padding size
+(\texttt{mirrorOfGlobalPairs}); each run's pair measurement is carried to the first cut of its
+physical model along the embedding $j_1$ of Definition~\ref{def:qld-physical-model}. The interface
+does \emph{not} ask the two cuts' pair measurements to be related --- the paper does not either,
+its simultaneous-measurement lemma giving one measurement per player's space --- and it has nothing
+to say about their states: the physical model of the exchanged model is the physical model with
+the two players' algebras exchanged, so the two cuts read one state by construction.
 
-The construction is two runs of Lemma~\ref{lem:qld-simultaneous}, one at the strategy and one at the
-\emph{swapped} strategy, whose padded state carries the other pair. What made this look hard, and
-is the thing to record, is a misreading of what the interface demands: it does \emph{not} ask the
-two cuts' pair measurements to be related --- the paper does not either, since its own
-simultaneous-measurement lemma gives one measurement per player's space --- but only that the two
-\emph{states} agree once each is given the pair the other carries. And those states are explicit:
-\texttt{padState} is the strategy tensored with one maximally entangled pair and four padding
-registers pinned at basis vectors (\texttt{padState\_reindex\_apply}), so both sides of
-\texttt{hmirror} are the same product of the same six factors and all that is left to check is
-that swapping a pair's halves changes nothing (\texttt{epr\_symm}). Reading the field as ``the
-two cuts must come from one construction'' rather than ``the two cuts' states must agree'' is what
-made it look like new mathematics.
-
-\emph{And the conclusion is now expressible, which it was not.} Both sides of this statement are
-exact Pauli objects, one per party, so writing it down at all needs each party's whole triple on
-its own side of one cut: Alice's $\alice \alice' \alice''$ against Bob's $\bob \bob' \bob''$. The
-formalization's padded state carried only the pair $\alice' \alice''$, so there was no such cut and
-no such statement. \texttt{MirrorSimul} supplies it, and the shape it takes was decided by three
-sentences of the paper rather than by the Lean types.
+\emph{And the conclusion is expressible.} Both sides of this statement are exact Pauli objects, one
+per party, so writing it down at all needs each party's whole triple on its own side of one cut:
+Alice's $\alice \alice' \alice''$ against Bob's $\bob \bob' \bob''$. That cut is the physical
+model, and the shape \texttt{MirrorSimul} takes was decided by three sentences of the paper rather
+than by the Lean types.
 
 The registers are partitioned two ways --- $\alice \alice'$ against $\bob \alice''$, and
 $\bob \bob'$ against $\alice \bob''$ --- and \texttt{qld-commutation.tex}'s
@@ -4690,34 +5044,27 @@ $\bob \bob'$ against $\alice \bob''$ --- and \texttt{qld-commutation.tex}'s
 with the registers changed. Lemma~\ref{lem:qld-simultaneous} gives $\widehat{S}$ on
 $\alice \alice'$ \emph{and} on $\bob \bob'$, one per player's space, and it is the second that
 $V_\bob$ conjugates by. So the second reading is not data of a new kind: \textbf{the mirror of a
-\texttt{SimulPair} is a \texttt{SimulPair}}, at the swapped strategy with the two players'
-measurements exchanged. \texttt{toFirst} and \texttt{toSecond} are the two views, and every lemma
-already proved about \texttt{SimulPair} --- \texttt{mVec}, \texttt{mTildeAnc}, \texttt{swapA},
-\texttt{swapU\_conj\_mTildeAnc} --- becomes Bob's by instantiation, with no mirror lemma to prove.
+\texttt{SimulPair} is a \texttt{SimulPair}}, at the exchanged players and the exchanged strategy.
+A \texttt{MirrorSimul} is the padding size and the two cuts' pair measurements, \texttt{first}
+and \texttt{second}, and every lemma already proved about a \texttt{SimulPair} ---
+\texttt{mTildeAnc}, \texttt{swapA}, \texttt{swapU\_conj\_mTildeAnc} --- becomes Bob's by
+instantiation at \texttt{second}, with no mirror lemma to prove.
 \texttt{bobSwap\_conj\_bobMTilde} is the paper's ``an entirely analogous calculation shows''
 discharged that way.
 
-Where the second pair goes was the one real decision, and getting it wrong breaks the statement
-rather than merely lengthening the proof. It is \emph{appended}: each view keeps the state its own
-cut sees, with only its own pair in it, and the other pair is tensored on with \texttt{expVec \_
-epr}, one half to each party (\texttt{hmirror} says the two appendings agree). The alternative ---
-hiding the second pair inside \texttt{SimulPair}'s arbitrary padding registers, which typechecks
-and needs nothing retyped --- would let $\widehat{S}$ act on $\bob''$, which is Bob's, and the
-paper's does not. A non-local $\widehat{S}$ makes $\tilde{M}$ and the swap unitary non-local, and
-then the two sides of this lemma do not lie on opposite sides of any cut. Appending puts the pair
-halves outermost, which is also where \texttt{mTilde} writes its Pauli register, so
-\texttt{mTildeAnc} lands on Alice's physical register with nothing to reindex ---
-\texttt{aliceMTilde} and \texttt{bobMTilde} are the two sides, and \texttt{selfConsGap} is this
-lemma's left-hand side. \texttt{planning/qld-two-pairs-scope.md} keeps both discarded designs.
-
-The bridge from what is proved to where it has to be read is \texttt{bornProb\_physVec}: along the
-cut $\tilde{M}$ needs, $\alice''$ has already moved to Alice, so what the appending adds is
-entirely Bob's, and an operator that is the identity on it sees the state
-Lemma~\ref{lem:qld-simultaneous} already describes. \texttt{sndExtVec} is that one-sided appending
-(\texttt{expVec} puts one register on each party and does not cover it; it does cover it with a
-trivial register on the first party, which is all \texttt{sndExtVec} is), and
-\texttt{pairSwapVec\_mirrorVec} says the two cuts' physical readings are the same vector on the
-nose, with only the parties written in the other order.
+Each cut's pair measurement acts on its own player's registers only, $(E_A, A')$ for the first and
+$(E_B, B')$ for the second, so $\widehat{S}$ never acts on the other player's registers --- a
+non-local $\widehat{S}$ would make $\tilde{M}$ and the swap unitary non-local, and then the two
+sides of this lemma would not lie on opposite sides of any cut. And $\tilde{M}$ writes its Pauli
+register outermost, which is where the physical model puts the far half of the player's own pair:
+\texttt{mTildeAnc}, flattened, lands on Alice's physical registers $(A'', E_A, A')$ with nothing to
+reindex, and the second cut's on Bob's. \texttt{aliceMTilde} and \texttt{bobMTilde} are the two
+sides, operators of the two players of the physical model, and \texttt{selfConsGap} is this
+lemma's left-hand side. A statement proved on the physical model of the exchanged model reads on
+the physical model along the exchange of the blocks (\texttt{phys\_swap\_bornProb},
+\texttt{phys\_swap\_inconsistency} and their companions). The matrix formalization appended each
+cut's missing pair to the other cut's state and proved the two appendings equal;
+\texttt{planning/qld-two-pairs-scope.md} keeps the designs it discarded on the way.
 
 \emph{And the chain's two ends are formalized, which leaves only its middle.} The chain's
 arithmetic frame is \texttt{MIPRE/Background/QLD/Chain.lean}, and it holds no estimate at all: it
@@ -4732,7 +5079,7 @@ the definition carries is the sum the chain's label is written with
 (\texttt{dotF\_chainLabel\_eq\_iff}).
 
 At the far end, \texttt{endOp} is display \texttt{eq:qld-pulling-12} and
-\texttt{endOpMirror\_apply} is the sentence that makes the whole lemma go through. Both parties'
+\texttt{endOpMirror\_eq} is the sentence that makes the whole lemma go through. Both parties'
 derivations end at that display, and the reason the two are then close to \emph{each other} rather
 than each close to something is that it is symmetric in the two pairs --- which is not apparent, its
 index set being cut out by a coupling that mentions both pairs and a pairing condition that mentions
@@ -4752,23 +5099,23 @@ is that display at item 1 of Lemma~\ref{lem:qld-helper}'s own constant. Two thin
 that and no more. The insertion's deficit is \emph{exactly} the near-identity's, because the
 measurement's outcomes are orthogonal, so summing the deviation over them leaves one copy rather
 than one per outcome (\texttt{sum\_snorm\_sq\_sub\_mul}) --- without that, the bound would carry a
-factor $q$. And the near-identity lives on $\Phi$'s own cut, where
+factor $q$. And the near-identity lives on the first cut, where
 \texttt{snorm\_sq\_one\_sub\_agreeOp} turns its deficit into the helper's Born probability, while
-$\tilde{M}$ lives on the cut that has $\alice''$ with Alice; \texttt{snorm\_comp\_equiv} moves
-between them, a state-norm being carried by any reindexing of the whole space. That lemma is what
-lets each step of the chain be read along whichever of the paper's three groupings it is local in,
-rather than forcing one grouping on all of them.
+$\tilde{M}$ lives on the physical model, which has $\alice''$ with Alice. The two are readings of
+one state model, with one Hilbert space and one state, so a state norm is the same number on both
+and the first cut's reading lemmas move an operator between them. That is what lets each step of
+the chain be read along whichever of the paper's three groupings it is local in, rather than
+forcing one grouping on all of them.
 
 \emph{And the expansion that follows it.} Displays \texttt{eq:qld-pulling-2} and
-\texttt{eq:qld-pulling-2b} carry out the product, and
-\texttt{SimulPair.aOp\_mTildeAnc\_mul\_nearId} is that computation at the interface. It is an
-identity, not an estimate, and it runs in three moves. The near-identity expands because the hatted
-point measurement \emph{is} the convolution
-$\sum_{a'} M^{(\mathtt{Point},W),u}_{a'} \ot \tau^{W,u}_{c-a'}$
-by construction (\texttt{sum\_kron\_syn\_eq\_hatMats}), and \texttt{reindex\_regroupEquiv} sends
-each of its terms to the cut $\tilde{M}$ lives on, putting $\tau^{W,u}$ beside Alice and the point
-measurement alone on Bob (\texttt{SimulPair.nearId\_eq\_sum}). Multiplying then kills all but one
-pair outcome, the family being projective, and fuses the two syndrome projectors into the Weyl
+\texttt{eq:qld-pulling-2b} carry out the product, and \texttt{SimulPair.aOp\_mTildeAnc\_mul\_nearId}
+is that computation at the interface. It is an identity, not an estimate, and it runs in three
+moves. The near-identity expands because the hatted point measurement \emph{is} the convolution
+$\sum_{a'} M^{(\mathtt{Point},W),u}_{a'} \ot \tau^{W,u}_{c-a'}$ by construction
+(\texttt{sum\_kron\_syn\_eq\_hatMats}), and the reading lemmas of the first cut send each of its
+terms to the physical model, where $\tilde{M}$ lives, putting $\tau^{W,u}$ beside Alice and the
+point measurement alone on Bob (\texttt{SimulPair.nearId\_eq\_sum}). Multiplying then kills all but
+one pair outcome, the family being projective, and fuses the two syndrome projectors into the Weyl
 outcomes meeting both conditions --- \texttt{syn\_mul\_syn}, which is where the chain's index set
 first appears (\texttt{SimulPair.mTildeAnc\_mul\_kron}). Finally the sum over Bob's outcome
 collapses: for each Weyl outcome $h$ exactly one $a'$ survives, namely $(g - g_h)(u)$, because in
@@ -4801,10 +5148,11 @@ the \emph{syndrome} projector, which is a fibre of the spectral family; the chai
 projector of that family, so it needs the single-projector version, and
 \texttt{stateVec\_epr\_proj} --- already in Foundations, and already used by the endgame --- is the
 ingredient. The shape of the argument is worth restating because it is what makes these steps
-available at all: Lemma~\ref{lem:qld-simultaneous} does not say the padded state \emph{is} an
-expanded state, only that it reproduces its expectations, so a \emph{vector} identity about it
-looks out of reach. It is not, because the identity to be proved is the vanishing of a squared
-norm, and a squared norm is an expectation.
+available at all: Lemma~\ref{lem:qld-simultaneous} does not say the model of the pair measurement
+\emph{is} the register model, only that the register model embeds in it, carrying its
+expectations, so a \emph{vector} identity about its state looks out of reach. It is not, because
+the identity to be proved is the vanishing of a squared norm, and a squared norm is an
+expectation.
 
 \emph{And \texttt{eq:qld-pulling-3b}, which is a definition unfolded the other way.}
 \texttt{hatMats\_mul\_proj} says the chain's factor $(M^{(\mathtt{Point},W),u}_r)_\alice \ot
@@ -4855,31 +5203,27 @@ Alice's side then collapses and travels. \texttt{sum\_aliceChainOp} sums the Wey
 her summand, the spectral projectors being complete, and
 \texttt{sum\_aliceChainOp\_sandwich} carries that through the sandwich, her gap operator not
 depending on the Weyl index. What is left is on $\alice \alice'$ alone, and
-\texttt{bornProb\_physVec\_aOp} carries it back to $\Phi$, where
-\texttt{SimulPair.sum\_snorm\_sq\_polyMarg\_one\_sub\_le} bounds it. That transport is
-stated twice --- \texttt{bornProb\_physVec\_aOp\_kron} keeps the identity written as a fourfold
-tensor product, and only the second collapses it --- because the intermediate \texttt{mVec}
-carries Bob's padding under \texttt{toFirst}'s name for it, and rewriting inside that application
-is not type-correct. The same spelling problem is why Alice's objects here
-(\texttt{aliceChainOp}, \texttt{aliceHat}) are named rather than reached through
-\texttt{toFirst}.
+\texttt{bornProb\_physVec\_aOp} reads it on the first cut, where
+\texttt{SimulPair.sum\_snorm\_sq\_polyMarg\_one\_sub\_le} bounds it: an operator of the first
+player of the first cut is the physical operator acting as the identity on $\alice''$, on the same
+state.
 
 \emph{And Bob's whole derivation is Alice's, instantiated.} \textbf{The mirror of a
-\texttt{MirrorSimul} is a \texttt{MirrorSimul}} --- at the swapped strategy, with the two
-players' measurements exchanged and the two cuts exchanged. \texttt{toFirst} and
-\texttt{toSecond} give Bob's objects as a \texttt{SimulPair}, which is enough for anything
-stated on one cut's state; \texttt{mirror} gives them on the \emph{physical} state, which is what
-the chain's last displays compare, so every lemma about the six-register cut becomes Bob's by
-instantiation. \texttt{mirror\_sum\_snorm\_sq\_chainP\_le} is
+\texttt{MirrorSimul} is a \texttt{MirrorSimul}} --- at the exchanged players and the exchanged
+strategy, with the two cuts exchanged. Its two fields give each player's objects on one cut, which
+is enough for anything stated there; \texttt{mirror} gives Bob's objects as the first player's of
+the mirror, on the physical model of the exchanged model, which the exchange of the blocks carries
+to the physical model --- what the chain's last displays compare --- so every lemma about the
+six-register reading becomes Bob's by instantiation. \texttt{mirror\_sum\_snorm\_sq\_chainP\_le} is
 \texttt{eq:qld-pulling-5} to \texttt{-8} for Bob, and its proof is one rewrite and one
 application. The paper's ``an analogous derivation shows'' for the second party is discharged that
 way for the whole chain rather than display by display, and
 \texttt{sum\_xSqNorm\_le\_of\_endOp}, which needs both parties' chains, will be fed from one.
 
-What makes it go through is that the state field survives the exchange:
-\texttt{mirrorVec\_mirrorVec} says \texttt{mirrorEquiv} composed with itself is the identity,
-by \texttt{rfl} --- exchanging the two parties and, within each, the party's own pair half with
-the other pair's, puts every register back where it started.
+What makes it go through is that the mirror is an involution by definition
+(\texttt{mirror\_mirror}, by \texttt{rfl}): exchanging the players twice is the identity on models
+and on projective strategies, and a \texttt{MirrorSimul} carries no state of its own to be
+exchanged.
 
 \emph{And the four-index family.} From \texttt{eq:qld-pulling-9a} on, the chain runs over
 \emph{both} parties' pairs: \texttt{chainQ} is that family, projective by
@@ -4968,14 +5312,12 @@ because the total deviation telescopes into the sum of the steps' and Cauchy--Sc
 constant one turns the squared norm of a sum of $n$ terms into $n$ times the sum of their squares.
 For eleven displays that is the difference between eleven and two thousand.
 
-\texttt{physLift} is the other joint. Displays \texttt{eq:qld-pulling-1} to \texttt{-4} are
-local in the first cut's grouping and everything from \texttt{-5} on is local in the physical
-one, so each of the first four has to be carried across --- and what carries it is that the
-appended pair contributes its norm and nothing else (\texttt{qform\_kron\_one\_of\_unit}, the
-one-party form of \texttt{bornProb\_expVec\_kron}) together with a regrouping
-(\texttt{physLiftEquiv}). \texttt{physLift} is a $*$-homomorphism, so
-\texttt{snorm\_physLift} follows from \texttt{qform\_physLift} with no further work, and a
-deviation of two lifted operators is the lift of their deviation.
+The other joint is between the groupings. Displays \texttt{eq:qld-pulling-1} to \texttt{-4} are
+local in the first cut's grouping and everything from \texttt{-5} on is local in the physical one.
+The matrix chain carried each of the first four across by lifting it through a regrouping of the
+appended pair; here the first cut and the physical model are two readings of one state model, so
+the first four terms enter the physical chain as they stand (\texttt{SimulPair.chainS} at the
+first cut), their operators read by the first cut's reading lemmas.
 
 \emph{And the first step of the chaining, which is the one that had to be read off the paper
 rather than the Lean.} \texttt{eq:qld-pulling-4} is the step that brings the second pair's outcome
@@ -4989,13 +5331,13 @@ earlier note here called this display, is the same fact for the \emph{first} pai
 \texttt{eq:qld-pulling-3a}. The two are genuinely different steps about different pairs, and the
 registers had to be checked against \texttt{qld-separating.tex} to see it.
 
-What makes the new one go through is \texttt{sum\_epr\_proj\_mulVec}: on a maximally entangled
-pair the matched Weyl projectors act as the projector on one half alone --- the projectors being
-symmetric matrices --- and those sum to the identity. \texttt{reindex\_bobPairProj} puts that
-fact on the physical grouping and \texttt{kron\_one\_mulVec} lets it act on the pair alone.
+What makes the new one go through is the mirror identity of the second player's pair in the
+physical model (Definition~\ref{def:qld-physical-model}): on the physical state the matched Weyl
+projectors act as the projector on one half alone --- the projectors being symmetric matrices ---
+and those sum to the identity (\texttt{bobPairProj\_eq}, \texttt{sum\_bobPairProj\_mulVec}).
 
 \emph{And the chaining has started.} \texttt{SimulPair.chainS} names the four terms displays
-\texttt{eq:qld-pulling-0} to \texttt{-3} run through, on the cut $\Phi$ lives on, and the three
+\texttt{eq:qld-pulling-0} to \texttt{-3} run through, on the first cut, and the three
 lemmas after it are those displays read as bounds on \emph{consecutive} deviations --- the form
 \texttt{sum\_snorm\_sq\_chain\_le} consumes. Two of the three are the displays applied
 verbatim; the middle one is free, \texttt{eq:qld-pulling-2} and \texttt{-2b} being identities
@@ -5004,15 +5346,14 @@ verbatim; the middle one is free, \texttt{eq:qld-pulling-2} and \texttt{-2b} bei
 \emph{And the chain's four free steps, which are one step.} Displays \texttt{eq:qld-pulling-3a},
 \texttt{-3b}, \texttt{-4} and \texttt{-5} are all ``$\approx_0$'' or identities, so the chain pays
 nothing between \texttt{-3} and \texttt{-5} and there is no reason to name the three terms
-between them: \texttt{MirrorSimul.physLift\_chainU3b\_mulVec} is the whole stretch at once.
+between them: \texttt{SimulPair.chainS\_three\_mulVec} followed by
+\texttt{MirrorSimul.chainS3b\_mulVec} is the whole stretch at once.
 
 What runs through all four is one fact about a maximally entangled pair, used on each of the
 two pairs in turn: \emph{the projector on one half is the projector on the other, on the state.}
-\texttt{SimulPair.ancProj\_mulVec\_mVec} is that for the pair $\alice'\alice''$, read on the cut
-$\Phi$ lives on rather than on $\Phi$ itself --- which is what \texttt{mulVec\_comp\_equiv} is
-for, the regrouping carrying \texttt{mulVec} the way \texttt{qform\_comp\_equiv} carries the
-quadratic form --- and \texttt{MirrorSimul.bobPairProj\_mulVec} is the same for the appended pair
-$\bob'\bob''$, which the physical grouping gives to Bob entire.
+\texttt{SimulPair.ancProj\_mulVec\_mVec} is that for the pair $\alice'\alice''$, read on the first
+cut, and \texttt{MirrorSimul.bobPairProj\_mulVec} is the same for the pair $\bob'\bob''$, which the
+physical model gives to Bob entire; both are the mirror identities of the physical state.
 
 Given that, both halves of the step are the same two lines. Insert the projector on the half
 the chain does not carry; it commutes with everything between it and the state, so it may be
@@ -5024,42 +5365,40 @@ beside it is the \emph{hatted} point measurement cut down by that projector
 is an identity \emph{on the state} and Bob's an identity \emph{of operators} --- is only that
 Bob's matched pair is already there, \texttt{eq:qld-pulling-4} having put it there.
 
-\texttt{MirrorSimul.physLift\_mulVec\_congr} is what carries the first of the two across:
-\texttt{eq:qld-pulling-3a} and \texttt{-3b} are local in the first cut's grouping, and an
-identity on that cut's state lifts to one on the physical state because the lift acts on the
-appended pair as the identity.
+Nothing has to carry the first of the two across: \texttt{eq:qld-pulling-3a} and \texttt{-3b} are
+local in the first cut's grouping, and an identity on the first cut's state is an identity on the
+physical state, the two being one vector.
 
 \emph{And the chaining, which is done.} \texttt{MirrorSimul.chainT} is the chain on the physical
-cut: ten terms for nine steps, the four of \texttt{eq:qld-pulling-0} to \texttt{-3} entering
-lifted and everything from \texttt{-5} on entering directly. Three of the nine steps are free
---- \texttt{eq:qld-pulling-2} and \texttt{-2b}, then \texttt{-3a} to \texttt{-5}, then
-\texttt{-9a} --- and the six that are not cost, in order: item 1 of
-Lemma~\ref{lem:qld-helper}, the game's point--point consistency, item 2 of
-Lemma~\ref{lem:qld-helper}, \texttt{eq:qld-pulling-10} complete, item 2 again at the second cut,
-and Schwartz--Zippel. \texttt{sum\_uniform\_snorm\_sq\_chainT\_le} is their sum at the factor
-nine that \texttt{sum\_snorm\_sq\_chain\_le} charges, and
-\texttt{sum\_uniform\_snorm\_sq\_mTildeAnc\_endOp\_le} is \texttt{eq:qld-pulling-cons} for
-Alice: her exact Pauli measurement on $\alice \alice' \alice''$ is within
+model: ten terms for nine steps, the four of \texttt{eq:qld-pulling-0} to \texttt{-3} entering as
+the first cut's terms and everything from \texttt{-5} on entering directly. Three of the nine steps
+are free --- \texttt{eq:qld-pulling-2} and \texttt{-2b}, then \texttt{-3a} to \texttt{-5}, then
+\texttt{-9a} --- and the six that are not cost, in order: item 1 of Lemma~\ref{lem:qld-helper}, the
+game's point--point consistency, item 2 of Lemma~\ref{lem:qld-helper}, \texttt{eq:qld-pulling-10}
+complete, item 2 again at the second cut, and Schwartz--Zippel.
+\texttt{sum\_uniform\_snorm\_sq\_chainT\_le} is their sum at the factor nine that
+\texttt{sum\_snorm\_sq\_chain\_le} charges, and
+\texttt{sum\_uniform\_snorm\_sq\_mTildeAnc\_endOp\_le} is \texttt{eq:qld-pulling-cons} for Alice:
+her exact Pauli measurement on $\alice \alice' \alice''$ is within
 $9(10 \delta_S + 860 \eps + 2\sqrt{172 \eps} + md/q)$, in summed squared state distance, of the
 chain's endpoint.
 
 The one cost the displays did not already supply is \texttt{eq:qld-pulling-3}'s.
 \texttt{SimulPair.sum\_uniform\_xSqNorm\_pt\_le} supplies it: the game's point--point
-consistency, read on the cut the chain runs on rather than on the strategy's own state. That
-reading is free, and for the reason the whole \texttt{SimulPair} interface exists ---
-\texttt{Phi\_reduced} says the padded state reproduces the expanded state's expectations, and
-the expanded state's pair contributes only its norm --- but it has to be done once
-(\texttt{bornProb\_mVec\_ext}, \texttt{xSqNorm\_mVec\_ext}).
+consistency, read on the model the chain runs on rather than on the strategy's own. That reading
+is free, for the reason the whole \texttt{SimulPair} interface exists --- the register model
+embeds in the first cut carrying every expectation, and the strategy's model embeds in the physical
+model with the registers inert --- but it has to be done once (\texttt{bornProb\_mVec\_ext},
+\texttt{xSqNorm\_mVec\_ext}).
 
 \emph{And the lemma, which is now proved.} Two steps after the chain, and neither is a new
 derivation.
 
 \emph{Bob's half is Alice's at the mirror.} \texttt{MirrorSimul.mirror} makes the mirror a
-\texttt{MirrorSimul} again, \texttt{mirror\_physVec} says its physical state is this one with the
-parties written in the other order, and \texttt{endOp\_swap\_sum} says its endpoint is this one
-read from the other side --- which is \texttt{swap\_mem\_coupledIdx}, the symmetry of the index
-set that is the whole reason this lemma holds.
-\texttt{snorm\_swapVec\_aOp\_sub\_kron\_sum} carries the norm across the swap, and
+\texttt{MirrorSimul} again, its physical model is this one with the players exchanged, and
+\texttt{sum\_coupledIdx\_swap} says its endpoint is this one read from the other side --- which is
+\texttt{swap\_mem\_coupledIdx}, the symmetry of the index set that is the whole reason this lemma
+holds. \texttt{snorm\_sub\_endOpMirror} carries the norm across the exchange of the blocks, and
 \texttt{sum\_xSqNorm\_le\_of\_endOp}, in the tree since the endpoint was named, puts the two
 halves together: \texttt{sum\_selfConsGap\_le} is the two exact Pauli \emph{measurements}
 agreeing.
@@ -5080,7 +5419,7 @@ Lemma~\ref{lem:qld-povm-to-obs} in the state-norm form that step takes.
 \label{lem:qld-swap}
 \ledgernode{1.2.2.16}
 \uses{lem:qld-exact-paulis,lem:qld-pauli-selfcons,lem:qld-win,lem:schwartz-zippel,
-  def:state-distance,def:cross-distance}
+  def:state-distance,def:cross-distance,def:qld-physical-model}
 \lean{MIPRE.QLD.sTensor, MIPRE.QLD.sTensor_mul, MIPRE.QLD.sTensor_one,
   MIPRE.QLD.sTensor_conjTranspose, MIPRE.QLD.wTilde_eq_sTensor, MIPRE.QLD.uOf, MIPRE.QLD.swapU,
   MIPRE.QLD.uOf_conjTranspose, MIPRE.QLD.uOf_mul_conjTranspose, MIPRE.QLD.uOf_conjTranspose_mul,
@@ -5142,7 +5481,7 @@ Lemma~\ref{lem:qld-povm-to-obs} in the state-norm form that step takes.
   MIPRE.QLD.MirrorSimul.swapPhi_W_ψ, MIPRE.QLD.MirrorSimul.swapPhi_ΦA,
   MIPRE.QLD.MirrorSimul.swapPhi_ΦB, MIPRE.QLD.MirrorSimul.stateSqNorm_swapPhi_alice,
   MIPRE.QLD.MirrorSimul.stateSqNorm_swapPhi_bob, MIPRE.QLD.norm_auxVec, MIPRE.QLD.auxVec_smul,
-  MIPRE.QLD.reg_ψ_eq_auxVec, MIPRE.QLD.regAct_twirl}
+  MIPRE.QLD.reg_ψ_eq_auxVec, MIPRE.QLD.regAct_twirl, MIPRE.QLD.MirrorSimul.isPVM_bobConjPauli}
 \leanok
 There is $\delta_{qld} = O\bigl( \delta_S^{1/4} + md/q \bigr)$ and local unitaries $V_\alice$,
 $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
@@ -5158,7 +5497,19 @@ $V_\bob$ on the expanded spaces such that, writing $M = 2^m$:
 \end{enumerate}
 Conjugation carries the exact Pauli observables of Lemma~\ref{lem:qld-exact-paulis} to the honest
 Pauli operators \emph{exactly}, with no error at all; that identity is a step of item 2's proof,
-not a weaker form of it.
+not a weaker form of it. The Lean proves it for the two cuts of a projective strategy in any
+bipartite model (Lemma~\ref{lem:qld-pauli-selfcons}), in the vocabulary of
+Definition~\ref{def:qld-sound-in}. For a unit vector $\ket{\aux}$ of the extension of the
+strategy's model by the padded registers (Definition~\ref{def:qld-physical-model}), the swap
+isometry is a local isometry from the strategy's model to the register model on $\F_q^M$ of that
+extension in the state $\ket{\aux}$: the strategy's model into its physical model with the
+registers inert, then conjugation by the two swap unitaries $V_\alice$ and $V_\bob$, then the
+regrouping into item~1's cut. Item~1 is the squared distance of the transported state to that
+register model's state $\ket{\EPR_q}^{\ot M} \ot \ket{\aux}$, and item~2, for each player and each
+basis, the summed squared state-dependent distance there of the transported $(\pauli, W)$
+measurement, read as cube data, to the honest projector on the player's half of the register. One
+$\ket{\aux}$ serves both items and both players. The statement above is its tensor-product
+instance.
 \end{lemma}
 
 \begin{proof}
@@ -5174,21 +5525,30 @@ $O(\sqrt{\delta_S})$.
 
 \paragraph{Comments.} Both items are formalized, relative to one auxiliary state, with nothing
 assumed beyond the game: \texttt{MirrorSimul.swap\_isometry} in
-\texttt{MIPRE/Background/QLD/SwapItemTwo.lean}. The history below is kept because it records where
-the obstacles were. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean}, item
+\texttt{MIPRE/Background/QLD/SwapItemTwo.lean}. The isometry is \texttt{MirrorSimul.swapPhi}, a
+local isometry of the strategy's model in the vocabulary of \texttt{QLD.Extraction}: the inert
+embedding of the model into its physical model, the conjugation by the two swap unitaries
+(\texttt{adV}), and the regrouping \texttt{unassoc} into item~1's cut, read in the auxiliary state.
+It carries the strategy's state to the swapped physical state regrouped, \texttt{endState}, by
+definition, item~1 compares that with the register model's state
+\texttt{tgtState}, and the summands of item~2 are the physical model's state norms of the conjugated
+Pauli measurement minus the honest projector (\texttt{stateSqNorm\_swapPhi\_alice},
+\texttt{stateSqNorm\_swapPhi\_bob}). The history below is kept because it records where the
+obstacles were. The exact pieces are in \texttt{MIPRE/Background/QLD/SwapUnitary.lean}, item
 1's assembly in \texttt{MIPRE/Background/QLD/SwapState.lean} and
 \texttt{MIPRE/Background/QLD/SwapItemOne.lean}, and item 2's threading in
 \texttt{SwapItemTwo.lean}.
 
 The Lean statement has two constants where the statement above has one: item 1 is bounded by
-\texttt{etaItemOne}, which is $2 - 2\sqrt{1 - \eta}$ with $\eta = 2\sqrt{\delta_S} + 2\delta_S$,
+\texttt{etaItemOne}, which is $2 - 2\sqrt{1 - \eta}$ with $\eta = 2\sqrt{X} + 2X$ for the
+constant $X$ of Lemma~\ref{lem:qld-pauli-selfcons},
 and item 2 by \texttt{deltaItemTwo} at that bound, which is
 $2\bigl( 11 \delta' + md/q + 2 \sqrt{\texttt{etaItemOne}} \bigr)$, where $\delta'$
 (\texttt{deltaLegs}) bounds each leg of \texttt{eq:qld-unitary-5}. Their maximum is
-$\delta_{qld}$. Item 2's distance is written out, as
+$\delta_{qld}$. Item 2's distance is the register model's summed squared state norm, which in the
+tensor-product model is
 $\sum_h \norm{(V M^{(\pauli,W)}_h V^\dagger - \Id \ot \tau^W_h) \ket{\aux} \ot
-\ket{\EPR_q}^{\ot M}}^2$, rather than through \texttt{stateSqNorm}; the two are the same
-number. That the maximum has the shape Theorem~\ref{thm:qld} asks for is
+\ket{\EPR_q}^{\ot M}}^2$. That the maximum has the shape Theorem~\ref{thm:qld} asks for is
 \texttt{errSmall\_swapItemOne} and its companions in
 \texttt{MIPRE/Background/QLD/ErrorShape.lean}.
 
@@ -5279,28 +5639,19 @@ consumes: reading the two families at the value of the encoding at the sampled p
 the full outcome raises the agreement by at most $md/q$, the pairs it adds being the distinct ones
 whose encodings collide there.
 
-\emph{And a four-factor regrouping, which is \emph{not} yet item 1's cut.}
-\texttt{endEquiv} moves both ancilla factors of a two-party product out of the party grouping and
-puts them together, and \texttt{qform\_endVec} carries an expectation between the two readings; it
-is the same pattern as \texttt{regroupEquiv}, which moves one across. It was written to be item
-1's cut and it is not, which is worth stating plainly because it locates the real obstacle.
-\texttt{exists\_auxVec\_close} concludes about $\ket{\EPR_q}^{\ot M}_{\alice'' \bob''}$ --- one
-half of \emph{each} party's local pair --- whereas the padded state of this formalization carries
-only the pair $\alice' \alice''$, read along the cut $\alice \alice' \mid \bob \alice''$, and
-has no $\bob' \bob''$ in it at all. That was deliberate and correct for
-Lemma~\ref{lem:qld-simultaneous} and Lemma~\ref{lem:qld-helper}, each of which uses one
-orientation at a time, and it is what \texttt{reports/qld-stage5-blueprint-repairs.md} records as
-the second entangled pair not being needed for Lemma~\ref{lem:qld-exact-paulis}'s item 1. Item 2's
-threading is the first consumer that does need it.
-
-\emph{And that obstacle is now removed.} \texttt{MirrorSimul}, described in the comments on
-Lemma~\ref{lem:qld-pauli-selfcons}, carries both pairs by appending each to the cut that does not
-already have it, and produces the two \texttt{SimulPair} views the two orientations need.
-\texttt{physVec} is the state on the physical grouping $\alice \alice' \alice''$ against
-$\bob \bob' \bob''$, which is the cut item 1 concludes along, \texttt{physVec\_mirror} says the
-mirrored view lands on it too, and \texttt{bornProb\_physVec} carries expectations from the cut
-everything was proved on. What stands between the endgame's steps and the lemma is now bookkeeping
-again.
+\emph{And item~1's cut, which holds both pairs.} \texttt{exists\_auxVec\_close} concludes about
+$\ket{\EPR_q}^{\ot M}_{\alice'' \bob''}$ --- one half of \emph{each} party's local pair --- whereas
+the register model of one run of stage~4 carries only the pair $\alice' \alice''$, read along the
+cut $\alice \alice' \mid \bob \alice''$, and has no $\bob' \bob''$ in it at all. That was
+deliberate and correct for Lemma~\ref{lem:qld-simultaneous} and Lemma~\ref{lem:qld-helper}, each
+of which uses one orientation at a time, and it is what
+\texttt{reports/qld-stage5-blueprint-repairs.md} records as the second entangled pair not being
+needed for Lemma~\ref{lem:qld-exact-paulis}'s item 1. Item 2's threading is the first consumer
+that does need it. The physical model of Definition~\ref{def:qld-physical-model} holds both pairs,
+the two cuts of a \texttt{MirrorSimul} are readings of it (Lemma~\ref{lem:qld-pauli-selfcons}), and
+item~1's cut is the register model, with the pair $(A'', B'')$, of the extension of the strategy's
+model by the padded registers, into which \texttt{unassoc} regroups the physical model;
+\texttt{qform\_endVec} carries an expectation between the two readings.
 
 \emph{And the missing edge, made explicit.} Item 1 asks for a near-invariance of the state under
 the Weyl twirl on its two ancilla halves; what Lemma~\ref{lem:qld-pauli-selfcons} supplies is an
@@ -5316,11 +5667,10 @@ Lemma~\ref{lem:qld-exact-paulis}.
 Three things had to be said to make the blueprint's ``one rewriting'' go through, and each is
 worth naming.
 
-\emph{The cut.} \texttt{endEquiv} regroups a four-fold product whose ancilla halves sit in the
-middle. The physical cut of a \texttt{MirrorSimul} puts each party's half of the pair it holds at
-the \emph{end}, so \texttt{outerPairEquiv} is the regrouping this needs --- written once it was
-clear which cut the state actually has, which is the same point the paragraph above makes about
-\texttt{endEquiv} not being item 1's cut.
+\emph{The cut.} The physical model puts the far half of each party's own pair first among that
+party's registers, and item~1's cut puts the two far halves together as the register; the
+regrouping between them is \texttt{unassoc}, a local isometry with no condition on the state, and
+\texttt{endState} is the swapped physical state carried along it.
 
 \emph{The conjugation, read backwards.} \texttt{swapU\_conj\_wTilde\_X} and \texttt{\_Z} say
 the swap unitary strips the pair measurement off the exact Pauli observable exactly; read the
@@ -5348,9 +5698,10 @@ item 1's bound this is where $\delta_S^{1/4}$ enters. The last step is
 \texttt{eq:qld-unitary-5} at the \emph{mirror} instance (\texttt{sum\_bornProb\_physVec\_ge}):
 Bob's exact Pauli measurement against Alice's $(\pauli, W)$ reading is the second cut's
 $\tilde{M}$ against the swapped strategy's Pauli reading. \texttt{sum\_snorm\_sq\_alice\_le}
-applies the chain at $\Delta = \ket{\aux} \ot \ket{\EPR_q}^{\ot M}$ read on the physical cut
-(\texttt{physAux}, through \texttt{outerUnVec}, the inverse of \texttt{outerVec}), for any
-$\ket{\aux}$ close to the swapped state. \texttt{sum\_snorm\_sq\_bob\_le} is Alice's at the
+applies the chain at $\Delta = \ket{\aux} \ot \ket{\EPR_q}^{\ot M}$ read on the physical model
+(\texttt{physAux}, the register model's state carried there by the associativity of item~1's cut,
+which \texttt{unassoc} inverts: \texttt{unassoc\_W\_physAux}), for any $\ket{\aux}$ close to the
+swapped state. \texttt{sum\_snorm\_sq\_bob\_le} is Alice's at the
 mirror, relative to the \emph{same} $\ket{\aux}$: the mirror's product state and its swapped
 physical state are this one's with the parties exchanged (\texttt{mirror\_physSwap\_mulVec}), so
 no second auxiliary state is needed. One point of encoding: the Schwartz--Zippel packaging reads
@@ -5363,21 +5714,17 @@ table of $\coded(h)$, faithful because the encoding is multilinear and $d \geq 1
 $11\delta$ for the paper's $9\delta$, as Lemma~\ref{lem:qld-global-success} records). Two
 adapters put it to work. \texttt{inconsistency\_triangle} is the estimate in the vocabulary this
 interface states everything in --- an inconsistency rather than an agreement, the two being the
-same number. And \texttt{inconsistency\_regroupVec} settles the one real obstacle, that the three
-legs are not read along the same cut: $\tilde{M}^{W,u}$ needs the ancilla half with the first
-party, which is the regrouped cut, while the strategy's own measurements are stated along the
-padded state's. For operators that ignore the register the regrouping moves --- which the
-strategy's measurements do, being extended by the identity there --- the two readings are the same
-number, the regrouping being a reindexing of the whole space. \texttt{SimulPair
-.inconsistency\_mTilde\_pauli\_le} is then the display, with the two middle legs --- the game's
-point--point and point--Pauli consistencies, the latter read through
-\texttt{pauliAtPOVM} --- as hypotheses, in the same way
-\texttt{exists\_auxVec\_close} takes item 1's near-invariances. They are asked for in the form
-the game supplies them: \texttt{inconsistency\_padded} reads a consistency between the strategy's
-own measurements on the padded state and on the strategy's own state alike, both being extended by
-the identity on the expansion's ancillas and on the padding, so
-\texttt{inconsistency\_mTilde\_pauli\_le'} takes them on $\ket{\psi}$, where
-\texttt{agree\_subtest\_le} leaves them.
+same number. The three legs are not read in the same model: $\tilde{M}^{W,u}$ needs the ancilla
+half with the first party, which is the physical model, while the strategy's own measurements live
+in its own model. They are read on the physical model with the registers inert
+(\texttt{physInert}), an embedding of models, along which every inconsistency is the same number.
+\texttt{SimulPair.inconsistency\_mTilde\_pauli\_le} is then the display, with the two middle legs
+--- the game's point--point and point--Pauli consistencies, the latter read through
+\texttt{pauliAtPOVM} --- as hypotheses, in the same way \texttt{exists\_auxVec\_close} takes item
+1's near-invariances. They are asked for in the form the game supplies them: an inconsistency of
+the strategy's own measurements carried along that embedding is their inconsistency in the
+strategy's own model, so \texttt{inconsistency\_mTilde\_pauli\_le'} takes them on $\ket{\psi}$,
+where \texttt{agree\_subtest\_le} leaves them.
 
 \emph{And those two legs are discharged.} They are items 1 and 3 of Lemma~\ref{lem:qld-win} at the
 point and Pauli types --- \texttt{item\_consistency} and \texttt{item\_pauli\_consistency}, both
@@ -5392,13 +5739,12 @@ which is \texttt{agree\_subtest\_le}'s $172\eps$ halved, and
 \texttt{inconsistency\_mTilde\_pauli\_le\_of\_win} is then \texttt{eq:qld-unitary-5} from the
 game's soundness and item 1 of Lemma~\ref{lem:qld-exact-paulis} alone.
 
-\emph{And the endgame's transport.} \texttt{abs\_qform\_sub\_qform\_le}: moving an expectation
-from the product state to the padded one costs twice the operator's bound times the distance
-between them. Item 1 bounds the \emph{squared} distance, which is exactly where the fourth root
-in $\delta_{qld}$ comes from.
-\texttt{reports/qld-stage5-blueprint-repairs.md} records the repairs above, including the
-ledger's declared dependencies for node $1.2.2.16$, which name $1.2.2.4$
-(Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.
+\emph{And the endgame's transport.} \texttt{abs\_qform\_withState\_sub\_qform\_le}: moving an
+expectation from the product state to the swapped physical state costs twice the operator's bound
+times the distance between them. Item 1 bounds the \emph{squared} distance, which is exactly where
+the fourth root in $\delta_{qld}$ comes from. \texttt{reports/qld-stage5-blueprint-repairs.md}
+records the repairs above, including the ledger's declared dependencies for node $1.2.2.16$, which
+name $1.2.2.4$ (Lemma~\ref{lem:qld-win}) and which the \texttt{uses} list did not.
 
 \subsection{Undecidability of the halting problem}
 \label{sec:rr-halting}

@@ -33,6 +33,7 @@ public import MIPRE.Background.QLD.SamplerQueryProgram
 public import MIPRE.Background.QLD.CLExplicitTransport
 public import MIPRE.Background.QLD.SwapItemTwo
 public import MIPRE.Background.QLD.Soundness
+public import MIPRE.Background.Introspection.QLDExtractionAdapter
 
 @[expose] public section
 
@@ -688,9 +689,9 @@ padded strategy at each of the nine ordered type pairs, and the value bound. -/
   MIPRE.QLD.Sample.question_fst_eq_lineQ, MIPRE.QLD.Sample.question_snd_eq_lineQ, MIPRE.QLD.sum_ty,
   MIPRE.QLD.one_sub_povmValue_padStrat_eq, MIPRE.QLD.padStrat_value
 
-/-! `lem:qld-global-pvm` (`MIPRE/Background/QLD/PaddedLIDT.lean`, with the reduced-state lemma of
-`MIPRE/Background/QLD/Simul.lean` it uses). -/
-#guard_sorry_free MIPRE.QLD.ansZero, MIPRE.QLD.padPt_aOp_mats, MIPRE.QLD.deltaGS, MIPRE.QLD.deltaLD,
+/-! `lem:qld-global-pvm` (`MIPRE/Background/QLD/PaddedLIDT.lean`: the seeded test's soundness,
+a hypothesis on the model, applied in the padded model of `MIPRE/Background/QLD/PhysModel.lean`). -/
+#guard_sorry_free MIPRE.QLD.padPt_aOp_mats, MIPRE.QLD.deltaGS, MIPRE.QLD.deltaLD,
   MIPRE.QLD.deltaGS_nonneg, MIPRE.QLD.exists_global_pvm, MIPRE.QLD.exists_global_pvm_hat,
   MIPRE.QLD.GlobalPair, MIPRE.QLD.exists_globalPair
 
@@ -714,8 +715,8 @@ padded strategy at each of the nine ordered type pairs, and the value bound. -/
   MIPRE.QLD.sum_bad_mass_le_of_le, MIPRE.QLD.GlobalPair.sum_bad_mass_A_le,
   MIPRE.QLD.GlobalPair.sum_bad_mass_B_le
 
-/-! `lem:qld-global-products` (`MIPRE/Background/QLD/Products.lean`, and its specialization to the
-padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
+/-! `lem:qld-global-products` (`MIPRE/Background/QLD/Products.lean`, and its specialization to a
+`GlobalPair` in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
 #guard_sorry_free MIPRE.mul_self_le_self_of_le_one,
   MIPRE.one_sub_proj_conjTranspose_mul_self_le_one, MIPRE.snorm_sq_add_le, MIPRE.bornProb_mono_left,
   MIPRE.bornProb_one_eq_normSq_stateVecB, MIPRE.sum_snorm_sq_aOp_mul_bOp_le, MIPRE.QLD.ordZX,
@@ -735,8 +736,8 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
   MIPRE.QLD.GlobalPair.products_ZX_A, MIPRE.QLD.GlobalPair.products_XZ_A,
   MIPRE.QLD.GlobalPair.products_ZX_B, MIPRE.QLD.GlobalPair.products_XZ_B
 
-/-! `lem:qld-global-linear` (`MIPRE/Background/QLD/Linear.lean`, and its specialization to the
-padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
+/-! `lem:qld-global-linear` (`MIPRE/Background/QLD/Linear.lean`, and its specialization to a
+`GlobalPair` in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
 #guard_sorry_free MIPRE.LIDT.patch, MIPRE.LIDT.maskOn, MIPRE.LIDT.maskOff,
   MIPRE.LIDT.patch_maskOn_maskOff, MIPRE.LIDT.maskOn_patch, MIPRE.LIDT.maskOff_patch,
   MIPRE.LIDT.maskOn_eq_self, MIPRE.LIDT.maskOff_eq_self, MIPRE.LIDT.maskOn_apply_of_not,
@@ -861,8 +862,8 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
   MIPRE.QLD.PauliCL.SamplerProgram.query_runs,
   MIPRE.QLD.PauliCL.ExplicitSeed.binaryOutputPermutation_presentation,
   MIPRE.QLD.PauliCL.ExplicitSeed.binaryQuestion_outputPermutation
-/-! `lem:qld-global-separate` (`MIPRE/Background/QLD/Separate.lean`, and its specialization to the
-padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
+/-! `lem:qld-global-separate` (`MIPRE/Background/QLD/Separate.lean`, and its specialization to a
+`GlobalPair` in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
 #guard_sorry_free MIPRE.LIDT.LowIndDegPoly.eval_zero, MIPRE.LIDT.LowIndDegPoly.eval_sub,
   MIPRE.LIDT.LowIndDegPoly.const, MIPRE.LIDT.LowIndDegPoly.eval_const,
   MIPRE.LIDT.LowIndDegPoly.coef_eq_zero_of_not, MIPRE.LIDT.LowIndDegPoly.restrictOff,
@@ -897,8 +898,8 @@ padded state in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
   MIPRE.QLD.sq_sub_two_mul_le_sq, MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq, MIPRE.QLD.marg_Z_ge,
   MIPRE.QLD.marg_X_ge, MIPRE.QLD.inconsistency_evalMarg_Z_le, MIPRE.QLD.inconsistency_evalMarg_X_le
 
-/-! `lem:qld-global-robustness` (`MIPRE/Background/QLD/Complete.lean` for the register
-transport, `MIPRE/Background/QLD/PaddedLIDT.lean` for the errors). -/
+/-! `lem:qld-global-robustness` (`MIPRE/Background/QLD/Complete.lean` for the marginals,
+`MIPRE/Background/QLD/PaddedLIDT.lean` for the errors). -/
 #guard_sorry_free MIPRE.QLD.deltaProd, MIPRE.QLD.deltaSep, MIPRE.QLD.deltaS,
   MIPRE.QLD.GlobalPair.one_sub_two_eta_ge, MIPRE.QLD.GlobalPair.sum_not_isGood_mass_A_le',
   MIPRE.QLD.GlobalPair.sum_not_isGood_mass_B_le', MIPRE.QLD.liftPt, MIPRE.QLD.liftPt_mats,
@@ -1125,11 +1126,10 @@ statement `MIPRE/Background/QLD/SwapItemTwo.lean`. -/
   MIPRE.QLD.MirrorSimul.mirror_physSwap_mulVec, MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le,
   MIPRE.QLD.MirrorSimul.swap_isometry
 
-/-! `thm:qld`: the Pauli basis test. The theorem is `MIPRE/Background/QLD/Soundness.lean`, on the
-descent `MIPRE/Background/QLD/Descent.lean`, the explicit isometry
-`MIPRE/Background/QLD/PhysEmbed.lean`, the register-first form
-`MIPRE/Background/QLD/RegisterForm.lean`, and the error `MIPRE/Background/QLD/{QLDError,ErrorShape,
-Regime}.lean`. -/
+/-! `thm:qld`: the Pauli basis test, in a bipartite model, from the soundness of the seeded test in
+its extensions. The theorem is `MIPRE/Background/QLD/Soundness.lean` (`soundIn_of_lidt`: the
+legalization, the trivial extraction outside the regime, and the extraction by the swap isometry
+inside it), and the error `MIPRE/Background/QLD/{QLDError,ErrorShape,Regime}.lean`. -/
 #guard_sorry_free MIPRE.QLD.errShape, MIPRE.QLD.ErrSmall, MIPRE.QLD.errSum, MIPRE.QLD.errShape_eq,
   MIPRE.QLD.errSum_nonneg, MIPRE.QLD.one_le_md_real, MIPRE.QLD.one_le_q_real, MIPRE.QLD.errSum_anti,
   MIPRE.QLD.errSum_le_three, MIPRE.QLD.errSum_rpow_le, MIPRE.QLD.errShape_nonneg,
@@ -1163,7 +1163,40 @@ Regime}.lean`. -/
   MIPRE.QLD.errSmall_qldDelta, MIPRE.QLD.errSmall_qldHlt, MIPRE.QLD.errSmall_qldEta,
   MIPRE.QLD.errSmall_deltaLegs, MIPRE.QLD.errSmall_deltaItemTwo, MIPRE.QLD.errSmall_qldBound,
   MIPRE.QLD.errSmall_qldErr, MIPRE.QLD.exists_qldErr_le, MIPRE.QLD.rdPauliVec_legalize_pauli,
-  MIPRE.QLD.MirrorSimul.isPVM_bobConjPauli
+  MIPRE.QLD.legalStrat, MIPRE.QLD.legalStrat_PA, MIPRE.QLD.legalStrat_PB,
+  MIPRE.QLD.one_sub_value_legalStrat_le, MIPRE.QLD.legalSupport_legalStrat_A,
+  MIPRE.QLD.legalSupport_legalStrat_B, MIPRE.QLD.legalStrat_pauli_A, MIPRE.QLD.legalStrat_pauli_B,
+  MIPRE.QLD.sum_stateSqNorm_alice_le_four, MIPRE.QLD.sum_stateSqNorm_bob_le_four,
+  MIPRE.QLD.norm_inert_reg_sub_le_four, MIPRE.QLD.inert_reg_ΦA_one, MIPRE.QLD.inert_reg_ΦB_one,
+  MIPRE.QLD.Extraction.trivial, MIPRE.QLD.norm_evec_unitPoint, MIPRE.QLD.dominatesPOVM_of_expand,
+  MIPRE.QLD.MirrorSimul.swapPhi_ΦA_one, MIPRE.QLD.MirrorSimul.swapPhi_ΦB_one,
+  MIPRE.QLD.exists_extraction_of_regime, MIPRE.QLD.soundIn_of_lidt
+
+/-! `cor:qld-valid`: `thm:qld` at the genuine full-register answers, for a strategy supported on
+correctly formatted Pauli answers, at the universal constants of the closed form of the error
+(`MIPRE/Background/Introspection/QLDExtractionAdapter.lean`; the conclusion `FieldExtraction` is
+in `MIPRE/Background/Introspection/BinaryExtraction.lean`). -/
+#guard_sorry_free MIPRE.Introspection.RestrictedSoundness.PauliSupported,
+  MIPRE.Introspection.RestrictedSoundness.rdPauliVec_op_of_supported,
+  MIPRE.Introspection.RestrictedSoundness.ParsedPauliSupported,
+  MIPRE.Introspection.RestrictedSoundness.completePauliPOVM_invalid_of_supported,
+  MIPRE.Introspection.RestrictedSoundness.qldCoefficient,
+  MIPRE.Introspection.RestrictedSoundness.qldExponent,
+  MIPRE.Introspection.RestrictedSoundness.qldCoefficient_one_le,
+  MIPRE.Introspection.RestrictedSoundness.qldExponent_pos,
+  MIPRE.Introspection.RestrictedSoundness.qldExponent_lt_one,
+  MIPRE.Introspection.RestrictedSoundness.qldErr_le_errShape,
+  MIPRE.Introspection.RestrictedSoundness.FieldExtraction,
+  MIPRE.Introspection.RestrictedSoundness.FieldExtraction.mono,
+  MIPRE.Introspection.RestrictedSoundness.FieldExtraction.ofQLD,
+  MIPRE.Introspection.RestrictedSoundness.fieldExtraction_exists,
+  MIPRE.Introspection.RestrictedSoundness.degreeOne_fieldExtraction_exists
+
+/-! `cor:qld-binary`: the field-register extraction read on qubits, along a self-dual basis
+(`MIPRE/Background/Introspection/BinaryExtraction.lean`). -/
+#guard_sorry_free MIPRE.Introspection.RestrictedSoundness.binaryX,
+  MIPRE.Introspection.RestrictedSoundness.binaryZ,
+  MIPRE.Introspection.RestrictedSoundness.FieldExtraction.toBinary
 
 /-! ## Declarations added when the chain was restated in a bipartite model
 
@@ -1266,7 +1299,7 @@ Phase 5 of `planning/mipco-track.md`, by blueprint node. -/
   MIPRE.QLD.MirrorSimul.swapPhi_W_ψ, MIPRE.QLD.MirrorSimul.swapPhi_ΦA,
   MIPRE.QLD.MirrorSimul.swapPhi_ΦB, MIPRE.QLD.MirrorSimul.stateSqNorm_swapPhi_alice,
   MIPRE.QLD.MirrorSimul.stateSqNorm_swapPhi_bob, MIPRE.QLD.norm_auxVec, MIPRE.QLD.auxVec_smul,
-  MIPRE.QLD.reg_ψ_eq_auxVec, MIPRE.QLD.regAct_twirl
+  MIPRE.QLD.reg_ψ_eq_auxVec, MIPRE.QLD.regAct_twirl, MIPRE.QLD.MirrorSimul.isPVM_bobConjPauli
 
 /-! `lem:qld-win` -/
 #guard_sorry_free MIPRE.QLD.isPVMIn_msPOVM
