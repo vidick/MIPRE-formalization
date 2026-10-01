@@ -22,8 +22,22 @@ a function of `g` and not of `g(u)`.
 
 The two sums are equal, not merely comparable. Within a fibre of the evaluation the pair
 measurement's outcomes are orthogonal projectors, so every cross term of the squared norm
-vanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the
-helper in the chain's own indexing is its corollary.
+vanishes, and the fibres partition the outcomes. That is `StateModel.snorm_sq_sum_orthogonal` of
+`MIPRE/Foundations/ModelCalculus.lean`, and the helper in the chain's own indexing is its
+corollary.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The estimates about a single
+vector `v` and matrices on its index set are stated in a state model `M : StateModel 𝒞`
+(`snorm v T` is `M.snorm T`, `qform v T` is `M.qform T`, the adjoint is `star`), and the positivity
+of a sandwich is that of the represented operator. The estimates about two parties are stated in a
+bipartite model: `aOp A * bOp B` is `M.πA A * M.πB B`, and the agreement operator is an element of
+the model's algebra. In `fact:add-a-proj` the register factor is a matrix of scalars on a register
+of the second player, `B ⊗ T` being `smulKron B T` in the matrices over the second player's
+algebra, ordered as they are (`MatrixStar`). The helper in the chain's indexing is stated for any
+`SimulPair M S K ι δ`. The matrix `snorm_sq_sum_orthogonal` of this file is
+`StateModel.snorm_sq_sum_orthogonal`, and is used from `ModelCalculus.lean`.
 -/
 
 noncomputable section
@@ -32,30 +46,6 @@ namespace MIPRE
 
 open Finset Matrix
 open scoped Kronecker ComplexOrder MatrixOrder
-
-/-! ## A squared norm over orthogonal outcomes -/
-
-section Orthogonal
-
-variable {N : Type*} [Fintype N] [DecidableEq N] {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
-
-/-- **A sum of orthogonal blocks has no cross terms.** If `S` is a projective family then, for any
-`R`, the squared state norm of `(∑ g ∈ s, S g) R` is the sum of those of the `S g · R`. -/
-theorem snorm_sq_sum_orthogonal (v : N → ℂ) {S : Λ → Matrix N N ℂ} (hS : IsPVM S)
-    (R : Matrix N N ℂ) (s : Finset Λ) :
-    snorm v ((∑ g ∈ s, S g) * R) ^ 2 = ∑ g ∈ s, snorm v (S g * R) ^ 2 := by
-  classical
-  rw [snorm_sq_eq_qform, Finset.sum_mul, Matrix.conjTranspose_sum, Finset.sum_mul]
-  have hterm : ∀ g ∈ s, ((S g * R)ᴴ * ∑ g' ∈ s, S g' * R) = (S g * R)ᴴ * (S g * R) := by
-    intro g hg
-    rw [Finset.mul_sum, Finset.sum_eq_single_of_mem g hg fun g' _ hg' => ?_]
-    rw [Matrix.conjTranspose_mul, hS.isSelfAdjoint, Matrix.mul_assoc,
-      ← Matrix.mul_assoc (S g) (S g') R, hS.orthogonal (Ne.symm hg'), Matrix.zero_mul,
-      Matrix.mul_zero]
-  rw [Finset.sum_congr rfl hterm, qform_sum]
-  exact Finset.sum_congr rfl fun g _ => (snorm_sq_eq_qform v (S g * R)).symm
-
-end Orthogonal
 
 /-! ## The agreement operator, and inserting it as a near-identity
 
@@ -68,64 +58,59 @@ exactly one minus the agreement, with no Cauchy--Schwarz anywhere. -/
 
 section Agree
 
-variable {dA dB G : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  [Fintype G] [DecidableEq G]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] {G : Type*} [Fintype G]
 
 /-- **The agreement operator** `sum_g S_g (x) B_g` of a family on one party against a family on the
 other, indexed by the same outcome. -/
-def agreeOp (S : G → Matrix dA dA ℂ) (B : G → Matrix dB dB ℂ) :
-    Matrix (dA × dB) (dA × dB) ℂ :=
-  ∑ g, (aOp (S g) : Matrix (dA × dB) _ ℂ) * bOp (B g)
+def agreeOp (M : BipartiteModel 𝒞 𝒜 ℬ) (S : G → 𝒜) (B : G → ℬ) : 𝒞 :=
+  ∑ g, M.πA (S g) * M.πB (B g)
 
-omit [DecidableEq G] in
-theorem agreeOp_conjTranspose {S : G → Matrix dA dA ℂ} {B : G → Matrix dB dB ℂ}
-    (hS : ∀ g, (S g)ᴴ = S g) (hB : ∀ g, (B g)ᴴ = B g) :
-    (agreeOp S B)ᴴ = agreeOp S B := by
-  rw [agreeOp, Matrix.conjTranspose_sum]
-  exact Finset.sum_congr rfl fun g _ => by rw [aOp_bOp_conjTranspose, hS, hB]
+theorem agreeOp_conjTranspose (M : BipartiteModel 𝒞 𝒜 ℬ) {S : G → 𝒜} {B : G → ℬ}
+    (hS : ∀ g, star (S g) = S g) (hB : ∀ g, star (B g) = B g) :
+    star (agreeOp M S B) = agreeOp M S B := by
+  rw [agreeOp, star_sum]
+  exact Finset.sum_congr rfl fun g _ => by rw [M.star_πA_mul_πB, hS, hB]
 
 /-- **It is idempotent**, because the first party's outcomes are orthogonal and the second party's
 factors are projectors. -/
-theorem agreeOp_mul_self {S : G → Matrix dA dA ℂ} (hS : IsPVM S) {B : G → Matrix dB dB ℂ}
-    (hB : ∀ g, B g * B g = B g) : agreeOp S B * agreeOp S B = agreeOp S B := by
-  classical
+theorem agreeOp_mul_self [DecidableEq G] (M : BipartiteModel 𝒞 𝒜 ℬ) {S : G → 𝒜}
+    (hS : IsPVMIn S) {B : G → ℬ} (hB : ∀ g, B g * B g = B g) :
+    agreeOp M S B * agreeOp M S B = agreeOp M S B := by
   rw [agreeOp, Finset.sum_mul]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [Finset.mul_sum, Finset.sum_eq_single g (fun g' _ hg' => by
-      rw [aOp_bOp_mul_aOp_bOp, hS.orthogonal (Ne.symm hg'), aOp_zero, Matrix.zero_mul])
+      rw [M.πA_mul_πB_mul, hS.orthogonal (Ne.symm hg'), map_zero, zero_mul])
     fun hmem => absurd (Finset.mem_univ g) hmem,
-    aOp_bOp_mul_aOp_bOp, hS.idem, hB]
+    M.πA_mul_πB_mul, hS.idem, hB]
 
-omit [DecidableEq G] in
-theorem qform_agreeOp (ψ : dA × dB → ℂ) (S : G → Matrix dA dA ℂ) (B : G → Matrix dB dB ℂ) :
-    qform ψ (agreeOp S B) = ∑ g, bornProb ψ (S g) (B g) := by
-  rw [agreeOp, qform_sum]
-  exact Finset.sum_congr rfl fun g _ => (bornProb_eq_qform ψ (S g) (B g)).symm
+theorem qform_agreeOp (M : BipartiteModel 𝒞 𝒜 ℬ) (S : G → 𝒜) (B : G → ℬ) :
+    M.qform (agreeOp M S B) = ∑ g, M.bornProb (S g) (B g) := by
+  rw [agreeOp, M.qform_sum]
+  rfl
 
 /-- **The deficit of the agreement operator from the identity is one minus the agreement.** No
 Cauchy--Schwarz: the operator is a projection, so its squared deviation is linear in it. -/
-theorem snorm_sq_one_sub_agreeOp {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)
-    {S : G → Matrix dA dA ℂ} (hS : IsPVM S) {B : G → Matrix dB dB ℂ}
-    (hBsa : ∀ g, (B g)ᴴ = B g) (hB : ∀ g, B g * B g = B g) :
-    snorm ψ (1 - agreeOp S B) ^ 2 = 1 - ∑ g, bornProb ψ (S g) (B g) := by
-  have hsa := agreeOp_conjTranspose hS.isSelfAdjoint hBsa
-  have hid := agreeOp_mul_self hS hB
-  have hkey : ((1 : Matrix (dA × dB) (dA × dB) ℂ) - agreeOp S B)ᴴ * (1 - agreeOp S B)
-      = 1 - agreeOp S B := by
-    rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hsa, Matrix.sub_mul, Matrix.mul_sub,
-      Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one, Matrix.one_mul, hid]
-    abel
-  rw [snorm_sq_eq_qform, hkey, qform_sub, qform_one ψ hψ, qform_agreeOp]
+theorem snorm_sq_one_sub_agreeOp [DecidableEq G] {M : BipartiteModel 𝒞 𝒜 ℬ} (hM : ‖M.ψ‖ = 1)
+    {S : G → 𝒜} (hS : IsPVMIn S) {B : G → ℬ} (hBsa : ∀ g, star (B g) = B g)
+    (hB : ∀ g, B g * B g = B g) :
+    M.snorm (1 - agreeOp M S B) ^ 2 = 1 - ∑ g, M.bornProb (S g) (B g) := by
+  have hsa := agreeOp_conjTranspose M hS.star_eq hBsa
+  have hid := agreeOp_mul_self M hS hB
+  have hkey : star ((1 : 𝒞) - agreeOp M S B) * (1 - agreeOp M S B) = 1 - agreeOp M S B := by
+    rw [star_sub, star_one, hsa]
+    calc (1 - agreeOp M S B) * (1 - agreeOp M S B)
+        = 1 - agreeOp M S B - agreeOp M S B + agreeOp M S B * agreeOp M S B := by noncomm_ring
+      _ = 1 - agreeOp M S B := by rw [hid]; abel
+  rw [M.snorm_sq_eq_qform, hkey, M.qform_sub, M.qform_one hM, qform_agreeOp]
 
-omit [DecidableEq G] in
 /-- **Inserting the near-identity costs at most its own deficit.** A contraction on the left cannot
 amplify it, which is the whole of display `eq:qld-pulling-1`. -/
-theorem snorm_sub_mul_agreeOp_le (ψ : dA × dB → ℂ) {X : Matrix (dA × dB) (dA × dB) ℂ}
-    (hX : Bnd X 1) (S : G → Matrix dA dA ℂ) (B : G → Matrix dB dB ℂ) :
-    snorm ψ (X - X * agreeOp S B) ≤ snorm ψ (1 - agreeOp S B) := by
-  rw [show X - X * agreeOp S B = X * (1 - agreeOp S B) from by
-    rw [Matrix.mul_sub, Matrix.mul_one]]
-  exact le_trans (snorm_mul_le ψ hX _) (le_of_eq (one_mul _))
+theorem snorm_sub_mul_agreeOp_le (M : BipartiteModel 𝒞 𝒜 ℬ) {X : 𝒞} (hX : M.Bnd X 1)
+    (S : G → 𝒜) (B : G → ℬ) :
+    M.snorm (X - X * agreeOp M S B) ≤ M.snorm (1 - agreeOp M S B) := by
+  rw [show X - X * agreeOp M S B = X * (1 - agreeOp M S B) by rw [mul_sub, mul_one]]
+  exact le_trans (M.snorm_mul_le hX _) (le_of_eq (one_mul _))
 
 end Agree
 
@@ -133,40 +118,41 @@ end Agree
 
 section AddAProj
 
-variable {dB anc X : Type*} [Fintype dB] [DecidableEq dB] [Fintype anc] [DecidableEq anc]
+variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] [PartialOrder R]
+  [StarOrderedRing R] [StarProper R] {anc X : Type*} [Fintype anc] [DecidableEq anc]
   [Fintype X]
 
-/-- **A family of projectors tensored with a projective measurement sums to at most the
-identity.** The complement is `∑_x (1 - B_x) ⊗ T_x`, a sum of positive semidefinite terms. This is
-what displays `eq:qld-pulling-8` and `eq:qld-pulling-10` use to discard the index the sandwich
-runs over. -/
-theorem sum_kron_le_one {B : X → Matrix dB dB ℂ} (hBsa : ∀ x, (B x)ᴴ = B x)
+/-- **A family of projections tensored with a projective measurement of a register sums to at most
+the identity.** The complement is `∑_x (1 - B_x) ⊗ T_x`, a sum of nonnegative terms. This is what
+displays `eq:qld-pulling-8` and `eq:qld-pulling-10` use to discard the index the sandwich runs
+over. -/
+theorem sum_kron_le_one {B : X → R} (hBsa : ∀ x, star (B x) = B x)
     (hB : ∀ x, B x * B x = B x) {T : X → Matrix anc anc ℂ} (hT : IsPVM T) :
-    (∑ x, B x ⊗ₖ T x) ≤ (1 : Matrix (dB × anc) (dB × anc) ℂ) := by
-  have hrw : (1 : Matrix (dB × anc) (dB × anc) ℂ) - ∑ x, B x ⊗ₖ T x
-      = ∑ x, ((1 : Matrix dB dB ℂ) - B x) ⊗ₖ T x := by
-    rw [Finset.sum_congr rfl fun x (_ : x ∈ univ) =>
-        sub_kronecker_right (1 : Matrix dB dB ℂ) (B x) (T x),
-      Finset.sum_sub_distrib, ← kronecker_sum_right, hT.sum_eq_one, Matrix.one_kronecker_one]
+    (∑ x, smulKron (B x) (T x)) ≤ (1 : Matrix anc anc R) := by
+  have hrw : (1 : Matrix anc anc R) - ∑ x, smulKron (B x) (T x)
+      = ∑ x, smulKron (1 - B x) (T x) := by
+    rw [Finset.sum_congr rfl fun x (_ : x ∈ univ) => (smulKron_sub_left 1 (B x) (T x)).symm,
+      Finset.sum_sub_distrib, ← smulKron_sum_right, hT.sum_eq_one, smulKron_one_one]
   refine sub_nonneg.mp ?_
   rw [hrw]
-  refine Finset.sum_nonneg fun x _ => Matrix.nonneg_iff_posSemidef.mpr ?_
-  refine Matrix.PosSemidef.kronecker ?_ (hT.posSemidef x)
-  refine posSemidef_of_proj ?_ ?_
-  · rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hBsa]
-  · rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one,
-      Matrix.one_mul, hB]
-    abel
+  refine Finset.sum_nonneg fun x _ => smulKron_nonneg_of_proj ?_ ?_
+  · refine posSemidef_of_proj ?_ ?_
+    · rw [star_sub, star_one, hBsa]
+    · calc (1 - B x) * (1 - B x) = 1 - B x - B x + B x * B x := by noncomm_ring
+        _ = 1 - B x := by rw [hB]; abel
+  · rw [hT.isSelfAdjoint, hT.idem]
 
-/-- **Discarding that index.** Against a positive semidefinite operator on the other party, the
-family's total contribution is at most the operator's own weight. -/
-theorem sum_bornProb_kron_le {dA : Type*} [Fintype dA] [DecidableEq dA] (ψ : dA × (dB × anc) → ℂ)
-    {A : Matrix dA dA ℂ} (hA : A.PosSemidef) {B : X → Matrix dB dB ℂ}
-    (hBsa : ∀ x, (B x)ᴴ = B x) (hB : ∀ x, B x * B x = B x) {T : X → Matrix anc anc ℂ}
+/-- **Discarding that index.** Against a nonnegative operator on the other party, the family's
+total contribution is at most the operator's own weight. The second player's algebra is the
+matrices over `R` on the register. -/
+theorem sum_bornProb_kron_le {𝒞 𝒜 : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜]
+    [StarRing 𝒜] [Algebra ℂ 𝒜] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+    (M : BipartiteModel 𝒞 𝒜 (Matrix anc anc R)) {A : 𝒜} (hA : 0 ≤ A) {B : X → R}
+    (hBsa : ∀ x, star (B x) = B x) (hB : ∀ x, B x * B x = B x) {T : X → Matrix anc anc ℂ}
     (hT : IsPVM T) :
-    ∑ x, bornProb ψ A (B x ⊗ₖ T x) ≤ bornProb ψ A 1 := by
-  rw [← bornProb_sum_right]
-  exact bornProb_mono_right ψ hA (sum_kron_le_one hBsa hB hT)
+    ∑ x, M.bornProb A (smulKron (B x) (T x)) ≤ M.bornProb A 1 := by
+  rw [← M.bornProb_sum_right]
+  exact bornProb_mono_right M hA (sum_kron_le_one hBsa hB hT)
 
 end AddAProj
 
@@ -187,63 +173,68 @@ act on different parties. -/
 
 section Substitute
 
-variable {N : Type*} [Fintype N] [DecidableEq N] {ι : Type*} [Fintype ι] [DecidableEq ι]
+variable {𝒞 : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] {ι : Type*}
 
-omit [DecidableEq N] in
+/-- **A projection is represented by a positive operator.** -/
+theorem π_nonneg_of_isStarProjection (M : StateModel 𝒞) {P : 𝒞} (hP : IsStarProjection P) :
+    0 ≤ M.π P := by
+  have h : P = star P * P := by rw [hP.isSelfAdjoint.star_eq, hP.isIdempotentElem.eq]
+  rw [h]
+  exact M.π_star_mul_self_nonneg P
+
 /-- **A projector's sandwich is the squared norm of half of it.** The `sqrt(1)` factors of the
 chain's Cauchy--Schwarz are read off a sandwich this way. -/
-theorem snorm_sq_proj_mul_eq_qform (v : N → ℂ) {S Y : Matrix N N ℂ} (hSsa : Sᴴ = S)
-    (hSidem : S * S = S) (hYsa : Yᴴ = Y) :
-    snorm v (S * Y) ^ 2 = qform v (Y * S * Y) := by
-  rw [snorm_sq_eq_qform, Matrix.conjTranspose_mul, hSsa, hYsa]
+theorem snorm_sq_proj_mul_eq_qform (M : StateModel 𝒞) {S Y : 𝒞} (hSsa : star S = S)
+    (hSidem : S * S = S) (hYsa : star Y = Y) :
+    M.snorm (S * Y) ^ 2 = M.qform (Y * S * Y) := by
+  rw [M.snorm_sq_eq_qform, star_mul, hSsa, hYsa]
   congr 1
-  rw [Matrix.mul_assoc, ← Matrix.mul_assoc S S Y, hSidem, ← Matrix.mul_assoc]
+  rw [mul_assoc, ← mul_assoc S S Y, hSidem, ← mul_assoc]
 
 /-- **A sandwiched positive operator is a nonnegative form.** -/
-theorem qform_sandwich_nonneg (v : N → ℂ) {P : Matrix N N ℂ} (hP : P.PosSemidef)
-    (W : Matrix N N ℂ) : 0 ≤ qform v (Wᴴ * P * W) :=
-  qform_nonneg_of_nonneg v (Matrix.nonneg_iff_posSemidef.mpr (hP.conjTranspose_mul_mul_same W))
+theorem qform_sandwich_nonneg (M : StateModel 𝒞) {P : 𝒞} (hP : 0 ≤ M.π P) (W : 𝒞) :
+    0 ≤ M.qform (star W * P * W) := by
+  refine M.qform_nonneg ?_
+  rw [map_mul, map_mul, map_star]
+  exact star_left_conjugate_nonneg hP _
 
 /-- **The squared norm of a sum over orthogonal outcomes is a sum of sandwiches.** One term per
 outcome, with the operator beside it on both sides; the cross terms vanish because the outcomes
 annihilate each other. -/
-theorem snorm_sq_sum_proj_sandwich (v : N → ℂ) {P : ι → Matrix N N ℂ} (hP : IsPVM P)
-    (W : ι → Matrix N N ℂ) (s : Finset ι) :
-    snorm v (∑ i ∈ s, P i * W i) ^ 2 = ∑ i ∈ s, qform v ((W i)ᴴ * P i * W i) := by
-  rw [snorm_sq_sum_proj_mul v hP.isSelfAdjoint (fun i j hij => hP.orthogonal hij) W s]
+theorem snorm_sq_sum_proj_sandwich [Fintype ι] [DecidableEq ι] (M : StateModel 𝒞)
+    {P : ι → 𝒞} (hP : IsPVMIn P) (W : ι → 𝒞) (s : Finset ι) :
+    M.snorm (∑ i ∈ s, P i * W i) ^ 2 = ∑ i ∈ s, M.qform (star (W i) * P i * W i) := by
+  rw [M.snorm_sq_sum_proj_mul hP.star_eq (fun i j hij => hP.orthogonal hij) W s]
   refine Finset.sum_congr rfl fun i _ => ?_
-  have h : (W i)ᴴ * (P i)ᴴ * (P i * W i) = (W i)ᴴ * P i * W i := by
-    rw [hP.isSelfAdjoint, Matrix.mul_assoc, ← Matrix.mul_assoc (P i) (P i) (W i), hP.idem,
-      ← Matrix.mul_assoc]
-  rw [snorm_sq_eq_qform, Matrix.conjTranspose_mul, h]
+  have h : star (W i) * star (P i) * (P i * W i) = star (W i) * P i * W i := by
+    rw [hP.star_eq, mul_assoc, ← mul_assoc (P i) (P i) (W i), hP.idem, ← mul_assoc]
+  rw [M.snorm_sq_eq_qform, star_mul, h]
 
-omit [DecidableEq ι] in
 /-- **Dropping a constraint on the outcomes.** Every sandwich is nonnegative, so enlarging the set
 summed over only increases the total. -/
-theorem sum_qform_sandwich_le_of_subset (v : N → ℂ) {P : ι → Matrix N N ℂ} (hP : IsPVM P)
-    (W : ι → Matrix N N ℂ) {s t : Finset ι} (hst : s ⊆ t) :
-    ∑ i ∈ s, qform v ((W i)ᴴ * P i * W i) ≤ ∑ i ∈ t, qform v ((W i)ᴴ * P i * W i) :=
+theorem sum_qform_sandwich_le_of_subset [Fintype ι] (M : StateModel 𝒞) {P : ι → 𝒞}
+    (hP : IsPVMIn P) (W : ι → 𝒞) {s t : Finset ι} (hst : s ⊆ t) :
+    ∑ i ∈ s, M.qform (star (W i) * P i * W i) ≤ ∑ i ∈ t, M.qform (star (W i) * P i * W i) :=
   Finset.sum_le_sum_of_subset_of_nonneg hst fun i _ _ =>
-    qform_sandwich_nonneg v (hP.posSemidef i) (W i)
+    qform_sandwich_nonneg M (π_nonneg_of_isStarProjection M (hP.isStarProjection i)) (W i)
 
-omit [DecidableEq N] [Fintype ι] [DecidableEq ι] in
 /-- **Cauchy--Schwarz across an index, with the first family not self-adjoint.**
-With `M` self-adjoint, `M * R` is already `Mᴴ * R`; the projector form of the chain's swap needs
-the general one. -/
-theorem abs_sum_qform_conjTranspose_mul_le (v : N → ℂ) (s : Finset ι)
-    (M R : ι → Matrix N N ℂ) :
-    |∑ i ∈ s, qform v ((M i)ᴴ * R i)|
-      ≤ Real.sqrt (∑ i ∈ s, snorm v (M i) ^ 2) * Real.sqrt (∑ i ∈ s, snorm v (R i) ^ 2) := by
-  have hpt : ∀ i ∈ s, |qform v ((M i)ᴴ * R i)| ≤ snorm v (M i) * snorm v (R i) :=
-    fun i _ => abs_qform_conjTranspose_mul_le v (M i) (R i)
+With `A` self-adjoint, `A * R` is already `star A * R`; the projector form of the chain's swap
+needs the general one. -/
+theorem abs_sum_qform_conjTranspose_mul_le (M : StateModel 𝒞) (s : Finset ι)
+    (A R : ι → 𝒞) :
+    |∑ i ∈ s, M.qform (star (A i) * R i)|
+      ≤ Real.sqrt (∑ i ∈ s, M.snorm (A i) ^ 2) * Real.sqrt (∑ i ∈ s, M.snorm (R i) ^ 2) := by
+  have hpt : ∀ i ∈ s, |M.qform (star (A i) * R i)| ≤ M.snorm (A i) * M.snorm (R i) :=
+    fun i _ => M.abs_qform_star_mul_le (A i) (R i)
   refine le_trans (le_trans (Finset.abs_sum_le_sum_abs _ _) (Finset.sum_le_sum hpt)) ?_
-  have hsq := sum_mul_sq_le_sq_mul_sq s (fun i => snorm v (M i)) (fun i => snorm v (R i))
-  have hn : (0 : ℝ) ≤ ∑ i ∈ s, snorm v (M i) ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
-  calc (∑ i ∈ s, snorm v (M i) * snorm v (R i))
-      ≤ |∑ i ∈ s, snorm v (M i) * snorm v (R i)| := le_abs_self _
-    _ = Real.sqrt ((∑ i ∈ s, snorm v (M i) * snorm v (R i)) ^ 2) :=
+  have hsq := sum_mul_sq_le_sq_mul_sq s (fun i => M.snorm (A i)) (fun i => M.snorm (R i))
+  have hn : (0 : ℝ) ≤ ∑ i ∈ s, M.snorm (A i) ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
+  calc (∑ i ∈ s, M.snorm (A i) * M.snorm (R i))
+      ≤ |∑ i ∈ s, M.snorm (A i) * M.snorm (R i)| := le_abs_self _
+    _ = Real.sqrt ((∑ i ∈ s, M.snorm (A i) * M.snorm (R i)) ^ 2) :=
         (Real.sqrt_sq_eq_abs _).symm
-    _ ≤ Real.sqrt ((∑ i ∈ s, snorm v (M i) ^ 2) * ∑ i ∈ s, snorm v (R i) ^ 2) :=
+    _ ≤ Real.sqrt ((∑ i ∈ s, M.snorm (A i) ^ 2) * ∑ i ∈ s, M.snorm (R i) ^ 2) :=
         Real.sqrt_le_sqrt hsq
     _ = _ := Real.sqrt_mul hn _
 
@@ -252,51 +243,51 @@ second remaining estimate sandwiches a *projector* with the measurement it swaps
 the cost is the deviation read through that projector --- summing the projector away is what makes
 the bound `eps` rather than `eps` times the number of pair outcomes, which is what the bare form
 below would give. Otherwise the two are the same argument. -/
-theorem abs_sum_qform_swap_proj_le (v : N → ℂ) (s : Finset ι) {X Y S : ι → Matrix N N ℂ} {ε : ℝ}
-    (hXsa : ∀ i, (X i)ᴴ = X i) (hXidem : ∀ i, X i * X i = X i) (hYsa : ∀ i, (Y i)ᴴ = Y i)
-    (hSsa : ∀ i, (S i)ᴴ = S i) (hSidem : ∀ i, S i * S i = S i)
-    (hcomm : ∀ i, X i * S i = S i * X i)
-    (hε : ∑ i ∈ s, snorm v (S i * (X i - Y i)) ^ 2 ≤ ε)
-    (hY : ∑ i ∈ s, snorm v (S i * Y i) ^ 2 ≤ 1)
-    (hX : ∑ i ∈ s, snorm v (S i * X i) ^ 2 ≤ 1) :
-    |(∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)|
+theorem abs_sum_qform_swap_proj_le (M : StateModel 𝒞) (s : Finset ι) {X Y S : ι → 𝒞}
+    {ε : ℝ} (hXsa : ∀ i, star (X i) = X i) (hXidem : ∀ i, X i * X i = X i)
+    (hYsa : ∀ i, star (Y i) = Y i) (hSsa : ∀ i, star (S i) = S i)
+    (hSidem : ∀ i, S i * S i = S i) (hcomm : ∀ i, X i * S i = S i * X i)
+    (hε : ∑ i ∈ s, M.snorm (S i * (X i - Y i)) ^ 2 ≤ ε)
+    (hY : ∑ i ∈ s, M.snorm (S i * Y i) ^ 2 ≤ 1)
+    (hX : ∑ i ∈ s, M.snorm (S i * X i) ^ 2 ≤ 1) :
+    |(∑ i ∈ s, M.qform (X i * S i)) - ∑ i ∈ s, M.qform (Y i * S i * Y i)|
       ≤ 2 * Real.sqrt ε := by
-  have hdev : ∀ i, (X i - Y i)ᴴ = X i - Y i := fun i => by
-    rw [Matrix.conjTranspose_sub, hXsa, hYsa]
-  have hterm : ∀ i ∈ s, qform v (X i * S i) - qform v (Y i * S i * Y i)
-      = qform v ((X i - Y i) * (S i * Y i)) + qform v ((X i - Y i) * (S i * X i)) := by
+  have hdev : ∀ i, star (X i - Y i) = X i - Y i := fun i => by
+    rw [star_sub, hXsa, hYsa]
+  have hterm : ∀ i ∈ s, M.qform (X i * S i) - M.qform (Y i * S i * Y i)
+      = M.qform ((X i - Y i) * (S i * Y i)) + M.qform ((X i - Y i) * (S i * X i)) := by
     intro i _
     have hXSX : X i * S i * X i = X i * S i := by
-      rw [Matrix.mul_assoc, ← hcomm i, ← Matrix.mul_assoc, hXidem]
-    have hflip : qform v (Y i * S i * (X i - Y i)) = qform v ((X i - Y i) * (S i * Y i)) := by
-      rw [← qform_conjTranspose v (Y i * S i * (X i - Y i))]
+      rw [mul_assoc, ← hcomm i, ← mul_assoc, hXidem]
+    have hflip : M.qform (Y i * S i * (X i - Y i))
+        = M.qform ((X i - Y i) * (S i * Y i)) := by
+      rw [← M.qform_star (Y i * S i * (X i - Y i))]
       congr 1
-      rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hdev, hSsa, hYsa]
-    rw [← hXSX, ← qform_sub, ← hflip, ← qform_add]
+      rw [star_mul, star_mul, hdev, hSsa, hYsa]
+    rw [← hXSX, ← M.qform_sub, ← hflip, ← M.qform_add]
     congr 1
     noncomm_ring
-  have hsplit : (∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)
-      = (∑ i ∈ s, qform v ((X i - Y i) * (S i * Y i)))
-        + ∑ i ∈ s, qform v ((X i - Y i) * (S i * X i)) := by
+  have hsplit : (∑ i ∈ s, M.qform (X i * S i)) - ∑ i ∈ s, M.qform (Y i * S i * Y i)
+      = (∑ i ∈ s, M.qform ((X i - Y i) * (S i * Y i)))
+        + ∑ i ∈ s, M.qform ((X i - Y i) * (S i * X i)) := by
     rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl hterm
-  have hb : ∀ Z : ι → Matrix N N ℂ, (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 →
-      |∑ i ∈ s, qform v ((X i - Y i) * (S i * Z i))| ≤ Real.sqrt ε := by
+  have hb : ∀ Z : ι → 𝒞, (∑ i ∈ s, M.snorm (S i * Z i) ^ 2) ≤ 1 →
+      |∑ i ∈ s, M.qform ((X i - Y i) * (S i * Z i))| ≤ Real.sqrt ε := by
     intro Z hZ
-    have hcong : ∀ i ∈ s, qform v ((X i - Y i) * (S i * Z i))
-        = qform v ((S i * (X i - Y i))ᴴ * (S i * Z i)) := by
+    have hcong : ∀ i ∈ s, M.qform ((X i - Y i) * (S i * Z i))
+        = M.qform (star (S i * (X i - Y i)) * (S i * Z i)) := by
       intro i _
       congr 1
-      rw [Matrix.conjTranspose_mul, hSsa, hdev i, Matrix.mul_assoc,
-        ← Matrix.mul_assoc (S i) (S i), hSidem]
+      rw [star_mul, hSsa, hdev i, mul_assoc, ← mul_assoc (S i) (S i), hSidem]
     rw [Finset.sum_congr rfl hcong]
-    refine le_trans (abs_sum_qform_conjTranspose_mul_le v s
+    refine le_trans (abs_sum_qform_conjTranspose_mul_le M s
       (fun i => S i * (X i - Y i)) (fun i => S i * Z i)) ?_
-    have h1 : Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 := by
+    have h1 : Real.sqrt (∑ i ∈ s, M.snorm (S i * Z i) ^ 2) ≤ 1 := by
       simpa using Real.sqrt_le_sqrt hZ
-    calc Real.sqrt (∑ i ∈ s, snorm v (S i * (X i - Y i)) ^ 2)
-          * Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2)
-        ≤ Real.sqrt (∑ i ∈ s, snorm v (S i * (X i - Y i)) ^ 2) * 1 :=
+    calc Real.sqrt (∑ i ∈ s, M.snorm (S i * (X i - Y i)) ^ 2)
+          * Real.sqrt (∑ i ∈ s, M.snorm (S i * Z i) ^ 2)
+        ≤ Real.sqrt (∑ i ∈ s, M.snorm (S i * (X i - Y i)) ^ 2) * 1 :=
           mul_le_mul_of_nonneg_left h1 (Real.sqrt_nonneg _)
       _ ≤ Real.sqrt ε := by rw [mul_one]; exact Real.sqrt_le_sqrt hε
   rw [hsplit]
@@ -314,46 +305,49 @@ leaves `sqrt(eps)` twice --- the other factor of each product being a mass at mo
 
 The sandwich on the `X` side has collapsed: `X S X = X S` there, since `X` is a projection
 commuting with `S`. That is why only the `Y` side is written with both halves. -/
-theorem abs_sum_qform_swap_le (v : N → ℂ) (s : Finset ι) {X Y S : ι → Matrix N N ℂ} {ε : ℝ}
-    (hXsa : ∀ i, (X i)ᴴ = X i) (hXidem : ∀ i, X i * X i = X i) (hYsa : ∀ i, (Y i)ᴴ = Y i)
-    (hSsa : ∀ i, (S i)ᴴ = S i) (hcomm : ∀ i, X i * S i = S i * X i)
-    (hε : ∑ i ∈ s, snorm v (X i - Y i) ^ 2 ≤ ε)
-    (hY : ∑ i ∈ s, snorm v (S i * Y i) ^ 2 ≤ 1)
-    (hX : ∑ i ∈ s, snorm v (S i * X i) ^ 2 ≤ 1) :
-    |(∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)|
+theorem abs_sum_qform_swap_le (M : StateModel 𝒞) (s : Finset ι) {X Y S : ι → 𝒞} {ε : ℝ}
+    (hXsa : ∀ i, star (X i) = X i) (hXidem : ∀ i, X i * X i = X i)
+    (hYsa : ∀ i, star (Y i) = Y i) (hSsa : ∀ i, star (S i) = S i)
+    (hcomm : ∀ i, X i * S i = S i * X i)
+    (hε : ∑ i ∈ s, M.snorm (X i - Y i) ^ 2 ≤ ε)
+    (hY : ∑ i ∈ s, M.snorm (S i * Y i) ^ 2 ≤ 1)
+    (hX : ∑ i ∈ s, M.snorm (S i * X i) ^ 2 ≤ 1) :
+    |(∑ i ∈ s, M.qform (X i * S i)) - ∑ i ∈ s, M.qform (Y i * S i * Y i)|
       ≤ 2 * Real.sqrt ε := by
-  have hdev : ∀ i, (X i - Y i)ᴴ = X i - Y i := fun i => by
-    rw [Matrix.conjTranspose_sub, hXsa, hYsa]
-  have hterm : ∀ i ∈ s, qform v (X i * S i) - qform v (Y i * S i * Y i)
-      = qform v ((X i - Y i) * (S i * Y i)) + qform v ((X i - Y i) * (S i * X i)) := by
+  have hdev : ∀ i, star (X i - Y i) = X i - Y i := fun i => by
+    rw [star_sub, hXsa, hYsa]
+  have hterm : ∀ i ∈ s, M.qform (X i * S i) - M.qform (Y i * S i * Y i)
+      = M.qform ((X i - Y i) * (S i * Y i)) + M.qform ((X i - Y i) * (S i * X i)) := by
     intro i _
     have hXSX : X i * S i * X i = X i * S i := by
-      rw [Matrix.mul_assoc, ← hcomm i, ← Matrix.mul_assoc, hXidem]
-    have hflip : qform v (Y i * S i * (X i - Y i)) = qform v ((X i - Y i) * (S i * Y i)) := by
-      rw [← qform_conjTranspose v (Y i * S i * (X i - Y i))]
+      rw [mul_assoc, ← hcomm i, ← mul_assoc, hXidem]
+    have hflip : M.qform (Y i * S i * (X i - Y i))
+        = M.qform ((X i - Y i) * (S i * Y i)) := by
+      rw [← M.qform_star (Y i * S i * (X i - Y i))]
       congr 1
-      rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hdev, hSsa, hYsa]
-    rw [← hXSX, ← qform_sub, ← hflip, ← qform_add]
+      rw [star_mul, star_mul, hdev, hSsa, hYsa]
+    rw [← hXSX, ← M.qform_sub, ← hflip, ← M.qform_add]
     congr 1
     noncomm_ring
-  have hsplit : (∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)
-      = (∑ i ∈ s, qform v ((X i - Y i) * (S i * Y i)))
-        + ∑ i ∈ s, qform v ((X i - Y i) * (S i * X i)) := by
+  have hsplit : (∑ i ∈ s, M.qform (X i * S i)) - ∑ i ∈ s, M.qform (Y i * S i * Y i)
+      = (∑ i ∈ s, M.qform ((X i - Y i) * (S i * Y i)))
+        + ∑ i ∈ s, M.qform ((X i - Y i) * (S i * X i)) := by
     rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl hterm
-  have hdevε : Real.sqrt (∑ i ∈ s, snorm v (X i - Y i) ^ 2) ≤ Real.sqrt ε :=
+  have hdevε : Real.sqrt (∑ i ∈ s, M.snorm (X i - Y i) ^ 2) ≤ Real.sqrt ε :=
     Real.sqrt_le_sqrt hε
-  have hb : ∀ Z : ι → Matrix N N ℂ, (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 →
-      |∑ i ∈ s, qform v ((X i - Y i) * (S i * Z i))| ≤ Real.sqrt ε := by
+  have hb : ∀ Z : ι → 𝒞, (∑ i ∈ s, M.snorm (S i * Z i) ^ 2) ≤ 1 →
+      |∑ i ∈ s, M.qform ((X i - Y i) * (S i * Z i))| ≤ Real.sqrt ε := by
     intro Z hZ
-    have hcs := abs_sum_qform_conjTranspose_mul_le v s (fun i => X i - Y i) (fun i => S i * Z i)
+    have hcs := abs_sum_qform_conjTranspose_mul_le M s (fun i => X i - Y i)
+      (fun i => S i * Z i)
     simp only [hdev] at hcs
     refine le_trans hcs ?_
-    have h1 : Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2) ≤ 1 := by
+    have h1 : Real.sqrt (∑ i ∈ s, M.snorm (S i * Z i) ^ 2) ≤ 1 := by
       simpa using Real.sqrt_le_sqrt hZ
-    calc Real.sqrt (∑ i ∈ s, snorm v (X i - Y i) ^ 2)
-          * Real.sqrt (∑ i ∈ s, snorm v (S i * Z i) ^ 2)
-        ≤ Real.sqrt (∑ i ∈ s, snorm v (X i - Y i) ^ 2) * 1 :=
+    calc Real.sqrt (∑ i ∈ s, M.snorm (X i - Y i) ^ 2)
+          * Real.sqrt (∑ i ∈ s, M.snorm (S i * Z i) ^ 2)
+        ≤ Real.sqrt (∑ i ∈ s, M.snorm (X i - Y i) ^ 2) * 1 :=
           mul_le_mul_of_nonneg_left h1 (Real.sqrt_nonneg _)
       _ ≤ Real.sqrt ε := by rw [mul_one]; exact hdevε
   rw [hsplit]
@@ -378,81 +372,62 @@ section Insert
 
 section Fibre
 
-variable {N : Type*} [Fintype N] [DecidableEq N] {ι κ : Type*} [Fintype ι] [DecidableEq ι]
-  [Fintype κ] [DecidableEq κ]
+variable {𝒞 : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] {ι κ : Type*} [Fintype ι]
+  [DecidableEq ι] [Fintype κ] [DecidableEq κ]
 
 /-- **A projective family in front, indexed through a map to the operators' own index.** Each
 fibre of the map contributes at most the operator it names, because the projectors in a fibre sum
 to a projection and a projection is a contraction. Without the fibres this would be false: the
 index `i` can be far larger than `k`, and summing one operator once per `i` would multiply the
 bound by the size of a fibre. -/
-theorem sum_snorm_sq_proj_comp_le (v : N → ℂ) {P : ι → Matrix N N ℂ} (hP : IsPVM P)
-    (c : ι → κ) (Z : κ → Matrix N N ℂ) :
-    ∑ i, snorm v (P i * Z (c i)) ^ 2 ≤ ∑ k, snorm v (Z k) ^ 2 := by
-  classical
-  have hsplit : ∑ i, snorm v (P i * Z (c i)) ^ 2
-      = ∑ k, ∑ i ∈ univ.filter fun i => c i = k, snorm v (P i * Z (c i)) ^ 2 :=
-    (Finset.sum_fiberwise (univ : Finset ι) c fun i => snorm v (P i * Z (c i)) ^ 2).symm
+theorem sum_snorm_sq_proj_comp_le (M : StateModel 𝒞) {P : ι → 𝒞} (hP : IsPVMIn P)
+    (c : ι → κ) (Z : κ → 𝒞) :
+    ∑ i, M.snorm (P i * Z (c i)) ^ 2 ≤ ∑ k, M.snorm (Z k) ^ 2 := by
+  have hsplit : ∑ i, M.snorm (P i * Z (c i)) ^ 2
+      = ∑ k, ∑ i ∈ univ.filter fun i => c i = k, M.snorm (P i * Z (c i)) ^ 2 :=
+    (Finset.sum_fiberwise (univ : Finset ι) c fun i => M.snorm (P i * Z (c i)) ^ 2).symm
   rw [hsplit]
   refine Finset.sum_le_sum fun k _ => ?_
-  have hfib : ∑ i ∈ univ.filter fun i => c i = k, snorm v (P i * Z (c i)) ^ 2
-      = ∑ i ∈ univ.filter fun i => c i = k, snorm v (P i * Z k) ^ 2 :=
+  have hfib : ∑ i ∈ univ.filter fun i => c i = k, M.snorm (P i * Z (c i)) ^ 2
+      = ∑ i ∈ univ.filter fun i => c i = k, M.snorm (P i * Z k) ^ 2 :=
     Finset.sum_congr rfl fun i hi => by rw [(Finset.mem_filter.mp hi).2]
-  rw [hfib, ← snorm_sq_sum_orthogonal v hP (Z k) (univ.filter fun i => c i = k)]
-  refine snorm_sq_mul_le_of_contraction v ?_ (Z k)
-  have hsa : (∑ i ∈ univ.filter fun i => c i = k, P i)ᴴ
-      = ∑ i ∈ univ.filter fun i => c i = k, P i := by
-    rw [Matrix.conjTranspose_sum]
-    exact Finset.sum_congr rfl fun i _ => hP.isSelfAdjoint i
-  have hidem : (∑ i ∈ univ.filter fun i => c i = k, P i)
-      * (∑ i ∈ univ.filter fun i => c i = k, P i)
-      = ∑ i ∈ univ.filter fun i => c i = k, P i := by
-    rw [Finset.sum_mul]
-    refine Finset.sum_congr rfl fun i hi => ?_
-    rw [Matrix.mul_sum,
-      Finset.sum_eq_single_of_mem i hi fun j _ hji => hP.orthogonal (Ne.symm hji), hP.idem]
-  rw [hsa, hidem]
-  exact proj_le_one hsa hidem
+  rw [hfib, ← M.snorm_sq_sum_orthogonal hP (Z k) (univ.filter fun i => c i = k)]
+  have h := M.snorm_mul_le (M.bnd_one_of_isStarProjection ((hP.coarse c).isStarProjection k))
+    (Z k)
+  rw [one_mul] at h
+  exact pow_le_pow_left₀ (M.snorm_nonneg _) h 2
 
 end Fibre
 
-variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
   {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
 
 /-- **The deficit of the insertion is the cross-party deviation.** Inserting one party's outcome
 in front of the other party's costs `(1 - A) B`, which is `B (B - A)` because `B` is a projection
 and the two parties commute --- and a projection in front costs nothing. -/
-theorem snorm_one_sub_aOp_mul_bOp_le (ψ : dA × dB → ℂ) (A : Matrix dA dA ℂ) {B : Matrix dB dB ℂ}
-    (hBsa : Bᴴ = B) (hBidem : B * B = B) :
-    snorm ψ (((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp A) * bOp B)
-      ≤ snorm ψ ((aOp A : Matrix (dA × dB) (dA × dB) ℂ) - bOp B) := by
-  have hrw : ((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp A) * bOp B
-      = bOp B * ((bOp B : Matrix (dA × dB) (dA × dB) ℂ) - aOp A) := by
-    rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.one_mul, ← bOp_mul, hBidem,
-      ← aOp_mul_bOp]
-  have hbnd : Bnd (bOp B : Matrix (dA × dB) (dA × dB) ℂ) 1 := by
-    refine bnd_bOp ?_
-    rw [hBsa, hBidem]
-    exact proj_le_one hBsa hBidem
-  rw [hrw, snorm_sub_comm ψ (aOp A) (bOp B)]
-  simpa using snorm_mul_le ψ hbnd ((bOp B : Matrix (dA × dB) (dA × dB) ℂ) - aOp A)
+theorem snorm_one_sub_aOp_mul_bOp_le (M : BipartiteModel 𝒞 𝒜 ℬ) (A : 𝒜) {B : ℬ}
+    (hBsa : star B = B) (hBidem : B * B = B) :
+    M.snorm ((1 - M.πA A) * M.πB B) ≤ M.snorm (M.πA A - M.πB B) := by
+  have hrw : (1 - M.πA A) * M.πB B = M.πB B * (M.πB B - M.πA A) := by
+    rw [sub_mul, mul_sub, one_mul, ← map_mul M.πB B B, hBidem, (M.commute A B).eq]
+  have hbnd : M.Bnd (M.πB B) 1 := M.bnd_πB_of_isStarProjection ⟨hBidem, hBsa⟩
+  rw [hrw, M.snorm_sub_comm (M.πA A) (M.πB B)]
+  simpa using M.snorm_mul_le hbnd (M.πB B - M.πA A)
 
 /-- **Display `eq:qld-pulling-3`.** Inserting the other party's outcome beside each term of a
 projective family, the family being indexed through the measurement's own outcomes, costs the
 measurement's summed cross-consistency and nothing else. -/
-theorem sum_snorm_sq_insert_le (ψ : dA × dB → ℂ)
-    {P : ι → Matrix (dA × dB) (dA × dB) ℂ} (hP : IsPVM P) (c : ι → κ) (A : κ → Matrix dA dA ℂ)
-    {B : κ → Matrix dB dB ℂ} (hBsa : ∀ k, (B k)ᴴ = B k) (hBidem : ∀ k, B k * B k = B k)
-    {ε : ℝ} (hcons : ∑ k, xSqNorm ψ (A k) (B k) ≤ ε) :
-    ∑ i, snorm ψ (P i
-        * (((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp (A (c i))) * bOp (B (c i)))) ^ 2 ≤ ε := by
-  refine le_trans (sum_snorm_sq_proj_comp_le ψ hP c
-    fun k => ((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp (A k)) * bOp (B k)) ?_
+theorem sum_snorm_sq_insert_le (M : BipartiteModel 𝒞 𝒜 ℬ) {P : ι → 𝒞} (hP : IsPVMIn P)
+    (c : ι → κ) (A : κ → 𝒜) {B : κ → ℬ} (hBsa : ∀ k, star (B k) = B k)
+    (hBidem : ∀ k, B k * B k = B k) {ε : ℝ} (hcons : ∑ k, M.xSqNorm (A k) (B k) ≤ ε) :
+    ∑ i, M.snorm (P i * ((1 - M.πA (A (c i))) * M.πB (B (c i)))) ^ 2 ≤ ε := by
+  refine le_trans (sum_snorm_sq_proj_comp_le M.toStateModel hP c
+    fun k => (1 - M.πA (A k)) * M.πB (B k)) ?_
   refine le_trans (Finset.sum_le_sum fun k (_ : k ∈ univ) => ?_) hcons
-  rw [xSqNorm_eq_snorm_sq]
-  have h := snorm_one_sub_aOp_mul_bOp_le ψ (A k) (hBsa k) (hBidem k)
-  have h0 := snorm_nonneg ψ (((1 : Matrix (dA × dB) (dA × dB) ℂ) - aOp (A k)) * bOp (B k))
-  nlinarith [h, h0]
+  rw [M.xSqNorm_eq_sq]
+  exact pow_le_pow_left₀ (M.snorm_nonneg _)
+    (snorm_one_sub_aOp_mul_bOp_le M (A k) (hBsa k) (hBidem k)) 2
 
 end Insert
 
@@ -463,25 +438,26 @@ parties. What `lem:qld-swap` consumes is one binary observable, read off that fa
 function of the outcome. The passage between the two is the paper's `fact:agreement`,
 `fact:data-processing` and `fact:agreement` again, and for *projective* families it is free: the
 summed deviation and the agreement probability determine each other exactly, and agreement can
-only increase under a relabelling. Foundations has that as `sum_xSqNorm_map_le`, on bundled
-POVMs; what the chain speaks is `IsPVM`, and `IsPVM.toPOVM` bridges the two. -/
+only increase under a relabelling. Foundations has that as `BipartiteModel.sum_xSqNorm_map_le`, on
+POVMs; a projective family is one (`IsPVMIn.toPOVMIn`). -/
 
 section Coarse
 
-variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
   {Λ Λ' : Type*} [Fintype Λ] [DecidableEq Λ] [Fintype Λ'] [DecidableEq Λ']
 
 /-- **Coarse-graining a cross-party consistency costs nothing.** Two projective measurements
 relabelled the same way stay as close as they were --- with no factor for the size of a fibre,
 which a per-fibre triangle inequality would have cost. -/
-theorem sum_xSqNorm_fibre_le {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    {A : Λ → Matrix dA dA ℂ} {B : Λ → Matrix dB dB ℂ} (hA : IsPVM A) (hB : IsPVM B)
-    (f : Λ → Λ') :
-    ∑ c, xSqNorm ψ (∑ a ∈ univ.filter fun a => f a = c, A a)
+theorem sum_xSqNorm_fibre_le {M : BipartiteModel 𝒞 𝒜 ℬ} (hM : ‖M.ψ‖ = 1) {A : Λ → 𝒜}
+    {B : Λ → ℬ} (hA : IsPVMIn A) (hB : IsPVMIn B) (f : Λ → Λ') :
+    ∑ c, M.xSqNorm (∑ a ∈ univ.filter fun a => f a = c, A a)
         (∑ a ∈ univ.filter fun a => f a = c, B a)
-      ≤ ∑ a, xSqNorm ψ (A a) (B a) := by
-  have h := sum_xSqNorm_map_le hψ hA.toPOVM hB.toPOVM hA hB f
-  simpa only [POVM.map_mats, IsPVM.toPOVM_mats] using h
+      ≤ ∑ a, M.xSqNorm (A a) (B a) := by
+  have h := M.sum_xSqNorm_map_le hM hA.toPOVMIn hB.toPOVMIn hA hB f
+  simpa only [POVMIn.map_op, IsPVMIn.toPOVMIn_op] using h
 
 end Coarse
 
@@ -495,72 +471,61 @@ open scoped Kronecker ComplexOrder MatrixOrder
 section Helper
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
-  {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
-
-/- The pair space is a four-fold product whose `DecidableEq` runs past the default instance-size
-bound; raised as in `MIPRE/Background/QLD/MTilde.lean`. -/
-set_option synthInstance.maxSize 1000
+  [NeZero m]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+  [StarProper ℬ]
+variable {𝒞' 𝒜' ℬ' : Type*} [Ring 𝒞'] [StarRing 𝒞'] [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜']
+  [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ'] [PartialOrder 𝒜'] [StarOrderedRing 𝒜']
+  [PartialOrder ℬ'] [StarOrderedRing ℬ']
 
 namespace SimulPair
 
-variable (P : SimulPair ψ MA MB δ)
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {S : M.ProjStrat (qldGame (d := d) hm)} {K : BipartiteModel 𝒞' 𝒜' ℬ'}
+  {ι : (M.reg (Anc F m)).Embedding K} {δ : ℝ}
+
+variable (P : SimulPair M S K ι δ)
 
 /-- **The evaluated marginal's same-party product, split by polynomial outcome.** The evaluated
 marginal at `a` is the sum of the polynomial-indexed outcomes over the fibre `g(u) = a`, and those
-are orthogonal projectors, so the squared norms add. -/
+are orthogonal projections, so the squared norms add. -/
 theorem snorm_sq_evalMarg_eq_sum_polyMarg (W : Bas) (u : Point F m) (a : F) :
-    snorm P.Φ (aOp ((((evalMarg P.SA W u).mats a).val)
-          * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2
+    K.snorm (K.πA ((evalMarg P.SA W u).op a * (1 - ι.ΦA (hatMats S.PA W u a)))) ^ 2
       = ∑ g ∈ univ.filter fun g : LowIndDegPoly (F := F) (m := m) (d := d) => g.eval u = a,
-          snorm P.Φ (aOp (((polyMarg P.SA W).mats g).val
-            * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2 := by
-  classical
-  have hsplit : (((evalMarg P.SA W u).mats a).val)
+          K.snorm (K.πA ((polyMarg P.SA W).op g * (1 - ι.ΦA (hatMats S.PA W u a)))) ^ 2 := by
+  have hsplit : (evalMarg P.SA W u).op a
       = ∑ g ∈ univ.filter fun g : LowIndDegPoly (F := F) (m := m) (d := d) => g.eval u = a,
-          ((polyMarg P.SA W).mats g).val := by
+          (polyMarg P.SA W).op g := by
     rw [evalMarg_eq_map_polyMarg]
-    exact POVM.map_mats _ _ _
-  rw [hsplit, Finset.sum_mul, aOp_sum]
-  rw [show (∑ g ∈ univ.filter fun g : LowIndDegPoly (F := F) (m := m) (d := d) => g.eval u = a,
-      (aOp (((polyMarg P.SA W).mats g).val
-        * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))
-        : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ))
-      = (∑ g ∈ univ.filter fun g : LowIndDegPoly (F := F) (m := m) (d := d) => g.eval u = a,
-          (aOp (((polyMarg P.SA W).mats g).val)
-            : Matrix (((dA × Anc F m) × P.EA) × ((dB × Anc F m) × P.EB)) _ ℂ))
-        * aOp (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)) from by
-      rw [Finset.sum_mul]
-      exact Finset.sum_congr rfl fun g _ => aOp_mul _ _]
-  rw [snorm_sq_sum_orthogonal P.Φ (isPVM_polyMarg P.SA_proj W).aOp _ _]
-  exact Finset.sum_congr rfl fun g _ => by rw [aOp_mul]
+    exact POVMIn.map_op _ _ _
+  rw [hsplit, map_mul, map_sum,
+    K.snorm_sq_sum_orthogonal ((isPVM_polyMarg P.SA_proj W).map K.πA)]
+  exact Finset.sum_congr rfl fun g _ => by rw [map_mul]
 
 /-- **Item 2 of `lem:qld-helper`, in the chain's own indexing**: the same-party product of the
 *polynomial-indexed* marginal with the complement of Alice's point measurement at that outcome's
 own value. This is the form displays `eq:qld-pulling-7` and `eq:qld-pulling-11` consume. -/
-theorem sum_snorm_sq_polyMarg_one_sub_le {hm : m ∣ Fintype.card F} {ε : ℝ}
-    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
+theorem sum_snorm_sq_polyMarg_one_sub_le {ε : ℝ} (hfail : 1 - S.value ≤ ε) (W : Bas) :
     ∑ u, uniform (Point F m) u
-        * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), snorm P.Φ
-          (aOp (((polyMarg P.SA W).mats g).val
-            * (1 - (aOp (hatMats MA W u (g.eval u)) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2
+        * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          K.snorm (K.πA ((polyMarg P.SA W).op g
+            * (1 - ι.ΦA (hatMats S.PA W u (g.eval u))))) ^ 2
       ≤ 4 * δ + 2 * (172 * ε) := by
-  classical
-  have h := P.sum_snorm_sq_evalMarg_one_sub_le (hm := hm) hψ hfail hprojB W
+  have h := P.sum_snorm_sq_evalMarg_one_sub_le hfail W
   have hu : ∀ u : Point F m,
-      (∑ a : F, snorm P.Φ (aOp ((((evalMarg P.SA W u).mats a).val)
-          * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2)
-        = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), snorm P.Φ
-          (aOp (((polyMarg P.SA W).mats g).val
-            * (1 - (aOp (hatMats MA W u (g.eval u)) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2 :=
+      (∑ a : F, K.snorm (K.πA ((evalMarg P.SA W u).op a
+          * (1 - ι.ΦA (hatMats S.PA W u a)))) ^ 2)
+        = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
+          K.snorm (K.πA ((polyMarg P.SA W).op g
+            * (1 - ι.ΦA (hatMats S.PA W u (g.eval u))))) ^ 2 :=
     fun u => by
       rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) =>
         P.snorm_sq_evalMarg_eq_sum_polyMarg W u a]
       rw [← Finset.sum_fiberwise (univ : Finset (LowIndDegPoly (F := F) (m := m) (d := d)))
-        (fun g => g.eval u) fun g => snorm P.Φ (aOp (((polyMarg P.SA W).mats g).val
-          * (1 - (aOp (hatMats MA W u (g.eval u)) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2]
+        (fun g => g.eval u) fun g => K.snorm (K.πA ((polyMarg P.SA W).op g
+          * (1 - ι.ΦA (hatMats S.PA W u (g.eval u))))) ^ 2]
       exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun g hg => by
         rw [(Finset.mem_filter.mp hg).2]
   rwa [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [hu u]] at h
@@ -571,33 +536,27 @@ helper's own `delta_S`: the marginal's outcomes sum to the identity, so the comp
 one minus the agreement. -/
 theorem sum_bornProb_polyMarg_one_sub_le (W : Bas) :
     ∑ u, uniform (Point F m) u * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
-        bornProb P.Φ (((polyMarg P.SA W).mats g).val)
-          (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ))
+        K.bornProb ((polyMarg P.SA W).op g) (1 - ι.ΦB (hatMats S.PB W u (g.eval u)))
       ≤ δ := by
-  classical
-  have hlow := P.sum_bornProb_polyMarg_ge (MB := MB) W
+  have hlow := P.sum_bornProb_polyMarg_ge W
   have hsplit : ∀ u : Point F m,
       (∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
-          bornProb P.Φ (((polyMarg P.SA W).mats g).val)
-            (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ)))
+          K.bornProb ((polyMarg P.SA W).op g) (1 - ι.ΦB (hatMats S.PB W u (g.eval u))))
         = 1 - ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
-            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
-              (aOp (hatMats MB W u (g.eval u))) := by
+            K.bornProb ((polyMarg P.SA W).op g) (ι.ΦB (hatMats S.PB W u (g.eval u))) := by
     intro u
     rw [Finset.sum_congr rfl fun g (_ : g ∈ univ) =>
-        bornProb_sub_right P.Φ (((polyMarg P.SA W).mats g).val) 1
-          (aOp (hatMats MB W u (g.eval u))),
-      Finset.sum_sub_distrib, ← bornProb_sum_left,
-      (isPVM_polyMarg P.SA_proj W).sum_eq_one, bornProb_one_one P.Φ_unit]
+        K.bornProb_sub_right ((polyMarg P.SA W).op g) 1 (ι.ΦB (hatMats S.PB W u (g.eval u))),
+      Finset.sum_sub_distrib, ← K.bornProb_sum_left, (polyMarg P.SA W).sum_op,
+      K.bornProb_one_one P.ψ_unit]
   rw [Finset.sum_congr rfl fun u (_ : u ∈ univ) => by rw [hsplit u],
     Finset.sum_congr rfl fun u (_ : u ∈ univ) =>
       show uniform (Point F m) u * (1 - ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
-            bornProb P.Φ (((polyMarg P.SA W).mats g).val)
-              (aOp (hatMats MB W u (g.eval u))))
+            K.bornProb ((polyMarg P.SA W).op g) (ι.ΦB (hatMats S.PB W u (g.eval u))))
           = uniform (Point F m) u - uniform (Point F m) u
               * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),
-                bornProb P.Φ (((polyMarg P.SA W).mats g).val)
-                  (aOp (hatMats MB W u (g.eval u))) from by ring,
+                K.bornProb ((polyMarg P.SA W).op g) (ι.ΦB (hatMats S.PB W u (g.eval u)))
+        from by ring,
     Finset.sum_sub_distrib, sum_uniform_eq_one]
   linarith
 

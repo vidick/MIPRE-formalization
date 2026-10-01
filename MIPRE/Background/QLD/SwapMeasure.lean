@@ -40,6 +40,21 @@ That cancellation is the paper's relabelling `h' = h + coded(g_W)`, the passage 
 records as repaired: the repair was to keep `coded(g_W) . ind_m(u)` rather than the false
 `g_W(u)` throughout, and what makes the relabelling exact here is that the shift and the outcome
 are written with the same `cd(pi p) . u` by construction.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The exact half is stated over
+any `⋆`-algebra `R`, as `ExactPauli.lean` and `SwapUnitary.lean` are: the pair measurement is a
+projective measurement in `R`, the conjugated measurement a matrix over `R` on the register, and
+`Id (x) B` is `smulKron 1 B`. The single-vector and two-party estimates are stated in a state model
+and in a bipartite model. The interface half lives in the physical model `phys N K` of a pair
+measurement on the first cut (`CutSimul`): the exact Pauli measurement is the first player's
+`mTildePOVM`, and the strategy's own point and Pauli measurements are read there with the registers
+inert (`physInert`), an embedding of `N` along which the game's consistencies transfer unchanged.
+The matrix route's regrouping of the cut (`inconsistency_regroupVec`) and its reduction of the
+padded state (`bornProb_padded`, `inconsistency_padded`) are those transfers
+(`BipartiteModel.Embedding.inconsistency_pushforward`), and the transport of an expectation to a
+nearby state is `StateModel.abs_qform_sub_qform_le` of `MIPRE/Foundations/ModelCalculus.lean`.
 -/
 
 noncomputable section
@@ -52,7 +67,6 @@ open scoped Kronecker ComplexOrder MatrixOrder
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
 variable {n : Type*} [Fintype n] [DecidableEq n]
 variable {G : Type*} [Fintype G] [DecidableEq G]
-variable {dA : Type*} [Fintype dA] [DecidableEq dA]
 
 set_option linter.unusedSectionVars false
 
@@ -94,36 +108,37 @@ end Conj
 
 section Measure
 
-variable {S : G × G → Matrix dA dA ℂ} {cd : G → (n → F)}
+variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] {S : G × G → R}
+  {cd : G → (n → F)}
 
 /-- **Conjugation by the swap unitary strips the pair measurement off the exact Pauli
 measurement.** For a family each of whose operators the ancilla factor twists by the character of
 `cd (pi p)` --- the very shift the outcome of `M~^{W,u}_a` is written with --- the two cancel and
 only the bare syndrome projector survives:
 `V M~^{W,u}_a V^dagger = Id (x) tau^W_{[g_h(u) = a]}`. -/
-theorem swapU_conj_mTilde (hS : IsPVM S) {pi : G × G → G}
+theorem swapU_conj_mTilde (hS : IsPVMIn S) {pi : G × G → G}
     {w : (n → F) → Matrix (n → F) (n → F) ℂ}
     (h : ∀ (p : G × G) (b : n → F),
       uOf cd p * w b * (uOf cd p)ᴴ = sgn (trDot b (cd (pi p))) • w b)
     (u : n → F) (a : F) :
-    swapU S cd * mTilde S pi cd w u a * (swapU S cd)ᴴ = 1 ⊗ₖ syn w u a := by
+    swapU S cd * mTilde S pi cd w u a * star (swapU S cd) = smulKron 1 (syn w u a) := by
   rw [mTilde_eq_sTensor, swapU, sTensor_mul hS, sTensor_conjTranspose hS, sTensor_mul hS]
   rw [show (fun p => uOf cd p * syn w u (dotF (cd (pi p)) u + a) * (uOf cd p)ᴴ)
       = fun _ => syn w u a from funext fun p => by
     rw [conj_syn_of_sign (h p) u (dotF (cd (pi p)) u + a)]
     congr 1
     rw [add_comm (dotF (cd (pi p)) u) a, add_assoc, add_self_eq_zero', add_zero]]
-  show (∑ p, S p ⊗ₖ syn w u a) = 1 ⊗ₖ syn w u a
+  show (∑ p, smulKron (S p) (syn w u a)) = smulKron 1 (syn w u a)
   rw [← sum_kron, hS.sum_eq_one]
 
 /-- **The `X`-side identity.** -/
-theorem swapU_conj_mTilde_X (hS : IsPVM S) (u : n → F) (a : F) :
-    swapU S cd * mTilde S Prod.fst cd wX u a * (swapU S cd)ᴴ = 1 ⊗ₖ syn wX u a :=
+theorem swapU_conj_mTilde_X (hS : IsPVMIn S) (u : n → F) (a : F) :
+    swapU S cd * mTilde S Prod.fst cd wX u a * star (swapU S cd) = smulKron 1 (syn wX u a) :=
   swapU_conj_mTilde hS (fun p b => uOf_conj_wX cd p b) u a
 
 /-- **The `Z`-side identity.** -/
-theorem swapU_conj_mTilde_Z (hS : IsPVM S) (u : n → F) (a : F) :
-    swapU S cd * mTilde S Prod.snd cd wZ u a * (swapU S cd)ᴴ = 1 ⊗ₖ syn wZ u a :=
+theorem swapU_conj_mTilde_Z (hS : IsPVMIn S) (u : n → F) (a : F) :
+    swapU S cd * mTilde S Prod.snd cd wZ u a * star (swapU S cd) = smulKron 1 (syn wZ u a) :=
   swapU_conj_mTilde hS (fun p b => by rw [uOf_conj_wZ, trDot_comm]) u a
 
 end Measure
@@ -132,34 +147,34 @@ end Measure
 
 The endgame of item 2 opens by expanding the squared deviation of the conjugated Pauli measurement
 from the bare ancilla family. Both act on the *same* party, so the bipartite expansion
-`one_sub_sum_bornProb_eq` does not apply; the same three-term expansion does, with the two
-diagonal sums exactly one because both families are projective. -/
+`BipartiteModel.one_sub_sum_bornProb_eq` does not apply; the same three-term expansion does, with
+the two diagonal sums exactly one because both families are projective. -/
 
 section Deviation
 
-variable {N : Type*} [Fintype N] [DecidableEq N] {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
+variable {𝒞 : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] {Λ : Type*} [Fintype Λ]
+  [DecidableEq Λ]
 
 /-- **The summed deviation of two projective measurements on one party is twice one minus their
 agreement.** The cross term appears twice and the two copies are conjugate, so no real part
 survives in the statement --- `qform` is already the real part, and the flipped product has the
 same one. -/
-theorem sum_snorm_sq_sub_eq_two_sub {v : N → ℂ} (hv : ‖evec v‖ = 1) {A T : Λ → Matrix N N ℂ}
-    (hA : IsPVM A) (hT : IsPVM T) :
-    ∑ h, snorm v (A h - T h) ^ 2 = 2 - 2 * ∑ h, qform v (A h * T h) := by
-  have hterm : ∀ h : Λ, snorm v (A h - T h) ^ 2
-      = qform v (A h) + qform v (T h) - 2 * qform v (A h * T h) := by
+theorem sum_snorm_sq_sub_eq_two_sub {M : StateModel 𝒞} (hM : ‖M.ψ‖ = 1) {A T : Λ → 𝒞}
+    (hA : IsPVMIn A) (hT : IsPVMIn T) :
+    ∑ h, M.snorm (A h - T h) ^ 2 = 2 - 2 * ∑ h, M.qform (A h * T h) := by
+  have hterm : ∀ h : Λ, M.snorm (A h - T h) ^ 2
+      = M.qform (A h) + M.qform (T h) - 2 * M.qform (A h * T h) := by
     intro h
-    have hflip : qform v (T h * A h) = qform v (A h * T h) := by
-      rw [← qform_conjTranspose v (T h * A h), Matrix.conjTranspose_mul, hA.isSelfAdjoint,
-        hT.isSelfAdjoint]
-    rw [snorm_sq_eq_qform, Matrix.conjTranspose_sub, hA.isSelfAdjoint, hT.isSelfAdjoint,
+    have hflip : M.qform (T h * A h) = M.qform (A h * T h) := by
+      rw [← M.qform_star (T h * A h), star_mul, hA.star_eq, hT.star_eq]
+    rw [M.snorm_sq_eq_qform, star_sub, hA.star_eq, hT.star_eq,
       show (A h - T h) * (A h - T h)
           = A h * A h + T h * T h - A h * T h - T h * A h from by noncomm_ring,
-      hA.idem, hT.idem, qform_sub, qform_sub, qform_add, hflip]
+      hA.idem, hT.idem, M.qform_sub, M.qform_sub, M.qform_add, hflip]
     ring
   rw [Finset.sum_congr rfl fun h (_ : h ∈ univ) => hterm h, Finset.sum_sub_distrib,
-    Finset.sum_add_distrib, ← Finset.mul_sum, ← qform_sum, ← qform_sum, hA.sum_eq_one,
-    hT.sum_eq_one, qform_one v hv]
+    Finset.sum_add_distrib, ← Finset.mul_sum, ← M.qform_sum, ← M.qform_sum, hA.sum_eq_one,
+    hT.sum_eq_one, M.qform_one hM]
   ring
 
 end Deviation
@@ -177,50 +192,50 @@ section Agree
 open MIPRE.LIDT MIPRE.LowDegree
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]
-  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 /-- **The off-diagonal agreement of two projective families across the parties costs `md/q`**,
 when the index is encoded injectively by low-individual-degree polynomials. The weights are Born
 probabilities of a pair of projective measurements, so they are nonnegative and sum to one. -/
 theorem sum_uniform_agree_bornProb_le {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
-    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    {A : Λ → Matrix dA dA ℂ} {T : Λ → Matrix dB dB ℂ} (hA : IsPVM A) (hT : IsPVM T)
+    {M : BipartiteModel 𝒞 𝒜 ℬ} (hM : ‖M.ψ‖ = 1)
+    {A : Λ → 𝒜} {T : Λ → ℬ} (hA : IsPVMIn A) (hT : IsPVMIn T)
     {enc : Λ → LowIndDegPoly (F := F) (m := m) (d := d)}
     (hinj : ∀ h h' : Λ, h ≠ h' → (enc h).toMv ≠ (enc h').toMv) :
     ∑ u, uniform (Point F m) u
         * ∑ hh ∈ univ.filter fun hh : Λ × Λ => (enc hh.1).eval u = (enc hh.2).eval u,
-            (if hh.1 = hh.2 then (0 : ℝ) else bornProb ψ (A hh.1) (T hh.2))
+            (if hh.1 = hh.2 then (0 : ℝ) else M.bornProb (A hh.1) (T hh.2))
       ≤ (m : ℝ) * d / Fintype.card F := by
-  classical
   have hnn : ∀ hh : Λ × Λ,
-      (0 : ℝ) ≤ if hh.1 = hh.2 then (0 : ℝ) else bornProb ψ (A hh.1) (T hh.2) := fun hh => by
+      (0 : ℝ) ≤ if hh.1 = hh.2 then (0 : ℝ) else M.bornProb (A hh.1) (T hh.2) := fun hh => by
     split_ifs
     · exact le_rfl
-    · exact bornProb_nonneg ψ (hA.posSemidef _) (hT.posSemidef _)
+    · exact M.bornProb_nonneg (hA.nonneg _) (hT.nonneg _)
   refine sum_uniform_agree_mass_le (p := fun hh : Λ × Λ => enc hh.1)
     (q := fun hh : Λ × Λ => enc hh.2) _
-    (fun hh h0 => hinj hh.1 hh.2 fun he => h0 (if_pos he)) hnn ?_
-  calc ∑ hh : Λ × Λ, (if hh.1 = hh.2 then (0 : ℝ) else bornProb ψ (A hh.1) (T hh.2))
-      ≤ ∑ hh : Λ × Λ, bornProb ψ (A hh.1) (T hh.2) :=
+    (fun hh h0 => hinj hh.1 hh.2 fun he => h0 (ite_eq_left he)) hnn ?_
+  calc ∑ hh : Λ × Λ, (if hh.1 = hh.2 then (0 : ℝ) else M.bornProb (A hh.1) (T hh.2))
+      ≤ ∑ hh : Λ × Λ, M.bornProb (A hh.1) (T hh.2) :=
         Finset.sum_le_sum fun hh _ => by
           split_ifs
-          · exact bornProb_nonneg ψ (hA.posSemidef _) (hT.posSemidef _)
+          · exact M.bornProb_nonneg (hA.nonneg _) (hT.nonneg _)
           · exact le_rfl
     _ = 1 := by
         rw [Fintype.sum_prod_type,
-          Finset.sum_congr rfl fun h (_ : h ∈ univ) =>
-            (bornProb_sum_right ψ univ (A h) T).symm,
-          hT.sum_eq_one, ← bornProb_sum_left, hA.sum_eq_one, bornProb_one_one hψ]
+          Finset.sum_congr rfl fun h (_ : h ∈ univ) => (M.bornProb_sum_right (A h) univ T).symm,
+          hT.sum_eq_one, ← M.bornProb_sum_left, hA.sum_eq_one, M.bornProb_one_one hM]
 
 end Agree
 
 /-! ## Display `eq:qld-unitary-5`: the triangle chain
 
 Three consistencies chain to a fourth. The paper's `fact:triangle-for-simeq` item 1 is already in
-Foundations as `agreeSum_triangle`, on the *agreement* of two POVM families; the appendix's
-interface states everything as an *inconsistency* instead, and the two are the same number
-(`sum_bornProb_diag_eq`). This is the adapter, and with it `eq:qld-unitary-5` is the estimate
-applied to `eq:qld-unitary-2`, `-3` and `-4`.
+Foundations as `BipartiteModel.agreeSum_triangle`, on the *agreement* of two families of POVMs; the
+appendix's interface states everything as an *inconsistency* instead, and the two are the same
+number (`sum_bornProb_diag_eq`). This is the adapter, and with it `eq:qld-unitary-5` is the
+estimate applied to `eq:qld-unitary-2`, `-3` and `-4`.
 
 The constant is the Lean one, `11 delta` where the paper has `9 delta`: the padding into a
 four-dimensional auxiliary space that buys the `9` is what `agreeSum_triangle` does without, and
@@ -228,99 +243,26 @@ four-dimensional auxiliary space that buys the `9` is what `agreeSum_triangle` d
 
 section Triangle
 
-variable {X Λ : Type*} [Fintype X] [Fintype Λ] [DecidableEq Λ]
-  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {X Λ : Type*} [Fintype X] [Fintype Λ] [DecidableEq Λ]
 
 /-- **The agreement triangle, read as inconsistencies.** `A` against `D` through `B` and `C`,
 where the two middle legs share a family on each side. -/
 theorem inconsistency_triangle {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1 : ∑ x, μ x = 1)
-    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (A C : X → POVM Λ dA) (B D : X → POVM Λ dB)
-    {δ : ℝ} (hAB : inconsistency μ ψ A B ≤ δ) (hCB : inconsistency μ ψ C B ≤ δ)
-    (hCD : inconsistency μ ψ C D ≤ δ) :
-    inconsistency μ ψ A D ≤ 11 * δ := by
-  have hbridge : ∀ (M : X → POVM Λ dA) (N : X → POVM Λ dB),
-      1 - agreeSum μ ψ M N = inconsistency μ ψ M N := fun M N => by
-    rw [agreeSum, sum_bornProb_diag_eq hμ1 hψ M N]
+    {M : BipartiteModel 𝒞 𝒜 ℬ} (hM : ‖M.ψ‖ = 1) (A C : X → POVMIn Λ 𝒜)
+    (B D : X → POVMIn Λ ℬ) {δ : ℝ} (hAB : M.inconsistency μ A B ≤ δ)
+    (hCB : M.inconsistency μ C B ≤ δ) (hCD : M.inconsistency μ C D ≤ δ) :
+    M.inconsistency μ A D ≤ 11 * δ := by
+  have hbridge : ∀ (P : X → POVMIn Λ 𝒜) (Q : X → POVMIn Λ ℬ),
+      1 - M.agreeSum μ P Q = M.inconsistency μ P Q := fun P Q => by
+    rw [BipartiteModel.agreeSum, sum_bornProb_diag_eq hμ1 hM P Q]
     ring
-  have h := agreeSum_triangle (δ := δ) hμ0 hμ1 hψ A C B D
+  have h := M.agreeSum_triangle (δ := δ) hμ0 hμ1 hM A C B D
     ((hbridge A B).symm ▸ hAB) ((hbridge C B).symm ▸ hCB) ((hbridge C D).symm ▸ hCD)
   rwa [hbridge] at h
 
 end Triangle
-
-/-! ## Moving an expectation to a nearby state
-
-The endgame of item 2 computes against the product state `|aux> (x) |EPR>^M` and then transports
-the answer back to the padded state, across item 1's bound on the distance between them. Item 1
-bounds the *squared* norm, so the transport costs a square root of it --- which is where the
-fourth root in `delta_qld` comes from. -/
-
-section StateMove
-
-variable {N : Type*} [Fintype N]
-
-/-- **Moving a quadratic form to a nearby state costs twice the bound times the distance.** The
-difference splits into two terms, each with the deviation on one side, and each is bounded by
-Cauchy--Schwarz against a state of norm at most one. -/
-theorem abs_qform_sub_qform_le (v w : N → ℂ) {X : Matrix N N ℂ} {K : ℝ} (hK : 0 ≤ K)
-    (hX : Bnd X K) (hv : ‖evec v‖ ≤ 1) (hw : ‖evec w‖ ≤ 1) :
-    |qform v X - qform w X| ≤ 2 * K * ‖evec (v - w)‖ := by
-  have hsplit : star v ⬝ᵥ (X *ᵥ v) - star w ⬝ᵥ (X *ᵥ w)
-      = star (v - w) ⬝ᵥ (X *ᵥ v) + star w ⬝ᵥ (X *ᵥ (v - w)) := by
-    rw [Matrix.mulVec_sub, star_sub, sub_dotProduct, dotProduct_sub]
-    ring
-  have h1 : ‖star (v - w) ⬝ᵥ (X *ᵥ v)‖ ≤ K * ‖evec (v - w)‖ := by
-    rw [← inner_evec]
-    refine le_trans (norm_inner_le_norm _ _) ?_
-    calc ‖evec (v - w)‖ * ‖evec (X *ᵥ v)‖ ≤ ‖evec (v - w)‖ * (K * ‖evec v‖) :=
-          mul_le_mul_of_nonneg_left (hX v) (norm_nonneg _)
-      _ ≤ ‖evec (v - w)‖ * (K * 1) :=
-          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hv hK) (norm_nonneg _)
-      _ = K * ‖evec (v - w)‖ := by ring
-  have h2 : ‖star w ⬝ᵥ (X *ᵥ (v - w))‖ ≤ K * ‖evec (v - w)‖ := by
-    rw [← inner_evec]
-    refine le_trans (norm_inner_le_norm _ _) ?_
-    calc ‖evec w‖ * ‖evec (X *ᵥ (v - w))‖ ≤ 1 * ‖evec (X *ᵥ (v - w))‖ :=
-          mul_le_mul_of_nonneg_right hw (norm_nonneg _)
-      _ ≤ K * ‖evec (v - w)‖ := by rw [one_mul]; exact hX (v - w)
-  have hre : qform v X - qform w X = (star v ⬝ᵥ (X *ᵥ v) - star w ⬝ᵥ (X *ᵥ w)).re := by
-    rw [qform, qform, Complex.sub_re]
-  rw [hre, hsplit]
-  refine le_trans (Complex.abs_re_le_norm _) (le_trans (norm_add_le _ _) ?_)
-  linarith
-
-end StateMove
-
-/-! ## Carrying a consistency across the regrouped cut
-
-The three legs of `eq:qld-unitary-5` are not read along the same cut. `M~^{W,u}` needs the ancilla
-half with the first party, which is the regrouped cut `mVec`; the strategy's own point and Pauli
-measurements are local to the unpadded registers and are stated along the padded state's own cut.
-For operators that ignore the register the regrouping moves --- which the strategy's measurements
-do, being extended by the identity there --- the two readings are the same number, since the
-regrouping is a reindexing of the whole space and the moved factor carries the identity. -/
-
-section Transport
-
-variable {R S T E X Λ : Type*} [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S]
-  [Fintype T] [DecidableEq T] [Fintype E] [DecidableEq E] [Fintype X] [Fintype Λ] [DecidableEq Λ]
-
-/-- **A consistency between operators that ignore the moved register reads the same on both
-cuts.** -/
-theorem inconsistency_regroupVec (μ : X → ℝ) (ψ : R × ((S × T) × E) → ℂ)
-    (A : X → POVM Λ R) (B : X → POVM Λ S) :
-    inconsistency μ (regroupVec ψ) (fun x => (A x).aOp (E := T)) (fun x => (B x).aOp (E := E))
-      = inconsistency μ ψ A fun x => ((B x).aOp (E := T)).aOp (E := E) := by
-  refine Finset.sum_congr rfl fun x _ => ?_
-  congr 1
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  split_ifs with h
-  · rfl
-  · show bornProb (regroupVec ψ) _ _ = bornProb ψ _ _
-    rw [POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats]
-    exact bornProb_regroupVec ψ ((A x).mats a).val ((B x).mats b).val 1
-
-end Transport
 
 /-! ## The same, on the interface of `lem:qld-simultaneous`
 
@@ -333,19 +275,20 @@ section Interface
 
 open MIPRE.LIDT MIPRE.LowDegree
 
-set_option synthInstance.maxSize 1000
-
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
-  {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
+  [NeZero m]
 
+omit [Algebra (ZMod 2) F] [NeZero m] in
 /-- **The `(Pauli, W)` measurement, read at a point.** The paper's
 `M^{(Pauli,W)}_{[g_h(u) = a]}`: the strategy's Pauli measurement coarse-grained by the value at
 `u` of the low-degree encoding of the answer it returns. -/
-def pauliAtPOVM {d' : Type} [Fintype d'] [DecidableEq d']
-    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) : POVM F d' :=
-  (M (.pauli W)).map (rdPauli u)
+def pauliAtPOVM {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    (P : Question F m → POVMIn (Answer F m d) R) (W : Bas) (u : Point F m) : POVMIn F R :=
+  (P (.pauli W)).map (rdPauli u)
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 /-! ## The two middle legs, from the game
 
@@ -362,179 +305,190 @@ section GameLegs
 variable {ε : ℝ}
 
 /-- **A cross-party deviation is exactly twice the inconsistency**, for projective families on a
-unit state. Only `≤` holds for POVMs (`xSqNorm_sum_le_two_mul`); what makes it an equality here is
-that both families' masses are exactly one. -/
+unit state. Only `≤` holds for POVMs (`BipartiteModel.xSqNorm_sum_le_two_mul`); what makes it an
+equality here is that both families' masses are exactly one. -/
 theorem inconsistency_eq_half_xPovmDist {X Λ : Type*} [Fintype X] [Fintype Λ] [DecidableEq Λ]
-    (μ : X → ℝ) (hψ : star ψ ⬝ᵥ ψ = 1) (M : X → POVM Λ dA) (N : X → POVM Λ dB)
-    (hM : ∀ x, IsPVM fun o => (((M x).mats o).val))
-    (hN : ∀ x, IsPVM fun o => (((N x).mats o).val)) :
-    inconsistency μ ψ M N = xPovmDist μ ψ M N / 2 := by
-  rw [inconsistency_eq_sum_pairInconsistency, xPovmDist, Finset.sum_div]
+    {M : BipartiteModel 𝒞 𝒜 ℬ} (μ : X → ℝ) (hM : ‖M.ψ‖ = 1) (P : X → POVMIn Λ 𝒜)
+    (Q : X → POVMIn Λ ℬ) (hP : ∀ x, IsPVMIn (P x).op) (hQ : ∀ x, IsPVMIn (Q x).op) :
+    M.inconsistency μ P Q = M.xPovmDist μ P Q / 2 := by
+  rw [show M.inconsistency μ P Q = ∑ x, μ x * pairInconsistency M (P x) (Q x) from rfl,
+    BipartiteModel.xPovmDist, Finset.sum_div]
   refine Finset.sum_congr rfl fun x _ => ?_
-  have h1 := sum_diag_eq_one_sub hψ (M x) (N x)
-  have h2 := one_sub_sum_bornProb_eq (norm_evec_eq_one_of_unit hψ) (hM x) (hN x)
-  simp only [bornProb] at h2
+  have h1 := sum_diag_eq_one_sub hM (P x) (Q x)
+  have h2 := M.one_sub_sum_bornProb_eq hM (hP x) (hQ x)
   rw [mul_div_assoc]
   congr 1
   linarith
 
 /-- **The game's point--point consistency**, as an inconsistency over uniform points: item 1 of
 `lem:qld-win` at the type `(Point, W)`, read through the answer's field element. -/
-theorem inconsistency_pt_pt_le {hm : m ∣ Fintype.card F} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
-    inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
-        (fun u => ptAtPOVM MB W u) ≤ 86 * ε := by
-  have hM : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MA W u).mats o).val) :=
-    fun u => isPVM_povm_map _ (hprojA _) _
-  have hN : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MB W u).mats o).val) :=
-    fun u => isPVM_povm_map _ (hprojB _) _
-  rw [inconsistency_eq_half_xPovmDist (uniform (Point F m)) hψ _ _ hM hN, xPovmDist,
-    ← sum_content_pt W fun u => ∑ o : F, xSqNorm ψ (((ptAtPOVM MA W u).mats o).val)
-      (((ptAtPOVM MB W u).mats o).val)]
-  have h := item_consistency (hm := hm) hψ hfail (.point W) (φ := rdVal)
-  rw [xPovmDist] at h
-  simp only [show ∀ c : Content F m, (MA (Content.question hm c (Ty.point W))).map rdVal
-      = ptAtPOVM MA W (c.pt W) from fun _ => rfl,
-    show ∀ c : Content F m, (MB (Content.question hm c (Ty.point W))).map rdVal
-      = ptAtPOVM MB W (c.pt W) from fun _ => rfl] at h
+theorem inconsistency_pt_pt_le {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    (hM : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op) (W : Bas) :
+    M.inconsistency (uniform (Point F m)) (fun u => ptAtPOVM PA W u)
+        (fun u => ptAtPOVM PB W u) ≤ 86 * ε := by
+  have hP : ∀ u : Point F m, IsPVMIn (ptAtPOVM PA W u).op :=
+    fun u => POVMIn.isPVMIn_map (hPA _) _
+  have hQ : ∀ u : Point F m, IsPVMIn (ptAtPOVM PB W u).op :=
+    fun u => POVMIn.isPVMIn_map (hPB _) _
+  rw [inconsistency_eq_half_xPovmDist (uniform (Point F m)) hM _ _ hP hQ,
+    BipartiteModel.xPovmDist,
+    ← sum_content_pt W fun u => ∑ o : F, M.xSqNorm ((ptAtPOVM PA W u).op o)
+      ((ptAtPOVM PB W u).op o)]
+  have h := item_consistency (hm := hm) hM hfail (.point W) (φ := rdVal)
+  rw [BipartiteModel.xPovmDist] at h
+  simp only [show ∀ c : Content F m, (PA (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM PA W (c.pt W) from fun _ => rfl,
+    show ∀ c : Content F m, (PB (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM PB W (c.pt W) from fun _ => rfl] at h
   linarith
 
 /-- **The game's point--Pauli consistency**, likewise: item 3 of `lem:qld-win`, the low-degree
 encoding of the Pauli answer evaluated at the sampled point against the point answer. -/
-theorem inconsistency_pt_pauli_le {hm : m ∣ Fintype.card F} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :
-    inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
-        (fun u => pauliAtPOVM MB W u) ≤ 86 * ε := by
-  have hM : ∀ u : Point F m, IsPVM fun o => (((ptAtPOVM MA W u).mats o).val) :=
-    fun u => isPVM_povm_map _ (hprojA _) _
-  have hN : ∀ u : Point F m, IsPVM fun o => (((pauliAtPOVM MB W u).mats o).val) :=
-    fun u => isPVM_povm_map _ (hprojB _) _
-  rw [inconsistency_eq_half_xPovmDist (uniform (Point F m)) hψ _ _ hM hN, xPovmDist,
-    ← sum_content_pt W fun u => ∑ o : F, xSqNorm ψ (((ptAtPOVM MA W u).mats o).val)
-      (((pauliAtPOVM MB W u).mats o).val)]
-  have h := item_pauli_consistency (hm := hm) hψ hfail W
-  simp only [show ∀ c : Content F m, (MA (Content.question hm c (Ty.point W))).map rdVal
-      = ptAtPOVM MA W (c.pt W) from fun _ => rfl,
-    show ∀ c : Content F m, (MB (Content.question hm c (Ty.pauli W))).map (rdPauli (c.pt W))
-      = pauliAtPOVM MB W (c.pt W) from fun _ => rfl] at h
+theorem inconsistency_pt_pauli_le {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+    {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
+    (hM : ‖M.ψ‖ = 1) (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op) (W : Bas) :
+    M.inconsistency (uniform (Point F m)) (fun u => ptAtPOVM PA W u)
+        (fun u => pauliAtPOVM PB W u) ≤ 86 * ε := by
+  have hP : ∀ u : Point F m, IsPVMIn (ptAtPOVM PA W u).op :=
+    fun u => POVMIn.isPVMIn_map (hPA _) _
+  have hQ : ∀ u : Point F m, IsPVMIn (pauliAtPOVM PB W u).op :=
+    fun u => POVMIn.isPVMIn_map (hPB _) _
+  rw [inconsistency_eq_half_xPovmDist (uniform (Point F m)) hM _ _ hP hQ,
+    BipartiteModel.xPovmDist,
+    ← sum_content_pt W fun u => ∑ o : F, M.xSqNorm ((ptAtPOVM PA W u).op o)
+      ((pauliAtPOVM PB W u).op o)]
+  have h := item_pauli_consistency (hm := hm) hM hfail W
+  simp only [show ∀ c : Content F m, (PA (Content.question hm c (Ty.point W))).map rdVal
+      = ptAtPOVM PA W (c.pt W) from fun _ => rfl,
+    show ∀ c : Content F m, (PB (Content.question hm c (Ty.pauli W))).map (rdPauli (c.pt W))
+      = pauliAtPOVM PB W (c.pt W) from fun _ => rfl] at h
   linarith
 
 end GameLegs
 
+variable [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ] [StarProper ℬ]
+
 namespace SimulPair
 
-variable (P : SimulPair ψ MA MB δ)
+section Generic
 
-/-- **Alice's swap unitary**, built from the simultaneous pair measurement along the encoding. -/
-def swapA : Matrix (((dA × Anc F m) × P.EA) × Anc F m) (((dA × Anc F m) × P.EA) × Anc F m) ℂ :=
-  swapU (fun p => ((P.SA.mats p).val)) cubeData
+variable {𝒞' 𝒜' ℬ' : Type*} [Ring 𝒞'] [StarRing 𝒞'] [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜']
+  [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ'] [PartialOrder 𝒜'] [StarOrderedRing 𝒜']
+  [PartialOrder ℬ'] [StarOrderedRing ℬ']
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {S : M.ProjStrat (qldGame (d := d) hm)} {K : BipartiteModel 𝒞' 𝒜' ℬ'}
+  {ι : (M.reg (Anc F m)).Embedding K} {δ : ℝ}
 
-theorem swapA_mul_conjTranspose : P.swapA * P.swapAᴴ = 1 :=
+variable (P : SimulPair M S K ι δ)
+
+/-- **Alice's swap unitary**, built from the simultaneous pair measurement along the encoding: a
+matrix over `K`'s first algebra on the register. -/
+def swapA : Matrix (Anc F m) (Anc F m) 𝒜' :=
+  swapU P.SA.op cubeData
+
+theorem swapA_mul_conjTranspose [StarModule ℂ 𝒜'] : P.swapA * star P.swapA = 1 :=
   swapU_mul_conjTranspose P.SA_proj
 
-theorem swapA_conjTranspose_mul : P.swapAᴴ * P.swapA = 1 :=
+theorem swapA_conjTranspose_mul [StarModule ℂ 𝒜'] : star P.swapA * P.swapA = 1 :=
   swapU_conjTranspose_mul P.SA_proj
 
-/-- **A Born probability of the strategy's own measurements reads the same on the padded state.**
-Both operators are extended by the identity on the expansion's ancillas and on the padding, so the
-padded state's reduction carries them to the expanded state and the expanded state's factorization
-carries them down to the original one, the entangled pair contributing its own norm and nothing
-else. -/
-theorem bornProb_padded (X : Matrix dA dA ℂ) (Y : Matrix dB dB ℂ) :
-    bornProb P.Φ (aOp (aOp X)) (aOp (aOp Y)) = bornProb ψ X Y := by
-  rw [P.Φ_reduced (aOp X) (aOp Y)]
-  show bornProb (expVec ψ (epr (F := F) (n := Fin m → Bool))) (X ⊗ₖ 1) (Y ⊗ₖ 1) = _
-  rw [bornProb_expVec_kron ψ _ Matrix.PosSemidef.one Matrix.PosSemidef.one,
-    bornProb_one_one epr_unit, mul_one]
+/-- **Display `eq:qld-unitary-6` at the interface.** -/
+theorem swapU_conj_mTildeAt [StarModule ℂ 𝒜'] (W : Bas) (u : Point F m) (a : F) :
+    P.swapA * P.mTildeAt W u a * star P.swapA = smulKron 1 (syn (weylOf W) (indVec u) a) := by
+  rw [SimulPair.swapA, SimulPair.mTildeAt]
+  cases W with
+  | X => exact swapU_conj_mTilde_X P.SA_proj (indVec u) a
+  | Z => exact swapU_conj_mTilde_Z P.SA_proj (indVec u) a
 
-/-- **And so does a consistency between them.** This is what puts the game's own consistencies ---
-which are statements about the strategy's measurements on the original state --- into the
-vocabulary the appendix's interface reads them in. -/
-theorem inconsistency_padded {Y Λ : Type*} [Fintype Y] [Fintype Λ] [DecidableEq Λ] (μ : Y → ℝ)
-    (M : Y → POVM Λ dA) (N : Y → POVM Λ dB) :
-    inconsistency μ P.Φ (fun y => ((M y).aOp (E := Anc F m)).aOp (E := P.EA))
-        (fun y => ((N y).aOp (E := Anc F m)).aOp (E := P.EB))
-      = inconsistency μ ψ M N := by
-  refine Finset.sum_congr rfl fun y _ => ?_
-  congr 1
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  split_ifs with h
-  · rfl
-  · show bornProb P.Φ _ _ = bornProb ψ _ _
-    rw [POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats, POVM.aOp_mats]
-    exact P.bornProb_padded ((M y).mats a).val ((N y).mats b).val
+end Generic
+
+/-! ### On the physical model
+
+The three legs of `eq:qld-unitary-5` are read on the physical state: the exact Pauli measurement is
+an operator of the physical model's first player (`mTildePOVM`), and the strategy's own point and
+Pauli measurements are read there with the registers inert (`physInert`). The game's consistencies
+are statements about the strategy's measurements on the model's own state, and the embedding
+carries them to the physical state unchanged. -/
+
+section Physical
+
+variable {hm : m ∣ Fintype.card F} {N : BipartiteModel 𝒞 𝒜 ℬ}
+  {S : N.ProjStrat (qldGame (d := d) hm)} {K : ℕ} {δ : ℝ}
 
 /-- **Display `eq:qld-unitary-5` at the interface.** The exact Pauli measurement agrees with the
 strategy's `(Pauli, W)` measurement, read at the sampled point, to within eleven times whatever
 bounds the three legs. Its own leg is item 1 of Lemma `lem:qld-exact-paulis`
 (\texttt{inconsistency\_mTilde\_le}); the two middle legs are the game's own consistencies ---
-point against point and point against Pauli --- and are hypotheses here, stated along the padded
-state's own cut and carried across by \texttt{inconsistency\_regroupVec}. -/
-theorem inconsistency_mTilde_pauli_le (W : Bas) {δ' : ℝ}
-    (hpt : inconsistency (uniform (Point F m)) P.Φ
-        (fun u => ((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA))
-        (fun u => ((ptAtPOVM MB W u).aOp (E := Anc F m)).aOp (E := P.EB)) ≤ δ')
-    (hpauli : inconsistency (uniform (Point F m)) P.Φ
-        (fun u => ((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA))
-        (fun u => ((pauliAtPOVM MB W u).aOp (E := Anc F m)).aOp (E := P.EB)) ≤ δ')
-    (hmt : inconsistency (uniform (Point F m)) P.mVec
-        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
-    inconsistency (uniform (Point F m)) P.mVec
-        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
-      ≤ 11 * δ' := by
-  refine inconsistency_triangle (uniform_nonneg (Point F m)) (sum_uniform_eq_one (Point F m))
-    P.mVec_unit _ (fun u => (((ptAtPOVM MA W u).aOp (E := Anc F m)).aOp (E := P.EA)).aOp
-      (E := Anc F m)) _ _ hmt ?_ ?_
-  · rw [SimulPair.mVec, inconsistency_regroupVec]
-    exact hpt
-  · rw [SimulPair.mVec, inconsistency_regroupVec]
-    exact hpauli
+point against point and point against Pauli --- and are hypotheses here, stated on the physical
+state with the strategy's measurements read along \texttt{physInert}. -/
+theorem inconsistency_mTilde_pauli_le (P : CutSimul N S K δ) (W : Bas) {δ' : ℝ}
+    (hpt : (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m))
+        (fun u => (ptAtPOVM S.PA W u).pushforward (physInert (Anc F m) F m d N K).ΦA
+          (physInert (Anc F m) F m d N K).ΦA_one)
+        (fun u => (ptAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one) ≤ δ')
+    (hpauli : (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m))
+        (fun u => (ptAtPOVM S.PA W u).pushforward (physInert (Anc F m) F m d N K).ΦA
+          (physInert (Anc F m) F m d N K).ΦA_one)
+        (fun u => (pauliAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one) ≤ δ')
+    (hmt : (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m))
+        (fun u => P.mTildePOVM W u)
+        (fun u => (ptAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one) ≤ δ') :
+    (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m))
+        (fun u => P.mTildePOVM W u)
+        (fun u => (pauliAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one)
+      ≤ 11 * δ' :=
+  inconsistency_triangle (uniform_nonneg (Point F m)) (sum_uniform_eq_one (Point F m))
+    P.mVec_unit _ (fun u => (ptAtPOVM S.PA W u).pushforward (physInert (Anc F m) F m d N K).ΦA
+      (physInert (Anc F m) F m d N K).ΦA_one) _ _ hmt hpt hpauli
 
 /-- **Display `eq:qld-unitary-5`, with its two middle legs read on the strategy's own state.**
 This is the form the game supplies them in: `agree_subtest_le` bounds a cross-party deviation of
-the strategy's measurements on `psi`, and nothing there knows about the expansion or the padding.
--/
-theorem inconsistency_mTilde_pauli_le' (W : Bas) {δ' : ℝ}
-    (hpt : inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
-      (fun u => ptAtPOVM MB W u) ≤ δ')
-    (hpauli : inconsistency (uniform (Point F m)) ψ (fun u => ptAtPOVM MA W u)
-      (fun u => pauliAtPOVM MB W u) ≤ δ')
-    (hmt : inconsistency (uniform (Point F m)) P.mVec
-        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
-    inconsistency (uniform (Point F m)) P.mVec
-        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
+the strategy's measurements on the model's state, and nothing there knows about the registers. -/
+theorem inconsistency_mTilde_pauli_le' (P : CutSimul N S K δ) (W : Bas) {δ' : ℝ}
+    (hpt : N.inconsistency (uniform (Point F m)) (fun u => ptAtPOVM S.PA W u)
+      (fun u => ptAtPOVM S.PB W u) ≤ δ')
+    (hpauli : N.inconsistency (uniform (Point F m)) (fun u => ptAtPOVM S.PA W u)
+      (fun u => pauliAtPOVM S.PB W u) ≤ δ')
+    (hmt : (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m))
+        (fun u => P.mTildePOVM W u)
+        (fun u => (ptAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one) ≤ δ') :
+    (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m))
+        (fun u => P.mTildePOVM W u)
+        (fun u => (pauliAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one)
       ≤ 11 * δ' :=
-  P.inconsistency_mTilde_pauli_le W (by rw [P.inconsistency_padded]; exact hpt)
-    (by rw [P.inconsistency_padded]; exact hpauli) hmt
+  P.inconsistency_mTilde_pauli_le W
+    (by rw [(physInert (Anc F m) F m d N K).inconsistency_pushforward]; exact hpt)
+    (by rw [(physInert (Anc F m) F m d N K).inconsistency_pushforward]; exact hpauli) hmt
 
 /-- **Display `eq:qld-unitary-5`, from the game's soundness and item 1 of
 `lem:qld-exact-paulis` alone.** The two middle legs are now discharged: they are items 1 and 3 of
 `lem:qld-win` at the point and Pauli types, and `86 = 172/2` is `agree_subtest_le`'s constant
 halved by the passage from a cross-party deviation to an inconsistency. -/
-theorem inconsistency_mTilde_pauli_le_of_win {hm : m ∣ Fintype.card F} {ε δ' : ℝ}
-    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) (hε : 86 * ε ≤ δ')
-    (hmt : inconsistency (uniform (Point F m)) P.mVec
-        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp) ≤ δ') :
-    inconsistency (uniform (Point F m)) P.mVec
-        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (pauliAtPOVM MB W u).aOp)
+theorem inconsistency_mTilde_pauli_le_of_win (P : CutSimul N S K δ) {ε δ' : ℝ}
+    (hfail : 1 - S.value ≤ ε) (W : Bas) (hε : 86 * ε ≤ δ')
+    (hmt : (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m))
+        (fun u => P.mTildePOVM W u)
+        (fun u => (ptAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one) ≤ δ') :
+    (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m))
+        (fun u => P.mTildePOVM W u)
+        (fun u => (pauliAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one)
       ≤ 11 * δ' :=
   P.inconsistency_mTilde_pauli_le' W
-    (le_trans (inconsistency_pt_pt_le hψ hfail hprojA hprojB W) hε)
-    (le_trans (inconsistency_pt_pauli_le hψ hfail hprojA hprojB W) hε) hmt
+    (le_trans (inconsistency_pt_pt_le S.ψ_unit hfail S.projA S.projB W) hε)
+    (le_trans (inconsistency_pt_pauli_le S.ψ_unit hfail S.projA S.projB W) hε) hmt
 
-/-- **Display `eq:qld-unitary-6` at the interface.** -/
-theorem swapU_conj_mTildeAt (W : Bas) (u : Point F m) (a : F) :
-    P.swapA * P.mTildeAt W u a * P.swapAᴴ = 1 ⊗ₖ syn (weylOf W) (indVec u) a := by
-  rw [SimulPair.swapA, SimulPair.mTildeAt]
-  cases W with
-  | X => exact swapU_conj_mTilde_X P.SA_proj (indVec u) a
-  | Z => exact swapU_conj_mTilde_Z P.SA_proj (indVec u) a
+end Physical
 
 end SimulPair
 

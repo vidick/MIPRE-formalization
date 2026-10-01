@@ -21,94 +21,38 @@ as a sum over the *outcomes* of the simultaneous measurement. The paper states t
 closeness between two **measurements**: `M~^{W,ind_m(u)}_a`, an operator on one party, and the
 strategy's `(Point, W)` measurement on the other. This file is that reading.
 
-## Why it is a reindexing and not a new estimate
+## Why it is a change of cut and not a new estimate
 
 The paper's expanded state is
 `|psi-hat> = |psi>_{A B} (x) |EPR>_{A' A''} (x) |EPR>_{B' B''}`, with `A' A''` a maximally
 entangled pair *local to Alice* and `B' B''` one local to Bob, and it is read along two cuts,
 `A A' | B A''` and `B B' | A B''` --- one per orientation of `lem:qld-simultaneous`. Neither cut is
-the physical one: each splits a local pair. `MIPRE.QLD.hatVec` is one such cut, and it is all
-`lem:qld-simultaneous` and `lem:qld-helper` need, since each uses one orientation at a time.
+the physical one: each splits a local pair. The first cut of the physical model (`cut1`) is one
+such cut, and it is all `lem:qld-simultaneous` and `lem:qld-helper` need, since each uses one
+orientation at a time.
 
 `M~^{W,u-tilde}_a = sum_g S-hat^W_g (x) tau^W_{coded(g) . u-tilde - a}(u-tilde)` is different: it
 wants the pair measurement and the generalized Pauli on *disjoint registers of one party*,
-`A A'` and `A''`. In the `hatVec` cut the register `A''` sits with the opposite party. So writing
-`M~` as a single matrix is a regrouping of the same six registers along a third cut,
-`A A' A'' | B`, and every Born probability transports across it by `bornProb_regroupVec`, which is
-one entry computation. No second entangled pair and no new estimate are involved.
+`A A'` and `A''`. In the first cut the register `A''` sits with the opposite party. So writing
+`M~` as a single operator of one player is reading the same registers along a third cut,
+`A A' A'' | B`, which is the physical model `phys` itself; every Born probability transports
+across it by the reading lemmas `cut1_πA` and `cut1_πB` of the first cut
+(`phys_bornProb_compHom_smulKron`). No second entangled pair and no new estimate are involved.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The pair measurement is the
+`SA` of a `SimulPair M S K ι δ`, a projective measurement in the first algebra `𝒜'` of the model
+`K`; `mTilde` and `wTilde` of `ExactPauli.lean` are taken over that algebra, so `mTildeAt` and
+`wTildeAt` are matrices over `𝒜'` on the register `Anc F m` (register outer, `smulKron`). For a
+pair measurement on the first cut of the physical state (`CutSimul N S K δ`), `𝒜'` is the matrices
+over `𝒜` on `(Ea, A')`, and `compHom` of `mTildeAt` is an operator of the physical model's first
+player on `(A'', (Ea, A'))`: that is the matrix `mVec` reading, whose state is now the physical
+state, and whose regrouping `regroupVec` is the reading lemma of the first cut. The strategy's
+point measurement is read in the physical model with the registers inert (`physInert`).
 -/
 
 noncomputable section
-
-namespace MIPRE
-
-open Finset Matrix
-open scoped Kronecker ComplexOrder MatrixOrder
-
-/-! ## Regrouping the two parties' registers -/
-
-section Regroup
-
-variable {R S T E : Type*} [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S]
-  [Fintype T] [DecidableEq T] [Fintype E] [DecidableEq E]
-
-/-- **The regrouping** that moves the ancilla factor `T` from the second party to the first. -/
-def regroupEquiv : R × ((S × T) × E) ≃ (R × T) × (S × E) where
-  toFun p := ((p.1, p.2.1.2), (p.2.1.1, p.2.2))
-  invFun p := (p.1.1, ((p.2.1, p.1.2), p.2.2))
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-/-- The state, read along the regrouped cut. -/
-def regroupVec (ψ : R × ((S × T) × E) → ℂ) : (R × T) × (S × E) → ℂ :=
-  ψ ∘ (regroupEquiv (R := R) (S := S) (T := T) (E := E)).symm
-
-/-- **The quadratic form is carried by any reindexing of the whole space.** The bipartite version
-`quadForm_reindex` reindexes the two parties separately and so cannot move a factor between them;
-this one makes no reference to a cut. -/
-theorem qform_comp_equiv {N N' : Type*} [Fintype N] [Fintype N'] (e : N ≃ N') (ψ : N → ℂ)
-    (A : Matrix N N ℂ) :
-    star (ψ ∘ e.symm) ⬝ᵥ ((Matrix.reindex e e A) *ᵥ (ψ ∘ e.symm)) = star ψ ⬝ᵥ (A *ᵥ ψ) := by
-  rw [Matrix.reindex_apply, Matrix.submatrix_mulVec_equiv]
-  have hcomp : (ψ ∘ e.symm) ∘ e.symm.symm = ψ := by
-    rw [Equiv.symm_symm, Function.comp_assoc, Equiv.symm_comp_self, Function.comp_id]
-  rw [hcomp]
-  show ∑ p, star ψ (e.symm p) * (A *ᵥ ψ) (e.symm p) = ∑ p, star ψ p * (A *ᵥ ψ) p
-  exact Equiv.sum_comp e.symm fun p => star ψ p * (A *ᵥ ψ) p
-
-omit [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S] [Fintype T] [DecidableEq T]
-  [Fintype E] in
-/-- The same operator, grouped the two ways. -/
-theorem reindex_regroupEquiv (X : Matrix R R ℂ) (M : Matrix S S ℂ) (N : Matrix T T ℂ) :
-    Matrix.reindex (regroupEquiv (R := R) (S := S) (T := T) (E := E))
-        (regroupEquiv (R := R) (S := S) (T := T) (E := E))
-        (X ⊗ₖ (aOp (M ⊗ₖ N) : Matrix ((S × T) × E) ((S × T) × E) ℂ))
-      = (X ⊗ₖ N) ⊗ₖ (aOp M : Matrix (S × E) (S × E) ℂ) := by
-  ext p q
-  obtain ⟨⟨r, t⟩, s, e⟩ := p
-  obtain ⟨⟨r', t'⟩, s', e'⟩ := q
-  simp only [Matrix.reindex_apply, Matrix.submatrix_apply, regroupEquiv, Equiv.coe_fn_symm_mk,
-    kroneckerMap_apply, aOp]
-  ring
-
-omit [DecidableEq R] [DecidableEq S] [DecidableEq T] in
-/-- **The Born probability across the regrouped cut.** -/
-theorem bornProb_regroupVec (ψ : R × ((S × T) × E) → ℂ) (X : Matrix R R ℂ) (M : Matrix S S ℂ)
-    (N : Matrix T T ℂ) :
-    bornProb (regroupVec ψ) (X ⊗ₖ N) (aOp M) = bornProb ψ X (aOp (M ⊗ₖ N)) := by
-  rw [bornProb, bornProb, regroupVec, ← reindex_regroupEquiv, qform_comp_equiv]
-
-omit [DecidableEq R] [DecidableEq S] [DecidableEq T] [DecidableEq E] in
-/-- A regrouped unit vector is a unit vector. -/
-theorem regroupVec_unit {ψ : R × ((S × T) × E) → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) :
-    star (regroupVec ψ) ⬝ᵥ regroupVec ψ = 1 := by
-  rw [← hψ]
-  exact Equiv.sum_comp (regroupEquiv (R := R) (S := S) (T := T) (E := E)).symm
-    fun p => star ψ p * ψ p
-
-end Regroup
-
-end MIPRE
 
 namespace MIPRE.QLD
 
@@ -121,20 +65,20 @@ section PVM
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
   {n : Type*} [Fintype n] [DecidableEq n] {G : Type*} [Fintype G] [DecidableEq G]
-  {dA : Type*} [Fintype dA] [DecidableEq dA]
+  {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R]
 
 /-- `mTilde` is block diagonal along the pair measurement, so `sTensor_mul` applies to it. -/
-theorem mTilde_eq_sTensor (S : G × G → Matrix dA dA ℂ) (pi : G × G → G) (cd : G → (n → F))
+theorem mTilde_eq_sTensor (S : G × G → R) (pi : G × G → G) (cd : G → (n → F))
     (w : (n → F) → Matrix (n → F) (n → F) ℂ) (u : n → F) (a : F) :
     mTilde S pi cd w u a = sTensor S fun p => syn w u (dotF (cd (pi p)) u + a) :=
   mTilde_eq_sum S pi cd w u a
 
 /-- **The measurement `M~^{W,u}` is projective.** Its elements multiply factorwise because the
 pair measurement is projective, and factorwise they are the ancilla's syndrome projectors. -/
-theorem isPVM_mTilde {S : G × G → Matrix dA dA ℂ} (hS : IsPVM S) (pi : G × G → G)
+theorem isPVM_mTilde [StarModule ℂ R] {S : G × G → R} (hS : IsPVMIn S) (pi : G × G → G)
     (cd : G → (n → F)) {w : (n → F) → Matrix (n → F) (n → F) ℂ} (hw : IsWeylFamily w)
-    (u : n → F) : IsPVM (mTilde S pi cd w u) where
-  isSelfAdjoint a := by
+    (u : n → F) : IsPVMIn (mTilde S pi cd w u) where
+  star_eq a := by
     rw [mTilde_eq_sTensor, sTensor_conjTranspose hS]
     exact congrArg (sTensor S) (funext fun _ => (isPVM_syn hw u).isSelfAdjoint _)
   idem a := by
@@ -147,14 +91,21 @@ theorem isPVM_mTilde {S : G × G → Matrix dA dA ℂ} (hS : IsPVM S) (pi : G ×
     rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => mTilde_eq_sTensor S pi cd w u a,
       show (∑ a : F, sTensor S fun p => syn w u (dotF (cd (pi p)) u + a))
           = sTensor S fun p => ∑ a : F, syn w u (dotF (cd (pi p)) u + a) from by
-        show (∑ a : F, ∑ p, S p ⊗ₖ syn w u (dotF (cd (pi p)) u + a))
-          = ∑ p, S p ⊗ₖ ∑ a : F, syn w u (dotF (cd (pi p)) u + a)
+        show (∑ a : F, ∑ p, smulKron (S p) (syn w u (dotF (cd (pi p)) u + a)))
+          = ∑ p, smulKron (S p) (∑ a : F, syn w u (dotF (cd (pi p)) u + a))
         rw [Finset.sum_comm]
         exact Finset.sum_congr rfl fun p _ => (kron_sum univ _ _).symm,
       show (fun p => ∑ a : F, syn w u (dotF (cd (pi p)) u + a))
           = fun _ : G × G => (1 : Matrix (n → F) (n → F) ℂ) from
         funext fun p => hone _,
       sTensor_one hS]
+  orthogonal {a b} hab := by
+    rw [mTilde_eq_sTensor, mTilde_eq_sTensor, sTensor_mul hS,
+      show (fun p => syn w u (dotF (cd (pi p)) u + a) * syn w u (dotF (cd (pi p)) u + b))
+          = fun _ : G × G => (0 : Matrix (n → F) (n → F) ℂ) from
+        funext fun p => (isPVM_syn hw u).orthogonal fun h => hab (add_left_cancel h)]
+    show (∑ p, smulKron (S p) (0 : Matrix (n → F) (n → F) ℂ)) = 0
+    simp only [smulKron_zero_right, Finset.sum_const_zero]
 
 omit [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [DecidableEq n] in
 /-- The pairing is additive in its right argument too. -/
@@ -176,12 +127,11 @@ are additive --- the sign because the pairing is, the generalized Pauli by the W
 group law --- so no error term and no hypothesis beyond projectivity appears. With
 `wTilde_mul_wTilde` this is the second of the two Pauli group relations
 `lem:qld-exact-paulis` asserts. -/
-theorem wTilde_mul_add {S : G × G → Matrix dA dA ℂ} (hS : IsPVM S) (pi : G × G → G)
+theorem wTilde_mul_add {S : G × G → R} (hS : IsPVMIn S) (pi : G × G → G)
     (cd : G → (n → F)) {w : (n → F) → Matrix (n → F) (n → F) ℂ} (hw : IsWeylFamily w) (e : F)
     (u v : n → F) :
     wTilde S pi cd w e u * wTilde S pi cd w e v = wTilde S pi cd w e (u + v) := by
-  rw [wTilde_eq, wTilde_eq, wTilde_eq, ← Matrix.mul_kronecker_mul, pvmObs_mul hS, smul_add,
-    hw.map_add]
+  rw [wTilde_eq, wTilde_eq, wTilde_eq, smulKron_mul, hS.pvmObs_mul, smul_add, hw.map_add]
   congr 1
   refine congrArg (pvmObs S) (funext fun p => ?_)
   simp only [Pi.mul_apply]
@@ -210,134 +160,147 @@ theorem add_eq_iff_eq_add (a b c : F) : a + b = c ↔ b = c + a := by
   · rintro rfl
     rw [← add_assoc, add_comm a c, add_assoc, add_self_eq_zero', add_zero]
 
-variable {d' : Type} [Fintype d'] [DecidableEq d']
+variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
 
+omit [Algebra (ZMod 2) F] [NeZero m] in
 /-- The strategy's `(Point, W)` measurement at `u`, read as a field element. -/
-def ptAtPOVM (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) : POVM F d' :=
-  (M (.point W u)).map rdVal
+def ptAtPOVM (P : Question F m → POVMIn (Answer F m d) R) (W : Bas) (u : Point F m) :
+    POVMIn F R :=
+  (P (.point W u)).map rdVal
 
-theorem hatPtPOVM_eq_kron (M : Question F m → POVM (Answer F m d) d') (W : Bas)
+variable [Algebra ℂ R] [StarModule ℂ R] [StarProper R]
+
+theorem hatPtPOVM_eq_kron (P : Question F m → POVMIn (Answer F m d) R) (W : Bas)
     (u : Point F m) :
-    hatPtPOVM M W u = ((ptAtPOVM M W u).kron (synPOVM W u)).map fun p => p.1 + p.2 := rfl
+    hatPtPOVM P W u
+      = (kronIn (ptAtPOVM P W u) (synPOVM W u) (isPVM_synPOVM W u)).map fun p => p.1 + p.2 :=
+  rfl
 
 /-- **The convolution, summed along the shift.** In characteristic two `c + a` is the partner of
 `a` in the fibre of the sum over `c`, so summing the product family along `a` is summing it over
 that fibre --- which is the hatted point measurement at `c`. This is the step that turns
 `mTilde`'s defining sum into the hatted point measurement the helper's agreement names. -/
-theorem sum_kron_syn_eq_hatMats (M : Question F m → POVM (Answer F m d) d') (W : Bas)
+theorem sum_kron_syn_eq_hatMats (P : Question F m → POVMIn (Answer F m d) R) (W : Bas)
     (u : Point F m) (c : F) :
-    ∑ a : F, (((ptAtPOVM M W u).mats a).val ⊗ₖ ((synPOVM W u).mats (c + a)).val)
-      = hatMats M W u c := by
-  classical
-  rw [hatMats, hatPtPOVM_eq_kron, POVM.map_mats, Finset.sum_filter, Fintype.sum_prod_type]
+    ∑ a : F, smulKron ((ptAtPOVM P W u).op a) ((synPOVM W u).mats (c + a)).val
+      = hatMats P W u c := by
+  rw [hatMats, hatPtPOVM_eq_kron, POVMIn.map_op, Finset.sum_filter, Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [Finset.sum_eq_single (c + a) (fun b _ hb => if_neg fun h => hb
+  rw [Finset.sum_eq_single (c + a) (fun b _ hb => ite_eq_right fun h => hb
       ((add_eq_iff_eq_add a b c).mp h)) fun hmem => absurd (mem_univ (c + a)) hmem,
-    if_pos ((add_eq_iff_eq_add a (c + a) c).mpr rfl), POVM.kron_mats]
+    ite_eq_left ((add_eq_iff_eq_add a (c + a) c).mpr rfl), kronIn_op]
 
 end Shift
+
+/-! ## The first cut, read on the physical model
+
+The first cut `cut1` of the physical model hands the first player's far half `A''` to the second
+player. An operator of the first player of the physical model that is a product on `A''` ---
+`compHom (smulKron T Q)`, `T` on `(Ea, A')` and `Q` a matrix of scalars on `A''` --- against an
+operator of the second player that does not see the registers is the first cut's `T` against the
+register model's `Y ⊗ Q` carried along `ι₁`: the reading lemmas `cut1_πA`, `cut1_πB` of
+`MIPRE/Background/QLD/PhysModel.lean`, both readings sharing one state model. This is the model form
+of the matrix regrouping `bornProb_regroupVec`. -/
+
+section Reading
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
+variable {I : Type*} [Fintype I] [DecidableEq I] [Nonempty I] {F : Type*} [Field F] [Fintype F]
+  [DecidableEq F] {m d : ℕ}
+
+variable (I F m d) in
+/-- **The physical model reads the model's own operators with the registers inert**: `N` embeds in
+its physical model, `X ↦ X ⊗ 1` for each player (`BipartiteModel.inertEmb` at the physical state).
+The strategy's measurements are read in the physical model along it. -/
+abbrev physInert (N : BipartiteModel 𝒞 𝒜 ℬ) (K : ℕ) : N.Embedding (phys I F m d N K) :=
+  N.inertEmb (physE I F m d K) norm_physE
+
+variable {N : BipartiteModel 𝒞 𝒜 ℬ} {K : ℕ}
+
+@[simp]
+theorem physInert_ΦA (X : 𝒜) :
+    (physInert I F m d N K).ΦA X = diagonal fun _ : PhysReg I F m d K => X := rfl
+
+@[simp]
+theorem physInert_ΦB (Y : ℬ) :
+    (physInert I F m d N K).ΦB Y = diagonal fun _ : PhysReg I F m d K => Y := rfl
+
+/-- The register operators of the second player of the register model, carried to the first cut:
+`Y ⊗ Q` acts as `Q` on `A''` and `Y` with the second player's physical registers inert. -/
+theorem ι₁_ΦB_smulKron (Y : ℬ) (Q : Matrix I I ℂ) :
+    (ι₁ I F m d N K).ΦB (smulKron Y Q)
+      = compHom (smulKron ((physInert I F m d N K).ΦB Y) Q) := by
+  rw [ι₁_ΦB, physInert_ΦB]
+  congr 1
+  ext a b p q
+  by_cases h : p = q
+  · subst h
+    simp
+  · simp [diagonal_apply_ne _ h]
+
+/-- **A Born probability of the physical model, read on the first cut.** The first player's
+operator is a product on the moved half `A''`, the second player's does not see the registers:
+the reading lemmas `cut1_πA`, `cut1_πB` and `smulKron X Q = (X ⊗ 1)(1 ⊗ Q)`. -/
+theorem phys_bornProb_compHom_smulKron
+    (T : Matrix (PadAnc F m d K × I) (PadAnc F m d K × I) 𝒜) (Q : Matrix I I ℂ) (Y : ℬ) :
+    (phys I F m d N K).bornProb (compHom (smulKron T Q)) ((physInert I F m d N K).ΦB Y)
+      = (cut1 I F m d N K).bornProb T ((ι₁ I F m d N K).ΦB (smulKron Y Q)) := by
+  rw [ι₁_ΦB_smulKron]
+  show (phys I F m d N K).qform _ = (phys I F m d N K).qform _
+  rw [cut1_πA, cut1_πB, ← mul_assoc, ← map_mul, ← map_mul, ← smulKron_eq_diagonal_mul]
+
+end Reading
 
 /-! ## Item 1, as a closeness of two measurements -/
 
 section Item
 
-/- The index of `mTilde`'s matrices is a four-fold product, `((dA x Anc) x EA) x Anc`, whose
-`DecidableEq` runs past the default instance-size bound --- each half alone is found, the product
-is not. Raised here and nowhere else. -/
-set_option synthInstance.maxSize 1000
-
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {ψ : dA × dB → ℂ} {MA : Question F m → POVM (Answer F m d) dA}
-  {MB : Question F m → POVM (Answer F m d) dB} {δ : ℝ}
+  [NeZero m]
 
 omit [Field F] [Algebra (ZMod 2) F] [NeZero m] in
 /-- The marginal `sCoarse` of `ExactPauli.lean` is `polyMarg`. -/
-theorem sCoarse_eq_polyMarg {R : Type*} [Fintype R] [DecidableEq R]
-    (S : POVM (PolyPair F m d) R) (W : Bas)
+theorem sCoarse_eq_polyMarg {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [PartialOrder R]
+    [StarOrderedRing R] (S : POVMIn (PolyPair F m d) R) (W : Bas)
     (g : LowIndDegPoly (F := F) (m := m) (d := d)) :
-    sCoarse (fun p => ((S.mats p).val)) (PolyPair.proj W) g = ((polyMarg S W).mats g).val :=
-  (POVM.map_mats _ _ _).symm
+    sCoarse S.op (PolyPair.proj W) g = (polyMarg S W).op g :=
+  (POVMIn.map_op _ _ _).symm
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+  [StarProper ℬ]
 
 namespace SimulPair
 
-variable (P : SimulPair ψ MA MB δ)
+section Generic
 
-/-- **The state along the third cut.** `hatVec`'s cut puts the register the paper calls `A''`
-with the opposite party; this one puts it with Alice, which is where `mTilde` needs it. -/
-def mVec : ((((dA × Anc F m) × P.EA) × Anc F m) × (dB × P.EB)) → ℂ := regroupVec P.Φ
+variable {𝒞' 𝒜' ℬ' : Type*} [Ring 𝒞'] [StarRing 𝒞'] [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜']
+  [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ'] [PartialOrder 𝒜'] [StarOrderedRing 𝒜']
+  [PartialOrder ℬ'] [StarOrderedRing ℬ']
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {S : M.ProjStrat (qldGame (d := d) hm)} {K : BipartiteModel 𝒞' 𝒜' ℬ'}
+  {ι : (M.reg (Anc F m)).Embedding K} {δ : ℝ}
 
-theorem mVec_unit : star P.mVec ⬝ᵥ P.mVec = 1 := regroupVec_unit P.Φ_unit
+variable (P : SimulPair M S K ι δ)
 
 /-- **The paper's `M~^{W, ind_m(u)}_a`** (`eq:tilde_M`): the simultaneous pair measurement of
-`lem:qld-simultaneous` tensored with the ancilla's generalized Pauli at the shifted syndrome. -/
-def mTildeAt (W : Bas) (u : Point F m) (a : F) :
-    Matrix (((dA × Anc F m) × P.EA) × Anc F m) (((dA × Anc F m) × P.EA) × Anc F m) ℂ :=
-  mTilde (fun p => ((P.SA.mats p).val)) (PolyPair.proj W) cubeData (weylOf W) (indVec u) a
+`lem:qld-simultaneous` tensored with the ancilla's generalized Pauli at the shifted syndrome, a
+matrix over `K`'s first algebra on the register `Anc F m`. -/
+def mTildeAt (W : Bas) (u : Point F m) (a : F) : Matrix (Anc F m) (Anc F m) 𝒜' :=
+  mTilde P.SA.op (PolyPair.proj W) cubeData (weylOf W) (indVec u) a
 
 /-- It is a projective measurement. -/
-theorem isPVM_mTildeAt (W : Bas) (u : Point F m) : IsPVM (P.mTildeAt W u) :=
+theorem isPVM_mTildeAt [StarModule ℂ 𝒜'] (W : Bas) (u : Point F m) :
+    IsPVMIn (P.mTildeAt W u) :=
   isPVM_mTilde P.SA_proj (PolyPair.proj W) cubeData (isWeylFamily_weylOf W) (indVec u)
 
 theorem mTildeAt_eq (W : Bas) (u : Point F m) (a : F) :
     P.mTildeAt W u a
-      = ∑ g, ((polyMarg P.SA W).mats g).val
-          ⊗ₖ ((synPOVM W u).mats (dotF (cubeData g) (indVec u) + a)).val :=
+      = ∑ g, smulKron ((polyMarg P.SA W).op g)
+          ((synPOVM W u).mats (dotF (cubeData g) (indVec u) + a)).val :=
   Finset.sum_congr rfl fun g _ => by rw [sCoarse_eq_polyMarg, synPOVM_mats]
-
-/-- **One term of the agreement, across the cut.** -/
-theorem bornProb_mTildeAt (W : Bas) (u : Point F m) (a : F) :
-    bornProb P.mVec (P.mTildeAt W u a) (aOp (((ptAtPOVM MB W u).mats a).val))
-      = ∑ g, bornProb P.Φ (((polyMarg P.SA W).mats g).val)
-          (aOp ((((ptAtPOVM MB W u).mats a).val)
-            ⊗ₖ ((synPOVM W u).mats (dotF (cubeData g) (indVec u) + a)).val)) := by
-  rw [P.mTildeAt_eq W u a, bornProb_sum_left, mVec]
-  exact Finset.sum_congr rfl fun g _ => bornProb_regroupVec _ _ _ _
-
-/-- **The agreement of `M~^{W,ind_m(u)}` with the strategy's point measurement is the outcome sum
-the helper's chain bounds.** -/
-theorem sum_bornProb_mTildeAt (W : Bas) (u : Point F m) :
-    ∑ a : F, bornProb P.mVec (P.mTildeAt W u a) (aOp (((ptAtPOVM MB W u).mats a).val))
-      = ∑ g, bornProb P.Φ (((polyMarg P.SA W).mats g).val)
-          (aOp (hatMats MB W u (dotF (cubeData g) (indVec u)))) := by
-  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => P.bornProb_mTildeAt W u a, Finset.sum_comm]
-  refine Finset.sum_congr rfl fun g _ => ?_
-  rw [← sum_kron_syn_eq_hatMats MB W u (dotF (cubeData g) (indVec u)), aOp_sum,
-    bornProb_sum_right]
-
-/-- **Item 1 of `lem:qld-exact-paulis`**: the measurement `M~^{W,ind_m(u)}` agrees with the
-strategy's `(Point, W)` measurement with probability at least `1 - delta_qld`, on average over a
-uniform point, where
-`delta_qld = delta_S + 2 (delta_S + sqrt(688 eps) + md/q)`. -/
-theorem sum_bornProb_mTilde_ge {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (W : Bas) :
-    1 - (δ + 2 * ((δ + Real.sqrt (688 * ε)) + (m : ℝ) * d / Fintype.card F))
-      ≤ ∑ u, uniform (Point F m) u * ∑ a : F,
-          bornProb P.mVec (P.mTildeAt W u a) (aOp (((ptAtPOVM MB W u).mats a).val)) := by
-  have h := P.sum_bornProb_cubeData_ge (hm := hm) hψ hfail hprojB hd W
-  have hrw : ∀ u : Point F m,
-      uniform (Point F m) u * ∑ g, bornProb P.Φ (((polyMarg P.SA W).mats g).val)
-          (aOp (hatMats MB W u (dotF (cubeData g) (indVec u))))
-        = uniform (Point F m) u * ∑ a : F,
-          bornProb P.mVec (P.mTildeAt W u a) (aOp (((ptAtPOVM MB W u).mats a).val)) :=
-    fun u => by rw [P.sum_bornProb_mTildeAt W u]
-  rwa [Finset.sum_congr rfl fun u (_ : u ∈ univ) => hrw u] at h
-
-/-- **Item 1 of `lem:qld-exact-paulis` as the paper states it**: on average over a uniform point,
-the measurement `M~^{W, ind_m(u)}` and the strategy's `(Point, W)` measurement are consistent to
-within `delta_S + 2 (delta_S + sqrt(688 eps) + md/q)`. -/
-theorem inconsistency_mTilde_le {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (W : Bas) :
-    inconsistency (uniform (Point F m)) P.mVec
-        (fun u => (P.isPVM_mTildeAt W u).toPOVM) (fun u => (ptAtPOVM MB W u).aOp)
-      ≤ δ + 2 * ((δ + Real.sqrt (688 * ε)) + (m : ℝ) * d / Fintype.card F) := by
-  have hd0 := sum_bornProb_diag_eq (sum_uniform_eq_one (Point F m)) P.mVec_unit
-    (fun u => (P.isPVM_mTildeAt W u).toPOVM) fun u => (ptAtPOVM MB W u).aOp (E := P.EB)
-  have hge := P.sum_bornProb_mTilde_ge (hm := hm) hψ hfail hprojB hd W
-  simp only [IsPVM.toPOVM_mats, POVM.aOp_mats] at hd0
-  linarith
 
 /-! ### The exact half, at the same data
 
@@ -347,13 +310,12 @@ measurement of a `SimulPair` puts the exact half and the approximate half of
 `lem:qld-exact-paulis` on the *same* objects, which is what the lemma asserts. -/
 
 /-- **The paper's `W~^e(u-tilde)`** (`eq:def-tildewj`) at the simultaneous pair measurement. -/
-def wTildeAt (W : Bas) (e : F) (v : Anc F m) :
-    Matrix (((dA × Anc F m) × P.EA) × Anc F m) (((dA × Anc F m) × P.EA) × Anc F m) ℂ :=
-  wTilde (fun p => ((P.SA.mats p).val)) (PolyPair.proj W) cubeData (weylOf W) e v
+def wTildeAt (W : Bas) (e : F) (v : Anc F m) : Matrix (Anc F m) (Anc F m) 𝒜' :=
+  wTilde P.SA.op (PolyPair.proj W) cubeData (weylOf W) e v
 
 /-- It is self-adjoint. -/
-theorem wTildeAt_conjTranspose (W : Bas) (e : F) (v : Anc F m) :
-    (P.wTildeAt W e v)ᴴ = P.wTildeAt W e v :=
+theorem wTildeAt_conjTranspose [StarModule ℂ 𝒜'] (W : Bas) (e : F) (v : Anc F m) :
+    star (P.wTildeAt W e v) = P.wTildeAt W e v :=
   wTilde_conjTranspose P.SA_proj (isWeylFamily_weylOf W) e v
 
 /-- It squares to the identity, so it is a genuine `+-1`-valued observable. -/
@@ -372,6 +334,100 @@ theorem wTildeAt_mul_wTildeAt (e e' : F) (v v' : Anc F m) :
       = sgn (Algebra.trace (ZMod 2) F (e * e' * dotF v v'))
         • (P.wTildeAt .Z e' v' * P.wTildeAt .X e v) :=
   wTilde_mul_wTilde P.SA_proj e e' v v'
+
+end Generic
+
+/-! ### On the physical model
+
+For a pair measurement on the first cut of the physical state, `compHom` of `mTildeAt` is an
+operator of the physical model's first player, and the strategy's point measurement is read there
+with the registers inert. -/
+
+section Physical
+
+variable {hm : m ∣ Fintype.card F} {N : BipartiteModel 𝒞 𝒜 ℬ}
+  {S : N.ProjStrat (qldGame (d := d) hm)} {K : ℕ} {δ : ℝ}
+
+/-- **The physical state is a unit vector**: it is the state of the first cut. The matrix
+statement was about the regrouped state `mVec`, whose model is the physical model. -/
+theorem mVec_unit (P : CutSimul N S K δ) : ‖(phys (Anc F m) F m d N K).ψ‖ = 1 :=
+  P.ψ_unit
+
+/-- **`M~^{W, ind_m(u)}` as a measurement of the physical model's first player**: the elements
+`compHom (P.mTildeAt W u a)`, the pair measurement on `(Ea, A')` and the Pauli on `A''`. -/
+def mTildePOVM (P : CutSimul N S K δ) (W : Bas) (u : Point F m) :
+    POVMIn F (Matrix (PhysReg (Anc F m) F m d K) (PhysReg (Anc F m) F m d K) 𝒜) :=
+  ((P.isPVM_mTildeAt W u).pushforward compHom_one).toPOVMIn
+
+@[simp]
+theorem mTildePOVM_op (P : CutSimul N S K δ) (W : Bas) (u : Point F m) (a : F) :
+    (P.mTildePOVM W u).op a = compHom (P.mTildeAt W u a) := rfl
+
+/-- It is projective. -/
+theorem isPVM_mTildePOVM (P : CutSimul N S K δ) (W : Bas) (u : Point F m) :
+    IsPVMIn (P.mTildePOVM W u).op :=
+  (P.isPVM_mTildeAt W u).pushforward compHom_one
+
+/-- **One term of the agreement, across the cut.** -/
+theorem bornProb_mTildeAt (P : CutSimul N S K δ) (W : Bas) (u : Point F m) (a : F) :
+    (phys (Anc F m) F m d N K).bornProb (compHom (P.mTildeAt W u a))
+        ((physInert (Anc F m) F m d N K).ΦB ((ptAtPOVM S.PB W u).op a))
+      = ∑ g, (cut1 (Anc F m) F m d N K).bornProb ((polyMarg P.SA W).op g)
+          ((ι₁ (Anc F m) F m d N K).ΦB (smulKron ((ptAtPOVM S.PB W u).op a)
+            ((synPOVM W u).mats (dotF (cubeData g) (indVec u) + a)).val)) := by
+  rw [P.mTildeAt_eq W u a, map_sum, BipartiteModel.bornProb_sum_left]
+  exact Finset.sum_congr rfl fun g _ => phys_bornProb_compHom_smulKron _ _ _
+
+/-- **The agreement of `M~^{W,ind_m(u)}` with the strategy's point measurement is the outcome sum
+the helper's chain bounds.** -/
+theorem sum_bornProb_mTildeAt (P : CutSimul N S K δ) (W : Bas) (u : Point F m) :
+    ∑ a : F, (phys (Anc F m) F m d N K).bornProb (compHom (P.mTildeAt W u a))
+        ((physInert (Anc F m) F m d N K).ΦB ((ptAtPOVM S.PB W u).op a))
+      = ∑ g, (cut1 (Anc F m) F m d N K).bornProb ((polyMarg P.SA W).op g)
+          ((ι₁ (Anc F m) F m d N K).ΦB (hatMats S.PB W u (dotF (cubeData g) (indVec u)))) := by
+  rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => P.bornProb_mTildeAt W u a, Finset.sum_comm]
+  refine Finset.sum_congr rfl fun g _ => ?_
+  rw [← sum_kron_syn_eq_hatMats S.PB W u (dotF (cubeData g) (indVec u)), map_sum,
+    BipartiteModel.bornProb_sum_right]
+
+/-- **Item 1 of `lem:qld-exact-paulis`**: the measurement `M~^{W,ind_m(u)}` agrees with the
+strategy's `(Point, W)` measurement with probability at least `1 - delta_qld`, on average over a
+uniform point, where
+`delta_qld = delta_S + 2 (delta_S + sqrt(688 eps) + md/q)`. -/
+theorem sum_bornProb_mTilde_ge (P : CutSimul N S K δ) {ε : ℝ} (hfail : 1 - S.value ≤ ε)
+    (hd : 1 ≤ d) (W : Bas) :
+    1 - (δ + 2 * ((δ + Real.sqrt (688 * ε)) + (m : ℝ) * d / Fintype.card F))
+      ≤ ∑ u, uniform (Point F m) u * ∑ a : F,
+          (phys (Anc F m) F m d N K).bornProb (compHom (P.mTildeAt W u a))
+            ((physInert (Anc F m) F m d N K).ΦB ((ptAtPOVM S.PB W u).op a)) := by
+  have h := P.sum_bornProb_cubeData_ge hfail hd W
+  have hrw : ∀ u : Point F m,
+      uniform (Point F m) u * ∑ g, (cut1 (Anc F m) F m d N K).bornProb ((polyMarg P.SA W).op g)
+          ((ι₁ (Anc F m) F m d N K).ΦB (hatMats S.PB W u (dotF (cubeData g) (indVec u))))
+        = uniform (Point F m) u * ∑ a : F,
+          (phys (Anc F m) F m d N K).bornProb (compHom (P.mTildeAt W u a))
+            ((physInert (Anc F m) F m d N K).ΦB ((ptAtPOVM S.PB W u).op a)) :=
+    fun u => by rw [P.sum_bornProb_mTildeAt W u]
+  rwa [Finset.sum_congr rfl fun u (_ : u ∈ univ) => hrw u] at h
+
+/-- **Item 1 of `lem:qld-exact-paulis` as the paper states it**: on average over a uniform point,
+the measurement `M~^{W, ind_m(u)}` and the strategy's `(Point, W)` measurement are consistent to
+within `delta_S + 2 (delta_S + sqrt(688 eps) + md/q)`, on the physical state. -/
+theorem inconsistency_mTilde_le (P : CutSimul N S K δ) {ε : ℝ} (hfail : 1 - S.value ≤ ε)
+    (hd : 1 ≤ d) (W : Bas) :
+    (phys (Anc F m) F m d N K).inconsistency (uniform (Point F m)) (fun u => P.mTildePOVM W u)
+        (fun u => (ptAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+          (physInert (Anc F m) F m d N K).ΦB_one)
+      ≤ δ + 2 * ((δ + Real.sqrt (688 * ε)) + (m : ℝ) * d / Fintype.card F) := by
+  have hd0 := sum_bornProb_diag_eq (sum_uniform_eq_one (Point F m)) P.mVec_unit
+    (fun u => P.mTildePOVM W u)
+    (fun u => (ptAtPOVM S.PB W u).pushforward (physInert (Anc F m) F m d N K).ΦB
+      (physInert (Anc F m) F m d N K).ΦB_one)
+  have hge := P.sum_bornProb_mTilde_ge hfail hd W
+  simp only [mTildePOVM_op, POVMIn.pushforward_op] at hd0
+  linarith
+
+end Physical
 
 end SimulPair
 
