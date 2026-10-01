@@ -34,9 +34,21 @@ Three things have to be said about it, and this file says them.
   `lem:qld-axis-degree`; the second needs only `d >= 1`.
 * **The measurement.** `padLineMats` is the paper's `Q-hat^l`: the conditional average, over the
   fresh randomness the subline construction draws, of the pasted line measurement
-  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM.
+  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM in a player's algebra of the
+  expanded model.
 
 What is *not* here is the consistency bound `delta_combine`; see the blueprint.
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). Only the measurement changes:
+the pasted line measurement (`MIPRE/Background/QLD/Lines.lean`) is a family of elements of
+`Matrix (Anc F m) (Anc F m) R` over a player's ordered `⋆`-algebra `R`, with no combining register
+`F × F` (it was inert in every padded measurement), so `padLineMats` is an average of pasted
+sandwiches there. Completeness is `IsPVMIn.sum_conj'` and nonnegativity is the Gram form
+`IsPVMIn.conj_eq_gram` of a sandwich, averaged with nonnegative real weights (`real_smul_nonneg`);
+the name `posSemidef_*` is kept for these nonnegativity statements. The combinatorics of the
+combining map is unchanged.
 
 ## The affine data, and why the whole geometry is in `xBlk_dir_sub`
 
@@ -503,42 +515,25 @@ averaging over the fresh randomness the construction draws --- a seed and a raw 
 section POVM
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dB : Type} [Fintype dB] [DecidableEq dB] {hm : m ∣ Fintype.card F}
-  {M : Question F m → POVM (Answer F m d) dB}
+  [NeZero m] {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] [PartialOrder R]
+  [StarOrderedRing R] [StarProper R] {hm : m ∣ Fintype.card F}
+  {S : Question F m → POVMIn (Answer F m d) R}
 
-/-- **The pasted line measurement is a POVM**: a sandwich of projectors is positive, and the pairs
-of line polynomials exhaust it. -/
-theorem sum_pasteLine (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
+/-- **The pasted line measurement is complete**: the inner family sums away against the outer
+one's projectivity (`IsPVMIn.sum_conj'`), the outer line measurement being the conjugating one. -/
+theorem sum_pasteLine (hS : ∀ q, IsPVMIn (S q).op)
     (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (cX cZ : Content F m) :
-    ∑ q : LinePoly F (m * d) × LinePoly F (m * d),
-        (pasteLine PX PZ d M cX cZ q
-          : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) = 1 := by
-  have hA : IsPVM fun f : LinePoly F (m * d) =>
-      (aOp (PX.lineMats d M cX f)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) :=
-    IsPVM.aOp (PX.isPVM_lineMats d hM cX)
-  have hB : IsPVM fun f : LinePoly F (m * d) =>
-      (aOp (PZ.lineMats d M cZ f)
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) :=
-    IsPVM.aOp (PZ.isPVM_lineMats d hM cZ)
-  rw [Finset.sum_congr rfl fun q
-      (_ : q ∈ (univ : Finset (LinePoly F (m * d) × LinePoly F (m * d)))) =>
-    show (pasteLine PX PZ d M cX cZ q
-          : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ)
-        = aOp (PX.lineMats d M cX q.1) * aOp (PZ.lineMats d M cZ q.2)
-            * aOp (PX.lineMats d M cX q.1) from by
-      rw [pasteLine, aOp_mul, aOp_mul]]
-  exact (Fintype.sum_equiv (Equiv.prodComm (LinePoly F (m * d)) (LinePoly F (m * d))) _ _
-    fun q => rfl).trans (sum_sandOpG hB hA)
+    ∑ q : LinePoly F (m * d) × LinePoly F (m * d), pasteLine PX PZ d S cX cZ q = 1 :=
+  (PZ.isPVM_lineMats d hS cZ).sum_conj' (PX.isPVM_lineMats d hS cX)
 
-theorem posSemidef_pasteLine (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
+/-- **Each element of the pasted line measurement is nonnegative**: a sandwich of projections is
+a Gram element `(Z X)⋆ (Z X)` (`IsPVMIn.conj_eq_gram`), nonnegative in the model's order. -/
+theorem posSemidef_pasteLine (hS : ∀ q, IsPVMIn (S q).op)
     (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (cX cZ : Content F m)
     (q : LinePoly F (m * d) × LinePoly F (m * d)) :
-    (pasteLine PX PZ d M cX cZ q
-      : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ).PosSemidef := by
-  rw [pasteLine, aOp_mul, aOp_mul]
-  exact sandOpG_posSemidef (IsPVM.aOp (PZ.isPVM_lineMats d hM cZ))
-    (IsPVM.aOp (PX.isPVM_lineMats d hM cX)) q.2 q.1
+    0 ≤ pasteLine PX PZ d S cX cZ q := by
+  rw [pasteLine, (PZ.isPVM_lineMats d hS cZ).conj_eq_gram (PX.isPVM_lineMats d hS cX) q.2 q.1]
+  exact star_mul_self_nonneg _
 
 /-- The fresh randomness the subline construction draws: a seed and a raw direction per side. -/
 abbrev SubRand (F : Type*) (m : ℕ) := (F × Point F m) × (F × Point F m)
@@ -549,57 +544,55 @@ def subPair (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (ty : C
     (P : LPData F (4 * m)) (e : SubRand F m) : LPData F m × LPData F m :=
   (subX hm4 hm P e.1, subZ hm4 hm ty P e.2)
 
-/-- **The padded line measurement `Q-hat^l`.** Its outcomes are line polynomials of degree at most
-`md + 1` on the padded line, and on an axis-parallel padded line `degLE_padCombine_aline` sharpens
-that to `d`. -/
+/-- **The padded line measurement `Q-hat^l`**, in the register's matrices over the player's
+algebra. Its outcomes are line polynomials of degree at most `md + 1` on the padded line, and on an
+axis-parallel padded line `degLE_padCombine_aline` sharpens that to `d`. -/
 def padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty) (PX : LinePres F m hm .X)
-    (PZ : LinePres F m hm .Z) (M : Question F m → POVM (Answer F m d) dB)
-    (P : LPData F (4 * m)) (f : LinePoly F (m * d + 1)) :
-    Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ :=
-  ((Fintype.card (SubRand F m) : ℝ))⁻¹ • ∑ e : SubRand F m,
+    (PZ : LinePres F m hm .Z) (S : Question F m → POVMIn (Answer F m d) R)
+    (P : LPData F (4 * m)) (f : LinePoly F (m * d + 1)) : Matrix (Anc F m) (Anc F m) R :=
+  (((Fintype.card (SubRand F m) : ℝ)⁻¹ : ℝ) : ℂ) • ∑ e : SubRand F m,
     ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
         padCombine hm4 hm ty d P e.1 e.2 q = f,
-      pasteLine PX PZ d M (pairCX (subPair hm4 hm ty P e)) (pairCZ (subPair hm4 hm ty P e)) q
+      pasteLine PX PZ d S (pairCX (subPair hm4 hm ty P e)) (pairCZ (subPair hm4 hm ty P e)) q
 
 /-- **The padded line measurement is complete.** The fibres of the combining map partition the pairs
 of line polynomials, so the outcome sum is the pasted measurement's own. -/
 theorem sum_padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty) (PX : LinePres F m hm .X)
-    (PZ : LinePres F m hm .Z) (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
-    (P : LPData F (4 * m)) :
-    ∑ f : LinePoly F (m * d + 1), padLineMats hm4 ty PX PZ M P f = 1 := by
+    (PZ : LinePres F m hm .Z) (hS : ∀ q, IsPVMIn (S q).op) (P : LPData F (4 * m)) :
+    ∑ f : LinePoly F (m * d + 1), padLineMats hm4 ty PX PZ S P f = 1 := by
   classical
   have hcard : (Fintype.card (SubRand F m) : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   have hinner : ∀ e : SubRand F m,
       ∑ f : LinePoly F (m * d + 1),
         ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
             padCombine hm4 hm ty d P e.1 e.2 q = f,
-          (pasteLine PX PZ d M (pairCX (subPair hm4 hm ty P e))
-              (pairCZ (subPair hm4 hm ty P e)) q
-            : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) = 1 := by
+          pasteLine PX PZ d S (pairCX (subPair hm4 hm ty P e)) (pairCZ (subPair hm4 hm ty P e)) q
+        = 1 := by
     intro e
     rw [← sum_fiber (fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
         padCombine hm4 hm ty d P e.1 e.2 q)
-      fun _ q => (pasteLine PX PZ d M (pairCX (subPair hm4 hm ty P e))
-          (pairCZ (subPair hm4 hm ty P e)) q
-        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ)]
-    exact sum_pasteLine hM PX PZ _ _
+      fun _ q => pasteLine PX PZ d S (pairCX (subPair hm4 hm ty P e))
+        (pairCZ (subPair hm4 hm ty P e)) q]
+    exact sum_pasteLine hS PX PZ _ _
   simp only [padLineMats]
   rw [← Finset.smul_sum, Finset.sum_comm,
     Finset.sum_congr rfl fun e (_ : e ∈ (univ : Finset (SubRand F m))) => hinner e,
-    Finset.sum_const, Finset.card_univ,
-    ← Nat.cast_smul_eq_nsmul ℝ, smul_smul, inv_mul_cancel₀ hcard, one_smul]
+    Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul,
+    show (((Fintype.card (SubRand F m) : ℝ)⁻¹ : ℝ) : ℂ) * (Fintype.card (SubRand F m) : ℂ) = 1 by
+      rw [Complex.ofReal_inv, Complex.ofReal_natCast]
+      exact inv_mul_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero),
+    one_smul]
 
-/-- **Each outcome of the padded line measurement is positive.** -/
+/-- **Each outcome of the padded line measurement is nonnegative**: an average of pasted
+sandwiches, each a Gram element (`real_smul_nonneg`). -/
 theorem posSemidef_padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty)
     (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (P : LPData F (4 * m))
+    (hS : ∀ q, IsPVMIn (S q).op) (P : LPData F (4 * m))
     (f : LinePoly F (m * d + 1)) :
-    (padLineMats hm4 ty PX PZ M P f).PosSemidef := by
-  refine Matrix.PosSemidef.smul ?_ (by positivity)
-  refine Finset.sum_induction _ _ (fun _ _ h1 h2 => h1.add h2) Matrix.PosSemidef.zero
-    fun e _ => ?_
-  exact Finset.sum_induction _ _ (fun _ _ h1 h2 => h1.add h2) Matrix.PosSemidef.zero
-    fun q _ => posSemidef_pasteLine hM PX PZ _ _ q
+    0 ≤ padLineMats hm4 ty PX PZ S P f :=
+  real_smul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _))
+    (Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun q _ =>
+      posSemidef_pasteLine hS PX PZ _ _ q)
 
 /-- **Coarse-graining a fibre sum again**: summing the fibres of `g` over a set of values is summing
 over the preimage of that set. -/
@@ -629,8 +622,8 @@ theorem sum_filter_padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty)
     (hdirZ : ∀ (D : LPData F m) (u : Point F m), PZ.dir (ofLPZ D u) = D.dir hm ty)
     (P : LPData F (4 * m)) (tau a : F) :
     ∑ f ∈ univ.filter fun f : LinePoly F (m * d + 1) => LinePoly.eval f tau = a,
-        padLineMats hm4 ty PX PZ M P f
-      = ((Fintype.card (SubRand F m) : ℝ))⁻¹ • ∑ e : SubRand F m,
+        padLineMats hm4 ty PX PZ S P f
+      = (((Fintype.card (SubRand F m) : ℝ)⁻¹ : ℝ) : ℂ) • ∑ e : SubRand F m,
           ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
               alph (padShift hm4 ty tau P).pt
                     * LinePoly.eval q.1
@@ -638,12 +631,12 @@ theorem sum_filter_padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty)
                   + bet (padShift hm4 ty tau P).pt
                     * LinePoly.eval q.2
                         (PZ.param (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e))) = a,
-            pasteLine PX PZ d M (pairCX (subPair hm4 hm ty P e))
+            pasteLine PX PZ d S (pairCX (subPair hm4 hm ty P e))
               (pairCZ (subPair hm4 hm ty P e)) q := by
   classical
   simp only [padLineMats]
   rw [← Finset.smul_sum, Finset.sum_comm]
-  refine congrArg (fun A => ((Fintype.card (SubRand F m) : ℝ))⁻¹ • A)
+  refine congrArg (fun A => (((Fintype.card (SubRand F m) : ℝ)⁻¹ : ℝ) : ℂ) • A)
     (Finset.sum_congr rfl fun e _ => ?_)
   rw [sum_filter_fiber (fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
     padCombine hm4 hm ty d P e.1 e.2 q) (fun f => LinePoly.eval f tau = a)]

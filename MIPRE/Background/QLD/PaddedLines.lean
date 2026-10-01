@@ -22,8 +22,8 @@ pairs-of-lines lemma applies directly. What is left is a single coarse-graining 
 what this file adds.
 
 * **Coarse-graining both sides the same way can only increase agreement.**
-  `sum_bornProb_le_fibre`, for bare matrix families rather than `POVM` structures --- which is what
-  the pasted line measurement is.
+  `sum_bornProb_le_fibre`, for bare nonnegative families rather than `POVMIn` structures --- which
+  is what the pasted line measurement is.
 * **The two coarse-grained families.** `ptComb` is the combined point measurement read along the
   linear form `(a, b)`, the paper's `Q-hat^{x,z,alpha,beta}`; `lineComb` is the pasted line
   measurement coarse-grained by the combining map. `lineComb_eq_sum_pasteFib` identifies the second
@@ -34,6 +34,20 @@ what this file adds.
 The `m^2` and the functional form are discussed in the report: it is `poly(m) * poly(eps, md/q)`
 rather than the `m * poly(eps, md/q)` the blueprint statement advertises, which
 `lem:qld-simultaneous`'s `a(md)^a` prefactor absorbs.
+
+## In a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The pasted line measurement and
+its coarse-grainings (`pasteFib`, `lineComb`) are families of elements of
+`Matrix (Anc F m) (Anc F m) R` over a player's ordered `⋆`-algebra, and the consistency bound is an
+**agreement bound in the expanded model `M.reg (Anc F m)`**: the combined point measurement is the
+first player's sandwich `M-hat^Z_b M-hat^X_a M-hat^Z_b` itself, read along `(alpha, beta)`
+(`ptComb`), not a dilation of it. That is the form `pairs_of_lines_prod_of_items` now returns, and
+it is also what the padded strategy measures, so no compression is needed downstream. The
+exchanged player is the same statement for `M.swap`, read back through `hatVec_swapVec_xSqNorm`
+and `hatVec_swapVec_bornProb`. Positivity is the model's order: the two coarse-graining lemmas
+take nonnegative families, and the name `posSemidef_pasteFib` is kept for a nonnegativity
+statement.
 -/
 
 noncomputable section
@@ -49,83 +63,47 @@ set_option linter.unusedSectionVars false
 
 section Born
 
-variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
-/-- **Coarse-graining both sides the same way can only increase agreement.** The `POVM`-structure
-version is `MIPRE.sum_bornProb_le_map`; here the families are bare, which is the shape the pasted
-line measurement comes in. -/
+/-- **Coarse-graining both sides the same way can only increase agreement.** The `POVMIn` version
+is `BipartiteModel.sum_bornProb_le_map`; here the families are bare nonnegative families, which is
+the shape the pasted line measurement comes in. -/
 theorem sum_bornProb_le_fibre {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]
-    [DecidableEq κ] (ψ : dA × dB → ℂ) (P : ι → Matrix dA dA ℂ) (Q : ι → Matrix dB dB ℂ)
-    (hP : ∀ i, (P i).PosSemidef) (hQ : ∀ i, (Q i).PosSemidef) (f : ι → κ) :
-    ∑ i, bornProb ψ (P i) (Q i)
-      ≤ ∑ k : κ, bornProb ψ (∑ i ∈ univ.filter fun i => f i = k, P i)
+    [DecidableEq κ] (M : BipartiteModel 𝒞 𝒜 ℬ) (P : ι → 𝒜) (Q : ι → ℬ)
+    (hP : ∀ i, 0 ≤ P i) (hQ : ∀ i, 0 ≤ Q i) (f : ι → κ) :
+    ∑ i, M.bornProb (P i) (Q i)
+      ≤ ∑ k : κ, M.bornProb (∑ i ∈ univ.filter fun i => f i = k, P i)
           (∑ i ∈ univ.filter fun i => f i = k, Q i) := by
   classical
-  refine le_trans (le_of_eq (sum_fiber f fun _ i => bornProb ψ (P i) (Q i)))
+  refine le_trans (le_of_eq (sum_fiber f fun _ i => M.bornProb (P i) (Q i)))
     (Finset.sum_le_sum fun k _ => ?_)
-  rw [bornProb_sum_sum]
+  rw [M.bornProb_sum_sum]
   refine Finset.sum_le_sum fun i hi => ?_
-  exact Finset.single_le_sum (f := fun j => bornProb ψ (P i) (Q j))
-    (fun j _ => bornProb_nonneg ψ (hP i) (hQ j)) hi
+  exact Finset.single_le_sum (f := fun j => M.bornProb (P i) (Q j))
+    (fun j _ => M.bornProb_nonneg (hP i) (hQ j)) hi
 
 /-- **A Born sum on the diagonal of two POVMs is at most one.** -/
-theorem sum_bornProb_diag_le_one {ι : Type*} [Fintype ι] {ψ : dA × dB → ℂ}
-    (hψ : star ψ ⬝ᵥ ψ = 1) (P : ι → Matrix dA dA ℂ) (Q : ι → Matrix dB dB ℂ)
-    (hP : ∀ i, (P i).PosSemidef) (hQ : ∀ i, (Q i).PosSemidef)
+theorem sum_bornProb_diag_le_one {ι : Type*} [Fintype ι] {M : BipartiteModel 𝒞 𝒜 ℬ}
+    (hM : ‖M.ψ‖ = 1) (P : ι → 𝒜) (Q : ι → ℬ) (hP : ∀ i, 0 ≤ P i) (hQ : ∀ i, 0 ≤ Q i)
     (hPs : ∑ i, P i = 1) (hQs : ∑ i, Q i = 1) :
-    ∑ i, bornProb ψ (P i) (Q i) ≤ 1 := by
+    ∑ i, M.bornProb (P i) (Q i) ≤ 1 := by
   classical
-  have h1 : bornProb ψ (1 : Matrix dA dA ℂ) (1 : Matrix dB dB ℂ) = 1 := by
-    rw [bornProb, Matrix.one_kronecker_one, Matrix.one_mulVec, hψ, Complex.one_re]
-  refine le_trans ?_ (le_of_eq h1)
-  rw [← hPs, ← hQs, bornProb_sum_sum]
+  refine le_trans ?_ (le_of_eq (M.bornProb_one_one hM))
+  rw [← hPs, ← hQs, M.bornProb_sum_sum]
   refine Finset.sum_le_sum fun i _ => ?_
-  exact Finset.single_le_sum (f := fun j => bornProb ψ (P i) (Q j))
-    (fun j _ => bornProb_nonneg ψ (hP i) (hQ j)) (mem_univ i)
+  exact Finset.single_le_sum (f := fun j => M.bornProb (P i) (Q j))
+    (fun j _ => M.bornProb_nonneg (hP i) (hQ j)) (mem_univ i)
 
 end Born
-
-/-! ## Exchanging the two players
-
-`extVec2` lives in `Foundations/Sandwich.lean` and `swapVec` in `Foundations/StateDistance.lean`,
-and neither of those files imports the other, so the one fact relating them sits here. -/
-
-section Swap
-
-variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-/-- **Swapping the state swaps the twice-extended state**, the two ancilla labels being exchanged
-with it. -/
-theorem extVec2_swapVec {Anc Bnc : Type*} [Fintype Anc] [DecidableEq Anc] [Fintype Bnc]
-    [DecidableEq Bnc] (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc) :
-    extVec2 (swapVec ψ) b₀ a₀ = swapVec (extVec2 ψ a₀ b₀) := by
-  classical
-  funext qp
-  obtain ⟨q, p⟩ := qp
-  show (((ancillaEmbed dB b₀) ⊗ₖ (ancillaEmbed dA a₀)) *ᵥ swapVec ψ) (q, p)
-    = (((ancillaEmbed dA a₀) ⊗ₖ (ancillaEmbed dB b₀)) *ᵥ ψ) (p, q)
-  rw [Matrix.mulVec, Matrix.mulVec, dotProduct, dotProduct]
-  refine (Fintype.sum_equiv (Equiv.prodComm dA dB) _ _ fun r => ?_).symm
-  obtain ⟨i, j⟩ := r
-  show ((ancillaEmbed dA a₀) ⊗ₖ (ancillaEmbed dB b₀)) (p, q) (i, j) * ψ (i, j)
-    = ((ancillaEmbed dB b₀) ⊗ₖ (ancillaEmbed dA a₀)) (q, p) (j, i) * swapVec ψ (j, i)
-  show (ancillaEmbed dA a₀) p i * (ancillaEmbed dB b₀) q j * ψ (i, j)
-    = (ancillaEmbed dB b₀) q j * (ancillaEmbed dA a₀) p i * ψ (i, j)
-  ring
-
-/-- **Swapping the state exchanges the two arguments of the cross-party deviation.** -/
-theorem xSqNorm_swapVec (ψ : dA × dB → ℂ) (X : Matrix dB dB ℂ) (Y : Matrix dA dA ℂ) :
-    xSqNorm (swapVec ψ) X Y = xSqNorm ψ Y X := by
-  rw [xSqNorm_eq_snorm_sq, snorm_swapVec_aOp_sub_bOp, xSqNorm_eq_sq]
-
-end Swap
 
 /-! ## The two coarse-grained families -/
 
 section Comb
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dB : Type} [Fintype dB] [DecidableEq dB] {hm : m ∣ Fintype.card F}
+  [NeZero m] {hm : m ∣ Fintype.card F}
 
 /-- The pasted line measurement's own outcome map: each side's polynomial read at the parameter of
 its own subline. -/
@@ -133,71 +111,78 @@ def pasteEval (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (cX cZ : Conte
     (q : LinePoly F (m * d) × LinePoly F (m * d)) : F × F :=
   (LinePoly.eval q.1 (PX.param cX), LinePoly.eval q.2 (PZ.param cZ))
 
+/-- **The combined point measurement along the linear form `(a, b)`**: the paper's
+`Q-hat^{x,z,alpha,beta}`, as the coarse-graining of a family indexed by pairs, in any additive
+monoid. -/
+def ptComb {N : Type*} [AddCommMonoid N] (Q : F × F → N) (a b : F) (v : F) : N :=
+  ∑ r ∈ univ.filter fun r : F × F => a * r.1 + b * r.2 = v, Q r
+
+section Ops
+
+variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] [PartialOrder R]
+  [StarOrderedRing R] [StarProper R]
+
 /-- The pasted line measurement coarse-grained by that map --- the family the product form of
 `lem:qld-pairs-of-lines` bounds. -/
 def pasteFib (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (d : ℕ)
-    (M : Question F m → POVM (Answer F m d) dB) (cX cZ : Content F m) (r : F × F) :
-    Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ :=
+    (S : Question F m → POVMIn (Answer F m d) R) (cX cZ : Content F m) (r : F × F) :
+    Matrix (Anc F m) (Anc F m) R :=
   ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
       LinePoly.eval q.1 (PX.param cX) = r.1 ∧ LinePoly.eval q.2 (PZ.param cZ) = r.2,
-    pasteLine PX PZ d M cX cZ q
+    pasteLine PX PZ d S cX cZ q
 
 theorem pasteFib_eq (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (d : ℕ)
-    (M : Question F m → POVM (Answer F m d) dB) (cX cZ : Content F m) (r : F × F) :
-    pasteFib PX PZ d M cX cZ r
+    (S : Question F m → POVMIn (Answer F m d) R) (cX cZ : Content F m) (r : F × F) :
+    pasteFib PX PZ d S cX cZ r
       = ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
-          pasteEval PX PZ cX cZ q = r, pasteLine PX PZ d M cX cZ q := by
+          pasteEval PX PZ cX cZ q = r, pasteLine PX PZ d S cX cZ q := by
   classical
   refine Finset.sum_congr (Finset.filter_congr fun q _ => ?_) fun _ _ => rfl
   rw [pasteEval, Prod.ext_iff]
 
-theorem posSemidef_pasteFib {M : Question F m → POVM (Answer F m d) dB}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (PX : LinePres F m hm .X)
+/-- Each element of the coarse-grained pasted family is nonnegative. -/
+theorem posSemidef_pasteFib {S : Question F m → POVMIn (Answer F m d) R}
+    (hS : ∀ q, IsPVMIn (S q).op) (PX : LinePres F m hm .X)
     (PZ : LinePres F m hm .Z) (cX cZ : Content F m) (r : F × F) :
-    (pasteFib PX PZ d M cX cZ r).PosSemidef :=
-  Finset.sum_induction _ _ (fun _ _ h1 h2 => h1.add h2) Matrix.PosSemidef.zero
-    fun q _ => posSemidef_pasteLine hM PX PZ cX cZ q
+    0 ≤ pasteFib PX PZ d S cX cZ r :=
+  Finset.sum_nonneg fun q _ => posSemidef_pasteLine hS PX PZ cX cZ q
 
-theorem sum_pasteFib {M : Question F m → POVM (Answer F m d) dB}
-    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (PX : LinePres F m hm .X)
+theorem sum_pasteFib {S : Question F m → POVMIn (Answer F m d) R}
+    (hS : ∀ q, IsPVMIn (S q).op) (PX : LinePres F m hm .X)
     (PZ : LinePres F m hm .Z) (cX cZ : Content F m) :
-    ∑ r : F × F, pasteFib PX PZ d M cX cZ r = 1 := by
+    ∑ r : F × F, pasteFib PX PZ d S cX cZ r = 1 := by
   classical
   rw [Finset.sum_congr rfl fun r (_ : r ∈ (univ : Finset (F × F))) =>
-    pasteFib_eq PX PZ d M cX cZ r,
+    pasteFib_eq PX PZ d S cX cZ r,
     ← sum_fiber (fun q : LinePoly F (m * d) × LinePoly F (m * d) => pasteEval PX PZ cX cZ q)
-      fun _ q => pasteLine PX PZ d M cX cZ q]
-  exact sum_pasteLine hM PX PZ cX cZ
-
-/-- **The combined point measurement along the linear form `(a, b)`**: the paper's
-`Q-hat^{x,z,alpha,beta}`. -/
-def ptComb {N : Type*} [Fintype N] [DecidableEq N] (Q : F × F → Matrix N N ℂ) (a b : F) (v : F) :
-    Matrix N N ℂ :=
-  ∑ r ∈ univ.filter fun r : F × F => a * r.1 + b * r.2 = v, Q r
+      fun _ q => pasteLine PX PZ d S cX cZ q]
+  exact sum_pasteLine hS PX PZ cX cZ
 
 /-- **The pasted line measurement coarse-grained by the combining map at `(a, b)`.** Averaged over
 the fresh randomness this is `padLineMats` read at the sampled point; see
 `sum_filter_padLineMats`. -/
 def lineComb (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (d : ℕ)
-    (M : Question F m → POVM (Answer F m d) dB) (cX cZ : Content F m) (a b : F) (v : F) :
-    Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ :=
+    (S : Question F m → POVMIn (Answer F m d) R) (cX cZ : Content F m) (a b : F) (v : F) :
+    Matrix (Anc F m) (Anc F m) R :=
   ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>
       a * LinePoly.eval q.1 (PX.param cX) + b * LinePoly.eval q.2 (PZ.param cZ) = v,
-    pasteLine PX PZ d M cX cZ q
+    pasteLine PX PZ d S cX cZ q
 
 /-- **The line side is a coarse-graining of the fibre family**, along the same linear form. This is
 what lets the two be compared by `sum_bornProb_le_fibre`. -/
 theorem lineComb_eq_sum_pasteFib (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (d : ℕ)
-    (M : Question F m → POVM (Answer F m d) dB) (cX cZ : Content F m) (a b : F) (v : F) :
-    lineComb PX PZ d M cX cZ a b v
+    (S : Question F m → POVMIn (Answer F m d) R) (cX cZ : Content F m) (a b : F) (v : F) :
+    lineComb PX PZ d S cX cZ a b v
       = ∑ r ∈ univ.filter fun r : F × F => a * r.1 + b * r.2 = v,
-        pasteFib PX PZ d M cX cZ r := by
+        pasteFib PX PZ d S cX cZ r := by
   classical
   rw [Finset.sum_congr rfl fun r (_ : r ∈ univ.filter fun r : F × F => a * r.1 + b * r.2 = v) =>
-    pasteFib_eq PX PZ d M cX cZ r,
+    pasteFib_eq PX PZ d S cX cZ r,
     sum_filter_fiber (fun q : LinePoly F (m * d) × LinePoly F (m * d) => pasteEval PX PZ cX cZ q)
-      (fun r : F × F => a * r.1 + b * r.2 = v) fun q => pasteLine PX PZ d M cX cZ q]
+      (fun r : F × F => a * r.1 + b * r.2 = v) fun q => pasteLine PX PZ d S cX cZ q]
   rfl
+
+end Ops
 
 end Comb
 
