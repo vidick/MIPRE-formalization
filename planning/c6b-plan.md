@@ -67,7 +67,7 @@ design round (not committed); everything else is an estimate with the basis give
 | T1 | centre-valued trace and comparison at `p = 1` (`exists_isCenterValuedTrace`); Theorem 1.2 without abelian projections (`povm_orthogonalization_of_isCenterValuedTrace`, `povm_orthogonalization_vecTrace`); the finite-pair form in model vocabulary (`povm_orthogonalization_finitePair`) | `MIPRE/Background/Orthonormalization/{CenterTrace,CenterTraceClauses,CenterComparison,NoAbelian,FinitePairOrtho}.lean` | ≈ 1.25k (measured) | done |
 | T2 | matrix units: `IsMatUnits`, `HasDyadicUnits` and their transport (∗-homs, `ᵐᵒᵖ`, matrices, products); the trace bound and no abelian projections (Theorems K, K′); `IsDyadicPair` with `swap` and `expand` | `MIPRE/Foundations/` | 0.38–0.46k (measured, 0.4k) | open |
 | T3 | amplification: `amplify T B` with `amplify_correlation`; the standard form of `tensorStep M B` is a dyadic pair, and so is its ancilla extension | `MIPRE/Background/Repetition/` | ≈ 0.1k (measured) | open |
-| T4 | the algebra `B`: a `StdTracialAlgebra.{0}` with dyadic matrix units, unital in `B.A` or after representation | `MIPRE/Background/Repetition/` | 0.55–1.5k (unmeasured) | open; choose by prototype between the ultraproduct GNS of `lp (n ↦ M_{2ⁿ}(ℂ)) ∞` and a twisted Pauli (CAR) algebra (report §3) |
+| T4 | the algebra `B`: a `StdTracialAlgebra.{0}` with unital dyadic matrix units in `B.A` | `Foundations/MatUnits.lean` (≈ 0.25k) and `MIPRE/Background/Repetition/PauliAlgebra.lean` (≈ 0.5k) | 0.75–0.85k | chosen 2026-10-01: the twisted Pauli (CAR) algebra (report §3). Both candidates were prototyped in Lean, sorry-free (Pauli 688 lines, the ultraproduct 426); Pauli's units are unital in `B.A` itself, so it gives `HasDyadicUnits B.A` as T2–T3 state it, while the ultraproduct's are unital only after representation and would need a second predicate and an adapter |
 | T5 | restate C6a to the class: `SoundFin`, its `expand`, the value lemma on `amplify T B`, the three consumers, blueprint `def:finite-pair`, `lem:co-value-finite-pair`, `def:lidt-sound-fin`; `mipco_eq_core_of_lidtFin` keeps its text | C6a's files | 0.08–0.15k + blueprint | open |
 
 **The port (M)**, under `MIPRE/Background/LIDT/Co/`, mirroring the vendored LDT tree file by file,
@@ -118,12 +118,14 @@ norm balls is already vendored (`MvN/WOTCompact.lean:114`).
 - The summed semidefinite form is what every consumer of `SdpStatementWithSlackness` uses, and a
   near-maximizer does not suffice: an explicit counterexample in `L^∞[0, 1]` (report §5).
 - Order agreement: in a finite pair, `0 ≤ a` in `𝒜` iff `0 ≤ π(πA a)` (report §4, §5).
+- The algebra `B` (T4) exists in Lean: the twisted Pauli algebra on `ℓ²` of a countable group of
+  sign vectors is a `StdTracialAlgebra.{0}` with unital dyadic units, prototyped sorry-free; its
+  `StarOrderedRing` instance, the named risk of the design round, came from Mathlib's spectral
+  order without difficulty.
 - `CommutativityPoints` has no matrix-specific syntax and uses no swap symmetry, so it ports almost
   textually; the probe ratios were 0.25–0.65 on the base layer and about 0.9 on bridge proofs.
 
 **Not settled.**
-- **The algebra `B` (T4).** Unmeasured; its `StarOrderedRing` instance on a closed subalgebra is a
-  named risk.
 - **The vendored classical layer is not purely classical.** `Distribution.lean` imports
   `Quantum.FiniteMatrix` and defines the operator average used by every downstream directory, so
   the matrix layer stays in every port file's import closure and name collisions between ported
