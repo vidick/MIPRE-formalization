@@ -1032,8 +1032,11 @@ What remains is the hypothesis. Lin proves the commuting-operator soundness of q
 reduction, answer reduction and parallel repetition on tracially embeddable strategies, whose
 correlations are dense in $C_{qc}$ (Theorem~\ref{thm:tracial-density}), through the rounding
 of almost-synchronous correlations for balanced games, the rigidity of the Pauli basis test
-and the soundness of the low-individual-degree test in that setting~\cite{Lin23,Lin25};
-parallel repetition in the commuting-operator model is
+and the soundness of the low-individual-degree test for synchronous strategies~\cite{Lin23,Lin25}.
+That last soundness he cites rather than proves. The closest proved theorem is for a test with
+subcube pair questions in place of diagonal lines, and his proof of the version with several
+codewords is incomplete (\texttt{reports/lidt-co-audit.md}, Section~2). Parallel repetition in
+the commuting-operator model is
 Theorem~\ref{thm:direct-repetition-co}, and its verifier-level reading is
 Theorem~\ref{thm:parallel-repetition-co}. The commuting-operator
 \emph{completeness} of compression is never needed: the nested criterion asks the
@@ -1047,7 +1050,9 @@ Corollary~\ref{cor:mipco-from-stages}); and the Pauli basis test is sound there 
 low-individual-degree test is (Lemma~\ref{lem:qld-sound-co}). So what remains is one statement:
 the soundness of the seeded CL test (Theorem~\ref{thm:lidt-cl-soundness}) in the
 commuting-operator model (Definition~\ref{def:lidt-sound-in}), from which $\MIPco = \coRE$ follows
-(Corollary~\ref{cor:mipco-from-lidt}). Each stage, and the Pauli basis test, was proved by
+(Corollary~\ref{cor:mipco-from-lidt}). No source proves that statement for an arbitrary vector
+state. The audit \texttt{reports/lidt-co-audit.md} records what the literature does prove, and a
+weaker hypothesis that would suffice. Each stage, and the Pauli basis test, was proved by
 generalizing the existing analysis over the projective commuting-operator model of
 Section~\ref{sec:ds-mipco-projective} rather than by re-proving it, with the tensor-product
 strategies as an instance: the operator calculus (Remark~\ref{rem:model-calculus}),
