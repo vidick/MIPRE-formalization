@@ -183,6 +183,19 @@ theorem unit_of_norm_evec_eq_one {N : Type*} [Fintype N] {v : N → ℂ} (h : �
   rw [← inner_evec, inner_self_eq_norm_sq_to_K, h]
   simp
 
+/-- **A local isometry carries Born probabilities on any vector**: on the image of the vector,
+the images of the two operators have the Born probability the operators have on the vector. -/
+theorem bornProb_withState_W {𝒞' 𝒜' ℬ' 𝒞'' 𝒜'' ℬ'' : Type*} [Ring 𝒞'] [StarRing 𝒞']
+    [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜'] [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ']
+    [Ring 𝒞''] [StarRing 𝒞''] [Algebra ℂ 𝒞''] [Ring 𝒜''] [StarRing 𝒜''] [Algebra ℂ 𝒜'']
+    [Ring ℬ''] [StarRing ℬ''] [Algebra ℂ ℬ''] {N : BipartiteModel 𝒞' 𝒜' ℬ'}
+    {N' : BipartiteModel 𝒞'' 𝒜'' ℬ''} (Φ : BipartiteModel.LocalIsometry N N') (v : N.H)
+    (a : 𝒜') (b : ℬ') :
+    (N'.withState (Φ.W v)).bornProb (Φ.ΦA a) (Φ.ΦB b) = (N.withState v).bornProb a b := by
+  show (⟪Φ.W v, N'.π (N'.πA (Φ.ΦA a) * N'.πB (Φ.ΦB b)) (Φ.W v)⟫_ℂ).re
+    = (⟪v, N.π (N.πA a * N.πB b) v⟫_ℂ).re
+  rw [Φ.intertwine, LinearIsometry.inner_map_map]
+
 end Generic
 
 /-! ## The objects item 2 is about -/
@@ -352,21 +365,6 @@ theorem sum_bornProb_physVec_ge {ε : ℝ} (hfail : 1 - S.value ≤ ε) (hd : 1 
       (Mi.bornProb_physVec_pauli_bobMTilde W u a).symm)
   rw [hsum] at hdiag
   linarith
-
-/-! ### Conjugation by the swap unitaries, on any vector -/
-
-/-- **A local isometry carries Born probabilities on any vector**: on the image of the vector,
-the images of the two operators have the Born probability the operators have on the vector. -/
-theorem bornProb_withState_W {𝒞' 𝒜' ℬ' 𝒞'' 𝒜'' ℬ'' : Type*} [Ring 𝒞'] [StarRing 𝒞']
-    [Algebra ℂ 𝒞'] [Ring 𝒜'] [StarRing 𝒜'] [Algebra ℂ 𝒜'] [Ring ℬ'] [StarRing ℬ'] [Algebra ℂ ℬ']
-    [Ring 𝒞''] [StarRing 𝒞''] [Algebra ℂ 𝒞''] [Ring 𝒜''] [StarRing 𝒜''] [Algebra ℂ 𝒜'']
-    [Ring ℬ''] [StarRing ℬ''] [Algebra ℂ ℬ''] {N : BipartiteModel 𝒞' 𝒜' ℬ'}
-    {N' : BipartiteModel 𝒞'' 𝒜'' ℬ''} (Φ : BipartiteModel.LocalIsometry N N') (v : N.H)
-    (a : 𝒜') (b : ℬ') :
-    (N'.withState (Φ.W v)).bornProb (Φ.ΦA a) (Φ.ΦB b) = (N.withState v).bornProb a b := by
-  show (⟪Φ.W v, N'.π (N'.πA (Φ.ΦA a) * N'.πB (Φ.ΦB b)) (Φ.W v)⟫_ℂ).re
-    = (⟪v, N.π (N.πA a * N.πB b) v⟫_ℂ).re
-  rw [Φ.intertwine, LinearIsometry.inner_map_map]
 
 set_option maxHeartbeats 1000000 in
 /-- **A fibred agreement, carried from the physical state to a nearby one.** On a state `Δ`
@@ -595,25 +593,6 @@ theorem sum_snorm_sq_alice_le {ε : ℝ} (hfail : 1 - S.value ≤ ε) (hd : 1 �
 
 /-! ### Bob's half, through the mirror -/
 
-/-- The exchange of the blocks carries the first player's operators of the physical model of the
-exchanged players to the second player's of the physical model. -/
-theorem blockSwap_π_πA (w : (phys (Anc F m) F m d M.swap Mi.K).H)
-    (X : Matrix (PhysReg (Anc F m) F m d Mi.K) (PhysReg (Anc F m) F m d Mi.K) ℬ) :
-    (blockSwapIso (Anc F m) F m d M Mi.K).W
-        ((phys (Anc F m) F m d M.swap Mi.K).π ((phys (Anc F m) F m d M.swap Mi.K).πA X) w)
-      = (phys (Anc F m) F m d M Mi.K).π ((phys (Anc F m) F m d M Mi.K).πB X)
-        ((blockSwapIso (Anc F m) F m d M Mi.K).W w) :=
-  ((blockSwapIso (Anc F m) F m d M Mi.K).intertwineA X w).symm
-
-/-- And the second player's to the first player's. -/
-theorem blockSwap_π_πB (w : (phys (Anc F m) F m d M.swap Mi.K).H)
-    (Y : Matrix (PhysReg (Anc F m) F m d Mi.K) (PhysReg (Anc F m) F m d Mi.K) 𝒜) :
-    (blockSwapIso (Anc F m) F m d M Mi.K).W
-        ((phys (Anc F m) F m d M.swap Mi.K).π ((phys (Anc F m) F m d M.swap Mi.K).πB Y) w)
-      = (phys (Anc F m) F m d M Mi.K).π ((phys (Anc F m) F m d M Mi.K).πA Y)
-        ((blockSwapIso (Anc F m) F m d M Mi.K).W w) :=
-  ((blockSwapIso (Anc F m) F m d M Mi.K).intertwineB Y w).symm
-
 /-- **The mirror's swapped physical state is the swapped physical state**, carried by the
 exchange of the blocks of registers: the mirror's swap unitaries are Bob's and Alice's in the
 other order. -/
@@ -624,10 +603,17 @@ theorem mirror_physSwap_mulVec :
             * (phys (Anc F m) F m d M.swap Mi.K).πB Mi.aliceSwap)
           (phys (Anc F m) F m d M.swap Mi.K).ψ)
       = (phys (Anc F m) F m d M Mi.K).π Mi.physSwap (phys (Anc F m) F m d M Mi.K).ψ := by
-  rw [π_mul_apply (phys (Anc F m) F m d M.swap Mi.K).toStateModel, Mi.blockSwap_π_πA,
-    Mi.blockSwap_π_πB, (blockSwapIso (Anc F m) F m d M Mi.K).W_ψ,
-    ← π_mul_apply (phys (Anc F m) F m d M Mi.K).toStateModel, physSwap,
-    ((phys (Anc F m) F m d M Mi.K).commute Mi.aliceSwap Mi.bobSwap).eq]
+  have h := (blockSwapIso (Anc F m) F m d M Mi.K).toLocalIsometry.intertwine Mi.bobSwap
+    Mi.aliceSwap (phys (Anc F m) F m d M.swap Mi.K).ψ
+  rw [BipartiteModel.Iso.toLocalIsometry_W, BipartiteModel.Iso.toLocalIsometry_W,
+    (blockSwapIso (Anc F m) F m d M Mi.K).W_ψ] at h
+  rw [← h]
+  show (phys (Anc F m) F m d M Mi.K).π ((phys (Anc F m) F m d M Mi.K).πB Mi.bobSwap
+      * (phys (Anc F m) F m d M Mi.K).πA Mi.aliceSwap) (phys (Anc F m) F m d M Mi.K).ψ
+    = (phys (Anc F m) F m d M Mi.K).π ((phys (Anc F m) F m d M Mi.K).πA Mi.aliceSwap
+      * (phys (Anc F m) F m d M Mi.K).πB Mi.bobSwap) (phys (Anc F m) F m d M Mi.K).ψ
+  exact congrArg (fun T => (phys (Anc F m) F m d M Mi.K).π T (phys (Anc F m) F m d M Mi.K).ψ)
+    ((phys (Anc F m) F m d M Mi.K).commute Mi.aliceSwap Mi.bobSwap).eq.symm
 
 /-- A state norm of the first player of the physical model of the exchanged players, on any
 vector, is the second player's on the physical model, on the exchanged vector. -/
@@ -638,9 +624,9 @@ theorem snorm_withState_blockSwap (w : (phys (Anc F m) F m d M.swap Mi.K).H)
       = ((phys (Anc F m) F m d M Mi.K).withState ((blockSwapIso (Anc F m) F m d M Mi.K).W w)).snorm
         ((phys (Anc F m) F m d M Mi.K).πB X) := by
   show ‖(phys (Anc F m) F m d M.swap Mi.K).π ((phys (Anc F m) F m d M.swap Mi.K).πA X) w‖
-    = ‖(phys (Anc F m) F m d M Mi.K).π ((phys (Anc F m) F m d M Mi.K).πB X)
-        ((blockSwapIso (Anc F m) F m d M Mi.K).W w)‖
-  rw [← Mi.blockSwap_π_πA, LinearIsometryEquiv.norm_map]
+    = ‖((phys (Anc F m) F m d M Mi.K).swap).π (((phys (Anc F m) F m d M Mi.K).swap).πA
+        ((blockSwapIso (Anc F m) F m d M Mi.K).ΦA X)) ((blockSwapIso (Anc F m) F m d M Mi.K).W w)‖
+  rw [(blockSwapIso (Anc F m) F m d M Mi.K).intertwineA, LinearIsometryEquiv.norm_map]
 
 set_option maxHeartbeats 4000000 in
 /-- **Item 2 of `lem:qld-swap`, Bob's half, relative to the same auxiliary state.** Alice's half
@@ -665,27 +651,41 @@ theorem sum_snorm_sq_bob_le {ε : ℝ} (hfail : 1 - S.value ≤ ε) (hd : 1 ≤ 
       (blockSwapIso (Anc F m) F m d M Mi.K).W Δ' = Mi.physAux aux :=
     ⟨(blockSwapIso (Anc F m) F m d M Mi.K).W.symm (Mi.physAux aux),
       LinearIsometryEquiv.apply_symm_apply _ _⟩
-  have hΔn : ‖Δ'‖ = 1 := by
-    rw [← LinearIsometryEquiv.norm_map (blockSwapIso (Anc F m) F m d M Mi.K).W, hΔ',
-      Mi.norm_evec_physAux, haux]
+  have hΔn : ‖Δ'‖ = 1 :=
+    calc ‖Δ'‖ = ‖(blockSwapIso (Anc F m) F m d M Mi.K).W Δ'‖ :=
+          ((blockSwapIso (Anc F m) F m d M Mi.K).W.norm_map Δ').symm
+      _ = ‖Mi.physAux aux‖ := congrArg (fun x => ‖x‖) hΔ'
+      _ = 1 := by rw [Mi.norm_evec_physAux, haux]
   have hr' : ‖(phys (Anc F m) F m d M.swap Mi.K).π
         ((phys (Anc F m) F m d M.swap Mi.K).πA Mi.bobSwap
           * (phys (Anc F m) F m d M.swap Mi.K).πB Mi.aliceSwap)
         (phys (Anc F m) F m d M.swap Mi.K).ψ - Δ'‖ ≤ Real.sqrt η := by
-    rw [← LinearIsometryEquiv.norm_map (blockSwapIso (Anc F m) F m d M Mi.K).W,
-      LinearIsometryEquiv.map_sub, Mi.mirror_physSwap_mulVec, hΔ']
-    exact hr
+    have e : (blockSwapIso (Anc F m) F m d M Mi.K).W ((phys (Anc F m) F m d M.swap Mi.K).π
+          ((phys (Anc F m) F m d M.swap Mi.K).πA Mi.bobSwap
+            * (phys (Anc F m) F m d M.swap Mi.K).πB Mi.aliceSwap)
+          (phys (Anc F m) F m d M.swap Mi.K).ψ - Δ')
+        = (phys (Anc F m) F m d M Mi.K).π Mi.physSwap (phys (Anc F m) F m d M Mi.K).ψ
+          - Mi.physAux aux := by
+      rw [LinearIsometryEquiv.map_sub, Mi.mirror_physSwap_mulVec, hΔ']
+      rfl
+    calc _ = ‖(blockSwapIso (Anc F m) F m d M Mi.K).W ((phys (Anc F m) F m d M.swap Mi.K).π
+            ((phys (Anc F m) F m d M.swap Mi.K).πA Mi.bobSwap
+              * (phys (Anc F m) F m d M.swap Mi.K).πB Mi.aliceSwap)
+            (phys (Anc F m) F m d M.swap Mi.K).ψ - Δ')‖ :=
+          ((blockSwapIso (Anc F m) F m d M Mi.K).W.norm_map _).symm
+      _ = ‖(phys (Anc F m) F m d M Mi.K).π Mi.physSwap (phys (Anc F m) F m d M Mi.K).ψ
+            - Mi.physAux aux‖ := congrArg (fun x => ‖x‖) e
+      _ ≤ Real.sqrt η := hr
   have hmove : ∀ (W : Bas) (h : Anc F m),
       (phys (Anc F m) F m d M.swap Mi.K).π
           ((phys (Anc F m) F m d M.swap Mi.K).πA (Mi.bobTau W h)) Δ'
         = (phys (Anc F m) F m d M.swap Mi.K).π
           ((phys (Anc F m) F m d M.swap Mi.K).πB (Mi.aliceTau W h)) Δ' := by
     intro W h
-    have e1 := Mi.blockSwap_π_πA Δ' (Mi.bobTau W h)
-    have e2 := Mi.blockSwap_π_πB Δ' (Mi.aliceTau W h)
-    rw [hΔ'] at e1 e2
-    exact (blockSwapIso (Anc F m) F m d M Mi.K).W.injective
-      (e1.trans ((Mi.aliceTau_mulVec_physAux aux W h).symm.trans e2.symm))
+    apply (blockSwapIso (Anc F m) F m d M Mi.K).W.injective
+    rw [← (blockSwapIso (Anc F m) F m d M Mi.K).intertwineA,
+      ← (blockSwapIso (Anc F m) F m d M Mi.K).intertwineB, hΔ']
+    exact (Mi.aliceTau_mulVec_physAux aux W h).symm
   have hcore := Mi.mirror.sum_snorm_sq_aliceConjPauli_le (povmValue_swapped_le hfail) hd hδ hε
     Δ' hΔn hmove hr' W
   have hcore' : ∑ h : Anc F m, ((phys (Anc F m) F m d M.swap Mi.K).withState Δ').snorm
