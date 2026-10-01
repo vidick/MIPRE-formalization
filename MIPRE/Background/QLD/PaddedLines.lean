@@ -262,14 +262,15 @@ padded line measurement inherits it through `degLE_padCombine_aline`. -/
 section AxisSupport
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {hm : m ∣ Fintype.card F} {d' : Type} [Fintype d'] [DecidableEq d']
+  [NeZero m] {hm : m ∣ Fintype.card F}
 
 /-- **The strategy's axis-line reading of a legally supported strategy is supported on degree at
 most `d`.** -/
-theorem lineAnsPOVM_aline_eq_zero_of_not_degLE {n : ℕ} {M : Question F m → POVM (Answer F m d) d'}
-    (hleg : LegalSupport M) (W : Bas) (c : Content F m) {f : LinePoly F n} (hf : ¬ DegLE f d) :
-    ((lineAnsPOVM n hm M (.aline W) c).mats f).val = 0 := by
-  rw [lineAnsPOVM, POVM.map_mats]
+theorem lineAnsPOVM_aline_eq_zero_of_not_degLE {R : Type*} [Ring R] [StarRing R] [PartialOrder R]
+    [StarOrderedRing R] {n : ℕ} {S : Question F m → POVMIn (Answer F m d) R}
+    (hleg : LegalSupport S) (W : Bas) (c : Content F m) {f : LinePoly F n} (hf : ¬ DegLE f d) :
+    (lineAnsPOVM n hm S (.aline W) c).op f = 0 := by
+  rw [lineAnsPOVM, POVMIn.map_op]
   refine Finset.sum_eq_zero fun a ha => ?_
   have hfa : rdLine n a = f := (Finset.mem_filter.mp ha).2
   by_cases hok : (c.question hm (.aline W)).fmtOk a = true
@@ -280,17 +281,20 @@ theorem lineAnsPOVM_aline_eq_zero_of_not_degLE {n : ℕ} {M : Question F m → P
     exact degLE_padLine p
   · exact hleg _ _ (Bool.eq_false_iff.mpr hok)
 
+variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] [PartialOrder R]
+  [StarOrderedRing R] [StarProper R]
+
 /-- **The support half of `lem:qld-axis-degree`, at the expanded measurement**: for `d ≥ 1` and a
 legally supported strategy, the expanded axis-parallel line measurement has no element off the
 polynomials of degree at most `d`. -/
 theorem hatLinePOVM_aline_eq_zero_of_not_degLE (hd : 1 ≤ d) {n : ℕ}
-    {M : Question F m → POVM (Answer F m d) d'} (hleg : LegalSupport M) (W : Bas)
+    {S : Question F m → POVMIn (Answer F m d) R} (hleg : LegalSupport S) (W : Bas)
     (c : Content F m) {f : LinePoly F n} (hf : ¬ DegLE f d) :
-    ((hatLinePOVM n hm M W (.aline W) (abaseOf hm W) (dirOf hm) c).mats f).val = 0 := by
-  rw [hatLinePOVM, POVM.map_mats]
+    (hatLinePOVM n hm S W (.aline W) (abaseOf hm W) (dirOf hm) c).op f = 0 := by
+  rw [hatLinePOVM, POVMIn.map_op]
   refine Finset.sum_eq_zero fun p hp => ?_
   have hpf : p.1 + p.2 = f := (Finset.mem_filter.mp hp).2
-  rw [POVM.kron_mats]
+  rw [kronIn_op]
   by_cases h1 : DegLE p.1 d
   · have h2 : ¬ DegLE p.2 1 := fun h2 => hf (hpf ▸ DegLE.add h1 (h2.mono hd))
     have hanc : ((synLinePOVM n W (abaseOf hm W c) (dirOf hm c)).mats p.2).val = 0 := by
@@ -300,26 +304,24 @@ theorem hatLinePOVM_aline_eq_zero_of_not_degLE (hd : 1 ≤ d) {n : ℕ}
       apply h2
       rw [← (Finset.mem_filter.mp hh).2]
       exact degLE_lineCoeffs_aline (abaseOf hm W c) (MIPRE.LIDT.CL.chi hm c.s) h
-    rw [hanc, Matrix.kronecker_zero]
-  · rw [lineAnsPOVM_aline_eq_zero_of_not_degLE hleg W c h1, Matrix.zero_kronecker]
+    rw [hanc, smulKron_zero_right]
+  · rw [lineAnsPOVM_aline_eq_zero_of_not_degLE hleg W c h1, smulKron_zero_left]
 
 /-- The same, for the axis-parallel presentation's line measurement. -/
 theorem lineMats_aPres_eq_zero_of_not_degLE (hd : 1 ≤ d)
-    {M : Question F m → POVM (Answer F m d) d'} (hleg : LegalSupport M) (W : Bas)
+    {S : Question F m → POVMIn (Answer F m d) R} (hleg : LegalSupport S) (W : Bas)
     (c : Content F m) {f : LinePoly F (m * d)} (hf : ¬ DegLE f d) :
-    (aPres hm W).lineMats d M c f = 0 :=
+    (aPres hm W).lineMats d S c f = 0 :=
   hatLinePOVM_aline_eq_zero_of_not_degLE hd hleg W c hf
-
-variable {dB : Type} [Fintype dB] [DecidableEq dB]
 
 /-- **The support half of `lem:qld-axis-degree`, at the padded line measurement**: on an
 axis-parallel padded line, the padded line measurement of a legally supported strategy has no
 element off the polynomials of degree at most `d`. This is what makes its outcome a legal answer to
 an axis-parallel line question of the seeded test at `(q, 4m, d, 1)`. -/
 theorem padLineMats_aline_eq_zero_of_not_degLE (hm4 : 4 * m ∣ Fintype.card F) (hd : 1 ≤ d)
-    {M : Question F m → POVM (Answer F m d) dB} (hleg : LegalSupport M) (P : LPData F (4 * m))
+    {S : Question F m → POVMIn (Answer F m d) R} (hleg : LegalSupport S) (P : LPData F (4 * m))
     {f : LinePoly F (m * d + 1)} (hf : ¬ DegLE f d) :
-    padLineMats hm4 .aline (aPres hm .X) (aPres hm .Z) M P f = 0 := by
+    padLineMats hm4 .aline (aPres hm .X) (aPres hm .Z) S P f = 0 := by
   rw [padLineMats]
   refine smul_eq_zero_of_right _
     (Finset.sum_eq_zero fun e _ => Finset.sum_eq_zero fun q hq => ?_)
@@ -328,8 +330,8 @@ theorem padLineMats_aline_eq_zero_of_not_degLE (hm4 : 4 * m ∣ Fintype.card F) 
   by_cases hX : DegLE q.1 d
   · have hZ : ¬ DegLE q.2 d := fun hZ =>
       hf (hqf ▸ degLE_padCombine_aline hm4 hm hd P e.1 e.2 q hX hZ)
-    rw [lineMats_aPres_eq_zero_of_not_degLE hd hleg .Z _ hZ, mul_zero, zero_mul, aOp_zero]
-  · rw [lineMats_aPres_eq_zero_of_not_degLE hd hleg .X _ hX, zero_mul, zero_mul, aOp_zero]
+    rw [lineMats_aPres_eq_zero_of_not_degLE hd hleg .Z _ hZ, mul_zero, zero_mul]
+  · rw [lineMats_aPres_eq_zero_of_not_degLE hd hleg .X _ hX, zero_mul, zero_mul]
 
 end AxisSupport
 
@@ -338,114 +340,108 @@ end AxisSupport
 section Main
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}
-  {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
+  [NeZero m] {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+  [StarProper ℬ] {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {PA : Question F m → POVMIn (Answer F m d) 𝒜} {PB : Question F m → POVMIn (Answer F m d) ℬ}
   {ε : ℝ}
 
 set_option maxHeartbeats 1600000 in
 /-- **`lem:qld-padded-lines`, the consistency bound.** On the padded line-point law, at every padded
-seed and line type, the combined point measurement read along `(alpha, beta)` at the sampled point
-agrees with the pasted line measurement coarse-grained by the combining map, up to
-`m^2 * delta_P`.
+seed and line type, the first player's combined point measurement --- the sandwich of the expanded
+point measurements, read along `(alpha, beta)` at the sampled point --- agrees in the expanded
+model `M.reg (Anc F m)` with the second player's pasted line measurement coarse-grained by the
+combining map, up to `m^2 * delta_P`.
 
 The proof is the coarse-graining step and then the two domination lemmas: agreement only increases
 under a common coarse-graining, the padded law is at most `m^2` times the product law
 (`avgSub_le_mul_avgAll`), and `(alpha, beta)` is uniform and independent of both sublines
 (`avgSubAB_le_of_forall`). The paper's Claims 17-1 to 17-3 are not used; see
 `reports/padded-lines-product-law.md`. -/
-theorem padded_lines_consistency (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+theorem padded_lines_consistency (hm4 : 4 * m ∣ Fintype.card F) (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op)
     (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
     (hfacX : FactorsX PX) (hfacZ : FactorsZ PZ)
     (hX1 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),
-        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineMats d MA c f)
-          (PX.lineMats d MB c f) ≤ 172 * ε)
+        (M.reg (Anc F m)).xSqNorm (PX.lineMats d PA c f) (PX.lineMats d PB c f) ≤ 172 * ε)
     (hX2 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
-        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA .X (c.pt .X) a)
-          (PX.lineEvalMats d MB c a) ≤ 172 * ε)
+        (M.reg (Anc F m)).xSqNorm (hatMats PA .X (c.pt .X) a) (PX.lineEvalMats d PB c a)
+          ≤ 172 * ε)
     (hZ2 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ b : F,
-        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA .Z (c.pt .Z) b)
-          (PZ.lineEvalMats d MB c b) ≤ 172 * ε)
+        (M.reg (Anc F m)).xSqNorm (hatMats PA .Z (c.pt .Z) b) (PZ.lineEvalMats d PB c b)
+          ≤ 172 * ε)
     {εc : ℝ} (hcoll : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
       collProb PX d c ≤ εc) (ty : CL.Ty) (s : F) :
-    ∃ QA : LPData F m × LPData F m → F × F →
-        Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ,
-      (∀ p, IsPVM (QA p))
-      ∧ (∀ p r, (ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))ᴴ
-            * (QA p r * ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))
-          = sand (hatMats MA .X p.1.pt) (hatMats MA .Z p.2.pt) r)
-      ∧ 1 - avgSubAB hm4 hm ty s (fun a b cX cZ =>
-            ∑ v : F, bornProb (extHat (m := m) ψ) (ptComb (QA (cX, cZ)) a b v)
-              (lineComb PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v))
-        ≤ (m : ℝ) * (m : ℝ) * deltaPairs ε εc := by
+    1 - avgSubAB hm4 hm ty s (fun a b cX cZ =>
+          ∑ v : F, (M.reg (Anc F m)).bornProb
+            (ptComb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt)) a b v)
+            (lineComb PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v))
+      ≤ (m : ℝ) * (m : ℝ) * deltaPairs ε εc := by
   classical
-  obtain ⟨QA, hPA, hkA, hbound⟩ := pairs_of_lines_prod_of_items hψ hfail hprojA hprojB PX PZ
-    hfacX hfacZ hX1 hX2 hZ2 hcoll
-  refine ⟨QA, hPA, hkA, ?_⟩
-  have hunit : star (extHat (m := m) ψ) ⬝ᵥ (extHat (m := m) ψ) = 1 :=
-    extVec2_unit (hatVec_unit hψ) ((0 : F), (0 : F)) ((0 : F), (0 : F))
+  set N := M.reg (Anc F m) with hN
+  have hbound := pairs_of_lines_prod_of_items hM hfail hPA hPB PX PZ hfacX hfacZ hX1 hX2 hZ2 hcoll
+  have hunit : ‖N.ψ‖ = 1 := hatVec_unit hM
+  -- the first player's sandwich is a POVM
+  have hQnn : ∀ (p : LPData F m × LPData F m) (r : F × F),
+      0 ≤ sand (hatMats PA .X p.1.pt) (hatMats PA .Z p.2.pt) r := fun p r => by
+    rw [(isPVM_hatMats hPA .X p.1.pt).sand_eq_gram (isPVM_hatMats hPA .Z p.2.pt)]
+    exact star_mul_self_nonneg _
+  have hQsum : ∀ p : LPData F m × LPData F m,
+      ∑ r : F × F, sand (hatMats PA .X p.1.pt) (hatMats PA .Z p.2.pt) r = 1 := fun p =>
+    (isPVM_hatMats hPA .X p.1.pt).sum_sand (isPVM_hatMats hPA .Z p.2.pt)
   -- the product-law bound on the fine agreement, `pasteFib` being the filter sum by definition
   have hfineb : 1 - avgAll (fun cX : LPData F m => avgAll fun cZ : LPData F m =>
-        ∑ r : F × F, bornProb (extHat (m := m) ψ) (QA (cX, cZ) r)
-          (pasteFib PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r))
+        ∑ r : F × F, N.bornProb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt) r)
+          (pasteFib PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r))
       ≤ deltaPairs ε εc := by
     rw [avgAll_prod_eq_uniform]
     exact hbound
   -- every fine agreement is at most one
-  have hQpsd : ∀ (p : LPData F m × LPData F m) (r : F × F), (QA p r).PosSemidef :=
-    fun p r => (hPA p).posSemidef r
-  have hTpsd : ∀ (p : LPData F m × LPData F m) (r : F × F),
-      (pasteFib PX PZ d MB (pairCX p) (pairCZ p) r).PosSemidef :=
-    fun p r => posSemidef_pasteFib hprojB PX PZ (pairCX p) (pairCZ p) r
-  have hTsum : ∀ p : LPData F m × LPData F m,
-      ∑ r : F × F, pasteFib PX PZ d MB (pairCX p) (pairCZ p) r = 1 :=
-    fun p => sum_pasteFib hprojB PX PZ (pairCX p) (pairCZ p)
   have hfine1 : ∀ p : LPData F m × LPData F m,
-      (∑ r : F × F, bornProb (extHat (m := m) ψ) (QA p r)
-        (pasteFib PX PZ d MB (pairCX p) (pairCZ p) r)) ≤ 1 := fun p =>
-    sum_bornProb_diag_le_one (ι := F × F) hunit (QA p)
-      (pasteFib PX PZ d MB (pairCX p) (pairCZ p))
-      (hQpsd p) (hTpsd p) (hPA p).sum_eq_one (hTsum p)
+      (∑ r : F × F, N.bornProb (sand (hatMats PA .X p.1.pt) (hatMats PA .Z p.2.pt) r)
+        (pasteFib PX PZ d PB (pairCX p) (pairCZ p) r)) ≤ 1 := fun p =>
+    sum_bornProb_diag_le_one (ι := F × F) hunit _ _ (hQnn p)
+      (fun r => posSemidef_pasteFib hPB PX PZ (pairCX p) (pairCZ p) r) (hQsum p)
+      (sum_pasteFib hPB PX PZ (pairCX p) (pairCZ p))
   -- coarse-graining only increases agreement
   have hcoarse : ∀ (a b : F) (p : LPData F m × LPData F m),
-      (∑ r : F × F, bornProb (extHat (m := m) ψ) (QA p r)
-          (pasteFib PX PZ d MB (pairCX p) (pairCZ p) r))
-        ≤ ∑ v : F, bornProb (extHat (m := m) ψ) (ptComb (QA p) a b v)
-            (lineComb PX PZ d MB (pairCX p) (pairCZ p) a b v) := by
+      (∑ r : F × F, N.bornProb (sand (hatMats PA .X p.1.pt) (hatMats PA .Z p.2.pt) r)
+          (pasteFib PX PZ d PB (pairCX p) (pairCZ p) r))
+        ≤ ∑ v : F, N.bornProb (ptComb (sand (hatMats PA .X p.1.pt) (hatMats PA .Z p.2.pt)) a b v)
+            (lineComb PX PZ d PB (pairCX p) (pairCZ p) a b v) := by
     intro a b p
-    refine le_trans (sum_bornProb_le_fibre (ι := F × F) (κ := F) (extHat (m := m) ψ) (QA p)
-      (pasteFib PX PZ d MB (pairCX p) (pairCZ p)) (fun r => (hPA p).posSemidef r)
-      (fun r => posSemidef_pasteFib hprojB PX PZ _ _ r)
+    refine le_trans (sum_bornProb_le_fibre (ι := F × F) (κ := F) N _
+      (pasteFib PX PZ d PB (pairCX p) (pairCZ p)) (hQnn p)
+      (fun r => posSemidef_pasteFib hPB PX PZ _ _ r)
       (fun r : F × F => a * r.1 + b * r.2)) (le_of_eq (Finset.sum_congr rfl fun v _ => ?_))
     rw [ptComb, lineComb_eq_sum_pasteFib]
   -- the deficit of the fine agreement, on the product law
   have hinner : ∀ cX : LPData F m,
       avgAll (fun cZ : LPData F m => 1 - ∑ r : F × F,
-          bornProb (extHat (m := m) ψ) (QA (cX, cZ) r)
-            (pasteFib PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r))
+          N.bornProb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt) r)
+            (pasteFib PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r))
         = 1 - avgAll (fun cZ : LPData F m => ∑ r : F × F,
-          bornProb (extHat (m := m) ψ) (QA (cX, cZ) r)
-            (pasteFib PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r)) := fun cX => by
+          N.bornProb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt) r)
+            (pasteFib PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r)) := fun cX => by
     rw [avgAll_sub (fun _ : LPData F m => (1 : ℝ)), avgAll_one]
   have houter : avgAll (fun cX : LPData F m => avgAll fun cZ : LPData F m =>
-        1 - ∑ r : F × F, bornProb (extHat (m := m) ψ) (QA (cX, cZ) r)
-          (pasteFib PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r))
+        1 - ∑ r : F × F, N.bornProb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt) r)
+          (pasteFib PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r))
       = 1 - avgAll (fun cX : LPData F m => avgAll fun cZ : LPData F m =>
-        ∑ r : F × F, bornProb (extHat (m := m) ψ) (QA (cX, cZ) r)
-          (pasteFib PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r)) := by
+        ∑ r : F × F, N.bornProb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt) r)
+          (pasteFib PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r)) := by
     rw [congrArg avgAll (funext hinner), avgAll_sub (fun _ : LPData F m => (1 : ℝ)), avgAll_one]
   -- the padded law, at each fixed `(alpha, beta)`
   have hstep : ∀ a b : F, avgSub hm4 hm ty s (fun cX cZ =>
-        1 - ∑ v : F, bornProb (extHat (m := m) ψ) (ptComb (QA (cX, cZ)) a b v)
-          (lineComb PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v))
+        1 - ∑ v : F, N.bornProb (ptComb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt)) a b v)
+          (lineComb PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v))
       ≤ (m : ℝ) * (m : ℝ) * deltaPairs ε εc := by
     intro a b
     refine le_trans (avgSub_mono hm4 hm ty s (g' := fun cX cZ =>
-      1 - ∑ r : F × F, bornProb (extHat (m := m) ψ) (QA (cX, cZ) r)
-        (pasteFib PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r)) fun cX cZ => by
+      1 - ∑ r : F × F, N.bornProb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt) r)
+        (pasteFib PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) r)) fun cX cZ => by
       have h := hcoarse a b (cX, cZ)
       linarith) ?_
     refine le_trans (avgSub_le_mul_avgAll hm4 hm ty s fun cX cZ => by
@@ -457,85 +453,74 @@ theorem padded_lines_consistency (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ
   -- and back to the joint law
   have hsub := avgSubAB_sub hm4 hm ty s (fun _ _ _ _ => (1 : ℝ))
     (fun (a b : F) (cX cZ : LPData F m) => ∑ v : F,
-      bornProb (extHat (m := m) ψ) (ptComb (QA (cX, cZ)) a b v)
-        (lineComb PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v))
+      N.bornProb (ptComb (sand (hatMats PA .X cX.pt) (hatMats PA .Z cZ.pt)) a b v)
+        (lineComb PX PZ d PB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v))
   rw [avgSubAB_one] at hsub
   have hle := avgSubAB_le_of_forall hm4 hm ty s hstep
   linarith [hsub, hle]
 
 /-! ### The other register version
 
-The paper's `lem:qld-4-13` asserts the relation in both orientations. The second is the first applied
-to the swapped strategy on the swapped state, read back through `extHat_swapVec` and
-`bornProb_swapVec` --- the route `Swap.lean` takes for the expansion stage's point items. The two
-mirrored inputs are `lem:qld-expanded-lines`' second item with the players exchanged. -/
-
-theorem extHat_swapVec (ψ : dA × dB → ℂ) :
-    extHat (F := F) (m := m) (swapVec ψ) = swapVec (extHat (m := m) ψ) := by
-  rw [extHat, extHat, hatVec_swapVec, extVec2_swapVec]
+The paper's `lem:qld-4-13` asserts the relation in both orientations. The second is the first
+applied to the exchanged model `M.swap`, with the two strategies exchanged, read back through
+`hatVec_swapVec_xSqNorm` and `hatVec_swapVec_bornProb` --- the route `Swap.lean` takes for the
+expansion stage's point items. The two mirrored inputs are `lem:qld-expanded-lines`' second item
+with the players exchanged. -/
 
 set_option maxHeartbeats 1600000 in
-/-- **`lem:qld-padded-lines`, the consistency bound in the other register version**: the line
-measurement on Alice's registers against the padded point measurement on Bob's. -/
-theorem padded_lines_consistency_swap (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))
+/-- **`lem:qld-padded-lines`, the consistency bound in the other register version**: the first
+player's pasted line measurement against the second player's combined point measurement, in the
+expanded model. -/
+theorem padded_lines_consistency_swap (hm4 : 4 * m ∣ Fintype.card F) (hM : ‖M.ψ‖ = 1)
+    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
+    (hPA : ∀ q, IsPVMIn (PA q).op) (hPB : ∀ q, IsPVMIn (PB q).op)
     (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)
     (hfacX : FactorsX PX) (hfacZ : FactorsZ PZ)
     (hX1 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),
-        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineMats d MA c f)
-          (PX.lineMats d MB c f) ≤ 172 * ε)
+        (M.reg (Anc F m)).xSqNorm (PX.lineMats d PA c f) (PX.lineMats d PB c f) ≤ 172 * ε)
     (hX2' : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
-        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineEvalMats d MA c a)
-          (hatMats MB .X (c.pt .X) a) ≤ 172 * ε)
+        (M.reg (Anc F m)).xSqNorm (PX.lineEvalMats d PA c a) (hatMats PB .X (c.pt .X) a)
+          ≤ 172 * ε)
     (hZ2' : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ b : F,
-        xSqNorm (hatVec (F := F) (m := m) ψ) (PZ.lineEvalMats d MA c b)
-          (hatMats MB .Z (c.pt .Z) b) ≤ 172 * ε)
+        (M.reg (Anc F m)).xSqNorm (PZ.lineEvalMats d PA c b) (hatMats PB .Z (c.pt .Z) b)
+          ≤ 172 * ε)
     {εc : ℝ} (hcoll : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *
       collProb PX d c ≤ εc) (ty : CL.Ty) (s : F) :
-    ∃ QB : LPData F m × LPData F m → F × F →
-        Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ,
-      (∀ p, IsPVM (QB p))
-      ∧ (∀ p r, (ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))ᴴ
-            * (QB p r * ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))
-          = sand (hatMats MB .X p.1.pt) (hatMats MB .Z p.2.pt) r)
-      ∧ 1 - avgSubAB hm4 hm ty s (fun a b cX cZ =>
-            ∑ v : F, bornProb (extHat (m := m) ψ)
-              (lineComb PX PZ d MA (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v)
-              (ptComb (QB (cX, cZ)) a b v))
-        ≤ (m : ℝ) * (m : ℝ) * deltaPairs ε εc := by
+    1 - avgSubAB hm4 hm ty s (fun a b cX cZ =>
+          ∑ v : F, (M.reg (Anc F m)).bornProb
+            (lineComb PX PZ d PA (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v)
+            (ptComb (sand (hatMats PB .X cX.pt) (hatMats PB .Z cZ.pt)) a b v))
+      ≤ (m : ℝ) * (m : ℝ) * deltaPairs ε εc := by
   classical
-  -- the three inputs, on the swapped state
+  -- the three inputs, in the exchanged model
   have hX1sw : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),
-      xSqNorm (hatVec (F := F) (m := m) (swapVec ψ)) (PX.lineMats d MB c f)
-        (PX.lineMats d MA c f) ≤ 172 * ε := by
+      (M.swap.reg (Anc F m)).xSqNorm (PX.lineMats d PB c f) (PX.lineMats d PA c f)
+        ≤ 172 * ε := by
     refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ =>
       congrArg (fun t : ℝ => (Fintype.card (Content F m) : ℝ)⁻¹ * t)
         (Finset.sum_congr rfl fun f _ => ?_))) hX1
-    rw [hatVec_swapVec, xSqNorm_swapVec]
+    exact hatVec_swapVec_xSqNorm M _ _
   have hX2sw : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,
-      xSqNorm (hatVec (F := F) (m := m) (swapVec ψ)) (hatMats MB .X (c.pt .X) a)
-        (PX.lineEvalMats d MA c a) ≤ 172 * ε := by
+      (M.swap.reg (Anc F m)).xSqNorm (hatMats PB .X (c.pt .X) a) (PX.lineEvalMats d PA c a)
+        ≤ 172 * ε := by
     refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ =>
       congrArg (fun t : ℝ => (Fintype.card (Content F m) : ℝ)⁻¹ * t)
         (Finset.sum_congr rfl fun a _ => ?_))) hX2'
-    rw [hatVec_swapVec, xSqNorm_swapVec]
+    exact hatVec_swapVec_xSqNorm M _ _
   have hZ2sw : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ b : F,
-      xSqNorm (hatVec (F := F) (m := m) (swapVec ψ)) (hatMats MB .Z (c.pt .Z) b)
-        (PZ.lineEvalMats d MA c b) ≤ 172 * ε := by
+      (M.swap.reg (Anc F m)).xSqNorm (hatMats PB .Z (c.pt .Z) b) (PZ.lineEvalMats d PA c b)
+        ≤ 172 * ε := by
     refine le_trans (le_of_eq (Finset.sum_congr rfl fun c _ =>
       congrArg (fun t : ℝ => (Fintype.card (Content F m) : ℝ)⁻¹ * t)
         (Finset.sum_congr rfl fun b _ => ?_))) hZ2'
-    rw [hatVec_swapVec, xSqNorm_swapVec]
-  obtain ⟨QB, hPB, hkB, hb⟩ := padded_lines_consistency (MA := MB) (MB := MA) (ψ := swapVec ψ)
-    hm4 (swapVec_unit hψ) (povmValue_swapped_le hfail) hprojB hprojA PX PZ hfacX hfacZ
-    hX1sw hX2sw hZ2sw hcoll ty s
-  refine ⟨QB, hPB, hkB, le_trans (le_of_eq (congrArg (fun t : ℝ => 1 - t) ?_)) hb⟩
+    exact hatVec_swapVec_xSqNorm M _ _
+  have hb := padded_lines_consistency (M := M.swap) (PA := PB) (PB := PA) hm4 (swapVec_unit hM)
+    (povmValue_swapped_le hfail) hPB hPA PX PZ hfacX hfacZ hX1sw hX2sw hZ2sw hcoll ty s
+  refine le_trans (le_of_eq (congrArg (fun t : ℝ => 1 - t) ?_)) hb
   refine congrArg (avgSubAB hm4 hm ty s) ?_
   funext a b cX cZ
   refine Finset.sum_congr rfl fun v _ => ?_
-  rw [extHat_swapVec, bornProb_swapVec]
+  exact (hatVec_swapVec_bornProb M _ _).symm
 
 end Main
 
