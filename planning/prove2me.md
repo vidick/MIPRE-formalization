@@ -108,9 +108,10 @@ pin until the bump of 2026-09-28 (PR #237). Its parent, **`70cbf1c`** ("Rename t
 Palomar plan", 2026-09-28), is therefore on Lean `v4.33.0` / Mathlib `db584cd`, one
 toolchain-only commit behind the platform, and the compression closure at `70cbf1c` differs
 from `e2f4de6` only by the module headers, the dropped `private` markers and the
-`MIPRE.Tactics` bundle. So the upload source is `70cbf1c` and drift repair should be nil.
-Not yet checked: the closure has not been built against `0df444a` with `v4.33.1`. That is
-step 3 below, and the first thing to do.
+`MIPRE.Tactics` bundle. So the upload source is `70cbf1c` and drift repair is nil: **checked 2026-10-01** (step 3
+below), the closure builds unchanged against the platform's environment, with no errors and
+no warnings, and every headline declaration depends on `propext`, `Classical.choice` and
+`Quot.sound` only.
 
 ## Plan
 
@@ -122,11 +123,27 @@ step 3 below, and the first thing to do.
    (`module`, `public import` → `import`, `@[expose] public section` and its closing `end`),
    which the playbook's Phase 3 only half-covers ("strip the keyword `module` before the
    first `import`").
-3. **Build the closure against the platform pin**: a workspace with `lean-toolchain`
-   `v4.33.1` and `lakefile.lean` requiring Mathlib at `0df444a`, `lake exe cache get`, the 24
-   modules copied in, `lake build`. Expected: no fixes. Cloud sessions can do this
-   (`releases.lean-lang.org` and the Mathlib cache hosts are allowed; the Mathlib cache is a
-   multi-GB download against the session's disk allowance).
+3. **Build the closure against the platform pin.** Done 2026-10-01, in a cloud session, in
+   a scratch workspace outside the repository: the 23 modules of the closure at `70cbf1c`
+   (`git show 70cbf1c:<path>`; `MIPRE/Tactics.lean` did not exist yet), a `lakefile.toml`
+   with `autoImplicit = false` requiring Mathlib by git URL at `0df444a`, a `lake-manifest.json`
+   written by hand from Mathlib's own manifest at that commit (its eight dependencies marked
+   `inherited`, plus the Mathlib entry; `lake update` was not run), and Mathlib itself
+   fetched shallow (`git fetch --depth 1 origin 0df444a…`, 121 MB) into
+   `.lake/packages/mathlib` before Lake looked for it. The toolchain came from the GitHub
+   release asset `lean-4.33.1-linux.tar.zst` (570 MB), unpacked next to the workspace and put
+   first on `PATH`, since the cloud image has no `elan`. `lake exe cache get` restricted to
+   the closure's 16 Mathlib imports restored 1,278 files in 17 s (the file arguments are
+   resolved against the current directory, so they are written
+   `.lake/packages/mathlib/Mathlib/….lean`); the full Mathlib cache was not needed. Then
+   `lake build MIPRE`: **1,323 jobs, 27 modules of ours, 65 s, no errors, no warnings**, and
+   `#print axioms` on `recursive_compression`, `recursive_compression_halting`, the four
+   `compressibility_criterion*`, `exists_efficient_universal`, `exists_clocked_universal`,
+   `efficient_fixed_point` and `PolyTimeFun.smn` gives the three standard axioms for each.
+   Disk: about 2.5 GB in all. One Lake detail worth knowing: a `lean_lib` whose `roots` is
+   the single module `MIPRE.Foundations.Compression` does not claim its sibling imports as
+   local modules and fails with "object file … does not exist"; root the library at an
+   aggregator `MIPRE.lean` instead.
 4. **Extract and plan.** Run `extract_decl_graph.lean` and `extract_sketch_info.lean` over
    the closure; classify by the playbook's rules (node above 40 proof lines, or 11–40 with a
    promotion signal; inline helper otherwise; one `Definitions` bundle per source module with
