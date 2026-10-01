@@ -118,10 +118,10 @@ norm balls is already vendored (`MvN/WOTCompact.lean:114`).
 - The summed semidefinite form is what every consumer of `SdpStatementWithSlackness` uses, and a
   near-maximizer does not suffice: an explicit counterexample in `L^∞[0, 1]` (report §5).
 - Order agreement: in a finite pair, `0 ≤ a` in `𝒜` iff `0 ≤ π(πA a)` (report §4, §5).
-- The algebra `B` (T4) exists in Lean: the twisted Pauli algebra on `ℓ²` of a countable group of
-  sign vectors is a `StdTracialAlgebra.{0}` with unital dyadic units, prototyped sorry-free; its
-  `StarOrderedRing` instance, the named risk of the design round, came from Mathlib's spectral
-  order without difficulty.
+- The algebra `B` (T4) exists in Lean: the twisted Pauli algebra on `ℓ²(ℕ →₀ ℤ/2 × ℤ/2)` is a
+  `StdTracialAlgebra.{0}` with unital dyadic units, prototyped sorry-free. The `StarOrderedRing`
+  instance the design round named as a risk is not needed: `StdTracialAlgebra` asks only for a
+  ∗-algebra over `ℂ`, and the order lives on the model's algebras, not on `B.A`.
 - `CommutativityPoints` has no matrix-specific syntax and uses no swap symmetry, so it ports almost
   textually; the probe ratios were 0.25–0.65 on the base layer and about 0.9 on bridge proofs.
 
