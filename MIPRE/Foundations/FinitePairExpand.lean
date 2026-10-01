@@ -231,8 +231,8 @@ theorem IsFinitePair.expand (h : M.IsFinitePair) {α β : Type*} [Fintype α] [D
       rintro _ ⟨b, rfl⟩
       have hb := hT (diagonal fun _ => b)
       rwa [diagonal_map (map_zero _), liftRight_diagonal_const] at hb
-    have hreg : ∀ b b', Commute T (toCLM (liftRight (α := α) (single b b' (1 : M.H →L[ℂ] M.H))))
-        := by
+    have hreg :
+        ∀ b b', Commute T (toCLM (liftRight (α := α) (single b b' (1 : M.H →L[ℂ] M.H)))) := by
       intro b b'
       have hb := hT (single b b' 1)
       rwa [map_single, map_one] at hb
@@ -250,8 +250,8 @@ theorem IsFinitePair.expand (h : M.IsFinitePair) {α β : Type*} [Fintype α] [D
       rintro _ ⟨a, rfl⟩
       have ha := hT (diagonal fun _ => a)
       rwa [diagonal_map (map_zero _), liftLeft_diagonal_const] at ha
-    have hreg : ∀ a a', Commute T (toCLM (liftLeft (β := β) (single a a' (1 : M.H →L[ℂ] M.H))))
-        := by
+    have hreg :
+        ∀ a a', Commute T (toCLM (liftLeft (β := β) (single a a' (1 : M.H →L[ℂ] M.H)))) := by
       intro a a'
       have ha := hT (single a a' 1)
       rwa [map_single, map_one] at ha

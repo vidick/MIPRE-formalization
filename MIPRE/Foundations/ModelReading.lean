@@ -394,6 +394,34 @@ theorem bornProb_expand_basisVec (a₀ : α) (b₀ : β) (X : Matrix α α 𝒜)
   · intro h
     exact absurd (Finset.mem_univ _) h
 
+section Order
+
+variable [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [PartialOrder ℬ]
+  [StarOrderedRing ℬ] [StarProper ℬ]
+
+/-- **The value of a strategy of an extension at a product basis vector** is the value of the
+families of its reference entries. -/
+theorem povmValue_expand_basisVec (a₀ : α) (b₀ : β) {X Y A B : Type*} [Fintype X] [Fintype Y]
+    [Fintype A] [Fintype B] (G : Game X Y A B) (PA : X → POVMIn A (Matrix α α 𝒜))
+    (PB : Y → POVMIn B (Matrix β β ℬ)) (PA' : X → POVMIn A 𝒜) (PB' : Y → POVMIn B ℬ)
+    (hA : ∀ x a, (PA x).op a a₀ a₀ = (PA' x).op a) (hB : ∀ y b, (PB y).op b b₀ b₀ = (PB' y).op b) :
+    (M.expand (basisVec a₀ b₀)).povmValue G PA PB = M.povmValue G PA' PB' := by
+  unfold povmValue condWin
+  simp only [bornProb_expand_basisVec, hA, hB]
+
+/-- **On an extension at a product basis vector, two families with the same reference entries have
+the same inconsistency**: a Born probability sees only the reference entries. -/
+theorem inconsistency_expand_basisVec_congr (a₀ : α) (b₀ : β) {Λ X : Type*} [Fintype Λ]
+    [DecidableEq Λ] [Fintype X] (μ : X → ℝ) {P P' : X → POVMIn Λ (Matrix α α 𝒜)}
+    {Q Q' : X → POVMIn Λ (Matrix β β ℬ)} (hP : ∀ x a, (P x).op a a₀ a₀ = (P' x).op a a₀ a₀)
+    (hQ : ∀ x b, (Q x).op b b₀ b₀ = (Q' x).op b b₀ b₀) :
+    (M.expand (basisVec a₀ b₀)).inconsistency μ P Q
+      = (M.expand (basisVec a₀ b₀)).inconsistency μ P' Q' := by
+  unfold inconsistency
+  simp only [bornProb_expand_basisVec, hP, hQ]
+
+end Order
+
 end BipartiteModel
 
 end MIPRE

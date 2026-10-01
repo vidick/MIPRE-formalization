@@ -88,42 +88,6 @@ an embedding (`liftOp`, `liftPt`), the swapped padded state is the model `K.swap
 
 noncomputable section
 
-namespace MIPRE.BipartiteModel
-
-/-! ## The value and the inconsistency at a product basis vector -/
-
-section BasisVec
-
-variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
-  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
-  [StarProper 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarProper ℬ] (N : BipartiteModel 𝒞 𝒜 ℬ)
-  {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β] (a₀ : α) (b₀ : β)
-
-/-- **The value of a strategy of an extension at a product basis vector** is the value of the
-families of its reference entries. -/
-theorem povmValue_expand_basisVec {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A]
-    [Fintype B] (G : Game X Y A B) (PA : X → POVMIn A (Matrix α α 𝒜))
-    (PB : Y → POVMIn B (Matrix β β ℬ)) (PA' : X → POVMIn A 𝒜) (PB' : Y → POVMIn B ℬ)
-    (hA : ∀ x a, (PA x).op a a₀ a₀ = (PA' x).op a) (hB : ∀ y b, (PB y).op b b₀ b₀ = (PB' y).op b) :
-    (N.expand (basisVec a₀ b₀)).povmValue G PA PB = N.povmValue G PA' PB' := by
-  unfold povmValue condWin
-  simp only [bornProb_expand_basisVec, hA, hB]
-
-/-- **On an extension at a product basis vector, two families with the same reference entries have
-the same inconsistency**: a Born probability sees only the reference entries. -/
-theorem inconsistency_expand_basisVec_congr {Λ X : Type*} [Fintype Λ] [DecidableEq Λ] [Fintype X]
-    (μ : X → ℝ) {P P' : X → POVMIn Λ (Matrix α α 𝒜)} {Q Q' : X → POVMIn Λ (Matrix β β ℬ)}
-    (hP : ∀ x a, (P x).op a a₀ a₀ = (P' x).op a a₀ a₀)
-    (hQ : ∀ x b, (Q x).op b b₀ b₀ = (Q' x).op b b₀ b₀) :
-    (N.expand (basisVec a₀ b₀)).inconsistency μ P Q
-      = (N.expand (basisVec a₀ b₀)).inconsistency μ P' Q' := by
-  unfold inconsistency
-  simp only [bornProb_expand_basisVec, hP, hQ]
-
-end BasisVec
-
-end MIPRE.BipartiteModel
-
 namespace MIPRE.QLD
 
 open Finset Matrix MIPRE MIPRE.LIDT

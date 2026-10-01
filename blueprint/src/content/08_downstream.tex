@@ -2801,6 +2801,15 @@ with all of the other player's, and each player's operators carry a vector trace
 arbitrary unit vector. $\omegaco$ is \emph{approached in finite pairs} if for every game $\game$ and
 every $0 \leq t < \omegaco(\game)$ there is a projective strategy for $\game$ of value greater than
 $t$ in a finite pair.
+
+Two features of the class matter for the port of the soundness proof to it. The trace is a finite
+sum of vector states, so the class is narrower than that of all pairs with faithful normal tracial
+states; the standard form of a tracial algebra needs one vector, and ancilla extensions, the
+doubling $\mH \oplus \mH$ and amplification by a type $\mathrm{II}_1$ factor stay in the class,
+while corners do not. And the class contains type $\mathrm{I}$ pairs with diffuse centre, such as
+$L^\infty[0,1]$ acting on $L^2[0,1]$, so soundness in finite pairs includes them: a port that
+orthonormalizes only in type $\mathrm{II}_1$ algebras would have to narrow the class and amplify in
+Lemma~\ref{lem:co-value-finite-pair}.
 \end{definition}
 
 \begin{lemma}[Finite pairs are closed under ancilla extensions]
@@ -2866,38 +2875,37 @@ in every finite pair (Definition~\ref{def:finite-pair}).
 
 \begin{theorem}[Answer reduction is sound in $\omegaco$, given the test in finite pairs]
 \label{thm:ar-sound-co-fin}
-\uses{thm:ar-sound-co,def:lidt-sound-fin,lem:co-value-finite-pair,lem:model-proj-strategy-values}
+\uses{thm:ar-sound-co,def:lidt-sound-fin,lem:model-proj-strategy-values}
 \lean{MIPRE.AnswerReduction.answerReduction_soundIn_commuting_fin,
   MIPRE.LIDT.Simul.approxSoundIn_commuting_of_fin}
 \leanok
-If the seeded CL test is sound in finite pairs (Definition~\ref{def:lidt-sound-fin}), then the
-answer reduction of Theorem~\ref{thm:answer-reduction} is sound in $\omegaco$, at the constants of
-Theorem~\ref{thm:ar-sound-co}.
+If $\omegaco$ is approached in finite pairs (Definition~\ref{def:finite-pair}) and the seeded CL
+test is sound in finite pairs (Definition~\ref{def:lidt-sound-fin}), then the answer reduction of
+Theorem~\ref{thm:answer-reduction} is sound in $\omegaco$, at the constants of
+Theorem~\ref{thm:ar-sound-co}. The first hypothesis is Lemma~\ref{lem:co-value-finite-pair}.
 \end{theorem}
 
 \begin{proof}
 \leanok
-$\omegaco$ is approached by projective strategies in finite pairs
-(Lemma~\ref{lem:co-value-finite-pair}), where the test is sound by hypothesis, and it dominates
-every model on a Hilbert space (Lemma~\ref{lem:model-proj-strategy-values}). So
+$\omegaco$ is then approached by projective strategies in finite pairs, where the test is sound,
+and it dominates every model on a Hilbert space (Lemma~\ref{lem:model-proj-strategy-values}). So
 Theorem~\ref{thm:ar-sound-co} applies.
 \end{proof}
 
 \begin{lemma}[The Pauli basis test, given the seeded test in finite pairs]
 \label{lem:qld-approx-co-fin}
-\uses{thm:qld,def:qld-sound-in,def:lidt-sound-fin,lem:co-value-finite-pair,
-  lem:finite-pair-expand,lem:povm-domination}
+\uses{thm:qld,def:qld-sound-in,def:lidt-sound-fin,lem:finite-pair-expand,lem:povm-domination}
 \lean{MIPRE.QLD.approxSoundIn_commuting_of_fin}
 \leanok
-If the seeded CL test is sound in finite pairs (Definition~\ref{def:lidt-sound-fin}), then
-$\omegaco$ is approached by projective strategies of models in which the Pauli basis test is sound
-with $\omegaco$ (Definition~\ref{def:qld-sound-in}).
+If $\omegaco$ is approached in finite pairs (Definition~\ref{def:finite-pair},
+Lemma~\ref{lem:co-value-finite-pair}) and the seeded CL test is sound in finite pairs
+(Definition~\ref{def:lidt-sound-fin}), then $\omegaco$ is approached by projective strategies of
+models in which the Pauli basis test is sound with $\omegaco$ (Definition~\ref{def:qld-sound-in}).
 \end{lemma}
 
 \begin{proof}
 \leanok
-$\omegaco$ is approached by projective strategies in finite pairs
-(Lemma~\ref{lem:co-value-finite-pair}), and Theorem~\ref{thm:qld} applies in each of them with
+Theorem~\ref{thm:qld} applies in each finite pair approaching $\omegaco$, with
 $\omega = \omegaco$. Its first hypothesis holds because an extension of a finite pair by a unit
 vector has nonempty registers and so is a finite pair (Lemma~\ref{lem:finite-pair-expand}), in
 which the seeded test is sound. Its second holds because $\omegaco$ dominates the POVM strategies of
@@ -2906,7 +2914,7 @@ every model on a Hilbert space in a unit state (Lemma~\ref{lem:povm-domination})
 
 \begin{corollary}[$\MIPco = \coRE$, from the soundness of the low-individual-degree test in finite pairs]
 \label{cor:mipco-from-lidt-fin}
-\uses{cor:mipco-from-stages,thm:ar-sound-co-fin,lem:qld-approx-co-fin}
+\uses{cor:mipco-from-stages,thm:ar-sound-co-fin,lem:qld-approx-co-fin,lem:co-value-finite-pair}
 \lean{MIPRE.mipco_eq_core_of_lidtFin}
 \leanok
 If the seeded CL test is sound in finite pairs (Definition~\ref{def:lidt-sound-fin}), then
@@ -2915,9 +2923,10 @@ $\MIPco = \coRE$.
 
 \begin{proof}
 \leanok
-Introspection is sound in $\omegaco$ as soon as $\omegaco$ is approached by projective strategies
-of models in which the Pauli basis test is sound (Theorem~\ref{thm:intro-sound-co}), which
-Lemma~\ref{lem:qld-approx-co-fin} provides. Answer reduction is sound in $\omegaco$ by
+$\omegaco$ is approached in finite pairs (Lemma~\ref{lem:co-value-finite-pair}). Introspection is
+sound in $\omegaco$ as soon as $\omegaco$ is approached by projective strategies of models in which
+the Pauli basis test is sound (Theorem~\ref{thm:intro-sound-co}), which
+Lemma~\ref{lem:qld-approx-co-fin} then provides. Answer reduction is sound in $\omegaco$ by
 Theorem~\ref{thm:ar-sound-co-fin}, and parallel repetition is
 (Theorem~\ref{thm:parallel-repetition-co}). So the compression of
 Corollary~\ref{cor:mipco-from-stages} is sound in $\omegaco$, which gives $\MIPco = \coRE$.

@@ -7,7 +7,7 @@ module
 public import MIPRE.Background.Repetition.Commuting
 public import MIPRE.Background.Repetition.CommutingRepetition.Tracial.Reduction
 public import MIPRE.Background.Repetition.CommutingRepetition.VN.ConcreteVN
-public import MIPRE.Background.QLD.PaddedLIDT
+public import MIPRE.Foundations.ModelReading
 public import MIPRE.Foundations.FinitePairExpand
 public import MIPRE.Foundations.KrausDilation
 
@@ -40,8 +40,9 @@ tracial density, in the form proved by the vendored development:
    (`BipartiteModel.povmValue_expand_basisVec`), and the extension is a finite pair
    (`BipartiteModel.IsFinitePair.expand`).
 
-An empty alphabet makes `ω_co(G) = 0`, below every admissible threshold; otherwise the alphabets
-are those of the vendored theorem, which assumes them nonempty.
+An empty answer alphabet leaves no strategy, so `ω_co(G) = 0`, below every admissible threshold;
+a game's question sets are nonempty, its distribution summing to `1`. Otherwise the alphabets are
+those of the vendored theorem, which assumes them nonempty.
 -/
 
 namespace MIPRE.Repetition
@@ -60,8 +61,10 @@ right action, in which the second player's operators lie. -/
 noncomputable def rightVN : StarSubalgebra ℂ (M.H →L[ℂ] M.H) :=
   StarSubalgebra.centralizer ℂ (M.vnAlg : Set (M.H →L[ℂ] M.H))
 
+/-- `R(𝒜)'` carries the operator order, as a commutant. -/
 instance : StarOrderedRing M.vnAlg := starOrderedRing_centralizer (Set.range M.Rop)
 
+/-- `R(𝒜)''` carries the operator order, as a commutant. -/
 instance : StarOrderedRing (rightVN M) := starOrderedRing_centralizer _
 
 variable {M} in
@@ -79,17 +82,9 @@ theorem L_mul_eq_of_mem_rightVN {y : M.H →L[ℂ] M.H} (hy : y ∈ rightVN M) (
     M.L a * y = y * M.L a :=
   mem_rightVN_iff.1 hy _ (M.L_mem_vnAlg a)
 
+/-- The left action on the trace vector is the embedding `ι` of `𝒜` into `L²(𝒜, τ)`. -/
 theorem L_traceVector (a : M.A) : M.L a M.traceVector = M.ι a := by
   rw [StdTracialAlgebra.traceVector, M.L_apply, mul_one]
-
-/-- The trace vector is a unit vector. -/
-theorem norm_traceVector_sq : ‖M.traceVector‖ ^ 2 = 1 := by
-  have h := inner_self_eq_norm_sq_to_K (𝕜 := ℂ) M.traceVector
-  rw [StdTracialAlgebra.traceVector, M.ι_inner, star_one, one_mul, M.τ_one] at h
-  show ‖M.ι 1‖ ^ 2 = 1
-  rw [← Complex.ofReal_inj]
-  push_cast
-  exact h.symm
 
 /-- **The trace vector separates `R(𝒜)'`**, being cyclic for the right action. -/
 theorem eq_zero_of_mem_vnAlg {x : M.H →L[ℂ] M.H} (hx : x ∈ M.vnAlg)
@@ -109,19 +104,11 @@ theorem eq_zero_of_mem_rightVN {y : M.H →L[ℂ] M.H} (hy : y ∈ rightVN M)
   rw [← L_traceVector M a, ← mul_apply_eq_comp, ← L_mul_eq_of_mem_rightVN M hy a,
     mul_apply_eq_comp, h0, map_zero]
 
-/-- Conjugation by `J` is multiplicative. -/
-theorem conjJ_mul (G G' : M.H →L[ℂ] M.H) : M.conjJ (G * G') = M.conjJ G * M.conjJ G' := by
-  ext v
-  rw [mul_apply_eq_comp, M.conjJ_apply, M.conjJ_apply, M.conjJ_apply,
-    mul_apply_eq_comp, M.J_J]
-
 /-- The trace-vector state of `J G J` is the conjugate of that of `G`. -/
 theorem traceState_conjJ_eq (G : M.H →L[ℂ] M.H) :
     M.traceState (M.conjJ G) = star (M.traceState G) := by
-  have h := M.inner_J_J (G M.traceVector) M.traceVector
-  rw [M.J_traceVector] at h
   unfold StdTracialAlgebra.traceState
-  rw [M.conjJ_apply, M.J_traceVector, ← h, ← inner_conj_symm, starRingEnd_apply]
+  rw [M.inner_conjJ, M.J_traceVector, starRingEnd_apply]
 
 /-- **The trace-vector state is tracial on `R(𝒜)''`**: conjugation by `J` carries `R(𝒜)''` into
 `R(𝒜)'`, where it is (`StdTracialAlgebra.traceState_mul_comm_vn`). -/
@@ -129,8 +116,8 @@ theorem traceState_mul_comm_rightVN {y y' : M.H →L[ℂ] M.H} (hy : y ∈ right
     (hy' : y' ∈ rightVN M) : M.traceState (y * y') = M.traceState (y' * y) := by
   have hJ : ∀ {G}, G ∈ rightVN M → M.conjJ G ∈ M.vnAlg := fun hG =>
     M.conjJ_mem_vnAlg fun m => (L_mul_eq_of_mem_rightVN M hG m).symm
-  rw [← star_star (M.traceState (y * y')), ← traceState_conjJ_eq, conjJ_mul,
-    M.traceState_mul_comm_vn (hJ hy) (hJ hy'), ← conjJ_mul, traceState_conjJ_eq, star_star]
+  rw [← star_star (M.traceState (y * y')), ← traceState_conjJ_eq, M.conjJ_mul,
+    M.traceState_mul_comm_vn (hJ hy) (hJ hy'), ← M.conjJ_mul, traceState_conjJ_eq, star_star]
 
 /-- **The standard-form model** of a tracial algebra in a state `ψ` of `L²(𝒜, τ)`: the operators
 of `L²(𝒜, τ)` represented on it, the commutant `R(𝒜)'` of the right action as the first player's
@@ -145,11 +132,13 @@ noncomputable def stdModel (ψ : M.H) :
   commute a b := mem_rightVN_iff.1 b.2 a a.2
 
 variable {M} in
+/-- The first player's operators of the standard-form model are `R(𝒜)'`. -/
 theorem mem_opsA_stdModel {ψ : M.H} {T : M.H →L[ℂ] M.H} :
     T ∈ (stdModel M ψ).opsA ↔ T ∈ M.vnAlg :=
   ⟨by rintro ⟨a, rfl⟩; exact a.2, fun h => ⟨⟨T, h⟩, rfl⟩⟩
 
 variable {M} in
+/-- The second player's operators of the standard-form model are `R(𝒜)''`. -/
 theorem mem_opsB_stdModel {ψ : M.H} {T : M.H →L[ℂ] M.H} :
     T ∈ (stdModel M ψ).opsB ↔ T ∈ rightVN M :=
   ⟨by rintro ⟨b, rfl⟩; exact b.2, fun h => ⟨⟨T, h⟩, rfl⟩⟩
@@ -165,7 +154,8 @@ theorem isFinitePair_stdModel (ψ : M.H) : (stdModel M ψ).IsFinitePair where
   traceA := ⟨{
     n := 1
     g := fun _ => M.traceVector
-    norm_sq_sum := by rw [Fin.sum_univ_one]; exact norm_traceVector_sq M
+    norm_sq_sum := by
+      rw [Fin.sum_univ_one]; exact (congrArg (· ^ 2) M.norm_traceVector).trans (one_pow 2)
     trace_mul_comm := fun x hx y hy => by
       simp only [Fin.sum_univ_one]
       exact M.traceState_mul_comm_vn (mem_opsA_stdModel.1 hx) (mem_opsA_stdModel.1 hy)
@@ -173,7 +163,8 @@ theorem isFinitePair_stdModel (ψ : M.H) : (stdModel M ψ).IsFinitePair where
   traceB := ⟨{
     n := 1
     g := fun _ => M.traceVector
-    norm_sq_sum := by rw [Fin.sum_univ_one]; exact norm_traceVector_sq M
+    norm_sq_sum := by
+      rw [Fin.sum_univ_one]; exact (congrArg (· ^ 2) M.norm_traceVector).trans (one_pow 2)
     trace_mul_comm := fun x hx y hy => by
       simp only [Fin.sum_univ_one]
       exact traceState_mul_comm_rightVN M (mem_opsB_stdModel.1 hx) (mem_opsB_stdModel.1 hy)

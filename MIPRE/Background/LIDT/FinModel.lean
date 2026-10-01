@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.ModelSoundness
-public import MIPRE.Foundations.FinitePair
+public import MIPRE.Foundations.FinitePairExpand
 
 @[expose] public section
 
@@ -17,16 +17,17 @@ soundness of the seeded CL test in every **finite pair** (`SoundFin`, `def:lidt-
 models whose two algebras are each other's commutants and both carry a faithful tracial state
 (`MIPRE.BipartiteModel.IsFinitePair`), with an arbitrary vector state
 (`reports/lidt-co-audit.md`, §3.4). `SoundFin` and `SoundCo` are incomparable as statements; what
-`SoundFin` buys is a trace on both algebras.
+`SoundFin` buys is a trace on both algebras. Like `SoundCo` (`SoundCo.expand`), it holds in every
+ancilla extension by a unit vector of a model in its class (`SoundFin.expand`), the class being
+closed under them.
 
 The answer-reduction analysis applies the hypothesis inside the model of one near-optimal
 projective strategy, so what it needs of a value model `ω` is that `ω` be approached by projective
 strategies of models in which the test is sound and which `ω` dominates (`ApproxSoundIn ω`).
 `val*` has it through the tensor-product models of tensor-product strategies
 (`approxSoundIn_tensor`). Both hypotheses give it for `ω_co`: `SoundCo` through the
-commuting-operator models
-(`approxSoundIn_commuting`), and `SoundFin` through finite pairs, given that `ω_co` is approached
-in finite pairs (`approxSoundIn_commuting_of_fin`; the approximation is
+commuting-operator models (`approxSoundIn_commuting`), and `SoundFin` through finite pairs, given
+that `ω_co` is approached in finite pairs (`approxSoundIn_commuting_of_fin`; the approximation is
 `MIPRE.Repetition.commutingFinitePairApprox`, from Lin's tracial density).
 -/
 
@@ -40,6 +41,20 @@ def SoundFin : Prop :=
   ∀ {𝒞 𝒜 ℬ : Type} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜]
     [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ]
     [StarOrderedRing ℬ] (M : BipartiteModel.{0} 𝒞 𝒜 ℬ), M.IsFinitePair → SoundIn M
+
+/-- **The seeded CL test is sound in every extension of a finite pair by a unit vector**, when it
+is sound in every finite pair: the registers of a unit vector are nonempty
+(`nonempty_of_norm_evec_eq_one`), and the extension is again a finite pair
+(`BipartiteModel.IsFinitePair.expand`). The Pauli basis analysis applies the test there
+(`QLD.soundIn_of_lidt`). -/
+theorem SoundFin.expand (h : SoundFin) {𝒞 𝒜 ℬ : Type} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞]
+    [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜]
+    [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ 𝒜] [StarProper 𝒜]
+    [StarModule ℂ ℬ] [StarProper ℬ] {M : BipartiteModel.{0} 𝒞 𝒜 ℬ} (hM : M.IsFinitePair)
+    {α β : Type} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β] (e : α × β → ℂ)
+    (he : ‖evec e‖ = 1) : SoundIn (M.expand e) := by
+  obtain ⟨_, _⟩ := nonempty_of_norm_evec_eq_one he
+  exact h _ (hM.expand e)
 
 /-- **The value model is approached by projective strategies of models in which the seeded test
 is sound and which it dominates**: below the value of a game, and above `0`, lies the value of

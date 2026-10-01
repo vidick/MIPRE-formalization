@@ -179,14 +179,6 @@ theorem one_le_delta_of_trivial {a : ℕ} (ha : 1 ≤ a) {lam mu sigma n : ℕ} 
       one_le_mul_of_one_le_of_one_le h1 h2
     nlinarith
 
-/-- **A strategy above `1 - ε`**, from the value of a game above it. -/
-theorem exists_value_gt {X Y A₁ B₁ : Type*} [Fintype X] [Fintype Y] [Fintype A₁] [Fintype B₁]
-    {G : Game X Y A₁ B₁} {ε : ℝ} (hε : ε < 1) (h : 1 - ε < quantumValue G) :
-    ∃ R : TensorProductStrategy G, 1 - ε ≤ R.value := by
-  by_contra hno
-  push Not at hno
-  exact absurd h (not_lt.mpr (Real.iSup_le (fun R => (hno R).le) (by linarith)))
-
 set_option maxHeartbeats 1000000 in
 /-- **Soundness of answer reduction, for a projective strategy in a bipartite model**
 (`lem:ar-error-assembly`): in a model in which the low-individual-degree test is sound, a
@@ -328,8 +320,8 @@ at the same constants as in the tensor-product value, given the soundness of the
 low-individual-degree test in the commuting-operator model (`LIDT.Simul.SoundCo`, Phase 6 of
 `planning/mipco-track.md`): `ω_co` of the answer-reduced verifier above `1 - ε` gives
 `ω_co(𝒱_n) ≥ 1 - δ(ε, n)`, for `n` past the threshold. `ω_co` is approached by projective
-strategies in the models of commuting-operator strategies (`LIDT.Simul.approxSoundIn_commuting`).
--/
+strategies in the models of commuting-operator strategies
+(`LIDT.Simul.approxSoundIn_commuting`). -/
 theorem arVerifier_soundness_commuting (R : Polynomial ℕ) (hF : ShoupField PD)
     (hR : ParamsBound PD R) (hL : FieldLarge PD) (hLD : LIDT.Simul.SoundCo)
     (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ) (ε : ℝ) (B : ℕ) (hC : soundC PD R hL ≤ n)

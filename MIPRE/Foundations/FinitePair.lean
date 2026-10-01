@@ -31,10 +31,24 @@ uses (`IsFinitePair.expand`, `MIPRE/Foundations/FinitePairExpand.lean`).
 * **`BipartiteModel.IsFinitePair M`** (`def:finite-pair`): the players' represented operators,
   `π (πA a)` and `π (πB b)`, act injectively, each player's operators are exactly the operators
   commuting with the other player's, and each player's operators carry a `VecTrace`. The order
-  of each player's algebra is its own; since the algebras are star-ordered rings and each image
-  is a commutant, closed under square roots, it is the operator order.
+  of each player's algebra is its own. It agrees with the operator order, since a positive
+  operator of a commutant has its square root there, but no lemma here states this yet; the
+  soundness interface `LIDT.Simul.SoundIn` reads only projections, which are positive in both.
 * **`CommutingFinitePairApprox`**: below `ω_co(G)`, and above `0`, lies the value of a projective
   strategy for `G` in a finite pair on a Hilbert space of `Type`.
+
+Two features of the class bear on the port of the soundness proof to it (C6b of the plan).
+* **Finite coupling.** A `VecTrace` has finitely many vectors, so the class is narrower than that of
+  all pairs with faithful normal traces: `ℓ^∞(ℕ)` acting blockwise on `⊕ₙ ℂⁿ`, with commutant
+  `⊕ₙ Mₙ`, is excluded. This is deliberate. The standard form needs one vector, and the extensions,
+  the doubling `H ⊕ H` and amplification by a II₁ factor all stay inside the class, while corner
+  reductions `p 𝒜 p` do not. The vendored II₁ orthonormalization tier takes families indexed by
+  `ℕ` with summable squared norms, of which a `VecTrace` padded with zeros is one.
+* **Type I pairs.** The class contains type I pairs with diffuse centre, such as `L^∞[0, 1]` acting
+  on `L²[0, 1]`, its own commutant, with the trace vector `1`. So `LIDT.Simul.SoundFin` asks for
+  soundness there too, and a port that orthonormalizes only in type II₁ algebras would need a
+  II₁ condition here and an amplification by the hyperfinite II₁ factor in the value lemma
+  (`reports/lidt-co-audit.md`, the orthonormalization tier).
 -/
 
 namespace MIPRE
