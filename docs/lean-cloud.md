@@ -93,6 +93,13 @@ LeanSearch available.
    so Lake never resolves a `scope`. The price is that `lake update` cannot work
    here at all.
 
+   For the Prove2Me submission (`planning/prove2me.md`), add `prove2.me` as well: its
+   API, its `start.md` and its mirrored reference docs are all served from that host.
+   Added 2026-10-01; `curl` through the proxy reaches it, but the agent's `WebFetch`
+   tool has its own egress list and still reports the host blocked, so read the site
+   with `curl`. The platform's GitHub repositories (`prove2me/prove2me_workspace`,
+   `prove2me/formalpedia`) need nothing added.
+
 3. **Setup script**: paste the contents of `.claude/cloud-setup.sh`, adjusting
    `BRANCH` if the toolchain of a feature branch differs from `main`.
 4. Save. The first session in the environment runs the script; later sessions
