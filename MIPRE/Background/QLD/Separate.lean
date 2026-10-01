@@ -34,6 +34,16 @@ most `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether
 `E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of
 `lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is
 the mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). As in
+`MIPRE/Background/QLD/Linear.lean`, the state is that of a bipartite model `K` (the model in which
+the low individual degree test is applied, `padModel`, or any other), the outcome `G_g` is a
+projection of the first player's algebra, the families `X`, `Z` are projective measurements of the
+second player's, `G_g ⊗ D` is `K.πA (G.op g) * K.πB D`, and the expectations `⟨S ⊗ D⟩` are Born
+probabilities `K.bornProb S D`. The diagonal weight bound `Z X Z ≤ Z` holds in any star-ordered
+ring, `Z (1 - X) Z` being a conjugate of a nonnegative element. The polynomial half is unchanged.
 -/
 
 noncomputable section
@@ -138,7 +148,6 @@ end MIPRE.LIDT
 namespace MIPRE.QLD
 
 open Finset Matrix MIPRE MIPRE.LIDT
-open scoped Kronecker ComplexOrder MatrixOrder
 
 /-! ## Exchanging a block of coordinates -/
 
@@ -372,10 +381,8 @@ end Lin
 
 section Fibre
 
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {RA RB : Type*} [Fintype RA]
-  [DecidableEq RA] [Fintype RB] [DecidableEq RB] {X' Z' : F → Matrix RB RB ℂ}
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F]
 
-omit [DecidableEq RA] [Fintype RB] [DecidableEq RB] in
 /-- A nontrivial linear form on `F²` vanishes on at most `q` pairs. -/
 theorem card_filter_linear_le {c₁ c₂ : F} (h : ¬ (c₁ = 0 ∧ c₂ = 0)) :
     (univ.filter fun ab : F × F => ab.1 * c₁ + ab.2 * c₂ = 0).card ≤ Fintype.card F := by
@@ -404,9 +411,8 @@ theorem card_filter_linear_le {c₁ c₂ : F} (h : ¬ (c₁ = 0 ∧ c₂ = 0)) :
     refine Prod.ext he' (mul_right_cancel₀ hc₂ ?_)
     linear_combination h1 - h2 - c₁ * he'
 
-omit [DecidableEq RA] in
 /-- The order `Z_b X_a` along `(α, β)` is the order `X_a Z_b` with the roles exchanged. -/
-theorem ptComb_ordZX_eq (X' Z' : F → Matrix RB RB ℂ) (α β c : F) :
+theorem ptComb_ordZX_eq {R : Type*} [Ring R] (X' Z' : F → R) (α β c : F) :
     ptComb (ordZX X' Z') α β c = ptComb (ordXZ Z' X') β α c := by
   simp only [ptComb, ordZX, ordXZ]
   refine Finset.sum_equiv (Equiv.prodComm F F) (fun r => ?_) (fun r _ => ?_)
@@ -414,35 +420,38 @@ theorem ptComb_ordZX_eq (X' Z' : F → Matrix RB RB ℂ) (α β c : F) :
     rw [add_comm]
   · simp only [Equiv.prodComm_apply, Prod.fst_swap, Prod.snd_swap]
 
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {X' Z' : F → ℬ}
+
 omit [Field F] [DecidableEq F] in
 /-- **The diagonal weight**: `‖(S ⊗ X_a Z_b) Φ‖² = ⟨S ⊗ Z_b X_a Z_b⟩ ≤ ⟨S ⊗ Z_b⟩`. -/
-theorem snorm_sq_ordXZ_le_bornProb (Φ : RA × RB → ℂ) {S : Matrix RA RA ℂ} (hsa : Sᴴ = S)
-    (hidem : S * S = S) (hX : IsPVM X') (hZ : IsPVM Z') (a b : F) :
-    snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' a * Z' b)) ^ 2 ≤ bornProb Φ S (Z' b) := by
-  rw [snorm_sq_aOp_mul_bOp Φ hsa hidem, Matrix.conjTranspose_mul, hX.isSelfAdjoint,
-    hZ.isSelfAdjoint, Matrix.mul_assoc, ← Matrix.mul_assoc (X' a), hX.idem, ← Matrix.mul_assoc]
-  refine bornProb_mono_right Φ (posSemidef_of_proj hsa hidem) ?_
-  have h1 : (0 : Matrix RB RB ℂ) ≤ 1 - X' a :=
-    sub_nonneg.mpr (proj_le_one (hX.isSelfAdjoint a) (hX.idem a))
-  have h2 := (Matrix.nonneg_iff_posSemidef.mp h1).conjTranspose_mul_mul_same (Z' b)
-  rw [hZ.isSelfAdjoint, Matrix.mul_sub, Matrix.mul_one, Matrix.sub_mul, hZ.idem] at h2
-  exact sub_nonneg.mp (Matrix.nonneg_iff_posSemidef.mpr h2)
+theorem snorm_sq_ordXZ_le_bornProb (K : BipartiteModel 𝒞 𝒜 ℬ) {S : 𝒜}
+    (hS : IsStarProjection S) (hX : IsPVMIn X') (hZ : IsPVMIn Z') (a b : F) :
+    K.snorm (K.πA S * K.πB (X' a * Z' b)) ^ 2 ≤ K.bornProb S (Z' b) := by
+  rw [K.snorm_sq_πA_mul_πB hS, star_mul, hX.star_eq, hZ.star_eq,
+    show Z' b * X' a * (X' a * Z' b) = Z' b * X' a * Z' b by
+      rw [← mul_assoc (Z' b * X' a), mul_assoc (Z' b) (X' a) (X' a), hX.idem]]
+  refine bornProb_mono_right K hS.nonneg ?_
+  have h2 : 0 ≤ star (Z' b) * (1 - X' a) * Z' b :=
+    star_left_conjugate_nonneg (sub_nonneg.mpr (hX.le_one a)) (Z' b)
+  rw [hZ.star_eq, mul_sub, mul_one, sub_mul, hZ.idem] at h2
+  exact sub_nonneg.mp h2
 
 /-- **The linear fibre**: for the linear form `α a₀ + β b₀`, the fibre always contains the diagonal
 pair `(a₀, b₀)`, and any other pair for at most `q` of the `q²` values of `(α, β)`; so the average
 over `(α, β)` of the fibre weights is at most `2/q · ⟨S ⊗ 1⟩` plus the diagonal weight. -/
-theorem sum_ab_snorm_sq_ordComb_le_of_lin (Φ : RA × RB → ℂ) {S : Matrix RA RA ℂ} (hsa : Sᴴ = S)
-    (hidem : S * S = S) (hX : IsPVM X') (hZ : IsPVM Z') (a₀ b₀ : F) :
+theorem sum_ab_snorm_sq_ordComb_le_of_lin (K : BipartiteModel 𝒞 𝒜 ℬ) {S : 𝒜}
+    (hS : IsStarProjection S) (hX : IsPVMIn X') (hZ : IsPVMIn Z') (a₀ b₀ : F) :
     ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ)
-          * bOp (ptComb (ordXZ X' Z') ab.1 ab.2 (ab.1 * a₀ + ab.2 * b₀))) ^ 2
-      ≤ 2 / Fintype.card F * bornProb Φ S 1
-        + snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' a₀ * Z' b₀)) ^ 2 := by
+        * K.snorm (K.πA S * K.πB (ptComb (ordXZ X' Z') ab.1 ab.2 (ab.1 * a₀ + ab.2 * b₀))) ^ 2
+      ≤ 2 / Fintype.card F * K.bornProb S 1
+        + K.snorm (K.πA S * K.πB (X' a₀ * Z' b₀)) ^ 2 := by
   have hq : (Fintype.card F : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   have hq0 : (0 : ℝ) ≤ (Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹ := by positivity
   have hqi : (0 : ℝ) ≤ (Fintype.card F : ℝ)⁻¹ := by positivity
-  have hwsum := sum_snorm_sq_ordXZ_eq Φ hsa hidem hX hZ
-  have hW0 : 0 ≤ bornProb Φ S 1 := by
+  have hwsum := sum_snorm_sq_ordXZ_eq K hS hX hZ
+  have hW0 : 0 ≤ K.bornProb S 1 := by
     rw [← hwsum]
     exact Finset.sum_nonneg fun p _ => sq_nonneg _
   have hcount : ∀ p : F × F, ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
@@ -479,48 +488,46 @@ theorem sum_ab_snorm_sq_ordComb_le_of_lin (Φ : RA × RB → ℂ) {S : Matrix RA
   rw [← Finset.sum_filter_add_sum_filter_not univ (fun ab : F × F => ab.2 = 0)]
   have h0 : ∑ ab ∈ univ.filter (fun ab : F × F => ab.2 = 0),
       ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ)
-          * bOp (ptComb (ordXZ X' Z') ab.1 ab.2 (ab.1 * a₀ + ab.2 * b₀))) ^ 2
-      ≤ (Fintype.card F : ℝ)⁻¹ * bornProb Φ S 1 := by
+        * K.snorm (K.πA S * K.πB (ptComb (ordXZ X' Z') ab.1 ab.2 (ab.1 * a₀ + ab.2 * b₀))) ^ 2
+      ≤ (Fintype.card F : ℝ)⁻¹ * K.bornProb S 1 := by
     calc _ ≤ ∑ ab ∈ univ.filter (fun ab : F × F => ab.2 = 0),
-          ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * bornProb Φ S 1 :=
+          ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * K.bornProb S 1 :=
           Finset.sum_le_sum fun ab _ => mul_le_mul_of_nonneg_left
-            (snorm_sq_ordComb_ordXZ_le Φ hsa hidem hX hZ _ _ _) hq0
-      _ = (Fintype.card F : ℝ)⁻¹ * bornProb Φ S 1 := by
+            (snorm_sq_ordComb_ordXZ_le K hS hX hZ _ _ _) hq0
+      _ = (Fintype.card F : ℝ)⁻¹ * K.bornProb S 1 := by
           rw [Finset.sum_const, card_filter_snd_eq_zero, nsmul_eq_mul, ← mul_assoc, ← mul_assoc,
             mul_inv_cancel₀ hq, one_mul]
   have h1 : ∑ ab ∈ univ.filter (fun ab : F × F => ¬ ab.2 = 0),
       ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ)
-          * bOp (ptComb (ordXZ X' Z') ab.1 ab.2 (ab.1 * a₀ + ab.2 * b₀))) ^ 2
-      ≤ (Fintype.card F : ℝ)⁻¹ * bornProb Φ S 1
-        + snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' a₀ * Z' b₀)) ^ 2 := by
-    rw [← Finset.mul_sum, sum_filter_snorm_sq_ordComb_eq Φ S hX]
+        * K.snorm (K.πA S * K.πB (ptComb (ordXZ X' Z') ab.1 ab.2 (ab.1 * a₀ + ab.2 * b₀))) ^ 2
+      ≤ (Fintype.card F : ℝ)⁻¹ * K.bornProb S 1
+        + K.snorm (K.πA S * K.πB (X' a₀ * Z' b₀)) ^ 2 := by
+    rw [← Finset.mul_sum, sum_filter_snorm_sq_ordComb_eq K S hX]
     calc _ ≤ ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * ∑ p : F × F, ∑ ab : F × F,
             (if ab.1 * p.1 + ab.2 * p.2 = ab.1 * a₀ + ab.2 * b₀ then (1 : ℝ) else 0)
-              * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' p.1 * Z' p.2)) ^ 2 :=
+              * K.snorm (K.πA S * K.πB (X' p.1 * Z' p.2)) ^ 2 :=
           mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun p _ =>
             Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) fun ab _ _ =>
               mul_nonneg (by split_ifs <;> norm_num) (sq_nonneg _)) hq0
       _ = ∑ p : F × F, (∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
             * (if ab.1 * p.1 + ab.2 * p.2 = ab.1 * a₀ + ab.2 * b₀ then (1 : ℝ) else 0))
-              * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' p.1 * Z' p.2)) ^ 2 := by
+              * K.snorm (K.πA S * K.πB (X' p.1 * Z' p.2)) ^ 2 := by
           rw [Finset.mul_sum]
           refine Finset.sum_congr rfl fun p _ => ?_
           rw [Finset.sum_mul, Finset.mul_sum]
           refine Finset.sum_congr rfl fun ab _ => ?_
           ring
       _ ≤ ∑ p : F × F, ((if p = (a₀, b₀) then (1 : ℝ) else 0) + (Fintype.card F : ℝ)⁻¹)
-            * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' p.1 * Z' p.2)) ^ 2 :=
+            * K.snorm (K.πA S * K.πB (X' p.1 * Z' p.2)) ^ 2 :=
           Finset.sum_le_sum fun p _ => mul_le_mul_of_nonneg_right (hcount p) (sq_nonneg _)
-      _ = snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' a₀ * Z' b₀)) ^ 2
-            + (Fintype.card F : ℝ)⁻¹ * bornProb Φ S 1 := by
+      _ = K.snorm (K.πA S * K.πB (X' a₀ * Z' b₀)) ^ 2
+            + (Fintype.card F : ℝ)⁻¹ * K.bornProb S 1 := by
           simp only [add_mul, Finset.sum_add_distrib, ite_mul, one_mul, zero_mul,
             Finset.sum_ite_eq', mem_univ, if_true]
           rw [← Finset.mul_sum, hwsum]
       _ = _ := add_comm _ _
-  calc _ ≤ (Fintype.card F : ℝ)⁻¹ * bornProb Φ S 1 + ((Fintype.card F : ℝ)⁻¹ * bornProb Φ S 1
-        + snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' a₀ * Z' b₀)) ^ 2) := add_le_add h0 h1
+  calc _ ≤ (Fintype.card F : ℝ)⁻¹ * K.bornProb S 1 + ((Fintype.card F : ℝ)⁻¹ * K.bornProb S 1
+        + K.snorm (K.πA S * K.πB (X' a₀ * Z' b₀)) ^ 2) := add_le_add h0 h1
     _ = _ := by ring
 
 end Fibre
@@ -529,8 +536,10 @@ end Fibre
 
 section Blocks
 
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}
-  [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]
+  {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 omit [NeZero m] in
 /-- **Conditioning on a block**: if `Op` reads only the coordinates in `T` and the polynomial `H`
@@ -538,27 +547,27 @@ reads some coordinate outside `T`, then `E_u ⟨S ⊗ Op_u(H(u))⟩ ≤ 8md/q ·
 coordinates, `H` is a non-constant polynomial in the others except with probability `4md/q`, and a
 non-constant polynomial takes each value with probability at most `4md/q`. -/
 theorem sum_uniform_bornProb_readOn_le {T : Finset (Fin (4 * m))}
-    {Op : Point F (4 * m) → F → Matrix RB RB ℂ} (hOp : ∀ u u', Op (mixOn T u u') = Op u')
-    (hpvm : ∀ u, IsPVM (Op u)) {H : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
-    (hH : H.DepOutside T) (Φ : RA × RB → ℂ) {S : Matrix RA RA ℂ} (hS : S.PosSemidef) :
-    ∑ u, uniform (Point F (4 * m)) u * bornProb Φ S (Op u (H.eval u))
-      ≤ 8 * m * d / Fintype.card F * bornProb Φ S 1 := by
+    {Op : Point F (4 * m) → F → ℬ} (hOp : ∀ u u', Op (mixOn T u u') = Op u')
+    (hpvm : ∀ u, IsPVMIn (Op u)) {H : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
+    (hH : H.DepOutside T) (K : BipartiteModel 𝒞 𝒜 ℬ) {S : 𝒜} (hS : 0 ≤ S) :
+    ∑ u, uniform (Point F (4 * m)) u * K.bornProb S (Op u (H.eval u))
+      ≤ 8 * m * d / Fintype.card F * K.bornProb S 1 := by
   obtain ⟨t₀, ht₀T, ht₀, hcoef⟩ := LowIndDegPoly.exists_coef_ne_zero_of_depOutside hH
-  have hW0 : 0 ≤ bornProb Φ S 1 := bornProb_nonneg Φ hS Matrix.PosSemidef.one
+  have hW0 : 0 ≤ K.bornProb S 1 := K.bornProb_nonneg hS zero_le_one
   have hη0 : (0 : ℝ) ≤ 4 * m * d / Fintype.card F := by positivity
   rw [sum_uniform_mixOn T]
   have hinner : ∀ u' : Point F (4 * m),
-      ∑ u, uniform (Point F (4 * m)) u * bornProb Φ S (Op (mixOn T u u') (H.eval (mixOn T u u')))
+      ∑ u, uniform (Point F (4 * m)) u * K.bornProb S (Op (mixOn T u u') (H.eval (mixOn T u u')))
         ≤ ((if (H.coef Tᶜ t₀).eval u' = 0 then (1 : ℝ) else 0) + 4 * m * d / Fintype.card F)
-          * bornProb Φ S 1 := by
+          * K.bornProb S 1 := by
     intro u'
     simp only [hOp, eval_mixOn]
     split_ifs with h0
-    · calc _ ≤ ∑ u, uniform (Point F (4 * m)) u * bornProb Φ S 1 :=
-            Finset.sum_le_sum fun u _ => mul_le_mul_of_nonneg_left (bornProb_mono_right Φ hS
-              (proj_le_one ((hpvm u').isSelfAdjoint _) ((hpvm u').idem _))) (uniform_nonneg _ _)
-        _ = 1 * bornProb Φ S 1 := by rw [← Finset.sum_mul, sum_uniform_eq_one]
-        _ ≤ (1 + 4 * m * d / Fintype.card F) * bornProb Φ S 1 :=
+    · calc _ ≤ ∑ u, uniform (Point F (4 * m)) u * K.bornProb S 1 :=
+            Finset.sum_le_sum fun u _ => mul_le_mul_of_nonneg_left (bornProb_mono_right K hS
+              ((hpvm u').le_one _)) (uniform_nonneg _ _)
+        _ = 1 * K.bornProb S 1 := by rw [← Finset.sum_mul, sum_uniform_eq_one]
+        _ ≤ (1 + 4 * m * d / Fintype.card F) * K.bornProb S 1 :=
             mul_le_mul_of_nonneg_right (by linarith) hW0
     · rw [zero_add]
       have hne : ∀ b : F, H.restrictOff T u' - LowIndDegPoly.const b ≠ 0 := fun b h => by
@@ -572,9 +581,9 @@ theorem sum_uniform_bornProb_readOn_le {T : Finset (Fin (4 * m))}
         have h := sum_uniform_eval_eq_zero_le (hne b)
         simp only [LowIndDegPoly.eval_sub, LowIndDegPoly.eval_const, sub_eq_zero] at h
         exact h
-      calc ∑ u, uniform (Point F (4 * m)) u * bornProb Φ S (Op u' ((H.restrictOff T u').eval u))
+      calc ∑ u, uniform (Point F (4 * m)) u * K.bornProb S (Op u' ((H.restrictOff T u').eval u))
           = ∑ u, uniform (Point F (4 * m)) u * ∑ b, (if (H.restrictOff T u').eval u = b
-              then (1 : ℝ) else 0) * bornProb Φ S (Op u' b) := by
+              then (1 : ℝ) else 0) * K.bornProb S (Op u' b) := by
             refine Finset.sum_congr rfl fun u _ => ?_
             congr 1
             rw [Finset.sum_eq_single ((H.restrictOff T u').eval u)]
@@ -585,107 +594,107 @@ theorem sum_uniform_bornProb_readOn_le {T : Finset (Fin (4 * m))}
               exact absurd (mem_univ _) h
         _ = ∑ b, (∑ u, uniform (Point F (4 * m)) u
               * (if (H.restrictOff T u').eval u = b then (1 : ℝ) else 0))
-                * bornProb Φ S (Op u' b) := by
+                * K.bornProb S (Op u' b) := by
             simp_rw [Finset.mul_sum]
             rw [Finset.sum_comm]
             refine Finset.sum_congr rfl fun b _ => ?_
             rw [Finset.sum_mul]
             refine Finset.sum_congr rfl fun u _ => ?_
             ring
-        _ ≤ ∑ b, (4 * m * d / Fintype.card F) * bornProb Φ S (Op u' b) :=
+        _ ≤ ∑ b, (4 * m * d / Fintype.card F) * K.bornProb S (Op u' b) :=
             Finset.sum_le_sum fun b _ => mul_le_mul_of_nonneg_right (hprob b)
-              (bornProb_nonneg Φ hS ((hpvm u').posSemidef b))
-        _ = 4 * m * d / Fintype.card F * bornProb Φ S 1 := by
-            rw [← Finset.mul_sum, ← bornProb_sum_right, (hpvm u').sum_eq_one]
+              (K.bornProb_nonneg hS ((hpvm u').nonneg b))
+        _ = 4 * m * d / Fintype.card F * K.bornProb S 1 := by
+            rw [← Finset.mul_sum, ← K.bornProb_sum_right, (hpvm u').sum_eq_one]
   calc _ ≤ ∑ u', uniform (Point F (4 * m)) u'
         * (((if (H.coef Tᶜ t₀).eval u' = 0 then (1 : ℝ) else 0) + 4 * m * d / Fintype.card F)
-          * bornProb Φ S 1) :=
+          * K.bornProb S 1) :=
         Finset.sum_le_sum fun u' _ => mul_le_mul_of_nonneg_left (hinner u') (uniform_nonneg _ _)
     _ = (∑ u', uniform (Point F (4 * m)) u' * (if (H.coef Tᶜ t₀).eval u' = 0 then (1 : ℝ) else 0))
-          * bornProb Φ S 1
-        + 4 * m * d / Fintype.card F * (∑ u', uniform (Point F (4 * m)) u') * bornProb Φ S 1 := by
+          * K.bornProb S 1
+        + 4 * m * d / Fintype.card F * (∑ u', uniform (Point F (4 * m)) u') * K.bornProb S 1 := by
         rw [Finset.sum_mul, Finset.mul_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun u' _ => by ring
-    _ ≤ 4 * m * d / Fintype.card F * bornProb Φ S 1
-        + 4 * m * d / Fintype.card F * 1 * bornProb Φ S 1 := by
+    _ ≤ 4 * m * d / Fintype.card F * K.bornProb S 1
+        + 4 * m * d / Fintype.card F * 1 * K.bornProb S 1 := by
         rw [sum_uniform_eq_one]
         exact add_le_add (mul_le_mul_of_nonneg_right (sum_uniform_eval_eq_zero_le hcoef) hW0)
           le_rfl
-    _ = 8 * m * d / Fintype.card F * bornProb Φ S 1 := by ring
+    _ = 8 * m * d / Fintype.card F * K.bornProb S 1 := by ring
 
-variable {X Z : Point F m → F → Matrix RB RB ℂ}
+variable {X Z : Point F m → F → ℬ}
 
 /-- **A linear outcome against the order `X_a Z_b`**: the fibre contributes `2/q · ⟨S ⊗ 1⟩`
 beyond its diagonal pair, whose weight is at most `E_{u₀} ⟨S ⊗ Z_{g₂(u₀)}(z)⟩`. -/
-theorem sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
-    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))
-    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
+theorem sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB (hd : 1 ≤ d) (K : BipartiteModel 𝒞 𝒜 ℬ)
+    {S : 𝒜} (hS : IsStarProjection S) (hX : ∀ x, IsPVMIn (X x))
+    (hZ : ∀ z, IsPVMIn (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
     (hlin : IsLinAB g) :
     ∑ u, uniform (Point F (4 * m)) u
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2
-      ≤ 2 / Fintype.card F * bornProb Φ S 1
+        * K.snorm (K.πA S * K.πB (ordComb ordXZ X Z u (g.eval u))) ^ 2
+      ≤ 2 / Fintype.card F * K.bornProb S 1
         + ∑ u₀, uniform (Point F (4 * m)) u₀
-          * bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by
+          * K.bornProb S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by
   rw [sum_uniform_setAB]
   have hinner : ∀ u₀ : Point F (4 * m),
       ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z (setAB u₀ ab.1 ab.2)
+        * K.snorm (K.πA S * K.πB (ordComb ordXZ X Z (setAB u₀ ab.1 ab.2)
           (g.eval (setAB u₀ ab.1 ab.2)))) ^ 2
-      ≤ 2 / Fintype.card F * bornProb Φ S 1
-        + bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by
+      ≤ 2 / Fintype.card F * K.bornProb S 1
+        + K.bornProb S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by
     intro u₀
     have hre : ∀ ab : F × F, ordComb ordXZ X Z (setAB u₀ ab.1 ab.2) (g.eval (setAB u₀ ab.1 ab.2))
         = ptComb (ordXZ (X (xBlk u₀)) (Z (zBlk u₀))) ab.1 ab.2
           (ab.1 * (gA hd g).eval u₀ + ab.2 * (gB hd g).eval u₀) := fun ab => by
       rw [ordComb, xBlk_setAB, zBlk_setAB, alph_setAB, bet_setAB, eval_setAB_of_isLinAB hd hlin]
     simp only [hre]
-    exact (sum_ab_snorm_sq_ordComb_le_of_lin Φ hsa hidem (hX _) (hZ _) _ _).trans
-      (add_le_add le_rfl (snorm_sq_ordXZ_le_bornProb Φ hsa hidem (hX _) (hZ _) _ _))
-  calc _ ≤ ∑ u₀, uniform (Point F (4 * m)) u₀ * (2 / Fintype.card F * bornProb Φ S 1
-        + bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀))) :=
+    exact (sum_ab_snorm_sq_ordComb_le_of_lin K hS (hX _) (hZ _) _ _).trans
+      (add_le_add le_rfl (snorm_sq_ordXZ_le_bornProb K hS (hX _) (hZ _) _ _))
+  calc _ ≤ ∑ u₀, uniform (Point F (4 * m)) u₀ * (2 / Fintype.card F * K.bornProb S 1
+        + K.bornProb S (Z (zBlk u₀) ((gB hd g).eval u₀))) :=
         Finset.sum_le_sum fun u₀ _ => mul_le_mul_of_nonneg_left (hinner u₀) (uniform_nonneg _ _)
-    _ = 2 / Fintype.card F * (∑ u₀, uniform (Point F (4 * m)) u₀) * bornProb Φ S 1
-        + ∑ u₀, uniform (Point F (4 * m)) u₀ * bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by
+    _ = 2 / Fintype.card F * (∑ u₀, uniform (Point F (4 * m)) u₀) * K.bornProb S 1
+        + ∑ u₀, uniform (Point F (4 * m)) u₀ * K.bornProb S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by
         rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun u₀ _ => by ring
     _ = _ := by rw [sum_uniform_eq_one, mul_one]
 
 /-- **A linear outcome whose `β` coefficient reads a coordinate outside the `z` block**, against
 the order `X_a Z_b`: `E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ (2 + 8md)/q · ⟨S ⊗ 1⟩`. -/
-theorem sum_uniform_snorm_sq_ordComb_XZ_le_of_depB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
-    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))
-    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
+theorem sum_uniform_snorm_sq_ordComb_XZ_le_of_depB (hd : 1 ≤ d) (K : BipartiteModel 𝒞 𝒜 ℬ)
+    {S : 𝒜} (hS : IsStarProjection S) (hX : ∀ x, IsPVMIn (X x))
+    (hZ : ∀ z, IsPVMIn (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
     (hlin : IsLinAB g) (hB : (gB hd g).DepOutside zSet) :
     ∑ u, uniform (Point F (4 * m)) u
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2
-      ≤ (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by
-  calc _ ≤ 2 / Fintype.card F * bornProb Φ S 1
+        * K.snorm (K.πA S * K.πB (ordComb ordXZ X Z u (g.eval u))) ^ 2
+      ≤ (2 + 8 * m * d) / Fintype.card F * K.bornProb S 1 := by
+  calc _ ≤ 2 / Fintype.card F * K.bornProb S 1
         + ∑ u₀, uniform (Point F (4 * m)) u₀
-          * bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀)) :=
-        sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB hd Φ hsa hidem hX hZ hlin
-    _ ≤ 2 / Fintype.card F * bornProb Φ S 1 + 8 * m * d / Fintype.card F * bornProb Φ S 1 :=
+          * K.bornProb S (Z (zBlk u₀) ((gB hd g).eval u₀)) :=
+        sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB hd K hS hX hZ hlin
+    _ ≤ 2 / Fintype.card F * K.bornProb S 1 + 8 * m * d / Fintype.card F * K.bornProb S 1 :=
         add_le_add le_rfl (sum_uniform_bornProb_readOn_le (Op := fun u => Z (zBlk u))
-          (fun u u' => by rw [zBlk_mixOn_zSet]) (fun u => hZ _) hB Φ (posSemidef_of_proj hsa hidem))
-    _ = (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by ring
+          (fun u u' => by rw [zBlk_mixOn_zSet]) (fun u => hZ _) hB K hS.nonneg)
+    _ = (2 + 8 * m * d) / Fintype.card F * K.bornProb S 1 := by ring
 
 /-- **A linear outcome against the order `Z_b X_a`**: the mirror image, with the roles of
 `(X, a, α)` and `(Z, b, β)` exchanged. -/
-theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
-    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))
-    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
+theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB (hd : 1 ≤ d) (K : BipartiteModel 𝒞 𝒜 ℬ)
+    {S : 𝒜} (hS : IsStarProjection S) (hX : ∀ x, IsPVMIn (X x))
+    (hZ : ∀ z, IsPVMIn (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
     (hlin : IsLinAB g) :
     ∑ u, uniform (Point F (4 * m)) u
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2
-      ≤ 2 / Fintype.card F * bornProb Φ S 1
+        * K.snorm (K.πA S * K.πB (ordComb ordZX X Z u (g.eval u))) ^ 2
+      ≤ 2 / Fintype.card F * K.bornProb S 1
         + ∑ u₀, uniform (Point F (4 * m)) u₀
-          * bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀)) := by
+          * K.bornProb S (X (xBlk u₀) ((gA hd g).eval u₀)) := by
   rw [sum_uniform_setAB]
   have hinner : ∀ u₀ : Point F (4 * m),
       ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z (setAB u₀ ab.1 ab.2)
+        * K.snorm (K.πA S * K.πB (ordComb ordZX X Z (setAB u₀ ab.1 ab.2)
           (g.eval (setAB u₀ ab.1 ab.2)))) ^ 2
-      ≤ 2 / Fintype.card F * bornProb Φ S 1
-        + bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀)) := by
+      ≤ 2 / Fintype.card F * K.bornProb S 1
+        + K.bornProb S (X (xBlk u₀) ((gA hd g).eval u₀)) := by
     intro u₀
     have hre : ∀ ab : F × F, ordComb ordZX X Z (setAB u₀ ab.1 ab.2) (g.eval (setAB u₀ ab.1 ab.2))
         = ptComb (ordXZ (Z (zBlk u₀)) (X (xBlk u₀))) ab.2 ab.1
@@ -694,111 +703,104 @@ theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB (hd : 1 ≤ d) (Φ : RA ×
         ptComb_ordZX_eq, add_comm]
     simp only [hre]
     calc _ = ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-          * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ)
-            * bOp (ptComb (ordXZ (Z (zBlk u₀)) (X (xBlk u₀))) ab.1 ab.2
+          * K.snorm (K.πA S
+            * K.πB (ptComb (ordXZ (Z (zBlk u₀)) (X (xBlk u₀))) ab.1 ab.2
               (ab.1 * (gB hd g).eval u₀ + ab.2 * (gA hd g).eval u₀))) ^ 2 :=
           Equiv.sum_comp (Equiv.prodComm F F) (fun ab : F × F =>
             ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-              * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ)
-                * bOp (ptComb (ordXZ (Z (zBlk u₀)) (X (xBlk u₀))) ab.1 ab.2
+              * K.snorm (K.πA S
+                * K.πB (ptComb (ordXZ (Z (zBlk u₀)) (X (xBlk u₀))) ab.1 ab.2
                   (ab.1 * (gB hd g).eval u₀ + ab.2 * (gA hd g).eval u₀))) ^ 2)
-      _ ≤ 2 / Fintype.card F * bornProb Φ S 1 + snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ)
-            * bOp (Z (zBlk u₀) ((gB hd g).eval u₀) * X (xBlk u₀) ((gA hd g).eval u₀))) ^ 2 :=
-          sum_ab_snorm_sq_ordComb_le_of_lin Φ hsa hidem (hZ _) (hX _) _ _
-      _ ≤ _ := add_le_add le_rfl (snorm_sq_ordXZ_le_bornProb Φ hsa hidem (hZ _) (hX _) _ _)
-  calc _ ≤ ∑ u₀, uniform (Point F (4 * m)) u₀ * (2 / Fintype.card F * bornProb Φ S 1
-        + bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀))) :=
+      _ ≤ 2 / Fintype.card F * K.bornProb S 1 + K.snorm (K.πA S
+            * K.πB (Z (zBlk u₀) ((gB hd g).eval u₀) * X (xBlk u₀) ((gA hd g).eval u₀))) ^ 2 :=
+          sum_ab_snorm_sq_ordComb_le_of_lin K hS (hZ _) (hX _) _ _
+      _ ≤ _ := add_le_add le_rfl (snorm_sq_ordXZ_le_bornProb K hS (hZ _) (hX _) _ _)
+  calc _ ≤ ∑ u₀, uniform (Point F (4 * m)) u₀ * (2 / Fintype.card F * K.bornProb S 1
+        + K.bornProb S (X (xBlk u₀) ((gA hd g).eval u₀))) :=
         Finset.sum_le_sum fun u₀ _ => mul_le_mul_of_nonneg_left (hinner u₀) (uniform_nonneg _ _)
-    _ = 2 / Fintype.card F * (∑ u₀, uniform (Point F (4 * m)) u₀) * bornProb Φ S 1
-        + ∑ u₀, uniform (Point F (4 * m)) u₀ * bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀)) := by
+    _ = 2 / Fintype.card F * (∑ u₀, uniform (Point F (4 * m)) u₀) * K.bornProb S 1
+        + ∑ u₀, uniform (Point F (4 * m)) u₀ * K.bornProb S (X (xBlk u₀) ((gA hd g).eval u₀)) := by
         rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun u₀ _ => by ring
     _ = _ := by rw [sum_uniform_eq_one, mul_one]
 
 /-- **A linear outcome whose `α` coefficient reads a coordinate outside the `x` block**, against
 the order `Z_b X_a`. -/
-theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_depA (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
-    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))
-    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
+theorem sum_uniform_snorm_sq_ordComb_ZX_le_of_depA (hd : 1 ≤ d) (K : BipartiteModel 𝒞 𝒜 ℬ)
+    {S : 𝒜} (hS : IsStarProjection S) (hX : ∀ x, IsPVMIn (X x))
+    (hZ : ∀ z, IsPVMIn (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}
     (hlin : IsLinAB g) (hA : (gA hd g).DepOutside xSet) :
     ∑ u, uniform (Point F (4 * m)) u
-        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2
-      ≤ (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by
-  calc _ ≤ 2 / Fintype.card F * bornProb Φ S 1
+        * K.snorm (K.πA S * K.πB (ordComb ordZX X Z u (g.eval u))) ^ 2
+      ≤ (2 + 8 * m * d) / Fintype.card F * K.bornProb S 1 := by
+  calc _ ≤ 2 / Fintype.card F * K.bornProb S 1
         + ∑ u₀, uniform (Point F (4 * m)) u₀
-          * bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀)) :=
-        sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB hd Φ hsa hidem hX hZ hlin
-    _ ≤ 2 / Fintype.card F * bornProb Φ S 1 + 8 * m * d / Fintype.card F * bornProb Φ S 1 :=
+          * K.bornProb S (X (xBlk u₀) ((gA hd g).eval u₀)) :=
+        sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB hd K hS hX hZ hlin
+    _ ≤ 2 / Fintype.card F * K.bornProb S 1 + 8 * m * d / Fintype.card F * K.bornProb S 1 :=
         add_le_add le_rfl (sum_uniform_bornProb_readOn_le (Op := fun u => X (xBlk u))
-          (fun u u' => by rw [xBlk_mixOn_xSet]) (fun u => hX _) hA Φ (posSemidef_of_proj hsa hidem))
-    _ = (2 + 8 * m * d) / Fintype.card F * bornProb Φ S 1 := by ring
+          (fun u u' => by rw [xBlk_mixOn_xSet]) (fun u => hX _) hA K hS.nonneg)
+    _ = (2 + 8 * m * d) / Fintype.card F * K.bornProb S 1 := by ring
 
-omit [DecidableEq F] [NeZero m] in
+omit [DecidableEq F] [NeZero m] [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] in
 /-- **The assembly, abstractly**: if every bad outcome has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩`
 and the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ` holds, then
 `(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ`. -/
-theorem sum_bad_mass_le_of_avg (Φ : RA × RB → ℂ)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (B : Point F (4 * m) → F → Matrix RB RB ℂ)
+theorem sum_bad_mass_le_of_avg (K : BipartiteModel 𝒞 𝒜 ℬ)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (B : Point F (4 * m) → F → ℬ)
     (bad : LowIndDegPoly (F := F) (m := 4 * m) (d := d) → Prop) [DecidablePred bad] {η Δ : ℝ}
     (havg : ∀ g, bad g → ∑ u, uniform (Point F (4 * m)) u
-      * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2
-      ≤ η * bornProb Φ (G.M () g) 1)
-    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))) ^ 2 ≤ Δ) :
-    (1 - 2 * η) * ∑ g ∈ univ.filter bad, bornProb Φ (G.M () g) 1 ≤ 2 * Δ := by
-  have hsa : ∀ g, (G.M () g)ᴴ = G.M () g := fun g => G.selfAdjoint () g
-  have hidem : ∀ g, G.M () g * G.M () g = G.M () g := fun g => G.projective () g
+      * K.snorm (K.πA (G.op g) * K.πB (B u (g.eval u))) ^ 2 ≤ η * K.bornProb (G.op g) 1)
+    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2 ≤ Δ) :
+    (1 - 2 * η) * ∑ g ∈ univ.filter bad, K.bornProb (G.op g) 1 ≤ 2 * Δ := by
   have hbad : ∀ g : LowIndDegPoly (F := F) (m := 4 * m) (d := d), bad g →
-      (1 - 2 * η) * bornProb Φ (G.M () g) 1
-        ≤ 2 * ∑ u, uniform (Point F (4 * m)) u * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (1 - B u (g.eval u))) ^ 2 := by
+      (1 - 2 * η) * K.bornProb (G.op g) 1
+        ≤ 2 * ∑ u, uniform (Point F (4 * m)) u * K.snorm (K.πA (G.op g)
+          * K.πB (1 - B u (g.eval u))) ^ 2 := by
     intro g hg
     have hB := havg g hg
-    have hterm : ∀ u : Point F (4 * m), bornProb Φ (G.M () g) 1
-        ≤ 2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2
-          + 2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-            * bOp (1 - B u (g.eval u))) ^ 2 := by
+    have hterm : ∀ u : Point F (4 * m), K.bornProb (G.op g) 1
+        ≤ 2 * K.snorm (K.πA (G.op g) * K.πB (B u (g.eval u))) ^ 2
+          + 2 * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2 := by
       intro u
-      have h := snorm_sq_add_le Φ
-        ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u)))
-        ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u)))
-      rwa [← Matrix.mul_add, ← bOp_add,
-        show B u (g.eval u) + (1 - B u (g.eval u)) = (1 : Matrix RB RB ℂ) by abel,
-        snorm_sq_aOp_mul_bOp Φ (hsa g) (hidem g), Matrix.conjTranspose_one, Matrix.one_mul] at h
-    have hw : bornProb Φ (G.M () g) 1
-        = ∑ u, uniform (Point F (4 * m)) u * bornProb Φ (G.M () g) 1 := by
+      have h := snorm_sq_add_le K.toStateModel
+        (K.πA (G.op g) * K.πB (B u (g.eval u)))
+        (K.πA (G.op g) * K.πB (1 - B u (g.eval u)))
+      rwa [← mul_add, ← map_add,
+        show B u (g.eval u) + (1 - B u (g.eval u)) = (1 : ℬ) by abel,
+        K.snorm_sq_πA_mul_πB (hG.isStarProjection g), star_one, one_mul] at h
+    have hw : K.bornProb (G.op g) 1
+        = ∑ u, uniform (Point F (4 * m)) u * K.bornProb (G.op g) 1 := by
       rw [← Finset.sum_mul, sum_uniform_eq_one, one_mul]
-    have h1 : bornProb Φ (G.M () g) 1 ≤ ∑ u, uniform (Point F (4 * m)) u
-        * (2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2
-          + 2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-            * bOp (1 - B u (g.eval u))) ^ 2) := by
+    have h1 : K.bornProb (G.op g) 1 ≤ ∑ u, uniform (Point F (4 * m)) u
+        * (2 * K.snorm (K.πA (G.op g) * K.πB (B u (g.eval u))) ^ 2
+          + 2 * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2) := by
       rw [hw]
       exact Finset.sum_le_sum fun u _ => mul_le_mul_of_nonneg_left (hterm u) (uniform_nonneg _ _)
     have h2 : ∑ u, uniform (Point F (4 * m)) u
-        * (2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2
-          + 2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-            * bOp (1 - B u (g.eval u))) ^ 2)
+        * (2 * K.snorm (K.πA (G.op g) * K.πB (B u (g.eval u))) ^ 2
+          + 2 * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2)
         = 2 * ∑ u, uniform (Point F (4 * m)) u
-            * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2
-          + 2 * ∑ u, uniform (Point F (4 * m)) u * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-            * bOp (1 - B u (g.eval u))) ^ 2 := by
+            * K.snorm (K.πA (G.op g) * K.πB (B u (g.eval u))) ^ 2
+          + 2 * ∑ u, uniform (Point F (4 * m)) u
+            * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2 := by
       rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun u _ => by ring
     linarith [h1, h2, hB]
-  calc (1 - 2 * η) * ∑ g ∈ univ.filter bad, bornProb Φ (G.M () g) 1
-      = ∑ g ∈ univ.filter bad, (1 - 2 * η) * bornProb Φ (G.M () g) 1 := Finset.mul_sum _ _ _
+  calc (1 - 2 * η) * ∑ g ∈ univ.filter bad, K.bornProb (G.op g) 1
+      = ∑ g ∈ univ.filter bad, (1 - 2 * η) * K.bornProb (G.op g) 1 := Finset.mul_sum _ _ _
     _ ≤ ∑ g ∈ univ.filter bad, 2 * ∑ u, uniform (Point F (4 * m)) u
-          * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))) ^ 2 :=
+          * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2 :=
         Finset.sum_le_sum fun g hg => hbad g (mem_filter.mp hg).2
     _ ≤ ∑ g, 2 * ∑ u, uniform (Point F (4 * m)) u
-          * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))) ^ 2 :=
+          * K.snorm (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2 :=
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) fun g _ _ =>
           mul_nonneg (by norm_num) (Finset.sum_nonneg fun u _ =>
             mul_nonneg (uniform_nonneg _ _) (sq_nonneg _))
-    _ = 2 * ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-          ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))) ^ 2 := by
+    _ = 2 * ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+          (K.πA (G.op g) * K.πB (1 - B u (g.eval u))) ^ 2 := by
         rw [← Finset.mul_sum, Finset.sum_comm]
         congr 1
         exact Finset.sum_congr rfl fun u _ => (Finset.mul_sum _ _ _).symm
@@ -807,23 +809,18 @@ theorem sum_bad_mass_le_of_avg (Φ : RA × RB → ℂ)
 /-- **`lem:qld-global-separate`, abstract form.** With `η = (2 + 2d + 8md)/q`, if the two
 ordered-product estimates hold with bounds `Δ₁` (order `X_a Z_b`) and `Δ₂` (order `Z_b X_a`),
 then `(1 - 2η) · (weight of the outcomes that are not good) ≤ 2Δ₁ + 2Δ₂`. -/
-theorem sum_not_isGood_mass_le (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {Δ₁ Δ₂ : ℝ}
-    (hXZ : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2
-      ≤ Δ₁)
-    (hZX : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordZX X Z u (g.eval u))) ^ 2
-      ≤ Δ₂) :
+theorem sum_not_isGood_mass_le (hd : 1 ≤ d) (K : BipartiteModel 𝒞 𝒜 ℬ)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z)) {Δ₁ Δ₂ : ℝ}
+    (hXZ : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2 ≤ Δ₁)
+    (hZX : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - ordComb ordZX X Z u (g.eval u))) ^ 2 ≤ Δ₂) :
     (1 - 2 * ((2 + 2 * d + 8 * m * d) / Fintype.card F))
-        * ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1
+        * ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1
       ≤ 2 * Δ₁ + 2 * Δ₂ := by
-  have hsa : ∀ g, (G.M () g)ᴴ = G.M () g := fun g => G.selfAdjoint () g
-  have hidem : ∀ g, G.M () g * G.M () g = G.M () g := fun g => G.projective () g
-  have hw0 : ∀ g, 0 ≤ bornProb Φ (G.M () g) 1 := fun g =>
-    bornProb_nonneg Φ (posSemidef_of_proj (hsa g) (hidem g)) Matrix.PosSemidef.one
+  have hw0 : ∀ g, 0 ≤ K.bornProb (G.op g) 1 := fun g =>
+    K.bornProb_nonneg (hG.nonneg g) zero_le_one
   have hq0 : (0 : ℝ) ≤ (Fintype.card F : ℝ)⁻¹ := by positivity
   have hm0 : (0 : ℝ) ≤ m := Nat.cast_nonneg m
   have hd0 : (0 : ℝ) ≤ d := Nat.cast_nonneg d
@@ -839,18 +836,18 @@ theorem sum_not_isGood_mass_le (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
     apply mul_le_mul_of_nonneg_right _ hq0
     linarith
   -- the two applications of the assembly
-  have h₁ := sum_bad_mass_le_of_avg Φ G (ordComb ordXZ X Z)
+  have h₁ := sum_bad_mass_le_of_avg K G hG (ordComb ordXZ X Z)
     (fun g => ¬ IsLinAB g ∨ (IsLinAB g ∧ (gB hd g).DepOutside zSet))
     (η := (2 + 2 * d + 8 * m * d) / Fintype.card F) (fun g hg => by
       rcases hg with hg | ⟨hlin, hB⟩
-      · exact (sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB hd Φ (hsa g) (hidem g) hX hZ
+      · exact (sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB hd K (hG.isStarProjection g) hX hZ
           hg).trans (mul_le_mul_of_nonneg_right hη₁ (hw0 g))
-      · exact (sum_uniform_snorm_sq_ordComb_XZ_le_of_depB hd Φ (hsa g) (hidem g) hX hZ hlin
+      · exact (sum_uniform_snorm_sq_ordComb_XZ_le_of_depB hd K (hG.isStarProjection g) hX hZ hlin
           hB).trans (mul_le_mul_of_nonneg_right hη₂ (hw0 g))) hXZ
-  have h₂ := sum_bad_mass_le_of_avg Φ G (ordComb ordZX X Z)
+  have h₂ := sum_bad_mass_le_of_avg K G hG (ordComb ordZX X Z)
     (fun g => IsLinAB g ∧ (gA hd g).DepOutside xSet)
     (η := (2 + 2 * d + 8 * m * d) / Fintype.card F) (fun g hg =>
-      (sum_uniform_snorm_sq_ordComb_ZX_le_of_depA hd Φ (hsa g) (hidem g) hX hZ hg.1
+      (sum_uniform_snorm_sq_ordComb_ZX_le_of_depA hd K (hG.isStarProjection g) hX hZ hg.1
         hg.2).trans (mul_le_mul_of_nonneg_right hη₂ (hw0 g))) hZX
   -- the union bound
   have hsub : univ.filter (fun g : LowIndDegPoly (F := F) (m := 4 * m) (d := d) => ¬ IsGood g)
@@ -867,31 +864,31 @@ theorem sum_not_isGood_mass_le (hd : 1 ≤ d) (Φ : RA × RB → ℂ)
     (s₁ := univ.filter (fun g : LowIndDegPoly (F := F) (m := 4 * m) (d := d) =>
       ¬ IsLinAB g ∨ (IsLinAB g ∧ (gB hd g).DepOutside zSet)))
     (s₂ := univ.filter (fun g => IsLinAB g ∧ (gA hd g).DepOutside xSet))
-    (f := fun g => bornProb Φ (G.M () g) 1)
+    (f := fun g => K.bornProb (G.op g) 1)
   have hinter := Finset.sum_nonneg (s := univ.filter (fun g : LowIndDegPoly (F := F) (m := 4 * m)
     (d := d) => ¬ IsLinAB g ∨ (IsLinAB g ∧ (gB hd g).DepOutside zSet))
       ∩ univ.filter (fun g => IsLinAB g ∧ (gA hd g).DepOutside xSet))
     fun g _ => hw0 g
   have hcover := Finset.sum_le_sum_of_subset_of_nonneg hsub
-    (f := fun g => bornProb Φ (G.M () g) 1) fun g _ _ => hw0 g
+    (f := fun g => K.bornProb (G.op g) 1) fun g _ _ => hw0 g
   have hΔ₁ : 0 ≤ Δ₁ := le_trans (Finset.sum_nonneg fun u _ => mul_nonneg (uniform_nonneg _ _)
     (Finset.sum_nonneg fun g _ => sq_nonneg _)) hXZ
   have hΔ₂ : 0 ≤ Δ₂ := le_trans (Finset.sum_nonneg fun u _ => mul_nonneg (uniform_nonneg _ _)
     (Finset.sum_nonneg fun g _ => sq_nonneg _)) hZX
   by_cases hc : 0 ≤ 1 - 2 * ((2 + 2 * d + 8 * m * d) / (Fintype.card F : ℝ))
-  · have hW : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1
+  · have hW : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1
         ≤ ∑ g ∈ univ.filter (fun g => ¬ IsLinAB g ∨ (IsLinAB g ∧ (gB hd g).DepOutside zSet)),
-            bornProb Φ (G.M () g) 1
+            K.bornProb (G.op g) 1
           + ∑ g ∈ univ.filter (fun g => IsLinAB g ∧ (gA hd g).DepOutside xSet),
-            bornProb Φ (G.M () g) 1 := by linarith
+            K.bornProb (G.op g) 1 := by linarith
     calc _ ≤ (1 - 2 * ((2 + 2 * d + 8 * m * d) / Fintype.card F))
           * (∑ g ∈ univ.filter (fun g => ¬ IsLinAB g ∨ (IsLinAB g ∧ (gB hd g).DepOutside zSet)),
-              bornProb Φ (G.M () g) 1
+              K.bornProb (G.op g) 1
             + ∑ g ∈ univ.filter (fun g => IsLinAB g ∧ (gA hd g).DepOutside xSet),
-              bornProb Φ (G.M () g) 1) := mul_le_mul_of_nonneg_left hW hc
+              K.bornProb (G.op g) 1) := mul_le_mul_of_nonneg_left hW hc
       _ ≤ 2 * Δ₁ + 2 * Δ₂ := by rw [mul_add]; exact add_le_add h₁ h₂
   · push Not at hc
-    have hsum : 0 ≤ ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 :=
+    have hsum : 0 ≤ ∑ g ∈ univ.filter (fun g => ¬ IsGood g), K.bornProb (G.op g) 1 :=
       Finset.sum_nonneg fun g _ => hw0 g
     have hprod0 := mul_nonneg (neg_nonneg.mpr hc.le) hsum
     linarith

@@ -5,9 +5,9 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.QLD.PaddedStrategy
+public import MIPRE.Background.QLD.Uniform
 public import MIPRE.Foundations.LowDegree.SchwartzZippel
 public import MIPRE.Background.LIDT.Coefficients
-public import MIPRE.Foundations.StrategyDilation
 
 @[expose] public section
 
@@ -43,48 +43,52 @@ probability by `8md/q` (`card_mixAgree_le`); for one that does not, the probabil
 for any finite variable type, which is what the pair `Fin (4m) ⊕ Fin (4m)` needs) were written
 here and now live in `MIPRE/Background/LIDT/Coefficients.lean`, where the simultaneous low-degree
 test can use them too.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The state is that of a
+bipartite model `K` --- the model in which the low individual degree test is applied, `padModel`,
+or any other --- the global measurement is a POVM `G` in the first player's algebra (`POVMIn`),
+evaluated at a point by `evalPOVMIn`, the point measurement is a family of POVMs in the second
+player's algebra, and the weight of an outcome is the Born probability `K.bornProb (G.op g) 1`.
+That two distinct elements of a POVM sum to at most one holds in any star-ordered ring
+(`POVMIn.add_le_one`), and the elements of `G` are nonnegative as those of a POVM, so neither
+measurement needs to be projective. The second player's version is the first player's in the
+exchanged model `K.swap` (`BipartiteModel.inconsistency_swap`, `BipartiteModel.bornProb_swap`).
+The polynomial half is unchanged.
 -/
 
 noncomputable section
 
 namespace MIPRE
 
-open Finset Matrix
-open scoped Kronecker ComplexOrder MatrixOrder
+open Finset
 
 /-! ## Born-rule and POVM facts -/
 
 section Born
 
-variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ]
 
-theorem bornProb_add_right (ψ : dA × dB → ℂ) (X : Matrix dA dA ℂ) (Y Z : Matrix dB dB ℂ) :
-    bornProb ψ X (Y + Z) = bornProb ψ X Y + bornProb ψ X Z := by
-  have h := bornProb_sub_right ψ X (Y + Z) Z
+/-- The Born probability is additive in the second player's operator. -/
+theorem bornProb_add_right (M : BipartiteModel 𝒞 𝒜 ℬ) (X : 𝒜) (Y Z : ℬ) :
+    M.bornProb X (Y + Z) = M.bornProb X Y + M.bornProb X Z := by
+  have h := M.bornProb_sub_right X (Y + Z) Z
   rw [add_sub_cancel_right] at h
   linarith
 
-/-- Two distinct elements of a POVM sum to at most the identity. -/
-theorem POVM.add_le_one {A : Type*} [Fintype A] [DecidableEq A] (M : POVM A dB) {b b' : A}
-    (h : b ≠ b') : ((M.mats b).val) + ((M.mats b').val) ≤ (1 : Matrix dB dB ℂ) := by
-  have hpair : ((M.mats b).val) + ((M.mats b').val)
-      = ∑ x ∈ ({b, b'} : Finset A), ((M.mats x).val) :=
-    (Finset.sum_pair (f := fun x => ((M.mats x).val)) h).symm
-  rw [← POVM.sum_val M, hpair]
-  exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
-    fun a _ _ => Matrix.nonneg_iff_posSemidef.mpr (M.posSemidef a)
+end Born
 
-/-- Exchanging the two parties exchanges the two families. -/
-theorem inconsistency_swapVec {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A] (μ : X → ℝ)
-    (ψ : dA × dB → ℂ) (M : X → POVM A dA) (N : X → POVM A dB) :
-    inconsistency μ (swapVec ψ) N M = inconsistency μ ψ M N := by
-  unfold inconsistency
-  simp only [bornProb_def, bornProb_swapVec]
-  refine Finset.sum_congr rfl fun x _ => ?_
-  congr 1
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  exact if_congr eq_comm rfl rfl
+/-- **Two distinct elements of a POVM sum to at most one**, in any star-ordered ring. -/
+theorem POVMIn.add_le_one {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    {A : Type*} [Fintype A] [DecidableEq A] (M : POVMIn A R) {b b' : A} (h : b ≠ b') :
+    M.op b + M.op b' ≤ 1 := by
+  have hpair : M.op b + M.op b' = ∑ x ∈ ({b, b'} : Finset A), M.op x :=
+    (Finset.sum_pair (f := fun x => M.op x) h).symm
+  rw [← M.sum_op, hpair]
+  exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
+    fun a _ _ => M.op_nonneg a
 
 theorem sum_ite_eq_zero_sub {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup β] (a : α)
     (x : α → β) : (∑ b, if a = b then 0 else x b) = (∑ b, x b) - x a := by
@@ -95,50 +99,51 @@ theorem sum_ite_eq_zero_sub {α β : Type*} [Fintype α] [DecidableEq α] [AddCo
   rw [Finset.sum_ite_eq univ a x, if_pos (mem_univ a)] at h
   exact eq_sub_of_add_eq h
 
-/-- The elements of a projective measurement are positive. -/
-theorem ProjectiveMeasurement.posSemidef_M {X A : Type*} [Fintype A]
-    (G : ProjectiveMeasurement X A (Matrix dA dA ℂ)) (x : X) (a : A) : (G.M x a).PosSemidef := by
-  have : G.M x a = (G.M x a)ᴴ * G.M x a := by
-    rw [← Matrix.star_eq_conjTranspose, G.selfAdjoint, G.projective]
-  rw [this]
-  exact Matrix.posSemidef_conjTranspose_mul_self _
-
-end Born
-
 end MIPRE
 
 namespace MIPRE.QLD
 
-open Finset Matrix MIPRE MIPRE.LIDT MvPolynomial
-open scoped Kronecker ComplexOrder MatrixOrder
+open Finset MIPRE MIPRE.LIDT MvPolynomial
 
 /-! ## The inconsistency of an evaluated global measurement, unfolded -/
 
 section Mass
 
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ} {RA RB : Type*} [Fintype RA]
-  [DecidableEq RA] [Fintype RB] [DecidableEq RB]
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ}
+
+/-- **A global measurement evaluated at a point**: the POVM with outcomes in `F` whose element at
+`a` is the sum of the elements at the polynomials `g` with `g(u) = a`. The model form of
+`LIDT.evalPOVM`, in any star-ordered ring. -/
+def evalPOVMIn {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    (G : POVMIn (LowIndDegPoly (F := F) (m := n) (d := d)) R) (u : Point F n) : POVMIn F R :=
+  G.map fun g => g.eval u
+
+theorem evalPOVMIn_op {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    (G : POVMIn (LowIndDegPoly (F := F) (m := n) (d := d)) R) (u : Point F n) (a : F) :
+    (evalPOVMIn G u).op a = ∑ g ∈ univ.filter fun g => g.eval u = a, G.op g :=
+  POVMIn.map_op _ _ _
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [PartialOrder ℬ]
 
 /-- **The inconsistency of an evaluated global measurement with a point measurement** is one minus
 the average weight the global outcome's value at the point receives from the point measurement:
 `1 - ∑_u μ_u ∑_g ⟨G_g ⊗ P_u(g(u))⟩`. -/
-theorem inconsistency_evalPOVM_eq (μ : Point F n → ℝ) (hμ : ∑ u, μ u = 1) {Φ : RA × RB → ℂ}
-    (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := n) (d := d)) (Matrix RA RA ℂ))
-    (P : Point F n → POVM F RB) :
-    inconsistency μ Φ (evalPOVM G) P
-      = 1 - ∑ u, μ u * ∑ g, bornProb Φ (G.M () g) (((P u).mats (g.eval u)).val) := by
+theorem inconsistency_evalPOVM_eq [StarOrderedRing 𝒜] (μ : Point F n → ℝ) (hμ : ∑ u, μ u = 1)
+    {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := n) (d := d)) 𝒜) (P : Point F n → POVMIn F ℬ) :
+    K.inconsistency μ (evalPOVMIn G) P
+      = 1 - ∑ u, μ u * ∑ g, K.bornProb (G.op g) ((P u).op (g.eval u)) := by
   have hfib : ∀ u, (∑ a : F, ∑ b : F, if a = b then 0 else
-      bornProb Φ (((evalPOVM G u).mats a).val) (((P u).mats b).val))
-      = ∑ g, ∑ b : F, if g.eval u = b then 0 else
-          bornProb Φ (G.M () g) (((P u).mats b).val) := by
+      K.bornProb ((evalPOVMIn G u).op a) ((P u).op b))
+      = ∑ g, ∑ b : F, if g.eval u = b then 0 else K.bornProb (G.op g) ((P u).op b) := by
     intro u
     have h1 : ∀ a b : F, (if a = b then (0 : ℝ) else
-        bornProb Φ (((evalPOVM G u).mats a).val) (((P u).mats b).val))
+        K.bornProb ((evalPOVMIn G u).op a) ((P u).op b))
         = ∑ g ∈ univ.filter fun g : LowIndDegPoly (F := F) (m := n) (d := d) => g.eval u = a,
-            if a = b then 0 else bornProb Φ (G.M () g) (((P u).mats b).val) := by
+            if a = b then 0 else K.bornProb (G.op g) ((P u).op b) := by
       intro a b
-      rw [evalPOVM, POVM.map_mats, bornProb_sum_left]
+      rw [evalPOVMIn_op, K.bornProb_sum_left]
       split_ifs
       · simp
       · rfl
@@ -149,19 +154,19 @@ theorem inconsistency_evalPOVM_eq (μ : Point F n → ℝ) (hμ : ∑ u, μ u = 
     refine Finset.sum_congr rfl fun g hg => ?_
     rw [(mem_filter.mp hg).2]
   have hsum : ∀ u, (∑ g, ∑ b : F, if g.eval u = b then 0 else
-      bornProb Φ (G.M () g) (((P u).mats b).val))
-      = 1 - ∑ g, bornProb Φ (G.M () g) (((P u).mats (g.eval u)).val) := by
+      K.bornProb (G.op g) ((P u).op b))
+      = 1 - ∑ g, K.bornProb (G.op g) ((P u).op (g.eval u)) := by
     intro u
-    simp_rw [sum_ite_eq_zero_sub, ← bornProb_sum_right, POVM.sum_val]
-    rw [Finset.sum_sub_distrib, ← bornProb_sum_left, G.normalized, bornProb_one_one hΦ]
-  unfold inconsistency
-  simp only [bornProb_def, hfib, hsum, mul_sub, mul_one, Finset.sum_sub_distrib, hμ]
+    simp_rw [sum_ite_eq_zero_sub, ← K.bornProb_sum_right, (P u).sum_op]
+    rw [Finset.sum_sub_distrib, ← K.bornProb_sum_left, G.sum_op, K.bornProb_one_one hK]
+  unfold BipartiteModel.inconsistency
+  simp only [hfib, hsum, mul_sub, mul_one, Finset.sum_sub_distrib, hμ]
 
-/-- The total weight of a projective measurement's outcomes is one. -/
-theorem sum_bornProb_M_one {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1) {A : Type*} [Fintype A]
-    (G : ProjectiveMeasurement Unit A (Matrix RA RA ℂ)) :
-    ∑ g, bornProb Φ (G.M () g) (1 : Matrix RB RB ℂ) = 1 := by
-  rw [← bornProb_sum_left, G.normalized, bornProb_one_one hΦ]
+omit [PartialOrder ℬ] in
+/-- The total weight of a POVM's outcomes is one. -/
+theorem sum_bornProb_M_one {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1) {A : Type*} [Fintype A]
+    (G : POVMIn A 𝒜) : ∑ g, K.bornProb (G.op g) 1 = 1 := by
+  rw [← K.bornProb_sum_left, G.sum_op, K.bornProb_one_one hK]
 
 end Mass
 
@@ -250,10 +255,11 @@ omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
     (mixSwap p).1 = mix p.1 p.2 := rfl
 
 /-- **The padded point measurement does not read the dummy coordinates.** -/
-theorem padPt_mix {dA : Type} [Fintype dA] [DecidableEq dA]
-    {M : Question F m → POVM (Answer F m d) dA} (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))
-    (u u' : Point F (4 * m)) : padPt hM (mix u u') = padPt hM u :=
-  POVM.ext' fun a => by rw [padPt_mats, padPt_mats, xBlk_mix, zBlk_mix, alph_mix, bet_mix]
+theorem padPt_mix {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]
+    [PartialOrder R] [StarOrderedRing R] [StarProper R]
+    {S : Question F m → POVMIn (Answer F m d) R} (hS : ∀ q, IsPVMIn (S q).op)
+    (u u' : Point F (4 * m)) : padPt hS (mix u u') = padPt hS u :=
+  POVMIn.ext' fun a => by rw [padPt_mats, padPt_mats, xBlk_mix, zBlk_mix, alph_mix, bet_mix]
 
 /-- **`w`-independence**: a coefficient vector with no monomial involving a dummy coordinate. -/
 def WIndep (g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)) : Prop :=
@@ -367,19 +373,20 @@ theorem card_mixAgree_le {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)} (hg 
 
 section Weight
 
-variable {RA RB : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
 omit [Algebra (ZMod 2) F] [NeZero m] in
 /-- **The resampling estimate.** If the evaluated global measurement is `δ`-consistent, on average
 over a uniform point, with a point measurement that does not read the dummy coordinates, then
 `∑_g ⟨G_g⟩ · Pr[g(u) = g(mix u u')] ≥ 1 - 2δ`: the consistency holds at `u` and at `mix u u'`
-simultaneously, and two distinct elements of a POVM sum to at most the identity. -/
-theorem sum_mass_mixAgree_ge {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (P : Point F (4 * m) → POVM F RB) (hP : ∀ u u', P (mix u u') = P u) {δ : ℝ}
-    (hcons : inconsistency (uniform (Point F (4 * m))) Φ (evalPOVM G) P ≤ δ) :
-    1 - 2 * δ ≤ ∑ g, bornProb Φ (G.M () g) 1
+simultaneously, and two distinct elements of a POVM sum to at most one. -/
+theorem sum_mass_mixAgree_ge {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜)
+    (P : Point F (4 * m) → POVMIn F ℬ) (hP : ∀ u u', P (mix u u') = P u) {δ : ℝ}
+    (hcons : K.inconsistency (uniform (Point F (4 * m))) (evalPOVMIn G) P ≤ δ) :
+    1 - 2 * δ ≤ ∑ g, K.bornProb (G.op g) 1
       * (((mixAgree g).card : ℝ) / (Fintype.card F : ℝ) ^ (4 * m + 4 * m)) := by
   set μ := uniform (Point F (4 * m)) with hμdef
   have hμ1 : ∑ u, μ u = 1 := sum_uniform_eq_one _
@@ -387,11 +394,10 @@ theorem sum_mass_mixAgree_ge {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 
   have hcard_c : (Fintype.card (Point F (4 * m)) : ℝ) * c = 1 :=
     mul_inv_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
   set S : Point F (4 * m) → ℝ :=
-    fun u => ∑ g, bornProb Φ (G.M () g) (((P u).mats (g.eval u)).val) with hS
+    fun u => ∑ g, K.bornProb (G.op g) ((P u).op (g.eval u)) with hS
   have h1 : 1 - δ ≤ ∑ u, c * S u := by
-    rw [inconsistency_evalPOVM_eq μ hμ1 hΦ G P] at hcons
-    have : ∑ u, μ u * ∑ g, bornProb Φ (G.M () g) (((P u).mats (g.eval u)).val)
-        = ∑ u, c * S u := rfl
+    rw [inconsistency_evalPOVM_eq μ hμ1 hK G P] at hcons
+    have : ∑ u, μ u * ∑ g, K.bornProb (G.op g) ((P u).op (g.eval u)) = ∑ u, c * S u := rfl
     linarith
   have hpair : ∑ p : Point F (4 * m) × Point F (4 * m), c * c * S p.1 = ∑ u, c * S u := by
     rw [Fintype.sum_prod_type]
@@ -413,23 +419,22 @@ theorem sum_mass_mixAgree_ge {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 
     simp only [mul_add, Finset.sum_add_distrib]
     linarith
   have hpt : ∀ (g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)) (u u' : Point F (4 * m)),
-      bornProb Φ (G.M () g) (((P u).mats (g.eval u)).val)
-        + bornProb Φ (G.M () g) (((P (mix u u')).mats (g.eval (mix u u'))).val)
-        ≤ (1 + if g.eval u = g.eval (mix u u') then 1 else 0) * bornProb Φ (G.M () g) 1 := by
+      K.bornProb (G.op g) ((P u).op (g.eval u))
+        + K.bornProb (G.op g) ((P (mix u u')).op (g.eval (mix u u')))
+        ≤ (1 + if g.eval u = g.eval (mix u u') then 1 else 0) * K.bornProb (G.op g) 1 := by
     intro g u u'
-    have hG := G.posSemidef_M () g
+    have hG := G.op_nonneg g
     rw [hP, ← bornProb_add_right]
     split_ifs with heq
     · rw [heq]
-      calc bornProb Φ (G.M () g)
-            (((P u).mats (g.eval (mix u u'))).val + ((P u).mats (g.eval (mix u u'))).val)
-          ≤ bornProb Φ (G.M () g) (1 + 1) :=
-            bornProb_mono_right Φ hG (add_le_add (POVM.le_one _ _) (POVM.le_one _ _))
-        _ = (1 + 1) * bornProb Φ (G.M () g) 1 := by rw [bornProb_add_right]; ring
-    · calc bornProb Φ (G.M () g)
-            (((P u).mats (g.eval u)).val + ((P u).mats (g.eval (mix u u'))).val)
-          ≤ bornProb Φ (G.M () g) 1 := bornProb_mono_right Φ hG (POVM.add_le_one (P u) heq)
-        _ = (1 + 0) * bornProb Φ (G.M () g) 1 := by ring
+      calc K.bornProb (G.op g)
+            ((P u).op (g.eval (mix u u')) + (P u).op (g.eval (mix u u')))
+          ≤ K.bornProb (G.op g) (1 + 1) :=
+            bornProb_mono_right K hG (add_le_add ((P u).op_le_one _) ((P u).op_le_one _))
+        _ = (1 + 1) * K.bornProb (G.op g) 1 := by rw [bornProb_add_right]; ring
+    · calc K.bornProb (G.op g) ((P u).op (g.eval u) + (P u).op (g.eval (mix u u')))
+          ≤ K.bornProb (G.op g) 1 := bornProb_mono_right K hG ((P u).add_le_one heq)
+        _ = (1 + 0) * K.bornProb (G.op g) 1 := by ring
   have hc2 : ∑ _p : Point F (4 * m) × Point F (4 * m), c * c = 1 := by
     rw [Finset.sum_const, Finset.card_univ, Fintype.card_prod, nsmul_eq_mul]
     push_cast
@@ -438,22 +443,21 @@ theorem sum_mass_mixAgree_ge {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 
           ring
       _ = 1 := by rw [hcard_c, one_mul]
   have hsum : ∑ p : Point F (4 * m) × Point F (4 * m), c * c * (S p.1 + S (mix p.1 p.2))
-      ≤ ∑ g, bornProb Φ (G.M () g) 1 * (1 + ((mixAgree g).card : ℝ) * (c * c)) := by
+      ≤ ∑ g, K.bornProb (G.op g) 1 * (1 + ((mixAgree g).card : ℝ) * (c * c)) := by
     calc ∑ p : Point F (4 * m) × Point F (4 * m), c * c * (S p.1 + S (mix p.1 p.2))
         = ∑ p : Point F (4 * m) × Point F (4 * m), ∑ g, c * c
-            * (bornProb Φ (G.M () g) (((P p.1).mats (g.eval p.1)).val)
-              + bornProb Φ (G.M () g) (((P (mix p.1 p.2)).mats (g.eval (mix p.1 p.2))).val)) := by
+            * (K.bornProb (G.op g) ((P p.1).op (g.eval p.1))
+              + K.bornProb (G.op g) ((P (mix p.1 p.2)).op (g.eval (mix p.1 p.2)))) := by
           refine Finset.sum_congr rfl fun p _ => ?_
-          show c * c * (∑ g, bornProb Φ (G.M () g) (((P p.1).mats (g.eval p.1)).val)
-            + ∑ g, bornProb Φ (G.M () g) (((P (mix p.1 p.2)).mats (g.eval (mix p.1 p.2))).val))
-            = _
+          show c * c * (∑ g, K.bornProb (G.op g) ((P p.1).op (g.eval p.1))
+            + ∑ g, K.bornProb (G.op g) ((P (mix p.1 p.2)).op (g.eval (mix p.1 p.2)))) = _
           rw [← Finset.sum_add_distrib, Finset.mul_sum]
       _ ≤ ∑ p : Point F (4 * m) × Point F (4 * m), ∑ g, c * c
             * ((1 + if g.eval p.1 = g.eval (mix p.1 p.2) then 1 else 0)
-              * bornProb Φ (G.M () g) 1) := by
+              * K.bornProb (G.op g) 1) := by
           refine Finset.sum_le_sum fun p _ => Finset.sum_le_sum fun g _ => ?_
           exact mul_le_mul_of_nonneg_left (hpt g p.1 p.2) (by positivity)
-      _ = ∑ g, bornProb Φ (G.M () g) 1 * (1 + ((mixAgree g).card : ℝ) * (c * c)) := by
+      _ = ∑ g, K.bornProb (G.op g) 1 * (1 + ((mixAgree g).card : ℝ) * (c * c)) := by
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun g _ => ?_
           have hind : ∑ p : Point F (4 * m) × Point F (4 * m),
@@ -462,23 +466,23 @@ theorem sum_mass_mixAgree_ge {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 
             rw [← Finset.mul_sum, Finset.sum_boole, mixAgree]
           calc ∑ p : Point F (4 * m) × Point F (4 * m), c * c
                 * ((1 + if g.eval p.1 = g.eval (mix p.1 p.2) then (1 : ℝ) else 0)
-                  * bornProb Φ (G.M () g) 1)
-              = bornProb Φ (G.M () g) 1 * ((∑ _p : Point F (4 * m) × Point F (4 * m), c * c)
+                  * K.bornProb (G.op g) 1)
+              = K.bornProb (G.op g) 1 * ((∑ _p : Point F (4 * m) × Point F (4 * m), c * c)
                 + ∑ p : Point F (4 * m) × Point F (4 * m),
                     c * c * (if g.eval p.1 = g.eval (mix p.1 p.2) then (1 : ℝ) else 0)) := by
                 rw [mul_add, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
                 refine Finset.sum_congr rfl fun p _ => ?_
                 ring
-            _ = bornProb Φ (G.M () g) 1 * (1 + ((mixAgree g).card : ℝ) * (c * c)) := by
+            _ = K.bornProb (G.op g) 1 * (1 + ((mixAgree g).card : ℝ) * (c * c)) := by
                 rw [hc2, hind]
                 ring
-  have hmass : ∑ g, bornProb Φ (G.M () g) 1 = 1 := sum_bornProb_M_one hΦ G
+  have hmass : ∑ g, K.bornProb (G.op g) 1 = 1 := sum_bornProb_M_one hK G
   have hcc : c * c = ((Fintype.card F : ℝ) ^ (4 * m + 4 * m))⁻¹ := by
     rw [hc, Fintype.card_fun, Fintype.card_fin]
     push_cast
     rw [← mul_inv, ← pow_add]
-  have hfin : ∑ g, bornProb Φ (G.M () g) 1 * (1 + ((mixAgree g).card : ℝ) * (c * c))
-      = 1 + ∑ g, bornProb Φ (G.M () g) 1
+  have hfin : ∑ g, K.bornProb (G.op g) 1 * (1 + ((mixAgree g).card : ℝ) * (c * c))
+      = 1 + ∑ g, K.bornProb (G.op g) 1
           * (((mixAgree g).card : ℝ) / (Fintype.card F : ℝ) ^ (4 * m + 4 * m)) := by
     simp only [mul_add, mul_one, Finset.sum_add_distrib, hmass, hcc, div_eq_mul_inv]
   linarith
@@ -487,15 +491,14 @@ omit [Algebra (ZMod 2) F] [NeZero m] in
 /-- **`lem:qld-global-dummy`.** If the evaluated global measurement is `δ`-consistent with a point
 measurement that does not read the dummy coordinates, the total weight of the outcomes that read
 one satisfies `(1 - 8md/q) · weight ≤ 2δ`. -/
-theorem sum_bad_mass_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (P : Point F (4 * m) → POVM F RB) (hP : ∀ u u', P (mix u u') = P u) {δ : ℝ}
-    (hcons : inconsistency (uniform (Point F (4 * m))) Φ (evalPOVM G) P ≤ δ) :
+theorem sum_bad_mass_le {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜)
+    (P : Point F (4 * m) → POVMIn F ℬ) (hP : ∀ u u', P (mix u u') = P u) {δ : ℝ}
+    (hcons : K.inconsistency (uniform (Point F (4 * m))) (evalPOVMIn G) P ≤ δ) :
     (1 - ((4 * m + 4 * m : ℕ) : ℝ) * d / Fintype.card F)
-      * ∑ g ∈ univ.filter (fun g => ¬ WIndep g), bornProb Φ (G.M () g) 1 ≤ 2 * δ := by
-  have h := sum_mass_mixAgree_ge hΦ G P hP hcons
-  have hmass := sum_bornProb_M_one (RB := RB) hΦ G
+      * ∑ g ∈ univ.filter (fun g => ¬ WIndep g), K.bornProb (G.op g) 1 ≤ 2 * δ := by
+  have h := sum_mass_mixAgree_ge hK G P hP hcons
+  have hmass := sum_bornProb_M_one hK G
   set η : ℝ := ((4 * m + 4 * m : ℕ) : ℝ) * d / Fintype.card F with hη
   set Q : ℝ := (Fintype.card F : ℝ) ^ (4 * m + 4 * m) with hQ
   have hQpos : 0 < Q := pow_pos (Nat.cast_pos.mpr Fintype.card_pos) _
@@ -505,19 +508,19 @@ theorem sum_bad_mass_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
     rw [hQ, pow_add]
   rw [← Finset.sum_filter_add_sum_filter_not univ fun g => WIndep g] at h hmass
   have hgood : ∑ g ∈ univ.filter (fun g => WIndep g),
-      bornProb Φ (G.M () g) 1 * (((mixAgree g).card : ℝ) / Q)
-      = ∑ g ∈ univ.filter (fun g => WIndep g), bornProb Φ (G.M () g) 1 := by
+      K.bornProb (G.op g) 1 * (((mixAgree g).card : ℝ) / Q)
+      = ∑ g ∈ univ.filter (fun g => WIndep g), K.bornProb (G.op g) 1 := by
     refine Finset.sum_congr rfl fun g hg => ?_
     rw [mixAgree_eq_univ_of_wIndep (mem_filter.mp hg).2, Finset.card_univ, hPQ,
       div_self hQpos.ne', mul_one]
   have hbad : ∑ g ∈ univ.filter (fun g => ¬ WIndep g),
-      bornProb Φ (G.M () g) 1 * (((mixAgree g).card : ℝ) / Q)
-      ≤ η * ∑ g ∈ univ.filter (fun g => ¬ WIndep g), bornProb Φ (G.M () g) 1 := by
+      K.bornProb (G.op g) 1 * (((mixAgree g).card : ℝ) / Q)
+      ≤ η * ∑ g ∈ univ.filter (fun g => ¬ WIndep g), K.bornProb (G.op g) 1 := by
     rw [Finset.mul_sum]
     refine Finset.sum_le_sum fun g hg => ?_
     rw [mul_comm η]
     exact mul_le_mul_of_nonneg_left (card_mixAgree_le (mem_filter.mp hg).2)
-      (bornProb_nonneg _ (G.posSemidef_M () g) Matrix.PosSemidef.one)
+      (K.bornProb_nonneg (G.op_nonneg g) zero_le_one)
   rw [hgood] at h
   rw [sub_mul, one_mul]
   linarith
@@ -525,16 +528,15 @@ theorem sum_bad_mass_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
 omit [Algebra (ZMod 2) F] [NeZero m] in
 /-- `lem:qld-global-dummy` with the standing assumption `16 m d ≤ q`: the weight of the outcomes
 that read a dummy coordinate is at most `4δ`. -/
-theorem sum_bad_mass_le_of_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (P : Point F (4 * m) → POVM F RB) (hP : ∀ u u', P (mix u u') = P u) {δ : ℝ}
-    (hcons : inconsistency (uniform (Point F (4 * m))) Φ (evalPOVM G) P ≤ δ)
+theorem sum_bad_mass_le_of_le {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜)
+    (P : Point F (4 * m) → POVMIn F ℬ) (hP : ∀ u u', P (mix u u') = P u) {δ : ℝ}
+    (hcons : K.inconsistency (uniform (Point F (4 * m))) (evalPOVMIn G) P ≤ δ)
     (hq : 16 * m * d ≤ Fintype.card F) :
-    ∑ g ∈ univ.filter (fun g => ¬ WIndep g), bornProb Φ (G.M () g) 1 ≤ 4 * δ := by
-  have h := sum_bad_mass_le hΦ G P hP hcons
-  have hB : 0 ≤ ∑ g ∈ univ.filter (fun g => ¬ WIndep g), bornProb Φ (G.M () g) 1 :=
-    Finset.sum_nonneg fun g _ => bornProb_nonneg _ (G.posSemidef_M () g) Matrix.PosSemidef.one
+    ∑ g ∈ univ.filter (fun g => ¬ WIndep g), K.bornProb (G.op g) 1 ≤ 4 * δ := by
+  have h := sum_bad_mass_le hK G P hP hcons
+  have hB : 0 ≤ ∑ g ∈ univ.filter (fun g => ¬ WIndep g), K.bornProb (G.op g) 1 :=
+    Finset.sum_nonneg fun g _ => K.bornProb_nonneg (G.op_nonneg g) zero_le_one
   have hη : ((4 * m + 4 * m : ℕ) : ℝ) * d / Fintype.card F ≤ 1 / 2 := by
     rw [div_le_iff₀ (Nat.cast_pos.mpr Fintype.card_pos)]
     have : ((16 * m * d : ℕ) : ℝ) ≤ Fintype.card F := Nat.cast_le.mpr hq

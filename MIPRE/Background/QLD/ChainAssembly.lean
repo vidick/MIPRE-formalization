@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 module
-public import MIPRE.Background.QLD.Chain
+public import MIPRE.Background.QLD.ChainPhysical
 
 @[expose] public section
 

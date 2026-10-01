@@ -517,6 +517,7 @@ public import MIPRE.Background.QLD.CLPresentation
 public import MIPRE.Background.QLD.CLTransport
 public import MIPRE.Background.QLD.Chain
 public import MIPRE.Background.QLD.ChainAssembly
+public import MIPRE.Background.QLD.ChainPhysical
 public import MIPRE.Background.QLD.ChainProbe
 public import MIPRE.Background.QLD.Combine
 public import MIPRE.Background.QLD.Combined

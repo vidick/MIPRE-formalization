@@ -5,7 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.QLD.Dummy
-public import MIPRE.Foundations.Parseval
+public import MIPRE.Foundations.ModelCalculus
 
 @[expose] public section
 
@@ -28,247 +28,221 @@ Two steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, becaus
 `c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves
 `∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,
 a fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval
-over `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into
-`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation
-is a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.
+over `F_q` (`BipartiteModel.sum_avg_stateSqNorm_fibre_eq`) turns the average over `(α, β)` of the
+fibre sums into `(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and
+each deviation is a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and
+`Z X Z - X Z = -(1 - Z) [X, Z]`.
 
-Everything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with
-the consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and
-`lem:qld-combined-points` supply them for the padded state.
+Everything here is stated for abstract projective families `X x`, `Z z` of the second player,
+with the consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and
+`lem:qld-combined-points` supply them for the padded strategy.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The state is that of a
+bipartite model `K` (the model in which the low individual degree test is applied, `padModel`,
+or any other), the global measurement `G` is a projective POVM in the first player's algebra, and
+the two families `X x`, `Z z` are projective measurements in the second player's. A Kronecker
+product `G_g ⊗ D` is `K.πA (G.op g) * K.πB D`, its state norm is `K.snorm`, and the second
+player's squared norm `‖(1 ⊗ D) Φ‖²` is `K.swap.stateSqNorm D`. The ordered products, the
+commutator and the combinations are defined in any ring. The step `(1 - P)² ≤ 1 - P` is taken on
+the represented operators, where the functional calculus lives (`mul_self_le_self_of_le_one`),
+and Parseval is the model's (`BipartiteModel.sum_avg_stateSqNorm_fibre_eq` in `K.swap`).
 -/
 
 noncomputable section
 
 namespace MIPRE
 
-open Finset Matrix
-open scoped Kronecker ComplexOrder MatrixOrder
+open Finset
 
 section Generic
 
-variable {N : Type*} [Fintype N] [DecidableEq N]
+/-- An element of a projective measurement is at most one, in a star-ordered ring. -/
+theorem IsPVMIn.le_one {R Λ : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
+    [Fintype Λ] {P : Λ → R} (h : IsPVMIn P) (a : Λ) : P a ≤ 1 := by
+  rw [← h.sum_eq_one]
+  exact Finset.single_le_sum (fun b _ => h.nonneg b) (Finset.mem_univ a)
 
-/-- `Q² ≤ Q` for `0 ≤ Q ≤ 1`. -/
-theorem mul_self_le_self_of_le_one {Q : Matrix N N ℂ} (h0 : (0 : Matrix N N ℂ) ≤ Q)
-    (h1 : Q ≤ 1) : Q * Q ≤ Q := by
-  have hc : Commute Q (1 - Q) := by
-    show Q * (1 - Q) = (1 - Q) * Q
-    noncomm_ring
-  have h := hc.mul_nonneg h0 (sub_nonneg.mpr h1)
-  have heq : Q * (1 - Q) = Q - Q * Q := by noncomm_ring
-  rw [heq] at h
-  exact sub_nonneg.mp h
-
-/-- The complement of a projector is a contraction. -/
-theorem one_sub_proj_conjTranspose_mul_self_le_one {P : Matrix N N ℂ} (hsa : Pᴴ = P)
-    (hidem : P * P = P) : ((1 : Matrix N N ℂ) - P)ᴴ * (1 - P) ≤ 1 := by
-  have hsa' : ((1 : Matrix N N ℂ) - P)ᴴ = 1 - P := by
-    rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, hsa]
-  have hidem' : ((1 : Matrix N N ℂ) - P) * (1 - P) = 1 - P := by
-    rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_sub, Matrix.one_mul, Matrix.mul_one,
-      Matrix.one_mul, hidem]
+/-- The complement of a projection is a contraction, in a star-ordered ring. -/
+theorem one_sub_proj_conjTranspose_mul_self_le_one {R : Type*} [Ring R] [StarRing R]
+    [PartialOrder R] [StarOrderedRing R] {P : R} (hsa : star P = P) (hidem : P * P = P) :
+    star (1 - P) * (1 - P) ≤ 1 := by
+  have hsa' : star (1 - P) = 1 - P := by rw [star_sub, star_one, hsa]
+  have hidem' : (1 - P) * (1 - P) = 1 - P := by
+    rw [sub_mul, mul_sub, mul_sub, one_mul, mul_one, one_mul, hidem]
     abel
   rw [hsa', hidem']
-  exact proj_le_one hsa' hidem'
+  exact sub_le_self 1 (posSemidef_of_proj hsa hidem)
 
-omit [DecidableEq N] in
-theorem snorm_sq_add_le (v : N → ℂ) (M M' : Matrix N N ℂ) :
-    snorm v (M + M') ^ 2 ≤ 2 * snorm v M ^ 2 + 2 * snorm v M' ^ 2 := by
-  have h := snorm_add_le v M M'
-  have h0 := snorm_nonneg v (M + M')
-  nlinarith [sq_nonneg (snorm v M - snorm v M')]
+/-- `‖T + T'‖² ≤ 2 ‖T‖² + 2 ‖T'‖²` in the state norm of a state model. -/
+theorem snorm_sq_add_le {𝒞 : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] (M : StateModel 𝒞)
+    (T T' : 𝒞) : M.snorm (T + T') ^ 2 ≤ 2 * M.snorm T ^ 2 + 2 * M.snorm T' ^ 2 := by
+  have h := M.snorm_add_le T T'
+  have h0 := M.snorm_nonneg (T + T')
+  nlinarith [sq_nonneg (M.snorm T - M.snorm T')]
 
 end Generic
 
 section Born
 
-variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ]
 
-/-- The Born probability is monotone in Alice's operator when Bob's is positive. -/
-theorem bornProb_mono_left (ψ : dA × dB → ℂ) {X X' : Matrix dA dA ℂ} (h : X ≤ X')
-    {Y : Matrix dB dB ℂ} (hY : Y.PosSemidef) : bornProb ψ X Y ≤ bornProb ψ X' Y := by
-  rw [← bornProb_swapVec ψ X Y, ← bornProb_swapVec ψ X' Y]
-  exact bornProb_mono_right _ hY h
+/-- **`Q² ≤ Q` for `0 ≤ Q ≤ 1`, read through a Born probability**: against a nonnegative element
+of the first player, `⟨S ⊗ Q²⟩ ≤ ⟨S ⊗ Q⟩`. The inequality `Q² ≤ Q` is taken on the represented
+operator (`Op.mul_self_le_self`), where the functional calculus lives; the second player's
+algebra need not have one. -/
+theorem mul_self_le_self_of_le_one (M : BipartiteModel 𝒞 𝒜 ℬ) {S : 𝒜} (hS : 0 ≤ S) {Q : ℬ}
+    (h0 : 0 ≤ Q) (h1 : Q ≤ 1) : M.bornProb S (Q * Q) ≤ M.bornProb S Q := by
+  have hD : 0 ≤ M.π (M.πB (Q - Q * Q)) := by
+    simp only [map_sub, map_mul]
+    exact sub_nonneg.2 (Op.mul_self_le_self (M.π_πB_nonneg h0) (M.swap.π_πA_le_one h1))
+  have h : 0 ≤ M.bornProb S (Q - Q * Q) := by
+    refine M.qform_nonneg ?_
+    rw [map_mul]
+    exact ((M.commute S (Q - Q * Q)).map M.π).mul_nonneg (M.π_πA_nonneg hS) hD
+  rw [M.bornProb_sub_right] at h
+  linarith
 
-/-- The squared norm of `(S ⊗ D) ψ` for a projector `S`, as a Born probability. -/
-theorem snorm_sq_aOp_mul_bOp (ψ : dA × dB → ℂ) {S : Matrix dA dA ℂ} (hsa : Sᴴ = S)
-    (hidem : S * S = S) (D : Matrix dB dB ℂ) :
-    snorm ψ ((aOp S : Matrix (dA × dB) _ ℂ) * bOp D) ^ 2 = bornProb ψ S (Dᴴ * D) := by
-  rw [snorm_sq_eq_qform, aOp_bOp_conjTranspose, aOp_bOp_mul_aOp_bOp, hsa, hidem,
-    ← bornProb_eq_qform]
+/-- The Born probability is monotone in the first player's operator when the second player's is
+nonnegative. -/
+theorem bornProb_mono_left (M : BipartiteModel 𝒞 𝒜 ℬ) {X X' : 𝒜} (h : X ≤ X') {Y : ℬ}
+    (hY : 0 ≤ Y) : M.bornProb X Y ≤ M.bornProb X' Y := by
+  rw [← M.bornProb_swap X Y, ← M.bornProb_swap X' Y]
+  exact bornProb_mono_right M.swap hY h
 
-/-- `⟨ψ| 1 ⊗ Dᴴ D |ψ⟩ = ‖(1 ⊗ D) ψ‖²`. -/
-theorem bornProb_one_eq_normSq_stateVecB (ψ : dA × dB → ℂ) (D : Matrix dB dB ℂ) :
-    bornProb ψ (1 : Matrix dA dA ℂ) (Dᴴ * D) = ‖stateVecB ψ D‖ ^ 2 := by
-  rw [normSq_stateVecB_eq_qform, bornProb_eq_qform, aOp_one, Matrix.one_mul]
+omit [PartialOrder 𝒜] [StarOrderedRing 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] in
+/-- `⟨ψ| 1 ⊗ D⋆ D |ψ⟩ = ‖(1 ⊗ D) ψ‖²`: the second player's squared state norm. -/
+theorem bornProb_one_eq_normSq_stateVecB (M : BipartiteModel 𝒞 𝒜 ℬ) (D : ℬ) :
+    M.bornProb 1 (star D * D) = M.swap.stateSqNorm D := by
+  rw [M.swap.stateSqNorm_eq_bornProb_one D, M.bornProb_swap]
 
-/-- The deviation of a projective outcome family from a Bob-side operator family, grouped by a
-value map: the Alice projector `∑_{f g = c} G_g ≤ 1` is dropped. -/
-theorem sum_snorm_sq_aOp_mul_bOp_le {Λ C : Type*} [Fintype Λ] [Fintype C] [DecidableEq C]
-    (ψ : dA × dB → ℂ) {G : Λ → Matrix dA dA ℂ} (hG : IsPVM G) (f : Λ → C)
-    (D : C → Matrix dB dB ℂ) :
-    ∑ g, snorm ψ ((aOp (G g) : Matrix (dA × dB) _ ℂ) * bOp (D (f g))) ^ 2
-      ≤ ∑ c, ‖stateVecB ψ (D c)‖ ^ 2 := by
+/-- The deviation of a projective outcome family from a family of the second player, grouped by
+a value map: the first player's projection `∑_{f g = c} G_g ≤ 1` is dropped. -/
+theorem sum_snorm_sq_aOp_mul_bOp_le (M : BipartiteModel 𝒞 𝒜 ℬ) {Λ C : Type*} [Fintype Λ]
+    [Fintype C] [DecidableEq C] {G : Λ → 𝒜} (hG : IsPVMIn G) (f : Λ → C) (D : C → ℬ) :
+    ∑ g, M.snorm (M.πA (G g) * M.πB (D (f g))) ^ 2 ≤ ∑ c, M.swap.stateSqNorm (D c) := by
   classical
-  have hterm : ∀ g, snorm ψ ((aOp (G g) : Matrix (dA × dB) _ ℂ) * bOp (D (f g))) ^ 2
-      = bornProb ψ (G g) ((D (f g))ᴴ * D (f g)) := fun g =>
-    snorm_sq_aOp_mul_bOp ψ (hG.isSelfAdjoint g) (hG.idem g) _
+  have hterm : ∀ g, M.snorm (M.πA (G g) * M.πB (D (f g))) ^ 2
+      = M.bornProb (G g) (star (D (f g)) * D (f g)) := fun g =>
+    M.snorm_sq_πA_mul_πB (hG.isStarProjection g) _
   simp_rw [hterm]
   rw [← Finset.sum_fiberwise univ f]
   refine Finset.sum_le_sum fun c _ => ?_
-  rw [Finset.sum_congr rfl fun g hg => by rw [(mem_filter.mp hg).2], ← bornProb_sum_left,
+  rw [Finset.sum_congr rfl fun g hg => by rw [(mem_filter.mp hg).2], ← M.bornProb_sum_left,
     ← bornProb_one_eq_normSq_stateVecB]
-  refine bornProb_mono_left ψ ?_ (Matrix.posSemidef_conjTranspose_mul_self _)
+  refine bornProb_mono_left M ?_ (star_mul_self_nonneg _)
   rw [← hG.sum_eq_one]
   exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
-    fun g _ _ => Matrix.nonneg_iff_posSemidef.mpr (hG.posSemidef g)
+    fun g _ _ => hG.nonneg g
 
 end Born
-
-section Ext
-
-variable {dA dB Anc Bnc : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  [Fintype Anc] [DecidableEq Anc] [Fintype Bnc] [DecidableEq Bnc]
-
-/-- Alice's squared state norm of an operator extended by the identity, on the twice-extended
-state, is its squared state norm on the state. -/
-theorem stateSqNorm_extVec2_aOp (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc) (M : Matrix dA dA ℂ) :
-    stateSqNorm (extVec2 ψ a₀ b₀) (aOp M : Matrix (dA × Anc) _ ℂ) = stateSqNorm ψ M := by
-  rw [stateSqNorm_eq_qform (dB := dB × Bnc), aOp_conjTranspose, ← aOp_mul, qform_aOp_extVec2,
-    compress_aOp, ← stateSqNorm_eq_qform]
-
-end Ext
-
-/-! ## Parseval for a Bob-side family -/
-
-section Parseval
-
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-/-- **Parseval over `F_q` for the fibre sums of a Bob-side family summing to zero**: the average
-over the combining coefficients of the squared norms of the fibre sums is `(1 - 1/q)` times the
-sum of the squared norms of the members. -/
-theorem sum_avg_normSq_stateVecB_fibre_eq (ψ : dA × dB → ℂ) {E : F × F → Matrix dB dB ℂ}
-    (hE : ∑ p, E p = 0) :
-    ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
-        ∑ c : F, ‖stateVecB ψ (QLD.ptComb E ab.1 ab.2 c)‖ ^ 2
-      = (1 - (Fintype.card F : ℝ)⁻¹) * ∑ p : F × F, ‖stateVecB ψ (E p)‖ ^ 2 := by
-  have hU : ∑ p : F × F, (bOp (E p) : Matrix (dA × dB) _ ℂ) *ᵥ ψ = 0 := by
-    rw [← Matrix.sum_mulVec, ← bOp_sum, hE, bOp_zero, Matrix.zero_mulVec]
-  have h := sum_avg_norm_fibre_sq (F := F) (fun p => (bOp (E p) : Matrix (dA × dB) _ ℂ) *ᵥ ψ) hU
-  have hfib : ∀ (ab : F × F) (c : F), stateVecB ψ (QLD.ptComb E ab.1 ab.2 c)
-      = evec (∑ p ∈ univ.filter fun p : F × F => ab.1 * p.1 + ab.2 * p.2 = c,
-          (bOp (E p) : Matrix (dA × dB) _ ℂ) *ᵥ ψ) := by
-    intro ab c
-    rw [← Matrix.sum_mulVec, ← bOp_sum]
-    rfl
-  simp_rw [hfib]
-  rw [h]
-  rfl
-
-end Parseval
 
 end MIPRE
 
 namespace MIPRE.QLD
 
-open Finset Matrix MIPRE MIPRE.LIDT
-open scoped Kronecker ComplexOrder MatrixOrder
+open Finset MIPRE MIPRE.LIDT
 
 /-! ## The two ordered products and the commutator -/
 
 section Ord
 
-variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {RB : Type*} [Fintype RB]
-  [DecidableEq RB]
+variable {F : Type*} {R : Type*}
 
-/-- Bob's ordered product, `X` then `Z` (applied right to left: `Z_b X_a`). -/
-def ordZX (X Z : F → Matrix RB RB ℂ) (p : F × F) : Matrix RB RB ℂ := Z p.2 * X p.1
+/-- The ordered product, `X` then `Z` (applied right to left: `Z_b X_a`). -/
+def ordZX [Mul R] (X Z : F → R) (p : F × F) : R := Z p.2 * X p.1
 
-/-- Bob's ordered product, `Z` then `X`: `X_a Z_b`. -/
-def ordXZ (X Z : F → Matrix RB RB ℂ) (p : F × F) : Matrix RB RB ℂ := X p.1 * Z p.2
+/-- The ordered product, `Z` then `X`: `X_a Z_b`. -/
+def ordXZ [Mul R] (X Z : F → R) (p : F × F) : R := X p.1 * Z p.2
 
 /-- The commutator `X_a Z_b - Z_b X_a`. -/
-def comm (X Z : F → Matrix RB RB ℂ) (p : F × F) : Matrix RB RB ℂ := X p.1 * Z p.2 - Z p.2 * X p.1
+def comm [Ring R] (X Z : F → R) (p : F × F) : R := X p.1 * Z p.2 - Z p.2 * X p.1
 
-variable {X Z : F → Matrix RB RB ℂ}
+variable [Fintype F] [Ring R] [StarRing R] {X Z : F → R}
 
-omit [Field F] [DecidableEq F] in
-theorem sum_ordZX (hX : IsPVM X) (hZ : IsPVM Z) : ∑ p : F × F, ordZX X Z p = 1 := by
+theorem sum_ordZX (hX : IsPVMIn X) (hZ : IsPVMIn Z) : ∑ p : F × F, ordZX X Z p = 1 := by
   rw [Fintype.sum_prod_type, Finset.sum_comm]
-  simp only [ordZX, ← Matrix.mul_sum, hX.sum_eq_one, Matrix.mul_one]
+  simp only [ordZX, ← Finset.mul_sum, hX.sum_eq_one, mul_one]
   exact hZ.sum_eq_one
 
-omit [Field F] [DecidableEq F] in
-theorem sum_ordXZ (hX : IsPVM X) (hZ : IsPVM Z) : ∑ p : F × F, ordXZ X Z p = 1 := by
+theorem sum_ordXZ (hX : IsPVMIn X) (hZ : IsPVMIn Z) : ∑ p : F × F, ordXZ X Z p = 1 := by
   rw [Fintype.sum_prod_type]
-  simp only [ordXZ, ← Matrix.mul_sum, hZ.sum_eq_one, Matrix.mul_one]
+  simp only [ordXZ, ← Finset.mul_sum, hZ.sum_eq_one, mul_one]
   exact hX.sum_eq_one
 
-omit [Field F] [DecidableEq F] in
 /-- `Z X Z - Z X = Z [X, Z]`. -/
-theorem sand_sub_ordZX (hZ : IsPVM Z) (p : F × F) :
+theorem sand_sub_ordZX (hZ : IsPVMIn Z) (p : F × F) :
     sand X Z p - ordZX X Z p = Z p.2 * comm X Z p := by
-  simp only [sand, ordZX, comm, Matrix.mul_sub, ← Matrix.mul_assoc, hZ.idem]
+  simp only [sand, ordZX, comm, mul_sub, ← mul_assoc, hZ.idem]
 
-omit [Field F] [DecidableEq F] in
 /-- `Z X Z - X Z = -(1 - Z) [X, Z]`. -/
-theorem sand_sub_ordXZ (hZ : IsPVM Z) (p : F × F) :
-    sand X Z p - ordXZ X Z p = -(((1 : Matrix RB RB ℂ) - Z p.2) * comm X Z p) := by
-  have h : ((1 : Matrix RB RB ℂ) - Z p.2) * comm X Z p
-      = X p.1 * Z p.2 - Z p.2 * X p.1 * Z p.2 := by
-    simp only [comm, Matrix.sub_mul, Matrix.one_mul, Matrix.mul_sub, ← Matrix.mul_assoc, hZ.idem]
+theorem sand_sub_ordXZ (hZ : IsPVMIn Z) (p : F × F) :
+    sand X Z p - ordXZ X Z p = -((1 - Z p.2) * comm X Z p) := by
+  have h : (1 - Z p.2) * comm X Z p = X p.1 * Z p.2 - Z p.2 * X p.1 * Z p.2 := by
+    simp only [comm, sub_mul, one_mul, mul_sub, ← mul_assoc, hZ.idem]
     abel
   rw [h, sand, ordXZ]
   abel
 
-variable {dA : Type*} [Fintype dA] [DecidableEq dA]
-
-omit [Field F] in
-theorem norm_stateVecB_sand_sub_ordZX_le (hZ : IsPVM Z) (ψ : dA × RB → ℂ) (p : F × F) :
-    ‖stateVecB ψ (sand X Z p - ordZX X Z p)‖ ≤ ‖stateVecB ψ (comm X Z p)‖ := by
-  rw [sand_sub_ordZX hZ]
-  exact norm_stateVecB_mul_le ψ (hZ.conjTranspose_mul_self_le_one _) _
-
-omit [Field F] [DecidableEq F] in
-theorem norm_stateVecB_sand_sub_ordXZ_le (hZ : IsPVM Z) (ψ : dA × RB → ℂ) (p : F × F) :
-    ‖stateVecB ψ (sand X Z p - ordXZ X Z p)‖ ≤ ‖stateVecB ψ (comm X Z p)‖ := by
-  rw [sand_sub_ordXZ hZ, ← neg_one_smul ℂ, stateVecB_smul, norm_smul, norm_neg, norm_one,
-    one_mul]
-  exact norm_stateVecB_mul_le ψ
-    (one_sub_proj_conjTranspose_mul_self_le_one (hZ.isSelfAdjoint _) (hZ.idem _)) _
-
 end Ord
+
+section OrdNorm
+
+variable {F : Type*} [Fintype F] {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜]
+  [StarRing 𝒜] [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] {X Z : F → ℬ}
+
+/-- The deviation of the sandwich from the order `Z_b X_a` is at most the commutator, in the
+second player's state norm. -/
+theorem norm_stateVecB_sand_sub_ordZX_le (hZ : IsPVMIn Z) (K : BipartiteModel 𝒞 𝒜 ℬ)
+    (p : F × F) :
+    K.swap.stateNorm (sand X Z p - ordZX X Z p) ≤ K.swap.stateNorm (comm X Z p) := by
+  rw [sand_sub_ordZX hZ]
+  exact K.swap.stateNorm_mul_le (K.swap.bnd_πA_of_isStarProjection (hZ.isStarProjection _)) _
+
+/-- The deviation of the sandwich from the order `X_a Z_b` is at most the commutator, in the
+second player's state norm. -/
+theorem norm_stateVecB_sand_sub_ordXZ_le [PartialOrder ℬ] [StarOrderedRing ℬ] (hZ : IsPVMIn Z)
+    (K : BipartiteModel 𝒞 𝒜 ℬ) (p : F × F) :
+    K.swap.stateNorm (sand X Z p - ordXZ X Z p) ≤ K.swap.stateNorm (comm X Z p) := by
+  rw [sand_sub_ordXZ hZ, ← neg_one_smul ℂ ((1 - Z p.2) * comm X Z p), K.swap.stateNorm_smul,
+    norm_neg, norm_one, one_mul]
+  exact K.swap.stateNorm_mul_le (K.swap.bnd_πA_of_star_mul_self_le
+    (one_sub_proj_conjTranspose_mul_self_le_one (hZ.star_eq _) (hZ.idem _))) _
+
+end OrdNorm
 
 /-! ## The averaged fibre bound -/
 
 section Fibre
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]
-  {dA RB : Type*} [Fintype dA] [DecidableEq dA] [Fintype RB] [DecidableEq RB]
-  {X Z : F → Matrix RB RB ℂ}
+  {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜] [Algebra ℂ 𝒜]
+  [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] {X Z : F → ℬ}
 
 /-- **The fibre sums of `sand - ord` are controlled by the commutators**, on average over the
 combining coefficients and without a factor `q`, for either order. -/
-theorem sum_avg_fibre_sand_sub_ord_le (hX : IsPVM X) (hZ : IsPVM Z) (ψ : dA × RB → ℂ)
-    {ord : (F → Matrix RB RB ℂ) → (F → Matrix RB RB ℂ) → F × F → Matrix RB RB ℂ}
+theorem sum_avg_fibre_sand_sub_ord_le (hX : IsPVMIn X) (hZ : IsPVMIn Z)
+    (K : BipartiteModel 𝒞 𝒜 ℬ) {ord : (F → ℬ) → (F → ℬ) → F × F → ℬ}
     (hord1 : ∑ p : F × F, ord X Z p = 1)
-    (hordle : ∀ p, ‖stateVecB ψ (sand X Z p - ord X Z p)‖ ≤ ‖stateVecB ψ (comm X Z p)‖) :
+    (hordle : ∀ p, K.swap.stateNorm (sand X Z p - ord X Z p) ≤ K.swap.stateNorm (comm X Z p)) :
     ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
-        ∑ c : F, ‖stateVecB ψ (ptComb (fun p => sand X Z p - ord X Z p) ab.1 ab.2 c)‖ ^ 2
-      ≤ ∑ p : F × F, ‖stateVecB ψ (comm X Z p)‖ ^ 2 := by
-  rw [sum_avg_normSq_stateVecB_fibre_eq ψ (E := fun p => sand X Z p - ord X Z p)
-    (by rw [Finset.sum_sub_distrib, sum_sand hX hZ, hord1, sub_self])]
-  have hq : (0 : ℝ) ≤ 1 - (Fintype.card F : ℝ)⁻¹ := by
-    rw [sub_nonneg]
-    exact inv_le_one_of_one_le₀ (by exact_mod_cast Fintype.card_pos)
-  calc (1 - (Fintype.card F : ℝ)⁻¹) * ∑ p : F × F, ‖stateVecB ψ (sand X Z p - ord X Z p)‖ ^ 2
-      ≤ 1 * ∑ p : F × F, ‖stateVecB ψ (comm X Z p)‖ ^ 2 := by
+        ∑ c : F, K.swap.stateSqNorm (ptComb (fun p => sand X Z p - ord X Z p) ab.1 ab.2 c)
+      ≤ ∑ p : F × F, K.swap.stateSqNorm (comm X Z p) := by
+  rw [show (∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *
+        ∑ c : F, K.swap.stateSqNorm (ptComb (fun p => sand X Z p - ord X Z p) ab.1 ab.2 c))
+      = (1 - (Fintype.card F : ℝ)⁻¹) * ∑ p : F × F, K.swap.stateSqNorm (sand X Z p - ord X Z p)
+      from K.swap.sum_avg_stateSqNorm_fibre_eq (E := fun p => sand X Z p - ord X Z p)
+        (by rw [Finset.sum_sub_distrib, hX.sum_sand hZ, hord1, sub_self])]
+  calc (1 - (Fintype.card F : ℝ)⁻¹) * ∑ p : F × F, K.swap.stateSqNorm (sand X Z p - ord X Z p)
+      ≤ 1 * ∑ p : F × F, K.swap.stateSqNorm (comm X Z p) := by
         refine mul_le_mul
           (by linarith [inv_nonneg.mpr (Nat.cast_nonneg (Fintype.card F) : (0 : ℝ) ≤ _)])
-          (Finset.sum_le_sum fun p _ => pow_le_pow_left₀ (norm_nonneg _) (hordle p) 2)
-          (Finset.sum_nonneg fun p _ => sq_nonneg _) (by norm_num)
+          (Finset.sum_le_sum fun p _ =>
+            pow_le_pow_left₀ (K.swap.stateNorm_nonneg _) (hordle p) 2)
+          (Finset.sum_nonneg fun p _ => K.swap.stateSqNorm_nonneg _) (by norm_num)
     _ = _ := one_mul _
 
 end Fibre
@@ -375,210 +349,211 @@ end Pad
 section Products
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {RA RB : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]
+  [NeZero m]
 
 /-- The sandwich combination at a padded point, `P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b`, for
-abstract point measurements `X x`, `Z z` on Bob's register. -/
-def sandComb (X Z : Point F m → F → Matrix RB RB ℂ) (u : Point F (4 * m)) (c : F) :
-    Matrix RB RB ℂ :=
+abstract point measurements `X x`, `Z z` in a ring. -/
+def sandComb {R : Type*} [Ring R] (X Z : Point F m → F → R) (u : Point F (4 * m)) (c : F) : R :=
   ptComb (sand (X (xBlk u)) (Z (zBlk u))) (alph u) (bet u) c
 
 /-- An ordered-product combination at a padded point, `∑_{αa + βb = c} ord(a, b)`. -/
-def ordComb (ord : (F → Matrix RB RB ℂ) → (F → Matrix RB RB ℂ) → F × F → Matrix RB RB ℂ)
-    (X Z : Point F m → F → Matrix RB RB ℂ) (u : Point F (4 * m)) (c : F) : Matrix RB RB ℂ :=
+def ordComb {R : Type*} [Ring R] (ord : (F → R) → (F → R) → F × F → R)
+    (X Z : Point F m → F → R) (u : Point F (4 * m)) (c : F) : R :=
   ptComb (ord (X (xBlk u)) (Z (zBlk u))) (alph u) (bet u) c
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
-theorem ptComb_posSemidef {Q : F × F → Matrix RB RB ℂ} (hQ : ∀ p, (Q p).PosSemidef)
-    (a b c : F) : (ptComb Q a b c).PosSemidef :=
-  Matrix.nonneg_iff_posSemidef.mp
-    (Finset.sum_nonneg fun p _ => Matrix.nonneg_iff_posSemidef.mpr (hQ p))
+section Ring
+
+variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
 
 omit [Algebra (ZMod 2) F] [NeZero m] in
-theorem ptComb_le_one {Q : F × F → Matrix RB RB ℂ} (hQ : ∀ p, (Q p).PosSemidef)
-    (hsum : ∑ p, Q p = 1) (a b c : F) : ptComb Q a b c ≤ 1 := by
+theorem ptComb_posSemidef {Q : F × F → R} (hQ : ∀ p, 0 ≤ Q p) (a b c : F) :
+    0 ≤ ptComb Q a b c :=
+  Finset.sum_nonneg fun p _ => hQ p
+
+omit [Algebra (ZMod 2) F] [NeZero m] in
+theorem ptComb_le_one {Q : F × F → R} (hQ : ∀ p, 0 ≤ Q p) (hsum : ∑ p, Q p = 1) (a b c : F) :
+    ptComb Q a b c ≤ 1 := by
   rw [← hsum]
-  exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
-    fun p _ _ => Matrix.nonneg_iff_posSemidef.mpr (hQ p)
+  exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun p _ _ => hQ p
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
-theorem ptComb_conjTranspose {Q : F × F → Matrix RB RB ℂ} (hQ : ∀ p, (Q p)ᴴ = Q p) (a b c : F) :
-    (ptComb Q a b c)ᴴ = ptComb Q a b c := by
-  rw [ptComb, Matrix.conjTranspose_sum]
+omit [PartialOrder R] [StarOrderedRing R] [Algebra (ZMod 2) F] [NeZero m] in
+theorem ptComb_conjTranspose {Q : F × F → R} (hQ : ∀ p, star (Q p) = Q p) (a b c : F) :
+    star (ptComb Q a b c) = ptComb Q a b c := by
+  rw [ptComb, star_sum]
   exact Finset.sum_congr rfl fun p _ => hQ p
 
-variable {X Z : Point F m → F → Matrix RB RB ℂ}
+variable {X Z : Point F m → F → R}
 
 omit [Algebra (ZMod 2) F] in
-theorem sandComb_posSemidef (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z))
-    (u : Point F (4 * m)) (c : F) : (sandComb X Z u c).PosSemidef :=
-  ptComb_posSemidef (fun p => sand_posSemidef (hX _) (hZ _) p) _ _ _
+theorem sandComb_posSemidef (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z))
+    (u : Point F (4 * m)) (c : F) : 0 ≤ sandComb X Z u c :=
+  ptComb_posSemidef (fun p => by
+    rw [(hX _).sand_eq_gram (hZ _)]
+    exact star_mul_self_nonneg _) _ _ _
 
 omit [Algebra (ZMod 2) F] in
-theorem sandComb_le_one (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) (u : Point F (4 * m))
-    (c : F) : sandComb X Z u c ≤ 1 :=
-  ptComb_le_one (fun p => sand_posSemidef (hX _) (hZ _) p) (sum_sand (hX _) (hZ _)) _ _ _
+theorem sandComb_le_one (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z))
+    (u : Point F (4 * m)) (c : F) : sandComb X Z u c ≤ 1 :=
+  ptComb_le_one (fun p => by
+    rw [(hX _).sand_eq_gram (hZ _)]
+    exact star_mul_self_nonneg _) ((hX _).sum_sand (hZ _)) _ _ _
 
-omit [Algebra (ZMod 2) F] in
-theorem sandComb_conjTranspose (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z))
-    (u : Point F (4 * m)) (c : F) : (sandComb X Z u c)ᴴ = sandComb X Z u c :=
-  ptComb_conjTranspose (fun p => sand_conjTranspose (hX _) (hZ _) p) _ _ _
+omit [PartialOrder R] [StarOrderedRing R] [Algebra (ZMod 2) F] in
+theorem sandComb_conjTranspose (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z))
+    (u : Point F (4 * m)) (c : F) : star (sandComb X Z u c) = sandComb X Z u c :=
+  ptComb_conjTranspose (fun p => (hX _).star_sand (hZ _) p) _ _ _
 
-omit [Algebra (ZMod 2) F] in
-theorem sandComb_sub_ordComb (ord : (F → Matrix RB RB ℂ) → (F → Matrix RB RB ℂ) → F × F →
-    Matrix RB RB ℂ) (u : Point F (4 * m)) (c : F) :
+omit [StarRing R] [PartialOrder R] [StarOrderedRing R] [Algebra (ZMod 2) F] in
+theorem sandComb_sub_ordComb (ord : (F → R) → (F → R) → F × F → R) (u : Point F (4 * m))
+    (c : F) :
     sandComb X Z u c - ordComb ord X Z u c
       = ptComb (fun p => sand (X (xBlk u)) (Z (zBlk u)) p - ord (X (xBlk u)) (Z (zBlk u)) p)
           (alph u) (bet u) c := by
   simp only [sandComb, ordComb, ptComb, Finset.sum_sub_distrib]
 
+end Ring
+
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] {X Z : Point F m → F → ℬ}
+
 /-- **`lem:qld-global-products`, for an abstract ordered product.** Let `G` be a projective
-measurement with outcomes polynomials on `F^{4m}`, consistent with error `δ`, on average over a
-uniform padded point, with the sandwich combination of two projective families `X x`, `Z z` on
-Bob's register whose average commutator weight is `κ`; and let `ord` be an ordered product of the
-two families summing to one and deviating from the sandwich by a contraction of the commutator.
-Then `∑_g E_u ‖(G_g ⊗ (1 - ∑_{αa + βb = g(u)} ord(a, b))) Φ‖² ≤ 2δ + 2κ`. -/
-theorem sum_snorm_sq_ordComb_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z))
-    {ord : (F → Matrix RB RB ℂ) → (F → Matrix RB RB ℂ) → F × F → Matrix RB RB ℂ}
+measurement of the first player with outcomes polynomials on `F^{4m}`, consistent with error `δ`,
+on average over a uniform padded point, with the sandwich combination of two projective families
+`X x`, `Z z` of the second player whose average commutator weight is `κ`; and let `ord` be an
+ordered product of the two families summing to one and deviating from the sandwich by a
+contraction of the commutator. Then `∑_g E_u ‖(G_g ⊗ (1 - ∑_{αa + βb = g(u)} ord(a, b))) Φ‖² ≤
+2δ + 2κ`. -/
+theorem sum_snorm_sq_ordComb_le {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z))
+    {ord : (F → ℬ) → (F → ℬ) → F × F → ℬ}
     (hord1 : ∀ x z, ∑ p : F × F, ord (X x) (Z z) p = 1)
-    (hordle : ∀ x z p, ‖stateVecB Φ (sand (X x) (Z z) p - ord (X x) (Z z) p)‖
-      ≤ ‖stateVecB Φ (comm (X x) (Z z) p)‖)
+    (hordle : ∀ x z p, K.swap.stateNorm (sand (X x) (Z z) p - ord (X x) (Z z) p)
+      ≤ K.swap.stateNorm (comm (X x) (Z z) p))
     {δ κ : ℝ}
     (hcons : 1 - δ ≤ ∑ u, uniform (Point F (4 * m)) u
-      * ∑ g, bornProb Φ (G.M () g) (sandComb X Z u (g.eval u)))
+      * ∑ g, K.bornProb (G.op g) (sandComb X Z u (g.eval u)))
     (hcomm : ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)
-      * ∑ p : F × F, ‖stateVecB Φ (comm (X x) (Z z) p)‖ ^ 2 ≤ κ) :
-    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-        * bOp (1 - ordComb ord X Z u (g.eval u))) ^ 2
+      * ∑ p : F × F, K.swap.stateSqNorm (comm (X x) (Z z) p) ≤ κ) :
+    ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm (K.πA (G.op g)
+        * K.πB (1 - ordComb ord X Z u (g.eval u))) ^ 2
       ≤ 2 * δ + 2 * κ := by
   have hμ0 : ∀ u, 0 ≤ uniform (Point F (4 * m)) u := fun u => inv_nonneg.mpr (Nat.cast_nonneg _)
   have hμ1 : ∑ u, uniform (Point F (4 * m)) u = 1 := sum_uniform_eq_one _
-  have hGpvm : IsPVM (G.M ()) :=
-    ⟨fun g => G.selfAdjoint () g, fun g => G.projective () g, G.normalized ()⟩
   -- the pointwise split along `1 - B = (1 - P) + (P - B)`
-  have hsplit : ∀ u g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-        * bOp (1 - ordComb ord X Z u (g.eval u))) ^ 2
-      ≤ 2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (1 - sandComb X Z u (g.eval u))) ^ 2
-        + 2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2 := by
+  have hsplit : ∀ u g, K.snorm (K.πA (G.op g) * K.πB (1 - ordComb ord X Z u (g.eval u))) ^ 2
+      ≤ 2 * K.snorm (K.πA (G.op g) * K.πB (1 - sandComb X Z u (g.eval u))) ^ 2
+        + 2 * K.snorm (K.πA (G.op g)
+          * K.πB (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2 := by
     intro u g
-    have h : (1 : Matrix RB RB ℂ) - ordComb ord X Z u (g.eval u)
+    have h : (1 : ℬ) - ordComb ord X Z u (g.eval u)
         = (1 - sandComb X Z u (g.eval u))
           + (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u)) := by abel
-    rw [h, bOp_add, Matrix.mul_add]
-    exact snorm_sq_add_le _ _ _
+    rw [h, map_add, mul_add]
+    exact snorm_sq_add_le K.toStateModel _ _
   -- the first term: the consistency itself
-  have hfirst : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - sandComb X Z u (g.eval u))) ^ 2 ≤ δ := by
-    have hpt : ∀ u g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (1 - sandComb X Z u (g.eval u))) ^ 2
-        ≤ bornProb Φ (G.M () g) 1 - bornProb Φ (G.M () g) (sandComb X Z u (g.eval u)) := by
+  have hfirst : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (1 - sandComb X Z u (g.eval u))) ^ 2 ≤ δ := by
+    have hpt : ∀ u g, K.snorm (K.πA (G.op g) * K.πB (1 - sandComb X Z u (g.eval u))) ^ 2
+        ≤ K.bornProb (G.op g) 1 - K.bornProb (G.op g) (sandComb X Z u (g.eval u)) := by
       intro u g
-      rw [snorm_sq_aOp_mul_bOp Φ (G.selfAdjoint () g) (G.projective () g), ← bornProb_sub_right]
-      have hsa : ((1 : Matrix RB RB ℂ) - sandComb X Z u (g.eval u))ᴴ
-          = 1 - sandComb X Z u (g.eval u) := by
-        rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one, sandComb_conjTranspose hX hZ]
+      rw [K.snorm_sq_πA_mul_πB (hG.isStarProjection g), ← K.bornProb_sub_right]
+      have hsa : star ((1 : ℬ) - sandComb X Z u (g.eval u)) = 1 - sandComb X Z u (g.eval u) := by
+        rw [star_sub, star_one, sandComb_conjTranspose hX hZ]
       rw [hsa]
-      refine bornProb_mono_right Φ (G.posSemidef_M () g) (mul_self_le_self_of_le_one ?_ ?_)
-      · exact sub_nonneg.mpr (sandComb_le_one hX hZ u _)
-      · exact sub_le_self _ (Matrix.nonneg_iff_posSemidef.mpr (sandComb_posSemidef hX hZ u _))
-    calc ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-          ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - sandComb X Z u (g.eval u))) ^ 2
-        ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, (bornProb Φ (G.M () g) 1
-            - bornProb Φ (G.M () g) (sandComb X Z u (g.eval u))) :=
+      exact mul_self_le_self_of_le_one K (hG.nonneg g)
+        (sub_nonneg.mpr (sandComb_le_one hX hZ u _))
+        (sub_le_self _ (sandComb_posSemidef hX hZ u _))
+    calc ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+          (K.πA (G.op g) * K.πB (1 - sandComb X Z u (g.eval u))) ^ 2
+        ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, (K.bornProb (G.op g) 1
+            - K.bornProb (G.op g) (sandComb X Z u (g.eval u))) :=
           Finset.sum_le_sum fun u _ =>
             mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun g _ => hpt u g) (hμ0 u)
       _ = 1 - ∑ u, uniform (Point F (4 * m)) u
-            * ∑ g, bornProb Φ (G.M () g) (sandComb X Z u (g.eval u)) := by
-          simp only [Finset.sum_sub_distrib, sum_bornProb_M_one hΦ G, mul_sub, mul_one, hμ1]
+            * ∑ g, K.bornProb (G.op g) (sandComb X Z u (g.eval u)) := by
+          simp only [Finset.sum_sub_distrib, sum_bornProb_M_one hK G, mul_sub, mul_one, hμ1]
       _ ≤ δ := by linarith
   -- the second term: the commutators, through Parseval
-  have hsecond : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-        * bOp (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2 ≤ κ := by
-    have hu : ∀ u, ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2
-        ≤ ∑ c, ‖stateVecB Φ (ptComb (fun p => sand (X (xBlk u)) (Z (zBlk u)) p
-            - ord (X (xBlk u)) (Z (zBlk u)) p) (alph u) (bet u) c)‖ ^ 2 := by
+  have hsecond : ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+      (K.πA (G.op g) * K.πB (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2
+      ≤ κ := by
+    have hu : ∀ u, ∑ g, K.snorm (K.πA (G.op g)
+          * K.πB (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2
+        ≤ ∑ c, K.swap.stateSqNorm (ptComb (fun p => sand (X (xBlk u)) (Z (zBlk u)) p
+            - ord (X (xBlk u)) (Z (zBlk u)) p) (alph u) (bet u) c) := by
       intro u
-      have h := sum_snorm_sq_aOp_mul_bOp_le Φ hGpvm (fun g => g.eval u)
+      have h := sum_snorm_sq_aOp_mul_bOp_le K hG (fun g => g.eval u)
         (fun c => sandComb X Z u c - ordComb ord X Z u c)
       simpa only [sandComb_sub_ordComb] using h
-    calc ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-          ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-            * bOp (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2
-        ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ c, ‖stateVecB Φ (ptComb
+    calc ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+          (K.πA (G.op g) * K.πB (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2
+        ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ c, K.swap.stateSqNorm (ptComb
             (fun p => sand (X (xBlk u)) (Z (zBlk u)) p - ord (X (xBlk u)) (Z (zBlk u)) p)
-            (alph u) (bet u) c)‖ ^ 2 :=
+            (alph u) (bet u) c) :=
           Finset.sum_le_sum fun u _ => mul_le_mul_of_nonneg_left (hu u) (hμ0 u)
       _ = ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)
             * ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)
-              * ∑ c, ‖stateVecB Φ (ptComb (fun p => sand (X x) (Z z) p - ord (X x) (Z z) p)
-                  ab.1 ab.2 c)‖ ^ 2 :=
-          sum_uniform_pad4 fun x z a b => ∑ c, ‖stateVecB Φ (ptComb
-            (fun p => sand (X x) (Z z) p - ord (X x) (Z z) p) a b c)‖ ^ 2
+              * ∑ c, K.swap.stateSqNorm (ptComb (fun p => sand (X x) (Z z) p - ord (X x) (Z z) p)
+                  ab.1 ab.2 c) :=
+          sum_uniform_pad4 fun x z a b => ∑ c, K.swap.stateSqNorm (ptComb
+            (fun p => sand (X x) (Z z) p - ord (X x) (Z z) p) a b c)
       _ ≤ ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)
-            * ∑ p : F × F, ‖stateVecB Φ (comm (X x) (Z z) p)‖ ^ 2 := by
+            * ∑ p : F × F, K.swap.stateSqNorm (comm (X x) (Z z) p) := by
           refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun z _ =>
             mul_le_mul_of_nonneg_left ?_
               (mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _)) (inv_nonneg.mpr (Nat.cast_nonneg _)))
-          exact sum_avg_fibre_sand_sub_ord_le (hX x) (hZ z) Φ (hord1 x z) (hordle x z)
+          exact sum_avg_fibre_sand_sub_ord_le (hX x) (hZ z) K (hord1 x z) (hordle x z)
       _ ≤ κ := hcomm
-  have hsum : ∑ u, uniform (Point F (4 * m)) u * ∑ g, (2 * snorm Φ
-        ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - sandComb X Z u (g.eval u))) ^ 2
-        + 2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2)
-      = 2 * (∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-          ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - sandComb X Z u (g.eval u))) ^ 2)
-        + 2 * (∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ
-          ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-            * bOp (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2) := by
+  have hsum : ∑ u, uniform (Point F (4 * m)) u * ∑ g, (2 * K.snorm
+        (K.πA (G.op g) * K.πB (1 - sandComb X Z u (g.eval u))) ^ 2
+        + 2 * K.snorm (K.πA (G.op g)
+          * K.πB (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2)
+      = 2 * (∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+          (K.πA (G.op g) * K.πB (1 - sandComb X Z u (g.eval u))) ^ 2)
+        + 2 * (∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm
+          (K.πA (G.op g) * K.πB (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2) := by
     simp only [Finset.mul_sum, mul_add, Finset.sum_add_distrib]
     congr 1 <;> exact Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun g _ => by ring
-  calc ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-          * bOp (1 - ordComb ord X Z u (g.eval u))) ^ 2
-      ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, (2 * snorm Φ
-          ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - sandComb X Z u (g.eval u))) ^ 2
-          + 2 * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-            * bOp (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2) :=
+  calc ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm (K.πA (G.op g)
+          * K.πB (1 - ordComb ord X Z u (g.eval u))) ^ 2
+      ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, (2 * K.snorm
+          (K.πA (G.op g) * K.πB (1 - sandComb X Z u (g.eval u))) ^ 2
+          + 2 * K.snorm (K.πA (G.op g)
+            * K.πB (sandComb X Z u (g.eval u) - ordComb ord X Z u (g.eval u))) ^ 2) :=
         Finset.sum_le_sum fun u _ =>
           mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun g _ => hsplit u g) (hμ0 u)
     _ = _ := hsum
     _ ≤ 2 * δ + 2 * κ := by linarith [hfirst, hsecond]
 
 /-- `lem:qld-global-products` for the order `Z_b X_a`. -/
-theorem sum_snorm_sq_ordZX_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {δ κ : ℝ}
+theorem sum_snorm_sq_ordZX_le {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z)) {δ κ : ℝ}
     (hcons : 1 - δ ≤ ∑ u, uniform (Point F (4 * m)) u
-      * ∑ g, bornProb Φ (G.M () g) (sandComb X Z u (g.eval u)))
+      * ∑ g, K.bornProb (G.op g) (sandComb X Z u (g.eval u)))
     (hcomm : ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)
-      * ∑ p : F × F, ‖stateVecB Φ (comm (X x) (Z z) p)‖ ^ 2 ≤ κ) :
-    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-        * bOp (1 - ordComb ordZX X Z u (g.eval u))) ^ 2
+      * ∑ p : F × F, K.swap.stateSqNorm (comm (X x) (Z z) p) ≤ κ) :
+    ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm (K.πA (G.op g)
+        * K.πB (1 - ordComb ordZX X Z u (g.eval u))) ^ 2
       ≤ 2 * δ + 2 * κ :=
-  sum_snorm_sq_ordComb_le hΦ G hX hZ (fun x z => sum_ordZX (hX x) (hZ z))
-    (fun _ z p => norm_stateVecB_sand_sub_ordZX_le (hZ z) Φ p) hcons hcomm
+  sum_snorm_sq_ordComb_le hK G hG hX hZ (fun x z => sum_ordZX (hX x) (hZ z))
+    (fun _ z p => norm_stateVecB_sand_sub_ordZX_le (hZ z) K p) hcons hcomm
 
 /-- `lem:qld-global-products` for the order `X_a Z_b`. -/
-theorem sum_snorm_sq_ordXZ_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)
-    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))
-      (Matrix RA RA ℂ))
-    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {δ κ : ℝ}
+theorem sum_snorm_sq_ordXZ_le {K : BipartiteModel 𝒞 𝒜 ℬ} (hK : ‖K.ψ‖ = 1)
+    (G : POVMIn (LowIndDegPoly (F := F) (m := 4 * m) (d := d)) 𝒜) (hG : IsPVMIn G.op)
+    (hX : ∀ x, IsPVMIn (X x)) (hZ : ∀ z, IsPVMIn (Z z)) {δ κ : ℝ}
     (hcons : 1 - δ ≤ ∑ u, uniform (Point F (4 * m)) u
-      * ∑ g, bornProb Φ (G.M () g) (sandComb X Z u (g.eval u)))
+      * ∑ g, K.bornProb (G.op g) (sandComb X Z u (g.eval u)))
     (hcomm : ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)
-      * ∑ p : F × F, ‖stateVecB Φ (comm (X x) (Z z) p)‖ ^ 2 ≤ κ) :
-    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)
-        * bOp (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2
+      * ∑ p : F × F, K.swap.stateSqNorm (comm (X x) (Z z) p) ≤ κ) :
+    ∑ u, uniform (Point F (4 * m)) u * ∑ g, K.snorm (K.πA (G.op g)
+        * K.πB (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2
       ≤ 2 * δ + 2 * κ :=
-  sum_snorm_sq_ordComb_le hΦ G hX hZ (fun x z => sum_ordXZ (hX x) (hZ z))
-    (fun _ z p => norm_stateVecB_sand_sub_ordXZ_le (hZ z) Φ p) hcons hcomm
+  sum_snorm_sq_ordComb_le hK G hG hX hZ (fun x z => sum_ordXZ (hX x) (hZ z))
+    (fun _ z p => norm_stateVecB_sand_sub_ordXZ_le (hZ z) K p) hcons hcomm
 
 end Products
 
