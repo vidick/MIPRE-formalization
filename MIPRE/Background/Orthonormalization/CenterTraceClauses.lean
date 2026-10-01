@@ -187,8 +187,7 @@ theorem normal (hsep : ∀ x ∈ M, (∀ k, x (g k) = 0) → x = 0) :
       exact tendsto_finsetSum _ fun k _ => hTL _ _
     rw [hE.pairing L hL c hc]
     exact eq_of_nhds_neBot ((hA.continuousAt_comp
-      (continuous_vecFunctional_mul g c).continuousAt).neBot.mono
-      (inf_le_inf_left _ hlim))
+      (continuous_vecFunctional_mul g c).continuousAt).neBot.mono (inf_le_inf_left _ hlim))
   exact congrArg ofCLM (eq_of_isCentralIn_of_pairing hsep hAc (hE.mem_center L hL) hAp)
 
 /-- **Division in the centre**: for `0 ≤ b ≤ r` with `r` a projection of `M`, `E b = z * E r` for
