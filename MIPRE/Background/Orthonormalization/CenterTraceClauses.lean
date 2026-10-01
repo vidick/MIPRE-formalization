@@ -153,7 +153,8 @@ theorem center_mul (hsep : ∀ x ∈ M, (∀ k, x (g k) = 0) → x = 0) :
   -- `τ(E(c x) c') = τ(c x c')` and `τ(c E(x) c') = τ(E(x) (c c')) = τ(x (c c')) = τ(c x c')`
   rw [hE.pairing _ (mul_mem hc.1 hx) c' hc',
     (hEx.2.2 c hc.1 (by rw [one_mul, mul_one])).symm.eq, mul_assoc (E x),
-    hE.pairing x hx _ (isCentralIn_one_mul hc hc'), ← mul_assoc, (hc.2.2 x hx (by rw [one_mul, mul_one])).eq]
+    hE.pairing x hx _ (isCentralIn_one_mul hc hc'), ← mul_assoc,
+    (hc.2.2 x hx (by rw [one_mul, mul_one])).eq]
 
 /-- `E` is faithful on `M`. -/
 theorem faithful (hsep : ∀ x ∈ M, (∀ k, x (g k) = 0) → x = 0) :

@@ -2934,8 +2934,35 @@ Corollary~\ref{cor:mipco-from-stages} is sound in $\omegaco$, which gives $\MIPc
 
 What remains is the hypothesis of Corollary~\ref{cor:mipco-from-lidt-fin}:
 Theorem~\ref{thm:lidt-cl-soundness} in every finite pair. That is the port of the vendored proof
-described above, C6b of \texttt{planning/mipco-track.md}; \texttt{reports/lidt-co-audit.md},
-Section~5, sizes it and lists what it needs.
+described above, C6b of \texttt{planning/mipco-track.md}, planned in
+\texttt{planning/c6b-plan.md}; \texttt{reports/lidt-co-audit.md}, Section~5, sizes it, and
+\texttt{reports/c6b-paper-proofs.md} records the mathematics it adds. Its orthonormalization tier
+is the II$_1$ one: the class is narrowed to finite pairs whose algebras have no nonzero abelian
+projection, which unital matrix units of every size $2^n$ guarantee, and in those orthonormalization
+holds unconditionally.
+
+\begin{corollary}[Orthonormalization in a finite pair without abelian projections]
+\label{cor:orthonormalization-finite-pair}
+\uses{def:finite-pair,thm:orthonormalization-no-abelian}
+\lean{MIPRE.Orthonormalization.vnA, MIPRE.Orthonormalization.mem_vnA_iff,
+  MIPRE.Orthonormalization.povm_orthogonalization_finitePair}
+\leanok
+Let $M$ be a finite pair (Definition~\ref{def:finite-pair}) in a unit state $\psi$ whose first
+player's operators contain no nonzero abelian projection. A POVM $P$ of the first player's algebra
+with $\sum_a \|\pi(P_a)\psi\|^2 > 1 - \eps$ is within $\sum_a \|\pi(P_a - Q_a)\psi\|^2 < 9\eps$ of a
+projective measurement $Q$ of that algebra. The second player's version is the same statement for
+the model with the players exchanged.
+\end{corollary}
+
+\begin{proof}
+\uses{lem:model-strategy-co}
+\leanok
+The first player's operators are the commutant of the second player's, so they form a von Neumann
+algebra, with no bicommutant theorem; the vector trace of the finite pair is a faithful tracial
+vector functional on it, and the model's state is a vector state.
+Theorem~\ref{thm:orthonormalization-no-abelian} applies, and its projective measurement, which lies
+in the first player's operators, pulls back to the first player's algebra by injectivity.
+\end{proof}
 
 \subsection{Further directions}
 

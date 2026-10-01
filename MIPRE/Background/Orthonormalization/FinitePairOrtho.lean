@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.Orthonormalization.NoAbelian
+public import MIPRE.Foundations.CommutingModel
 public import MIPRE.Foundations.FinitePair
 public import MIPRE.Foundations.Measurement
 

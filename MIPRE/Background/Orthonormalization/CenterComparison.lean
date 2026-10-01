@@ -12,7 +12,7 @@ public import MIPRE.Background.Orthonormalization.Orthogonalization.MvN.PolarDec
 @[expose] public section
 
 /-!
-# Comparison of projections, and the centre-valued trace of a von Neumann algebra with a vector trace
+# Comparison of projections and the centre-valued trace of an algebra with a vector trace
 
 Two projections with the same centre-valued trace are Murray–von Neumann equivalent, in a von
 Neumann algebra `M` with a faithful tracial vector functional and in the matrix algebras
@@ -22,7 +22,7 @@ field H3 of the structure-theory interface at the projection `1`
 (`exists_isCenterValuedTrace`), for every such `M`, with no factor hypothesis.
 
 * **Generalized comparison** (`mvNEquiv_of_map_eq`): for a von Neumann algebra `N` with a faithful
-  positive tracial functional, and a linear map `Φ` that is tracial on `N`, compatible with left
+  positive functional, and a linear map `Φ` that is tracial on `N`, compatible with left
   multiplication by central projections and faithful on projections, projections with the same
   image under `Φ` are equivalent. The vendored proof for factors (`MvN/Comparison.lean`,
   `mvNEquiv_of_trace_eq`) builds a maximal partial isometry `W` from `p` into `q` by a greedy
@@ -209,17 +209,14 @@ theorem exists_maximal_isPartialBetween (N : VonNeumannAlgebra K) (τ : (K →L[
 
 end Comparison
 
-/- `hτtr` belongs to the statement's shape, that of the vendored `mvNEquiv_of_trace_eq`; the proof
-does not use it, since the traciality of `Φ` takes its place in the endgame. -/
-set_option linter.unusedVariables false in
 /-- **Generalized comparison of projections**: in a von Neumann algebra `N` with a faithful
-positive tracial functional `τ`, two projections with the same image under a linear map `Φ` that
-is tracial on `N`, compatible with left multiplication by central projections, and faithful on
-projections, are Murray–von Neumann equivalent. -/
+positive functional `τ`, two projections with the same image under a linear map `Φ` that is
+tracial on `N`, compatible with left multiplication by central projections, and faithful on
+projections, are Murray–von Neumann equivalent. Unlike the vendored `mvNEquiv_of_trace_eq`, `τ`
+need not be tracial: the traciality of `Φ` takes its place in the endgame. -/
 theorem mvNEquiv_of_map_eq {K : Type u} [NormedAddCommGroup K] [InnerProductSpace ℂ K]
     [CompleteSpace K] (N : VonNeumannAlgebra K) (τ : (K →L[ℂ] K) →ₗ[ℂ] ℂ)
-    (hτ0 : ∀ x ∈ N, 0 ≤ τ (star x * x)) (hτtr : ∀ x ∈ N, ∀ y ∈ N, τ (x * y) = τ (y * x))
-    (hτf : ∀ x ∈ N, τ (star x * x) = 0 → x = 0)
+    (hτ0 : ∀ x ∈ N, 0 ≤ τ (star x * x)) (hτf : ∀ x ∈ N, τ (star x * x) = 0 → x = 0)
     {V : Type*} [AddCommGroup V] [Module ℂ V] (Φ : (K →L[ℂ] K) →ₗ[ℂ] V)
     (hΦtr : ∀ x ∈ N, ∀ y ∈ N, Φ (x * y) = Φ (y * x))
     (hΦc : ∀ c, IsStarProjection c → c ∈ N → (∀ y ∈ N, Commute c y) →
@@ -261,7 +258,7 @@ theorem exists_eq_amplify_of_commute (M : VonNeumannAlgebra H) {n : ℕ}
   /- The first half of the vendored `matrixAlgebra_factor` (`MvN/MatrixFactor.lean`), which
   stops short of its factor hypothesis. -/
   obtain _ | n := n
-  · exact ⟨0, ⟨zero_mem M, by rw [mul_zero, zero_mul], fun y _ _ => Commute.zero_left y⟩,
+  · exact ⟨0, isCentralIn_one_iff.mpr ⟨zero_mem M, fun y _ => Commute.zero_left y⟩,
       ext_entry fun i _ => i.elim0⟩
   -- commuting with `e_{ij}`: `X_{ki} = δ_{ki} X_{jj}`
   have key : ∀ k i j : Fin (n + 1), entry X k i = if k = i then entry X j j else 0 := by
@@ -270,43 +267,12 @@ theorem exists_eq_amplify_of_commute (M : VonNeumannAlgebra H) {n : ℕ}
     simpa only [entry_mul_matrixUnit, entry_matrixUnit_mul, eq_self_iff_true, ite_true] using h
   have hXz : X = amplify (n + 1) (entry X 0 0) :=
     ext_entry fun k i => by rw [entry_amplify, key k i 0]
-  refine ⟨entry X 0 0, ⟨entry_mem hX 0 0, by rw [one_mul, mul_one], fun y hy _ => ?_⟩, hXz⟩
+  refine ⟨entry X 0 0, isCentralIn_one_iff.mpr ⟨entry_mem hX 0 0, fun y hy => ?_⟩, hXz⟩
   -- commuting with `y ⊕ ⋯ ⊕ y`, `y ∈ M`: `X_{00}` commutes with `y`
   have h := congrArg (fun Y => entry Y 0 0) (hXc _ (amplify_mem hy)).eq
   rw [hXz] at h
   simp only [entry_mul_amplify, entry_amplify, ite_true] at h
   exact h
-
-/-! ### The vector functional as the trace of the comparison theorem -/
-
-section VecFunctional
-
-variable {M : VonNeumannAlgebra H} {d : ℕ} {g : Fin d → H}
-
-/-- `τ(x* x) = ∑ₖ ‖x gₖ‖²` for the vector functional `τ` of `g`. -/
-theorem vecFunctional_star_mul_self_eq_sum (g : Fin d → H) (x : H →L[ℂ] H) :
-    vecFunctional g (star x * x) = ((∑ k, ‖x (g k)‖ ^ 2 : ℝ) : ℂ) := by
-  rw [vecFunctional_apply, Complex.ofReal_sum]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [mul_apply_eq_comp, ContinuousLinearMap.star_eq_adjoint,
-    ContinuousLinearMap.adjoint_inner_right, inner_self_eq_norm_sq_to_K]
-  norm_cast
-
-/-- The vector functional is positive. -/
-theorem vecFunctional_star_mul_self_nonneg (g : Fin d → H) (x : H →L[ℂ] H) :
-    0 ≤ vecFunctional g (star x * x) := by
-  rw [vecFunctional_star_mul_self_eq_sum]
-  exact Complex.zero_le_real.mpr (Finset.sum_nonneg fun k _ => sq_nonneg _)
-
-/-- The vector functional of a family separating `M` is faithful on `M`. -/
-theorem eq_zero_of_vecFunctional_star_mul_self_eq_zero
-    (hsep : ∀ x ∈ M, (∀ k, x (g k) = 0) → x = 0) {x : H →L[ℂ] H} (hx : x ∈ M)
-    (h : vecFunctional g (star x * x) = 0) : x = 0 := by
-  rw [vecFunctional_star_mul_self_eq_sum, Complex.ofReal_eq_zero,
-    Finset.sum_eq_zero_iff_of_nonneg fun k _ => sq_nonneg _] at h
-  exact hsep x hx fun k => norm_eq_zero.mp (pow_eq_zero_iff two_ne_zero |>.mp (h k (by simp)))
-
-end VecFunctional
 
 namespace IsCenterExpectation
 
@@ -320,16 +286,14 @@ theorem equiv_of_eq (htr : ∀ x ∈ M, ∀ y ∈ M, vecFunctional g (x * y) = v
     ∀ q q', IsStarProjection q → q ∈ M → IsStarProjection q' → q' ∈ M → E q = E q' →
       MvNEquiv M q q' := by
   intro q q' hq hqM hq' hq'M h
-  refine mvNEquiv_of_map_eq M (vecFunctional g) (fun x _ => vecFunctional_star_mul_self_nonneg g x)
-    htr (fun x hx => eq_zero_of_vecFunctional_star_mul_self_eq_zero hsep hx) E
-    (hE.trace htr hsep) (fun c _ hcM hcc => ⟨(c * ·), fun x hx => ?_⟩) (fun e he heM h0 => ?_)
-    hq hqM hq' hq'M h
+  refine mvNEquiv_of_map_eq M (vecFunctional g) (fun x _ => vecFunctional_star_mul_self_nonneg x)
+    (fun x hx => eq_zero_of_vecFunctional_star_mul_self_eq_zero hsep hx) E (hE.trace htr hsep)
+    (fun c _ hcM hcc => ⟨(c * ·), fun x hx => ?_⟩) (fun e he heM h0 => ?_) hq hqM hq' hq'M h
   · -- a central projection is central in `M`, and `E` is linear over the centre
-    exact hE.center_mul hsep c ⟨hcM, by rw [one_mul, mul_one], fun y hy _ => hcc y hy⟩ x hx
-  · -- `τ(e* e) = τ(e) = τ(E e) = 0`
-    refine eq_zero_of_vecFunctional_star_mul_self_eq_zero hsep heM ?_
-    rw [he.isSelfAdjoint.star_eq, he.isIdempotentElem.eq, ← hE.vecFunctional_eq e heM, h0,
-      map_zero]
+    exact hE.center_mul hsep c (isCentralIn_one_iff.mpr ⟨hcM, hcc⟩) x hx
+  · -- `E (e* e) = E e = 0`
+    refine hE.faithful hsep e heM ?_
+    rwa [he.isSelfAdjoint.star_eq, he.isIdempotentElem.eq]
 
 /-- **Comparison in `M_n(M)`**: projections with the same diagonal centre-valued trace
 `∑ᵢ E(Xᵢᵢ)` are equivalent. -/
@@ -341,7 +305,7 @@ theorem equiv_of_eq_matrix
       ∑ i, E (entry P i i) = ∑ i, E (entry Q i i) → MvNEquiv (matrixAlgebra M n) P Q := by
   intro hPM hP hQM hQ h
   have hτ0 : ∀ x ∈ M, 0 ≤ vecFunctional g (star x * x) := fun x _ =>
-    vecFunctional_star_mul_self_nonneg g x
+    vecFunctional_star_mul_self_nonneg x
   have hτf : ∀ x ∈ M, vecFunctional g (star x * x) = 0 → x = 0 := fun x hx =>
     eq_zero_of_vecFunctional_star_mul_self_eq_zero hsep hx
   /- `Φ X = ∑ᵢ E(Xᵢᵢ)`, with the diagonal trace of `τ` as the trace of `M_n(M)`. -/
@@ -351,7 +315,7 @@ theorem equiv_of_eq_matrix
     rw [hΦdef, LinearMap.sum_apply]
     rfl
   refine mvNEquiv_of_map_eq (matrixAlgebra M n) (diagTrace (vecFunctional g) n)
-    (diagTrace_nonneg M _ hτ0 n) (diagTrace_trace M _ htr n) (diagTrace_faithful M _ hτ0 hτf n) Φ
+    (diagTrace_nonneg M _ hτ0 n) (diagTrace_faithful M _ hτ0 hτf n) Φ
     (fun X hX Y hY => by
       rw [hΦ, hΦ]
       exact sum_entry_mul_eq E (hE.trace htr hsep) (entry_mem hX) (entry_mem hY))
@@ -381,7 +345,7 @@ theorem isCenterValuedTrace
   faithful x hx _ := hE.faithful hsep x hx
   normal l T L hT hL _ := hE.normal hsep l T L (fun k => (hT k).1) hL
   equiv_of_eq q q' hq hqM _ hq' hq'M _ := hE.equiv_of_eq htr hsep q q' hq hqM hq' hq'M
-  div r hr hrM _ := hE.div hsep r hr hrM
+  div r hr hrM _ := hE.div r hr hrM
   equiv_of_eq_matrix n P Q hPM hP _ hQM hQ _ := hE.equiv_of_eq_matrix htr hsep n P Q hPM hP hQM hQ
 
 end IsCenterExpectation

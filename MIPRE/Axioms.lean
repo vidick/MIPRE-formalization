@@ -206,6 +206,7 @@ public import MIPRE.MainTheorem
 public import MIPRE.Foundations.Tsirelson.Conditional
 public import MIPRE.Tsirelson
 public import MIPRE.MIPCo
+public import MIPRE.Background.Orthonormalization.FinitePairOrtho
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
@@ -3305,5 +3306,26 @@ conditional theorem, `cor:mipco-from-lidt-fin` (`MIPRE/MIPCo.lean`). -/
 
 -- blueprint `cor:mipco-from-lidt-fin`
 #guard_sorry_free MIPRE.mipco_eq_core_of_lidtFin
+
+/-! The commuting-operator track, C6b's II₁ orthonormalization tier (`planning/c6b-plan.md`, T1):
+a centre-valued trace for a von Neumann algebra with a faithful tracial vector functional,
+`lem:center-valued-trace` (`MIPRE/Background/Orthonormalization/{CenterTrace,CenterTraceClauses,
+CenterComparison}.lean`); de la Salle's Theorem 1.2 without abelian projections,
+`thm:orthonormalization-no-abelian` (`NoAbelian.lean`); and in a finite pair,
+`cor:orthonormalization-finite-pair` (`FinitePairOrtho.lean`). -/
+
+-- blueprint `lem:center-valued-trace`
+#guard_sorry_free MIPRE.Orthonormalization.vecFunctional, MIPRE.Orthonormalization.IsCenterExpectation,
+  MIPRE.Orthonormalization.eq_of_isCentralIn_of_pairing, MIPRE.Orthonormalization.exists_isCenterExpectation,
+  MIPRE.Orthonormalization.mvNEquiv_of_map_eq, MIPRE.Orthonormalization.IsCenterExpectation.isCenterValuedTrace,
+  MIPRE.Orthonormalization.exists_isCenterValuedTrace
+
+-- blueprint `thm:orthonormalization-no-abelian`
+#guard_sorry_free MIPRE.Orthonormalization.povm_orthogonalization_of_isCenterValuedTrace,
+  MIPRE.Orthonormalization.povm_orthogonalization_vecTrace
+
+-- blueprint `cor:orthonormalization-finite-pair`
+#guard_sorry_free MIPRE.Orthonormalization.vnA, MIPRE.Orthonormalization.mem_vnA_iff,
+  MIPRE.Orthonormalization.povm_orthogonalization_finitePair
 
 end
