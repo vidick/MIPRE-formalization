@@ -657,6 +657,12 @@ quantity `lem:qld-padded-lines` controls. -/
   MIPRE.QLD.sum_filter_padLineMats_eq_lineComb,
   MIPRE.QLD.lineMeas_map_eval_mats
 
+/-! Blueprint `lem:qld-global-setup`, continued: the divisibility `4m | q` from `m | q` and
+`4m <= q`, which the regime `48md <= q` supplies (`MIPRE/Background/QLD/Regime.lean`). -/
+
+#guard_sorry_free MIPRE.QLD.exists_card_eq_two_pow, MIPRE.QLD.exists_eq_two_pow_of_dvd_card,
+  MIPRE.QLD.four_mul_dvd_card, MIPRE.QLD.four_mul_dvd_card_of_regime
+
 /-! Blueprint `lem:qld-global-success`: the agreement triangle, the conditional failure of the
 padded strategy at each of the nine ordered type pairs, and the value bound. -/
 
@@ -695,13 +701,24 @@ a hypothesis on the model, applied in the padded model of `MIPRE/Background/QLD/
   MIPRE.QLD.deltaGS_nonneg, MIPRE.QLD.exists_global_pvm, MIPRE.QLD.exists_global_pvm_hat,
   MIPRE.QLD.GlobalPair, MIPRE.QLD.exists_globalPair
 
+/-! `lem:lidt-ldc-extraction`, its coefficient-vector algebra
+(`MIPRE/Background/LIDT/Coefficients.lean`), which stage 4 of the Pauli basis test shares; the
+lemma's other declarations are guarded in `MIPRE/Axioms.lean`. -/
+#guard_sorry_free MIPRE.LIDT.expFinsupp, MIPRE.LIDT.expFinsupp_apply,
+  MIPRE.LIDT.expFinsupp_injective, MIPRE.LIDT.LowIndDegPoly.toMv,
+  MIPRE.LIDT.LowIndDegPoly.eval_toMv, MIPRE.LIDT.LowIndDegPoly.coeff_toMv,
+  MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le, MIPRE.LIDT.patch, MIPRE.LIDT.maskOn,
+  MIPRE.LIDT.maskOff, MIPRE.LIDT.patch_maskOn_maskOff, MIPRE.LIDT.maskOn_patch,
+  MIPRE.LIDT.maskOff_patch, MIPRE.LIDT.maskOn_eq_self, MIPRE.LIDT.maskOff_eq_self,
+  MIPRE.LIDT.maskOn_apply_of_not, MIPRE.LIDT.maskOff_apply_of, MIPRE.LIDT.LowIndDegPoly.coef,
+  MIPRE.LIDT.prod_pow_patch, MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef,
+  MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off, MIPRE.LIDT.LowIndDegPoly.coef_maskOff,
+  MIPRE.LIDT.card_eval_eq_zero_le
+
 /-! `lem:qld-global-dummy` (`MIPRE/Background/QLD/Dummy.lean`, and its specialization in
 `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
 #guard_sorry_free MIPRE.LowDegree.agreeOn, MIPRE.LowDegree.mem_agreeOn,
-  MIPRE.LowDegree.prob_agreeOn_le_individualDegree, MIPRE.LIDT.expFinsupp,
-  MIPRE.LIDT.expFinsupp_apply, MIPRE.LIDT.expFinsupp_injective, MIPRE.LIDT.LowIndDegPoly.toMv,
-  MIPRE.LIDT.LowIndDegPoly.eval_toMv, MIPRE.LIDT.LowIndDegPoly.coeff_toMv,
-  MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le, MIPRE.LIDT.degreeOf_rename_le,
+  MIPRE.LowDegree.prob_agreeOn_le_individualDegree, MIPRE.LIDT.degreeOf_rename_le,
   MIPRE.bornProb_add_right, MIPRE.bornProb_mono_right, MIPRE.sum_uniform_eq_one,
   MIPRE.sum_ite_eq_zero_sub, MIPRE.QLD.inconsistency_evalPOVM_eq, MIPRE.QLD.sum_bornProb_M_one,
   MIPRE.QLD.IsDummy, MIPRE.QLD.not_isDummy_xIdx, MIPRE.QLD.not_isDummy_zIdx,
@@ -738,18 +755,12 @@ a hypothesis on the model, applied in the padded model of `MIPRE/Background/QLD/
 
 /-! `lem:qld-global-linear` (`MIPRE/Background/QLD/Linear.lean`, and its specialization to a
 `GlobalPair` in `MIPRE/Background/QLD/PaddedLIDT.lean`). -/
-#guard_sorry_free MIPRE.LIDT.patch, MIPRE.LIDT.maskOn, MIPRE.LIDT.maskOff,
-  MIPRE.LIDT.patch_maskOn_maskOff, MIPRE.LIDT.maskOn_patch, MIPRE.LIDT.maskOff_patch,
-  MIPRE.LIDT.maskOn_eq_self, MIPRE.LIDT.maskOff_eq_self, MIPRE.LIDT.maskOn_apply_of_not,
-  MIPRE.LIDT.maskOff_apply_of, MIPRE.LIDT.LowIndDegPoly.coef, MIPRE.LIDT.prod_pow_patch,
-  MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef, MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off,
-  MIPRE.LIDT.LowIndDegPoly.coef_maskOff, MIPRE.LIDT.card_eval_eq_zero_le, MIPRE.posSemidef_of_proj,
-  MIPRE.uniform_nonneg, MIPRE.QLD.abSet, MIPRE.QLD.mem_abSet, MIPRE.QLD.xIdx_notMem_abSet,
-  MIPRE.QLD.zIdx_notMem_abSet, MIPRE.QLD.patAB, MIPRE.QLD.patAB_aIdx, MIPRE.QLD.patAB_bIdx,
-  MIPRE.QLD.patAB_of_notMem, MIPRE.QLD.patAB_injective, MIPRE.QLD.pAB,
-  MIPRE.QLD.eval_coef_abSet_setAB, MIPRE.QLD.eval_pAB, MIPRE.QLD.vec_two_eq, MIPRE.QLD.fin2Equiv,
-  MIPRE.QLD.e10, MIPRE.QLD.e01, MIPRE.QLD.e10_ne_e01, MIPRE.QLD.linAB, MIPRE.QLD.eval_linAB,
-  MIPRE.QLD.sum_agree_two_le, MIPRE.QLD.IsLinAB, MIPRE.QLD.patAB_eq_maskOn,
+#guard_sorry_free MIPRE.posSemidef_of_proj, MIPRE.uniform_nonneg, MIPRE.QLD.abSet,
+  MIPRE.QLD.mem_abSet, MIPRE.QLD.xIdx_notMem_abSet, MIPRE.QLD.zIdx_notMem_abSet, MIPRE.QLD.patAB,
+  MIPRE.QLD.patAB_aIdx, MIPRE.QLD.patAB_bIdx, MIPRE.QLD.patAB_of_notMem, MIPRE.QLD.patAB_injective,
+  MIPRE.QLD.pAB, MIPRE.QLD.eval_coef_abSet_setAB, MIPRE.QLD.eval_pAB, MIPRE.QLD.vec_two_eq,
+  MIPRE.QLD.fin2Equiv, MIPRE.QLD.e10, MIPRE.QLD.e01, MIPRE.QLD.e10_ne_e01, MIPRE.QLD.linAB,
+  MIPRE.QLD.eval_linAB, MIPRE.QLD.sum_agree_two_le, MIPRE.QLD.IsLinAB, MIPRE.QLD.patAB_eq_maskOn,
   MIPRE.QLD.exists_bad_coef, MIPRE.QLD.pAB_ne_linAB, MIPRE.QLD.sum_uniform_eval_eq_zero_le,
   MIPRE.QLD.sum_snorm_sq_ordXZ_eq, MIPRE.QLD.fibMap, MIPRE.QLD.fibMap_injective,
   MIPRE.QLD.fiber_eq_image, MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne,
@@ -1126,10 +1137,10 @@ statement `MIPRE/Background/QLD/SwapItemTwo.lean`. -/
   MIPRE.QLD.MirrorSimul.mirror_physSwap_mulVec, MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le,
   MIPRE.QLD.MirrorSimul.swap_isometry
 
-/-! `thm:qld`: the Pauli basis test, in a bipartite model, from the soundness of the seeded test in
-its extensions. The theorem is `MIPRE/Background/QLD/Soundness.lean` (`soundIn_of_lidt`: the
-legalization, the trivial extraction outside the regime, and the extraction by the swap isometry
-inside it), and the error `MIPRE/Background/QLD/{QLDError,ErrorShape,Regime}.lean`. -/
+/-! `lem:qld-error`: the error of `thm:qld`, named once (`qldErr`,
+`MIPRE/Background/QLD/QLDError.lean`), and the closure calculus showing it is of the closed
+form (`MIPRE/Background/QLD/ErrorShape.lean`); the seeded soundness error's link is guarded
+with the declarations added in the bipartite restatement, below. -/
 #guard_sorry_free MIPRE.QLD.errShape, MIPRE.QLD.ErrSmall, MIPRE.QLD.errSum, MIPRE.QLD.errShape_eq,
   MIPRE.QLD.errSum_nonneg, MIPRE.QLD.one_le_md_real, MIPRE.QLD.one_le_q_real, MIPRE.QLD.errSum_anti,
   MIPRE.QLD.errSum_le_three, MIPRE.QLD.errSum_rpow_le, MIPRE.QLD.errShape_nonneg,
@@ -1149,9 +1160,7 @@ inside it), and the error `MIPRE/Background/QLD/{QLDError,ErrorShape,Regime}.lea
   MIPRE.QLD.errSmall_deltaSelfCons, MIPRE.QLD.two_sub_two_sqrt_one_sub,
   MIPRE.QLD.ErrSmall.itemOne_comp, MIPRE.QLD.errSmall_itemOneEta, MIPRE.QLD.errSmall_swapItemOne,
   MIPRE.QLD.errSmall_swapItemOne_sqrt, MIPRE.QLD.ErrSmall.of_cases, MIPRE.QLD.ErrSmall.of_regime,
-  MIPRE.QLD.errShape_mono_eps, MIPRE.QLD.ErrSmall.exists_le_min_one,
-  MIPRE.QLD.exists_card_eq_two_pow, MIPRE.QLD.exists_eq_two_pow_of_dvd_card,
-  MIPRE.QLD.four_mul_dvd_card, MIPRE.QLD.four_mul_dvd_card_of_regime, MIPRE.QLD.qldDelta,
+  MIPRE.QLD.errShape_mono_eps, MIPRE.QLD.ErrSmall.exists_le_min_one, MIPRE.QLD.qldDelta,
   MIPRE.QLD.qldHlt, MIPRE.QLD.qldEta, MIPRE.QLD.qldBound, MIPRE.QLD.qldErr, MIPRE.QLD.qldDelta_eq,
   MIPRE.QLD.qldHlt_eq, MIPRE.QLD.qldEta_eq, MIPRE.QLD.deltaLD_nonneg, MIPRE.QLD.deltaS_nonneg,
   MIPRE.QLD.qldDelta_nonneg, MIPRE.QLD.qldHlt_nonneg, MIPRE.QLD.qldEta_nonneg,
@@ -1162,10 +1171,15 @@ inside it), and the error `MIPRE/Background/QLD/{QLDError,ErrorShape,Regime}.lea
   MIPRE.QLD.le_qldErr, MIPRE.QLD.ErrSmall.deltaLegs_comp, MIPRE.QLD.ErrSmall.deltaItemTwo_comp,
   MIPRE.QLD.errSmall_qldDelta, MIPRE.QLD.errSmall_qldHlt, MIPRE.QLD.errSmall_qldEta,
   MIPRE.QLD.errSmall_deltaLegs, MIPRE.QLD.errSmall_deltaItemTwo, MIPRE.QLD.errSmall_qldBound,
-  MIPRE.QLD.errSmall_qldErr, MIPRE.QLD.exists_qldErr_le, MIPRE.QLD.rdPauliVec_legalize_pauli,
-  MIPRE.QLD.legalStrat, MIPRE.QLD.legalStrat_PA, MIPRE.QLD.legalStrat_PB,
-  MIPRE.QLD.one_sub_value_legalStrat_le, MIPRE.QLD.legalSupport_legalStrat_A,
-  MIPRE.QLD.legalSupport_legalStrat_B, MIPRE.QLD.legalStrat_pauli_A, MIPRE.QLD.legalStrat_pauli_B,
+  MIPRE.QLD.errSmall_qldErr, MIPRE.QLD.exists_qldErr_le
+
+/-! `thm:qld`: the Pauli basis test, in a bipartite model, from the soundness of the seeded test in
+its extensions (`MIPRE/Background/QLD/Soundness.lean`: `soundIn_of_lidt`, with the legalization,
+the trivial extraction outside the regime, and the extraction by the swap isometry inside it). -/
+#guard_sorry_free MIPRE.QLD.rdPauliVec_legalize_pauli, MIPRE.QLD.legalStrat,
+  MIPRE.QLD.legalStrat_PA, MIPRE.QLD.legalStrat_PB, MIPRE.QLD.one_sub_value_legalStrat_le,
+  MIPRE.QLD.legalSupport_legalStrat_A, MIPRE.QLD.legalSupport_legalStrat_B,
+  MIPRE.QLD.legalStrat_pauli_A, MIPRE.QLD.legalStrat_pauli_B,
   MIPRE.QLD.sum_stateSqNorm_alice_le_four, MIPRE.QLD.sum_stateSqNorm_bob_le_four,
   MIPRE.QLD.norm_inert_reg_sub_le_four, MIPRE.QLD.inert_reg_ΦA_one, MIPRE.QLD.inert_reg_ΦB_one,
   MIPRE.QLD.Extraction.trivial, MIPRE.QLD.norm_evec_unitPoint, MIPRE.QLD.dominatesPOVM_of_expand,
@@ -1218,6 +1232,9 @@ Phase 5 of `planning/mipco-track.md`, by blueprint node. -/
   MIPRE.BipartiteModel.exists_projective_joint, MIPRE.QLD.deltaQ_eq,
   MIPRE.QLD.combined_points_dilated, MIPRE.QLD.hatVec_swapVec_xSqNorm,
   MIPRE.QLD.hatVec_swapVec_bornProb
+
+/-! `lem:qld-error` -/
+#guard_sorry_free MIPRE.QLD.deltaSim_four_mul_le, MIPRE.QLD.ErrSmall.deltaSim_comp
 
 /-! `lem:qld-exact-paulis` -/
 #guard_sorry_free MIPRE.QLD.smulKron_smul_left, MIPRE.QLD.physInert, MIPRE.QLD.physInert_ΦA,
@@ -1303,8 +1320,5 @@ Phase 5 of `planning/mipco-track.md`, by blueprint node. -/
 
 /-! `lem:qld-win` -/
 #guard_sorry_free MIPRE.QLD.isPVMIn_msPOVM
-
-/-! `thm:qld` -/
-#guard_sorry_free MIPRE.QLD.deltaSim_four_mul_le, MIPRE.QLD.ErrSmall.deltaSim_comp
 
 end
