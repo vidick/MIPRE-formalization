@@ -3,8 +3,9 @@
 **Status: Phase 0 done (#235, #236), made generic in #239; Phase 1 done (#241, #243, #245);
 Phase 2 done (#247); Phase 3 done (#249); Phase 4 done (#251); Phase 5 done (#253); Phase 6, the
 one new theorem, open: its paper trail and the vendored proof audited (#255,
-`reports/lidt-co-audit.md`), and its hypothesis reduced to finite pairs (C6a,
-`MIPRE.mipco_eq_core_of_lidtFin`).** The conditional theorem — `MIP^co = coRE` given the commuting-operator
+`reports/lidt-co-audit.md`), its hypothesis reduced to finite pairs (C6a,
+`MIPRE.mipco_eq_core_of_lidtFin`) and narrowed to dyadic pairs, with the orthonormalization tier
+done (C6b, T1–T5); the port of the soundness proof open.** The conditional theorem — `MIP^co = coRE` given the commuting-operator
 soundness of gap compression — is in, with all of its plumbing, written once for both values.
 Since Phase 5 it follows from the soundness of the low-individual-degree test in the
 commuting-operator model alone (`MIPRE.mipco_eq_core_of_lidt`, hypothesis `LIDT.Simul.SoundCo`):
@@ -14,12 +15,14 @@ operator calculus of the stage analyses is proved once over a bipartite model, w
 layer as its tensor-product instance, and so are the soundness of oracularization, of answer
 reduction, of introspection and of the Pauli basis test. The audit finds no paper trail for
 `LIDT.Simul.SoundCo` in its present generality. Since C6a the theorem also follows from a
-different hypothesis, incomparable with it: `LIDT.Simul.SoundFin`, soundness in every finite pair
-(two algebras that are each other's commutants and carry faithful tracial states), reached from
-`ω_co` through the vendored tracial density (`MIPRE.mipco_eq_core_of_lidtFin`, §5, Phase 6). What
-remains is `SoundFin` itself (C6b), planned in `planning/c6b-plan.md` with the II₁
-orthonormalization tier; its analytic core, de la Salle's Theorem 1.2 in algebras without abelian
-projections, is proved.
+different hypothesis, incomparable with it: `LIDT.Simul.SoundFin`, soundness in every dyadic pair
+(a finite pair, two algebras that are each other's commutants and carry faithful tracial states,
+whose algebras both have unital matrix units of every size `2ⁿ`), reached from `ω_co` through the
+vendored tracial density and an amplification by the twisted Pauli algebra
+(`MIPRE.mipco_eq_core_of_lidtFin`, §5, Phase 6). What remains is `SoundFin` itself (C6b), planned
+in `planning/c6b-plan.md` with the II₁ orthonormalization tier. The tier is done: de la Salle's
+Theorem 1.2 holds unconditionally in algebras without abelian projections, and dyadic pairs have
+none; the port of the vendored soundness proof is open.
 
 Written 2026-09-28, after the explicit separation (#222) and the paper's class (#230–#233).
 Target: Lin's theorem `MIP^co = coRE` (`Lin25`, arXiv:2510.07162, STOC 2026), proved by
@@ -114,7 +117,7 @@ Piece by piece:
 | tracial value at most bipartite value | `lem:tracial-le-co`, #29 | not on the critical path (§5); open for the Tsirelson chapter |
 | Pauli basis rigidity, model `co` | `thm:qld` in a bipartite model from the LIDT hypothesis (`QLD.soundIn_of_lidt`), `QLD.soundCo_of_lidt` | done (Phase 5) |
 | introspection soundness, model `co` | `Introspection.seven`, finite-dimensional; generalized over the model | Phase 4 |
-| low-individual-degree test soundness, model `co` | not formalized; no source proves it for an arbitrary vector state; the vendored proof is dimension-free except at three isolated steps (`reports/lidt-co-audit.md`); the theorem needs it only in finite pairs (`LIDT.Simul.SoundFin`, `cor:mipco-from-lidt-fin`) | Phase 6, the one new theorem; audited (#255); reduced to finite pairs (C6a); C6b open (#259) |
+| low-individual-degree test soundness, model `co` | not formalized; no source proves it for an arbitrary vector state; the vendored proof is dimension-free except at three isolated steps (`reports/lidt-co-audit.md`); the theorem needs it only in dyadic pairs (`LIDT.Simul.SoundFin`, `cor:mipco-from-lidt-fin`) | Phase 6, the one new theorem; audited (#255); reduced to finite pairs (C6a) and narrowed to dyadic pairs (C6b's tier); the port open (#259) |
 | oracularization soundness, model `co` | generalized over the model (`OracularModel.lean`, `SeededGame.povmValue_sound_ge`), with `OracularTensor.lean` its tensor instance; `SeededGame.commutingOperatorValue_ge_of_oracular` | done (Phase 2) |
 
 ## 3. The dual criterion, and why co-completeness is not needed
@@ -712,6 +715,14 @@ recorded in `FinitePair.lean` and in `def:finite-pair`.
   II₁ condition in `IsFinitePair` and the amplification in the value lemma (4–8k lines). This is
   the orthonormalization-tier decision below, now with its consequence for the definition.
 
+*Since C6b T2–T5*, three sentences above are out of date. `CommutingFinitePairApprox` lives in
+`MIPRE/Foundations/DyadicPair.lean` (blueprint `def:dyadic-pair`) and asks for dyadic pairs, the
+finite pairs whose two algebras have unital dyadic matrix units; the value lemma
+`commutingFinitePairApprox` moved to `MIPRE/Background/Repetition/DyadicApprox.lean`. `SoundFin`
+asks only for dyadic pairs, which exclude the type I pairs with diffuse centre, so it no longer asks
+for orthonormalization there. And the value lemma amplifies by the twisted Pauli algebra
+(`MIPRE/Background/Repetition/{PauliAlgebra,Amplify}.lean`), not by a II₁ factor.
+
 *Decisions for the maintainer.*
 - Where the port lives: under `MIPRE/Background/LIDT/`, the only directory that may name
   `MIPStarRE`, or upstream and then vendored. Default taken for C6b: `MIPRE/Background/LIDT/Co/`.
@@ -719,8 +730,9 @@ recorded in `FinitePair.lean` and in `def:finite-pair`.
   (`planning/c6b-plan.md`, `reports/c6b-paper-proofs.md`) found that it needs a centre-valued trace
   at the projection `1` for an algebra with a faithful vector trace (proved, with no factor
   hypothesis), no abelian projections from dyadic matrix units (a trace estimate, no comparison
-  theory), and an amplifying algebra `B` with such units in the value lemma (open). The class
-  becomes the dyadic pairs, and `SoundFin` is narrowed to them.
+  theory), and an amplifying algebra `B` with such units in the value lemma (the twisted Pauli
+  algebra). The class became the dyadic pairs, and `SoundFin` is narrowed to them; all three are
+  done (C6b T1–T5).
 - Whether to have the operator-dual derivation reviewed: not on C6b's path, which proves the
   summed semidefinite form with the trace; it matters for route A1 only.
 - The findings to report to Lin (report §5.2).
@@ -814,7 +826,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | done (#249): ≈ 0.55k new, the ≈ 4k-line chain restated; the LIDT adapter deferred to C6 |
 | C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | done (#251): ≈ 3k new, ≈ 110 modules restated; `mipco_eq_core` conditional on the Pauli basis and LIDT tests in the commuting model |
 | C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | done (#253): ≈ 5.2k new, ≈ 50 modules restated; `mipco_eq_core_of_lidt` conditional on `LIDT.Simul.SoundCo` alone |
-| C6 | Phase 6: the low-individual-degree test in the commuting-operator model. C6a: `SoundFin → MIPCo = IsCoRE` with the adapters; C6b: the core theorem on class C | C6a 2–3k; C6b 70–120k new, plus an orthonormalization tier (4–8k with a II₁ restriction) | audit done (#255, `reports/lidt-co-audit.md`); C6a done (#258): target `SoundFin`, `mipco_eq_core_of_lidtFin`, ≈ 0.8k new lines; C6b planned (#259, `planning/c6b-plan.md`): II₁ tier chosen, its orthonormalization core proved (≈ 1.25k), the class, the amplification and the port open |
+| C6 | Phase 6: the low-individual-degree test in the commuting-operator model. C6a: `SoundFin → MIPCo = IsCoRE` with the adapters; C6b: the core theorem on class C | C6a 2–3k; C6b 70–120k new, plus an orthonormalization tier (4–8k with a II₁ restriction) | audit done (#255, `reports/lidt-co-audit.md`); C6a done (#258): target `SoundFin`, `mipco_eq_core_of_lidtFin`, ≈ 0.8k new lines; C6b planned (#259, `planning/c6b-plan.md`): II₁ tier chosen and done, ≈ 3.0k — the orthonormalization core (T1, ≈ 1.25k), the dyadic class, the twisted Pauli algebra, the amplification and C6a restated to the class (T2–T5, ≈ 1.75k), so `SoundFin` asks only for dyadic pairs and Theorem 1.2 is unconditional in them; the port (M0–M14) open |
 | C7 | Phase 7: the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
 
 C1 is the prerequisite of everything after it; C3 and C4 need only C1 and are independent

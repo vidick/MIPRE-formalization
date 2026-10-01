@@ -1052,8 +1052,9 @@ the soundness of the seeded CL test (Theorem~\ref{thm:lidt-cl-soundness}) in the
 commuting-operator model (Definition~\ref{def:lidt-sound-in}), from which $\MIPco = \coRE$ follows
 (Corollary~\ref{cor:mipco-from-lidt}). No source proves that statement for an arbitrary vector
 state (\texttt{reports/lidt-co-audit.md}), and Corollary~\ref{cor:mipco-from-lidt-fin} replaces it
-by its restriction to \emph{finite pairs}, the models whose two algebras are each other's commutants
-and carry faithful tracial states (Section~\ref{sec:ds-mipco-phase6}). Each stage, and the Pauli basis test, was proved by
+by its restriction to \emph{dyadic pairs}, the models whose two algebras are each other's
+commutants, carry faithful tracial states and contain unital matrix units of every size $2^n$
+(Section~\ref{sec:ds-mipco-phase6}). Each stage, and the Pauli basis test, was proved by
 generalizing the existing analysis over the projective commuting-operator model of
 Section~\ref{sec:ds-mipco-projective} rather than by re-proving it, with the tensor-product
 strategies as an instance: the operator calculus (Remark~\ref{rem:model-calculus}),
@@ -1062,7 +1063,7 @@ oracularization (Section~\ref{sec:ds-mipco-phase2}), answer reduction
 Pauli basis test (Section~\ref{sec:ds-mipco-phase5}). The low-individual-degree test is Phase 6,
 the one item that is new mathematics rather than a generalization: the only proof of its soundness
 here is the vendored finite-dimensional one, whose mechanisms use the finite dimension throughout.
-So far Phase 6 has reduced the hypothesis to finite pairs (Section~\ref{sec:ds-mipco-phase6}).
+So far Phase 6 has reduced the hypothesis to dyadic pairs (Section~\ref{sec:ds-mipco-phase6}).
 Sizes, phases and the delicate points are in \texttt{planning/mipco-track.md}, and the audit that
 fixed the model is \texttt{reports/co-generalization-audit.md}.
 \end{remark}
@@ -2759,7 +2760,7 @@ The Pauli basis test is then sound in the commuting-operator model (Lemma~\ref{l
 so both hypotheses of Corollary~\ref{cor:mipco-from-stages} hold.
 \end{proof}
 
-\subsubsection{The hypothesis in finite pairs}
+\subsubsection{The hypothesis in dyadic pairs}
 \label{sec:ds-mipco-phase6}
 
 The hypothesis of Corollary~\ref{cor:mipco-from-lidt} is Theorem~\ref{thm:lidt-cl-soundness} in the
@@ -2774,21 +2775,26 @@ approximation by finite-dimensional strategies is what fails. No source proves i
 
 Phase 6 therefore replaces it by its restriction to \emph{finite pairs}: models whose two players'
 algebras are each other's commutants and both carry a faithful tracial state, with an arbitrary
-vector state (Definition~\ref{def:finite-pair}). The two hypotheses are incomparable. What the
-restriction buys is a trace on both algebras, which is what a port of the vendored proof needs where
-it uses the dimension: the symmetrization of the two players, the semidefinite step, and
-orthonormalization, which in a finite von Neumann algebra is de la Salle's theorem. That port is
-still to be done. This subsection proves that the restriction suffices
-(Corollary~\ref{cor:mipco-from-lidt-fin}). Answer reduction and the Pauli basis test use the
-hypothesis only in the model of one near-optimal projective strategy and in its ancilla extensions,
-and by Lin's tracial density (Theorem~\ref{thm:tracial-density}) the near-optimal strategies can be
-taken in finite pairs, a class closed under ancilla extensions.
+vector state (Definition~\ref{def:finite-pair}); and, within those, to \emph{dyadic pairs}, whose two
+algebras also contain unital matrix units of every size $2^n$ (Definition~\ref{def:dyadic-pair}). The
+two hypotheses are incomparable. What the restriction buys is a trace on both algebras, which is what
+a port of the vendored proof needs where it uses the dimension: the symmetrization of the two
+players, the semidefinite step, and orthonormalization, which in a finite von Neumann algebra is de
+la Salle's theorem; and the matrix units exclude abelian projections
+(Theorem~\ref{thm:no-abelian-dyadic}), which makes that theorem unconditional in the class
+(Corollary~\ref{cor:orthonormalization-dyadic-pair}). The port is still to be done. This subsection
+proves that the restriction suffices (Corollary~\ref{cor:mipco-from-lidt-fin}). Answer reduction and
+the Pauli basis test use the hypothesis only in the model of one near-optimal projective strategy
+and in its ancilla extensions, and by Lin's tracial density (Theorem~\ref{thm:tracial-density}),
+followed by an amplification by an algebra with dyadic matrix units
+(Lemma~\ref{lem:amplification-dyadic}), the near-optimal strategies can be taken in dyadic pairs, a
+class closed under ancilla extensions.
 
 \begin{definition}[Finite pairs]
 \label{def:finite-pair}
-\uses{def:bipartite-model,def:model-proj-strategy}
+\uses{def:bipartite-model}
 \lean{MIPRE.VecTrace, MIPRE.BipartiteModel.opsA, MIPRE.BipartiteModel.opsB,
-  MIPRE.BipartiteModel.IsFinitePair, MIPRE.CommutingFinitePairApprox}
+  MIPRE.BipartiteModel.IsFinitePair}
 \leanok
 A \emph{vector trace} on a set $s$ of bounded operators on a Hilbert space $\mH$ is a finite family
 of vectors $g_1, \dots, g_n \in \mH$ with $\sum_k \|g_k\|^2 = 1$ such that $\tau(x) = \sum_k \langle
@@ -2798,18 +2804,18 @@ separation is the faithfulness of $\tau$, since $\tau(x^* x) = \sum_k \|x g_k\|^
 model (Definition~\ref{def:bipartite-model}) is a \emph{finite pair} if both players'
 representations are injective, the operators of each player are exactly the operators commuting
 with all of the other player's, and each player's operators carry a vector trace. The state is an
-arbitrary unit vector. $\omegaco$ is \emph{approached in finite pairs} if for every game $\game$ and
-every $0 \leq t < \omegaco(\game)$ there is a projective strategy for $\game$ of value greater than
-$t$ in a finite pair.
+arbitrary unit vector.
 
 Two features of the class matter for the port of the soundness proof to it. The trace is a finite
 sum of vector states, so the class is narrower than that of all pairs with faithful normal tracial
 states; the standard form of a tracial algebra needs one vector, and ancilla extensions, the
-doubling $\mH \oplus \mH$ and amplification by a type $\mathrm{II}_1$ factor stay in the class,
-while corners do not. And the class contains type $\mathrm{I}$ pairs with diffuse centre, such as
-$L^\infty[0,1]$ acting on $L^2[0,1]$, so soundness in finite pairs includes them: a port that
-orthonormalizes only in type $\mathrm{II}_1$ algebras would have to narrow the class and amplify in
-Lemma~\ref{lem:co-value-finite-pair}.
+doubling $\mH \oplus \mH$ and amplification by a tracial algebra in standard form
+(Lemma~\ref{lem:amplification-dyadic}) stay in the class, while corners do not. And the class
+contains type $\mathrm{I}$ pairs with diffuse centre, such as $L^\infty[0,1]$ acting on $L^2[0,1]$,
+whose projections are all abelian. Orthonormalization is proved only in algebras without abelian
+projections (Theorem~\ref{thm:orthonormalization-no-abelian}), so the class the port works in is
+narrowed to the dyadic pairs (Definition~\ref{def:dyadic-pair}), which exclude them, and
+Lemma~\ref{lem:co-value-finite-pair} amplifies to reach it.
 \end{definition}
 
 \begin{lemma}[Finite pairs are closed under ancilla extensions]
@@ -2837,13 +2843,242 @@ fixed $b_0 \in \beta$, give $X \otimes \Id_\beta$ the normalized trace $\abs{\al
 players exchanges the conditions.
 \end{proof}
 
-\begin{lemma}[$\omegaco$ is approached in finite pairs]
+The orthonormalization step of the port applies
+Theorem~\ref{thm:orthonormalization-no-abelian} in algebras cut out by a purely algebraic
+condition that excludes abelian projections (Theorem~\ref{thm:no-abelian-dyadic}): matrix units of
+every size $2^n$.
+
+\begin{definition}[Unital dyadic matrix units]
+\label{def:dyadic-units}
+\lean{MIPRE.IsMatUnits, MIPRE.HasDyadicUnits}
+\leanok
+Let $A$ be a ring with an involution and $\iota$ a finite set. A family $(e_{ij})_{i, j \in \iota}$
+of elements of $A$ is a system of \emph{unital matrix units} if $e_{ij} e_{lm} = \delta_{jl}\,
+e_{im}$, $e_{ij}^* = e_{ji}$ and $\sum_i e_{ii} = 1$. The ring $A$ has \emph{unital dyadic matrix
+units} if for every $n$ it has a system of unital matrix units indexed by $\{0, 1\}^n$, of size
+$2^n \times 2^n$.
+\end{definition}
+
+\begin{lemma}[Transport of dyadic matrix units]
+\label{lem:dyadic-units-closure}
+\uses{def:dyadic-units}
+\lean{MIPRE.IsMatUnits.mul_cancel, MIPRE.IsMatUnits.map, MIPRE.IsMatUnits.op,
+  MIPRE.IsMatUnits.diagonal, MIPRE.IsMatUnits.prod, MIPRE.HasDyadicUnits.map,
+  MIPRE.HasDyadicUnits.op, MIPRE.HasDyadicUnits.matrix, MIPRE.HasDyadicUnits.prod}
+\leanok
+Unital matrix units, and hence unital dyadic matrix units (Definition~\ref{def:dyadic-units}), pass
+along unital $*$-homomorphisms; to the opposite ring, as $e_{ij} \mapsto e_{ji}^{\mathrm{op}}$; to the
+ring of $\alpha \times \alpha$ matrices over the ring, as the scalar diagonals $e_{ij}\, \Id_\alpha$;
+and to the product of two rings, componentwise, for two systems with the same index.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Each clause is a direct computation. A unital $*$-homomorphism preserves products, adjoints, finite
+sums and the unit. In the opposite ring $e_{ji}^{\mathrm{op}} e_{ml}^{\mathrm{op}} = (e_{ml}
+e_{ji})^{\mathrm{op}} = \delta_{jl}\, e_{mi}^{\mathrm{op}}$. Diagonal matrices multiply entrywise,
+and the adjoint of a diagonal matrix is the diagonal of the adjoints. Products are computed
+componentwise, which is why the two systems must share an index: indexing dyadic units by
+$\{0, 1\}^n$ is what makes the product clause need no reindexing. The full proof is
+\texttt{reports/c6b-paper-proofs.md}, Section~3, Lemma~5.
+\end{proof}
+
+\begin{lemma}[Pauli sites give dyadic matrix units]
+\label{lem:pauli-sites-units}
+\uses{def:dyadic-units}
+\lean{MIPRE.PauliSites, MIPRE.PauliSites.proj, MIPRE.PauliSites.xpow, MIPRE.PauliSites.unit,
+  MIPRE.PauliSites.isMatUnits_unit, MIPRE.PauliSites.commute_unit, MIPRE.PauliSites.units,
+  MIPRE.PauliSites.units_mul, MIPRE.PauliSites.star_units, MIPRE.PauliSites.sum_units_diag,
+  MIPRE.PauliSites.isMatUnits_units, MIPRE.PauliSites.hasDyadicUnits}
+\leanok
+Let $R$ be a $*$-algebra over $\C$ with self-adjoint elements $x_k, z_k$ for $k \in \N$, such that
+$x_k^2 = z_k^2 = 1$ and $z_k x_k = -x_k z_k$, and elements at distinct sites commute. Put $p_k =
+\frac12 (1 + z_k)$ and $u^{(k)}_{ab} = x_k^a\, p_k\, x_k^b$ for $a, b \in \{0, 1\}$. Then each
+$u^{(k)}$ is a system of unital $2 \times 2$ matrix units, and the products $e_{ij} = \prod_{k < n}
+u^{(k)}_{i_k j_k}$, for $i, j \in \{0, 1\}^n$, are unital $2^n \times 2^n$ matrix units. So $R$ has
+unital dyadic matrix units (Definition~\ref{def:dyadic-units}).
+\end{lemma}
+
+\begin{proof}
+\leanok
+$p_k$ is a projection, $x_k p_k x_k = 1 - p_k$ by anticommutation, and so $p_k x_k p_k = x_k (1 -
+p_k) p_k = 0$. Hence $u^{(k)}_{ab} u^{(k)}_{cd} = x_k^a\, p_k x_k^{b + c} p_k\, x_k^d$ is
+$u^{(k)}_{ad}$ if $b = c$ and $0$ otherwise, $(u^{(k)}_{ab})^* = u^{(k)}_{ba}$, and $u^{(k)}_{00} +
+u^{(k)}_{11} = p_k + (1 - p_k) = 1$. Units at distinct sites commute, so the relations of the
+product system follow site by site, by induction on $n$. The construction is that of
+\texttt{reports/c6b-paper-proofs.md}, Section~3.8.
+\end{proof}
+
+\begin{theorem}[Dyadic matrix units exclude abelian projections]
+\label{thm:no-abelian-dyadic}
+\uses{def:finite-pair,lem:finite-pair-expand,lem:dyadic-units-closure}
+\lean{MIPRE.mul_star_le_mul_of_commute, MIPRE.VecTrace.tr, MIPRE.VecTrace.tr_one,
+  MIPRE.VecTrace.tr_mul_comm, MIPRE.VecTrace.re_tr_nonneg, MIPRE.VecTrace.re_tr_mono,
+  MIPRE.VecTrace.tr_star_mul_self, MIPRE.VecTrace.card_mul_re_tr_le_one,
+  MIPRE.VecTrace.eq_zero_of_dyadicUnits, MIPRE.BipartiteModel.mul_mem_opsA,
+  MIPRE.BipartiteModel.star_mem_opsA, MIPRE.BipartiteModel.IsFinitePair.eq_zero_of_abelianA,
+  MIPRE.BipartiteModel.IsFinitePair.eq_zero_of_abelianB}
+\leanok
+Let $s$ be a set of bounded operators on a Hilbert space, closed under products and adjoints, with
+a vector trace $\tau$ (Definition~\ref{def:finite-pair}), extended to all operators by $\tau(T) =
+\sum_k \langle g_k, T g_k \rangle$. Call a projection $p \in s$ \emph{abelian} in $s$ if $(pxp)(pyp)
+= (pyp)(pxp)$ for all $x, y \in s$, and let $p$ be one.
+\begin{itemize}
+\item (K1) If $s$ contains unital matrix units $(f_{ij})_{i, j \in \iota}$
+  (Definition~\ref{def:dyadic-units}), then $\abs{\iota} \cdot \mathrm{Re}\, \tau(p) \leq 1$.
+\item (K2) If $s$ contains unital dyadic matrix units, then $p = 0$.
+\item (K$'$) In a finite pair whose first player's algebra has unital dyadic matrix units, the first
+  player's operators contain no nonzero abelian projection; and likewise for the second player.
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+\leanok
+The tool is a Cauchy--Schwarz inequality in a commutative corner: for operators $x, y$ with $\alpha =
+x^* x$, $\beta = y^* y$ and $\gamma = x^* y$, if $\alpha$ commutes with $\beta$ and $\beta$ with
+$\gamma$, then $\gamma \gamma^* \leq \alpha \beta$. For $\eps > 0$ the operator $b = \beta + \eps$ is
+invertible and positive and commutes with $\alpha$, $\gamma$ and $\gamma^*$; with $z = x b - y
+\gamma^*$, $b (\alpha b - \gamma \gamma^*) = z^* z + \eps \gamma \gamma^* \geq 0$, so $\alpha b -
+\gamma \gamma^* \geq 0$, and $\eps \to 0$ gives the claim, the positive cone being closed.
+
+For (K1), fix $i_0 \in \iota$ and put $w_i = f_{i_0 i}\, p$ and $a_{ij} = w_i^* w_j = p f_{ij} p$. The
+$a_{ij}$ commute pairwise because $p$ is abelian, $\sum_i a_{ii} = p$, and $a_{ij} a_{ij}^* \leq
+a_{ii} a_{jj}$ by the corner inequality. The operator $X = \sum_i w_i w_i^*$ is self-adjoint and
+$f_{i_0 i_0} X = X = X f_{i_0 i_0}$; by traciality $\tau(X) = \tau(p)$ and $\mathrm{Re}\, \tau(X^2) =
+\sum_{i, j} \mathrm{Re}\, \tau(a_{ij} a_{ij}^*) \leq \mathrm{Re}\, \tau(p)$, and $\tau(f_{ii}) =
+\tau(f_{i_0 i_0})$ for every $i$, so $\tau(f_{i_0 i_0}) = 1/\abs{\iota}$. With $t = \mathrm{Re}\,
+\tau(p) \geq 0$, the positivity of $(X - c f_{i_0 i_0})^* (X - c f_{i_0 i_0}) = X^2 - 2cX + c^2
+f_{i_0 i_0}$ for real $c$ gives $0 \leq t - 2ct + c^2/\abs{\iota}$, and $c = \abs{\iota}\, t$ gives
+$t (1 - \abs{\iota}\, t) \geq 0$. For (K2), $2^n t \leq 1$ for every $n$, so $t = 0$; and $\tau(p) =
+\tau(p^* p) = \sum_k \|p g_k\|^2$, so $p$ kills every $g_k$ and vanishes, the family separating $s$.
+For (K$'$), the first player's operators are the image of a $*$-homomorphism, hence closed under
+products and adjoints; they carry the vector trace of the finite pair, and contain the images of the
+units (Lemma~\ref{lem:dyadic-units-closure}). The second player's case is the first for the model
+with the players exchanged, again a finite pair (Lemma~\ref{lem:finite-pair-expand}). No comparison
+theory and no centre-valued trace is used. The full proof is \texttt{reports/c6b-paper-proofs.md},
+Section~3, Theorems~K and~K$'$ (Lemmas~1--4 and~6).
+\end{proof}
+
+\begin{definition}[Dyadic pairs]
+\label{def:dyadic-pair}
+\uses{def:finite-pair,def:dyadic-units,def:model-proj-strategy}
+\lean{MIPRE.BipartiteModel.IsDyadicPair, MIPRE.CommutingFinitePairApprox}
+\leanok
+A \emph{dyadic pair} is a finite pair (Definition~\ref{def:finite-pair}) whose two players' algebras
+both have unital dyadic matrix units (Definition~\ref{def:dyadic-units}); by
+Theorem~\ref{thm:no-abelian-dyadic}, neither player's operators then contain a nonzero abelian
+projection. $\omegaco$ is \emph{approached in dyadic pairs} if for every game $\game$ and every $0
+\leq t < \omegaco(\game)$ there is a projective strategy for $\game$ of value greater than $t$ in a
+dyadic pair.
+\end{definition}
+
+\begin{lemma}[Dyadic pairs are closed under ancilla extensions]
+\label{lem:dyadic-pair-closure}
+\uses{def:dyadic-pair,lem:finite-pair-expand,lem:dyadic-units-closure,thm:no-abelian-dyadic}
+\lean{MIPRE.BipartiteModel.IsDyadicPair.swap, MIPRE.BipartiteModel.IsDyadicPair.expand,
+  MIPRE.BipartiteModel.IsDyadicPair.eq_zero_of_abelianA,
+  MIPRE.BipartiteModel.IsDyadicPair.eq_zero_of_abelianB}
+\leanok
+A dyadic pair with the players exchanged is a dyadic pair, and so is an ancilla extension of a
+dyadic pair (Definition~\ref{def:ancilla-extension}) with nonempty registers. Neither player's
+operators in a dyadic pair contain a nonzero abelian projection.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Exchanging the players exchanges the two conditions. The players' algebras of an extension are the
+matrix algebras $M_\alpha(\alg_A)$ and $M_\beta(\alg_B)$ (Definition~\ref{def:ancilla-extension}),
+in which the scalar diagonals of the model's units are units
+(Lemma~\ref{lem:dyadic-units-closure}), and the extension is a finite pair
+(Lemma~\ref{lem:finite-pair-expand}). The last claim is Theorem~\ref{thm:no-abelian-dyadic} on each
+side. The full proof is \texttt{reports/c6b-paper-proofs.md}, Section~3, Theorem~Cl (Lemma~7).
+\end{proof}
+
+\begin{lemma}[The twisted Pauli algebra]
+\label{lem:pauli-algebra}
+\uses{lem:pauli-sites-units}
+\lean{MIPRE.Repetition.Pauli.pauliA, MIPRE.Repetition.Pauli.pauliTrace,
+  MIPRE.Repetition.Pauli.pauliStd, MIPRE.Repetition.Pauli.pauliSites,
+  MIPRE.Repetition.Pauli.pauliStd_hasDyadicUnits}
+\leanok
+Let $\Lambda$ be the set of finitely supported sequences $g = (x(g)_k, z(g)_k)_{k \in \N}$ of pairs
+of bits, and $\omega(g, h) = (-1)^{\sum_k z(g)_k x(h)_k}$. On $\ell^2(\Lambda)$ the unitaries $W_g
+\delta_h = \omega(g, h)\, \delta_{g + h}$ satisfy $W_g W_h = \omega(g, h)\, W_{g + h}$ and $W_g^* =
+\omega(g, g)\, W_g$, so their linear span $\cal{P}$ is a $*$-algebra. With the trace $\tau(a) =
+\langle \delta_0, a \delta_0 \rangle$, the map $a \mapsto a \delta_0$, the inclusion as the left
+action and $a^{\mathrm{op}} \mapsto J a^* J$ as the right action, for the antiunitary $(J \xi)_k =
+\omega(k, k)\, \overline{\xi_k}$, it is a tracial algebra in standard form, in the sense of the
+vendored commuting-operator development used for Theorem~\ref{thm:tracial-density}; and $\cal{P}$
+itself has unital dyadic matrix units (Definition~\ref{def:dyadic-units}).
+\end{lemma}
+
+\begin{proof}
+\leanok
+$\tau(W_g) = 1$ if $g = 0$ and $0$ otherwise, so $\tau(W_g W_h)$ and $\tau(W_h W_g)$ both vanish
+unless $h = g$, where the two products agree: $\tau$ is tracial on a spanning set, hence on $\cal{P}$.
+The vectors $W_g \delta_0 = \delta_g$ span a dense subspace. $J$ is an involutive antiunitary with
+$J(a \delta_0) = a^* \delta_0$, from which the formula for the right action and its commutation with
+the left action follow on that dense subspace. Finally $X_k = W_g$ for $g$ the pair $(1, 0)$ at site
+$k$, and $Z_k = W_g$ for $(0, 1)$ at site $k$, are self-adjoint symmetries that anticommute at one
+site and commute at distinct sites, by the values of $\omega$; so Lemma~\ref{lem:pauli-sites-units}
+gives units in $\cal{P}$ itself, not only after representation. No closure is taken: the interface
+asks only for a $*$-algebra. The candidates and the choice are in
+\texttt{reports/c6b-paper-proofs.md}, Section~3.8.
+\end{proof}
+
+\begin{lemma}[Amplification by an algebra with dyadic matrix units]
+\label{lem:amplification-dyadic}
+\uses{def:dyadic-pair,lem:dyadic-units-closure}
+\lean{MIPRE.Repetition.leftVNHom, MIPRE.Repetition.rightVNHom, MIPRE.Repetition.isDyadicPair_stdModel,
+  MIPRE.Repetition.hasDyadicUnits_tensorStep, MIPRE.Repetition.isDyadicPair_stdModel_tensorStep,
+  MIPRE.Repetition.inclLeft,
+  MIPRE.Repetition.τ_inclLeft, MIPRE.Repetition.isPosElem_map, MIPRE.Repetition.amplify,
+  MIPRE.Repetition.amplify_correlation, MIPRE.Repetition.isDyadicPair_stdModel_amplify,
+  MIPRE.Repetition.exists_tracialStrategy_isDyadicPair}
+\leanok
+Let $\alg$ and $\cal{B}$ be tracial algebras in standard form, and suppose that $\cal{B}$ has unital
+dyadic matrix units (Definition~\ref{def:dyadic-units}).
+\begin{itemize}
+\item (A) For every vector $\psi$, the standard-form model of $\alg \otimes \cal{B}$ --- the
+  commutant $\cal{N}$ of its right action and the commutant $\cal{N}'$ of $\cal{N}$, as the players'
+  algebras, in the state $\psi$ --- is a dyadic pair (Definition~\ref{def:dyadic-pair}).
+\item (T) A tracial strategy $(\sigma, E, F)$ in $\alg$ gives the tracial strategy $(\sigma \otimes
+  1, E \otimes 1, F \otimes 1)$ in $\alg \otimes \cal{B}$, with the same correlation.
+\end{itemize}
+Consequently, for every game with nonempty alphabets and every $\lambda < \omegaco$, there is a
+tracial strategy of winning probability greater than $\lambda$ whose standard-form model is a
+dyadic pair in every state.
+\end{lemma}
+
+\begin{proof}
+\leanok
+For (A): the elements $1 \otimes f_{ij}$, for units $f$ of $\cal{B}$, are unital dyadic matrix units
+of $\alg \otimes \cal{B}$, the image of those of $\cal{B}$ under the unital $*$-homomorphism $b
+\mapsto 1 \otimes b$. The left action maps $\alg \otimes \cal{B}$ into $\cal{N}$, and the right
+action maps its opposite algebra into $\cal{N}'$, both as unital $*$-homomorphisms, so both players'
+algebras have units (Lemma~\ref{lem:dyadic-units-closure}). The model is a finite pair: the trace
+vector is tracial on $\cal{N}$ and, through the conjugation $J$ of the standard form, on
+$\cal{N}'$, and it separates both, being cyclic for the left and for the right actions. So it is a
+dyadic pair, and so are its ancilla extensions with nonempty registers, which is how
+Lemma~\ref{lem:co-value-finite-pair} uses it (Lemma~\ref{lem:dyadic-pair-closure}). For (T): $a \mapsto a
+\otimes 1$ is a unital $*$-homomorphism, so it maps sums of squares to sums of squares and keeps the
+measurements' sums equal to $1$, and the trace of $\alg \otimes \cal{B}$ restricts to that of
+$\alg$ on $\alg \otimes 1$, since $\tau(a \otimes b) = \tau(a) \tau(b)$ and $\tau(1) = 1$; so the
+normalization of the density and the correlation $\mathrm{Re}\, \tau(\sigma^* E^x_a \sigma F^y_b)$
+are unchanged. The consequence is the vendored strict form of Lin's tracial density for game values
+(Theorem~\ref{thm:tracial-density}), followed by (T) and (A). The full proof is
+\texttt{reports/c6b-paper-proofs.md}, Section~3, Theorems~A and~T (Lemmas~8 and~9).
+\end{proof}
+
+\begin{lemma}[$\omegaco$ is approached in dyadic pairs]
 \label{lem:co-value-finite-pair}
-\uses{def:finite-pair,lem:finite-pair-expand,lem:kraus-dilation,lem:qld-global-pvm}
-\lean{MIPRE.Repetition.commutingFinitePairApprox}
+\uses{def:dyadic-pair,lem:dyadic-pair-closure,lem:amplification-dyadic,lem:pauli-algebra,
+  lem:kraus-dilation,lem:qld-global-pvm}
+\lean{MIPRE.Repetition.nonempty_of_lt_commutingOperatorValue,
+  MIPRE.Repetition.exists_projStrat_expand_stdModel, MIPRE.Repetition.commutingFinitePairApprox}
 \leanok
 For every game $\game$ and every $0 \leq t < \omegaco(\game)$ there is a projective strategy for
-$\game$ of value greater than $t$ in a finite pair.
+$\game$ of value greater than $t$ in a dyadic pair (Definition~\ref{def:dyadic-pair}).
 \end{lemma}
 
 \begin{proof}
@@ -2852,78 +3087,82 @@ If an alphabet is empty, $\omegaco(\game) = 0$ and there is nothing to prove. Ot
 vendored development's strict form of Lin's tracial density for game values gives a tracially
 embeddable strategy (Theorem~\ref{thm:tracial-density}) of winning probability greater than $t$: a
 tracial algebra $\alg$ in standard form on $L^2(\alg, \tau)$, a density $\sigma$, and the two
-players' POVMs acting on the left and on the right, in the state $\iota\sigma$. Let $\cal{N}$ be
-the commutant of the right action. Then $\cal{N}$ and its commutant $\cal{N}'$, as the
-players' algebras, form a finite pair: the trace vector $\iota 1$ is tracial on $\cal{N}$ and,
-through the conjugation $J$ of the standard form, on $\cal{N}'$, and it separates both, being
-cyclic for the left and for the right actions. The left action lies in $\cal{N}$ and the right
-action in $\cal{N}'$, so the strategy is a POVM strategy in this model, of the same value. Each
-player's POVMs dilate to projective measurements in the matrices over the player's algebra,
-compressed to one basis vector (Lemma~\ref{lem:kraus-dilation}); in the ancilla extension at that
-basis vector they form a projective strategy of the same value (Lemma~\ref{lem:qld-global-pvm}),
-and the extension is a finite pair (Lemma~\ref{lem:finite-pair-expand}).
+players' POVMs acting on the left and on the right, in the state $\iota\sigma$. Amplified by the
+twisted Pauli algebra (Lemma~\ref{lem:pauli-algebra}), it keeps its winning probability, and its
+standard-form model --- the commutant $\cal{N}$ of the right action and its commutant $\cal{N}'$, as
+the players' algebras --- is a dyadic pair in every state (Lemma~\ref{lem:amplification-dyadic}).
+The left action lies in $\cal{N}$ and the right action in $\cal{N}'$, so the strategy is a POVM
+strategy in this model, of the same value. Each player's POVMs dilate to projective measurements in
+the matrices over the player's algebra, compressed to one basis vector
+(Lemma~\ref{lem:kraus-dilation}); in the ancilla extension at that basis vector they form a
+projective strategy of the same value (Lemma~\ref{lem:qld-global-pvm}), and the extension is a
+dyadic pair (Lemma~\ref{lem:dyadic-pair-closure}). Before the amplification the model is only a
+finite pair, whose algebras may have abelian projections; that is the reason for it
+(\texttt{reports/c6b-paper-proofs.md}, Section~3.7).
 \end{proof}
 
-\begin{definition}[The low-individual-degree test is sound in finite pairs]
+\begin{definition}[The low-individual-degree test is sound in dyadic pairs]
 \label{def:lidt-sound-fin}
-\uses{def:lidt-sound-in,def:finite-pair}
+\uses{def:lidt-sound-in,def:dyadic-pair}
 \lean{MIPRE.LIDT.Simul.SoundFin}
 \leanok
-The seeded CL test is \emph{sound in finite pairs} if it is sound (Definition~\ref{def:lidt-sound-in})
-in every finite pair (Definition~\ref{def:finite-pair}).
+The seeded CL test is \emph{sound in dyadic pairs} if it is sound (Definition~\ref{def:lidt-sound-in})
+in every dyadic pair (Definition~\ref{def:dyadic-pair}). Dyadic pairs being finite pairs, this is
+weaker than soundness in every finite pair, so the conditional theorem it feeds
+(Corollary~\ref{cor:mipco-from-lidt-fin}) is stronger.
 \end{definition}
 
-\begin{theorem}[Answer reduction is sound in $\omegaco$, given the test in finite pairs]
+\begin{theorem}[Answer reduction is sound in $\omegaco$, given the test in dyadic pairs]
 \label{thm:ar-sound-co-fin}
 \uses{thm:ar-sound-co,def:lidt-sound-fin,lem:model-proj-strategy-values}
 \lean{MIPRE.AnswerReduction.answerReduction_soundIn_commuting_fin,
   MIPRE.LIDT.Simul.approxSoundIn_commuting_of_fin}
 \leanok
-If $\omegaco$ is approached in finite pairs (Definition~\ref{def:finite-pair}) and the seeded CL
-test is sound in finite pairs (Definition~\ref{def:lidt-sound-fin}), then the answer reduction of
+If $\omegaco$ is approached in dyadic pairs (Definition~\ref{def:dyadic-pair}) and the seeded CL
+test is sound in dyadic pairs (Definition~\ref{def:lidt-sound-fin}), then the answer reduction of
 Theorem~\ref{thm:answer-reduction} is sound in $\omegaco$, at the constants of
 Theorem~\ref{thm:ar-sound-co}. The first hypothesis is Lemma~\ref{lem:co-value-finite-pair}.
 \end{theorem}
 
 \begin{proof}
 \leanok
-$\omegaco$ is then approached by projective strategies in finite pairs, where the test is sound,
+$\omegaco$ is then approached by projective strategies in dyadic pairs, where the test is sound,
 and it dominates every model on a Hilbert space (Lemma~\ref{lem:model-proj-strategy-values}). So
 Theorem~\ref{thm:ar-sound-co} applies.
 \end{proof}
 
-\begin{lemma}[The Pauli basis test, given the seeded test in finite pairs]
+\begin{lemma}[The Pauli basis test, given the seeded test in dyadic pairs]
 \label{lem:qld-approx-co-fin}
-\uses{thm:qld,def:qld-sound-in,def:lidt-sound-fin,lem:finite-pair-expand,lem:povm-domination}
+\uses{thm:qld,def:qld-sound-in,def:lidt-sound-fin,lem:dyadic-pair-closure,lem:povm-domination}
 \lean{MIPRE.QLD.approxSoundIn_commuting_of_fin}
 \leanok
-If $\omegaco$ is approached in finite pairs (Definition~\ref{def:finite-pair},
-Lemma~\ref{lem:co-value-finite-pair}) and the seeded CL test is sound in finite pairs
+If $\omegaco$ is approached in dyadic pairs (Definition~\ref{def:dyadic-pair},
+Lemma~\ref{lem:co-value-finite-pair}) and the seeded CL test is sound in dyadic pairs
 (Definition~\ref{def:lidt-sound-fin}), then $\omegaco$ is approached by projective strategies of
 models in which the Pauli basis test is sound with $\omegaco$ (Definition~\ref{def:qld-sound-in}).
 \end{lemma}
 
 \begin{proof}
 \leanok
-Theorem~\ref{thm:qld} applies in each finite pair approaching $\omegaco$, with
-$\omega = \omegaco$. Its first hypothesis holds because an extension of a finite pair by a unit
-vector has nonempty registers and so is a finite pair (Lemma~\ref{lem:finite-pair-expand}), in
+Theorem~\ref{thm:qld} applies in each dyadic pair approaching $\omegaco$, with
+$\omega = \omegaco$. Its first hypothesis holds because an extension of a dyadic pair by a unit
+vector has nonempty registers and so is a dyadic pair (Lemma~\ref{lem:dyadic-pair-closure}), in
 which the seeded test is sound. Its second holds because $\omegaco$ dominates the POVM strategies of
 every model on a Hilbert space in a unit state (Lemma~\ref{lem:povm-domination}).
 \end{proof}
 
-\begin{corollary}[$\MIPco = \coRE$, from the soundness of the low-individual-degree test in finite pairs]
+\begin{corollary}[$\MIPco = \coRE$, from the soundness of the low-individual-degree test in dyadic pairs]
 \label{cor:mipco-from-lidt-fin}
 \uses{cor:mipco-from-stages,thm:ar-sound-co-fin,lem:qld-approx-co-fin,lem:co-value-finite-pair}
 \lean{MIPRE.mipco_eq_core_of_lidtFin}
 \leanok
-If the seeded CL test is sound in finite pairs (Definition~\ref{def:lidt-sound-fin}), then
+If the seeded CL test is sound in dyadic pairs (Definition~\ref{def:lidt-sound-fin}), then
 $\MIPco = \coRE$.
 \end{corollary}
 
 \begin{proof}
 \leanok
-$\omegaco$ is approached in finite pairs (Lemma~\ref{lem:co-value-finite-pair}). Introspection is
+$\omegaco$ is approached in dyadic pairs (Lemma~\ref{lem:co-value-finite-pair}). Introspection is
 sound in $\omegaco$ as soon as $\omegaco$ is approached by projective strategies of models in which
 the Pauli basis test is sound (Theorem~\ref{thm:intro-sound-co}), which
 Lemma~\ref{lem:qld-approx-co-fin} then provides. Answer reduction is sound in $\omegaco$ by
@@ -2933,13 +3172,13 @@ Corollary~\ref{cor:mipco-from-stages} is sound in $\omegaco$, which gives $\MIPc
 \end{proof}
 
 What remains is the hypothesis of Corollary~\ref{cor:mipco-from-lidt-fin}:
-Theorem~\ref{thm:lidt-cl-soundness} in every finite pair. That is the port of the vendored proof
+Theorem~\ref{thm:lidt-cl-soundness} in every dyadic pair. That is the port of the vendored proof
 described above, C6b of \texttt{planning/mipco-track.md}, planned in
 \texttt{planning/c6b-plan.md}; \texttt{reports/lidt-co-audit.md}, Section~5, sizes it, and
 \texttt{reports/c6b-paper-proofs.md} records the mathematics it adds. Its orthonormalization tier
-is the II$_1$ one: the class is narrowed to finite pairs whose algebras have no nonzero abelian
-projection, which unital matrix units of every size $2^n$ guarantee, and in those orthonormalization
-holds unconditionally.
+is the II$_1$ one: the class is narrowed to the dyadic pairs, whose algebras have no nonzero
+abelian projection (Theorem~\ref{thm:no-abelian-dyadic}), and in those orthonormalization holds
+unconditionally (Corollary~\ref{cor:orthonormalization-dyadic-pair}).
 
 \begin{corollary}[Orthonormalization in a finite pair without abelian projections]
 \label{cor:orthonormalization-finite-pair}
@@ -2964,6 +3203,26 @@ Theorem~\ref{thm:orthonormalization-no-abelian} applies, and its projective meas
 in the first player's operators, pulls back to the first player's algebra by injectivity.
 \end{proof}
 
+\begin{corollary}[Orthonormalization in a dyadic pair]
+\label{cor:orthonormalization-dyadic-pair}
+\uses{cor:orthonormalization-finite-pair,lem:dyadic-pair-closure}
+\lean{MIPRE.Orthonormalization.povm_orthogonalization_dyadicPair,
+  MIPRE.Orthonormalization.povm_orthogonalization_dyadicPairB}
+\leanok
+Let $M$ be a dyadic pair (Definition~\ref{def:dyadic-pair}) in a unit state $\psi$. A POVM $P$ of
+either player's algebra with $\sum_a \|\pi(P_a)\psi\|^2 > 1 - \eps$ is within $\sum_a \|\pi(P_a -
+Q_a)\psi\|^2 < 9\eps$ of a projective measurement $Q$ of that algebra.
+\end{corollary}
+
+\begin{proof}
+\leanok
+Neither player's operators contain a nonzero abelian projection
+(Lemma~\ref{lem:dyadic-pair-closure}), so Corollary~\ref{cor:orthonormalization-finite-pair}
+applies to the first player, and to the second in the model with the players exchanged, which is
+again a dyadic pair. This is the form the orthonormalization sites of the port call, with no
+hypothesis beyond the class (\texttt{reports/c6b-paper-proofs.md}, Section~3.7).
+\end{proof}
+
 \subsection{Further directions}
 
 \begin{remark}
@@ -2977,7 +3236,7 @@ the halting games), which need the entanglement form of the pipeline
 (Remark~\ref{rem:entanglement-form}) rather than the value form adopted here; the
 commuting-operator counterpart $\MIPco = \coRE$~\cite{Lin23,Lin25}, stated and proved
 conditionally in Section~\ref{sec:ds-mipco} (Theorem~\ref{thm:mipco-eq-core}), where what
-remains is the soundness of the low-individual-degree test in finite pairs
+remains is the soundness of the low-individual-degree test in dyadic pairs
 (Corollary~\ref{cor:mipco-from-lidt-fin}); and, more speculatively,
 connections
 to the undecidability of the spectral gap and to the existence of non-hyperlinear

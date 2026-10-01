@@ -462,6 +462,7 @@ public import MIPRE.Background.Orthonormalization.Axioms
 public import MIPRE.Background.Orthonormalization.CenterComparison
 public import MIPRE.Background.Orthonormalization.CenterTrace
 public import MIPRE.Background.Orthonormalization.CenterTraceClauses
+public import MIPRE.Background.Orthonormalization.DyadicOrtho
 public import MIPRE.Background.Orthonormalization.FinitePairOrtho
 public import MIPRE.Background.Orthonormalization.NoAbelian
 public import MIPRE.Background.Orthonormalization.Orthogonalization.Assembly
@@ -590,6 +591,7 @@ public import MIPRE.Background.QLD.TypeEncoding
 public import MIPRE.Background.QLD.Uniform
 public import MIPRE.Background.QLD.Win
 public import MIPRE.Background.QLD.WinMS
+public import MIPRE.Background.Repetition.Amplify
 public import MIPRE.Background.Repetition.Axioms
 public import MIPRE.Background.Repetition.Commuting
 public import MIPRE.Background.Repetition.CommutingRepetition.Game.Basic
@@ -723,7 +725,9 @@ public import MIPRE.Background.Repetition.CommutingRepetition.VN.SubModel
 public import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorPower
 public import MIPRE.Background.Repetition.CommutingRepetition.VN.TensorStep
 public import MIPRE.Background.Repetition.Direct
+public import MIPRE.Background.Repetition.DyadicApprox
 public import MIPRE.Background.Repetition.Entangled
+public import MIPRE.Background.Repetition.PauliAlgebra
 public import MIPRE.Background.Repetition.Soundness
 public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition
 public import MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01
@@ -843,6 +847,7 @@ public import MIPRE.Foundations.CrossConsistency
 public import MIPRE.Foundations.Dilation
 public import MIPRE.Foundations.Disagreement
 public import MIPRE.Foundations.Distances
+public import MIPRE.Foundations.DyadicPair
 public import MIPRE.Foundations.EPRContraction
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.FinitePair
@@ -1235,6 +1240,7 @@ public import MIPRE.Foundations.LowDegree.UnaryPrimality
 public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
 public import MIPRE.Foundations.LowDegreeSandwich
+public import MIPRE.Foundations.MatUnits
 public import MIPRE.Foundations.Measurement
 public import MIPRE.Foundations.ModelCalculus
 public import MIPRE.Foundations.ModelEmbedding

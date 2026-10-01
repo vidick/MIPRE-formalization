@@ -1079,11 +1079,13 @@ the soundness of the low-individual-degree test in the commuting-operator model 
 (`LIDT.Simul.SoundCo`, Phase 6). `planning/mipco-track.md` records each phase.
 Phase 6's paper trail and the vendored proof have been audited (#255, `reports/lidt-co-audit.md`).
 No source proves `SoundCo` in its generality. On the audit's recommendation the theorem now also
-follows from a different hypothesis, `LIDT.Simul.SoundFin`: soundness in every finite pair, two
-algebras that are each other's commutants and carry faithful tracial states, reached through the
-vendored tracial density (C6a, `MIPRE.mipco_eq_core_of_lidtFin`). What remains is `SoundFin`
-itself, by a port of the vendored proof to finite pairs of about 70–120k lines (C6b,
-`planning/c6b-plan.md`, with the II₁ orthonormalization tier).
+follows from a different hypothesis, `LIDT.Simul.SoundFin`: soundness in every dyadic pair (a
+finite pair, two algebras that are each other's commutants and carry faithful tracial states, whose
+two algebras have unital matrix units of every size 2ⁿ), reached through the vendored tracial
+density and an amplification by the twisted Pauli algebra (C6a and C6b T2–T5,
+`MIPRE.mipco_eq_core_of_lidtFin`). What remains is `SoundFin` itself, by a port of the vendored
+proof to dyadic pairs of about 70–120k lines (C6b, `planning/c6b-plan.md`), with the II₁
+orthonormalization tier done (C6b T1–T5).
 
 ## Working rules for this track
 

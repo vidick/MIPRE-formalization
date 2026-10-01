@@ -14,12 +14,16 @@ public import MIPRE.Foundations.KrausDilation
 @[expose] public section
 
 /-!
-# `ω_co` is approached by projective strategies in finite pairs
+# Tracial strategies as projective strategies in finite pairs
 
 Phase 6 of `planning/mipco-track.md` (`reports/lidt-co-audit.md`, §3.4): below `ω_co(G)`, and above
-`0`, lies the value of a projective strategy for `G` in a finite pair
-(`MIPRE.CommutingFinitePairApprox`, `lem:co-value-finite-pair`). The analytic content is Lin's
-tracial density, in the form proved by the vendored development:
+`0`, lies the value of a projective strategy for `G` in a dyadic pair
+(`MIPRE.CommutingFinitePairApprox`, `lem:co-value-finite-pair`). This file gives the steps that
+hold for every tracial strategy, which land in finite pairs; the theorem itself,
+`MIPRE.Repetition.commutingFinitePairApprox` (`MIPRE/Background/Repetition/DyadicApprox.lean`),
+first amplifies the strategy so that its finite pair is dyadic
+(`MIPRE/Background/Repetition/Amplify.lean`). The analytic content is Lin's tracial density, in
+the form proved by the vendored development:
 
 1. **Strict tracial reduction.** `ω_co(G)` is the commuting-operator value of the vendored
    development (`MIPRE.Repetition.commutingOperatorValue_eq_omegaCO`), and below it lies the
@@ -28,21 +32,24 @@ tracial density, in the form proved by the vendored development:
    `L²(𝒜, τ)`, a density `σ`, the first player's POVMs acting on the left and the second player's
    on the right, in the state `ι σ`.
 2. **The standard-form pair.** On `L²(𝒜, τ)`, the commutant of the right action
-   (`StdTracialAlgebra.vnAlg`) and its commutant are a finite pair: the trace vector `ι 1` is
-   tracial on the first (`StdTracialAlgebra.traceState_mul_comm_vn`) and, through the conjugation
-   `J`, on the second, and it separates both, being cyclic for the left and for the right
-   actions. The left action lies in the first, the right action in the second, so `T` is a POVM
-   strategy of this model, of value its winning probability (`BipartiteModel.value_toCommuting`,
+   (`StdTracialAlgebra.vnAlg`) and its commutant are a finite pair (`isFinitePair_stdModel`): the
+   trace vector `ι 1` is tracial on the first (`StdTracialAlgebra.traceState_mul_comm_vn`) and,
+   through the conjugation `J`, on the second, and it separates both, being cyclic for the left
+   and for the right actions. The left action lies in the first, the right action in the second,
+   so `T` is a POVM strategy of this model, of value its winning probability
+   (`povmValue_stdModel`, through `BipartiteModel.value_toCommuting` and
    `TracialStrategy.toCommutingStrategy_correlation`).
-3. **Projectivity.** Each player's POVMs dilate to projective measurements in the matrices over the
-   player's algebra against one fixed basis vector (`MIPRE.exists_pvm_dilation`); in the ancilla
-   extension at that basis vector they form a projective strategy of the same value
-   (`BipartiteModel.povmValue_expand_basisVec`), and the extension is a finite pair
-   (`BipartiteModel.IsFinitePair.expand`).
+3. **Projectivity** (`exists_projStrat_expand_stdModel`). Each player's POVMs dilate to projective
+   measurements in the matrices over the player's algebra against one fixed basis vector
+   (`MIPRE.exists_pvm_dilation`); in the ancilla extension at that basis vector they form a
+   projective strategy of the same value (`BipartiteModel.povmValue_expand_basisVec`), and the
+   extension is a finite pair (`BipartiteModel.IsFinitePair.expand`), or a dyadic pair if the
+   standard-form model is one (`BipartiteModel.IsDyadicPair.expand`).
 
 An empty answer alphabet leaves no strategy, so `ω_co(G) = 0`, below every admissible threshold;
-a game's question sets are nonempty, its distribution summing to `1`. Otherwise the alphabets are
-those of the vendored theorem, which assumes them nonempty.
+a game's question sets are nonempty, its distribution summing to `1`
+(`nonempty_of_lt_commutingOperatorValue`). Otherwise the alphabets are those of the vendored
+theorem, which assumes them nonempty.
 -/
 
 namespace MIPRE.Repetition
@@ -218,49 +225,54 @@ theorem povmValue_stdModel (G : Game X Y A B) :
 
 end Tracial
 
-/-- **`ω_co` is approached by projective strategies in finite pairs** (`lem:co-value-finite-pair`):
-below `ω_co(G)`, and above `0`, lies the value of a projective strategy for `G` in a finite pair
-on a Hilbert space of `Type`. -/
-theorem commutingFinitePairApprox : CommutingFinitePairApprox := by
-  intro X Y A B _ _ _ _ G t ht h
-  classical
-  -- the alphabets are nonempty, or `ω_co(G) = 0`
+/-- **The alphabets of a game of positive commuting-operator value are nonempty**: a game's
+question sets are nonempty, its distribution summing to `1`, and an empty answer alphabet leaves no
+strategy, so `ω_co(G) = 0`, below every admissible threshold. -/
+theorem nonempty_of_lt_commutingOperatorValue {X Y A B : Type} [Fintype X] [Fintype Y]
+    [Fintype A] [Fintype B] {G : Game X Y A B} {t : ℝ} (ht : 0 ≤ t)
+    (h : t < commutingOperatorValue G) :
+    Nonempty X ∧ Nonempty Y ∧ Nonempty A ∧ Nonempty B := by
   obtain ⟨S⟩ : Nonempty (CommutingOperatorStrategy X Y A B) := by
     rcases isEmpty_or_nonempty (CommutingOperatorStrategy X Y A B) with hE | hne
     · rw [commutingOperatorValue, Real.iSup_of_isEmpty] at h
       exact absurd h (not_lt.2 ht)
     · exact hne
-  have : Nonempty X := by
+  have hX : Nonempty X := by
     by_contra hX
     rw [not_nonempty_iff] at hX
     simpa using G.μ_sum_one
-  have : Nonempty Y := by
+  have hY : Nonempty Y := by
     by_contra hY
     rw [not_nonempty_iff] at hY
     simpa using G.μ_sum_one
-  have : Nonempty A := S.nonempty_left (Classical.arbitrary X)
-  have : Nonempty B := S.nonempty_right (Classical.arbitrary Y)
+  exact ⟨hX, hY, S.nonempty_left (Classical.arbitrary X), S.nonempty_right (Classical.arbitrary Y)⟩
+
+/-- **A tracial strategy is a projective strategy of an ancilla extension of its standard-form
+model**, of value its winning probability: each player's POVMs dilate to projective measurements in
+the matrices over the player's algebra against one fixed basis vector (`exists_pvm_dilation`), and
+in the extension at that basis vector they have the value of the POVMs
+(`BipartiteModel.povmValue_expand_basisVec`, `povmValue_stdModel`). The registers are nonempty, so
+the extension is a finite pair, or a dyadic pair, when the standard-form model is one. -/
+theorem exists_projStrat_expand_stdModel {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A]
+    [Fintype B] [Nonempty A] [Nonempty B] (G : Game X Y A B) (T : TracialStrategy.{0} X Y A B) :
+    ∃ (α β : Type) (_ : Fintype α) (_ : DecidableEq α) (_ : Fintype β) (_ : DecidableEq β)
+      (_ : Nonempty α) (_ : Nonempty β) (e : α × β → ℂ)
+      (S : ((stdModel T.M (T.M.ι T.σ)).expand e).ProjStrat G),
+      S.value = (toCR G).win T.correlation := by
+  classical
   let a₀ := Classical.arbitrary A
   let b₀ := Classical.arbitrary B
-  -- strict tracial reduction
-  rw [commutingOperatorValue_eq_omegaCO] at h
-  obtain ⟨T, hT⟩ := CommutingRepetition.strict_tracial_reduction (toCR G) h
-  -- projective dilations in the two players' algebras
   obtain ⟨KA, PA, hPA, hPA₀⟩ := exists_pvm_dilation (measA T) a₀
   obtain ⟨KB, PB, hPB, hPB₀⟩ := exists_pvm_dilation (measB T) b₀
-  let N := (stdModel T.M (T.M.ι T.σ)).expand
-    (basisVec (Sum.inl (a₀, 0) : DilationAncilla A KA) (Sum.inl (b₀, 0) : DilationAncilla B KB))
-  refine ⟨_, _, _, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance,
-    inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance,
-    inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, N,
-    (isFinitePair_stdModel _ _).expand _,
+  refine ⟨_, _, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance,
+    inferInstance,
+    basisVec (Sum.inl (a₀, 0) : DilationAncilla A KA) (Sum.inl (b₀, 0) : DilationAncilla B KB),
     ⟨fun x => (hPA x).toPOVMIn, fun y => (hPB y).toPOVMIn, hPA, hPB, ?_⟩, ?_⟩
   · rw [BipartiteModel.norm_expand_state, norm_basisVec, one_mul]
     exact T.toCommutingStrategy.ψ_norm
   · rw [BipartiteModel.ProjStrat.value, BipartiteModel.povmValue_expand_basisVec _ _ _ G
       (fun x => (hPA x).toPOVMIn) (fun y => (hPB y).toPOVMIn) (measA T) (measB T) hPA₀ hPB₀,
       povmValue_stdModel]
-    exact hT
 
 end MIPRE.Repetition
 

@@ -302,6 +302,54 @@ fails to build if an unconditional result acquires an axiom, or if one of the fo
 targets is closed upstream without this blueprint being updated.
 \end{remark}
 
+\paragraph{Source.} de la Salle~\cite{dlS21}, which gives a dimension-free bound with
+explicit constants; earlier versions with worse parameters appear in~\cite{KPS18}
+and in~\cite{JNVWY20}. The Lean proof is vendored from the
+\texttt{orthogonalization} package of the \texttt{commuting-repetition} repository
+(the same upstream as Theorem~\ref{thm:direct-repetition-co}) by
+\texttt{scripts/vendor-repetition.py}; see that directory's \texttt{README.md} for what
+the copy changes (import prefixes, nothing else).
+
+\paragraph{Comments.} Used constantly: soundness analyses produce POVMs that are only
+approximately projective, and this lemma replaces them by genuinely projective
+measurements on the same space, which is what makes the ``projective strategies
+throughout'' convention of Section~\ref{sec:departures} viable (avoiding Naimark
+dilation). The finite-dimensional case suffices for the main theorem and is a clean,
+self-contained formalization target in linear algebra.
+
+The first of the two claims about the source made by the verification
+campaign~\cite{Audit26} --- that this statement was over-hypothesized, the result needing
+only a \emph{normal} state rather than a normal faithful tracial one, with constant $9$
+and exponent $1$ --- is now settled in the direction the campaign predicted, and settled
+by proof rather than by reading: the statement above carries neither faithfulness nor
+traciality and is checked. That matters beyond bookkeeping, because the tracial
+hypothesis excluded the bipartite vector-state applications that several of the
+projectivization sites of Section~\ref{ch:proof-structure} need; those sites can now use
+this lemma, where before they needed Naimark dilation or the projective-by-definition
+convention of Section~\ref{sec:departures}. What is settled is the mathematics, not the
+attribution: the campaign's second claim, that crediting the weaker predecessor
+to~\cite{KPS18} and~\cite{JNVWY20} is wrong and the source credits the low individual
+degree paper and Kempe--Vidick instead, is still unchecked here, \cite{dlS21} not being
+vendored in this repository. The campaign also offers a consistency-to-projectivity step
+giving $O(\delta)$ in place of $O(\delta^{1/4})$, which would sharpen the proof of
+Theorem~\ref{thm:almost-sync}.
+
+The formalized hypothesis and conclusion are both strict. For a POVM, completeness
+identifies the defect with $1-\varphi(\sum_a M_a^2)$, but does not turn a non-strict
+bound into a strict one. A compactness argument in finite dimension would retain the
+constant $9$ at the non-strict bound --- apply the theorem at every larger error, then
+pass to a convergent subsequence of projective measurements and use continuity --- and
+would also cover zero defect. Corollary~\ref{cor:ortho-from-consistency}, the one
+application in this chapter, does not need it: its Cauchy--Schwarz step produces slack
+$\gamma^2$ over the bound it has to clear, so the strict hypothesis holds as stated. The
+comments after that corollary record the repair. That corollary is no longer on the formalized
+route: the analysis of the Pauli basis test is stated for projective strategies in a bipartite
+model, whose measurements need no orthonormalization, so nothing outside the vendored tree
+applies this theorem at present.
+
+For the commuting-operator track this repository adds the fourth case of
+Remark~\ref{rem:orthonormalization-scope}: algebras without abelian projections, factor or not.
+
 \begin{lemma}[A centre-valued trace from a vector trace]
 \label{lem:center-valued-trace}
 \lean{MIPRE.Orthonormalization.vecFunctional, MIPRE.Orthonormalization.IsCenterExpectation,
@@ -363,51 +411,6 @@ its trace-class form. With the centre-valued trace of Lemma~\ref{lem:center-valu
 proof applies: the selection lemma on the type II$_1$ part, which is all of $\cal{M}$, then the
 polar decomposition in $M_n(\cal{M})$ and the three-term estimate.
 \end{proof}
-
-\paragraph{Source.} de la Salle~\cite{dlS21}, which gives a dimension-free bound with
-explicit constants; earlier versions with worse parameters appear in~\cite{KPS18}
-and in~\cite{JNVWY20}. The Lean proof is vendored from the
-\texttt{orthogonalization} package of the \texttt{commuting-repetition} repository
-(the same upstream as Theorem~\ref{thm:direct-repetition-co}) by
-\texttt{scripts/vendor-repetition.py}; see that directory's \texttt{README.md} for what
-the copy changes (import prefixes, nothing else).
-
-\paragraph{Comments.} Used constantly: soundness analyses produce POVMs that are only
-approximately projective, and this lemma replaces them by genuinely projective
-measurements on the same space, which is what makes the ``projective strategies
-throughout'' convention of Section~\ref{sec:departures} viable (avoiding Naimark
-dilation). The finite-dimensional case suffices for the main theorem and is a clean,
-self-contained formalization target in linear algebra.
-
-The first of the two claims about the source made by the verification
-campaign~\cite{Audit26} --- that this statement was over-hypothesized, the result needing
-only a \emph{normal} state rather than a normal faithful tracial one, with constant $9$
-and exponent $1$ --- is now settled in the direction the campaign predicted, and settled
-by proof rather than by reading: the statement above carries neither faithfulness nor
-traciality and is checked. That matters beyond bookkeeping, because the tracial
-hypothesis excluded the bipartite vector-state applications that several of the
-projectivization sites of Section~\ref{ch:proof-structure} need; those sites can now use
-this lemma, where before they needed Naimark dilation or the projective-by-definition
-convention of Section~\ref{sec:departures}. What is settled is the mathematics, not the
-attribution: the campaign's second claim, that crediting the weaker predecessor
-to~\cite{KPS18} and~\cite{JNVWY20} is wrong and the source credits the low individual
-degree paper and Kempe--Vidick instead, is still unchecked here, \cite{dlS21} not being
-vendored in this repository. The campaign also offers a consistency-to-projectivity step
-giving $O(\delta)$ in place of $O(\delta^{1/4})$, which would sharpen the proof of
-Theorem~\ref{thm:almost-sync}.
-
-The formalized hypothesis and conclusion are both strict. For a POVM, completeness
-identifies the defect with $1-\varphi(\sum_a M_a^2)$, but does not turn a non-strict
-bound into a strict one. A compactness argument in finite dimension would retain the
-constant $9$ at the non-strict bound --- apply the theorem at every larger error, then
-pass to a convergent subsequence of projective measurements and use continuity --- and
-would also cover zero defect. Corollary~\ref{cor:ortho-from-consistency}, the one
-application in this chapter, does not need it: its Cauchy--Schwarz step produces slack
-$\gamma^2$ over the bound it has to clear, so the strict hypothesis holds as stated. The
-comments after that corollary record the repair. That corollary is no longer on the formalized
-route: the analysis of the Pauli basis test is stated for projective strategies in a bipartite
-model, whose measurements need no orthonormalization, so nothing outside the vendored tree
-applies this theorem at present.
 
 \subsection{Magic Square rigidity}
 \label{sec:rr-magic-square}

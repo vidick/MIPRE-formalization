@@ -19,9 +19,12 @@ space, and both carry a faithful normal tracial state. The state of the model st
 What the smaller class buys is a trace on both algebras, which the finite-dimensional proof's
 two non-dimension-free steps (its semidefinite program and its orthonormalization) can be
 replaced with; what makes it enough is that `ω_co` is approached by projective strategies in
-finite pairs (`CommutingFinitePairApprox`, proved on the `Background` side from Lin's tracial
-density), and that the class is closed under the ancilla extensions the Pauli basis analysis
-uses (`IsFinitePair.expand`, `MIPRE/Foundations/FinitePairExpand.lean`).
+finite pairs, and that the class is closed under the ancilla extensions the Pauli basis analysis
+uses (`IsFinitePair.expand`, `MIPRE/Foundations/FinitePairExpand.lean`). The hypothesis
+`LIDT.Simul.SoundFin` asks for soundness only in the narrower class of **dyadic pairs**, the finite
+pairs whose two algebras have unital dyadic matrix units (`BipartiteModel.IsDyadicPair` and
+`CommutingFinitePairApprox`, `MIPRE/Foundations/DyadicPair.lean`), in which neither algebra has an
+abelian projection.
 
 * **`VecTrace s`**: a faithful tracial state on a set `s` of operators, given by finitely many
   vectors, `τ(x) = ∑ₖ ⟪gₖ, x gₖ⟫` with `∑ₖ ‖gₖ‖² = 1`. A finite sum of vector functionals is
@@ -34,21 +37,21 @@ uses (`IsFinitePair.expand`, `MIPRE/Foundations/FinitePairExpand.lean`).
   of each player's algebra is its own. It agrees with the operator order, since a positive
   operator of a commutant has its square root there, but no lemma here states this yet; the
   soundness interface `LIDT.Simul.SoundIn` reads only projections, which are positive in both.
-* **`CommutingFinitePairApprox`**: below `ω_co(G)`, and above `0`, lies the value of a projective
-  strategy for `G` in a finite pair on a Hilbert space of `Type`.
 
 Two features of the class bear on the port of the soundness proof to it (C6b of the plan).
 * **Finite coupling.** A `VecTrace` has finitely many vectors, so the class is narrower than that of
   all pairs with faithful normal traces: `ℓ^∞(ℕ)` acting blockwise on `⊕ₙ ℂⁿ`, with commutant
   `⊕ₙ Mₙ`, is excluded. This is deliberate. The standard form needs one vector, and the extensions,
-  the doubling `H ⊕ H` and amplification by a II₁ factor all stay inside the class, while corner
+  the doubling `H ⊕ H` and amplification by a tracial algebra in standard form
+  (`MIPRE/Background/Repetition/Amplify.lean`) all stay inside the class, while corner
   reductions `p 𝒜 p` do not. The vendored II₁ orthonormalization tier takes families indexed by
   `ℕ` with summable squared norms, of which a `VecTrace` padded with zeros is one.
 * **Type I pairs.** The class contains type I pairs with diffuse centre, such as `L^∞[0, 1]` acting
-  on `L²[0, 1]`, its own commutant, with the trace vector `1`. So `LIDT.Simul.SoundFin` asks for
-  soundness there too, and a port that orthonormalizes only in type II₁ algebras would need a
-  II₁ condition here and an amplification by the hyperfinite II₁ factor in the value lemma
-  (`reports/lidt-co-audit.md`, the orthonormalization tier).
+  on `L²[0, 1]`, its own commutant, with the trace vector `1`. Their projections are abelian, and
+  the orthonormalization step of the port needs none, so `LIDT.Simul.SoundFin` asks for soundness
+  only in dyadic pairs, which exclude them; the value lemma reaches dyadic pairs by amplifying by
+  an algebra with unital dyadic matrix units, the twisted Pauli algebra
+  (`reports/c6b-paper-proofs.md`, §3).
 -/
 
 namespace MIPRE
@@ -104,19 +107,6 @@ structure IsFinitePair (M : BipartiteModel 𝒞 𝒜 ℬ) : Prop where
   traceB : Nonempty (VecTrace M.opsB)
 
 end BipartiteModel
-
-/-- **`ω_co` is approached by projective strategies in finite pairs**: below `ω_co(G)`, and
-above `0`, lies the value of a projective strategy for `G` in a finite pair on a Hilbert space of
-`Type`. Proved from Lin's tracial density (`MIPRE.Repetition.commutingFinitePairApprox`). -/
-def CommutingFinitePairApprox : Prop :=
-  ∀ {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] (G : Game X Y A B) {t : ℝ},
-    0 ≤ t → t < commutingOperatorValue G →
-      ∃ (𝒞 𝒜 ℬ : Type) (_ : Ring 𝒞) (_ : StarRing 𝒞) (_ : Algebra ℂ 𝒞) (_ : Ring 𝒜)
-        (_ : StarRing 𝒜) (_ : Algebra ℂ 𝒜) (_ : Ring ℬ) (_ : StarRing ℬ) (_ : Algebra ℂ ℬ)
-        (_ : PartialOrder 𝒜) (_ : StarOrderedRing 𝒜) (_ : PartialOrder ℬ)
-        (_ : StarOrderedRing ℬ) (_ : StarModule ℂ 𝒜) (_ : StarProper 𝒜) (_ : StarModule ℂ ℬ)
-        (_ : StarProper ℬ) (M : BipartiteModel.{0} 𝒞 𝒜 ℬ),
-        M.IsFinitePair ∧ ∃ S : M.ProjStrat G, t < S.value
 
 end MIPRE
 
