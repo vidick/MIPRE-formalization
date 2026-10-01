@@ -1082,7 +1082,8 @@ No source proves `SoundCo` in its generality. On the audit's recommendation the 
 follows from a different hypothesis, `LIDT.Simul.SoundFin`: soundness in every finite pair, two
 algebras that are each other's commutants and carry faithful tracial states, reached through the
 vendored tracial density (C6a, `MIPRE.mipco_eq_core_of_lidtFin`). What remains is `SoundFin`
-itself, by a port of the vendored proof to finite pairs of about 70–120k lines (C6b).
+itself, by a port of the vendored proof to finite pairs of about 70–120k lines (C6b,
+`planning/c6b-plan.md`, with the II₁ orthonormalization tier).
 
 ## Working rules for this track
 

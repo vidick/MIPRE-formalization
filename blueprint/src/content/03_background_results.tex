@@ -277,11 +277,14 @@ state (\texttt{MIPRE.Orthonormalization.povm\_orthogonalization\_finDim}, the
 statement above, bridging \texttt{povm\_orthogonalization\_finDim\_vn}); $\cal{B}(H)$
 for arbitrary $H$ (\texttt{povm\_orthogonalization\_fullAlgebra\_general}); and II$_1$
 factors whose trace and state are both of trace-class form
-(\texttt{povm\_orthogonalization\_II\textsubscript{1}Factor}). A tracial
-commuting-operator strategy lives in a finite von Neumann algebra; on an
-infinite-dimensional space that algebra is covered only when it is a II$_1$ factor of
-that form, and otherwise, with a nontrivial center or a type~I part, needs the general
-case below.
+(\texttt{povm\_orthogonalization\_II\textsubscript{1}Factor}). This repository adds a
+fourth, for the commuting-operator track: every von Neumann algebra with no nonzero abelian
+projection and a faithful tracial state given by finitely many vectors, factor or not, for every
+state of trace-class form (Theorem~\ref{thm:orthonormalization-no-abelian}), from a centre-valued
+trace constructed without any structure theory (Lemma~\ref{lem:center-valued-trace}). A tracial
+commuting-operator strategy lives in a finite von Neumann algebra; on an infinite-dimensional
+space that algebra is now covered whenever it has no type~I part, whatever its centre, and a
+type~I part with diffuse centre still needs the general case below.
 
 The general case --- every von Neumann algebra, every normal state --- is proved only as
 an implication. Its hypothesis, \texttt{MvNStructureTheory}, bundles eight facts: seven
@@ -298,6 +301,68 @@ finite dimension and conditionally in general.
 fails to build if an unconditional result acquires an axiom, or if one of the four open
 targets is closed upstream without this blueprint being updated.
 \end{remark}
+
+\begin{lemma}[A centre-valued trace from a vector trace]
+\label{lem:center-valued-trace}
+\lean{MIPRE.Orthonormalization.vecFunctional, MIPRE.Orthonormalization.IsCenterExpectation,
+  MIPRE.Orthonormalization.eq_of_isCentralIn_of_pairing, MIPRE.Orthonormalization.exists_isCenterExpectation,
+  MIPRE.Orthonormalization.mvNEquiv_of_map_eq, MIPRE.Orthonormalization.IsCenterExpectation.isCenterValuedTrace,
+  MIPRE.Orthonormalization.exists_isCenterValuedTrace}
+\leanok
+Let $\cal{M}$ be a von Neumann algebra on a Hilbert space $\mH$ with a faithful tracial state
+of the form $\tau(x) = \sum_{k < d} \langle g_k, x g_k \rangle$ for finitely many vectors $g_k$.
+Then $\cal{M}$ has a centre-valued trace: a linear map $E$, defined on $\cal{B}(\mH)$ and
+constrained on $\cal{M}$ only, with values in the centre $\cal{Z}$ of $\cal{M}$, which is
+positive, faithful, tracial, the identity on $\cal{Z}$, $\cal{Z}$-linear, continuous along
+bounded weak-operator convergent nets, and admits division in the centre; and two projections of
+$\cal{M}$, or of the matrix algebra $M_n(\cal{M})$ compared through $\sum_i E(X_{ii})$, with the
+same centre-valued trace are Murray--von Neumann equivalent. These are the clauses of the
+centre-valued trace of the vendored structure-theory interface, at the projection $1$; no factor,
+type or separability hypothesis is needed.
+\end{lemma}
+
+\begin{proof}
+\leanok
+For $x \in \cal{M}$, the elements $y \in \cal{M}$ with $\|y\| \le \|x\|$ and $\tau(yc) = \tau(xc)$
+for every central $c$ form a set that is compact and convex in the weak operator topology, on
+which the $2$-norm $y \mapsto \sum_k \|y g_k\|^2$ is lower semicontinuous and, by the
+parallelogram law and faithfulness, has a unique minimizer. Conjugation by a unitary of
+$\cal{M}$ preserves the set and, by traciality, the $2$-norm, so it fixes the minimizer, which
+therefore commutes with every unitary of $\cal{M}$, hence with $\cal{M}$: it is central, and it is
+$E x$. A central element is determined by its pairings with the centre, which gives linearity
+and the algebraic clauses; normality and division are cluster-point arguments. For comparison,
+the vendored proof for factors builds a maximal partial isometry $W$ from $p$ into $q$ by a greedy
+chain and uses the factor hypothesis only to exclude two nonzero complements; here maximality
+makes the central support $c$ of $p - W^*W$ kill $q - WW^*$, and applying $E$ to
+$c(p - W^*W) = p - W^*W$ and $c(q - WW^*) = 0$ shows that both complements vanish. The matrix
+case is the same argument in $M_n(\cal{M})$, whose centre is the amplified centre of $\cal{M}$.
+The full proof is \texttt{reports/c6b-paper-proofs.md}, Section~2.
+\end{proof}
+
+\begin{theorem}[Orthonormalization in algebras without abelian projections]
+\label{thm:orthonormalization-no-abelian}
+\uses{lem:center-valued-trace}
+\lean{MIPRE.Orthonormalization.povm_orthogonalization_of_isCenterValuedTrace,
+  MIPRE.Orthonormalization.povm_orthogonalization_vecTrace}
+\leanok
+Let $\cal{M}$ be a von Neumann algebra with no nonzero abelian projection and a faithful tracial
+state given by finitely many vectors, as in Lemma~\ref{lem:center-valued-trace}. Then the
+conclusion of Theorem~\ref{thm:orthonormalization} holds in $\cal{M}$ for every vector state,
+and more generally for every positive normalized functional of trace-class form: a POVM
+$\{M_a\}$ in $\cal{M}$ with $\varphi(\sum_a M_a^2) > 1 - \eps$ is within
+$\varphi(\sum_a (M_a - P_a)^*(M_a - P_a)) < 9\eps$ of a projective measurement $\{P_a\}$ in
+$\cal{M}$.
+\end{theorem}
+
+\begin{proof}
+\leanok
+The vendored proof of the theorem for II$_1$ factors uses its factor hypothesis only to build its
+centre-valued trace, the scalar trace $x \mapsto \tau(x)\,1$; it reads the centre-valued trace only
+through the clauses of the interface, and the state only through positivity, normalization and
+its trace-class form. With the centre-valued trace of Lemma~\ref{lem:center-valued-trace} the same
+proof applies: the selection lemma on the type II$_1$ part, which is all of $\cal{M}$, then the
+polar decomposition in $M_n(\cal{M})$ and the three-term estimate.
+\end{proof}
 
 \paragraph{Source.} de la Salle~\cite{dlS21}, which gives a dimension-free bound with
 explicit constants; earlier versions with worse parameters appear in~\cite{KPS18}
