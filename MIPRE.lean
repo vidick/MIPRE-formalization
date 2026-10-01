@@ -122,6 +122,13 @@ public import MIPRE.Background.LIDT.Co.Basic.QuantumState
 public import MIPRE.Background.LIDT.Co.Basic.SubMeasurementCore
 public import MIPRE.Background.LIDT.Co.Basic.SubMeasurementFamilies
 public import MIPRE.Background.LIDT.Co.Basic.TensorPlacement
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.AnswerTheorems
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.Approximation
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.BridgeTheorems.DropBridges
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.BridgeTheorems.LiftBridges
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.Defs
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.SharedHelpers.Core
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.SharedHelpers.SharedLine
 public import MIPRE.Background.LIDT.Co.Preliminaries.ComparisonCore
 public import MIPRE.Background.LIDT.Co.Preliminaries.Defs
 public import MIPRE.Background.LIDT.Co.Preliminaries.DistanceBounds
