@@ -13,197 +13,128 @@ public import MIPRE.Background.QLD.Mirror
 # `MirrorSimul`, discharged
 
 `Mirror.lean` introduces `MirrorSimul`: the two cuts of `lem:qld-4-7`, on one state. Everything
-`lem:qld-pauli-selfcons` and `lem:qld-swap` say is stated against it, and until now nothing
-constructed one --- so that whole run of results was conditional on a structure no strategy had
-been shown to have.
+`lem:qld-pauli-selfcons` and `lem:qld-swap` say is stated against it, and this file constructs one,
+so that whole run of results holds for every legal projective strategy of the Pauli basis test in
+the regime, not only for strategies assumed to carry the structure.
 
-It has one. The two cuts are two runs of the same construction: `exists_globalPair` at the
-strategy gives the first, and at the *swapped* strategy the second, whose padded state carries the
-other pair. Nothing relates the two runs' measurements, and the structure does not ask that; the
-one field that relates the two cuts is `hmirror`, and that is about the states alone.
+The two cuts are two runs of the same construction: `exists_globalPair` at the strategy gives the
+first, and `exists_globalPair_swap`, at the strategy with the players exchanged in the model with
+the players exchanged, gives the second. Each run's simultaneous pair measurement
+(`GlobalPair.toSimulPair`) lives in its padded model, and is carried to the first cut of its
+physical model along the embedding `j₁` of the padded model (`SimulPair.transport`); composed with
+the inert embedding of the register model, `j₁` is the embedding `ι₁` that `CutSimul` asks for, by
+definition. Nothing relates the two runs' measurements, and the structure does not ask that.
 
-## Why `hmirror` is not hard
+## Why there is nothing to check about the states
 
-Because both states are explicit. `padState` is the strategy tensored with one maximally entangled
-pair and four padding registers pinned at basis vectors (`padState_reindex_apply`), so appending to
-each cut the pair the *other* one carries gives, on both sides, the same product of the same six
-factors. All that is left to check is that swapping a pair's two halves changes nothing, which is
-`epr_symm`.
+Both cuts read one physical state by construction. The first cut of the physical model of `M.swap`
+is a reading of that physical model, which has the space, the state and the representation of the
+physical model of `M`, with the two players' algebras exchanged; the exchange of the two blocks of
+registers (`blockSwapIso`, where the symmetry of the pair enters, `physE_symm`) carries every
+statement about the one to the other (`Mirror.lean`). So `MirrorSimul` has no field relating the
+two cuts' states, and all the two runs must share is the padding size `K`. Each run of stage 4
+holds at every padding size beyond a threshold (`exists_globalPair`), so both hold at the larger of
+the two thresholds.
 
 What this does **not** do is relate the two cuts' pair measurements. The paper does not either:
 `lem:qld-4-7` gives one measurement per player's space, and the chain's endpoint is symmetric in
 them for a reason of its own (`swap_mem_coupledIdx`), not because the two measurements are the
 same object.
+
+## Stated in a bipartite model
+
+Stated in a bipartite model (Phase 5 of `planning/mipco-track.md`). The matrix construction filled
+the matrix `MirrorSimul` field by field from the two runs' `SimulPair`s, each on its own
+twice-padded state vector `padState`, and proved its field `hmirror` --- the two states, each with
+the other cut's pair appended, are one state up to a regrouping --- by computing both states
+pointwise (`padState_reindex_apply`, from `extVec2_apply` and the weight `padWeight` of the padding
+registers) and swapping a pair's halves (`epr_symm`). Here the strategy is a projective strategy
+`S` of a bipartite model `M`, the two runs are `GlobalPair`s of the padded models of `M` and of
+`M.swap`, a `MirrorSimul` is the padding size and the two runs' simultaneous pair measurements
+transported to the first cut, and the state computation is gone: the two cuts read one physical
+model by construction. The seeded soundness theorem enters as the hypothesis `hL` of
+`exists_globalPair`, and `4m | q` is derived from the regime (`four_mul_dvd_card_of_regime`).
 -/
 
 noncomputable section
-namespace MIPRE
-open Finset Matrix
-open scoped Kronecker ComplexOrder MatrixOrder
-
-variable {dA dB Anc Bnc : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-  [Fintype Anc] [DecidableEq Anc] [Fintype Bnc] [DecidableEq Bnc]
-
-/-- **The doubly padded state, pointwise**: the original amplitude where both ancillas sit at
-their basis vectors, and zero elsewhere. -/
-theorem extVec2_apply (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc)
-    (p : (dA × Anc) × (dB × Bnc)) :
-    extVec2 ψ a₀ b₀ p
-      = (if p.1.2 = a₀ then (1 : ℂ) else 0) * (if p.2.2 = b₀ then (1 : ℂ) else 0)
-        * ψ (p.1.1, p.2.1) := by
-  classical
-  obtain ⟨⟨x, anc⟩, ⟨y, bnc⟩⟩ := p
-  show (∑ q : dA × dB, ((ancillaEmbed dA a₀) ⊗ₖ (ancillaEmbed dB b₀)) ((x, anc), (y, bnc)) q
-      * ψ q) = _
-  rw [Fintype.sum_prod_type]
-  rw [Finset.sum_congr rfl fun j (_ : j ∈ univ) => Finset.sum_congr rfl fun k _ => show
-      ((ancillaEmbed dA a₀) ⊗ₖ (ancillaEmbed dB b₀)) ((x, anc), (y, bnc)) (j, k) * ψ (j, k)
-        = ((if (x, anc) = (j, a₀) then (1 : ℂ) else 0)
-            * (if (y, bnc) = (k, b₀) then (1 : ℂ) else 0)) * ψ (j, k) from rfl]
-  by_cases ha : anc = a₀
-  · by_cases hb : bnc = b₀
-    · subst ha; subst hb
-      simp [Prod.ext_iff, ite_and, Finset.sum_ite_eq]
-    · simp [Prod.ext_iff, hb]
-  · simp [Prod.ext_iff, ha]
-
-end MIPRE
 
 namespace MIPRE.QLD
-open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.Adapter MIPRE.Weyl
-open scoped Kronecker ComplexOrder MatrixOrder
+
+open Finset Matrix MIPRE MIPRE.LIDT
+open scoped Kronecker ComplexOrder
+
+/-! ## The two runs, at one padding size -/
+
+section Mirror
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
-  [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
+  [NeZero m]
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+  [StarProper ℬ]
+variable {hm : m ∣ Fintype.card F} {M : BipartiteModel 𝒞 𝒜 ℬ}
+  {S : M.ProjStrat (qldGame (d := d) hm)} {K : ℕ} {δ ε : ℝ}
 
-omit [Algebra (ZMod 2) F] [NeZero m] in
-/-- **A maximally entangled pair is symmetric.** This is the whole content of the two cuts reading
-one state: the pair each cut is missing is the other's, and swapping its halves changes nothing. -/
-theorem epr_symm (a b : Anc F m) :
-    epr (F := F) (n := Fin m → Bool) (a, b) = epr (F := F) (n := Fin m → Bool) (b, a) := by
-  rw [epr, epr]
-  exact if_congr eq_comm rfl rfl
-
-/-- The weight the two padding registers carry: one where both sit at their basis vectors. -/
-def padWeight (e : (F × F) × CL.Answer F (4 * m) d 1) : ℂ :=
-  (if e.1 = ((0 : F), (0 : F)) then (1 : ℂ) else 0) * (if e.2 = ansZero then (1 : ℂ) else 0)
-
-set_option maxHeartbeats 1000000 in
-/-- **The `SimulPair`'s state, pointwise.** It is the strategy's amplitude times the pair's, with
-the padding registers pinned at their basis vectors --- an explicit product, which is what makes
-the two cuts comparable. -/
-theorem padState_reindex_apply (ψ : dA × dB → ℂ)
-    (A : (dA × Anc F m) × ((F × F) × CL.Answer F (4 * m) d 1))
-    (B : (dB × Anc F m) × ((F × F) × CL.Answer F (4 * m) d 1)) :
-    reindexVec (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-        (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-        (padState (F := F) (m := m) (d := d) ψ) (A, B)
-      = padWeight A.2 * padWeight B.2 * (ψ (A.1.1, B.1.1) * epr (A.1.2, B.1.2)) := by
-  obtain ⟨⟨a, a'⟩, ⟨f, c⟩⟩ := A
-  obtain ⟨⟨b, b'⟩, ⟨g, e⟩⟩ := B
-  show padState (F := F) (m := m) (d := d) ψ ((((a, a'), f), c), (((b, b'), g), e)) = _
-  rw [padState, extVec2_apply, extHat, extVec2_apply, hatVec]
-  show _ = padWeight (f, c) * padWeight (g, e) * (ψ (a, b) * epr (a', b'))
-  rw [padWeight, padWeight, expVec]
-  ring
-
-set_option maxHeartbeats 1000000 in
-/-- **The two cuts read one state.** Appending to each cut the pair the *other* one carries gives
-the same state on all six registers, up to the change of reading `mirrorVec`. Both sides are the
-same explicit product --- the strategy, the two pairs, and the four padding registers pinned at
-their basis vectors --- and all that has to be checked is that swapping a pair's two halves
-changes nothing, which is `epr_symm`. -/
-theorem hmirror_padState (ψ : dA × dB → ℂ) :
-    expVec (reindexVec (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-          (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-          (padState (F := F) (m := m) (d := d) (ψ ∘ Prod.swap)))
-        (epr (F := F) (n := Fin m → Bool))
-      = mirrorVec (expVec (reindexVec
-            (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-            (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-            (padState (F := F) (m := m) (d := d) ψ))
-          (epr (F := F) (n := Fin m → Bool))) := by
-  funext p
-  obtain ⟨⟨⟨⟨b, b'⟩, eb⟩, t⟩, ⟨⟨a, b''⟩, ea⟩, s⟩ := p
-  show reindexVec (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-          (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-          (padState (F := F) (m := m) (d := d) (ψ ∘ Prod.swap)) (((b, b'), eb), ((a, b''), ea))
-        * epr (F := F) (n := Fin m → Bool) (t, s)
-      = reindexVec (Equiv.prodAssoc (dA × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-            (Equiv.prodAssoc (dB × Anc F m) (F × F) (CL.Answer F (4 * m) d 1))
-            (padState (F := F) (m := m) (d := d) ψ) (((a, s), ea), ((b, t), eb))
-        * epr (F := F) (n := Fin m → Bool) (b'', b')
-  rw [padState_reindex_apply, padState_reindex_apply]
-  show padWeight eb * padWeight ea * ((ψ ∘ Prod.swap) (b, a) * epr (b', b''))
-      * epr (F := F) (n := Fin m → Bool) (t, s)
-    = padWeight ea * padWeight eb * (ψ (a, b) * epr (s, t))
-      * epr (F := F) (n := Fin m → Bool) (b'', b')
-  rw [epr_symm s t, epr_symm b'' b']
-  show padWeight eb * padWeight ea * (ψ (a, b) * epr (b', b'')) * epr (t, s)
-    = padWeight ea * padWeight eb * (ψ (a, b) * epr (t, s)) * epr (b', b'')
-  ring
-
-variable {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}
-  {ψ : dA × dB → ℂ} {ε δ : ℝ} {hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val)}
-  {hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)} (hm : m ∣ Fintype.card F)
-
-set_option synthInstance.maxSize 1000
-
-include hm in
-/-- **`MirrorSimul`, discharged.** The two cuts are two runs of the same construction: the first
-at the strategy, the second at the swapped strategy, whose padded state carries the *other* pair.
-Nothing relates their measurements --- the structure does not ask that --- and the one field that
-does relate the two, `hmirror`, is about the states alone, which are explicit products. -/
+/-- **`MirrorSimul`, discharged.** The two cuts are two runs of the same construction at one
+padding size `K`: a `GlobalPair` of the padded model of `M` at the strategy, and one of the padded
+model of `M.swap` at the strategy with the players exchanged, which fails with the same probability
+(`povmValue_swapped_le`). Each run's simultaneous pair measurement (`GlobalPair.toSimulPair`, of
+error `δ_S(q, δ, ε)`) is carried to the first cut of its physical model along `j₁`, which lands on
+`ι₁` by definition. Nothing relates the two runs' measurements, and the structure does not ask
+that. -/
 noncomputable def mirrorOfGlobalPairs
-    (P : GlobalPair ψ hprojA hprojB δ)
-    (P' : GlobalPair (ψ ∘ Prod.swap) hprojB hprojA δ)
-    (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hq : 48 * m * d ≤ Fintype.card F) :
-    MirrorSimul ψ MA MB (deltaS (Fintype.card F) δ ε) where
-  Ea := (F × F) × CL.Answer F (4 * m) d 1
-  instFintypeEa := inferInstance
-  instDecEqEa := inferInstance
-  Eb := (F × F) × CL.Answer F (4 * m) d 1
-  instFintypeEb := inferInstance
-  instDecEqEb := inferInstance
-  Φ := (P.toSimulPair hm hd hψ hfail hq).Φ
-  Φ_unit := (P.toSimulPair hm hd hψ hfail hq).Φ_unit
-  Φ_reduced := (P.toSimulPair hm hd hψ hfail hq).Φ_reduced
-  SA := (P.toSimulPair hm hd hψ hfail hq).SA
-  SA_proj := (P.toSimulPair hm hd hψ hfail hq).SA_proj
-  SB := (P.toSimulPair hm hd hψ hfail hq).SB
-  SB_proj := (P.toSimulPair hm hd hψ hfail hq).SB_proj
-  consA := (P.toSimulPair hm hd hψ hfail hq).consA
-  consB := (P.toSimulPair hm hd hψ hfail hq).consB
-  Φ' := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).Φ
-  Φ'_unit := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).Φ_unit
-  Φ'_reduced := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).Φ_reduced
-  SA' := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).SA
-  SA'_proj := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).SA_proj
-  SB' := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).SB
-  SB'_proj := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).SB_proj
-  consA' := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).consA
-  consB' := (P'.toSimulPair hm hd (swapVec_unit hψ) (povmValue_swapped_le hfail) hq).consB
-  hmirror := hmirror_padState ψ
+    (P : GlobalPair M S (padModel (Anc F m) F m d M K)
+      ((M.reg (Anc F m)).inertEmb (basisVec (t₀ : PadAnc F m d K) (t₀ : PadAnc F m d K))
+        norm_basisVec) δ)
+    (P' : GlobalPair M.swap (S.swap (qldGame (d := d) hm)) (padModel (Anc F m) F m d M.swap K)
+      ((M.swap.reg (Anc F m)).inertEmb (basisVec (t₀ : PadAnc F m d K) (t₀ : PadAnc F m d K))
+        norm_basisVec) δ)
+    (hd : 1 ≤ d) (hfail : 1 - S.value ≤ ε) (hq : 48 * m * d ≤ Fintype.card F) :
+    MirrorSimul M S (deltaS (Fintype.card F) δ ε) where
+  K := K
+  first := (P.toSimulPair hd hfail hq).transport (j₁ (Anc F m) F m d M K)
+  second := (P'.toSimulPair hd (povmValue_swapped_le hfail) hq).transport
+    (j₁ (Anc F m) F m d M.swap K)
 
-include hm in
-/-- **`MirrorSimul` exists**: a legal projective strategy of the Pauli basis test of value
-`1 - eps` has both cuts' simultaneous pair measurements, on one state. Running
-`lem:qld-simultaneous` twice --- once at the strategy and once at the swapped strategy --- gives
-the two cuts, and the states they carry are the same six-register state read two ways. This is
-what makes `lem:qld-pauli-selfcons` and everything below it unconditional. -/
-theorem exists_mirrorSimul (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ ⬝ᵥ ψ = 1)
-    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)
-    (hpA : ∀ q, IsPVM fun a => (((MA q).mats a).val))
-    (hpB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hε : 0 ≤ ε)
-    (hlegA : LegalSupport MA) (hlegB : LegalSupport MB) (hd : 1 ≤ d)
+end Mirror
+
+/-! ## `MirrorSimul` exists -/
+
+section Exists
+
+variable {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}
+  [NeZero m] {hm : m ∣ Fintype.card F}
+variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
+  [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
+  [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
+  [StarProper ℬ]
+variable {M : BipartiteModel 𝒞 𝒜 ℬ} {ε : ℝ}
+
+/-- **`MirrorSimul` exists**: for a legal projective strategy of the Pauli basis test of value
+`1 - ε`, if the seeded test is sound in every extension of the model by a unit vector, then inside
+the regime `48 m d ≤ q` both cuts' simultaneous pair measurements exist, on one physical state,
+with error `δ_S(q, δ_ld, ε)`. Running `lem:qld-global-pvm` twice --- once at the strategy
+(`exists_globalPair`) and once at the strategy with the players exchanged
+(`exists_globalPair_swap`) --- at the larger of the two padding thresholds gives the two cuts at
+one padding size. This is what makes `lem:qld-pauli-selfcons` and everything below it hold for
+every such strategy. -/
+theorem exists_mirrorSimul
+    (hL : ∀ {α β : Type} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+      (e : α × β → ℂ), ‖evec e‖ = 1 → LIDT.Simul.SoundIn (M.expand e))
+    (S : M.ProjStrat (qldGame (d := d) hm)) (hε : 0 ≤ ε) (hfail : 1 - S.value ≤ ε)
+    (hlegA : LegalSupport S.PA) (hlegB : LegalSupport S.PB) (hd : 1 ≤ d)
     (hq : 48 * m * d ≤ Fintype.card F) :
-    Nonempty (MirrorSimul ψ MA MB
+    Nonempty (MirrorSimul M S
       (deltaS (Fintype.card F) (deltaLD (Fintype.card F) m d ε) ε)) := by
-  obtain ⟨P⟩ := exists_globalPair hm hm4 hψ hfail hpA hpB hε hlegA hlegB hd
-  obtain ⟨P'⟩ := exists_globalPair hm hm4 (swapVec_unit hψ) (povmValue_swapped_le hfail)
-    hpB hpA hε hlegB hlegA hd
-  exact ⟨mirrorOfGlobalPairs hm P P' hd hψ hfail hq⟩
+  have hm4 : 4 * m ∣ Fintype.card F := four_mul_dvd_card_of_regime hm hd hq
+  obtain ⟨K₀, hK₀⟩ := exists_globalPair hL hm4 S hε hfail hlegA hlegB hd
+  obtain ⟨K₀', hK₀'⟩ := exists_globalPair_swap hL hm4 S hε hfail hlegA hlegB hd
+  obtain ⟨P⟩ := hK₀ (max K₀ K₀') (le_max_left _ _)
+  obtain ⟨P'⟩ := hK₀' (max K₀ K₀') (le_max_right _ _)
+  exact ⟨mirrorOfGlobalPairs P P' hd hfail hq⟩
+
+end Exists
 
 end MIPRE.QLD
 
