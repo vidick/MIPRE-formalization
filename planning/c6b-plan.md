@@ -42,9 +42,16 @@ modules, 1,442 lines; `Co.MakingMeasurementsProjective.orthonormalization`), who
 projective measurements calls T1, T5 and M2's Theorem G in place of the vendored
 finite-dimensional route, its 17 other vendored files being dropped or imported. Together 14,796
 lines, at 0.65× the vendored elaboration time; M4 within its estimate and M6–M8 well under theirs.
-31.4k lines are done. About 47–57k remain (M10–M14) at the estimates of §3, and 32–43k at the rate
-M6 and M7 measured, not counting the items above that M2 and M9 leave open; the port is 79–88k in
-all, or 64–74k. M10–M14 are open.
+M10 and M11 are done too (2026-10-02): `SelfImprovement` (30 modules, 11,411 lines;
+`Co.SelfImprovement.selfImprovement`), whose semidefinite program is M9's summed form through a
+two-part adapter and whose rounding is M8's orthonormalization, so that its top theorems take the
+model hypotheses `hS hA` and `1 ≤ params.d`, its 8 matrix-realization files being dropped, and
+`Pasting` (76 modules, 17,577 lines; `Co.Pasting.ldPasting`, with no new hypothesis); 28,988 lines,
+at 0.78× and 0.40× the vendored elaboration time, every file within the 2× rule but the
+statement file `SelfImprovement/Theorems/Statements` (2.19×). 60.4k lines are done. About 11–15k
+remain (M12–M14) at the estimates of §3, and 9–14k at the rates M10 and M11 measured; the port is
+71–76k in all, or 70–74k. M12–M14 are open: M12 threads `hd : 1 ≤ params.d` beside `hS hA`, M13
+discharges `hS hA` for `D(M)` and M14 supplies `hd` from `SoundIn`.
 
 ## 1. The target, and what the II₁ tier turned out to need
 
@@ -150,8 +157,8 @@ keystone lemmas: M0 came to 5.70k lines against 4.4–5.3k estimated, M1 to 3.01
 | M7 | `Commutativity` | M1, M3 | 13.4k → 12.1–13.8k, central 13.2k (10.5–12.5k): 11.29k quantum lines in 43 files, 2% classical; the largest revision, the directory being almost all quantum and `CommutativityPoints`, its closest relative, having ported at about 1.0 on content | done: all 43 modules under `Co/Commutativity/`, 8,025 lines for 13,399 vendored (0.60; r = 0.50), well below the estimate ("Departures in M4, M6, M7 and M8"); non-import elaboration 74.20 s against 134.15 s (0.55×), every file within the 2× rule; `port-pairing.py --check`: 0 missing, 18 classical declarations imported, 4 new (with the arithmetic `commDataProcessedGError_to_comMainError_arith` split out of `Main/EvaluatedQuestions` after review). `Co.Commutativity.comMain` (`thm:com-main`): for an `(ε, δ, γ)`-good strategy in `m + 1` variables and a slice family `G^x` consistent with its points, strongly self-consistent and bounded, each at `ζ`, `E_{x,y} ∑_{g,h} ‖L(G^x_g G^y_h − G^y_h G^x_g)Ψ‖² ≤ 30m(γ^{1/4} + ζ^{1/4} + (d/q)^{1/4})`, through `commDataProcessedG`, the same on evaluated slices at `48m(√γ + √ζ)`; `hnorm` dropped from 45 lemmas, `permInvState` and `densityFixed` from all. Blueprint `lem:co-commutation-g` |
 | M8 | `MakingMeasurementsProjective`: the dimension-free part, with the three orthonormalization sites calling T1 | M0, M3, T1 | ≈ 4.1k → 2.6–3.8k (3.3–3.8k) + adapter 0.8–1.5k: quantum share 0.82 and the highest matrix density of any directory, so r 0.6–0.95, about 10 files; about 2.5k further lines unassigned by the audit's partition, which would add 2.0–2.4k if ported | done, in a narrower scope than estimated: 7 of the 24 vendored files ported (`Statements`, `Orthonormalization/{RestrictSome,Completion}`, `Projectivization`, `ProjectivizationChain/Basic`, `LocalityPreservingRepair`, `Orthonormalization`), 1,442 lines for their 2,870 vendored (0.50; r = 0.37); the other 17 (7,398 lines: `Defs`, `Orthonormalization/ErrorBounds`, `NaimarkCore`, `QXPLayer/*`, `QXPLayerIdentities/*`, `SpectralTruncation/*`) dropped, their classical content imported and the finite-dimensional orthonormalization replaced by T1 ("Departures in M4, M6, M7 and M8"); the adapter is M2's Theorem G and two T5 calls. Non-import elaboration 18.97 s against 28.16 s (0.67×), `Orthonormalization` 5.11 s against 2.83 s (1.80×), within the rule while carrying new two-space content; `port-pairing.py --check`: 0 missing, 60 vendored declarations listed as not ported, 3 new. `Co.MakingMeasurementsProjective.orthonormalizationMainLemma` (`84 ζ^{1/4}`) and `orthonormalization` (`100 ζ^{1/4}`) in any symmetric model whose bipartite reading is a finite pair without abelian projections in `L(𝔓)`, for `ζ > 0`, and the two-space heterogeneous forms in a dyadic pair, for M13; M2's `optionCompletion` and `restrictSomeProjSubMeas` moved to their mirrored homes. Open: `ζ = 0`, not needed once M14 threads `1 ≤ params.d` (M2's row). Blueprint `lem:co-orthonormalization` |
 | M9 | the summed semidefinite form: a maximizer by weak-operator compactness, first-order conditions giving `Z = Σ T_g A_g ≥ A_g`, solved componentwise in the doubled model; `MatrixRealization` and `SdpMatrixBridge` (3.98k) are not ported | M0, M2 | new 0.55–0.75k (core measured) + adapter 0.1–0.25k (unchanged: new code, no M1 basis) | done, except the adapter. 925 lines in 3 modules against 0.55–0.75k. `MIPRE/Foundations/SummedSdp.lean` (546) has the conclusion `SummedSdp.IsSummedSdp A T Z` over any ordered ⋆-ring, whose fields are those of the vendored `SdpOptimalPairWithSlackness`, and the core chain, Lemmas 1b–3 and 5–9, up to `isSummedSdp_of_isMaxOn` and the converse `isSummedSdp_of_le`. The setting (S) is the commutant `StarSubalgebra.centralizer ℂ t` of any set, with `IsFaithfulTrace`. `MIPRE/Background/Orthonormalization/SdpMaximizer.lean` (165) has Lemma 4, `exists_isMaxOn_obj`, by the vendored weak-operator compactness, and Theorem 10, `exists_isSummedSdp`, `exists_isSummedSdp_finitePairA`/`B`. `Co/Doubling/Sdp.lean` (214) has Corollary 12, `exists_isSummedSdp_loc` and `exists_isSummedSdp_model`, under `L` and `R`, and Lemma 13, `isSummedSdp_equivA_iff`, `exists_isSummedSdp_A`/`B` and `exists_isSummedSdp_prod` over the report's `𝒜 × ℬ`. Componentwise data is automatic, since `Loc M` is a product. Open: the interface adapter to `SdpStatementWithSlackness` (`Measurement`, `G = Polynomial params`, `A_g = averagedPointOperator`), which is M10's because the port's types for it do not exist yet; Remark 12′, not needed. Elaboration: `SummedSdp.le_of_firstOrder` takes 4.9 s (`-DElab.async=false`, load 1.0), just under the 5 s rule, and `isMeasIn_perturb` takes 4.0 s. Both are risks at higher load, and splitting them is worth doing. `exists_isSummedSdp_A` of `Co/Doubling/Sdp.lean` takes 3.9 s (`-DElab.async=false`, load 1.0); nothing else in the three files takes 3 s. Blueprint `thm:summed-sdp`, `cor:summed-sdp-doubled` |
-| M10 | `SelfImprovement` theorems and definitions, + the summed-form interface adapter to `SdpStatementWithSlackness` (from M9, 0.1–0.25k) | M3–M6, M8, M9 | 16.44k → 13.1–15.1k (13–15.5k): without `MatrixRealization` and `SdpMatrixBridge`, 13.2k quantum lines in 32 files | open |
-| M11 | `Pasting` | M1, M3, M4, M7 | 30.3k → 23.2–26.5k (24–28k): 22.07k quantum lines in 76 files, the 5.3k classical lines (`Bernoulli/Scalar` and others) imported; its 87 `try rfl` sites became plain `rfl` in M1 at no change in size | open |
+| M10 | `SelfImprovement` theorems and definitions, + the summed-form interface adapter to `SdpStatementWithSlackness` (from M9, 0.1–0.25k) | M3–M6, M8, M9 | 16.44k → 13.1–15.1k (13–15.5k): without `MatrixRealization` and `SdpMatrixBridge`, 13.2k quantum lines in 32 files | done: 30 modules under `Co/SelfImprovement/`, every vendored file but the 7 of `MatrixRealization/` (3,667 lines) and `Theorems/Results/SdpMatrixBridge` (313), replaced by M9's summed form, and the classical `Theorems/Thresholds/{Helper,Final}` (1,210), imported; 11,411 lines for 15,227 vendored (0.75; r = 0.67 on the ported declarations, net of headers, with headers of 87 lines a file against 56 vendored), under the estimate and above the 8.4–10.5k that the rates of M6 and M7 gave ("Departures in M10 and M11"); non-import elaboration 84.18 s against 108.49 s (0.78×), every file within the 2× rule but `Theorems/Statements`, statement structures and the adapter, at 2.19×; `port-pairing.py --check`: 0 missing, 24 vendored declarations listed as not ported (`sdpPrimalObjective`, the real part of a matrix trace, and 23 classical, imported), 6 new, 9 private. The adapter is the two-part one prototyped in the design of M10, about 40 lines: `SdpStatementWithSlackness.of_isSummedSdp` (`Theorems/Statements`) and `sdp_statement_with_slackness params strategy hS` (`HelperCompleteness/Bracketed`), which applies `Doubling.exists_isSummedSdp_A hS` to the averaged point operators. `Co.SelfImprovement.selfImprovement` (`thm:self-improvement`): for an `(ε, δ, γ)`-good strategy and a polynomial measurement `G` with point consistency `ν`, a projective `H` and a witness `Z ≥ E_u A^u_{g(u)}` with completeness `1 − ν − σ`, point consistency, self-closeness and boundedness at `σ = 3000 m (ε^{1/32} + δ^{1/32} + (d/q)^{1/32})`, under `hS hA hd` (`hS` alone for the helper lemma and the SDP producer); the in-core orthonormalization is M8's Theorem G at `ζ = selfImprovementHelperError > 0` (`selfImprovementHelperError_pos`). Open: threading `hd` through M12, supplying it in M14 and discharging `hS hA` in M13. Blueprint `lem:co-self-improvement` |
+| M11 | `Pasting` | M1, M3, M4, M7 | 30.3k → 23.2–26.5k (24–28k): 22.07k quantum lines in 76 files, the 5.3k classical lines (`Bernoulli/Scalar` and others) imported; its 87 `try rfl` sites became plain `rfl` in M1 at no change in size | done: all 76 modules under `Co/Pasting/`, 17,577 lines for 30,290 vendored (0.58; r = 0.59), within the 15.2–19.0k that the rates of M6 and M7 gave and well under the estimate; four files are a docstring and imports, their vendored counterparts being classical (`Bernoulli/Scalar`, `Core/DDistinct`, `Defs/Interpolation`, `LineInterpolation/Core`); non-import elaboration 162.15 s against 404.44 s (0.40×), every file within the 2× rule (largest `Sandwich/PastedFamilies` at 1.77× and `Sandwich/Switcheroo` at 1.72×, definitions); `port-pairing.py --check`: 0 missing, 190 classical declarations imported, 0 new (two scoped decidability instances in `LineInterpolation/BadMass`, which the script does not count), 7 private. `Co.Pasting.ldPasting` (`thm:ld-pasting`): for an `(ε, δ, γ)`-good strategy in `m + 1` variables and a slice family complete at `κ` and consistent with the points, strongly self-consistent and bounded at `ζ`, a measurement `H` with point consistency `κ(1 + 1/(100m)) + 2ν + e^{−k/(80000m²)}` for every `k ≥ 400md`, `ν = 100k²m(ε^{1/32} + δ^{1/32} + γ^{1/32} + ζ^{1/32} + (d/q)^{1/32})`; with `ldPastingNCompleteness`, `ldPastingSubMeas` and the matrix Chernoff estimate on a vector state, `chernoffBernoulliMatrix`, its `hnorm` dropped. No statement takes a model hypothesis, pasting neither orthonormalizing nor solving a semidefinite program. Blueprint `lem:co-ld-pasting` |
 | M12 | `MainInductionStep` theorems | M7, M10, M11 | 8.9k → 7.1–8.2k (6.5–8.5k): 7.04k quantum lines in 20 files | open |
 | M13 | `Test/MainTheorem` → `Co.mainFormal` over a symmetric model, then over a dyadic pair through the doubling, + Theorem E, unsymmetrization with the two-space tail (from M2) | M2, M8, M12 | 5.06k → 2.5–3.5k (2.5–3.5k): `ScalarBounds` and `SourceScalars` classical and imported, 2.52k quantum lines in 6 files at 2.5–2.9k, plus the dyadic-pair restatement, which M1 does not measure | open |
 | M14 | the error cascade into `deltaSim` and the adapters to `SoundIn`: `SoundIn M` for every dyadic pair `M`, hence `SoundFin`, + `ζ > 0` at the in-core call site of Theorem G, threading `1 ≤ params.d` from `SoundIn` (from M2) | M13, T5 | 1.5–3.5k (unchanged: new code, no M1 basis) | open |
@@ -193,6 +200,16 @@ M12 4.6–5.8k, so M10–M14 32–43k and the port 64–74k. M4–M8 elaborate a
 (131.0 s against 200.3 s), and M0, M1 and M3–M8 together at 0.67× (246.7 s against 368.1 s;
 "Port conventions").
 
+**Revised after M10 and M11** (2026-10-02). M10 came to 11,411 lines against 13.1–15.1k (8.4–10.5k
+at the rates of M6 and M7) and M11 to 17,577 against 23.2–26.5k (15.2–19.0k): 28,988 lines in all,
+r = 0.67 and 0.59. 60.4k lines are done (M0 5.70k, M1 3.01k, M2 2.71k, M3 3.37k, M4 1.77k, M5 0.85k,
+M6 3.56k, M7 8.03k, M8 1.44k, M9 0.93k, M10 11.41k, M11 17.58k). What remains is M12 (7.1–8.2k at
+the estimate above; 5.4–6.5k at the rates M10 and M11 measured, r = 0.59–0.67 with headers of 59–87
+lines a file on its 7.04k quantum lines in 20 files), M13 (2.5–3.5k) and M14 (1.5–3.5k): 11–15k, or
+9–14k, and the port 71–76k in all, or 70–74k, against the 64–74k projected after M8. M10 and M11
+elaborate at 0.48× their vendored files (246.3 s against 512.9 s), and M0, M1, M3–M8, M10 and M11
+together at 0.56× (493.1 s against 881.1 s; "Port conventions").
+
 ## 4. Order
 
 1. **This pull request**: the plan, the paper proofs, and T1, with its blueprint nodes.
@@ -230,7 +247,17 @@ M12 4.6–5.8k, so M10–M14 32–43k and the port 64–74k. M4–M8 elaborate a
    model hypotheses `hS : S.toBipartite.IsFinitePair` and `hA : NoAbelianProj
    S.toBipartite.opsA` of M8's `orthonormalization`, which M4's `AnswerMainInductionHypothesis`
    already carries and M10–M12 must thread beside `ζ > 0` (M13 discharging them for `D(M)`).
-7. Then M10, M11 → M12 → M13 → M14, as the dependency column allows.
+7. **M10 and M11, done** (2026-10-02): `SelfImprovement` and `Pasting`, with their blueprint nodes
+   and axiom guards (§3), at 0.78× and 0.40× the vendored elaboration time; the departures,
+   M10's eight dropped matrix-realization files and its three threaded hypotheses among them, are
+   recorded under "Port conventions". M10 closes M9's open adapter and M2's and M8's `ζ > 0` at
+   the in-core orthonormalization, by `hd : 1 ≤ params.d` on `selfImprovement`; of the model
+   hypotheses only M10's top theorems take any, M11's statements none. They leave to later stages
+   the threading of `hd` beside `hS hA` through the induction (M12; M4's
+   `AnswerMainInductionHypothesis` carries `hS hA` but not `hd`), supplying `hd` from `SoundIn`
+   (M14) and discharging `hS hA` for `D(M)` (M13), and a cleanup: the two scoped decidability
+   instances of `LineInterpolation/BadMass` belong in an earlier shared `Pasting` file.
+8. Then M12 → M13 → M14, as the dependency column allows.
 
 ## 5. Things the design round settled, and things it did not
 
@@ -271,12 +298,14 @@ M12 4.6–5.8k, so M10–M14 32–43k and the port 64–74k. M4–M8 elaborate a
   and vendored declarations are certain: explicit `open … (…)` lists are mandatory, and the
   operator average must be ported (counted in M0).
 - **`ζ = 0`** in the doubling's orthonormalization step needs `1 ≤ d` threaded from `SoundIn` to the
-  core's parameters (report §4).
+  core's parameters (report §4). *M10*: `selfImprovement` takes `hd : 1 ≤ params.d`, which makes
+  its orthonormalization error positive; M12 threads it and M14 supplies it.
 - **The semidefinite witness `Z`** must lie in the doubled local algebra; the componentwise
   solution needs the `A_g` to be componentwise (report §5). *Settled by M9:* the local algebra
   of `D(M)` is the product `Loc M`, so every `A_g` of it is a pair, and
   `Doubling.exists_isSummedSdp_model` gives `T` and `Z` in `Loc M`. What is left is the adapter
-  (M10).
+  (M10). *Done in M10*: `SdpStatementWithSlackness.of_isSummedSdp` and
+  `sdp_statement_with_slackness params strategy hS`, through `Doubling.exists_isSummedSdp_A`.
 - **Elaboration time** is the main risk of the port: operator positivity on `K →L[ℂ] K` costs 1–3 s
   per proof against 0.6 s for the matrix version, roughly doubling under the whole-Mathlib imports
   the vendored classical layer forces. Positivity lemmas go in a base file without those imports.
@@ -288,8 +317,11 @@ M12 4.6–5.8k, so M10–M14 32–43k and the port 64–74k. M4–M8 elaborate a
   named: `MainInductionStep/Defs` is at 2.31 s against 1.79 s (1.29×),
   `GlobalVariance/Defs/Families` at 3.20 s against 2.79 s (1.15×), the `Commutativity` definitions
   at most 1.10×; it failed, narrowly, only in `MainInductionStep/Statements`, the statement
-  structures of the induction step, at 2.01×. `SelfImprovement/Defs` and `Pasting` are still to
-  come, and no cheap fix for signature synthesis is known.
+  structures of the induction step, at 2.01×. Measured on M10 and M11, it held in
+  `SelfImprovement/Defs` (3.59 s against 8.71 s, the vendored file elaborating its classical
+  half) and in every `Pasting` file, the definitions included (at most 1.77×); it failed again only
+  in a file of statement structures, `SelfImprovement/Theorems/Statements`, at 2.19×. No cheap fix
+  for signature synthesis is known.
 - **Upstream.** H3 could instead go to `vidick/commuting-repetition` and be vendored; the port's
   base layer could go to `LionSR/MIPStarRE`.
 
@@ -438,7 +470,7 @@ vendored names, the new ported names (with the vendored file a moved one comes f
 never counts as the counterpart of a public vendored one and is reported on a `private` line. Each
 stage runs it on its files and reports the output.
 
-**Elaboration, measured on M0 and M1, on M3 and M5, and on M4, M6, M7 and M8.** Non-import
+**Elaboration, measured on M0 and M1, on M3 and M5, on M4, M6, M7 and M8, and on M10 and M11.** Non-import
 elaboration of each file, `lake env lean -Dprofiler=true`, the sum of every profiler category except
 `import`, minimum of three runs, in seconds, against the vendored file measured the same way on the
 same machine. Lines are `wc -l`; "tc" is the typeclass-inference part, ported / vendored. Measured
@@ -593,6 +625,116 @@ charged to the declarations.
 | **all of M8** | 1442 | 2870 | 18.97 | 28.16 | 0.67 | 6.7 / 11.6 |
 | **M4, M6, M7 and M8** | 14796 | 23479 | 131.03 | 200.29 | 0.65 | 38.2 / 63.1 |
 | **M0, M1, M3–M8** | 27774 | 45947 | 246.74 | 368.13 | 0.67 | 79.3 / 115.0 |
+| `SelfImprovement/Defs.lean` | 268 | 397 | 3.59 | 8.71 | 0.41 | 1.88 / 5.70 |
+| `SelfImprovement/Theorems/AddInUFullStatement.lean` | 161 | 198 | 0.80 | 0.96 | 0.84 | 0.12 / 0.11 |
+| `SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean` | 407 | 456 | 2.33 | 2.99 | 0.78 | 0.69 / 0.40 |
+| `SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean` | 371 | 511 | 2.28 | 2.82 | 0.81 | 0.71 / 1.14 |
+| `SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean` | 496 | 731 | 3.16 | 7.58 | 0.42 | 1.09 / 4.04 |
+| `SelfImprovement/Theorems/Results/AddInUPointConsistency.lean` | 394 | 518 | 2.07 | 2.98 | 0.69 | 0.72 / 0.72 |
+| `SelfImprovement/Theorems/Results/AddInUStep12/Algebra.lean` | 470 | 576 | 3.58 | 3.42 | 1.04 | 1.21 / 0.87 |
+| `SelfImprovement/Theorems/Results/AddInUStep12/Raw.lean` | 368 | 663 | 4.06 | 3.76 | 1.08 | 1.66 / 0.91 |
+| `SelfImprovement/Theorems/Results/AddInUStep12/Selected.lean` | 389 | 804 | 5.26 | 7.47 | 0.70 | 2.28 / 3.33 |
+| `SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Factored.lean` | 238 | 398 | 1.31 | 2.24 | 0.58 | 0.34 / 0.53 |
+| `SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Selected.lean` | 505 | 761 | 3.70 | 10.38 | 0.36 | 1.46 / 5.36 |
+| `SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean` | 362 | 537 | 3.01 | 3.69 | 0.82 | 0.81 / 0.90 |
+| `SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Variance.lean` | 542 | 653 | 2.81 | 2.95 | 0.95 | 0.95 / 0.69 |
+| `SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean` | 506 | 648 | 3.12 | 3.67 | 0.85 | 0.95 / 0.96 |
+| `SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean` | 231 | 337 | 1.83 | 1.76 | 1.04 | 0.49 / 0.28 |
+| `SelfImprovement/Theorems/Results/BoundednessTransport/PointConsistency.lean` | 412 | 548 | 2.53 | 2.20 | 1.15 | 0.79 / 0.59 |
+| `SelfImprovement/Theorems/Results/BoundednessTransport/PointConsistencyLiteral.lean` | 382 | 371 | 1.95 | 1.48 | 1.31 | 0.57 / 0.35 |
+| `SelfImprovement/Theorems/Results/CommonHelpers.lean` | 134 | 166 | 1.33 | 1.29 | 1.03 | 0.47 / 0.30 |
+| `SelfImprovement/Theorems/Results/HelperCompleteness/Bracketed.lean` | 527 | 580 | 2.75 | 2.08 | 1.32 | 0.97 / 0.52 |
+| `SelfImprovement/Theorems/Results/HelperCompleteness/FiberBounds.lean` | 452 | 604 | 4.66 | 6.40 | 0.73 | 1.52 / 3.06 |
+| `SelfImprovement/Theorems/Results/HelperCompleteness/InputSdp.lean` | 267 | 339 | 1.91 | 1.78 | 1.07 | 0.51 / 0.47 |
+| `SelfImprovement/Theorems/Results/HelperCompleteness/Linearized.lean` | 400 | 504 | 2.72 | 2.58 | 1.06 | 0.87 / 0.63 |
+| `SelfImprovement/Theorems/Results/HelperSSC/Assembly.lean` | 588 | 819 | 2.43 | 4.75 | 0.51 | 0.92 / 1.23 |
+| `SelfImprovement/Theorems/Results/HelperSSC/Core.lean` | 368 | 516 | 2.28 | 3.43 | 0.67 | 0.62 / 0.61 |
+| `SelfImprovement/Theorems/Results/HelperSSC/PostDeleteA.lean` | 455 | 720 | 4.50 | 5.64 | 0.80 | 1.47 / 1.43 |
+| `SelfImprovement/Theorems/Results/SelfImprovementTop/Completeness.lean` | 196 | 280 | 1.54 | 1.21 | 1.27 | 0.43 / 0.23 |
+| `SelfImprovement/Theorems/Results/SelfImprovementTop/Core.lean` | 651 | 709 | 6.95 | 7.02 | 0.99 | 2.60 / 2.04 |
+| `SelfImprovement/Theorems/Results/SelfImprovementTop/FinalFields.lean` | 145 | 132 | 0.94 | 0.74 | 1.26 | 0.20 / 0.07 |
+| `SelfImprovement/Theorems/Results/SelfImprovementTop/SelfCloseness.lean` | 195 | 258 | 1.27 | 0.89 | 1.43 | 0.36 / 0.18 |
+| `SelfImprovement/Theorems/Statements.lean` | 531 | 493 | 3.48 | 1.59 | 2.19 | 1.34 / 0.30 |
+| **all of M10** | 11411 | 15227 | 84.18 | 108.49 | 0.78 | 29.0 / 37.9 |
+| `Pasting/Bernoulli/DegreeZero.lean` | 381 | 969 | 3.16 | 13.19 | 0.24 | 1.02 / 4.42 |
+| `Pasting/Bernoulli/Final.lean` | 603 | 819 | 3.67 | 9.07 | 0.40 | 0.95 / 2.83 |
+| `Pasting/Bernoulli/FromHToG.lean` | 149 | 154 | 0.78 | 0.85 | 0.92 | 0.09 / 0.06 |
+| `Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean` | 145 | 210 | 1.79 | 3.71 | 0.48 | 0.38 / 0.34 |
+| `Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean` | 271 | 486 | 3.08 | 10.24 | 0.30 | 0.76 / 0.98 |
+| `Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean` | 228 | 495 | 3.88 | 7.00 | 0.55 | 1.50 / 1.10 |
+| `Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean` | 193 | 323 | 2.86 | 2.29 | 1.25 | 1.21 / 0.36 |
+| `Pasting/Bernoulli/FromHToG/Core/BernoulliTail.lean` | 131 | 169 | 1.42 | 2.65 | 0.54 | 0.52 / 1.42 |
+| `Pasting/Bernoulli/FromHToG/Core/FactBundles.lean` | 96 | 286 | 0.90 | 18.98 | 0.05 | 0.09 / 3.23 |
+| `Pasting/Bernoulli/FromHToG/Core/StageMass.lean` | 272 | 523 | 3.11 | 4.13 | 0.75 | 0.91 / 1.09 |
+| `Pasting/Bernoulli/FromHToG/MoveLemmas/Basic.lean` | 255 | 569 | 3.14 | 5.19 | 0.61 | 1.26 / 1.68 |
+| `Pasting/Bernoulli/FromHToG/MoveLemmas/TailStage.lean` | 156 | 271 | 1.48 | 2.13 | 0.69 | 0.34 / 0.41 |
+| `Pasting/Bernoulli/FromHToG/PaperBounds.lean` | 192 | 484 | 2.02 | 3.14 | 0.64 | 0.52 / 0.68 |
+| `Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean` | 241 | 546 | 2.85 | 4.71 | 0.60 | 0.92 / 1.57 |
+| `Pasting/Bernoulli/FromHToG/PaperMoveChain/Moves.lean` | 204 | 404 | 2.18 | 4.62 | 0.47 | 0.59 / 0.72 |
+| `Pasting/Bernoulli/FromHToG/PaperMoveChain/Telescope.lean` | 329 | 643 | 4.10 | 9.26 | 0.44 | 1.43 / 2.40 |
+| `Pasting/Bernoulli/MatrixChernoff.lean` | 159 | 170 | 3.74 | 8.74 | 0.43 | 1.58 / 1.92 |
+| `Pasting/Bernoulli/Scalar.lean` | 55 | 527 | 0.55 | 11.38 | 0.05 | 0.00 / 2.96 |
+| `Pasting/Bernoulli/ScalarBounds.lean` | 155 | 256 | 1.83 | 5.26 | 0.35 | 0.35 / 1.69 |
+| `Pasting/Bernoulli/TruncatedSums.lean` | 192 | 409 | 2.47 | 4.78 | 0.52 | 0.81 / 1.75 |
+| `Pasting/Bernoulli/Weights.lean` | 119 | 127 | 0.96 | 0.95 | 1.01 | 0.17 / 0.07 |
+| `Pasting/CommutingWithG/Complete.lean` | 149 | 361 | 0.81 | 14.41 | 0.06 | 0.08 / 2.49 |
+| `Pasting/CommutingWithG/Incomplete.lean` | 124 | 214 | 1.71 | 2.31 | 0.74 | 0.45 / 0.26 |
+| `Pasting/ComparisonLemmas/Common.lean` | 159 | 380 | 1.20 | 8.85 | 0.14 | 0.22 / 2.68 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich.lean` | 88 | 85 | 0.75 | 0.72 | 1.03 | 0.08 / 0.03 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/BackChain.lean` | 155 | 255 | 1.43 | 2.05 | 0.70 | 0.25 / 0.31 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/Base.lean` | 128 | 192 | 1.14 | 1.28 | 0.89 | 0.18 / 0.14 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/Chain.lean` | 163 | 159 | 1.34 | 1.46 | 0.92 | 0.16 / 0.17 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/Core.lean` | 133 | 225 | 1.30 | 4.30 | 0.30 | 0.25 / 0.95 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/FlatChain.lean` | 248 | 387 | 1.96 | 3.35 | 0.58 | 0.40 / 0.78 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/FlatChainStep.lean` | 268 | 531 | 1.89 | 3.34 | 0.56 | 0.23 / 0.77 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/MoveChain/Lifting.lean` | 304 | 661 | 2.64 | 3.84 | 0.69 | 0.78 / 0.87 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean` | 423 | 683 | 2.54 | 3.91 | 0.65 | 0.83 / 0.70 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Move.lean` | 251 | 584 | 2.32 | 3.93 | 0.59 | 0.75 / 0.82 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Split.lean` | 215 | 299 | 1.80 | 3.01 | 0.60 | 0.36 / 0.84 |
+| `Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean` | 206 | 392 | 2.46 | 7.48 | 0.33 | 0.83 / 3.53 |
+| `Pasting/ComparisonLemmas/HAConsistency.lean` | 490 | 612 | 2.90 | 3.05 | 0.95 | 0.87 / 0.80 |
+| `Pasting/ComparisonLemmas/HBConsistency.lean` | 196 | 206 | 1.12 | 1.02 | 1.10 | 0.19 / 0.15 |
+| `Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean` | 643 | 735 | 4.21 | 3.92 | 1.07 | 1.53 / 1.14 |
+| `Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean` | 367 | 666 | 3.83 | 6.38 | 0.60 | 1.33 / 1.88 |
+| `Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean` | 317 | 402 | 1.29 | 1.99 | 0.65 | 0.27 / 0.50 |
+| `Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean` | 362 | 686 | 3.41 | 12.17 | 0.28 | 0.91 / 3.51 |
+| `Pasting/ComparisonLemmas/LdSandwichLineOnePoint/EndpointEquivs.lean` | 65 | 273 | 0.64 | 2.24 | 0.29 | 0.01 / 0.23 |
+| `Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean` | 277 | 582 | 3.37 | 21.28 | 0.16 | 0.66 / 3.58 |
+| `Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean` | 371 | 418 | 4.10 | 5.41 | 0.76 | 1.01 / 1.76 |
+| `Pasting/ComparisonLemmas/LineInterpolation/Averaging.lean` | 112 | 213 | 1.54 | 2.38 | 0.65 | 0.75 / 0.60 |
+| `Pasting/ComparisonLemmas/LineInterpolation/BadLine.lean` | 88 | 133 | 1.07 | 2.24 | 0.48 | 0.19 / 0.27 |
+| `Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean` | 569 | 811 | 5.46 | 9.08 | 0.60 | 1.75 / 3.98 |
+| `Pasting/ComparisonLemmas/LineInterpolation/Core.lean` | 55 | 456 | 0.46 | 3.71 | 0.12 | 0.00 / 0.86 |
+| `Pasting/ComparisonLemmas/LineInterpolation/HBError.lean` | 281 | 442 | 1.83 | 6.13 | 0.30 | 0.75 / 1.67 |
+| `Pasting/ComparisonLemmas/OverAllOutcomes/ErrorAndMass.lean` | 238 | 529 | 2.79 | 11.91 | 0.23 | 0.81 / 3.60 |
+| `Pasting/ComparisonLemmas/OverAllOutcomes/Final.lean` | 410 | 587 | 2.91 | 4.59 | 0.63 | 0.98 / 1.36 |
+| `Pasting/ComparisonLemmas/OverAllOutcomes/NonglobalDecomposition.lean` | 379 | 510 | 3.39 | 4.06 | 0.84 | 1.18 / 1.19 |
+| `Pasting/Core/CompletePart.lean` | 165 | 446 | 2.24 | 4.59 | 0.49 | 0.59 / 1.68 |
+| `Pasting/Core/DDistinct.lean` | 40 | 179 | 0.58 | 4.15 | 0.14 | 0.00 / 1.36 |
+| `Pasting/Core/LdGbcon.lean` | 365 | 642 | 2.56 | 4.86 | 0.53 | 0.88 / 1.91 |
+| `Pasting/Defs/Families.lean` | 136 | 194 | 1.25 | 1.95 | 0.64 | 0.40 / 0.73 |
+| `Pasting/Defs/Interpolation.lean` | 58 | 244 | 0.57 | 1.72 | 0.33 | 0.00 / 0.25 |
+| `Pasting/Defs/Tuples.lean` | 139 | 258 | 1.75 | 1.84 | 0.95 | 0.64 / 0.45 |
+| `Pasting/GHatFacts.lean` | 332 | 577 | 2.40 | 6.50 | 0.37 | 0.56 / 0.73 |
+| `Pasting/Sandwich/GHatSandwich.lean` | 192 | 299 | 2.13 | 3.62 | 0.59 | 0.86 / 1.46 |
+| `Pasting/Sandwich/PastedFamilies.lean` | 350 | 349 | 2.38 | 1.35 | 1.77 | 0.99 / 0.19 |
+| `Pasting/Sandwich/Switcheroo.lean` | 270 | 330 | 2.92 | 1.70 | 1.72 | 1.13 / 0.29 |
+| `Pasting/Statements.lean` | 481 | 540 | 2.96 | 1.88 | 1.58 | 0.63 / 0.43 |
+| `Pasting/SwitcherooCompletion.lean` | 165 | 304 | 1.25 | 8.77 | 0.14 | 0.20 / 1.63 |
+| `Pasting/SwitcherooCompletion/CompletePart.lean` | 98 | 302 | 0.82 | 18.02 | 0.05 | 0.09 / 2.97 |
+| `Pasting/SwitcherooCompletion/Expansion.lean` | 168 | 370 | 2.10 | 3.87 | 0.54 | 0.47 / 1.01 |
+| `Pasting/SwitcherooCompletion/FourthTermChain.lean` | 239 | 442 | 1.79 | 5.39 | 0.33 | 0.41 / 2.55 |
+| `Pasting/SwitcherooCompletion/SecondTerm.lean` | 177 | 362 | 1.60 | 2.33 | 0.69 | 0.35 / 0.54 |
+| `Pasting/SwitcherooCompletion/Utilities.lean` | 128 | 149 | 1.11 | 1.32 | 0.84 | 0.17 / 0.14 |
+| `Pasting/SwitcherooContraction/Commuted.lean` | 129 | 264 | 1.51 | 5.45 | 0.28 | 0.32 / 3.24 |
+| `Pasting/SwitcherooContraction/ScalarTerms.lean` | 201 | 202 | 1.72 | 2.67 | 0.64 | 0.41 / 1.00 |
+| `Pasting/SwitcherooContraction/Split.lean` | 441 | 591 | 4.04 | 16.95 | 0.24 | 1.38 / 10.20 |
+| `Pasting/SwitcherooSetup/Centers.lean` | 174 | 228 | 1.27 | 1.84 | 0.69 | 0.27 / 0.37 |
+| `Pasting/SwitcherooSetup/Infrastructure.lean` | 211 | 308 | 2.27 | 4.02 | 0.56 | 0.77 / 2.07 |
+| `Pasting/SwitcherooSetup/Terms.lean` | 158 | 201 | 1.35 | 1.61 | 0.84 | 0.29 / 0.44 |
+| **all of M11** | 17577 | 30290 | 162.15 | 404.44 | 0.40 | 46.2 / 109.8 |
+| **M10 and M11** | 28988 | 45517 | 246.33 | 512.92 | 0.48 | 75.2 / 147.7 |
+| **M0, M1, M3–M8, M10 and M11** | 56762 | 91464 | 493.07 | 881.05 | 0.56 | 154.5 / 262.7 |
 
 **The M3 and M5 rows** were measured the same way on 2026-10-02, 00:25–00:50 UTC, on the same
 4-core machine at load 0.5–2.1, ported and vendored file alternating, three rounds; the line
@@ -663,6 +805,40 @@ declaration takes 2.3 s at load up to 2.2, and the 5 s rule holds with a factor 
 `Foundations/Doubling` (5.52 s against 2.77 s, minimum of three, load 0.9–1.1, 08:10 UTC).
 None of the 69 files sets an option or raises a heartbeat limit, and none needs the file-wide
 `respectTransparency` that 85 of their vendored counterparts set.
+
+**The M10 and M11 rows** were measured the same way on 2026-10-02, 14:09–15:05 UTC, on the same
+4-core machine, three rounds with the ported and vendored file of each pair alternating, but two
+pairs at a time, so at load 0.9–3.3 rather than the 0.5–2.1 of the earlier rows; the line counts
+are those of the working tree measured (the files of `9e4b844` and the units finished after it).
+Both sides of a pair ran under the same conditions, so the ratios compare as before, and the
+absolute times are, if anything, high. Every file passes the 2× rule of §4 item 3 but one,
+`SelfImprovement/Theorems/Statements`, at 2.19× (3.48–3.75 s against 1.59–2.00 s over the rounds),
+a file of statement structures with M10's adapter, the case of `MainInductionStep/Statements`
+("Departures in M10 and M11"). The next largest are M11's `Sandwich/PastedFamilies` at 1.77×,
+`Sandwich/Switcheroo` at 1.72× and `Statements` at 1.58×, definitions all three, and M10's
+`SelfImprovementTop/SelfCloseness` at 1.43×. M10 is at 0.78× and M11 at 0.40×, and the largest
+savings are the files whose vendored counterparts elaborate classical lemmas that the port imports
+prebuilt (`Bernoulli/FromHToG/Core/FactBundles`, `Bernoulli/Scalar`,
+`SwitcherooCompletion/CompletePart` and `CommutingWithG/Complete`, 0.05–0.06×;
+`LdSandwichLineOnePoint/OutcomeLemmas` 0.16×). The port costs 7.4 ms a line on M10 and 9.2 ms on
+M11, against 7.1 and 13.4 ms vendored. With `-Dtrace.profiler=true -Dtrace.profiler.threshold=1000`,
+one run per file on each side under the default asynchronous elaboration, two at a time at load
+1.8–2.5 (15:05–15:24 UTC), 21 ported declarations reach 1 s, all of them proofs, and none 3 s: the
+largest are `Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_facts` 2.82 s (2.03–2.15 s
+in its unit's runs at load 0.5–0.7), `Pasting.chernoffBernoulliMatrix` 2.22 s (vendored 4.39 s), the
+two private moves of `PaperMoveChain/Telescope` 1.96 and 1.84 s,
+`SelfImprovement.helperDeleteAClonedQuantity_abs_sub_moveOverVQuantity_le_sqrt_two_delta` 1.48 s and
+`SelfImprovement.selfImprovementHelper` 1.42 s. On the vendored side 121 declarations reach 1 s and
+twelve take more than 5 s, the largest 21.8 s. Eight of the twelve are classical lemmas the port
+imports prebuilt (`firstSwitcherooError_le_eighth_stage` 21.8 s,
+`ldSandwichLineOnePoint_endpoint_comm_error_le` 21.5 s, `fromHToGPaperTotalError_le` 20.6 s,
+`secondSwitcherooError_le_commutingWithGCompleteError` 15.4 s, …); the other four are ported, and
+take under 1 s here or are split: `commutativitySwitcheroo_ofCompleteSelfConsistency` (10.4 s),
+`fromHToGAdjacentStage_paperMoveChain` (10.3 s, split into the two moves above),
+`switcherooAggregateFourthTerm_once_commuted_contraction_left` (6.5 s) and
+`switcherooAggregateFourthTerm_split_contraction` (6.1 s). So the 5 s rule holds with a factor of
+about 1.8 to spare at load 2.5, and of more than 2 at the loads of the units' own runs; none of the
+106 files sets an option or raises a heartbeat limit.
 
 Declaration times depend on the machine's load, because under the default asynchronous
 elaboration the profiler reports a proof's wall time (`Elab.async`), and they are recorded with
@@ -1021,6 +1197,141 @@ expected at 0.8–1.5×, as every M1 file is; definition-heavy files are expecte
   `Fq params.next` and `Fq params` not unifying at instance transparency; `refine
   (SubMeas.postprocess_comp _ _ _).trans …` works. No file sets `respectTransparency` or raises a
   heartbeat limit, the vendored file-wide options included.
+
+**Departures in M10 and M11.**
+- **Sizes.** M10 came to 11.41k lines against 13.1–15.1k (r = 0.67) and M11 to 17.58k against
+  23.2–26.5k (r = 0.59), the cause being M3's and M7's: the vendored proofs restate placements in
+  every step and prove Kronecker identities entrywise. Against the rates M6 and M7 measured, which
+  put them at 8.4–10.5k and 15.2–19.0k, M11 is inside and M10 above, for two reasons: its headers
+  (87 lines a file against 56 vendored; the module docstrings record the translation, the dropped
+  files and the threaded hypotheses), and its definition and statement files, which port at about
+  1.0 as M4's did (`Theorems/Statements` r = 1.02, with the adapter; `PointConsistencyLiteral`
+  0.94, `SelfImprovementTop/FinalFields` 0.89). Both were ported in units of at most about 900
+  vendored lines, in dependency order: 21 for M10 and 44 for M11.
+- **`SelfImprovement/Theorems/Statements` departs from the per-file 2× rule of §4 item 3**, at 2.19×
+  (3.48 s against 1.59 s, minimum of three runs; 3.48–3.75 s against 1.59–2.00 s over the rounds).
+  It is a file of statement structures and definitions with almost no proofs, the case of
+  `MainInductionStep/Statements` (2.01×) and `Test/Defs` (2.97×): typeclass inference 1.34 s
+  against 0.30 s, spread over about thirty signatures on `K →L[ℂ] K` and `𝔓` at 0.08–0.19 s each
+  (`SelfImprovementConclusion` and `SelfImprovementFinalFields` the largest), with M10's adapter,
+  `of_isSummedSdp` and `isSummedSdp`, about 0.2 s of new content that has no vendored cost. M10 as
+  a whole is at 0.78×.
+- **M10 drops 8 vendored files, 3,980 lines, and replaces them by M9.** `MatrixRealization/` (7
+  files, 3,667 lines: the canonical block semidefinite program, Slater strong duality and the
+  saturation of the slack block) and `Theorems/Results/SdpMatrixBridge` (313 lines, the bridge to
+  `SdpStatementWithSlackness`, the only importer of `MatrixRealization/Canonical/{Saturated,
+  StrongDuality/Separation}`, and itself imported only by `HelperCompleteness/Bracketed`) are
+  replaced by M9's summed form through a two-part adapter of about 40 lines:
+  `SdpStatementWithSlackness.of_isSummedSdp` (Co `Theorems/Statements`, with its converse
+  `SdpOptimalPairWithSlackness.isSummedSdp`) and `sdp_statement_with_slackness params strategy hS`
+  (Co `HelperCompleteness/Bracketed`), which applies `Doubling.exists_isSummedSdp_A hS` to the
+  averaged point operators `A_g = E_u A^u_{g(u)}`. The consumers use exactly the three fields
+  `primalTotalOperator`, `dualFeasible` and `complementarySlackness`, per `g` (report §5.2,
+  Lemma 0), so the vendored structures keep their fields and the two base uses of slackness are
+  ported unchanged: (a) in `HelperCompleteness/InputSdp`, with `Z` on the left factor, and (c) in
+  `HelperSSC/Assembly`, with `Z` on the right. The pairing script reads only ported files, so the
+  dropped files and their declarations are recorded in the module docstring of Co `Bracketed`.
+  `Theorems/Thresholds/{Helper,Final}` (1,210 lines) are wholly classical and imported with no Co
+  file, as M3 imports `Polynomials.lean`, recorded in Co `SelfImprovement/Defs`.
+- **`NaimarkCore`, which M8 dropped, is replaced as an import of `SelfImprovement/Defs`** by Co
+  `MakingMeasurementsProjective/Projectivization` (the `ProjSubMeas` API and `zeroProjSubMeas`),
+  which brings the vendored `MakingMeasurementsProjective/Defs` through Co `Statements`; no
+  `NaimarkCore` declaration is named in `SelfImprovement` outside `MatrixRealization`. Of the
+  ported files' own declarations only `sdpPrimalObjective`, the real part of a matrix trace, is
+  not ported: the model has no trace and nothing consumes it. "Dropped" and "replaced" here and
+  for `SdpMatrixBridge` and `MatrixRealization/` mean that no Co declaration uses these files, which
+  a constant-closure walk over the built oleans confirms (no constant of these eight modules or of
+  the vendored `Bracketed` under `Co.SelfImprovement.selfImprovement` or `Co.Pasting.ldPasting`,
+  2026-10-02); all eight stay in the build's
+  import closure through the classical imports: `NaimarkCore` by Co `SelfImprovement/Defs` →
+  vendored `SelfImprovement/Defs` → `MakingMeasurementsProjective/NaimarkCore`, and `SdpMatrixBridge`
+  with the seven `MatrixRealization` modules by Co `AddInUStep34AndTransfer/{Factored,Selected,
+  Transfer,Variance}`, `AddInUPointConsistency` and `HelperSSC/Core`, each of which imports its
+  vendored counterpart for classical lemmas, each of which reaches vendored
+  `AddInUStep34AndTransfer/Factored` → vendored `HelperCompleteness/Bracketed` → `SdpMatrixBridge`
+  → `MatrixRealization/Canonical/Saturated` → … → `MatrixRealization/Base`. A later cleanup can
+  take them out of the closure by moving the classical declarations those imports serve
+  (`addInU_le_sqrt_of_factor_bounds_*` and `addInU_weighted_cauchy_schwarz` of vendored `Factored`,
+  `pointConsistencyAddInUSelection` of `AddInUPointConsistency`,
+  `helperOffDiagonalVarianceSwapSelection` of `HelperSSC/Core`, the definitions of
+  `SelfImprovement/Defs`, …) into modules that import neither `Bracketed` nor `NaimarkCore`.
+- **The in-core orthonormalization, and three threaded hypotheses.** The vendored
+  `MakingMeasurementsProjective.orthonormalization ψ permInvState isNormalized`
+  (`SelfImprovementTop/Core.lean:433–436`, finite-dimensional, at any `ζ ≥ 0`) is M8's Theorem G,
+  `MakingMeasurementsProjective.orthonormalization S hS hA Hhat ζ hζ`, at `ζ =
+  selfImprovementHelperError params eps delta`, which is positive by the new
+  `selfImprovementHelperError_pos` when `hd : 1 ≤ params.d`. So `selfImprovement` and
+  `selfImprovement_of_axisParallel_selfConsistency` take `hS hA hd` right after `strategy`, as M8
+  places `hS hA` right after `S`; `self_improvement_helper_with_slackness`,
+  `selfImprovementHelper`, `sdp_statement_with_slackness` and `sdp_slackness_measurement` take
+  `hS` alone, Theorem 10 needing the faithful trace of a finite pair and no orthonormalization.
+  Only the main branch (`eps ≤ 1`, `delta ≤ 1`, `d ≤ q`) of `selfImprovement` uses `hd`; the
+  large-error branches are the vendored ones. Nothing else in M10, and nothing in M11, takes a new
+  hypothesis: pasting neither orthonormalizes nor solves a semidefinite program, so, against the
+  expectation recorded under M4's departures, M11's statements carry neither `hS hA` nor `hd`. This
+  settles M2's and M8's open point, `ζ > 0` at the in-core call site, up to threading: M4's
+  `AnswerMainInductionHypothesis` carries `hS hA` but not `1 ≤ params.d`, so M12 threads `hd` as a
+  hypothesis on `params` (constant along the induction, which changes only `m`), M14 supplies it
+  from `SoundIn`, and M13 discharges `hS hA` for `D(M)`. The case `ζ = 0` is neither proved nor
+  needed.
+- **Swap and normalization uses.** All of them map to a keystone lemma or to an M3/M8 lemma that
+  has already dropped the hypothesis: in M10, 21 `permInvState`/`swap_ev` sites, one
+  `densityFixed` and about 30 `isNormalized`; in M11, the 17 vendored `permInvState`, `swap_ev`
+  and `densityFixed` sites (in `GHatFacts`, `Bernoulli/{Final,DegreeZero}`,
+  `CommutingWithG/Complete`, `SwitcherooCompletion`, `ComparisonLemmas/HAConsistency` and
+  `Core/LdGbcon`) and the normalization
+  arguments of `bipartiteConsError_uniform_le_one`, `bipartiteSSCError_uniform_le_one`,
+  `triangleSub_right` and `consRel_symm_of_density_fixed`. The residual mass of `HAConsistency`
+  and `DegreeZero`, a vendored entrywise Kronecker `ext` proof, is one rewrite with
+  `S.ev_L_eq_ev_R`. `hnorm` is dropped from `chernoffBernoulliMatrix` (which takes a `V : VecState
+  K` and `X : K →L[ℂ] K`, the matrix Chernoff estimate being a continuous-functional-calculus lift
+  of the scalar Hoeffding bound with no dimension factor), from `fromHToG_ofGHatFactsAndHalfSandwich`
+  and `fromHToG_ofGHatFacts`, and from the telescope they feed. No ported statement of either
+  stage carries a swap, density or normalization hypothesis.
+- **Narrowed to one carrier, or given the model**, by the rule of "Same-space and bipartite
+  quantities": M11's `qBipartiteLinearConsDefect` and its three lemmas (`LdSandwichLineOnePoint/
+  CSSetup`), the three bipartite lemmas of `LineInterpolation/Averaging`, the three bipartite
+  helpers of `LineInterpolation/BadMass`, `subMeasMass_restrict_add_not`
+  (`OverAllOutcomes/NonglobalDecomposition`) and `avgOver_subMeasMass_restrict_liftLeft_eq_sum_coeff`
+  (`OverAllOutcomes/Final`) take `(S : SymModel 𝔓 K)` in the vendored `ψ` position, with
+  local submeasurements; M10's `addInU_selected_filtered_tensor_sum_le_one` and
+  `addInU_selected_sandwich_tensor_if_sum_le` (`AddInUStep34AndTransfer/Selected`), whose vendored
+  statements name no state, take the model first, as `ψ` (`S` is the selection there). The
+  families that place without a strategy take `S` as their first explicit argument: the sixteen
+  of `Sandwich/Switcheroo`, the switcheroo and completion families, `fromHToGTailStageFamily`,
+  the four adjoint and raw families of `CSSetup` with `ldSandwichLineOnePointCS_Aord`/`_Arot`,
+  and M10's `helperUpperOperator S params Z` and `projectiveResidualOperator S params H Z`.
+- **State-free declarations are generic**: `gHatTypeOperator` and `truncatedTypeSums` (`[Ring
+  R]`), `bernoulliTailOperator` (`[Algebra ℂ R]`), `multiplyByTotalOn{Right,Left}`, the ring
+  identities of `Bernoulli/TruncatedSums`, the two functional-calculus identities of
+  `Bernoulli/MatrixChernoff` (any C*-algebra), `postprocessMeasurement` (`EndpointEquivs`), the two
+  lemmas of `LineInterpolation/BadLine` and four of `BadMass`, so that they serve `𝔓` and
+  `K →L[ℂ] K` alike; `bernoulliTailOperator_leftTensor` moves the Bernoulli tail through `S.L`.
+- **New declarations.** M10 has six, each under `New here`: `selfImprovementHelperError_pos`,
+  `SdpStatementWithSlackness.of_isSummedSdp` and `SdpOptimalPairWithSlackness.isSummedSdp` (the
+  adapter), and `addInU_sum_projection_sandwich_le_one`, `addInU_sum_fiber_collapse` and
+  `addInU_selected_sum_fiber_collapse`, steps the vendored `AddInUStep12` proofs repeat inline. M11
+  has none that the script counts, but `LineInterpolation/BadMass` adds two scoped instances,
+  `instDecidableEqFqFqNext` and `instDecidableEqFqNextFq` (priority low, each
+  `instDecidableEqFin _ x y`), deciding the comparisons between `Fq params` and `Fq params.next`
+  that the vendored files decide through their file-wide `respectTransparency`;
+  `OverAllOutcomes/NonglobalDecomposition` gets them by importing `BadMass`, and their natural home
+  is an earlier shared `Pasting` file, a cleanup. Private theorems: 9 in M10 and 7 in M11, among
+  them the split of long proofs for elaboration time: `selfImprovement` into
+  `selfImprovement_main`, `selfImprovement_totalDifference` and `helper_pointTransfer` (the last
+  shared with `selfImprovementHelper`), and `fromHToGAdjacentStage_paperMoveChain`
+  (`PaperMoveChain/Telescope`; 11.6 s vendored, over the 5 s rule, and 3.6 s ported before the
+  split) into `fromHToGAdjacentStage_moveA0M1` and `_moveM1M2`.
+- **Pitfalls for later stages.** Where `Fq params` and `Fq params.next` meet, `rw` fails with
+  "motive is not type correct" or "target not type-correct at implicit transparency" without the
+  vendored `respectTransparency`; write the step as an `Eq.trans`/`congrArg` term (`BadMass`,
+  `DegreeZero`). `Preliminaries.sddRel_symm` needs its state as `strategy.state.toVecState` and
+  both lifted families explicit (`HAConsistency`, `DegreeZero`); through the `CoeOut` the families
+  stay metavariables. `fun_prop` on the continuity side conditions of the functional calculus took
+  4–6.6 s a declaration in `MatrixChernoff`; explicit terms (`continuous_pow`,
+  `continuous_finsetSum`, `.continuousOn`) take a fraction of it. None of the 106 files sets an
+  option or raises a heartbeat limit, while every one of their vendored counterparts sets the
+  file-wide `respectTransparency false`.
 
 **Departures in M1.**
 - Helpers that take the state keep the ported file's namespace, with the model or the vector

@@ -63,6 +63,17 @@ inputs of the SDP producer that have no Co file are recorded here.
   `SdpMatrixBridge`, whose only importer is this file. It is replaced by Theorem 10
   (`MIPRE/Foundations/SummedSdp.lean`, `MIPRE/Background/Orthonormalization/SdpMaximizer.lean`).
 
+"Dropped" means that no Co declaration uses these files, which a constant-closure walk over the
+built oleans confirms. They stay in the build's import closure through the classical imports:
+Co `AddInUStep34AndTransfer/{Factored,Selected,Transfer,Variance}`, `AddInUPointConsistency` and
+`HelperSSC/Core` import their vendored counterparts for classical lemmas, and each of those reaches
+the vendored `AddInUStep34AndTransfer/Factored`, which imports the vendored version of this file,
+which imports `SdpMatrixBridge` and through it `MatrixRealization/Canonical/Saturated` …
+`MatrixRealization/Base`. Likewise `MakingMeasurementsProjective/NaimarkCore`, dropped by M8, stays
+in the closure through Co `SelfImprovement/Defs` → vendored `SelfImprovement/Defs`. Moving those
+classical declarations into modules that import neither would remove them
+(`planning/c6b-plan.md`, "Departures in M10 and M11").
+
 ## Not ported
 
 Every declaration of the vendored file has a counterpart here.

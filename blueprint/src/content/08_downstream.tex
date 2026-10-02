@@ -3960,6 +3960,136 @@ with no further hypothesis, and $27 \min(\eta, 1) \leq 100\, \eta^{1/4}$. The ca
 excluded because the hypothesis of Corollary~\ref{cor:orthonormalization-finite-pair} is strict.
 \end{proof}
 
+The two remaining sections of the vendored proof before its induction step are ported too
+(\texttt{planning/c6b-plan.md}, milestones M10 and M11), over the symmetric model and with the
+swap and normalization hypotheses of the vendored statements dropped: self-improvement, which
+turns a measurement consistent with the points into a projective one with the same consistency
+up to a fixed loss (Lemma~\ref{lem:co-self-improvement}), and pasting, which glues slice
+measurements in $m$ variables into a measurement in $m + 1$ (Lemma~\ref{lem:co-ld-pasting}).
+Self-improvement solves the semidefinite program of the vendored proof by its summed form
+(Theorem~\ref{thm:summed-sdp}) and rounds by orthonormalization in a symmetric model
+(Lemma~\ref{lem:co-orthonormalization}), where the vendored development uses finite-dimensional
+strong duality and the finite-dimensional rounding; so it asks of the model what those two ask,
+a finite pair without abelian projections in its first player's operators, and it asks $d \geq
+1$, which makes the error at which it rounds positive. In both lemmas $S$, the polynomials and
+the consistency defect $\mathrm{cons}$ are as in the four lemmas above.
+
+\begin{lemma}[Self-improvement, in a symmetric model]
+\label{lem:co-self-improvement}
+\uses{def:sym-model,def:finite-pair,lem:co-global-variance-of-points,lem:co-orthonormalization,
+  cor:summed-sdp-doubled}
+\lean{MIPRE.LIDT.Co.SelfImprovement.SdpStatementWithSlackness.of_isSummedSdp,
+  MIPRE.LIDT.Co.SelfImprovement.sdp_statement_with_slackness,
+  MIPRE.LIDT.Co.SelfImprovement.selfImprovementHelper,
+  MIPRE.LIDT.Co.SelfImprovement.selfImprovementHelperError_pos,
+  MIPRE.LIDT.Co.SelfImprovement.SelfImprovementConclusion,
+  MIPRE.LIDT.Co.SelfImprovement.selfImprovement,
+  MIPRE.LIDT.Co.SelfImprovement.selfImprovement_of_axisParallel_selfConsistency}
+\leanok
+Consider an $(\eps, \delta, \gamma)$-good symmetric strategy in $S$ for the low individual degree
+test, as in Lemma~\ref{lem:co-commutativity-points}, with point measurements $A^u$ in $\cal{P}$.
+Let the bipartite reading of $S$ be a finite pair (Definition~\ref{def:finite-pair}) whose first
+player's operators contain no nonzero abelian projection, and let $d \geq 1$. Let $G$ be a
+measurement in $\cal{P}$ whose outcomes are the polynomials, with $\E_u \mathrm{cons}(A^u,
+G^{[u]}) \leq \nu$ for a uniformly random point $u$, where $G^{[u]}$ is $G$ evaluated at $u$, and
+put
+\[
+  \sigma = 3000\, m \Bigl(\eps^{1/32} + \delta^{1/32} + \Bigl(\frac{d}{q}\Bigr)^{1/32}\Bigr).
+\]
+Then there are a projective submeasurement $H$ in $\cal{P}$ whose outcomes are the polynomials
+and $Z \geq 0$ in $\cal{P}$ with $\E_u A^u_{g(u)} \leq Z$ for every polynomial $g$, such that
+\begin{enumerate}
+  \item \emph{(completeness)} $\mathrm{ev}\bigl(L(H_{\mathrm{total}})\bigr) \geq 1 - \nu - \sigma$;
+  \item \emph{(consistency with the points)} $\E_u \mathrm{cons}(A^u, H^{[u]}) \leq \sigma$;
+  \item \emph{(self-closeness)} $\sum_g \| (L(H_g) - R(H_g)) \Psi \|^2 \leq \sigma$;
+  \item \emph{(boundedness)} $\mathrm{ev}\bigl(L(Z)\, R(1 - H_{\mathrm{total}})\bigr) \leq \sigma$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\uses{lem:co-switch-sandwich-self-consistency,lem:sym-model-swap}
+\leanok
+The proof is the vendored one, \texttt{MIPStarRE.LDT.SelfImprovement.selfImprovement} in
+\texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/}, rewritten over the symmetric model
+(\texttt{planning/c6b-plan.md}, milestone M10), with two of its inputs replaced. It first
+produces a submeasurement $\widehat{H}$ with the four properties at the error $\eta = 100\, m
+(\sqrt{\eps} + \sqrt{\delta} + \sqrt{d/q})$, $\widehat{H}$ being strongly self-consistent in place of
+self-close. The semidefinite program supplies a measurement $T$ whose outcomes are the polynomials
+and $Z \in \cal{P}$ with $Z \geq A_g = \E_u A^u_{g(u)}$ and $T_g Z = T_g A_g$ for every $g$, and
+$\widehat{H}_h = \E_u A^u_{h(u)} T_h A^u_{h(u)}$; the vendored proof obtains $T$ and $Z$ from
+finite-dimensional strong duality, and here they are the summed form of
+Theorem~\ref{thm:summed-sdp} in the first player's algebra of the finite pair
+(Corollary~\ref{cor:summed-sdp-doubled}), whose fields are exactly the three the proof consumes.
+The four properties of $\widehat{H}$ are Cauchy--Schwarz estimates for the vector state, with the
+global variance of the points (Lemma~\ref{lem:co-global-variance-of-points}) bounding the cost of
+moving $u$. Since $d \geq 1$, $\eta > 0$, and orthonormalization
+(Lemma~\ref{lem:co-orthonormalization}, item~2) rounds $\widehat{H}$ to a projective $H$ at the
+error $100\, \eta^{1/4}$, where the vendored proof rounds in finite dimension at any $\eta \geq
+0$. Data processing and the completeness transfers of
+Lemma~\ref{lem:co-switch-sandwich-self-consistency} carry the four properties from $\widehat{H}$ to
+$H$, and the accumulated error is at most $\sigma$. When $\eps$, $\delta$ or $d/q$ exceeds $1$,
+$\sigma \geq 1$ and $H = 0$, $Z = 1$ will do. Where the vendored proof uses the permutation
+invariance of the state, the port uses $\mathrm{ev}(L(x)) = \mathrm{ev}(R(x))$
+(Lemma~\ref{lem:sym-model-swap}).
+\end{proof}
+
+\begin{lemma}[Pasting, in a symmetric model]
+\label{lem:co-ld-pasting}
+\uses{def:sym-model,lem:co-commutation-g}
+\lean{MIPRE.LIDT.Co.Pasting.chernoffBernoulliMatrix,
+  MIPRE.LIDT.Co.Pasting.LdPastingConclusion,
+  MIPRE.LIDT.Co.Pasting.ldPastingNCompleteness,
+  MIPRE.LIDT.Co.Pasting.ldPastingSubMeas,
+  MIPRE.LIDT.Co.Pasting.ldPastingNontrivial,
+  MIPRE.LIDT.Co.Pasting.ldPasting}
+\leanok
+Consider an $(\eps, \delta, \gamma)$-good symmetric strategy in $S$ for the low individual degree
+test in $m + 1$ variables, with point measurements $A^w$ in $\cal{P}$ for $w = (u, x) \in
+\Fq^{m+1}$. For each $x \in \Fq$ let $G^x$ be a projective submeasurement in $\cal{P}$ whose
+outcomes are the polynomials in $m$ variables, and $Z^x \in \cal{P}$. Suppose that for some
+$\kappa$ and $\eta$:
+\begin{enumerate}
+  \item \emph{(completeness)} $\mathrm{ev}\bigl(L(\E_x G^x_{\mathrm{total}})\bigr) \geq 1 - \kappa$;
+  \item \emph{(consistency with the points)} $\E_{(u, x)} \mathrm{cons}\bigl(A^{(u, x)},
+    G^{x, [u]}\bigr) \leq \eta$;
+  \item \emph{(strong self-consistency)} $\E_x \sum_g \| (L(G^x_g) - R(G^x_g)) \Psi \|^2 \leq
+    \eta$;
+  \item \emph{(boundedness)} $Z^x \geq 0$ and $\E_u A^{(u, x)}_{g(u)} \leq Z^x$ for all $x$ and
+    $g$, and $\E_x \mathrm{ev}\bigl(L(1 - G^x_{\mathrm{total}})\, R(Z^x)\bigr) \leq \eta$;
+\end{enumerate}
+with uniformly random $u$ and $x$. Then for every $k \geq 400\, m d$ there is a measurement $H$ in
+$\cal{P}$ whose outcomes are the polynomials in $m + 1$ variables with
+\[
+  \E_w \mathrm{cons}\bigl(A^w, H^{[w]}\bigr) \leq \kappa \Bigl(1 + \frac{1}{100 m}\Bigr) + 2 \nu +
+  e^{-k / (80000 m^2)}, \qquad \nu = 100\, k^2 m \Bigl(\eps^{1/32} + \delta^{1/32} +
+  \gamma^{1/32} + \eta^{1/32} + \Bigl(\frac{d}{q}\Bigr)^{1/32}\Bigr),
+\]
+for a uniformly random point $w \in \Fq^{m+1}$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:co-switch-sandwich-self-consistency,lem:sym-model-swap}
+\leanok
+The proof is the vendored one, \texttt{MIPStarRE.LDT.Pasting.ldPasting} in
+\texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/}, rewritten over the symmetric model
+(\texttt{planning/c6b-plan.md}, milestone M11). For $k$ distinct heights $x_1, \dots, x_k$ the
+sandwiched product $G^{x_1}_{g_1} \dots G^{x_k}_{g_k} \dots G^{x_1}_{g_1}$ is a submeasurement
+in $\cal{P}$, and $H$ interpolates the tuples $(g_1, \dots, g_k)$ that at least $d + 1$ slices
+answer and that agree with one polynomial in $m + 1$ variables; the missing mass goes to one
+fixed outcome. Consistency with the points is a chain of comparisons, each a Cauchy--Schwarz
+estimate for the vector state: the slice measurements commute approximately
+(Lemma~\ref{lem:co-commutation-g}), so a slice can be moved through the sandwich; a line through
+the heights is consistent with the interpolant except on a set of tuples of small mass; and the
+tuples that miss interpolation are at most a binomial tail in the averaged complete operator
+$\E_x G^x_{\mathrm{total}}$. The vendored proof bounds that tail by a matrix Chernoff estimate,
+which is the scalar Hoeffding bound lifted through the continuous functional calculus with no
+factor of the dimension, and holds verbatim for an operator on $K$ in a vector state. When $k =
+0$, or $\gamma$, $\eta$ or $d/q$ exceeds $1$, the bound is at least $1$; when $d = 0$, $H$ is
+built from the average of the slices, each read as a polynomial in $m + 1$ variables. Where the vendored proof uses the permutation
+invariance of the state, the port uses $\mathrm{ev}(L(x)) = \mathrm{ev}(R(x))$
+(Lemma~\ref{lem:sym-model-swap}).
+\end{proof}
+
 \subsection{Further directions}
 
 \begin{remark}
