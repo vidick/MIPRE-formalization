@@ -69,10 +69,20 @@ LeanSearch available.
 
    Since Mathlib v4.35 its cache tool downloads from `cache.mathlib.org`; the legacy
    Azure host `lakecache.blob.core.windows.net` still serves the same archives, and
-   `MATHLIB_CACHE_DEBUG_USE_LEGACY=1` selects it. The setup script and the hook try the
-   legacy host first, then the default, so an environment created before this line was
-   added keeps working until the legacy host is retired (found on 2026-09-28, when the
-   bump to v4.35.0-rc3 stalled on 403s from the proxy for the new host).
+   `MATHLIB_CACHE_DEBUG_USE_LEGACY=1` selects it (found on 2026-09-28, when the bump to
+   v4.35.0-rc3 stalled on 403s from the proxy for the new host). Mathlib keeps that
+   switch for troubleshooting only and means to retire it together with direct reads
+   from Azure, so `cache.mathlib.org` is the host that has to be allowed and the legacy
+   one is a fallback.
+
+   The setup script and the hook decide the order with one request: they ask
+   `cache.mathlib.org` for a file it cannot have. A 404 is the host itself answering,
+   and it is then tried first, the legacy host second. Anything else — the network
+   policy answers 403 for a host it does not allow — and the legacy host is tried
+   first, because a refused host fails on every one of some 9000 files before the
+   other gets its turn. So an environment that does not allow `cache.mathlib.org` yet
+   keeps working until the legacy host is retired, and every session in it opens with
+   a note saying so.
 
    GitHub needs nothing added. `github.com`, `codeload.github.com`,
    `objects.githubusercontent.com` and `release-assets.githubusercontent.com` are
@@ -105,7 +115,8 @@ the script has to be pasted by hand into a web form, so they can drift apart. Bo
 halves now say so rather than leaving it to be noticed:
 
 * The script writes `/opt/warm/SETUP-STAMP` (what branch, commit, toolchain and
-  Mathlib pin the snapshot was built from, the sha256 of both the pasted text and
+  Mathlib pin the snapshot was built from, what `cache.mathlib.org` answered to the
+  probe, the sha256 of both the pasted text and
   the repository's `.claude/cloud-setup.sh`, which bundle it fetched and how many
   modules are in place) and
   `/opt/warm/SETUP-REPORT.txt` (every step, timestamped — read this first when
@@ -113,9 +124,11 @@ halves now say so rather than leaving it to be noticed:
 * The hook compares them against the checkout at every session start and prints,
   in its `lean-warm:` line, how many MIPRE modules are prebuilt out of how many
   exist. It adds a note when `.claude/cloud-setup.sh` has changed since the
-  snapshot was built (re-save needed), and another when the text pasted into the
+  snapshot was built (re-save needed), another when the text pasted into the
   environment is not the repository's copy at all (which is how the toolchain
-  override and the pre-build went missing).
+  override and the pre-build went missing), and a third when the stamp's
+  `default-cache-probe` is 403: the network policy refused `cache.mathlib.org`, so
+  setup fell back to the legacy cache host and the host is still to be allowed.
 
 So a healthy session opens with one line naming the Lean version and a module
 count close to the total, and no notes. A count of zero means the bundle did not
@@ -170,6 +183,17 @@ enable lean-lsp-mcp's local Loogle (13 GiB peak).
   `lean-toolchain`, so after a bump re-save the environment's setup script (any
   edit, even a comment) to trigger a rebuild. The hook refuses to use the warm
   clone when the checkout wants another Lean version than the snapshot has.
+* **The Mathlib cache fails to download**: `Downloaded: 0 file(s)` on every
+  progress line, then `Warning: some files were not found in the cache` and
+  `8943 download(s) failed`, one per Mathlib file, is what a cache host refused by
+  the network policy looks like: the proxy answers 403 to every request, and the
+  warning's guess that the checkout "has diverged from upstream" is beside the
+  point. Check the allowed hosts against the list above; `default-cache-probe` in
+  `SETUP-STAMP` is what `cache.mathlib.org` answered when the snapshot was built,
+  and 404 is the healthy value. An environment still running an early copy of the
+  setup script, one plain `lake exe cache get` under `set -e`, failed this way on
+  2026-10-01, three days after the bump to v4.35.0-rc3 — and with a non-zero exit,
+  so no session started.
 * **Toolchain download fails**: the script tries `TOOLCHAIN_URL`, then
   `releases.lean-lang.org`, then the direct `github.com` release URL, logging each
   attempt. All three end at a release asset of `leanprover/lean4`; that download

@@ -32,8 +32,9 @@
 #   release.lean-lang.org             Lean release index
 #   cache.mathlib.org                 Mathlib olean cache (~7 GB unpacked), the
 #                                     default host since Mathlib v4.35
-#   lakecache.blob.core.windows.net   the same cache on its legacy host, used with
-#                                     MATHLIB_CACHE_DEBUG_USE_LEGACY=1 (tried first)
+#   lakecache.blob.core.windows.net   the same cache on its legacy host, read with
+#                                     MATHLIB_CACHE_DEBUG_USE_LEGACY=1: the fallback,
+#                                     tried first only if the default is refused
 #   loogle.lean-lang.org              \
 #   leansearch.net                     | lean-lsp-mcp search tools
 #   premise-search.com                 |
@@ -89,12 +90,23 @@ mathlib_rev() {
     | sed -n 's/.*"rev": "\([0-9a-f]*\)".*/\1/p' | head -1
 }
 
+# What Mathlib's default cache host answers, from this VM, to a request for a file
+# it cannot have: 404 when it is the host itself that answers, 403 when the network
+# policy does not allow the host, 000 when nothing answers at all.
+# Kept identical in .claude/hooks/lean-warm.sh.
+default_cache_probe() {
+  curl -s -o /dev/null -m 10 -w '%{http_code}' \
+    https://cache.mathlib.org/mathlib4-master/f/0000000000000000.ltar 2>/dev/null
+}
+
 # What this snapshot was built from, so that .claude/hooks/lean-warm.sh can tell a
 # session at startup whether the snapshot is still in step with the repository —
 # drift that is otherwise invisible until something is slow or broken.
 # `pasted-script-sha256` is the text actually pasted into the environment box, when
 # the shell lets us read it; `repo-script-sha256` is .claude/cloud-setup.sh as
 # committed on BRANCH. Their differing means the pasted copy is not the repo's.
+# `default-cache-probe` is what default_cache_probe answered: 404 is the healthy
+# value, and 403 means cache.mathlib.org is missing from the allowed hosts.
 stamp() {
   SELF="${BASH_SOURCE[0]:-$0}"
   {
@@ -103,6 +115,7 @@ stamp() {
     echo "commit: $(git -C "$WARM" rev-parse --short HEAD 2>/dev/null)"
     echo "toolchain: ${LEAN:-unknown}"
     echo "mathlib: $(mathlib_rev "$WARM/lake-manifest.json")"
+    echo "default-cache-probe: ${PROBE:-untested}"
     echo "repo-script-sha256: $(sha256sum "$WARM/.claude/cloud-setup.sh" 2>/dev/null | cut -d' ' -f1)"
     [ -r "$SELF" ] && echo "pasted-script-sha256: $(sha256sum "$SELF" | cut -d' ' -f1)"
     echo "mipre-oleans: $(find "$WARM/.lake/build/lib" -name '*.olean' 2>/dev/null | wc -l)"
@@ -167,13 +180,24 @@ log "installed $(lean --version 2>&1 | head -1)"
 #    built here is Mathlib's own `cache` executable.
 cd "$WARM" || bail "cannot enter $WARM"
 log "fetching dependencies and the Mathlib olean cache"
-#    Mathlib's cache tool downloads from cache.mathlib.org since v4.35; the legacy
-#    Azure host still serves the same archives and is tried first because it is
-#    the one this environment has allowed the longest. A blocked host fails with
-#    403 from the proxy on every file, so the wrong order costs the whole budget.
-MATHLIB_CACHE_DEBUG_USE_LEGACY=1 lake exe cache get \
-  || lake exe cache get \
-  || bail "lake exe cache get failed — allow cache.mathlib.org (or lakecache.blob.core.windows.net)"
+#    Mathlib's cache tool reads cache.mathlib.org since v4.35. The legacy Azure host
+#    still serves the same archives under MATHLIB_CACHE_DEBUG_USE_LEGACY=1, but
+#    Mathlib keeps that switch for troubleshooting only and means to retire it with
+#    direct reads from Azure. So the default host goes first and the legacy host is
+#    the fallback — unless the network policy refuses the default host. A refused
+#    host fails with 403 from the proxy on every file, so trying it first costs the
+#    whole budget; the probe costs one request, and then the legacy host goes first.
+PROBE=$(default_cache_probe)
+if [ "$PROBE" = 404 ]; then
+  lake exe cache get \
+    || MATHLIB_CACHE_DEBUG_USE_LEGACY=1 lake exe cache get \
+    || bail "lake exe cache get failed from cache.mathlib.org and from the legacy host"
+else
+  log "cache.mathlib.org answered $PROBE, not 404 (403: the network policy refuses it, add it to the allowed hosts); legacy host first"
+  MATHLIB_CACHE_DEBUG_USE_LEGACY=1 lake exe cache get \
+    || lake exe cache get \
+    || bail "lake exe cache get failed — allow cache.mathlib.org (or lakecache.blob.core.windows.net)"
+fi
 log "Mathlib in place: $(find .lake/packages/mathlib/.lake/build/lib -name '*.olean' 2>/dev/null | wc -l) oleans, $(du -sh .lake 2>/dev/null | cut -f1) on disk, $(left)s of the deadline left"
 
 # 4. This repository's own compiled modules, as a bundle. Lake's traces are

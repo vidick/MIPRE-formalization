@@ -70,7 +70,8 @@ Then fetch dependencies and Mathlib's compiled artifacts through the wrapper:
 ```
 
 `Cache` invokes `lake exe cache get` from this repository, preserving its manifest
-pins. GitHub and `lakecache.blob.core.windows.net` must be reachable. The first run
+pins. GitHub and `cache.mathlib.org` must be reachable (Mathlib's cache host since
+v4.35; before that it was `lakecache.blob.core.windows.net`). The first run
 checks out dependencies and compiles the small cache utility; it does not need a
 source build of Mathlib. Allow ample disk space for the toolchain, dependency
 sources, compressed cache downloads, and unpacked artifacts.
