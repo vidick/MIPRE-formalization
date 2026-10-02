@@ -23,6 +23,15 @@ mathlib_rev() {
     | sed -n 's/.*"rev": "\([0-9a-f]*\)".*/\1/p' | head -1
 }
 
+# What Mathlib's default cache host answers, from this VM, to a request for a file
+# it cannot have: 404 when it is the host itself that answers, 403 when the network
+# policy does not allow the host, 000 when nothing answers at all.
+# Kept identical in .claude/cloud-setup.sh.
+default_cache_probe() {
+  curl -s -o /dev/null -m 10 -w '%{http_code}' \
+    https://cache.mathlib.org/mathlib4-master/f/0000000000000000.ltar 2>/dev/null
+}
+
 if ! command -v lake >/dev/null 2>&1 || [ ! -d "$WARM/.lake" ]; then
   echo "lean-warm: no Lean/Mathlib environment on this VM (the cloud environment's setup script has not been applied). Do NOT install Lean or build Mathlib in this session unless the network policy allows the toolchain and cache hosts; see docs/lean-cloud.md."
   exit 0
@@ -56,10 +65,13 @@ have_rev=$(sed -n 's/^mathlib: //p' "$STAMP" 2>/dev/null)
 if [ -n "$want_rev" ] && [ "$want_rev" = "$have_rev" ]; then
   mathlib_note=""
 else
-  # The legacy host first, then the default (cache.mathlib.org since Mathlib
-  # v4.35); see .claude/cloud-setup.sh.
-  ( cd "$HERE" && ( MATHLIB_CACHE_DEBUG_USE_LEGACY=1 lake exe cache get \
-      || lake exe cache get ) >/dev/null 2>&1 ) || true
+  # The default host (cache.mathlib.org since Mathlib v4.35) first when it answers,
+  # the legacy host first when it does not; see .claude/cloud-setup.sh.
+  ( cd "$HERE" && if [ "$(default_cache_probe)" = 404 ]; then
+      lake exe cache get || MATHLIB_CACHE_DEBUG_USE_LEGACY=1 lake exe cache get
+    else
+      MATHLIB_CACHE_DEBUG_USE_LEGACY=1 lake exe cache get || lake exe cache get
+    fi >/dev/null 2>&1 ) || true
   mathlib_note=" Mathlib pin moved since the snapshot, so its oleans were refetched."
 fi
 
@@ -96,6 +108,12 @@ if [ -n "$repo_sha" ] && [ -n "$here_sha" ] && [ "$repo_sha" != "$here_sha" ]; t
 fi
 if [ -n "$pasted_sha" ] && [ -n "$repo_sha" ] && [ "$pasted_sha" != "$repo_sha" ]; then
   echo "lean-warm: NOTE the script pasted into the environment is not the repository's .claude/cloud-setup.sh. Paste the repository's copy so the two cannot drift apart."
+fi
+# And one between the environment and Mathlib: the network policy refused the
+# default cache host, so setup went to the legacy one. Nothing is wrong yet, and
+# nothing else would say so before the legacy host is retired.
+if [ "$(sed -n 's/^default-cache-probe: //p' "$STAMP" 2>/dev/null)" = 403 ]; then
+  echo "lean-warm: NOTE the network policy refused cache.mathlib.org when this snapshot was built, so setup fell back to the legacy cache host, which Mathlib means to retire. Ask the user to add cache.mathlib.org to the environment's allowed hosts; see docs/lean-cloud.md."
 fi
 
 echo "lean-warm: Lean ${installed:-?} + Mathlib ready for $HERE (LEAN_PROJECT_PATH); $warm_note.${mathlib_note} Iterate with the lean-lsp MCP tools (lean_diagnostic_messages, lean_goal, lean_multi_attempt): seconds per cycle, and they see edits without a build. Confirm a module with 'lake build MIPRE.<Module>' — seconds when its imports are built. Never 'lake build' on Mathlib, never 'lake update', and never 'lake clean' (.lake is shared with the snapshot: it would delete Mathlib's 7.6 GB too). Scratch files go in Scratch/."
