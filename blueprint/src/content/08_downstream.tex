@@ -3226,7 +3226,7 @@ again a dyadic pair. This is the form the orthonormalization sites of the port c
 hypothesis beyond the class (\texttt{reports/c6b-paper-proofs.md}, Section~3.7).
 \end{proof}
 
-The port has begun (\texttt{planning/c6b-plan.md}, Section~3, milestones M0, M1, M2, M3, M5 and M9). It replaces the
+The port has begun (\texttt{planning/c6b-plan.md}, Section~3, milestones M0 to M9). It replaces the
 vendored state on $\C^\iota \otimes \C^\iota$, and the swap hypotheses that come with it, by a
 \emph{symmetric model} (Definition~\ref{def:sym-model}), in which swap symmetry is a theorem
 (Lemma~\ref{lem:sym-model-swap}), and rewrites the vendored proof over it file by file, under
@@ -3766,6 +3766,198 @@ is $\sum_u \| (A^u - \E_v A^v) \Psi \|^2 = q^m V_{\mathrm{glob}}$, and $g q^m = 
 (\texttt{planning/c6b-plan.md}, milestone M5). The expectations are those of the vector state read
 as a state model (Definition~\ref{def:bipartite-model}). The matrix realization of the vendored
 development is not ported.
+\end{proof}
+
+Four further sections of the vendored proof are ported (\texttt{planning/c6b-plan.md}, milestones
+M4, M6, M7 and M8), each over the symmetric model and with the swap and normalization hypotheses of
+the vendored statements dropped: the definitions and statements of the main induction step, with
+the Schwartz--Zippel step of the vendored main theorem, which passes from consistency on points to
+consistency of whole polynomials (Lemma~\ref{lem:co-schwartz-zippel-step}); the global variance of
+the points (Lemma~\ref{lem:co-global-variance-of-points}); the commutation of the slice measurements
+(Lemma~\ref{lem:co-commutation-g}); and orthonormalization in a symmetric model
+(Lemma~\ref{lem:co-orthonormalization}), whose rounding to projective measurements calls de la
+Salle's theorem (Corollaries~\ref{cor:orthonormalization-finite-pair}
+and~\ref{cor:orthonormalization-dyadic-pair}) in place of the vendored finite-dimensional route.
+
+In these four lemmas $S$ is a symmetric model over $\cal{P}$ (Definition~\ref{def:sym-model}), with
+state $\Psi$, expectation $\mathrm{ev}$ and placements $L$ and $R$; a \emph{polynomial} is a map $g :
+\Fq^m \to \Fq$ of individual degree at most $d$, for the parameters $q$, $m$ and $d$ of the
+low individual degree test of Theorem~\ref{thm:lidt-cl-soundness}; and for submeasurements $A$ and
+$B$ in $\cal{P}$ with the same outcomes and totals $A_{\mathrm{total}} = \sum_a A_a$ and
+$B_{\mathrm{total}}$, their \emph{consistency defect} is
+\[
+  \mathrm{cons}(A, B) = \max\Bigl(0,\ \mathrm{ev}\bigl(L(A_{\mathrm{total}})\,
+  R(B_{\mathrm{total}})\bigr) - \sum_a \mathrm{ev}\bigl(L(A_a)\, R(B_a)\bigr)\Bigr),
+\]
+which is $\max(0, \sum_{a \neq b} \mathrm{ev}(L(A_a)\, R(B_b)))$.
+
+\begin{lemma}[The Schwartz--Zippel step, in a symmetric model]
+\label{lem:co-schwartz-zippel-step}
+\uses{def:sym-model}
+\lean{MIPRE.LIDT.Co.Test.MainFormalStep5ExpansionBound,
+  MIPRE.LIDT.Co.Test.mainFormalStep5_expansionBound,
+  MIPRE.LIDT.Co.Test.mainFormalStep5_selfConsistency_ofExpansionBound,
+  MIPRE.LIDT.Co.Test.mainFormalStep5_selfConsistency_ofExpansionBound_heterogeneous}
+\leanok
+Let $G$ and $H$ be submeasurements in $\cal{P}$ whose outcomes are the polynomials, and for a point
+$u \in \Fq^m$ let $G^{[u]}$ be $G$ evaluated at $u$, $G^{[u]}_a = \sum_{g : g(u) = a} G_g$, and
+likewise $H^{[u]}$. If $\E_u \mathrm{cons}(G^{[u]}, H^{[u]}) \leq \eta$ for a uniformly random
+point $u$, then
+\[
+  \mathrm{cons}(G, H) \leq \eta + \frac{md}{q}.
+\]
+\end{lemma}
+
+\begin{proof}
+\leanok
+The proof is the vendored one, \texttt{MIPStarRE.LDT.Test.mainFormalStep5\_selfConsistency\_ofExpansionBound}
+in \texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/Test/SchwartzZippelStep.lean}, rewritten over the
+symmetric model (\texttt{planning/c6b-plan.md}, milestone M4). Evaluating at $u$ leaves the totals
+unchanged and adds to the matched mass the pairs $g \neq h$ with $g(u) = h(u)$, so
+\[
+  \mathrm{cons}(G, H) \leq \E_u \mathrm{cons}(G^{[u]}, H^{[u]}) + \sum_{g \neq h} \Pr_u\bigl[g(u)
+  = h(u)\bigr]\, \mathrm{ev}\bigl(L(G_g)\, R(H_h)\bigr).
+\]
+Two distinct polynomials of individual degree at most $d$ in $m$ variables agree on at most a
+fraction $md/q$ of the points, by the Schwartz--Zippel bound of the vendored classical layer, which
+is imported; and the $\mathrm{ev}(L(G_g)\, R(H_h))$ are nonnegative, $L(G_g)$ and $R(H_h)$ being
+commuting positive operators, with sum at most $1$. The definitions ported with this step (the
+restricted strategies of the main induction step, the slice families with their completeness,
+consistency, strong self-consistency and boundedness, and the statements of the induction step)
+are definitions, without proofs.
+\end{proof}
+
+\begin{lemma}[Global variance of the points, in a symmetric model]
+\label{lem:co-global-variance-of-points}
+\uses{def:sym-model,lem:co-local-to-global}
+\lean{MIPRE.LIDT.Co.GlobalVariance.weightedPointConditionedOperatorAtPolynomial,
+  MIPRE.LIDT.Co.GlobalVariance.GlobalVarianceOfPointsStatement,
+  MIPRE.LIDT.Co.GlobalVariance.localVarianceTransportChainBound,
+  MIPRE.LIDT.Co.GlobalVariance.globalVarianceOfPoints}
+\leanok
+Consider an $(\eps, \delta, \gamma)$-good symmetric strategy in $S$ for the low individual degree
+test, as in Lemma~\ref{lem:co-commutativity-points}, with point measurements $A^u$ in $\cal{P}$,
+and let $G$ be a submeasurement in $\cal{P}$ whose outcomes are the polynomials. For a polynomial
+$g$ and a point $u$ put $W^u_g = L(A^u_{g(u)})\, R(\sqrt{G_g})$. Then for every polynomial $g$
+\[
+  \E_{(u, v)} \bigl\| (W^u_g - W^v_g) \Psi \bigr\|^2 \leq 6 \Bigl(4 \eps + 4 \delta + \frac{2md}{q}
+  \Bigr), \qquad \E_{u, v} \bigl\| (W^u_g - W^v_g) \Psi \bigr\|^2 \leq 24\, m \Bigl(\eps + \delta +
+  \frac{md}{q}\Bigr),
+\]
+where on the left $u$ is a uniformly random point and $v$ is $u$ with a uniformly random coordinate
+replaced by a uniformly random element of $\Fq$, and on the right $u$ and $v$ are independent
+uniformly random points.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:co-switch-sandwich-self-consistency}
+\leanok
+The proof is the vendored one, \texttt{MIPStarRE.LDT.GlobalVariance.globalVarianceOfPoints} in
+\texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/}, rewritten over the symmetric model
+(\texttt{planning/c6b-plan.md}, milestone M6). Six comparisons carry $W^u_g$ to $W^v_g$ along an
+edge, each an averaged squared distance: the self-consistency test ($2\delta$), the axis-parallel
+test ($2\eps$), the Schwartz--Zippel bound for the line through $u$ and $v$ ($md/q$, twice), and
+the first two undone at $v$ ($2\eps$, $2\delta$); the triangle inequality for six steps loses a
+factor $6$. The global bound is Lemma~\ref{lem:co-local-to-global} for the family $u \mapsto
+W^u_g$, which costs the factor $m$, with $6 (4\eps + 4\delta + 2md/q) \leq 24 (\eps + \delta +
+md/q)$. The vendored proof evaluates these variances on the weighted state $R(\sqrt{G_g})\, \rho\,
+R(\sqrt{G_g})$, which is not normalized; a vector state has no density, so here they are the
+variances of the weighted family on $\Psi$ itself, the same numbers. The consistency relations are
+used in both orders, which in a symmetric model is a theorem
+(Lemma~\ref{lem:sym-model-swap}).
+\end{proof}
+
+\begin{lemma}[Commutation of the slice measurements, in a symmetric model]
+\label{lem:co-commutation-g}
+\uses{def:sym-model,lem:co-commutativity-points}
+\lean{MIPRE.LIDT.Co.Commutativity.commDataProcessedG_of_commutativityPoints,
+  MIPRE.LIDT.Co.Commutativity.commDataProcessedG,
+  MIPRE.LIDT.Co.Commutativity.comMain_of_commutativityPoints,
+  MIPRE.LIDT.Co.Commutativity.comMain}
+\leanok
+Consider an $(\eps, \delta, \gamma)$-good symmetric strategy in $S$ for the low individual degree
+test in $m + 1$ variables, with point measurements $A^w$ in $\cal{P}$ for $w \in \Fq^{m+1}$,
+written $w = (u, x)$ with $u \in \Fq^m$ and $x \in \Fq$. For each $x \in \Fq$ let $G^x$ be a
+projective submeasurement in $\cal{P}$ whose outcomes are the polynomials, and $Z^x \in \cal{P}$.
+Suppose that for some $\eta$:
+\begin{enumerate}
+  \item \emph{(consistency with the points)} $\E_{(u, x)} \mathrm{cons}\bigl(A^{(u, x)},
+    G^{x, [u]}\bigr) \leq \eta$, where $G^{x, [u]}$ is $G^x$ evaluated at $u$;
+  \item \emph{(strong self-consistency)} $\E_x \sum_g \| (L(G^x_g) - R(G^x_g)) \Psi \|^2 \leq
+    \eta$;
+  \item \emph{(boundedness)} $Z^x \geq 0$ and $\E_u A^{(u, x)}_{g(u)} \leq Z^x$ for all $x$ and
+    $g$, and $\E_x \mathrm{ev}\bigl(L(1 - G^x_{\mathrm{total}})\, R(Z^x)\bigr) \leq \eta$;
+\end{enumerate}
+with uniformly random $u$ and $x$. Then, for independent uniformly random $x, y \in \Fq$,
+\[
+  \E_{x, y} \sum_{g, h} \bigl\| L\bigl(G^x_g G^y_h - G^y_h G^x_g\bigr) \Psi \bigr\|^2 \leq 30\, m
+  \Bigl(\gamma^{1/4} + \eta^{1/4} + \Bigl(\frac{d}{q}\Bigr)^{1/4}\Bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+\uses{lem:co-switch-sandwich-self-consistency,lem:sym-model-swap}
+\leanok
+The proof is the vendored one, \texttt{MIPStarRE.LDT.Commutativity.comMain} in
+\texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/}, rewritten over the symmetric model
+(\texttt{planning/c6b-plan.md}, milestone M7). It first bounds the commutators of the evaluated
+slice measurements $G^x_{[g(u) = a]}$ and $G^y_{[h(v) = b]}$, on average over two points $(u, x)$
+and $(v, y)$, by $48\, m (\gamma^{1/2} + \eta^{1/2})$: a chain of comparisons, each a
+Cauchy--Schwarz estimate for the vector state, inserts the point measurements next to the slice
+measurements by consistency, exchanges the two points by the commutativity of points
+(Lemma~\ref{lem:co-commutativity-points}) and removes them again, the boundedness controlling the
+mass that $G^x$ loses. It then passes from the evaluated to the full slice measurements: two
+distinct polynomials agree at a random point with probability at most $md/q$, so the evaluation
+loses at most that collision mass, and the closeness estimates of
+Lemma~\ref{lem:co-switch-sandwich-self-consistency} turn the bound into the displayed one, with its
+fourth roots. Where the vendored proof uses the permutation invariance of the state, the port uses
+$\mathrm{ev}(L(x)) = \mathrm{ev}(R(x))$ (Lemma~\ref{lem:sym-model-swap}).
+\end{proof}
+
+\begin{lemma}[Orthonormalization, in a symmetric model]
+\label{lem:co-orthonormalization}
+\uses{def:sym-model,def:finite-pair,def:dyadic-pair}
+\lean{MIPRE.LIDT.Co.MakingMeasurementsProjective.leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul,
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalizationMainLemma,
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalization,
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalizationMeasurement_of_consistency_from_projectivizationRepair_heterogeneous,
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalizationMeasurement_right_of_consistency_from_projectivizationRepair_heterogeneous}
+\leanok
+Let $\eta > 0$, and let the bipartite reading of $S$ (Definition~\ref{def:sym-model}) be a finite
+pair (Definition~\ref{def:finite-pair}) whose first player's operators contain no nonzero abelian
+projection.
+\begin{enumerate}
+  \item If $A$ and $B$ are measurements in $\cal{P}$ with $\mathrm{cons}(A, B) \leq \eta$, there
+    is a projective submeasurement $P$ in $\cal{P}$ with $\sum_a \| L(A_a - P_a) \Psi \|^2 \leq 84\,
+    \eta^{1/4}$.
+  \item If $A$ is a submeasurement in $\cal{P}$ with $\max(0, \mathrm{ev}(L(A_{\mathrm{total}})) -
+    \sum_a \mathrm{ev}(L(A_a)\, R(A_a))) \leq \eta$, there is a projective submeasurement $P$ in
+    $\cal{P}$ with $\sum_a \| L(A_a - P_a) \Psi \|^2 \leq 100\, \eta^{1/4}$.
+  \item Let $M$ be a dyadic pair (Definition~\ref{def:dyadic-pair}) in a unit state $\psi$, and $A$
+    and $B$ measurements of its first and second players' algebras with $1 - \sum_a \langle \psi,
+    \pi(\pi_A(A_a)\, \pi_B(B_a)) \psi \rangle \leq \eta$. Then there is a projective submeasurement
+    $P$ of the first player's algebra with $\sum_a \| \pi(\pi_A(A_a - P_a)) \psi \|^2 \leq 100\,
+    \eta^{1/4}$, and likewise one of the second player's algebra, with $B$ in place of $A$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\uses{cor:orthonormalization-finite-pair,cor:orthonormalization-dyadic-pair,
+  thm:doubled-orthonormalization,lem:qld-combined-points}
+\leanok
+The vendored proof, in \texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/},
+passes from consistency to an almost projective measurement and rounds that to a projective one in
+finite dimension, through a Naimark dilation, a spectral truncation and a reduction of rank. The
+first half is ported (\texttt{planning/c6b-plan.md}, milestone M8): by the Cauchy--Schwarz
+inequality for the vector state, $\mathrm{cons}(A, B) \leq \eta$ gives $1 - \sum_a \| L(A_a) \Psi
+\|^2 \leq 2 \eta$, which is less than $3 \min(\eta, 1)$. The second half is replaced:
+Corollary~\ref{cor:orthonormalization-finite-pair}, applied to $A$, gives a projective measurement
+$P$ with $\sum_a \| L(A_a - P_a) \Psi \|^2 < 27 \min(\eta, 1) \leq 84\, \eta^{1/4}$, which is
+item~1. Item~2 is Theorem~\ref{thm:doubled-orthonormalization}, in the form stated there for any
+symmetric model whose bipartite reading is such a finite pair. Item~3 is the same estimate in the
+two-space model, where Corollary~\ref{cor:orthonormalization-dyadic-pair} applies to either player
+with no further hypothesis, and $27 \min(\eta, 1) \leq 100\, \eta^{1/4}$. The case $\eta = 0$ is
+excluded because the hypothesis of Corollary~\ref{cor:orthonormalization-finite-pair} is strict.
 \end{proof}
 
 \subsection{Further directions}

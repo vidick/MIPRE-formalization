@@ -19,7 +19,8 @@ and its answer-valued form), together at 1.02× the vendored elaboration time. M
 acceptance rule of §4 item 3 in every file, M0 in all but the four recorded under "Port
 conventions". The sizes of M2–M14 are re-estimated from them (§3). M2 and M9 are done too. M2 is
 the doubling of a finite pair, `D(M)` as a symmetric model, a finite pair and, for a dyadic pair, a
-dyadic pair, with the symmetric strategy and orthonormalization in it (8 modules, 2.75k lines). M9
+dyadic pair, with the symmetric strategy and orthonormalization in it (8 modules, 2.75k lines,
+2.71k since M8 moved 41 of them to their mirrored homes). M9
 is the summed semidefinite form, which replaces JNVWY Lemma 9.2, solved componentwise in `D(M)` and
 pulled back to the players' algebras (3 modules, 0.93k lines). What M2 and M9 leave open is
 recorded in their rows: unsymmetrization beyond its arithmetic goes to M13, the semidefinite
@@ -31,9 +32,19 @@ the self-consistency calculus (`Co.Preliminaries.switchSandwich`,
 `twoNotionsOfSelfConsistency`, `selfConsistencyImpliesDataProcessing`, `completingToMeasurement`),
 and `ExpansionHypercubeGraph` (5 modules, 0.85k lines), whose `localToGlobal` holds for every
 family on every vector state by Gram positivity in place of the matrix realization; at 0.62× and
-0.24× the vendored elaboration time, and well under their estimated sizes (§3). About 69–83k
-lines remain (M4, M6–M8, M10–M14), not counting the three items above, and the port is 86–100k in
-all. M4, M6–M8 and M10–M14 are open.
+0.24× the vendored elaboration time, and well under their estimated sizes (§3). M4, M6, M7 and
+M8 are done too (2026-10-02): the definitions and statements of the main induction step with the
+Schwartz–Zippel step of the main theorem (4 modules, 1,771 lines;
+`Co.Test.mainFormalStep5_selfConsistency_ofExpansionBound`), `GlobalVariance` (15 modules, 3,558
+lines; `Co.GlobalVariance.globalVarianceOfPoints`), `Commutativity` (43 modules, 8,025 lines;
+`Co.Commutativity.comMain`) and the dimension-free part of `MakingMeasurementsProjective` (7
+modules, 1,442 lines; `Co.MakingMeasurementsProjective.orthonormalization`), whose rounding to
+projective measurements calls T1, T5 and M2's Theorem G in place of the vendored
+finite-dimensional route, its 17 other vendored files being dropped or imported. Together 14,796
+lines, at 0.65× the vendored elaboration time; M4 within its estimate and M6–M8 well under theirs.
+31.4k lines are done. About 47–57k remain (M10–M14) at the estimates of §3, and 32–43k at the rate
+M6 and M7 measured, not counting the items above that M2 and M9 leave open; the port is 79–88k in
+all, or 64–74k. M10–M14 are open.
 
 ## 1. The target, and what the II₁ tier turned out to need
 
@@ -131,13 +142,13 @@ keystone lemmas: M0 came to 5.70k lines against 4.4–5.3k estimated, M1 to 3.01
 |---|---|---|---|---|
 | M0 | base layer: the symmetric model `SymModel 𝔓 K` (unbundled; local C*-algebra `𝔓`, Hilbert space `K` a parameter, state `Ψ`, flip `J`), `ev = Op.qform`, the three swap facts as lemmas, generic `SubMeas`/`Measurement`/`ProjMeas`, placements as `map` along ∗-homs, the ev-level defects and relations, the `Preliminaries` slice CP needs, `SymStrat`, and the operator-valued `averageOperatorOverDistribution` | — | 6.06k → 4.0–4.6k, plus 0.4–0.7k for the operator averages | done: 18 modules under `Co/{Basic,Preliminaries,Test,Tactic}/`, 5,697 lines for 7,691 vendored (0.74), non-import elaboration 51.8 s against 53.0 s (0.98×), measured under "Port conventions". Blueprint `def:sym-model`, `lem:sym-model-swap` |
 | M1 | prototype: `CommutativityPoints` → `Co.CommutativityPoints.commutativityPoints`, with a swap probe (CP never uses the flip) | M0 | 3.46k → 1.9–2.7k | done: 7 modules under `Co/CommutativityPoints/`, 3,008 lines for 3,464 vendored (0.87 overall; r = 0.95 on the ported declarations, net of headers, and 1.00 including them, the ≈ 0.45k classical lines being imported), elaboration 16.8 s against 14.2 s (1.19×); `commutativityPoints` and the answer-valued `answerCommutativityPoints`, both ported (§5); `port-pairing.py --check`: 0 missing in every file. The swap probe is recorded in §5. Blueprint `lem:co-commutativity-points` |
-| M2 | the doubling: `D(M)` as a symmetric model and as a finite pair, no abelian projections in it, the role-average identity, the symmetric strategy, unsymmetrization at the vendored cut, orthonormalization in `D(M)` | M0, T1, T2 | new 0.95–1.45k; replaces about 3.96k vendored lines | done, except Theorem E beyond its arithmetic. 2,748 lines in 8 modules. `MIPRE/Foundations/FinitePairOrder.lean` (271) holds the ⋆-isomorphisms of a finite pair's algebras onto the commutants, `IsFinitePair.equivA`/`equivB`, and the order agreement `IsFinitePair.nonneg_iff_A`/`_B` (report §4 Lemma 10 = §5 Lemma 13), now the library's one order-agreement lemma. `MIPRE/Foundations/Doubling.lean` (473) holds block-diagonal operators on `H ⊕ H`, `VecTrace.diag2` and `NoAbelianProj`. Then `Co/Doubling/Model.lean` (219): `Doubling.model hM hψ : SymModel (Loc M) (Ampl (Fin 2) M.H)` over `Loc M = centralizer M.opsB × centralizer M.opsA`. `FinitePair.lean` (272): Theorems A and F, `isFinitePair`, `L_nonneg_iff`, `equiv : 𝒜 × ℬ ≃⋆ₐ Loc M`, `isDyadicPair`, `noAbelianProj_iff`. `Halving.lean` (257): Theorem C, `bornProb_model_eq`, `qBipartiteConsDefect_model`, `dis_model`, `inconsistency_model`. `Strategy.lean` (452): Theorem D, `symmStrat`, `symmStrat_isGood_three_mul`, and the arithmetic of E, `bipartiteConsError_components_le_two_mul`. `Orthonormalization.lean` (384): Theorem G for `ζ > 0`, stated over any symmetric model whose bipartite reading is a finite pair without abelian projections in its first player's operators (`SymModel.orthonormalization_of_isFinitePair` and its relational form `_sddRel`, the shape M8's ported `MakingMeasurementsProjective.orthonormalization` and M10's generic consumer need), with `Doubling.orthonormalization_model` its specialization to `D(M)`; and Proposition H, `SymModel.L_cfc`/`R_cfc` for an injective placement and `Doubling.cfc_mem_opsA`. And `Co/Test/StrategyBiProj/Measurements.lean` (420): the two-space surrogate `fail_M` (`ProjStrat.lowIndividualDegreeFailureProbability`), ported. Without the surrogate, which the estimate left to the port base, 2,328 new lines against 0.95–1.45k: the docstrings, both directions of every transport, the translation to the report's `𝒜 × ℬ` and the POVM transports were not in the estimate. Theorem B is M0's. Open: Theorem E itself, which needs the point consistency of the ported `mainInduction` (M12) and is M13's, with the two-space tail; supplying `ζ > 0` at the in-core call site of Theorem G, by threading `1 ≤ params.d` from `SoundIn` (M14), the case `ζ = 0` itself not being proved and not needed once this is done; Remarks R1–R2, off the route. Elaboration was measured with `-DElab.async=false` in one run per file at load 0.7–1.0, with a 1 s threshold, and was not compared with the vendored files. No declaration takes 3 s. The largest are the `equivHom`/`equivInv` definitions of `FinitePair.lean` at 2.5 and 2.6 s, `inconsistency_model` and `qBipartiteConsDefect_model` of `Halving.lean` at 2.3 s, and `cfc_mem_opsA` at 1.8–2.0 s; `orthonormalization_model` takes 1.1 s. (An earlier measurement put `L_cfc`, `R_cfc` and `cfc_L_mem_range` at 3.4–4.1 s when stated for `D(M)`, most of it synthesizing the functional calculus of `Ampl (Fin 2) M.H →L[ℂ] _` in the header; stated over a symmetric model they take under 1 s.) Blueprint `lem:finite-pair-order`, `def:doubled-model`, `lem:doubled-model-finite-pair`, `lem:doubled-model-role-average`, `lem:doubled-model-no-abelian`, `thm:doubled-symmetrization`, `thm:doubled-orthonormalization` |
+| M2 | the doubling: `D(M)` as a symmetric model and as a finite pair, no abelian projections in it, the role-average identity, the symmetric strategy, unsymmetrization at the vendored cut, orthonormalization in `D(M)` | M0, T1, T2 | new 0.95–1.45k; replaces about 3.96k vendored lines | done, except Theorem E beyond its arithmetic. 2,748 lines in 8 modules, 2,707 after M8 moved 41 of them to their mirrored homes. `MIPRE/Foundations/FinitePairOrder.lean` (271) holds the ⋆-isomorphisms of a finite pair's algebras onto the commutants, `IsFinitePair.equivA`/`equivB`, and the order agreement `IsFinitePair.nonneg_iff_A`/`_B` (report §4 Lemma 10 = §5 Lemma 13), now the library's one order-agreement lemma. `MIPRE/Foundations/Doubling.lean` (473) holds block-diagonal operators on `H ⊕ H`, `VecTrace.diag2` and `NoAbelianProj`. Then `Co/Doubling/Model.lean` (219): `Doubling.model hM hψ : SymModel (Loc M) (Ampl (Fin 2) M.H)` over `Loc M = centralizer M.opsB × centralizer M.opsA`. `FinitePair.lean` (272): Theorems A and F, `isFinitePair`, `L_nonneg_iff`, `equiv : 𝒜 × ℬ ≃⋆ₐ Loc M`, `isDyadicPair`, `noAbelianProj_iff`. `Halving.lean` (257): Theorem C, `bornProb_model_eq`, `qBipartiteConsDefect_model`, `dis_model`, `inconsistency_model`. `Strategy.lean` (452): Theorem D, `symmStrat`, `symmStrat_isGood_three_mul`, and the arithmetic of E, `bipartiteConsError_components_le_two_mul`. `Orthonormalization.lean` (384; 343 after M8 moved the completion and its restriction to their mirrored homes): Theorem G for `ζ > 0`, stated over any symmetric model whose bipartite reading is a finite pair without abelian projections in its first player's operators (`SymModel.orthonormalization_of_isFinitePair` and its relational form `_sddRel`, the shape M8's ported `MakingMeasurementsProjective.orthonormalization` and M10's generic consumer need), with `Doubling.orthonormalization_model` its specialization to `D(M)`; and Proposition H, `SymModel.L_cfc`/`R_cfc` for an injective placement and `Doubling.cfc_mem_opsA`. And `Co/Test/StrategyBiProj/Measurements.lean` (420): the two-space surrogate `fail_M` (`ProjStrat.lowIndividualDegreeFailureProbability`), ported. Without the surrogate, which the estimate left to the port base, 2,328 new lines against 0.95–1.45k: the docstrings, both directions of every transport, the translation to the report's `𝒜 × ℬ` and the POVM transports were not in the estimate. Theorem B is M0's. Open: Theorem E itself, which needs the point consistency of the ported `mainInduction` (M12) and is M13's, with the two-space tail; supplying `ζ > 0` at the in-core call site of Theorem G, by threading `1 ≤ params.d` from `SoundIn` (M14), the case `ζ = 0` itself not being proved and not needed once this is done; Remarks R1–R2, off the route. Elaboration was measured with `-DElab.async=false` in one run per file at load 0.7–1.0, with a 1 s threshold, and was not compared with the vendored files. No declaration takes 3 s. The largest are the `equivHom`/`equivInv` definitions of `FinitePair.lean` at 2.5 and 2.6 s, `inconsistency_model` and `qBipartiteConsDefect_model` of `Halving.lean` at 2.3 s, and `cfc_mem_opsA` at 1.8–2.0 s; `orthonormalization_model` takes 1.1 s. (An earlier measurement put `L_cfc`, `R_cfc` and `cfc_L_mem_range` at 3.4–4.1 s when stated for `D(M)`, most of it synthesizing the functional calculus of `Ampl (Fin 2) M.H →L[ℂ] _` in the header; stated over a symmetric model they take under 1 s.) Blueprint `lem:finite-pair-order`, `def:doubled-model`, `lem:doubled-model-finite-pair`, `lem:doubled-model-role-average`, `lem:doubled-model-no-abelian`, `thm:doubled-symmetrization`, `thm:doubled-orthonormalization` |
 | M3 | the rest of `Preliminaries` | M0 | 7.64k → 5.0–7.2k (6.0–7.0k): 6.17k quantum lines in 23 files, `Polynomials.lean` classical; r 0.6–0.95, `SwitchSandwich`, `Triangles` and `CauchySchwarz` being close kin of `ComparisonCore` and `DistanceBounds`, which ported at about 0.5 | done: 23 modules under `Co/Preliminaries/`, every vendored file but the classical `Polynomials.lean`, 3,421 lines for 7,505 vendored (0.46; r = 0.36 on the ported declarations, net of headers, 2,215 lines for 6,174 quantum lines before the review, whose shared expansion changed that by a few lines), below the estimate for the reasons under "Departures in M3 and M5"; non-import elaboration 38.1 s against 63.1 s (0.60×), every file within the 2× rule (largest `BipartiteSelfConsistency/Completion`, 1.03×), no declaration at 2 s (largest `globalVarianceTraceForm_eq_closedForm` of M5, 1.40 s, and `switchSandwich_rightTransfer`, 1.37 s asynchronously at load 1.0 and 1.47–1.72 s with `-DElab.async=false`, vendored 3.85 s; 1.86–2.20 s before the review's shared expansion); `port-pairing.py --check`: 0 missing, 10 classical declarations imported, 4 new. The switch sandwich (`switchSandwich`, `SwitchSandwichStmt`), the two notions of self-consistency (`twoNotionsOfSelfConsistency`, `bipartiteSSC_implies_localSSC_liftLeft`, `otherTwoNotionsOfSelfConsistency`), data processing (`selfConsistencyImpliesDataProcessing`) and completion (`completingToMeasurement`), with every swap and normalization hypothesis dropped. Blueprint `lem:co-switch-sandwich-self-consistency` |
-| M4 | `Test` core and `MainInductionStep` definitions and statements | M0, M3 | 1.92k → 1.7–2.0k (1.5–1.8k): `MainInductionStep/{Defs,Statements}` and `Test/{SchwartzZippelStep,StrategyPolynomialFamilies}`, 1.64k quantum lines in 4 files, r 0.9–1.05 | open |
+| M4 | `Test` core and `MainInductionStep` definitions and statements | M0, M3 | 1.92k → 1.7–2.0k (1.5–1.8k): `MainInductionStep/{Defs,Statements}` and `Test/{SchwartzZippelStep,StrategyPolynomialFamilies}`, 1.64k quantum lines in 4 files, r 0.9–1.05 | done: 4 modules, `Co/MainInductionStep/{Defs,Statements}` and `Co/Test/{SchwartzZippelStep,StrategyPolynomialFamilies}`, 1,771 lines for 1,915 vendored (0.92; r = 0.90 on the ported declarations, net of headers: `Defs` 0.90, `Statements` 1.01, `SchwartzZippelStep` 0.68, `StrategyPolynomialFamilies` 0.93), within the estimate; non-import elaboration 12.00 s against 7.94 s (1.51×), `MainInductionStep/Statements` at 5.08 s against 2.52 s (2.01×), a file of statement structures just over the 2× rule, recorded as a departure; `port-pairing.py --check`: 0 missing, the 10 classical declarations of `MainInductionStep/Defs` imported, the field `RestrictedSymStrat.isNormalized` a theorem. The checkable theorem is the Schwartz–Zippel step, `Co.Test.mainFormalStep5_selfConsistency_ofExpansionBound` (consistency `ζ` on points gives `ζ + md/q` on whole polynomials); the rest is what M10–M12 consume: `RestrictedSymStrat` and the restricted measurements, `IdxPolyFamily` with `Complete`, `ConsistentWithPoints`, `StronglySelfConsistent` and `SliceBoundednessInput`, `tensorFailureExpectation` (narrowed to one algebra; M12 calls it on `strategy.state`) and the statements of the induction step, `AnswerMainInductionHypothesis` quantifying over `𝔓` and `K`, restricted to strategies whose model is a finite pair without abelian projections in `L(𝔓)` (`strategy.state.toBipartite.IsFinitePair → NoAbelianProj strategy.state.toBipartite.opsA →`, the `hS hA` of M8's `orthonormalization`, which the induction's successor step reaches through self-improvement; M10–M12 thread `hS hA` beside `ζ > 0`, and M13 discharges them for `D(M)`; "Departures in M4, M6, M7 and M8"). Open: the two-space caller of the heterogeneous Step 5 lemma (M13, M14). Blueprint `lem:co-schwartz-zippel-step` |
 | M5 | `ExpansionHypercubeGraph`: the scalar part by import; `localToGlobal` by Gram positivity in place of its matrix realization | M0 | 3.8k → 1.0–1.9k (1.0–1.6k): M1 does not inform the Gram-positivity rewrite; the upper end ports every quantum declaration outside `MatrixRealization` (1.62k) at the M1 ratio | done: 5 modules under `Co/ExpansionHypercubeGraph/{Defs,Theorems}/`, `MatrixRealization/{Core,TraceForms}` not ported but replaced by Gram positivity (`re_combinedTraceForm_nonneg`), 852 lines for 3,808 vendored (0.22; r = 0.26), below the floor of the estimate; non-import elaboration 9.0 s against 37.6 s for the whole vendored directory (0.24×; 0.31× against its five counterparts alone), largest declaration `globalVarianceTraceForm_eq_closedForm`, 1.50 s. `localToGlobal params A V : globalVariance params A V ≤ m · localVariance params A V` for every `A : Point params → (K →L[ℂ] K)` and vector state `V`, and `localToGlobalBipartite` for `u ↦ S.L (A u)`; no swap fact and no new keystone positivity used. Blueprint `lem:co-local-to-global` |
-| M6 | `GlobalVariance` | M0, M3, M5 | 5.3k → 4.3–4.9k (4.2–4.8k): 4.03k quantum lines in 15 files | open |
-| M7 | `Commutativity` | M1, M3 | 13.4k → 12.1–13.8k, central 13.2k (10.5–12.5k): 11.29k quantum lines in 43 files, 2% classical; the largest revision, the directory being almost all quantum and `CommutativityPoints`, its closest relative, having ported at about 1.0 on content | open |
-| M8 | `MakingMeasurementsProjective`: the dimension-free part, with the three orthonormalization sites calling T1 | M0, M3, T1 | ≈ 4.1k → 2.6–3.8k (3.3–3.8k) + adapter 0.8–1.5k: quantum share 0.82 and the highest matrix density of any directory, so r 0.6–0.95, about 10 files; about 2.5k further lines unassigned by the audit's partition, which would add 2.0–2.4k if ported | open |
+| M6 | `GlobalVariance` | M0, M3, M5 | 5.3k → 4.3–4.9k (4.2–4.8k): 4.03k quantum lines in 15 files | done: 15 modules under `Co/GlobalVariance/{Defs,Theorems}/`, 3,558 lines for 5,295 vendored (0.67; r = 0.64), below the estimate; non-import elaboration 25.86 s against 30.05 s (0.86×), every file within the 2× rule; `port-pairing.py --check`: 0 missing, 40 classical declarations imported (`Defs/Core` is classical throughout), 1 new. `Co.GlobalVariance.globalVarianceOfPoints`: for an `(ε, δ, γ)`-good strategy and any polynomial submeasurement `G`, the weighted family `u ↦ S.L (A^u_{g(u)}) * S.R √G_g` has edge deviation at most `6(4ε + 4δ + 2md/q)` (`localVarianceTransportChainBound`) and independent-points deviation at most `24m(ε + δ + md/q)`, with no swap or normalization hypothesis; the vendored weighted state is replaced by that family on `S` itself, as M5's note prescribed. Blueprint `lem:co-global-variance-of-points` |
+| M7 | `Commutativity` | M1, M3 | 13.4k → 12.1–13.8k, central 13.2k (10.5–12.5k): 11.29k quantum lines in 43 files, 2% classical; the largest revision, the directory being almost all quantum and `CommutativityPoints`, its closest relative, having ported at about 1.0 on content | done: all 43 modules under `Co/Commutativity/`, 8,025 lines for 13,399 vendored (0.60; r = 0.50), well below the estimate ("Departures in M4, M6, M7 and M8"); non-import elaboration 74.20 s against 134.15 s (0.55×), every file within the 2× rule; `port-pairing.py --check`: 0 missing, 18 classical declarations imported, 4 new (with the arithmetic `commDataProcessedGError_to_comMainError_arith` split out of `Main/EvaluatedQuestions` after review). `Co.Commutativity.comMain` (`thm:com-main`): for an `(ε, δ, γ)`-good strategy in `m + 1` variables and a slice family `G^x` consistent with its points, strongly self-consistent and bounded, each at `ζ`, `E_{x,y} ∑_{g,h} ‖L(G^x_g G^y_h − G^y_h G^x_g)Ψ‖² ≤ 30m(γ^{1/4} + ζ^{1/4} + (d/q)^{1/4})`, through `commDataProcessedG`, the same on evaluated slices at `48m(√γ + √ζ)`; `hnorm` dropped from 45 lemmas, `permInvState` and `densityFixed` from all. Blueprint `lem:co-commutation-g` |
+| M8 | `MakingMeasurementsProjective`: the dimension-free part, with the three orthonormalization sites calling T1 | M0, M3, T1 | ≈ 4.1k → 2.6–3.8k (3.3–3.8k) + adapter 0.8–1.5k: quantum share 0.82 and the highest matrix density of any directory, so r 0.6–0.95, about 10 files; about 2.5k further lines unassigned by the audit's partition, which would add 2.0–2.4k if ported | done, in a narrower scope than estimated: 7 of the 24 vendored files ported (`Statements`, `Orthonormalization/{RestrictSome,Completion}`, `Projectivization`, `ProjectivizationChain/Basic`, `LocalityPreservingRepair`, `Orthonormalization`), 1,442 lines for their 2,870 vendored (0.50; r = 0.37); the other 17 (7,398 lines: `Defs`, `Orthonormalization/ErrorBounds`, `NaimarkCore`, `QXPLayer/*`, `QXPLayerIdentities/*`, `SpectralTruncation/*`) dropped, their classical content imported and the finite-dimensional orthonormalization replaced by T1 ("Departures in M4, M6, M7 and M8"); the adapter is M2's Theorem G and two T5 calls. Non-import elaboration 18.97 s against 28.16 s (0.67×), `Orthonormalization` 5.11 s against 2.83 s (1.80×), within the rule while carrying new two-space content; `port-pairing.py --check`: 0 missing, 60 vendored declarations listed as not ported, 3 new. `Co.MakingMeasurementsProjective.orthonormalizationMainLemma` (`84 ζ^{1/4}`) and `orthonormalization` (`100 ζ^{1/4}`) in any symmetric model whose bipartite reading is a finite pair without abelian projections in `L(𝔓)`, for `ζ > 0`, and the two-space heterogeneous forms in a dyadic pair, for M13; M2's `optionCompletion` and `restrictSomeProjSubMeas` moved to their mirrored homes. Open: `ζ = 0`, not needed once M14 threads `1 ≤ params.d` (M2's row). Blueprint `lem:co-orthonormalization` |
 | M9 | the summed semidefinite form: a maximizer by weak-operator compactness, first-order conditions giving `Z = Σ T_g A_g ≥ A_g`, solved componentwise in the doubled model; `MatrixRealization` and `SdpMatrixBridge` (3.98k) are not ported | M0, M2 | new 0.55–0.75k (core measured) + adapter 0.1–0.25k (unchanged: new code, no M1 basis) | done, except the adapter. 925 lines in 3 modules against 0.55–0.75k. `MIPRE/Foundations/SummedSdp.lean` (546) has the conclusion `SummedSdp.IsSummedSdp A T Z` over any ordered ⋆-ring, whose fields are those of the vendored `SdpOptimalPairWithSlackness`, and the core chain, Lemmas 1b–3 and 5–9, up to `isSummedSdp_of_isMaxOn` and the converse `isSummedSdp_of_le`. The setting (S) is the commutant `StarSubalgebra.centralizer ℂ t` of any set, with `IsFaithfulTrace`. `MIPRE/Background/Orthonormalization/SdpMaximizer.lean` (165) has Lemma 4, `exists_isMaxOn_obj`, by the vendored weak-operator compactness, and Theorem 10, `exists_isSummedSdp`, `exists_isSummedSdp_finitePairA`/`B`. `Co/Doubling/Sdp.lean` (214) has Corollary 12, `exists_isSummedSdp_loc` and `exists_isSummedSdp_model`, under `L` and `R`, and Lemma 13, `isSummedSdp_equivA_iff`, `exists_isSummedSdp_A`/`B` and `exists_isSummedSdp_prod` over the report's `𝒜 × ℬ`. Componentwise data is automatic, since `Loc M` is a product. Open: the interface adapter to `SdpStatementWithSlackness` (`Measurement`, `G = Polynomial params`, `A_g = averagedPointOperator`), which is M10's because the port's types for it do not exist yet; Remark 12′, not needed. Elaboration: `SummedSdp.le_of_firstOrder` takes 4.9 s (`-DElab.async=false`, load 1.0), just under the 5 s rule, and `isMeasIn_perturb` takes 4.0 s. Both are risks at higher load, and splitting them is worth doing. `exists_isSummedSdp_A` of `Co/Doubling/Sdp.lean` takes 3.9 s (`-DElab.async=false`, load 1.0); nothing else in the three files takes 3 s. Blueprint `thm:summed-sdp`, `cor:summed-sdp-doubled` |
 | M10 | `SelfImprovement` theorems and definitions, + the summed-form interface adapter to `SdpStatementWithSlackness` (from M9, 0.1–0.25k) | M3–M6, M8, M9 | 16.44k → 13.1–15.1k (13–15.5k): without `MatrixRealization` and `SdpMatrixBridge`, 13.2k quantum lines in 32 files | open |
 | M11 | `Pasting` | M1, M3, M4, M7 | 30.3k → 23.2–26.5k (24–28k): 22.07k quantum lines in 76 files, the 5.3k classical lines (`Bernoulli/Scalar` and others) imported; its 87 `try rfl` sites became plain `rfl` in M1 at no change in size | open |
@@ -169,6 +180,19 @@ to port at M3's rate, the remainder would be about half. M3 and M5 elaborate at 
 vendored files (11.6 and 10.6 ms a line, against 8.4 and 9.9 ms vendored), and M0, M1, M3 and M5
 together at 0.70× ("Port conventions").
 
+**Revised after M4, M6, M7 and M8** (2026-10-02). M4 came to 1,771 lines against 1.7–2.0k, M6 to
+3,558 against 4.3–4.9k, M7 to 8,025 against 12.1–13.8k and M8 to 1,442 against 3.4–5.3k with its
+adapter: 14,796 lines in all against 21.5–26.0k. 31.4k lines are done (M0 5.70k, M1 3.01k, M2
+2.71k, M3 3.37k, M4 1.77k, M5 0.85k, M6 3.56k, M7 8.03k, M8 1.44k, M9 0.93k). At the estimates
+above, M10–M14 are 47–57k more and the port 79–88k. Those estimates take r = 0.85–1.0 from
+`CommutativityPoints`, but `Commutativity`, the directory closest to `Pasting` and the
+`MainInductionStep` theorems, measured r = 0.50, and `GlobalVariance` 0.64: their vendored proofs
+restate placements in every step and prove Kronecker identities entrywise, as M3's did. At r =
+0.50–0.64, with the 55–65-line headers of M6 and M7, M10 would be 8.4–10.5k, M11 15.2–19.0k and
+M12 4.6–5.8k, so M10–M14 32–43k and the port 64–74k. M4–M8 elaborate at 0.65× their vendored files
+(131.0 s against 200.3 s), and M0, M1 and M3–M8 together at 0.67× (246.7 s against 368.1 s;
+"Port conventions").
+
 ## 4. Order
 
 1. **This pull request**: the plan, the paper proofs, and T1, with its blueprint nodes.
@@ -196,7 +220,17 @@ together at 0.70× ("Port conventions").
 5. **M3 and M5, done** (2026-10-02): the rest of `Preliminaries` and `ExpansionHypercubeGraph`,
    with their blueprint nodes and axiom guards (§3), at 0.62× and 0.24× the vendored elaboration
    time; the departures are recorded under "Port conventions".
-6. Then M4, M6, M7, M8 → M10, M11 → M12 → M13 → M14, as the dependency column allows.
+6. **M4, M6, M7 and M8, done** (2026-10-02): the main induction step's definitions and statements
+   with the Schwartz–Zippel step, `GlobalVariance`, `Commutativity` and the dimension-free part of
+   `MakingMeasurementsProjective`, with their blueprint nodes and axiom guards (§3), at 0.65× the
+   vendored elaboration time; the departures, M8's 17 dropped files among them, are recorded under
+   "Port conventions". They leave to later stages the two-space callers of M4's heterogeneous Step
+   5 lemma and of M8's heterogeneous orthonormalizations (M13), `tensorFailureExpectation` on
+   `strategy.state` (M12), `ζ > 0` at the in-core orthonormalization (M14, as for M2), and the
+   model hypotheses `hS : S.toBipartite.IsFinitePair` and `hA : NoAbelianProj
+   S.toBipartite.opsA` of M8's `orthonormalization`, which M4's `AnswerMainInductionHypothesis`
+   already carries and M10–M12 must thread beside `ζ > 0` (M13 discharging them for `D(M)`).
+7. Then M10, M11 → M12 → M13 → M14, as the dependency column allows.
 
 ## 5. Things the design round settled, and things it did not
 
@@ -243,15 +277,19 @@ together at 0.70× ("Port conventions").
   of `D(M)` is the product `Loc M`, so every `A_g` of it is a pair, and
   `Doubling.exists_isSummedSdp_model` gives `T` and `Z` in `Loc M`. What is left is the adapter
   (M10).
-- **Elaboration time** is the main risk of the port: operator positivity on `K →L[ℂ] K` costs
-  1–3 s per proof against 0.6 s for the matrix version, roughly doubling under the whole-Mathlib
-  imports the vendored classical layer forces. Positivity lemmas go in a base file without those
-  imports. Measured on M0 and M1, the port is at 1.02× the vendored files and no declaration takes
-  1.4 s (§4 item 3); the remaining risk is the definition-heavy files, where typeclass inference on
-  signatures over `K →L[ℂ] K` dominates, as in `Test/Defs` (2.97×). Expect the per-file rule to
-  fail for that reason in `MainInductionStep/Defs`, `SelfImprovement/Defs`, `GlobalVariance/Defs/*`
-  and the definitions of `Commutativity` and `Pasting`, unless a cheap fix for signature synthesis
-  is found.
+- **Elaboration time** is the main risk of the port: operator positivity on `K →L[ℂ] K` costs 1–3 s
+  per proof against 0.6 s for the matrix version, roughly doubling under the whole-Mathlib imports
+  the vendored classical layer forces. Positivity lemmas go in a base file without those imports.
+  Measured on M0 and M1, the port is at 1.02× the vendored files and no declaration takes 1.4 s (§4
+  item 3); the remaining risk is the definition-heavy files, where typeclass inference on signatures
+  over `K →L[ℂ] K` dominates, as in `Test/Defs` (2.97×). The per-file rule was expected to fail for
+  that reason in `MainInductionStep/Defs`, `SelfImprovement/Defs`, `GlobalVariance/Defs/*` and the
+  definitions of `Commutativity` and `Pasting`. Measured on M4, M6 and M7, it held in the files
+  named: `MainInductionStep/Defs` is at 2.31 s against 1.79 s (1.29×),
+  `GlobalVariance/Defs/Families` at 3.20 s against 2.79 s (1.15×), the `Commutativity` definitions
+  at most 1.10×; it failed, narrowly, only in `MainInductionStep/Statements`, the statement
+  structures of the induction step, at 2.01×. `SelfImprovement/Defs` and `Pasting` are still to
+  come, and no cheap fix for signature synthesis is known.
 - **Upstream.** H3 could instead go to `vidick/commuting-repetition` and be vendored; the port's
   base layer could go to `LionSR/MIPStarRE`.
 
@@ -400,21 +438,21 @@ vendored names, the new ported names (with the vendored file a moved one comes f
 never counts as the counterpart of a public vendored one and is reported on a `private` line. Each
 stage runs it on its files and reports the output.
 
-**Elaboration, measured on M0 and M1, and on M3 and M5.** Non-import elaboration of each file, `lake env lean
--Dprofiler=true`, the sum of every profiler category except `import`, minimum of three runs, in
-seconds, against the vendored file measured the same way on the same machine. Lines are `wc -l`;
-"tc" is the typeclass-inference part, ported / vendored. Measured 2026-10-01, 19:20–19:37 UTC,
-on a 4-core machine at load 0.5–1.7, on the files of commit `9fea38a`. Every M0 file reproduces
-the first M0 measurement (after the review round; the earlier figure of 2.4 s for the vendored
-keystone did not reproduce) within 14%, the largest changes being the vendored
-`SubMeasurementFamilies` (+14%), the ported `Test/StrategyCore` (+13%), the ported
-`DistanceBounds` (+10%) and the vendored `TensorPlacement` (+10%); the layer totals reproduce
-within 2% (51.8 s against 52.0 s ported, 53.0 s against 52.0 s vendored). So the move of the M0
-ratio from 1.00× to 0.98× is within the reproducibility of the measurement, and the per-file
-ratios are good to about ±15%. The line counts are those of `9fea38a`; the review after it added
-docstrings and upstream-qualified references to `CommutativityPoints` (3,077 lines now, no proof
-changed), which leaves the elaboration figures as they are and moves r from 0.95 to 0.97, the
-docstrings being charged to the declarations.
+**Elaboration, measured on M0 and M1, on M3 and M5, and on M4, M6, M7 and M8.** Non-import
+elaboration of each file, `lake env lean -Dprofiler=true`, the sum of every profiler category except
+`import`, minimum of three runs, in seconds, against the vendored file measured the same way on the
+same machine. Lines are `wc -l`; "tc" is the typeclass-inference part, ported / vendored. Measured
+2026-10-01, 19:20–19:37 UTC, on a 4-core machine at load 0.5–1.7, on the files of commit `9fea38a`.
+Every M0 file reproduces the first M0 measurement (after the review round; the earlier figure of
+2.4 s for the vendored keystone did not reproduce) within 14%, the largest changes being the vendored
+`SubMeasurementFamilies` (+14%), the ported `Test/StrategyCore` (+13%), the ported `DistanceBounds`
+(+10%) and the vendored `TensorPlacement` (+10%); the layer totals reproduce within 2% (51.8 s
+against 52.0 s ported, 53.0 s against 52.0 s vendored). So the move of the M0 ratio from 1.00× to
+0.98× is within the reproducibility of the measurement, and the per-file ratios are good to about
+±15%. The line counts are those of `9fea38a`; the review after it added docstrings and
+upstream-qualified references to `CommutativityPoints` (3,077 lines now, no proof changed), which
+leaves the elaboration figures as they are and moves r from 0.95 to 0.97, the docstrings being
+charged to the declarations.
 
 | file | ported lines | vendored lines | ported (s) | vendored (s) | ratio | tc (s) |
 |---|---|---|---|---|---|---|
@@ -480,6 +518,81 @@ docstrings being charged to the declarations.
 | **all of M5** (vendored: the whole directory) | 852 | 3808 | 8.99 | 37.60 | 0.24 | 3.0 / 8.9 |
 | **M3 and M5** | 4273 | 11313 | 47.07 | 100.73 | 0.47 | 14.2 / 30.8 |
 | **M0, M1, M3 and M5** | 12978 | 22468 | 115.71 | 167.84 | 0.69 | 41.1 / 51.9 |
+| `MainInductionStep/Defs.lean` | 458 | 549 | 2.31 | 1.79 | 1.29 | 0.68 / 0.27 |
+| `MainInductionStep/Statements.lean` | 708 | 681 | 5.08 | 2.52 | 2.01 | 1.03 / 0.36 |
+| `Test/SchwartzZippelStep.lean` | 274 | 354 | 2.32 | 2.15 | 1.08 | 0.70 / 0.66 |
+| `Test/StrategyPolynomialFamilies.lean` | 331 | 331 | 2.28 | 1.48 | 1.55 | 0.78 / 0.25 |
+| **all of M4** | 1771 | 1915 | 12.00 | 7.94 | 1.51 | 3.2 / 1.5 |
+| `GlobalVariance/Defs/Core.lean` | 59 | 179 | 0.47 | 1.07 | 0.44 | 0.00 / 0.06 |
+| `GlobalVariance/Defs/Families.lean` | 337 | 396 | 3.20 | 2.79 | 1.15 | 1.50 / 1.09 |
+| `GlobalVariance/Defs/Operators.lean` | 290 | 267 | 1.73 | 1.40 | 1.24 | 0.59 / 0.30 |
+| `GlobalVariance/Theorems/AlgebraicIdentity.lean` | 334 | 427 | 2.56 | 2.58 | 0.99 | 0.94 / 0.64 |
+| `GlobalVariance/Theorems/Averaging.lean` | 154 | 273 | 2.16 | 3.01 | 0.72 | 0.93 / 0.70 |
+| `GlobalVariance/Theorems/CollisionExpansion.lean` | 321 | 564 | 1.51 | 2.09 | 0.72 | 0.40 / 0.47 |
+| `GlobalVariance/Theorems/MainTheorems.lean` | 221 | 300 | 1.22 | 1.17 | 1.04 | 0.23 / 0.18 |
+| `GlobalVariance/Theorems/PolynomialSumBounds.lean` | 162 | 321 | 1.21 | 1.60 | 0.75 | 0.26 / 0.34 |
+| `GlobalVariance/Theorems/SelfConsistencyTransport/Point.lean` | 254 | 390 | 1.36 | 1.75 | 0.78 | 0.43 / 0.42 |
+| `GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean` | 351 | 381 | 2.12 | 1.88 | 1.13 | 0.64 / 0.41 |
+| `GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean` | 207 | 346 | 2.13 | 2.13 | 1.00 | 0.77 / 0.51 |
+| `GlobalVariance/Theorems/SelfConsistencyTransportSum.lean` | 248 | 342 | 1.69 | 1.48 | 1.14 | 0.45 / 0.23 |
+| `GlobalVariance/Theorems/Statements.lean` | 142 | 119 | 0.85 | 0.70 | 1.21 | 0.11 / 0.05 |
+| `GlobalVariance/Theorems/TransportChain/Core.lean` | 263 | 520 | 1.96 | 3.20 | 0.61 | 0.42 / 0.65 |
+| `GlobalVariance/Theorems/TransportChain/SumForm.lean` | 215 | 470 | 1.68 | 3.21 | 0.52 | 0.27 / 0.55 |
+| **all of M6** | 3558 | 5295 | 25.86 | 30.05 | 0.86 | 7.9 / 6.6 |
+| `Commutativity/Defs/Core.lean` | 228 | 276 | 1.72 | 1.56 | 1.10 | 0.63 / 0.48 |
+| `Commutativity/Defs/Normalization.lean` | 197 | 230 | 1.52 | 5.57 | 0.27 | 0.51 / 4.09 |
+| `Commutativity/Defs/Stability.lean` | 222 | 224 | 2.57 | 2.68 | 0.96 | 1.16 / 1.33 |
+| `Commutativity/EvaluatedSliceBounds/PhaseOneThree.lean` | 146 | 248 | 1.39 | 2.53 | 0.55 | 0.27 / 0.58 |
+| `Commutativity/EvaluatedSliceCommutation/Averages.lean` | 146 | 340 | 1.83 | 3.22 | 0.57 | 0.57 / 1.47 |
+| `Commutativity/EvaluatedSliceCommutation/Consequences.lean` | 93 | 91 | 0.79 | 0.73 | 1.08 | 0.10 / 0.08 |
+| `Commutativity/GCommStability/OverlapOne.lean` | 206 | 271 | 1.70 | 1.74 | 0.98 | 0.52 / 0.50 |
+| `Commutativity/GCommStability/OverlapTwo.lean` | 216 | 310 | 1.74 | 3.09 | 0.56 | 0.36 / 1.39 |
+| `Commutativity/GCommStability/Scalar/Common.lean` | 198 | 350 | 2.45 | 5.17 | 0.47 | 0.94 / 2.70 |
+| `Commutativity/GCommStability/Scalar/First.lean` | 119 | 123 | 1.03 | 0.80 | 1.29 | 0.26 / 0.08 |
+| `Commutativity/GCommStability/Scalar/RawSecond.lean` | 304 | 689 | 2.61 | 9.52 | 0.27 | 0.83 / 4.29 |
+| `Commutativity/GCommStability/Scalar/Second.lean` | 129 | 133 | 1.06 | 0.82 | 1.28 | 0.25 / 0.09 |
+| `Commutativity/Main/Auxiliary/HEvalTransport.lean` | 189 | 401 | 1.98 | 3.95 | 0.50 | 0.54 / 1.66 |
+| `Commutativity/Main/Auxiliary/ScalarMarginalization.lean` | 239 | 428 | 2.05 | 2.08 | 0.99 | 0.50 / 0.52 |
+| `Commutativity/Main/EvaluatedQuestions.lean` | 205 | 514 | 2.72 | 11.93 | 0.23 | 0.37 / 2.00 |
+| `Commutativity/Main/Results.lean` | 138 | 163 | 0.86 | 1.05 | 0.82 | 0.11 / 0.22 |
+| `Commutativity/Scaffold/Core.lean` | 107 | 106 | 0.73 | 0.64 | 1.14 | 0.07 / 0.04 |
+| `Commutativity/Scaffold/Products.lean` | 280 | 441 | 3.52 | 5.04 | 0.70 | 1.54 / 2.18 |
+| `Commutativity/Scaffold/Symmetry.lean` | 85 | 82 | 0.72 | 0.71 | 1.01 | 0.08 / 0.04 |
+| `Commutativity/ScalarApproximation/Core.lean` | 77 | 213 | 1.07 | 2.14 | 0.50 | 0.12 / 0.48 |
+| `Commutativity/ScalarApproximation/PaperChainBasic/Normalization.lean` | 264 | 627 | 3.69 | 6.02 | 0.61 | 1.58 / 2.79 |
+| `Commutativity/ScalarApproximation/PaperChainBasic/PointSwap.lean` | 149 | 201 | 1.29 | 1.56 | 0.83 | 0.26 / 0.32 |
+| `Commutativity/ScalarApproximation/PaperChainBasic/Reindexing.lean` | 95 | 113 | 0.94 | 0.80 | 1.17 | 0.15 / 0.05 |
+| `Commutativity/ScalarApproximation/PaperChainPhaseFive.lean` | 356 | 569 | 2.52 | 3.32 | 0.76 | 0.64 / 0.77 |
+| `Commutativity/ScalarApproximation/PaperChainPhaseSeven.lean` | 115 | 161 | 1.13 | 1.69 | 0.67 | 0.21 / 0.50 |
+| `Commutativity/ScalarApproximation/PaperChainPhaseSix.lean` | 127 | 241 | 1.31 | 2.29 | 0.57 | 0.29 / 0.96 |
+| `Commutativity/ScalarApproximation/PaperChainReverse.lean` | 95 | 103 | 0.77 | 0.81 | 0.95 | 0.09 / 0.11 |
+| `Commutativity/ScalarApproximation/PaperChainTail.lean` | 154 | 254 | 1.43 | 2.04 | 0.70 | 0.29 / 0.37 |
+| `Commutativity/ScalarApproximation/Pointwise.lean` | 283 | 553 | 2.82 | 3.96 | 0.71 | 0.80 / 1.52 |
+| `Commutativity/ScalarApproximation/ProcessedG.lean` | 115 | 168 | 0.72 | 0.78 | 0.93 | 0.07 / 0.10 |
+| `Commutativity/ScalarApproximation/ProcessedG/MainChain.lean` | 383 | 817 | 3.24 | 11.52 | 0.28 | 0.86 / 1.90 |
+| `Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean` | 393 | 704 | 3.18 | 8.01 | 0.40 | 1.06 / 1.87 |
+| `Commutativity/Transport/EvaluationSpecialization.lean` | 165 | 191 | 1.65 | 1.61 | 1.03 | 0.61 / 0.47 |
+| `Commutativity/Transport/FullSlice/Averages.lean` | 308 | 427 | 1.73 | 1.78 | 0.97 | 0.45 / 0.36 |
+| `Commutativity/Transport/FullSlice/Bridges/Closeness.lean` | 226 | 350 | 1.86 | 2.95 | 0.63 | 0.48 / 0.65 |
+| `Commutativity/Transport/FullSlice/Bridges/ClosenessCore.lean` | 108 | 152 | 0.86 | 1.19 | 0.72 | 0.11 / 0.13 |
+| `Commutativity/Transport/FullSlice/Bridges/ClosenessXEval.lean` | 116 | 200 | 1.01 | 1.47 | 0.69 | 0.15 / 0.23 |
+| `Commutativity/Transport/FullSlice/Bridges/QSDD.lean` | 124 | 195 | 1.71 | 2.75 | 0.62 | 0.52 / 1.21 |
+| `Commutativity/Transport/FullSlice/Machinery/Marginalization/Core.lean` | 337 | 695 | 2.99 | 6.44 | 0.46 | 0.79 / 2.28 |
+| `Commutativity/Transport/FullSlice/Machinery/Marginalization/Y.lean` | 151 | 318 | 1.45 | 2.26 | 0.64 | 0.28 / 0.29 |
+| `Commutativity/Transport/FullSlice/Machinery/Normalization.lean` | 207 | 347 | 1.60 | 2.36 | 0.68 | 0.38 / 0.76 |
+| `Commutativity/Transport/FullSlice/ZeroBounds.lean` | 148 | 273 | 1.56 | 2.80 | 0.56 | 0.49 / 1.35 |
+| `Commutativity/Transport/Pullback.lean` | 82 | 107 | 0.69 | 0.77 | 0.90 | 0.08 / 0.07 |
+| **all of M7** | 8025 | 13399 | 74.20 | 134.15 | 0.55 | 20.4 / 43.3 |
+| `MakingMeasurementsProjective/LocalityPreservingRepair.lean` | 277 | 818 | 3.73 | 10.12 | 0.37 | 1.54 / 5.74 |
+| `MakingMeasurementsProjective/Orthonormalization.lean` | 405 | 502 | 5.11 | 2.83 | 1.80 | 2.19 / 1.13 |
+| `MakingMeasurementsProjective/Orthonormalization/Completion.lean` | 114 | 214 | 2.27 | 2.20 | 1.03 | 0.74 / 0.60 |
+| `MakingMeasurementsProjective/Orthonormalization/RestrictSome.lean` | 52 | 50 | 0.53 | 1.05 | 0.50 | 0.04 / 0.28 |
+| `MakingMeasurementsProjective/Projectivization.lean` | 331 | 662 | 4.12 | 8.36 | 0.49 | 1.49 / 3.29 |
+| `MakingMeasurementsProjective/ProjectivizationChain/Basic.lean` | 125 | 237 | 1.94 | 1.94 | 1.00 | 0.44 / 0.34 |
+| `MakingMeasurementsProjective/Statements.lean` | 138 | 387 | 1.28 | 1.65 | 0.77 | 0.25 / 0.27 |
+| **all of M8** | 1442 | 2870 | 18.97 | 28.16 | 0.67 | 6.7 / 11.6 |
+| **M4, M6, M7 and M8** | 14796 | 23479 | 131.03 | 200.29 | 0.65 | 38.2 / 63.1 |
+| **M0, M1, M3–M8** | 27774 | 45947 | 246.74 | 368.13 | 0.67 | 79.3 / 115.0 |
 
 **The M3 and M5 rows** were measured the same way on 2026-10-02, 00:25–00:50 UTC, on the same
 4-core machine at load 0.5–2.1, ported and vendored file alternating, three rounds; the line
@@ -513,6 +626,43 @@ itself 0.45–0.57 s once. The vendored maximum in these files is `trace_combine
 `Theorems/Foundations`, not ported), 3.88 s. So no declaration takes 2 s, and the 5 s rule holds
 with a factor of about 3.5 to spare at that load; none of the
 28 files sets an option or raises a heartbeat limit.
+
+**The M4, M6, M7 and M8 rows** were measured the same way on 2026-10-02, 04:52–05:59 UTC, on the
+same 4-core machine at load 0.7–2.1, ported and vendored file alternating, three rounds, on the
+files of commit `60f1c59` (lines by `wc -l`). Each file of M8 is set against the vendored file of
+the same path only; the 17 vendored files M8 drops have no row. Every file passes the 2× rule of §4
+item 3 but one, `MainInductionStep/Statements`, at 2.01×, a file of statement structures without
+proofs ("Departures in M4, M6, M7 and M8"). The next largest are M8's `Orthonormalization` at 1.80×,
+which carries new two-space content (the Cauchy–Schwarz core and the two T5 lemmas) that has no
+vendored cost, and M4's `StrategyPolynomialFamilies` at 1.55×, definitions as well. M4 is at 1.51×,
+M6 at 0.86×, M7 at 0.55× and M8 at 0.67×; the other proof files are at 0.23–1.29×, and the largest
+savings are where the vendored proofs were slowest (`Main/EvaluatedQuestions` 0.23×,
+`ProcessedG/MainChain` 0.28×, `Scalar/RawSecond` 0.27×, `Defs/Normalization` 0.27×). M4–M8 as a
+whole are at 0.65×, and the port costs 8.9 ms a line on them against 8.5 ms vendored. With
+`-Dtrace.profiler=true -Dtrace.profiler.threshold=1000`, one run per ported file under the default
+asynchronous elaboration, at load 0.9–1.4 (06:00–06:11 UTC), seven declarations reached 1 s, all of
+them proofs, and the review's run (load 1.1–2.2) found an eighth,
+`Commutativity.fullSliceCommutation_qSDDOp_avg_expand_full` (`Transport/FullSlice/Bridges/QSDD`,
+1.03 s at load 1.10). The largest, `Commutativity.fullSliceCommutation_of_evaluated_on_evaluated_questions`
+(its vendored counterpart takes 13.1 s, over the 5 s rule), measured 2.42 s there and 2.99–3.17 s in
+the review, 1.88 s of it the real arithmetic of its small-parameter case; that arithmetic is now the
+standalone `commDataProcessedGError_to_comMainError_arith` (`New here`), and the two take 0.86–1.20 s
+and 1.36–1.66 s. Measured again the same way after that split, at load 0.8–1.7 (07:57–08:09 UTC),
+seven declarations reach 1 s: `Commutativity.evaluatedSlice_scalar_chain_bound` 2.00 s (2.07–2.20 s
+in the earlier runs), `Commutativity.gCommStabilityTwo_raw_scalar_pointwise_bound` 1.47 s,
+`Commutativity.commDataProcessedGError_to_comMainError_arith` 1.36 s,
+`MakingMeasurementsProjective.Orthonormalization.Completion.optionCompletion_bipartiteSSCRel` 1.24 s
+(vendored 1.39 s), `Commutativity.GCommStability.Scalar.scalar_pointwise_cauchy_schwarz_bound` 1.18
+s, `Commutativity.stabilityDefect_ev_eq` 1.14 s and
+`MakingMeasurementsProjective.leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul`
+1.13 s; `fullSliceCommutation_qSDDOp_avg_expand_full` stays under 1 s at that load. So no
+declaration takes 2.3 s at load up to 2.2, and the 5 s rule holds with a factor of two to spare.
+`MainInductionStep/Statements` sits at the 2× boundary rather than clearly over it: 2.01× above,
+1.94× in the review's minimum of three (4.97 s against 2.56 s), and 1.99× after M4's
+`AnswerMainInductionHypothesis` gained its finite-pair hypotheses and the import of
+`Foundations/Doubling` (5.52 s against 2.77 s, minimum of three, load 0.9–1.1, 08:10 UTC).
+None of the 69 files sets an option or raises a heartbeat limit, and none needs the file-wide
+`respectTransparency` that 85 of their vendored counterparts set.
 
 Declaration times depend on the machine's load, because under the default asynchronous
 elaboration the profiler reports a proof's wall time (`Elab.async`), and they are recorded with
@@ -583,16 +733,30 @@ expected at 0.8–1.5×, as every M1 file is; definition-heavy files are expecte
   `Co/Doubling/Model.lean`. The real-scalar and functional-calculus ones (`instNormedAlgebraRealLoc`,
   `instAlgebraRealLoc`, `instCFCLoc`) are in `Co/Doubling/Orthonormalization.lean`. Without the
   latter, `cfc` on `Loc M` fails, because `Algebra ℝ (Loc M)` is found through `Prod.algebra`.
-  Moving them next to the others is a cleanup.
-- `Co/Doubling/Orthonormalization.lean` declares the completion of a submeasurement and the
+  Moving them next to the others was tried after M8 and not kept: it took `Orthonormalization.lean`
+  from 20.6–20.9 s to 18.5–19.4 s of non-import elaboration but `Model.lean` from 18.5–19.1 s to
+  20.8–21.5 s (two runs each, load 0.9–1.7), so the three instances cost about as much wherever they
+  are declared, and the functional calculus on `Loc M` is not where `Orthonormalization.lean` spends
+  its time.
+- **`Co/Doubling/Orthonormalization.lean` and `Model.lean` are the most expensive files of the
+  doubling**, which the M2 row records only per declaration. `Orthonormalization.lean` takes about
+  20 s of non-import elaboration (20.6–20.9 s in two runs at load 0.9–1.1 on 2026-10-02, 19.7–21.7
+  s in the six of the M4–M8 review, before and after M8 moved 41 lines out of it), half of it
+  typeclass inference (10.1–11.0 s), and `Model.lean` 18.5–19.1 s, each about four times the most
+  expensive file of M4–M8. Neither has a vendored counterpart, so the 2× rule does not apply, and
+  the cost is spread: with a 1 s threshold the largest declarations of `Orthonormalization.lean`
+  are `map_cfc_of_injective` (1.85–2.12 s), `cfc_mem_opsA` (1.40–1.56 s), `cfc_mem_opsB`
+  (1.31–1.49 s), `one_sub_sum_norm_sq_completion_le` (1.23–1.26 s) and a statement whose
+  `SubMeas.map` argument elaborates in 1.05–1.46 s.
+- `Co/Doubling/Orthonormalization.lean` declared the completion of a submeasurement and the
   restriction of a projective submeasurement on `Option Outcome` under their vendored names,
   `MakingMeasurementsProjective.optionCompletion` (with its two `@[simp]` outcome lemmas) and
-  `MakingMeasurementsProjective.restrictSomeProjSubMeas`, generic over an ordered `⋆`-ring. M8's
-  ports of `LDT/MakingMeasurementsProjective/Statements.lean` and
-  `.../Orthonormalization/RestrictSome.lean` reuse them, and the pairing script reports them there
-  as ported elsewhere; M8 may move them into those files. Theorem G and Proposition H are stated
-  over any symmetric model (`SymModel.orthonormalization_of_isFinitePair`, `SymModel.L_cfc`), with
-  the doubled model a one-line specialization.
+  `MakingMeasurementsProjective.restrictSomeProjSubMeas`, generic over an ordered `⋆`-ring. M8 moved
+  them, unchanged, into its ports of `LDT/MakingMeasurementsProjective/Statements.lean` and
+  `.../Orthonormalization/RestrictSome.lean`, which `Co/Doubling/Orthonormalization.lean` now
+  imports. Theorem G and Proposition H are stated over any symmetric model
+  (`SymModel.orthonormalization_of_isFinitePair`, `SymModel.L_cfc`), with the doubled model a
+  one-line specialization.
 - Vector traces of the doubled model are stated on `VecTrace.diag2Set`, not on
   `(model hM hψ).toBipartite.opsA`. Instance synthesis on `(model hM hψ).toBipartite.H`, which
   unfolds to `Ampl (Fin 2) M.H` only through `SymModel.toBipartite`, exceeds the synthesis budget.
@@ -691,6 +855,172 @@ expected at 0.8–1.5×, as every M1 file is; definition-heavy files are expecte
   `orthogonalModeProjectorMatrix`) are typed as `MatrixOperator (pointHilbertSpace params)`, whose
   `-` and `•` do not unify syntactically with `Matrix`'s: `Results.lean` passes `(n := Point
   params)`, `id (α := Matrix ..)` and `trans_eq`.
+
+**Departures in M4, M6, M7 and M8.**
+- **Three of the four came in under their estimates, M8 far under**: M4 at 1.77k lines against
+  1.7–2.0k (r = 0.90, the 1.0 expected of definition files), M6 at 3.56k against 4.3–4.9k
+  (r = 0.64), M7 at 8.03k against 12.1–13.8k (r = 0.50) and M8 at 1.44k against 2.6–3.8k plus a
+  0.8–1.5k adapter (r = 0.37 on the seven files ported). The cause is M3's: the vendored proofs
+  restate long `leftTensor (ι₂ := ι) …` expressions in every step and prove Kronecker identities
+  entrywise, and here those are `S.L`, `S.opTensor_mul`, `S.leftTensor_mul_leftTensor` and the
+  keystone's positivity; the `Matrix.PosSemidef` self-adjointness arguments became
+  `IsSelfAdjoint.of_nonneg`. `CommutativityPoints`, which measured r = 0.95, has none of that, so
+  it was the wrong model for `Commutativity`. M8's estimate also assumed about ten files ported.
+- **`MainInductionStep/Statements` departs from the per-file 2× rule of §4 item 3**, at 2.01×
+  (5.08 s against 2.52 s, minimum of three runs; 5.08–5.28 s against 2.52–2.73 s over the rounds),
+  or rather sits at its boundary: two later minimum-of-three measurements give 1.94× and 1.99×.
+  It is a file of statement structures and their projections, without proofs, the case §5
+  predicted: typeclass inference 1.03 s against 0.36 s and type checking 1.39 s against 0.42 s,
+  spread over about thirty signatures on `K →L[ℂ] K` at 25–50 ms each, as in `Test/Defs` (2.97×).
+  Writing `strategy.state.toVecState.X` in place of the `CoeOut` dot notation made no difference
+  (4.71–4.90 s in a single-run comparison). M4 as a whole, three of whose four files are
+  definitions, is at 1.51×.
+- **M8 ports 7 of the 24 vendored files and drops 17** (7,398 vendored lines), each with its
+  replacement, recorded in the module docstring of `Co/MakingMeasurementsProjective/Orthonormalization.lean`
+  (the pairing script reads only ported files):
+  - `Defs` (320) and `Orthonormalization/ErrorBounds` (142) get no Co file: their error functions
+    are classical and imported, and the rest of `Defs` (`FiniteHilbertSpace`, `MatrixOperator`,
+    `MatrixSubmeasurement`, the Naimark data) is matrix-only, consumed only by the not-ported
+    `MatrixRealization`/`SdpMatrixBridge` and by M5's vendored imports of
+    `ExpansionHypercubeGraph/{Defs/Core,Theorems/Foundations,Theorems/Matrix,Theorems/Results}`,
+    whose matrix content M5 replaced by Gram positivity;
+  - `NaimarkCore` (404), `QXPLayer/*` (six files, 2,478), `QXPLayerIdentities/*` (six files,
+    3,140) and `SpectralTruncation/*` (two files, 914), the finite-dimensional orthonormalization
+    (Naimark dilation, rank reduction, rectangular SVD, step-function functional calculus legal
+    only on a finite spectrum), are replaced by T1: `povm_orthogonalization_finitePair` in the
+    repair theorems, T5's `povm_orthogonalization_dyadicPair`/`…B` in the two heterogeneous
+    lemmas, and M2's Theorem G for `orthonormalization`. No declaration of them is named outside
+    the directory. The vendored `ProjectivizationChain/Basic` imports `ProjectorApprox`, so the Co
+    file's classical import of it keeps that module in the import closure, prebuilt; no Co file
+    names it. M10's `SelfImprovement/Defs` will import Co `Projectivization` and the vendored
+    `Defs` in place of `NaimarkCore`.
+  The adapter the estimate allowed for (0.8–1.5k) is Theorem G, done in M2, and two direct T5
+  calls.
+- **The repair theorems are re-proved from T1.** `LocalityPreservingRepair` keeps the vendored
+  names of its four repair theorems and two `sddRel` bridges, proved through
+  `povm_orthogonalization_finitePair` at `ε = 3 min(ζ, 1)`, with error
+  `27 min(ζ, 1) ≤ 84 ζ^{1/4}` (`twentySeven_mul_min_le_orthonormalizationMainLemmaError`, new);
+  its 17 reduced-density declarations (`diagBlock` … `leftMarginal_ev_eq` and the right
+  counterparts) and the two used only by that route are not ported. Every T1-backed statement
+  changes shape the same way: `ψ hψ` becomes `S hS hA` with `hS : S.toBipartite.IsFinitePair` and
+  `hA : NoAbelianProj S.toBipartite.opsA`, and `0 ≤ ζ` becomes `0 < ζ`, because T1's hypothesis is
+  strict; there is no large-`ζ` branch, `min ζ 1` covering every `ζ > 0`. The case `ζ = 0` is
+  covered nowhere in M8: the in-core `orthonormalization` (vendored `SelfImprovementTop/Core:433`)
+  needs `0 < selfImprovementHelperError`, which holds when `1 ≤ params.d` (M14), and M13's
+  `SourceRoleRegister` errors contain `m·d/q`.
+- **Two M8 lemmas are two-space**, as M2's surrogate is. The heterogeneous
+  `orthonormalizationMeasurement_{,right_}of_consistency_from_projectivizationRepair_heterogeneous`
+  are stated over `M : MIPRE.BipartiteModel 𝒞 𝒜 ℬ` with `M.IsDyadicPair`, with M2's two-space
+  `bipartiteConsError` as hypothesis and the T1 sum of norms `∑ ‖π(πA(Aₐ − Pₐ))ψ‖² ≤
+  orthonormalizationError ζ` as conclusion, not an `SDDRel`; their consumer is M13
+  (`SourceRoleRegister/Core:507,547`). Their Cauchy–Schwarz core is the new
+  `one_sub_two_mul_le_sum_norm_sq_πA`/`_πB`.
+- **M2's `optionCompletion` and `restrictSomeProjSubMeas` moved** from
+  `Co/Doubling/Orthonormalization.lean` to their mirrored homes, `Co/MakingMeasurementsProjective/Statements.lean`
+  and `Co/MakingMeasurementsProjective/Orthonormalization/RestrictSome.lean`, byte for byte, with
+  their fully qualified names unchanged; `Co/Doubling/Orthonormalization.lean` imports them
+  (41 lines shorter), which makes no cycle. The ported `RestrictSome` does not import
+  `Statements`, against the vendored file. `Orthonormalization/Completion` bounds the overlap of
+  the totals by M2's step `∑ₐ b(Aₐ, Aₐ) ≤ b(T, T)` rather than
+  `Preliminaries.qBipartiteSSCDefect_postprocess_le`.
+- **Narrowed to one carrier**, by the rule of "Same-space and bipartite quantities" and as M3's
+  heterogeneous triangle lemmas were: M4's `tensorFailureExpectation`, now `(S : SymModel 𝔓 K)
+  (Z : 𝔓) (H : SubMeas Outcome 𝔓) : ℝ := S.ev (S.L Z * S.R (1 - H.total))`, every vendored use
+  of which (`MainInductionStep/Theorems/{PastingAssembly,SelfImprovementAssembly,AvgSliceErrors}/…`)
+  applies it to `strategy.state` of a `SymStrat`, so M12 calls it as `tensorFailureExpectation
+  strategy.state Z H`; M4's `mainFormalStep5_selfConsistency_ofExpansionBound_heterogeneous`, now
+  of the same type as its same-space sibling, whose vendored caller on the two-space `ProjStrat`
+  (`Test/MainTheorem/SourceRoleRegister/Core.lean`) is left to M13 and M14; and M8's
+  `Projectivization` lemmas, with `S` an explicit first argument.
+- **Fields that became theorems.** `RestrictedSymStrat.isNormalized` (M4) is a theorem, listed
+  under `Ported elsewhere`; `xRestrictedAnswerSymStrat` sets no `permInvState`, `densityFixed` or
+  `isNormalized`, and `xRestrictedStrategy_isNormalized` and
+  `xRestrictedAnswerSymStrat_isNormalized`, equalities of two proofs, lose `@[simp]`.
+  `AnswerMainInductionHypothesis` carries the universe binder `.{u, v, w}` and quantifies over
+  `𝔓 : Type v` and `K : Type w` with their instances, where the vendored one quantifies over a
+  finite carrier `ι : Type v`, and only over strategies whose model is a finite pair without
+  abelian projections in its first player's operators: `∀ strategy …,
+  strategy.state.toBipartite.IsFinitePair → NoAbelianProj strategy.state.toBipartite.opsA →
+  strategy.IsGood … → …`. These are the `hS hA` of M8's `orthonormalization`, which the
+  successor step of the vendored `answerMainInduction` (`MainInductionStep/Theorems/MainTheorems/Successor.lean:50`)
+  reaches through self-improvement (`SelfImprovementTop/Core.lean:433`); without them M12 could not
+  prove the hypothesis, T1 supplying no orthonormalization in an arbitrary C*-algebra. They thread
+  through the induction for free, restriction keeping the state (`xRestrictedAnswerSymStrat_state`
+  and `xRestrictedStrategy_state` hold by `rfl`), so M10's `selfImprovement` statements and M11's
+  and M12's induction-level theorems carry `hS hA` beside `ζ > 0`, and M13 discharges them for
+  `D(M)` with M2's `Doubling.isFinitePair` and `Doubling.noAbelianProj_iff`. M12 instantiates it
+  as `h 𝔓 K strategy … hS hA …`.
+- **Dropped hypotheses.** `hnorm : strategy.state.IsNormalized` is dropped from the 45 M7
+  lemmas, from M4's Step 5 theorems and from M8's `qSDD_*_zeroProjSubMeas_le_one`; `hperm`,
+  `strategy.permInvState` and `strategy.densityFixed` from every lemma that had them (M7's
+  `qBipartiteSSCDefect_eq_half_qSDD_of_proj` now takes `S P`; M8's
+  `sddRel_liftRight_of_liftLeft_permInv` and `qSDD_liftRight_eq_liftLeft_of_permInv` take `S`
+  first). The vendored uses became `S.ev_L_eq_ev_R`, `S.consRel_symm_of_density_fixed`,
+  `Preliminaries.qSDDCore_rightTensor_eq_leftTensor_of_permInv S` and
+  `S.ev_one_of_isNormalized`, and no ported statement carries a swap or normalization hypothesis.
+- **Argument conventions**, M1's and M3's: placement lemmas and definitions that place without a
+  strategy take `(S : SymModel 𝔓 K)` as an explicit first argument (M6's
+  `weightedPolynomialOperator_pos`/`_le_one` and `rightPolynomialWeightSqrt_contraction`, M7's
+  `leftOrderedProductOpFamily S`, `evaluatedPointFamilyLeft/Right S`, the normalization bounds,
+  `evaluatedSlicePointSwapRightPrefix S`); single-state lemmas take `(V : VecState K)`, and M6's
+  `ψbi` is a `VecState` in the same position, to which callers pass `strategy.state`; state-free
+  ones are generic (`zeroFullSliceOpFamily`, `zeroEvaluatedSliceOpFamily` and M8's
+  `zeroProjSubMeas`, written `(R := K →L[ℂ] K)` or `(R := 𝔓)` where the vendored text names
+  `ι`; `singletonOpFamily`, `postprocess_proj_outcome`, `cfc_sqrt_outcome_le_one`).
+- **M6: the weighted state is not ported**, as the M5 note prescribed. The vendored
+  point-conditioned variances evaluate on `W ρ Wᴴ`, `W = 1 ⊗ √G_g`, which is not a unit vector
+  state; here they are `ExpansionHypercubeGraph.localVariance`/`globalVariance` of the family
+  `u ↦ S.L (A^u_{g(u)}) * S.R √G_g` on `strategy.state`. So `weightedPolynomialState` and
+  `weightedPolynomialState_ev_leftTensor` are not ported,
+  `weightedNormDeviation_eq_pointConditionedDifferenceAvg` holds by `rfl`, and
+  `pointConditionedExpansionTransfer` is `localToGlobal`. `GlobalVariance/Defs/Core.lean` is a
+  docstring and its imports, the vendored file being classical.
+- **Proofs that take another route.** M6's `localVarianceDeviation_sum_le_localVarianceOfPointsError`
+  (`TransportChain/SumForm`) runs the six-step chain through `Preliminaries.sddOpRel_chain` on a
+  local operator family, as `TransportChain/Core` does, in place of the vendored pointwise
+  telescoping (0.87 s against 2.50 s). M6's `pointConditionedEventSelfConsistency_weighted_point` is
+  one summand of the sum form, so the two are declared in the reverse of the vendored order. M7's
+  stability expansions share the new `stabilityDefect_ev_eq` (`Scaffold/Products`), which replaces a
+  100-line calc the vendored file repeats; the four zero bounds of `Transport/FullSlice/ZeroBounds`
+  and `Main/Auxiliary/HEvalTransport` share the new `sum_ev_adjoint_self_leftTensor_mul_le_one`;
+  `ScalarApproximation/Core` proves the gap nonnegative as half of `qSDD` and imports Co
+  `Preliminaries/BipartiteSelfConsistency/Core` for `ev_adjoint_self_leftTensor_sub_rightTensor`;
+  `PaperChainBasic/Normalization` replaces the Kronecker calcs by six private theorems.
+  M7's `fullSliceCommutation_of_evaluated_on_evaluated_questions` (`Main/EvaluatedQuestions`) takes
+  13.1 s vendored, over the 5 s rule, and 2.55 s ported with `-DElab.async=false`: every `nlinarith`
+  became an explicit product fact fed to `linarith only`. Its real arithmetic, about 1.9 s of that,
+  is the separate `commDataProcessedGError_to_comMainError_arith`, so that neither half reaches 2 s.
+- **New declarations**, each under `New here`: M6 `generalizeBLeftOutcome_base`; M7
+  `sandwichByOuterSubMeas_sum_outcome`, `stabilityDefect_ev_eq`,
+  `sum_ev_adjoint_self_leftTensor_mul_le_one` and `commDataProcessedGError_to_comMainError_arith`;
+  M8 `twentySeven_mul_min_le_orthonormalizationMainLemmaError`, `one_sub_two_mul_le_sum_norm_sq_πA`
+  and `_πB`. Two private helpers are duplicated across M7's
+  `EvaluatedSliceCommutation/Averages` and `Transport/FullSlice/Averages` (`avg_sum_eq_of_swap`,
+  `avg_pair_sum_eq_of_swap`), the first being private to its module.
+- **Classical content imported from vendored modules**, listed as `classical, imported`: M4's
+  `MainInductionStep/Defs` (10 declarations), M6's `GlobalVariance/Defs/{Core,Families}`,
+  `Theorems/{Averaging,AlgebraicIdentity,CollisionExpansion,SelfConsistencyTransport/Utilities,TransportChain/Core}`,
+  M7's `Commutativity/Defs/Core`, `Scaffold/Core`, `Transport/Pullback`,
+  `Transport/FullSlice/Averages` and `Transport/FullSlice/Machinery/Marginalization/Core`, and M8's
+  `Defs` (its error functions), `Projectivization`, `ProjectivizationChain/Basic`, `LocalityPreservingRepair` and
+  `Orthonormalization/ErrorBounds`. Inside `MIPRE.LIDT.Co` the dotted name
+  `MakingMeasurementsProjective.X` resolves to the Co namespace, so the vendored classical names
+  of that directory are reached through explicit `open MIPStarRE.LDT.MakingMeasurementsProjective
+  (…)` lists.
+- **Pitfalls for later stages.** Several proofs exceeded 200000 heartbeats in a defeq check when
+  an argument was left to unification and were instant once it was given: the distribution of an
+  `avgOver_nonneg` inside a `rw` (`Marginalization/Y`), the binder type of `avgOver_uniform_snd`
+  (`ClosenessXEval`), the operator of a closing `avgOver_congr` (`ScalarMarginalization`), and the
+  outcome type of `qSDDCore_rightTensor_eq_leftTensor_of_permInv` against
+  `orderedProductOpFamily`/`reversedProductOpFamily`, whose `fun | (a, b) =>` match has no
+  `_outcome` lemma (`PaperChainBasic/PointSwap`); adding those two lemmas to
+  `Co/CommutativityPoints/Defs` is a cleanup. A single `refine` with `le_of_eq_of_le
+  (Finset.sum_congr …)` hit the limit in `SelfConsistencyTransportSum`, an explicit `have` and
+  `calc` did not. In M4's `restrictDiagonalMeasurement_postprocess_zero`, `rw`/`simp` with
+  `SubMeas.postprocess_comp` fails without the vendored `respectTransparency`, the instances for
+  `Fq params.next` and `Fq params` not unifying at instance transparency; `refine
+  (SubMeas.postprocess_comp _ _ _).trans …` works. No file sets `respectTransparency` or raises a
+  heartbeat limit, the vendored file-wide options included.
 
 **Departures in M1.**
 - Helpers that take the state keep the ported file's namespace, with the model or the vector
