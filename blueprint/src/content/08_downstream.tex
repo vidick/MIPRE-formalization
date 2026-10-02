@@ -723,7 +723,7 @@ Equivalent to CEP by Kirchberg's theorem (see~\cite{Oza13}); no new input from t
 project, but the equivalence itself is another substantial operator-algebra
 formalization.
 
-\subsection{The commuting-operator class, conditionally}
+\subsection{The commuting-operator class}
 \label{sec:ds-mipco}
 
 Lin proved that the commuting-operator analogue of $\MIPstar$ is $\coRE$~\cite{Lin25}, by
@@ -738,7 +738,10 @@ $\MIPco$ themselves are written once against a \emph{value model}
 and the two theorems differ only in the direction in which the value is semidecidable. The
 plan for discharging the hypothesis is \texttt{planning/mipco-track.md}; its Phases 1 to 5, the
 rest of this section, reduce it to the soundness of the low-individual-degree test in the
-commuting-operator model (Corollary~\ref{cor:mipco-from-lidt}). The companion proof
+commuting-operator model (Corollary~\ref{cor:mipco-from-lidt}), and Phase 6 to its soundness in
+dyadic pairs (Corollary~\ref{cor:mipco-from-lidt-fin}), which is proved
+(Theorem~\ref{thm:lidt-sound-fin}); so his theorem holds here without hypothesis
+(Theorem~\ref{thm:mipco-eq-core-unconditional}). The companion proof
 repository has no $\coRE$ chapter: the paper of record for this section is Lin's, and its
 nodes carry no ledger correspondence.
 
@@ -955,7 +958,7 @@ tensor completeness, and with Lemma~\ref{lem:valco-upper-re} in place of the NPA
 \label{thm:mipco-eq-core}
 \uses{thm:halting-co,lem:mipco-sub-core,def:mipco,def:core,thm:halting-undecidable,
   thm:compression-target,def:value-model}
-\lean{MIPRE.mipco_eq_core, MIPRE.core_subset_mipco, MIPRE.Halting.mipco_eq_core_of,
+\lean{MIPRE.mipco_eq_core_of_compression, MIPRE.core_subset_mipco, MIPRE.Halting.mipco_eq_core_of,
   MIPRE.Halting.core_subset_mipco_of, MIPRE.Halting.core_subset_mipclass_of_reduction,
   MIPRE.Halting.mipclass_eq_core_of_reduction}
 \leanok
@@ -1063,7 +1066,9 @@ oracularization (Section~\ref{sec:ds-mipco-phase2}), answer reduction
 Pauli basis test (Section~\ref{sec:ds-mipco-phase5}). The low-individual-degree test is Phase 6,
 the one item that is new mathematics rather than a generalization: the only proof of its soundness
 here is the vendored finite-dimensional one, whose mechanisms use the finite dimension throughout.
-So far Phase 6 has reduced the hypothesis to dyadic pairs (Section~\ref{sec:ds-mipco-phase6}).
+Phase 6 reduced the hypothesis to dyadic pairs (Section~\ref{sec:ds-mipco-phase6}) and proved it
+there (Theorem~\ref{thm:lidt-sound-fin}), so $\MIPco = \coRE$ holds
+(Theorem~\ref{thm:mipco-eq-core-unconditional}).
 Sizes, phases and the delicate points are in \texttt{planning/mipco-track.md}, and the audit that
 fixed the model is \texttt{reports/co-generalization-audit.md}.
 \end{remark}
@@ -2782,8 +2787,8 @@ a port of the vendored proof needs where it uses the dimension: the symmetrizati
 players, the semidefinite step, and orthonormalization, which in a finite von Neumann algebra is de
 la Salle's theorem; and the matrix units exclude abelian projections
 (Theorem~\ref{thm:no-abelian-dyadic}), which makes that theorem unconditional in the class
-(Corollary~\ref{cor:orthonormalization-dyadic-pair}). The port has begun
-(Lemma~\ref{lem:co-commutativity-points}), with the doubling that supplies its symmetric model
+(Corollary~\ref{cor:orthonormalization-dyadic-pair}). The port is complete
+(Theorem~\ref{thm:lidt-sound-fin}), with the doubling that supplies its symmetric model
 (Definition~\ref{def:doubled-model}) and the semidefinite step (Theorem~\ref{thm:summed-sdp}). This
 subsection
 proves that the restriction suffices (Corollary~\ref{cor:mipco-from-lidt-fin}). Answer reduction and
@@ -3174,9 +3179,11 @@ Theorem~\ref{thm:ar-sound-co-fin}, and parallel repetition is
 Corollary~\ref{cor:mipco-from-stages} is sound in $\omegaco$, which gives $\MIPco = \coRE$.
 \end{proof}
 
-What remains is the hypothesis of Corollary~\ref{cor:mipco-from-lidt-fin}:
-Theorem~\ref{thm:lidt-cl-soundness} in every dyadic pair. That is the port of the vendored proof
-described above, C6b of \texttt{planning/mipco-track.md}, planned in
+The hypothesis of Corollary~\ref{cor:mipco-from-lidt-fin} is
+Theorem~\ref{thm:lidt-cl-soundness} in every dyadic pair. It is proved
+(Theorem~\ref{thm:lidt-sound-fin}), so $\MIPco = \coRE$ holds without hypothesis
+(Theorem~\ref{thm:mipco-eq-core-unconditional}). The proof is the port of the vendored proof
+described above, C6b of \texttt{planning/mipco-track.md}, planned and recorded in
 \texttt{planning/c6b-plan.md}; \texttt{reports/lidt-co-audit.md}, Section~5, sizes it, and
 \texttt{reports/c6b-paper-proofs.md} records the mathematics it adds. Its orthonormalization tier
 is the II$_1$ one: the class is narrowed to the dyadic pairs, whose algebras have no nonzero
@@ -3226,13 +3233,15 @@ again a dyadic pair. This is the form the orthonormalization sites of the port c
 hypothesis beyond the class (\texttt{reports/c6b-paper-proofs.md}, Section~3.7).
 \end{proof}
 
-The port has begun (\texttt{planning/c6b-plan.md}, Section~3, milestones M0 to M9). It replaces the
+The port is complete (\texttt{planning/c6b-plan.md}, Section~3, milestones M0 to M14). It replaces the
 vendored state on $\C^\iota \otimes \C^\iota$, and the swap hypotheses that come with it, by a
 \emph{symmetric model} (Definition~\ref{def:sym-model}), in which swap symmetry is a theorem
 (Lemma~\ref{lem:sym-model-swap}), and rewrites the vendored proof over it file by file, under
 \texttt{MIPRE/Background/LIDT/Co/}, keeping the vendored names and importing the vendored classical
 layer rather than porting it. The first section ported in full is the commutativity of points
-(Lemma~\ref{lem:co-commutativity-points}).
+(Lemma~\ref{lem:co-commutativity-points}), and the last is the main theorem
+(Theorem~\ref{thm:co-main-formal}), from which the soundness of the seeded test in dyadic pairs
+follows (Theorem~\ref{thm:lidt-sound-fin}).
 
 \begin{definition}[Symmetric models]
 \label{def:sym-model}
@@ -4090,6 +4099,182 @@ invariance of the state, the port uses $\mathrm{ev}(L(x)) = \mathrm{ev}(R(x))$
 (Lemma~\ref{lem:sym-model-swap}).
 \end{proof}
 
+The remaining milestones of the port assemble these lemmas (\texttt{planning/c6b-plan.md},
+milestones M12 to M14). The main induction of the vendored proof runs over the symmetric model
+(Lemma~\ref{lem:co-main-induction}), with $d \geq 1$ threaded through to self-improvement, and it
+is applied in the doubled model $D(M)$ of a dyadic pair $M$, whose bipartite reading is a finite
+pair without abelian projections (Lemma~\ref{lem:doubled-model-no-abelian}). Its output is one
+measurement in the local algebra of $D(M)$, which is unsymmetrized into one measurement for each
+player of $M$; the tail of the vendored main theorem then runs on $M$ itself, with two players'
+algebras.
+
+\begin{lemma}[The main induction, in a symmetric model]
+\label{lem:co-main-induction}
+\uses{def:sym-model,def:finite-pair,lem:co-self-improvement,lem:co-ld-pasting}
+\lean{MIPRE.LIDT.Co.MainInductionStep.mainInduction}
+\leanok
+Consider an $(\eps, \delta, \gamma)$-good symmetric strategy in $S$ for the low individual degree
+test in $m$ variables, as in Lemma~\ref{lem:co-commutativity-points}, with point measurements
+$A^u$ in $\cal{P}$. Let the bipartite reading of $S$ be a finite pair
+(Definition~\ref{def:finite-pair}) whose first player's operators contain no nonzero abelian
+projection, and let $d \geq 1$. Then for every integer $k \geq 400\, m d$ there is a measurement
+$G$ in $\cal{P}$ whose outcomes are the polynomials of individual degree at most $d$ with
+\[
+  \E_u \mathrm{cons}\bigl(A^u, G^{[u]}\bigr) \leq m^2 \bigl(\nu + e^{-k / (80000 m^2)}\bigr),
+  \qquad \nu = 1000\, k^2 m^2 \Bigl(\eps^{1/1024} + \delta^{1/1024} + \gamma^{1/1024} +
+  \Bigl(\frac{d}{q}\Bigr)^{1/1024}\Bigr),
+\]
+for a uniformly random point $u$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The proof is the vendored one, \texttt{MIPStarRE.LDT.MainInductionStep.mainInduction} in
+\texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/}, rewritten over the
+symmetric model (\texttt{planning/c6b-plan.md}, milestone M12): a strong induction on $m$, run on
+an answer-valued form of the statement that quantifies over every symmetric model whose bipartite
+reading is a finite pair without abelian projections. For $m = 1$ the axis-parallel line
+measurement read at the point is the measurement. For $m + 1$ variables the strategy restricted to
+each slice $x_{m+1} = x$ is good at parameters bounded by the restricted failure probabilities,
+whose averages are those of the whole strategy; the induction hypothesis gives each slice a
+polynomial measurement, which self-improvement (Lemma~\ref{lem:co-self-improvement}) makes
+projective, complete, self-close and bounded, and pasting
+(Lemma~\ref{lem:co-ld-pasting}) assembles the slices into one measurement in $m + 1$ variables;
+the vendored parameter bounds absorb the errors into the one of the statement. The restrictions
+keep the model, so the hypotheses on it, and $d$, pass to each slice unchanged. When the error is
+at least $1$, any measurement will do.
+\end{proof}
+
+\begin{lemma}[Unsymmetrization in the doubled model]
+\label{lem:doubled-unsymmetrization}
+\uses{thm:doubled-symmetrization}
+\lean{MIPRE.LIDT.Co.Doubling.symmStrat_pointConsistency_unsymmetrize}
+\leanok
+Let $S$ be a projective strategy for the low individual degree test whose two players act in a
+finite pair $M$ with a unit state, and $S_D$ its symmetric strategy in the doubled model $D(M)$
+(Theorem~\ref{thm:doubled-symmetrization}). Let $G$ be a measurement in the local algebra of
+$D(M)$ whose outcomes are the polynomials, with components $G^1$ in the first player's algebra and
+$G^2$ in the second's. If the point measurements of $S_D$ are $\sigma$-consistent with the
+evaluations of $G$ in $D(M)$, for a uniformly random point, then in $M$ the first player's point
+measurements are $2\sigma$-consistent with the evaluations of $G^2$, and the evaluations of $G^1$
+are $2\sigma$-consistent with the second player's point measurements.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The point measurements of $S_D$ have the point measurements of $S$ as components, and evaluation
+commutes with taking components. A consistency defect of $D(M)$ between two paired families is the
+average of the two two-space defects of $M$ (Lemma~\ref{lem:doubled-model-role-average}), both
+nonnegative, so each is at most twice it (\texttt{reports/c6b-paper-proofs.md}, Section~4,
+Theorem~E). These are the constants of the vendored role-register unsymmetrization, which this
+replaces.
+\end{proof}
+
+\begin{theorem}[The main theorem of the low individual degree test, in a dyadic pair]
+\label{thm:co-main-formal}
+\uses{lem:doubled-unsymmetrization,lem:co-main-induction,
+  lem:co-orthonormalization,lem:co-schwartz-zippel-step,lem:doubled-model-no-abelian}
+\lean{MIPRE.LIDT.Co.Test.mainFormal}
+\leanok
+Let $S$ be a projective strategy for the low individual degree test whose two players act in a
+dyadic pair $M$ (Definition~\ref{def:dyadic-pair}) with a unit state, failing the test with
+probability at most $\eps$, let $d \geq 1$, and let $k$ be an integer with $k \geq 400 m d$ and
+$k > 0$. Then there are projective measurements $G^\alice$ in the first player's algebra and
+$G^\bob$ in the second's, with outcomes the polynomials of individual degree at most $d$, such
+that the first player's point measurements are consistent with the evaluations of $G^\bob$, the
+evaluations of $G^\alice$ with the second player's point measurements, and $G^\alice$ with
+$G^\bob$, each up to the error of the vendored main theorem, which at the parameters of the
+canonical-line test is $\delta_{lidt}(\eps, m, d, q, k)$ of Theorem~\ref{thm:lidt-soundness}.
+\end{theorem}
+
+\begin{proof}
+\leanok
+The proof is the vendored one, \texttt{MIPStarRE.LDT.Test.mainFormal} in
+\texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/}, rewritten over the models
+(\texttt{planning/c6b-plan.md}, milestones M12 and M13), with the role register replaced by the
+doubling. The symmetric strategy $S_D$ in $D(M)$ is $(3\eps, 3\eps, 3\eps)$-good
+(Theorem~\ref{thm:doubled-symmetrization}), and $D(M)$ is a finite pair without abelian
+projections (Lemma~\ref{lem:doubled-model-no-abelian}), so the main induction
+(Lemma~\ref{lem:co-main-induction}) runs in $D(M)$ and returns a measurement $G$ in its local
+algebra. Its components are $2\sigma$-consistent with the points in $M$
+(Lemma~\ref{lem:doubled-unsymmetrization}). The step from points to whole polynomials runs in
+$D(M)$ on the pairing of the two components, whose self-consistency there is exactly their
+two-space consistency in $M$, so it adds $md/q$ (Lemma~\ref{lem:co-schwartz-zippel-step}) with no
+loss of a factor of two. The rest of the vendored tail runs on $M$, with two players' algebras: the
+two-space orthonormalizations (Lemma~\ref{lem:co-orthonormalization}) at a positive error, since
+$d \geq 1$, a completion in the commutant that the finite pair identifies each algebra with
+(Lemma~\ref{lem:finite-pair-order}), and the vendored scalar cascade, verbatim. When the error is
+at least $1$, any projective measurements will do.
+\end{proof}
+
+\begin{lemma}[The canonical-line theorem in a dyadic pair]
+\label{lem:co-lidt-canonical-line}
+\uses{thm:co-main-formal,def:model-proj-strategy,def:lidt}
+\lean{MIPRE.LIDT.Co.Bridge.soundness, MIPRE.LIDT.Co.Bridge.soundLidtIn_of_isDyadicPair}
+\leanok
+Theorem~\ref{thm:lidt-soundness} holds, for $d \geq 1$, for the projective strategies in every
+dyadic pair (Definition~\ref{def:dyadic-pair}), with the measurements $G^\alice$ and $G^\bob$
+projective measurements in the two players' algebras and consistency measured by the
+inconsistency of the model.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The proof is the matrix one of Theorem~\ref{thm:lidt-soundness}, read in the model: the strategy
+is translated into the strategy container of the port, its failure surrogate is at most the
+rejection probability, Theorem~\ref{thm:co-main-formal} applies, and its measurements and errors
+are read back into the vocabulary of the model.
+\end{proof}
+
+\begin{lemma}[Soundness in a model from the canonical-line theorem in it]
+\label{lem:lidt-sound-in-of-model-lidt}
+\uses{def:lidt-sound-in}
+\lean{MIPRE.LIDT.Co.Chain.soundIn_of_soundLidtIn}
+\leanok
+Let $M$ be a bipartite model whose players' algebras are star-ordered. If the conclusion of
+Theorem~\ref{thm:lidt-soundness} holds for the projective strategies in $M$ whenever $d \geq 1$,
+with the measurements in the players' algebras, then the seeded CL test is sound in $M$
+(Definition~\ref{def:lidt-sound-in}).
+\end{lemma}
+
+\begin{proof}
+\uses{lem:model-embedding,lem:model-proj-strategy,lem:lidt-cl-adapter-weights}
+\leanok
+This is the route by which Lemma~\ref{lem:lidt-sound-in-tensor} reads
+Theorem~\ref{thm:lidt-cl-soundness} off Theorem~\ref{thm:lidt-soundness}, with the matrix Born
+rule replaced by the model's: the seeded strategy is reparametrized to a strategy for the
+canonical-line test with a single codeword, padded, and the tuple measurements are extracted from
+the measurements that the hypothesis provides, at the error $\delta_{\mathrm{CL}}$. When the
+padding is not possible the error is at least $1$, and constant measurements will do.
+\end{proof}
+
+\begin{theorem}[The low-individual-degree test is sound in dyadic pairs]
+\label{thm:lidt-sound-fin}
+\uses{def:lidt-sound-fin,lem:co-lidt-canonical-line,lem:lidt-sound-in-of-model-lidt}
+\lean{MIPRE.LIDT.Simul.soundFin}
+\leanok
+The seeded CL test is sound in dyadic pairs (Definition~\ref{def:lidt-sound-fin}).
+\end{theorem}
+
+\begin{proof}
+\leanok
+In a dyadic pair the canonical-line theorem holds (Lemma~\ref{lem:co-lidt-canonical-line}), and
+it gives the soundness of the seeded test there (Lemma~\ref{lem:lidt-sound-in-of-model-lidt}).
+\end{proof}
+
+\begin{theorem}[$\MIPco = \coRE$]
+\label{thm:mipco-eq-core-unconditional}
+\uses{cor:mipco-from-lidt-fin,thm:lidt-sound-fin}
+\lean{MIPRE.mipco_eq_core}
+\leanok
+$\MIPco = \coRE$, for the class of Definition~\ref{def:mipco}.
+\end{theorem}
+
+\begin{proof}
+\leanok
+The hypothesis of Corollary~\ref{cor:mipco-from-lidt-fin} is Theorem~\ref{thm:lidt-sound-fin}.
+\end{proof}
+
 \subsection{Further directions}
 
 \begin{remark}
@@ -4101,10 +4286,9 @@ $C_q$ and rates for the NPA hierarchy; uncomputability results for entanglement
 requirements ($\Ent(\cdot, \frac12)$ grows faster than any computable function along
 the halting games), which need the entanglement form of the pipeline
 (Remark~\ref{rem:entanglement-form}) rather than the value form adopted here; the
-commuting-operator counterpart $\MIPco = \coRE$~\cite{Lin23,Lin25}, stated and proved
-conditionally in Section~\ref{sec:ds-mipco} (Theorem~\ref{thm:mipco-eq-core}), where what
-remains is the soundness of the low-individual-degree test in dyadic pairs
-(Corollary~\ref{cor:mipco-from-lidt-fin}); and, more speculatively,
+commuting-operator counterpart $\MIPco = \coRE$~\cite{Lin23,Lin25}, proved in
+Section~\ref{sec:ds-mipco} (Theorem~\ref{thm:mipco-eq-core-unconditional}), through the soundness
+of the low-individual-degree test in dyadic pairs (Theorem~\ref{thm:lidt-sound-fin}); and, more speculatively,
 connections
 to the undecidability of the spectral gap and to the existence of non-hyperlinear
 groups, the latter being \emph{not} implied by CEP's failure and best recorded as an

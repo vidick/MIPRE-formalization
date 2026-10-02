@@ -9,21 +9,31 @@ public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Foundations.ClassMIPCo
 public import MIPRE.Background.Repetition.DyadicApprox
 public import MIPRE.Background.QLD.FinSoundness
+public import MIPRE.Background.LIDT.Co.SoundFin
 
 @[expose] public section
 
 /-!
-# `MIP^co = coRE`, conditionally on the commuting-operator soundness of compression
+# `MIP^co = coRE`
 
-Lin's theorem (`Lin25`, blueprint `thm:mipco-eq-core`), with one hypothesis left open: that
-the gap compression of the main theorem, `MIPRE.gapCompression`, is sound in the
-commuting-operator value model (`GapCompression.Sound ValueModel.commuting`, blueprint
-`def:compression-co-sound`) — the model-`co` case of the soundness clause of Lin's gap
-compression theorem. Everything else is proved, once for both values, in the value-model
-development (`Foundations/ValueModel.lean` and the halting reduction): the nested
-compressibility criterion, the tabulation and the semidecider, the class transfer, and
-`MIP^co ⊆ coRE` unconditionally (`MIPRE.MIPCo.isCoRE`). `planning/mipco-track.md` says what
-discharging the hypothesis takes.
+Lin's theorem (`Lin25`), **unconditionally**: `mipco_eq_core` (blueprint
+`thm:mipco-eq-core-unconditional`). It is `mipco_eq_core_of_lidtFin` applied to
+`LIDT.Simul.soundFin` (`MIPRE/Background/LIDT/Co/SoundFin.lean`, blueprint `thm:lidt-sound-fin`),
+the soundness of the seeded low-individual-degree test in every dyadic pair, which is the
+commuting-operator port of the vendored finite-dimensional soundness proof
+(`planning/c6b-plan.md`). The rest of this module records the route, as a chain of conditional
+theorems whose hypotheses shrink.
+
+`mipco_eq_core_of_compression` (blueprint `thm:mipco-eq-core`) has one hypothesis: that the gap
+compression of the main theorem, `MIPRE.gapCompression`, is sound in the commuting-operator value
+model (`GapCompression.Sound ValueModel.commuting`, blueprint `def:compression-co-sound`) — the
+model-`co` case of the soundness clause of Lin's gap compression theorem. Everything else is
+proved, once for both values, in the value-model development (`Foundations/ValueModel.lean` and
+the halting reduction): the nested compressibility criterion, the tabulation and the semidecider,
+the class transfer, and `MIP^co ⊆ coRE` unconditionally (`MIPRE.MIPCo.isCoRE`).
+The hypothesis itself is not proved: the unconditional `mipco_eq_core` goes around it, through
+`gapCompressionCo` (the same pipeline with `repetitionCo 7`) and `mipco_eq_core_of_lidtFin`;
+`planning/mipco-track.md` records the route.
 
 `mipco_eq_core_of_stages` states it with the hypothesis split into the commuting-operator
 soundness clauses of the stages of the compression. Parallel repetition's is proved
@@ -49,10 +59,12 @@ density and an amplification by the twisted Pauli algebra), so answer reduction 
 basis test, which use the hypothesis only in the model of one near-optimal strategy and in its
 ancilla extensions, need it only there.
 
-Both conditional theorems go through `gapCompressionCo`, the main theorem's pipeline with the
-number of repetitions chosen against the smaller of the two repetition constants
-(`repetitionCo`), since the commuting-operator repetition theorem has a constant of its own; any
-gap compression sound in `ω_co` gives the theorem (`Halting.mipco_eq_core_of`).
+The conditional theorems after `mipco_eq_core_of_compression` (`_of_stages`, `_of_lidt`,
+`_of_lidtFin`, and so the unconditional `mipco_eq_core`) go through `gapCompressionCo`, the main
+theorem's pipeline with the number of repetitions chosen against the smaller of the two
+repetition constants (`repetitionCo`), since the commuting-operator repetition theorem has a
+constant of its own; any gap compression sound in `ω_co` gives the theorem
+(`Halting.mipco_eq_core_of`).
 
 This module sits beside `MIPRE/MainTheorem.lean`, which `MIPRE/Foundations/` does not import,
 because the hypothesis is about its `gapCompression`.
@@ -71,9 +83,12 @@ theorem core_subset_mipco (hco : gapCompression.Sound .commuting) {L : Set Cost.
     (h : IsCoRE L) : MIPCo L :=
   Halting.core_subset_mipclass_of_reduction .commuting (halting_reduction_commuting hco) h
 
-/-- **`MIP^co = coRE`** (blueprint `thm:mipco-eq-core`), given the commuting-operator soundness
-of compression; `MIP^co ⊆ coRE` needs no hypothesis (`MIPCo.isCoRE`). -/
-theorem mipco_eq_core (hco : gapCompression.Sound .commuting) : MIPCo = IsCoRE :=
+/-- **`MIP^co = coRE` from co-soundness** (blueprint `thm:mipco-eq-core`), given the
+commuting-operator soundness of compression; `MIP^co ⊆ coRE` needs no hypothesis
+(`MIPCo.isCoRE`). The unconditional theorem is `mipco_eq_core`, which goes through
+`gapCompressionCo` and `mipco_eq_core_of_lidtFin` rather than through this one. -/
+theorem mipco_eq_core_of_compression (hco : gapCompression.Sound .commuting) :
+    MIPCo = IsCoRE :=
   Halting.mipclass_eq_core_of_reduction .commuting ValueModel.commuting_upperRE
     (halting_reduction_commuting hco)
 
@@ -122,6 +137,13 @@ theorem mipco_eq_core_of_lidtFin (h : LIDT.Simul.SoundFin) : MIPCo = IsCoRE :=
         (QLD.approxSoundIn_commuting_of_fin Repetition.commutingFinitePairApprox h))
       (AnswerReduction.answerReduction_soundIn_commuting_fin Repetition.commutingFinitePairApprox h)
       (repetitionCo_soundIn_commuting 7))
+
+/-- **`MIP^co = coRE`** (Lin, blueprint `thm:mipco-eq-core-unconditional`): the languages with
+commuting-operator multiprover interactive proofs are exactly the co-recursively-enumerable ones.
+The hypothesis of `mipco_eq_core_of_lidtFin`, the soundness of the seeded low-individual-degree
+test in every dyadic pair, is `LIDT.Simul.soundFin`. -/
+theorem mipco_eq_core : MIPCo = IsCoRE :=
+  mipco_eq_core_of_lidtFin LIDT.Simul.soundFin
 
 end MIPRE
 

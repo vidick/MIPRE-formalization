@@ -6,7 +6,14 @@ surveys of the code and four paper proofs, each proof checked by three independe
 revised, most of the new steps prototyped in Lean. The proofs are recorded in
 `reports/c6b-paper-proofs.md`; the audit that sized the port is `reports/lidt-co-audit.md`.
 
-**Status (2026-10-02).** The orthonormalization tier is complete (T1–T5 below). De la Salle's
+**Status (2026-10-02): C6b is complete.** `MIPRE.LIDT.Simul.soundFin : SoundFin` is proved
+(`Co/SoundFin.lean`, blueprint `thm:lidt-sound-fin`): the seeded low-individual-degree test is sound
+in every dyadic pair. With it **`MIPRE.mipco_eq_core : MIPCo = IsCoRE` holds without hypothesis**
+(`MIPRE/MIPCo.lean`, `thm:mipco-eq-core-unconditional`). The tier (T1–T5, about 3.0k lines) and the
+port (M0–M14, 71.7k lines under `MIPRE/Background/LIDT/Co/`, at 0.54× the vendored elaboration time
+on the files with a vendored counterpart) are done; what is left is off the route (§4 item 8). The
+rest of this paragraph is the record of how it went. The orthonormalization tier is complete (T1–T5
+below). De la Salle's
 Theorem 1.2 holds unconditionally in every von Neumann algebra with no nonzero abelian projection
 and a faithful tracial vector functional (T1), and in both algebras of every dyadic pair, a class
 that excludes abelian projections by a trace estimate (T2;
@@ -48,10 +55,21 @@ two-part adapter and whose rounding is M8's orthonormalization, so that its top 
 model hypotheses `hS hA` and `1 ≤ params.d`, its 8 matrix-realization files being dropped, and
 `Pasting` (76 modules, 17,577 lines; `Co.Pasting.ldPasting`, with no new hypothesis); 28,988 lines,
 at 0.78× and 0.40× the vendored elaboration time, every file within the 2× rule but the
-statement file `SelfImprovement/Theorems/Statements` (2.19×). 60.4k lines are done. About 11–15k
-remain (M12–M14) at the estimates of §3, and 9–14k at the rates M10 and M11 measured; the port is
-71–76k in all, or 70–74k. M12–M14 are open: M12 threads `hd : 1 ≤ params.d` beside `hS hA`, M13
-discharges `hS hA` for `D(M)` and M14 supplies `hd` from `SoundIn`.
+statement file `SelfImprovement/Theorems/Statements` (2.19×). **M12–M14 are done too, and with them
+C6b** (2026-10-02). M12 is the main induction (20 modules, 6,445 lines;
+`Co.MainInductionStep.mainInduction`), which threads `hd : 1 ≤ params.d` beside `hS hA`. M13 is the
+main theorem in a dyadic pair (7 modules, 2,715 lines; `Co.Test.mainFormal`): the main induction
+runs in the doubled model `D(M)`, where M2 discharges `hS hA`, Theorem E unsymmetrizes its output,
+and the vendored tail runs on `M` itself through a new two-space calculus. M14 is the model chain
+(12 modules, 2,155 lines): the canonical-line theorem in a dyadic pair
+(`Co.Bridge.soundLidtIn_of_isDyadicPair`), which supplies `hd` from the theorem's own `1 ≤ d`, and
+the simultaneous contract from it in any model (`Co.Chain.soundIn_of_soundLidtIn`), which takes
+`1 ≤ d` from `SoundIn`'s hypotheses. So `MIPRE.LIDT.Simul.soundFin : SoundFin` holds
+(`Co/SoundFin.lean`), and **`MIPRE.mipco_eq_core : MIPCo = IsCoRE` holds without hypothesis**
+(`MIPRE/MIPCo.lean`, blueprint `thm:mipco-eq-core-unconditional`). The port is 71.7k lines, M12 at
+0.34× the vendored elaboration time and M13 at 1.07× on its paired files, every file within the 2×
+rule but `MainInductionStep/Theorems/MainTheorems/Successor` (2.28×, signatures); the departures
+are recorded under "Departures in M12, M13 and M14".
 
 ## 1. The target, and what the II₁ tier turned out to need
 
@@ -159,9 +177,9 @@ keystone lemmas: M0 came to 5.70k lines against 4.4–5.3k estimated, M1 to 3.01
 | M9 | the summed semidefinite form: a maximizer by weak-operator compactness, first-order conditions giving `Z = Σ T_g A_g ≥ A_g`, solved componentwise in the doubled model; `MatrixRealization` and `SdpMatrixBridge` (3.98k) are not ported | M0, M2 | new 0.55–0.75k (core measured) + adapter 0.1–0.25k (unchanged: new code, no M1 basis) | done, except the adapter. 925 lines in 3 modules against 0.55–0.75k. `MIPRE/Foundations/SummedSdp.lean` (546) has the conclusion `SummedSdp.IsSummedSdp A T Z` over any ordered ⋆-ring, whose fields are those of the vendored `SdpOptimalPairWithSlackness`, and the core chain, Lemmas 1b–3 and 5–9, up to `isSummedSdp_of_isMaxOn` and the converse `isSummedSdp_of_le`. The setting (S) is the commutant `StarSubalgebra.centralizer ℂ t` of any set, with `IsFaithfulTrace`. `MIPRE/Background/Orthonormalization/SdpMaximizer.lean` (165) has Lemma 4, `exists_isMaxOn_obj`, by the vendored weak-operator compactness, and Theorem 10, `exists_isSummedSdp`, `exists_isSummedSdp_finitePairA`/`B`. `Co/Doubling/Sdp.lean` (214) has Corollary 12, `exists_isSummedSdp_loc` and `exists_isSummedSdp_model`, under `L` and `R`, and Lemma 13, `isSummedSdp_equivA_iff`, `exists_isSummedSdp_A`/`B` and `exists_isSummedSdp_prod` over the report's `𝒜 × ℬ`. Componentwise data is automatic, since `Loc M` is a product. Open: the interface adapter to `SdpStatementWithSlackness` (`Measurement`, `G = Polynomial params`, `A_g = averagedPointOperator`), which is M10's because the port's types for it do not exist yet; Remark 12′, not needed. Elaboration: `SummedSdp.le_of_firstOrder` takes 4.9 s (`-DElab.async=false`, load 1.0), just under the 5 s rule, and `isMeasIn_perturb` takes 4.0 s. Both are risks at higher load, and splitting them is worth doing. `exists_isSummedSdp_A` of `Co/Doubling/Sdp.lean` takes 3.9 s (`-DElab.async=false`, load 1.0); nothing else in the three files takes 3 s. Blueprint `thm:summed-sdp`, `cor:summed-sdp-doubled` |
 | M10 | `SelfImprovement` theorems and definitions, + the summed-form interface adapter to `SdpStatementWithSlackness` (from M9, 0.1–0.25k) | M3–M6, M8, M9 | 16.44k → 13.1–15.1k (13–15.5k): without `MatrixRealization` and `SdpMatrixBridge`, 13.2k quantum lines in 32 files | done: 30 modules under `Co/SelfImprovement/`, every vendored file but the 7 of `MatrixRealization/` (3,667 lines) and `Theorems/Results/SdpMatrixBridge` (313), replaced by M9's summed form, and the classical `Theorems/Thresholds/{Helper,Final}` (1,210), imported; 11,411 lines for 15,227 vendored (0.75; r = 0.67 on the ported declarations, net of headers, with headers of 87 lines a file against 56 vendored), under the estimate and above the 8.4–10.5k that the rates of M6 and M7 gave ("Departures in M10 and M11"); non-import elaboration 84.18 s against 108.49 s (0.78×), every file within the 2× rule but `Theorems/Statements`, statement structures and the adapter, at 2.19×; `port-pairing.py --check`: 0 missing, 24 vendored declarations listed as not ported (`sdpPrimalObjective`, the real part of a matrix trace, and 23 classical, imported), 6 new, 9 private. The adapter is the two-part one prototyped in the design of M10, about 40 lines: `SdpStatementWithSlackness.of_isSummedSdp` (`Theorems/Statements`) and `sdp_statement_with_slackness params strategy hS` (`HelperCompleteness/Bracketed`), which applies `Doubling.exists_isSummedSdp_A hS` to the averaged point operators. `Co.SelfImprovement.selfImprovement` (`thm:self-improvement`): for an `(ε, δ, γ)`-good strategy and a polynomial measurement `G` with point consistency `ν`, a projective `H` and a witness `Z ≥ E_u A^u_{g(u)}` with completeness `1 − ν − σ`, point consistency, self-closeness and boundedness at `σ = 3000 m (ε^{1/32} + δ^{1/32} + (d/q)^{1/32})`, under `hS hA hd` (`hS` alone for the helper lemma and the SDP producer); the in-core orthonormalization is M8's Theorem G at `ζ = selfImprovementHelperError > 0` (`selfImprovementHelperError_pos`). Open: threading `hd` through M12, supplying it in M14 and discharging `hS hA` in M13. Blueprint `lem:co-self-improvement` |
 | M11 | `Pasting` | M1, M3, M4, M7 | 30.3k → 23.2–26.5k (24–28k): 22.07k quantum lines in 76 files, the 5.3k classical lines (`Bernoulli/Scalar` and others) imported; its 87 `try rfl` sites became plain `rfl` in M1 at no change in size | done: all 76 modules under `Co/Pasting/`, 17,577 lines for 30,290 vendored (0.58; r = 0.59), within the 15.2–19.0k that the rates of M6 and M7 gave and well under the estimate; four files are a docstring and imports, their vendored counterparts being classical (`Bernoulli/Scalar`, `Core/DDistinct`, `Defs/Interpolation`, `LineInterpolation/Core`); non-import elaboration 162.15 s against 404.44 s (0.40×), every file within the 2× rule (largest `Sandwich/PastedFamilies` at 1.77× and `Sandwich/Switcheroo` at 1.72×, definitions); `port-pairing.py --check`: 0 missing, 190 classical declarations imported, 0 new (two scoped decidability instances in `LineInterpolation/BadMass`, which the script does not count), 7 private. `Co.Pasting.ldPasting` (`thm:ld-pasting`): for an `(ε, δ, γ)`-good strategy in `m + 1` variables and a slice family complete at `κ` and consistent with the points, strongly self-consistent and bounded at `ζ`, a measurement `H` with point consistency `κ(1 + 1/(100m)) + 2ν + e^{−k/(80000m²)}` for every `k ≥ 400md`, `ν = 100k²m(ε^{1/32} + δ^{1/32} + γ^{1/32} + ζ^{1/32} + (d/q)^{1/32})`; with `ldPastingNCompleteness`, `ldPastingSubMeas` and the matrix Chernoff estimate on a vector state, `chernoffBernoulliMatrix`, its `hnorm` dropped. No statement takes a model hypothesis, pasting neither orthonormalizing nor solving a semidefinite program. Blueprint `lem:co-ld-pasting` |
-| M12 | `MainInductionStep` theorems | M7, M10, M11 | 8.9k → 7.1–8.2k (6.5–8.5k): 7.04k quantum lines in 20 files | open |
-| M13 | `Test/MainTheorem` → `Co.mainFormal` over a symmetric model, then over a dyadic pair through the doubling, + Theorem E, unsymmetrization with the two-space tail (from M2) | M2, M8, M12 | 5.06k → 2.5–3.5k (2.5–3.5k): `ScalarBounds` and `SourceScalars` classical and imported, 2.52k quantum lines in 6 files at 2.5–2.9k, plus the dyadic-pair restatement, which M1 does not measure | open |
-| M14 | the error cascade into `deltaSim` and the adapters to `SoundIn`: `SoundIn M` for every dyadic pair `M`, hence `SoundFin`, + `ζ > 0` at the in-core call site of Theorem G, threading `1 ≤ params.d` from `SoundIn` (from M2) | M13, T5 | 1.5–3.5k (unchanged: new code, no M1 basis) | open |
+| M12 | `MainInductionStep` theorems | M7, M10, M11 | 8.9k → 7.1–8.2k (6.5–8.5k): 7.04k quantum lines in 20 files | done: all 20 modules under `Co/MainInductionStep/Theorems/`, 6,445 lines for 8,944 vendored (0.72), within the 5.4–6.5k that the rates of M10 and M11 gave and under the estimate; non-import elaboration 43.72 s against 128.48 s (0.34×, minimum of three runs), every file within the 2× rule but `MainTheorems/Successor` (2.28×, signatures; "Port conventions"); `port-pairing.py --check`: 0 missing. `Co.MainInductionStep.mainInduction` (and the answer-valued `answerMainInduction`, which proves M4's `AnswerMainInductionHypothesis`) over a symmetric model, under `hS hA` and `hd : 1 ≤ params.d`, threaded through the successor step to M10's self-improvement and M8's orthonormalization; the base case and the large-error branches take none of them. Blueprint `lem:co-main-induction`, which `thm:co-main-formal` uses |
+| M13 | `Test/MainTheorem` → `Co.mainFormal` over a symmetric model, then over a dyadic pair through the doubling, + Theorem E, unsymmetrization with the two-space tail (from M2) | M2, M8, M12 | 5.06k → 2.5–3.5k (2.5–3.5k): `ScalarBounds` and `SourceScalars` classical and imported, 2.52k quantum lines in 6 files at 2.5–2.9k, plus the dyadic-pair restatement, which M1 does not measure | done, in a different shape ("Departures in M12, M13 and M14"): `Co.Test.mainFormal` is stated directly over the two-space strategy of a dyadic pair, not first over a symmetric model. 7 modules, 2,715 lines: the five ported files of `Test/MainTheorem/` (`MainFormal`, `ProjectiveConsistency/Evaluation`, `SourceRoleRegister/{Core,Completion,Final}`), 1,802 lines for 2,741 vendored (0.66); the new two-space calculus `Test/MainTheorem/TwoSpace.lean` (626); and Theorem E, `Co/Doubling/Unsymmetrization.lean` (287). The seven scalar files are classical and imported, with no Co file; the vendored `Test/StrategyBiProjRoleAverage/Final` and `Test/StrategyBiProjUnsymmetrization` are not ported, replaced by M2's `Doubling/Strategy` and by `Unsymmetrization`. Elaboration of the five paired files 25.46 s against 23.85 s (1.07×), the largest `SourceRoleRegister/Core` at 1.66×; `TwoSpace` 21.5 s and `Unsymmetrization` 10.2 s, new. `port-pairing.py --check`: 0 missing. `Co.Test.mainFormal` takes `hM : strategy.state.IsDyadicPair` and `hd : 1 ≤ params.d`, and `mainFormal_isPVMIn`/`mainFormal_inconsistency` read it in the vocabulary of `SoundIn`. Blueprint `thm:co-main-formal`, `lem:doubled-unsymmetrization` |
+| M14 | the error cascade into `deltaSim` and the adapters to `SoundIn`: `SoundIn M` for every dyadic pair `M`, hence `SoundFin`, + `ζ > 0` at the in-core call site of Theorem G, threading `1 ≤ params.d` from `SoundIn` (from M2) | M13, T5 | 1.5–3.5k (unchanged: new code, no M1 basis) | done: 12 modules, 2,155 lines. `Co/Bridge/{Measurement,Strategy,Defect,Value,Consistency,Main}` (1,048 lines), the model forms of the repository's matrix bridge `LIDT/Bridge/*`: a projective strategy of a model for `lidtGame` as the port's `ProjStrat`, its failure surrogate at most `1 − value` (`failure_le`), and `Co.Bridge.soundness`, the canonical-line theorem in a dyadic pair, with `soundLidtIn_of_isDyadicPair`. `Co/Chain/{Defs,Extraction,Reduction,Padding,Simultaneous}` (1,058 lines), the model forms of the operator halves of `LIDT/{Adapter/Reduction,Padding,Extraction,Simultaneous}`: `SoundLidtIn M`, the canonical-line theorem in a model with `1 ≤ d` added, and `Co.Chain.soundIn_of_soundLidtIn : SoundLidtIn M → SoundIn M` for every model with `SoundIn`'s instance set. `Co/SoundFin.lean` (49): `MIPRE.LIDT.Simul.soundFin`. The matrix files stay, since they prove `soundIn_tensor`, and their classical halves are imported. Elaboration 30.95 s; 28.36 s for the ten files with a matrix counterpart against 95.71 s (0.30×). `MIPRE.mipco_eq_core : MIPCo = IsCoRE` (`MIPRE/MIPCo.lean`) is `mipco_eq_core_of_lidtFin LIDT.Simul.soundFin`. Blueprint `lem:co-lidt-canonical-line`, `lem:lidt-sound-in-of-model-lidt`, `thm:lidt-sound-fin`, `thm:mipco-eq-core-unconditional` |
 
 Totals: re-estimated after M1, the remaining port M2–M14 about 77–94k new lines, and the whole
 port 85–103k with the 8.7k of M0 and M1 (87–105k if the 2.5k unassigned lines of M8 are ported),
@@ -210,6 +228,15 @@ lines a file on its 7.04k quantum lines in 20 files), M13 (2.5–3.5k) and M14 (
 elaborate at 0.48× their vendored files (246.3 s against 512.9 s), and M0, M1, M3–M8, M10 and M11
 together at 0.56× (493.1 s against 881.1 s; "Port conventions").
 
+**After M12–M14** (2026-10-02). M12 came to 6,445 lines against 7.1–8.2k (5.4–6.5k at the rates of
+M10 and M11), M13 to 2,715 against 2.5–3.5k and M14 to 2,155 against 1.5–3.5k: 11,315 lines against
+the 11–15k (9–14k) projected. **The port is complete at 71.7k lines** (M0 5.70k, M1 3.01k, M2 2.71k,
+M3 3.37k, M4 1.77k, M5 0.85k, M6 3.56k, M7 8.03k, M8 1.44k, M9 0.93k, M10 11.41k, M11 17.58k, M12
+6.45k, M13 2.72k, M14 2.16k), inside the 71–76k projected after M11 and at the low end of the
+audit's 70–120k, with the tier's 3.0k beside it. M12 elaborates at 0.34× its vendored files and the
+paired files of M13 at 1.07×; M0, M1, M3–M8 and M10–M13 together, on the files with a vendored
+counterpart, at 0.54× (562.3 s against 1,033.4 s; "Port conventions").
+
 ## 4. Order
 
 1. **This pull request**: the plan, the paper proofs, and T1, with its blueprint nodes.
@@ -257,7 +284,19 @@ together at 0.56× (493.1 s against 881.1 s; "Port conventions").
    `AnswerMainInductionHypothesis` carries `hS hA` but not `hd`), supplying `hd` from `SoundIn`
    (M14) and discharging `hS hA` for `D(M)` (M13), and a cleanup: the two scoped decidability
    instances of `LineInterpolation/BadMass` belong in an earlier shared `Pasting` file.
-8. Then M12 → M13 → M14, as the dependency column allows.
+8. **M12, M13 and M14, done** (2026-10-02): the main induction, the main theorem in a dyadic pair
+   with Theorem E, and the model chain to `SoundIn`, with their blueprint nodes
+   (`lem:co-main-induction`, `lem:doubled-unsymmetrization`, `thm:co-main-formal`,
+   `lem:co-lidt-canonical-line`, `lem:lidt-sound-in-of-model-lidt`, `thm:lidt-sound-fin`,
+   `thm:mipco-eq-core-unconditional`) and axiom guards (§3). `MIPRE.LIDT.Simul.soundFin : SoundFin` (`Co/SoundFin.lean`, `thm:lidt-sound-fin`) closes
+   C6b, and `MIPRE.mipco_eq_core : MIPCo = IsCoRE` holds without hypothesis
+   (`thm:mipco-eq-core-unconditional`); the conditional theorem of that name is renamed
+   `mipco_eq_core_of_compression`. The departures are recorded under "Departures in M12, M13 and
+   M14".
+   Left for later, off the route: the cleanup of M11 (the two scoped decidability instances of
+   `LineInterpolation/BadMass`), the case `ζ = 0` of Theorem G, Remarks R1–R2, and the statement
+   files over the 2× rule (`MainInductionStep/Statements`, `SelfImprovement/Theorems/Statements`,
+   `MainInductionStep/Theorems/MainTheorems/Successor`).
 
 ## 5. Things the design round settled, and things it did not
 
@@ -470,7 +509,7 @@ vendored names, the new ported names (with the vendored file a moved one comes f
 never counts as the counterpart of a public vendored one and is reported on a `private` line. Each
 stage runs it on its files and reports the output.
 
-**Elaboration, measured on M0 and M1, on M3 and M5, on M4, M6, M7 and M8, and on M10 and M11.** Non-import
+**Elaboration, measured on M0 and M1, on M3 and M5, on M4, M6, M7 and M8, on M10 and M11, and on M12–M14.** Non-import
 elaboration of each file, `lake env lean -Dprofiler=true`, the sum of every profiler category except
 `import`, minimum of three runs, in seconds, against the vendored file measured the same way on the
 same machine. Lines are `wc -l`; "tc" is the typeclass-inference part, ported / vendored. Measured
@@ -735,6 +774,51 @@ charged to the declarations.
 | **all of M11** | 17577 | 30290 | 162.15 | 404.44 | 0.40 | 46.2 / 109.8 |
 | **M10 and M11** | 28988 | 45517 | 246.33 | 512.92 | 0.48 | 75.2 / 147.7 |
 | **M0, M1, M3–M8, M10 and M11** | 56762 | 91464 | 493.07 | 881.05 | 0.56 | 154.5 / 262.7 |
+| `MainInductionStep/Theorems/AvgSliceErrors/Core.lean` | 442 | 819 | 3.82 | 17.42 | 0.22 | 0.99 / 4.58 |
+| `MainInductionStep/Theorems/AvgSliceErrors/Successor.lean` | 382 | 526 | 2.95 | 7.59 | 0.39 | 0.83 / 2.44 |
+| `MainInductionStep/Theorems/InductionParameterBounds/Averaging.lean` | 52 | 125 | 0.55 | 1.63 | 0.33 | 0.00 / 0.51 |
+| `MainInductionStep/Theorems/InductionParameterBounds/MainError.lean` | 278 | 720 | 2.72 | 24.95 | 0.11 | 0.67 / 9.13 |
+| `MainInductionStep/Theorems/InductionParameterBounds/Preliminaries.lean` | 54 | 182 | 0.68 | 3.55 | 0.19 | 0.00 / 1.13 |
+| `MainInductionStep/Theorems/InductionParameterBounds/SelfImprovement.lean` | 115 | 148 | 1.04 | 3.55 | 0.29 | 0.17 / 1.25 |
+| `MainInductionStep/Theorems/MainTheorems/Base.lean` | 233 | 423 | 1.52 | 1.73 | 0.88 | 0.36 / 0.43 |
+| `MainInductionStep/Theorems/MainTheorems/Successor.lean` | 373 | 343 | 2.63 | 1.15 | 2.28 | 1.36 / 0.17 |
+| `MainInductionStep/Theorems/PastingAssembly/AnswerFields.lean` | 281 | 326 | 1.78 | 1.87 | 0.95 | 0.45 / 0.43 |
+| `MainInductionStep/Theorems/PastingAssembly/Basic.lean` | 412 | 790 | 2.07 | 20.22 | 0.10 | 0.72 / 4.64 |
+| `MainInductionStep/Theorems/PastingAssembly/ErrorBounds.lean` | 177 | 380 | 0.91 | 21.74 | 0.04 | 0.12 / 4.70 |
+| `MainInductionStep/Theorems/PastingAssembly/Successor.lean` | 511 | 562 | 2.38 | 3.74 | 0.64 | 0.69 / 1.04 |
+| `MainInductionStep/Theorems/RestrictedProbabilities/AnswerValued.lean` | 578 | 694 | 3.71 | 3.66 | 1.01 | 1.11 / 0.77 |
+| `MainInductionStep/Theorems/RestrictedProbabilities/Axis.lean` | 196 | 265 | 1.54 | 1.59 | 0.97 | 0.35 / 0.31 |
+| `MainInductionStep/Theorems/RestrictedProbabilities/Base.lean` | 73 | 222 | 0.67 | 1.87 | 0.35 | 0.07 / 0.49 |
+| `MainInductionStep/Theorems/RestrictedProbabilities/Core.lean` | 97 | 97 | 0.78 | 0.74 | 1.06 | 0.08 / 0.05 |
+| `MainInductionStep/Theorems/RestrictedProbabilities/Diagonal.lean` | 210 | 259 | 1.63 | 1.63 | 1.00 | 0.34 / 0.36 |
+| `MainInductionStep/Theorems/SelfImprovementAssembly/AnswerSlice.lean` | 765 | 801 | 4.58 | 3.36 | 1.36 | 1.69 / 0.53 |
+| `MainInductionStep/Theorems/SelfImprovementAssembly/Core.lean` | 677 | 652 | 5.07 | 3.44 | 1.47 | 1.79 / 0.65 |
+| `MainInductionStep/Theorems/StageDataConstructors.lean` | 539 | 610 | 2.69 | 3.04 | 0.89 | 0.75 / 0.86 |
+| **all of M12** | 6445 | 8944 | 43.72 | 128.48 | 0.34 | 12.5 / 34.5 |
+| `Doubling/Unsymmetrization.lean` (new) | 287 | — | 10.21 | — | — | 3.06 / — |
+| `Test/MainTheorem/MainFormal.lean` | 337 | 348 | 2.93 | 4.28 | 0.68 | 0.77 / 1.05 |
+| `Test/MainTheorem/ProjectiveConsistency/Evaluation.lean` | 166 | 234 | 1.65 | 1.59 | 1.04 | 0.46 / 0.40 |
+| `Test/MainTheorem/SourceRoleRegister/Completion.lean` | 537 | 984 | 12.38 | 11.22 | 1.10 | 6.81 / 4.07 |
+| `Test/MainTheorem/SourceRoleRegister/Core.lean` | 387 | 555 | 4.38 | 2.64 | 1.66 | 1.51 / 0.79 |
+| `Test/MainTheorem/SourceRoleRegister/Final.lean` | 375 | 620 | 4.12 | 4.11 | 1.00 | 1.49 / 1.42 |
+| `Test/MainTheorem/TwoSpace.lean` (new) | 626 | — | 21.52 | — | — | 12.40 / — |
+| **M13, the five files with a vendored counterpart** | 1802 | 2741 | 25.46 | 23.85 | 1.07 | 11.0 / 7.7 |
+| **all of M13 (the two new files included)** | 2715 | 2741 | 57.19 | 23.85 | — | 26.5 / 7.7 |
+| **M0, M1, M3–M8 and M10–M13** (paired files) | 65009 | 103149 | 562.26 | 1033.38 | 0.54 | 178.1 / 304.9 |
+| `Bridge/Consistency.lean` (against `LIDT/Bridge/Consistency.lean`) | 86 | 64 | 0.82 | 0.73 | 1.14 | 0.11 / 0.07 |
+| `Bridge/Defect.lean` (against `LIDT/Bridge/Defect.lean`) | 149 | 139 | 2.05 | 1.77 | 1.16 | 0.67 / 0.51 |
+| `Bridge/Main.lean` (against `LIDT/Bridge/Main.lean`) | 207 | 137 | 2.47 | 1.91 | 1.29 | 0.85 / 0.48 |
+| `Bridge/Measurement.lean` (against `LIDT/Bridge/Measurement.lean`) | 197 | 353 | 1.45 | 4.73 | 0.31 | 0.38 / 1.31 |
+| `Bridge/Strategy.lean` (against `LIDT/Bridge/Strategy.lean`) | 138 | 71 | 1.62 | 1.53 | 1.06 | 0.50 / 0.13 |
+| `Bridge/Value.lean` (against `LIDT/Bridge/Value.lean`) | 271 | 346 | 5.72 | 10.88 | 0.53 | 1.36 / 1.64 |
+| `Chain/Defs.lean` (new) | 166 | — | 2.01 | — | — | 0.68 / — |
+| `Chain/Extraction.lean` (against `LIDT/Extraction.lean`) | 313 | 768 | 4.84 | 11.55 | 0.42 | 1.57 / 3.34 |
+| `Chain/Padding.lean` (against `LIDT/Padding.lean`) | 123 | 919 | 1.95 | 37.09 | 0.05 | 0.69 / 3.91 |
+| `Chain/Reduction.lean` (against `LIDT/Adapter/Reduction.lean`) | 261 | 307 | 3.57 | 3.65 | 0.98 | 1.45 / 1.10 |
+| `Chain/Simultaneous.lean` (against `LIDT/Simultaneous.lean`) | 195 | 347 | 3.87 | 21.89 | 0.18 | 1.42 / 6.08 |
+| `SoundFin.lean` (new) | 49 | — | 0.58 | — | — | 0.01 / — |
+| **M14, the ten files with a matrix counterpart (the repository's own files, not vendored)** | 1940 | 3451 | 28.36 | 95.71 | 0.30 | 9.0 / 18.6 |
+| **all of M14** | 2155 | 3451 | 30.95 | 95.71 | — | 9.7 / 18.6 |
 
 **The M3 and M5 rows** were measured the same way on 2026-10-02, 00:25–00:50 UTC, on the same
 4-core machine at load 0.5–2.1, ported and vendored file alternating, three rounds; the line
@@ -839,6 +923,67 @@ take under 1 s here or are split: `commutativitySwitcheroo_ofCompleteSelfConsist
 `switcherooAggregateFourthTerm_split_contraction` (6.1 s). So the 5 s rule holds with a factor of
 about 1.8 to spare at load 2.5, and of more than 2 at the loads of the units' own runs; none of the
 106 files sets an option or raises a heartbeat limit.
+
+**The M12, M13 and M14 rows** were measured on 2026-10-02, 19:11–19:30 UTC, on the same 4-core
+machine at load 0.4–3.3, with `lake env lean -Dprofiler=true -Dtrace.profiler=true
+-Dtrace.profiler.threshold=1000`, two files at a time, three rounds, each round running every
+ported file and then its counterpart, so that the two sides alternate; each row is the minimum of
+the three runs on each side. They replace single-run figures taken by the units at load 0.3–4.3,
+which they mostly lower, by as much as a third (the vendored
+`InductionParameterBounds/MainError`, 36.2 s then and 25.0 s now). Line counts are those of the working tree. M12 and M13
+are compared with their vendored files; M14 has no vendored counterpart, and its `Bridge` and
+`Chain` files are compared with the repository's own matrix files whose model forms they are,
+which stay because they prove `soundIn_tensor`. `TwoSpace`, `Unsymmetrization`, `Chain/Defs` and
+`SoundFin` are new and have nothing to compare with.
+
+M12 is at 0.34× its vendored files (43.7 s against 128.5 s), the largest savings again being files
+whose vendored counterparts elaborate classical lemmas the port imports prebuilt
+(`PastingAssembly/ErrorBounds` 0.04×, `PastingAssembly/Basic` 0.10×,
+`InductionParameterBounds/MainError` 0.11×). One file departs from the 2× rule:
+**`MainTheorems/Successor`, at 2.28×** (2.63 s against 1.15 s), whose cost is typeclass inference
+(1.36 s against 0.17 s) on the signatures of the induction's successor step, which carry
+`hS hA hd` and the stage records over `𝔓` and `K →L[ℂ] K`, the case of the statement files
+`MainInductionStep/Statements` (2.01×) and `SelfImprovement/Theorems/Statements` (2.19×); it is
+1.5 s in absolute terms. Next are `SelfImprovementAssembly/Core` (1.47×) and `/AnswerSlice`
+(1.36×), for the same reason. M13's five files with a vendored counterpart are at 1.07× (25.5 s
+against 23.8 s), the largest `SourceRoleRegister/Core` at 1.66× and `SourceRoleRegister/Completion`
+at 1.10×; the new two-space calculus `TwoSpace` costs 21.5 s (626 lines, typeclass inference
+12.4 s, the placements and completions over abstract star-ordered algebras and `M.H →L[ℂ] M.H`)
+and `Unsymmetrization` 10.2 s (287 lines). M14 is at 0.30× its matrix counterparts (28.4 s against
+95.7 s; `Chain/Padding` 0.05× and `Chain/Simultaneous` 0.18×, whose matrix files elaborate the
+classical lemmas the chain imports), the largest ratio `Bridge/Main` at 1.29×. M12, M13 and M14
+together cost 131.9 s. The port costs 6.8 ms a line on M12, 21.1 ms on M13 and 14.4 ms on M14,
+against 14.4, 8.7 and 27.7 ms on their counterparts. M0, M1, M3–M8 and M10–M13 together, on the
+files with a vendored counterpart, elaborate at 0.54× (562.3 s against 1,033.4 s).
+
+Per declaration the record is a bound, since which declarations cross 1 s depends on the load:
+no ported declaration reaches 3 s, the largest being `Co.Bridge.failure_eq_sum` at 2.73 s in one
+run of a review re-profile at load 2.0–2.7 (matrix 2.00 s there; 1.81 s at load 0.7). That
+re-profile (three runs, two files at a time) found at least 19 ported declarations reaching 1 s:
+the 13 below, plus `Co.Chain.clSoundness_padded` (1.14–1.50 s) and
+`Co.Chain.soundIn_of_soundLidtIn` (1.14–1.21 s), which crossed 1 s in every run there but in none
+at load 0.9, and four that crossed it in some runs only: the private
+`three_le_k_sq_mul_next_m_of_nonneg` (1.21, 1.28 s),
+`le_one_of_mainInductionError_lt_one_of_nonneg` (1.07 s), `Co.Bridge.mdef_le` (1.06 s) and
+`Co.Chain.clSoundness_ldc_one` (1.07 s). The first measurement, at a 1 s threshold and taking the
+largest of three runs, found 13: `TwoSpace.two_questionConsistency_eq_questionSDD_of_projective`
+2.29 s, `Co.Bridge.failure_eq_sum` 2.18 s (matrix 2.15 s), the definitions
+`TwoSpace.completeAtOutcomeProjA` and `…B` 1.78 and 1.76 s and their `_toMeasurement` equations
+1.41 and 1.34 s, `ProjStrat.qSDD_rightPlaced_completeAtOutcome_eq` and `…left…` 1.28 and 1.21 s (vendored 1.60
+and 1.36 s),
+`Doubling.pairMeasurement` 1.15 s, two private averaging lemmas of `AvgSliceErrors/{Core,Successor}`
+1.13 and 1.01 s, `Test.mainFormalConclusion_ofRoleRegisterScalarBoundary` 1.06 s (vendored
+3.42 s) and `Co.Chain.inconsistency_extract_left_le` 1.03 s; `pairMeasurement`, the
+`AvgSliceErrors/Successor` lemma, `mainFormalConclusion_…` and `inconsistency_extract_left_le`
+reached 1 s in one run of three only. On the other side 46 declarations reach 1 s and seven take more than 5 s, all classical
+lemmas that the port imports prebuilt: four vendored
+(`ldPastingInInductionError_le_mainInductionError_of_bounds` 21.2 s,
+`ldPastingInInductionNu_le_fifth_mainInductionNu` 15.4 s, `average_sliceMainInductionNu_le` 5.9 s,
+`average_answerSuccessorSliceMainInductionNu_le` 5.7 s) and three of the matrix chain
+(`Simul.deltaCL_padded_le` 14.3 s, `accepts_sample_of` 11.6 s, `valAt_rmap` 11.3 s). So the 5 s
+rule holds with a factor of two to spare at load 3; none of the 39 files sets an option or raises
+a heartbeat limit, while every vendored counterpart of M12 and M13 sets the file-wide
+`respectTransparency false`.
 
 Declaration times depend on the machine's load, because under the default asynchronous
 elaboration the profiler reports a proof's wall time (`Elab.async`), and they are recorded with
@@ -1332,6 +1477,186 @@ expected at 0.8–1.5×, as every M1 file is; definition-heavy files are expecte
   `continuous_finsetSum`, `.continuousOn`) take a fraction of it. None of the 106 files sets an
   option or raises a heartbeat limit, while every one of their vendored counterparts sets the
   file-wide `respectTransparency false`.
+
+**Departures in M12, M13 and M14.**
+
+M12, the main induction:
+- **`hS hA hd` threading.** The successor step of the induction is where M10's self-improvement
+  (its semidefinite program and M8's rounding) is called, and M4's `AnswerMainInductionHypothesis`
+  quantifies only over symmetric models whose bipartite reading is a finite pair without abelian
+  projections. So `hS : strategy.state.toBipartite.IsFinitePair`,
+  `hA : NoAbelianProj strategy.state.toBipartite.opsA` and `hd : 1 ≤ params.d`, placed right after
+  `strategy` as M10 places them, go on exactly the declarations that reach those calls:
+  - `SelfImprovementAssembly/Core`: `selfImprovementInInductionSection`, its
+    `_of_axisParallel_selfConsistency` form, `SelfImprovementData.slice_outputs_ofSliceStrategyTransport`
+    and `SelfImprovementData.ofSliceStrategyTransport` (`hS hA hd`);
+  - `SelfImprovementAssembly/AnswerSlice`: `AnswerSelfImprovementData.slice_outputs_ofSliceStrategyTransport`,
+    `.slice_outputs_ofAnswerCarrier`, `.ofSliceStrategyTransport` and `.ofAnswerCarrier` (`hS hA hd`);
+  - `RestrictedProbabilities/AnswerValued`: `answerSuccessorRestrictedSliceConclusions` (`hS hA`,
+    since it applies the hypothesis rather than proving it);
+  - `StageDataConstructors`: `AnswerPerSliceInductionData.ofMainInductionHypothesis` (`hS hA`);
+  - `AvgSliceErrors/Successor`: `answerSuccessorRecursiveSliceMeasurements_ofMainInductionHypothesis`
+    (`hS hA`) and `answerSuccessorSelfImprovementOutputs_ofMainInductionHypothesis` (`hS hA hd`);
+  - `PastingAssembly/AnswerFields`: `answerSuccessorAveragedFamilyFields_ofMainInductionHypothesis`,
+    and `PastingAssembly/Successor`:
+    `answerMainInductionSuccessorNext_ofRecursiveHypothesisAndAnswerPasting` (`hS hA hd`);
+  - `MainTheorems/Successor`: `answerMainInduction` takes `hd` after the field model, `hS hA` coming
+    from the hypothesis's own binder, and `mainInductionSuccessorNext_ofAnswerCarrier`, its
+    `FromSuccessorBound` and `ofSmallErrorConstruction` forms, `mainInductionSuccessorNext`,
+    `mainInductionSuccessor` and `mainInduction` take `hS hA hd`.
+
+  A slice restriction keeps the model (`SliceStrategyTransport.state_eq`, or the carrier's state by
+  definition), so `hS hA` pass to each slice unchanged or as `hstate ▸ hS`; `hd` is constant along
+  the induction, since `Parameters.next` keeps `d`. `SliceStrategyTransport` keeps its five vendored
+  fields. The base case, the large-error branches, restriction, pasting and the parameter bounds
+  take none of the three.
+- **Swap and normalization uses replaced (4); no hypothesis dropped**, since no vendored statement of
+  M12 has one. `strongSelfConsistency_of_sddRel` used `strategy.permInvState`; it is M7's
+  `Commutativity.qBipartiteSSCDefect_eq_half_qSDD_of_proj`. The boundedness field of
+  `idxPolyFamily_sliceBoundednessInput_of_slice_bounds` used `ev_opTensor_swap_of_density_fixed`;
+  it is `ev_L_mul_R_comm`. `answerComMainForCarrier_ofAnswerGood` passed `carrier.isNormalized`,
+  which Co `comMain_of_commutativityPoints` does not take, and the base case's
+  `bipartiteConsError_uniform_le_one strategy.state strategy.isNormalized` is the model's
+  `bipartiteConsError_uniform_le_one`. `answerSelfImprovementCarrier` and
+  `xRestrictedAnswerSymStratOfAnswer` no longer set `permInvState`, `densityFixed` or
+  `isNormalized`, which are theorems of the model; `xRestrictedAnswerSymStratOfAnswer_isNormalized`
+  is kept, by `rfl`, without `@[simp]`, as M4's `xRestrictedAnswerSymStrat_isNormalized` is.
+- **`dummyDiagonalCovariantMeasurement` is generic.** It is state-free, so its carrier argument
+  `(ι : Type uι)` becomes any star-ordered ring `R`; it is called at `𝔓`.
+- **One new public theorem**, `ldPastingInInductionError_le_of_averaged_bounds`
+  (`PastingAssembly/Successor`): the scalar absorption that the vendored
+  `assembleAveragedPastingData` and `mainInductionFromAnswerStageDataOfSmallErrorDirect` each prove
+  by `nlinarith`, here once, by `linarith`. It cannot be private: the exposed definition
+  `assembleAveragedPastingData` uses it. Nine private theorems (`port-pairing.py`) factor the
+  vendored files' repeated scalar estimates and the base case written out twice.
+- **Classical content imported.** 25 of the 194 vendored declarations are classical and imported,
+  each listed as such. `InductionParameterBounds/{Preliminaries,Averaging}` are a docstring and
+  imports, their vendored files being classical throughout; `InductionParameterBounds/{MainError,
+  SelfImprovement}`, `AvgSliceErrors/Core`, `PastingAssembly/{Basic,ErrorBounds}` and
+  `RestrictedProbabilities/Base` import their vendored module for its classical lemmas (M3's
+  convention), which adds no operator content, and `MainTheorems/Base` imports the classical
+  `Basic/LinePolynomialEmbedding`. These names live in `MIPStarRE.LDT.MainInductionStep`; inside
+  `MIPRE.LIDT.Co` the dotted `MainInductionStep.X` resolves to the Co namespace, so they are reached
+  through explicit `open` lists. A pitfall from `AvgSliceErrors`: state an `rpow` fact with
+  `Real.rpow`, since `linarith` treats `Real.rpow x c` and `x ^ c` as different atoms.
+- **Universes.** The vendored separate carriers `ι'` of the stage records are dropped for `𝔓` and
+  `K`, their explicit universe instantiations left to unification; the induction hypothesis is
+  `AnswerMainInductionHypothesis.{uF, uP, uK}` for the vendored `.{uF, uι}`, and
+  `answerMainInduction.{uF, vP, vK}` proves it in any universes. Where the vendored file binds
+  `.{uF}` (or `.{uι', uF}`) on a declaration, the port keeps a `.{uF}` binder, which
+  `port-pairing.py` needs to pair the name.
+- **Elaboration.** `MainTheorems/Successor` departs from the 2× rule, at 2.28× (2.63 s against
+  1.15 s, minimum of three runs; "Port conventions"): typeclass inference on the signatures of the
+  successor step, which carry `hS hA hd` and the stage records over `𝔓` and `K →L[ℂ] K`, as in the
+  statement files of M4 and M10. A shortcut instance `Algebra ℂ (K →L[ℂ] K)`, tried in a scratch copy
+  (`local instance … := ContinuousLinearMap.algebra`), saves only 0.1–0.4 s of the 1.0–1.4 s of
+  typeclass inference and leaves the file at about 1.8–2.3×: most of that inference is the
+  signatures over `𝔓` and `K →L[ℂ] K` carrying `hS hA hd`, of which `Algebra ℂ (K →L[ℂ] K)`
+  (six syntheses, 0.66 s, with `MulAction ℂ K` nested in it) is only a part. The instance is not
+  added, since the gain is within the variation between runs. None of the 20 files sets an option, while every
+  vendored file of M12 sets the file-wide `respectTransparency false`.
+
+M13 and M14:
+- **The tail is two-space, over `M`; `D(M)` serves three steps only.** §3 planned `Co.mainFormal`
+  over a symmetric model, restated afterwards over a dyadic pair through the doubling. It is
+  instead stated once, over the port's two-space strategy `ProjStrat params 𝒞 𝒜 ℬ` whose state is
+  the dyadic pair `M` itself, as the vendored theorem is over `ιA × ιB`. The doubled model
+  `D(M)` (M2) appears inside the proof in three places: the main induction (M12's `mainInduction`
+  on `Doubling.symmStrat`, `(3ε, 3ε, 3ε)`-good by Theorem D), Theorem E, and the step from points
+  to whole polynomials (Step 5). The reason is the role average: `D(M)` gives only
+  `bc_D(X, Y) = ½ (bc_M(X¹, Y²) + bc_M(Y¹, X²))`, so pulling a one-sided relation back from `D(M)`
+  costs a factor two, which would break the vendored scalar cascade into `mainFormalError`. So the
+  vendored `SourceRoleRegister/*` and `MainFormal` run on `M`, through the new two-space calculus
+  `Co/Test/MainTheorem/TwoSpace.lean`. It holds the placements `placeA M = π ∘ πA`,
+  `placeB M = π ∘ πB` into `B(M.H)`, the vector state `vecState M hψ`, and the two-space forms of the
+  heterogeneous `Preliminaries` lemmas that M3 had narrowed to one carrier. The vendored `ConsRel ψ`
+  becomes M2's `bipartiteConsError M ≤ δ`, and `SDDRel` is read on `TwoSpace.vecState`; no two-space
+  `ConsRel` structure is defined. The two `_heterogeneous` theorems of
+  `ProjectiveConsistency/Evaluation` are two-space for the same reason, as M8's heterogeneous
+  orthonormalizations were.
+- **Theorem E and the diagonal Step 5.** `Co/Doubling/Unsymmetrization.lean` replaces the vendored
+  `Test/StrategyBiProjUnsymmetrization` (the role-register extractions, principal blocks and
+  matrix-trace lemmas). It defines the components `measA`, `measB` of a measurement of the doubled
+  local algebra `Loc M` and the pairing `pairMeasurement`. Theorem E
+  (`symmStrat_pointConsistency_unsymmetrize`) says that `σ`-consistency of the paired points with
+  `G` in `D(M)` gives `2σ`-consistency of each player's points with the other component of `G` in
+  `M`, the vendored constants, by M2's `bipartiteConsError_components_le_two_mul`. Step 5 runs in
+  `D(M)` on the pairing of the two polynomial measurements. The diagonal identity
+  `bipartiteConsError_model_diag` (the defect of a family with itself in `D(M)` is the two-space
+  defect of its components, exactly) makes this lossless, so M4's
+  `mainFormalStep5_selfConsistency_ofExpansionBound` adds `md/q` with no factor two, and M4's
+  heterogeneous Step 5 lemma needs no two-space caller.
+- **Completion is transported along `equivA`.** Co `Preliminaries.completeAtOutcomeProj` and
+  `ProjMeas.isPVMIn` need a C⋆-algebra, but the players' algebras of a model are only star-ordered
+  `⋆`-rings. In a finite pair each is `⋆`-isomorphic to a commutant, which is a C⋆-algebra
+  (`IsFinitePair.equivA`, `equivB`, `Foundations/FinitePairOrder.lean`). So
+  `TwoSpace.completeAtOutcomeProjA`/`B` complete there and come back along the inverse, and
+  `ProjMeas.isPVMIn_of_isFinitePair` (and its `B` form) transports projectivity the same way.
+  Positivity transfers along any `⋆`-homomorphism of star-ordered rings, and projectivity and the
+  total are algebraic, so the order agreement of a finite pair is not used. The lemmas that
+  complete take `hM : M.IsFinitePair`. In M14, `Co/Bridge/Measurement` coarse-grains in the same
+  setting through `IsPVMIn.coarse` (`postprocessMeas`), which is `ProjMeas.postprocess` by `rfl` in
+  a C⋆-algebra.
+- **`hd` threading.** `1 ≤ params.d` makes the in-core orthonormalization error positive (M10).
+  - **M12** threads it beside `hS hA` through the successor step of the induction. It is a
+    hypothesis on `params`, constant along the induction, since `Parameters.next` keeps `d`. The
+    base case and the large-error branches take none of the three.
+  - **M13**: `mainFormal` and its tail take `hM : strategy.state.IsDyadicPair` and `hd`. The
+    induction's `hS hA` are `Doubling.isFinitePair` and
+    `Doubling.noAbelianProj_opsA_of_isDyadicPair`, which discharges them for `D(M)` as M4–M12
+    required. `hd` has one further use: `ζ₁ > 0` for the two-space orthonormalizations
+    (`zeta₁_pos`, since `md/q > 0`), which replaces the vendored derivation of `0 ≤ ζ₁`.
+    `mainFormal_trivial_witness` takes neither.
+  - **M14**: `Co.Chain.SoundLidtIn M` is the canonical-line theorem with `1 ≤ d` added, and
+    `Co.Bridge.soundness` takes `hM` and `hd`. `soundIn_of_soundLidtIn` takes `1 ≤ d` (and `ε ≥ 0`)
+    from `SoundIn`'s own hypotheses. So neither `SoundIn` nor `SoundFin` changes, and the case
+    `ζ = 0` of Theorem G stays unproved and unneeded.
+- **The measurements of the model chain** are single `POVMIn`s with `IsPVMIn` stated separately,
+  where the matrix bridge returns `ProjectiveMeasurement Unit`, and the error is `M.inconsistency`.
+  `Co.Bridge.inconsistency_eq_bipartiteConsError` takes `hψ : ‖M.ψ‖ = 1` in place of the matrix
+  argument `S : TensorProductStrategy`, which it used only for its state. The model chain is new
+  code, the model forms of the repository's own matrix files (`LIDT/Bridge/*`, the operator halves
+  of `LIDT/{Adapter/Reduction,Padding,Extraction,Simultaneous}`). Those files stay, because they
+  prove `soundIn_tensor`, and their classical halves are imported through explicit `open` lists.
+  `Co.Chain.soundLidtIn_tensor` checks `SoundLidtIn` against the matrix theorem. Its composition
+  with `soundIn_of_soundLidtIn`, which would re-derive `soundIn_tensor`, is not stated.
+- **Hypotheses added in M13 beyond `hd`.** `hM` comes right after `strategy`: as
+  `strategy.state.IsDyadicPair` where the main induction or the two-space orthonormalization is
+  called, and as `IsFinitePair` for Theorem E's wrapper, the full-polynomial self-consistency and
+  the completions. The two orthonormalization theorems of `SourceRoleRegister/Core` take
+  `hζ : 0 < ζ` right after `ζ`, in place of the vendored derivation of `0 ≤ ζ`, because M8's
+  two-space orthonormalization asks for `ζ > 0`. `qBipartiteMatchMass_le_left_total_of_measurement_heterogeneous`
+  and its right form take `hψ`, because their conclusion is read on `TwoSpace.vecState`.
+  `mainFormal_trivial_witness` takes neither `hM` nor `hd`. `TwoSpace.consRel_of_matchGap` takes its
+  families in the order `A A' B B'` (Co's is `A B A' B'`). `SourceRoleRegister/Completion` does not
+  import `Core`, which it does not use, so `Final` imports both.
+- **New declarations.** Beyond the two new files (`TwoSpace`, `Unsymmetrization`, every declaration
+  listed under "New here"): `ProjStrat.bipartiteConsError_constFamily_unit` (the two-space
+  `constFamily_sdd_unit`), and the readouts `Test.mainFormal_isPVMIn` and
+  `Test.mainFormal_inconsistency`, which state `mainFormal` with `IsPVMIn` and `M.inconsistency` for
+  M14; `ProjMeas.isPVMIn_of_isFinitePair` and its `B` form live at the root of `MIPRE.LIDT.Co` so
+  that dot notation works. Three private theorems. In M14, `Co.Bridge.postprocessMeas` coarse-grains
+  a projective family through `IsPVMIn.coarse`, because Co `ProjMeas.postprocess` asks for a
+  C⋆-algebra; `ofProjMeas_isPVMIn`, `soundLidtIn_of_isDyadicPair`, `Co.Chain.inconsistency_uniform_comp`,
+  `constPM`/`constPM_isPVMIn` (the field the matrix `ProjectiveMeasurement` carried) and
+  `soundLidtIn_tensor`, the check of `SoundLidtIn` against the matrix theorem, are new.
+- **Statements relaxed in M14**, each from a hypothesis the model proof does not use:
+  `Co.Chain.inconsistency_map_le` drops `∑ μ = 1`; `clSoundness_ldc_one` has no `hε` (only its
+  `_deltaCL` form does, as in the matrix file); `extracted_conclusions` takes the extracted
+  measurements as plain `POVMIn`s, projectivity being the separate `extractPM_isPVMIn`.
+- **The rename.** The conditional `MIPRE.mipco_eq_core (hco : gapCompression.Sound .commuting)` is
+  now `mipco_eq_core_of_compression` (blueprint `thm:mipco-eq-core`, its guard renamed in
+  `MIPRE/Axioms.lean`). The name `MIPRE.mipco_eq_core` is the unconditional theorem
+  `mipco_eq_core_of_lidtFin LIDT.Simul.soundFin` (`thm:mipco-eq-core-unconditional`). The mentions
+  in `planning/mipco-track.md` and `planning/formalization-plan.md` say so; `reports/` is left as
+  written.
+- **`SoundFin` has a module of its own**, `Co/SoundFin.lean`, because the consumers of the
+  hypothesis import `LIDT/FinModel.lean` and do not need the port. `MIPRE/MIPCo.lean` imports it.
+  This creates no cycle, since nothing under `Co/` imports `MIPCo`.
+- **Elaboration.** Every file of M13 and M14 is within the 2× rule (largest `SourceRoleRegister/Core`
+  at 1.66×; "Port conventions"), and the one departure of the three milestones is M12's
+  `MainTheorems/Successor` (2.28×). None of the 39 files sets an option or raises a heartbeat limit,
+  although every vendored file of M12 and M13 sets the file-wide `respectTransparency false`.
 
 **Departures in M1.**
 - Helpers that take the state keep the ported file's namespace, with the model or the vector
