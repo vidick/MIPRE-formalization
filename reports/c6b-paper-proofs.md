@@ -2091,6 +2091,51 @@ port-base containers and the model bridge.
 
 ### 4.7 Status and open points
 
+**Formalized (M2, 2026-10-01).** Everything in this section except Theorem E is now in Lean,
+sorry-free and guarded in `MIPRE/Axioms.lean`. The modules are
+`MIPRE/Foundations/{FinitePairOrder,Doubling}.lean`, `MIPRE/Background/LIDT/Co/Doubling/` and
+`MIPRE/Background/LIDT/Co/Test/StrategyBiProj/Measurements.lean`, and the blueprint nodes are
+listed under M2 in `planning/c6b-plan.md`. One design point was left open here and is now
+settled. The model is built over the commutants: `𝒩` is realized as
+`Loc M = StarSubalgebra.centralizer ℂ M.opsB × StarSubalgebra.centralizer ℂ M.opsA`, which is a
+C⋆-algebra as the port's `SymModel` requires, and `Doubling.equiv : 𝒜 × ℬ ≃⋆ₐ[ℂ] Loc M`
+translates it to the `𝒜 × ℬ` used above.
+- Theorem A: `Doubling.model` (A.1–2), `Doubling.isFinitePair` with `tr_diag2_L` (A.3), and
+  `L_nonneg_iff`, `R_nonneg_iff` and `equiv_nonneg_iff` (A.4). These rest on
+  `IsFinitePair.nonneg_iff_A`, which is Lemma 10 = §5 Lemma 13. A dyadic pair doubles to a dyadic
+  pair (`Doubling.isDyadicPair`).
+- Theorem C: `Doubling.inner_L_mul_R`, `bornProb_model_eq`, `qBipartiteConsDefect_model`,
+  `dis_model` and `inconsistency_model`.
+- Theorem D: `Doubling.symmStrat` and `symmStrat_isGood_three_mul`. The three surrogate
+  identities are `symmStrat_axisParallel_eq_roleAverage`,
+  `symmStrat_selfConsistency_eq_pointAgreement` and `symmStrat_diagonal_eq_roleAverage`, over the
+  ported surrogate `ProjStrat.lowIndividualDegreeFailureProbability`.
+- Theorem E, its arithmetic only: `Doubling.bipartiteConsError_components_le_two_mul` and
+  `MIPRE.LIDT.Co.bipartiteConsError_eq_inconsistency`.
+- Theorem F: `Doubling.noAbelianProj_iff`, via `noAbelianProj_diag2Set_iff`.
+- Theorem G: `SymModel.orthonormalization_of_isFinitePair` for `ζ > 0`, in any symmetric model
+  whose bipartite reading is a finite pair whose first player's operators contain no nonzero
+  abelian projection, and its relational form `orthonormalization_of_isFinitePair_sddRel`, the
+  shape of the vendored `MakingMeasurementsProjective.orthonormalization`. For `D(M)` it is
+  `Doubling.orthonormalization_model`. It takes `ε = 3 min(ζ, 1)` in the tier, which removes the
+  case split at `ζ > 1`.
+- Proposition H: `SymModel.L_cfc`, for an injective placement (in `D(M)`,
+  `Doubling.model_L_injective`), and `Doubling.cfc_mem_opsA`.
+
+Of the open points below, three are resolved:
+- The items listed as not yet compiled are compiled, except Lemma 13 (Theorem E) beyond its
+  arithmetic, which is M13's.
+- `StarModule ℂ 𝒩` and the CFC transport onto `𝒩` come with `Loc M`, a C⋆-algebra.
+- The model containers exist (`ProjStrat`, `SymStrat` and the surrogates; M0 and M2).
+
+Still open:
+- Theorem E itself, with the two-space tail (M13);
+- supplying `ζ > 0` at the in-core call site of Theorem G, by threading `1 ≤ params.d` from
+  `SoundIn` (M14); the case `ζ = 0` itself is not proved, and that call site does not need it once
+  this is done;
+- the model bridge;
+- Remarks R1 and R2, which are off the route.
+
 **Resolved since the design.** The orthonormalization tier that Theorem G calls,
 `povm_orthogonalization_finitePair`, is proved and guarded (`MIPRE/Axioms.lean:3330-3331`). It
 goes through `povm_orthogonalization_vecTrace` (`Ortho/NoAbelian.lean:99-105`) and the
@@ -2684,6 +2729,37 @@ The estimate becomes about 0.55–0.75k lines plus a 100–250-line adapter. `pl
 uses this figure in row M9.
 
 ### 5.9 Status and open points
+
+**Formalized (M9, 2026-10-01).** Theorem 10, Corollaries 11 and 12 and Lemma 13 are now in Lean,
+sorry-free and guarded in `MIPRE/Axioms.lean` (blueprint `thm:summed-sdp`,
+`cor:summed-sdp-doubled`).
+- The core chain, Lemmas 1b–3 and 5–9, is in `MIPRE/Foundations/SummedSdp.lean`. The setting (S)
+  is phrased as `StarSubalgebra.centralizer ℂ t` with `IsFaithfulTrace`, and the conclusion
+  `IsSummedSdp A T Z` carries the fields of `SdpOptimalPairWithSlackness`. Theorem 10 given a
+  maximizer is `isSummedSdp_of_isMaxOn`; the converse of Corollary 11 is `isSummedSdp_of_le`.
+- Lemma 4 is `MIPRE.Orthonormalization.exists_isMaxOn_obj`, and Theorem 10 is `exists_isSummedSdp`
+  and `exists_isSummedSdp_finitePairA`/`B`, all in `MIPRE/Background/Orthonormalization/SdpMaximizer.lean`.
+- Corollary 12 is `Doubling.exists_isSummedSdp_loc` and `exists_isSummedSdp_model`, and Lemma 13
+  is `Doubling.isSummedSdp_equivA_iff`, `exists_isSummedSdp_A`/`B` and `exists_isSummedSdp_prod`,
+  all in `MIPRE/Background/LIDT/Co/Doubling/Sdp.lean`.
+- Lemma 9 is stated for any self-adjoint `W` in the commutant with `A_i ≤ W` and `ρ(W) ≤ ρ(Z)`
+  (`mul_eq_of_le`), which covers both `W = (Z + Z*)/2` and `W = Z`.
+- Lemma 5 proves `1 − K² ≥ 0` as the product of the commuting positives `1 − K` and `1 + K`,
+  where the proof above uses `√P`.
+
+The sizes are 925 lines against the 0.55–0.75k of §5.8: 546 for the core chain, 165 for Lemma 4
+and the finite-pair forms, and 214 for Corollary 12 and Lemma 13.
+
+Of the open points below, two are resolved:
+- The doubled model is proved (§4.7).
+- `A_g` is componentwise automatically, since the doubled local algebra is a product.
+
+Still open:
+- the interface adapter (M10);
+- Remark 12′, which is not needed;
+- the points about Proposition 15, which concern only the approximate route.
+
+The prototypes are now superseded by committed code.
 
 **Settled.**
 
