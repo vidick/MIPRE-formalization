@@ -75,11 +75,14 @@ Conclusion of the intermediate almost-projective step: a measurement which is
 and whose effects satisfy `Σₐ (Aₐ − Aₐ²) ≤ ζ`. -/
 structure AlmostProjMeasStatement {Outcome : Type*} [Fintype Outcome]
     (V : VecState K) (A : Measurement Outcome (K →L[ℂ] K)) (ζ : ℝ) : Prop where
+  /-- `A` is `ζ`-strongly self-consistent. -/
   strongSelfConsistency :
     V.SSCRel (uniformDistribution Unit) (constSubMeasFamily A.toSubMeas) ζ
+  /-- `A` is `2ζ`-close to itself in the state-dependent distance. -/
   selfDistance :
     V.SDDRel (uniformDistribution Unit) (constSubMeasFamily A.toSubMeas)
       (constSubMeasFamily A.toSubMeas) (2 * ζ)
+  /-- `∑ₐ ev(Aₐ − Aₐ²) ≤ ζ`. -/
   sourceAlmostProjective :
     ∑ a, V.ev (A.outcome a - A.outcome a * A.outcome a) ≤ ζ
 
@@ -92,6 +95,7 @@ state-dependent distance. -/
 structure RoundedProjMeasStatement {Outcome : Type*} [Fintype Outcome]
     (V : VecState K) (A : Measurement Outcome (K →L[ℂ] K))
     (P : ProjSubMeas Outcome (K →L[ℂ] K)) (ζ : ℝ) : Prop where
+  /-- `P` is `ζ`-close to `A` in the state-dependent distance. -/
   closeness :
     V.SDDRel (uniformDistribution Unit) (constSubMeasFamily A.toSubMeas)
       (constSubMeasFamily P.toSubMeas) ζ

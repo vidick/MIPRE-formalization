@@ -30,7 +30,11 @@ symmetric model `S : SymModel 𝔓 K`, with both measurements local in `𝔓`, a
 `triangleSub_heterogeneous` ("Departures in M3 and M5"): `leftTensor` is `S.L`, `rightTensor`
 is `S.R`, `leftPlacedSubMeas` is `S.leftPlacedSubMeas` and `leftLiftedMeasurement` is
 `S.leftLiftedMeasurement`. Each takes the model as an explicit first argument, in the namespace
-`MakingMeasurementsProjective`. The two-space use is served separately (milestone M8d).
+`MakingMeasurementsProjective`. The two-space use is served separately, by the heterogeneous
+lemmas of `Co/MakingMeasurementsProjective/Orthonormalization.lean`
+(`one_sub_two_mul_le_sum_norm_sq_πA`/`_πB`,
+`orthonormalizationMeasurement_{,right_}of_consistency_from_projectivizationRepair_heterogeneous`),
+for milestone M13.
 
 `sourceAlmostProjective_of_ssc` and `sourceAlmostProjective_nonneg` are about a state on one
 space and take a vector state `V : VecState K` with a joint measurement in `K →L[ℂ] K`.

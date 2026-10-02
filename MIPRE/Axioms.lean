@@ -217,6 +217,10 @@ public import MIPRE.Background.LIDT.Co.Preliminaries.SwitchSandwichMain.Complete
 public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.DataProcessing
 public import MIPRE.Background.LIDT.Co.Preliminaries.CompletionTransfer
 public import MIPRE.Background.LIDT.Co.ExpansionHypercubeGraph.Theorems.Results
+public import MIPRE.Background.LIDT.Co.Test.SchwartzZippelStep
+public import MIPRE.Background.LIDT.Co.GlobalVariance.Theorems.MainTheorems
+public import MIPRE.Background.LIDT.Co.Commutativity.Main.Results
+public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Orthonormalization
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
@@ -3503,5 +3507,40 @@ local-to-global inequality on any vector state by Gram positivity, `lem:co-local
   MIPRE.LIDT.Co.ExpansionHypercubeGraph.traceForm_localToGlobal,
   MIPRE.LIDT.Co.ExpansionHypercubeGraph.localToGlobal,
   MIPRE.LIDT.Co.ExpansionHypercubeGraph.localToGlobalBipartite
+
+/-! The Schwartz--Zippel step, the global variance of the points, the commutation of the slice
+measurements and orthonormalization in a symmetric model (C6b, M4, M6, M7 and M8 of
+`planning/c6b-plan.md`): `lem:co-schwartz-zippel-step`
+(`MIPRE/Background/LIDT/Co/Test/SchwartzZippelStep.lean`), `lem:co-global-variance-of-points`
+(`MIPRE/Background/LIDT/Co/GlobalVariance/`), `lem:co-commutation-g`
+(`MIPRE/Background/LIDT/Co/Commutativity/`) and `lem:co-orthonormalization`
+(`MIPRE/Background/LIDT/Co/MakingMeasurementsProjective/`), whose rounding calls the
+orthonormalization tier in place of the vendored finite-dimensional route. -/
+
+-- blueprint `lem:co-schwartz-zippel-step`
+#guard_sorry_free MIPRE.LIDT.Co.Test.MainFormalStep5ExpansionBound,
+  MIPRE.LIDT.Co.Test.mainFormalStep5_expansionBound,
+  MIPRE.LIDT.Co.Test.mainFormalStep5_selfConsistency_ofExpansionBound,
+  MIPRE.LIDT.Co.Test.mainFormalStep5_selfConsistency_ofExpansionBound_heterogeneous
+
+-- blueprint `lem:co-global-variance-of-points`
+#guard_sorry_free MIPRE.LIDT.Co.GlobalVariance.weightedPointConditionedOperatorAtPolynomial,
+  MIPRE.LIDT.Co.GlobalVariance.GlobalVarianceOfPointsStatement,
+  MIPRE.LIDT.Co.GlobalVariance.localVarianceTransportChainBound,
+  MIPRE.LIDT.Co.GlobalVariance.globalVarianceOfPoints
+
+-- blueprint `lem:co-commutation-g`
+#guard_sorry_free MIPRE.LIDT.Co.Commutativity.commDataProcessedG_of_commutativityPoints,
+  MIPRE.LIDT.Co.Commutativity.commDataProcessedG,
+  MIPRE.LIDT.Co.Commutativity.comMain_of_commutativityPoints,
+  MIPRE.LIDT.Co.Commutativity.comMain
+
+-- blueprint `lem:co-orthonormalization`
+#guard_sorry_free
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul,
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalizationMainLemma,
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalization,
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalizationMeasurement_of_consistency_from_projectivizationRepair_heterogeneous,
+  MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalizationMeasurement_right_of_consistency_from_projectivizationRepair_heterogeneous
 
 end

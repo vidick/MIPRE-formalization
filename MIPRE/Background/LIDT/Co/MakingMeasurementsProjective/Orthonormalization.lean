@@ -74,8 +74,9 @@ script checks only ported files:
   `MatrixOperator`, `PositiveMatrixState`, `MatrixSubmeasurement`, `MatrixMeasurement`,
   `matrixExpectation`, `naimarkAuxProjector`, `oneMeasLiftedDensity`, `OneMeasNaimarkData`,
   `NaimarkData`), consumed only by the not-ported `MatrixRealization` and `SdpMatrixBridge`
-  (replaced by milestone M5's Gram positivity and M9's summed form) and by
-  `ExpansionHypercubeGraph/Defs/Core.lean`, which M5 imports from the vendored tree.
+  (replaced by milestone M5's Gram positivity and M9's summed form) and by M5's vendored imports
+  of `ExpansionHypercubeGraph/{Defs/Core,Theorems/Foundations,Theorems/Matrix,Theorems/Results}`,
+  whose matrix content M5 replaced by Gram positivity.
 - `Orthonormalization/ErrorBounds.lean` (142 lines): wholly classical scalar bookkeeping, imported
   by this file, as milestone M3 imports `Polynomials.lean`.
 - `NaimarkCore.lean` (404 lines): the matrix Naimark dilation; nothing outside

@@ -9,6 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Defs
 public import MIPRE.Background.LIDT.Co.Test.StrategyPolynomialFamilies
+public import MIPRE.Foundations.Doubling
 
 @[expose] public section
 
@@ -32,7 +33,15 @@ and right placements `leftPlacedSubMeas (ιB := ι)` and `rightPlacedSubMeas (ι
 
 `AnswerMainInductionHypothesis` quantifies over the local algebra `𝔓` and the Hilbert space `K`
 of a symmetric model, in their own universes, where the vendored hypothesis quantifies over a
-finite carrier `ι`.
+finite carrier `ι`, and only over strategies whose model is a finite pair
+(`strategy.state.toBipartite.IsFinitePair`) without abelian projections in its first player's
+operators (`NoAbelianProj strategy.state.toBipartite.opsA`). These are the hypotheses `hS`, `hA`
+of the ported orthonormalization (`Co/MakingMeasurementsProjective/Orthonormalization.lean`),
+which the successor step of the induction reaches through self-improvement (the vendored
+`SelfImprovementTop/Core.lean`, line 433); restriction to a slice keeps the state
+(`xRestrictedAnswerSymStrat_state`), so they pass to the slices, and milestone M13 discharges them
+for the doubled model with `Doubling.isFinitePair` and `Doubling.noAbelianProj_iff`. This departs
+from the vendored statement, whose finite carriers need no such hypothesis.
 
 The error constants (`mainInductionError`, `selfImprovementInInductionError`,
 `ldPastingInInductionError`, `sliceConditioningLoss`) are the vendored classical declarations,
@@ -391,8 +400,11 @@ This is a Lean-only interface for the induction step in
 the paper-faithful `xRestrictedAnswerSymStrat` slices without appealing to the
 public main theorem.
 
-It quantifies over every symmetric model: a local C*-algebra `𝔓 : Type v` and a Hilbert space
-`K : Type w`, where the vendored hypothesis quantifies over a finite carrier `ι : Type v`. The
+It quantifies over symmetric models: a local C*-algebra `𝔓 : Type v` and a Hilbert space
+`K : Type w`, where the vendored hypothesis quantifies over a finite carrier `ι : Type v`, and
+over strategies whose model is a finite pair without abelian projections in its first player's
+operators, the hypotheses `hS`, `hA` of the ported orthonormalization, which the successor step
+reaches through self-improvement; the vendored hypothesis has none. The
 explicit `.{u,v,w}` universe binder keeps the three universes apart, as the vendored binder
 `.{u,v}` keeps the universe of `FieldModel`'s carrier apart from that of the carrier, so that
 a proof that instantiates `FieldModel.{0}` can still apply the hypothesis to a model in higher
@@ -402,6 +414,8 @@ def AnswerMainInductionHypothesis.{u, v, w} (params : Parameters)
   ∀ (𝔓 : Type v) [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
     (K : Type w) [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K],
     ∀ (strategy : AnswerSymStrat params 𝔓 K) (eps delta gamma : ℝ) (k : ℕ),
+      strategy.state.toBipartite.IsFinitePair →
+      NoAbelianProj strategy.state.toBipartite.opsA →
       strategy.IsGood eps delta gamma →
         1 ≤ k →
           400 * params.m * params.d ≤ k →

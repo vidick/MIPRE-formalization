@@ -25,6 +25,12 @@ The vendored hypothesis `hnorm : strategy.state.IsNormalized` is dropped from
 model (`VecState.ev_one_of_isNormalized`), and none of the lemmas the proof composes takes it
 any more. Callers pass `params strategy family gamma zeta hgamma_nonneg hzeta_nonneg hself hEval`.
 
+## New here
+
+`commDataProcessedGError_to_comMainError_arith`, the real arithmetic of the small-parameter case
+of `fullSliceCommutation_of_evaluated_on_evaluated_questions`, which the vendored proof does
+inline; split out so that the operator-level proof does not elaborate it.
+
 ## Not ported
 
 Every declaration of the vendored file has a counterpart here.
@@ -46,6 +52,73 @@ open MIPStarRE.LDT.Commutativity (EvaluatedSliceQuestion fullSliceQuestionOfEval
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+
+/-- The error arithmetic of `fullSliceCommutation_of_evaluated_on_evaluated_questions` in its
+small-parameter case: for `0 ≤ γ`, `0 ≤ ζ ≤ 1` and `d/q ≤ 1`,
+`16√ζ + 4md/q + 2√(48m(√γ + √ζ)) ≤ 30m(γ^¼ + ζ^¼ + (d/q)^¼)`, from `√ζ ≤ ζ^¼`,
+`d/q ≤ (d/q)^¼`, `√(48m(√γ + √ζ)) ≤ √(48m)(γ^¼ + ζ^¼)` and `√(48m) ≤ 7m`. -/
+theorem commDataProcessedGError_to_comMainError_arith (params : Parameters) (gamma zeta : ℝ)
+    (hgamma_nonneg : 0 ≤ gamma) (hzeta_nonneg : 0 ≤ zeta) (hzeta_le : zeta ≤ 1)
+    (hdq_le : (params.d : ℝ) / (params.q : ℝ) ≤ 1) :
+    16 * Real.sqrt zeta + 4 * (↑params.m * ↑params.d / ↑params.q) +
+        2 * Real.sqrt (commDataProcessedGError params gamma zeta) ≤
+      comMainError params gamma zeta := by
+  have hm_ge : (1 : ℝ) ≤ (params.m : ℝ) :=
+    Nat.one_le_cast.mpr (Nat.succ_le_of_lt params.hm)
+  have hm0 : (0 : ℝ) ≤ params.m := Nat.cast_nonneg _
+  have hdq_nn : 0 ≤ (params.d : ℝ) / (params.q : ℝ) :=
+    div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+  have hg4 : 0 ≤ Real.rpow gamma (1 / (4 : ℝ)) := Real.rpow_nonneg hgamma_nonneg _
+  have hz4 : 0 ≤ Real.rpow zeta (1 / (4 : ℝ)) := Real.rpow_nonneg hzeta_nonneg _
+  have hdq4 : 0 ≤ Real.rpow ((params.d : ℝ) / (params.q : ℝ)) (1 / (4 : ℝ)) :=
+    Real.rpow_nonneg hdq_nn _
+  unfold commDataProcessedGError comMainError
+  -- `√ζ ≤ ζ^¼` and `d/q ≤ (d/q)^¼`.
+  have h_sqrt_z : Real.sqrt zeta ≤ Real.rpow zeta (1 / (4 : ℝ)) := by
+    rw [Real.sqrt_eq_rpow]
+    exact Real.rpow_le_rpow_of_exponent_ge' hzeta_nonneg hzeta_le (by norm_num)
+      (by norm_num)
+  have h_dq : (params.d : ℝ) / params.q ≤
+      Real.rpow ((params.d : ℝ) / params.q) (1 / (4 : ℝ)) := by
+    conv_lhs => rw [← Real.rpow_one ((params.d : ℝ) / params.q)]
+    exact Real.rpow_le_rpow_of_exponent_ge' hdq_nn hdq_le (by norm_num) (by norm_num)
+  -- `(x^¼)² = x^½`.
+  have hsq : ∀ x : ℝ, 0 ≤ x →
+      (Real.rpow x (1 / (4 : ℝ))) ^ (2 : ℕ) = Real.rpow x (1 / (2 : ℝ)) := by
+    intro x hx
+    change (x ^ (1 / (4 : ℝ))) ^ (2 : ℕ) = x ^ (1 / (2 : ℝ))
+    rw [← Real.rpow_mul_natCast hx]
+    norm_num
+  -- `√(48m(γ^½ + ζ^½)) ≤ √(48m) (γ^¼ + ζ^¼)`, from `a² + b² ≤ (a + b)²`.
+  have hsqrt_cdpg :
+      Real.sqrt (48 * ↑params.m *
+        (Real.rpow gamma (1 / (2 : ℝ)) + Real.rpow zeta (1 / (2 : ℝ)))) ≤
+      Real.sqrt (48 * ↑params.m) *
+        (Real.rpow gamma (1 / (4 : ℝ)) + Real.rpow zeta (1 / (4 : ℝ))) := by
+    rw [← hsq gamma hgamma_nonneg, ← hsq zeta hzeta_nonneg,
+      ← Real.sqrt_sq (add_nonneg hg4 hz4), ← Real.sqrt_mul (by positivity)]
+    refine Real.sqrt_le_sqrt (mul_le_mul_of_nonneg_left ?_ (by positivity))
+    rw [add_sq]
+    linarith only [mul_nonneg (mul_nonneg zero_le_two hg4) hz4]
+  -- `√(48m) ≤ 7m`, since `48m ≤ 49m²` for `m ≥ 1`.
+  have hsqrt_48m : Real.sqrt (48 * ↑params.m) ≤ 7 * ↑params.m := by
+    rw [← Real.sqrt_sq (by positivity : (0 : ℝ) ≤ 7 * ↑params.m)]
+    refine Real.sqrt_le_sqrt ?_
+    rw [mul_pow]
+    linarith only [le_self_pow₀ hm_ge two_ne_zero, hm0]
+  have hA : 16 * Real.sqrt zeta ≤ 16 * ↑params.m * Real.rpow zeta (1 / (4 : ℝ)) := by
+    linarith only [h_sqrt_z, le_mul_of_one_le_left hz4 hm_ge]
+  have hB : 4 * (↑params.m * ↑params.d / ↑params.q) ≤
+      6 * ↑params.m * Real.rpow ((params.d : ℝ) / params.q) (1 / (4 : ℝ)) := by
+    rw [mul_div_assoc]
+    linarith only [mul_le_mul_of_nonneg_left h_dq hm0, mul_nonneg hm0 hdq4]
+  have hC : 2 * Real.sqrt (48 * ↑params.m *
+        (Real.rpow gamma (1 / (2 : ℝ)) + Real.rpow zeta (1 / (2 : ℝ)))) ≤
+      14 * ↑params.m *
+        (Real.rpow gamma (1 / (4 : ℝ)) + Real.rpow zeta (1 / (4 : ℝ))) := by
+    linarith only [hsqrt_cdpg, mul_le_mul_of_nonneg_right hsqrt_48m (add_nonneg hg4 hz4)]
+  -- `14m γ^¼ + 30m ζ^¼ + 6m (d/q)^¼ ≤ 30m (γ^¼ + ζ^¼ + (d/q)^¼)`.
+  linarith only [hA, hB, hC, mul_nonneg hm0 hg4, mul_nonneg hm0 hdq4]
 
 /-- Core Schwartz-Zippel transport on the evaluated-question space.
 
@@ -89,7 +162,6 @@ lemma fullSliceCommutation_of_evaluated_on_evaluated_questions
     (fullSliceQuestionOfEvaluatedSlice params q)
   have hm_ge : (1 : ℝ) ≤ (params.m : ℝ) :=
     Nat.one_le_cast.mpr (Nat.succ_le_of_lt params.hm)
-  have hm0 : (0 : ℝ) ≤ params.m := Nat.cast_nonneg _
   have hdq_nn : 0 ≤ (params.d : ℝ) / (params.q : ℝ) :=
     div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
   have hg4 : 0 ≤ Real.rpow gamma (1 / (4 : ℝ)) := Real.rpow_nonneg hgamma_nonneg _
@@ -123,58 +195,8 @@ lemma fullSliceCommutation_of_evaluated_on_evaluated_questions
       linarith only [hMargX, hMargY, hClose, h₁, h₂, h₃]
     -- Step 2, the error arithmetic:
     -- `16√ζ + 4md/q + 2√(48m(√γ + √ζ)) ≤ 30m(γ^¼ + ζ^¼ + (d/q)^¼)`.
-    have hArith :
-        16 * Real.sqrt zeta + 4 * (↑params.m * ↑params.d / ↑params.q) +
-            2 * Real.sqrt (commDataProcessedGError params gamma zeta) ≤
-          comMainError params gamma zeta := by
-      unfold commDataProcessedGError comMainError
-      -- `√ζ ≤ ζ^¼` and `d/q ≤ (d/q)^¼`.
-      have h_sqrt_z : Real.sqrt zeta ≤ Real.rpow zeta (1 / (4 : ℝ)) := by
-        rw [Real.sqrt_eq_rpow]
-        exact Real.rpow_le_rpow_of_exponent_ge' hzeta_nonneg hzeta_le (by norm_num)
-          (by norm_num)
-      have h_dq : (params.d : ℝ) / params.q ≤
-          Real.rpow ((params.d : ℝ) / params.q) (1 / (4 : ℝ)) := by
-        conv_lhs => rw [← Real.rpow_one ((params.d : ℝ) / params.q)]
-        exact Real.rpow_le_rpow_of_exponent_ge' hdq_nn hdq_le (by norm_num) (by norm_num)
-      -- `(x^¼)² = x^½`.
-      have hsq : ∀ x : ℝ, 0 ≤ x →
-          (Real.rpow x (1 / (4 : ℝ))) ^ (2 : ℕ) = Real.rpow x (1 / (2 : ℝ)) := by
-        intro x hx
-        change (x ^ (1 / (4 : ℝ))) ^ (2 : ℕ) = x ^ (1 / (2 : ℝ))
-        rw [← Real.rpow_mul_natCast hx]
-        norm_num
-      -- `√(48m(γ^½ + ζ^½)) ≤ √(48m) (γ^¼ + ζ^¼)`, from `a² + b² ≤ (a + b)²`.
-      have hsqrt_cdpg :
-          Real.sqrt (48 * ↑params.m *
-            (Real.rpow gamma (1 / (2 : ℝ)) + Real.rpow zeta (1 / (2 : ℝ)))) ≤
-          Real.sqrt (48 * ↑params.m) *
-            (Real.rpow gamma (1 / (4 : ℝ)) + Real.rpow zeta (1 / (4 : ℝ))) := by
-        rw [← hsq gamma hgamma_nonneg, ← hsq zeta hzeta_nonneg,
-          ← Real.sqrt_sq (add_nonneg hg4 hz4), ← Real.sqrt_mul (by positivity)]
-        refine Real.sqrt_le_sqrt (mul_le_mul_of_nonneg_left ?_ (by positivity))
-        rw [add_sq]
-        linarith only [mul_nonneg (mul_nonneg zero_le_two hg4) hz4]
-      -- `√(48m) ≤ 7m`, since `48m ≤ 49m²` for `m ≥ 1`.
-      have hsqrt_48m : Real.sqrt (48 * ↑params.m) ≤ 7 * ↑params.m := by
-        rw [← Real.sqrt_sq (by positivity : (0 : ℝ) ≤ 7 * ↑params.m)]
-        refine Real.sqrt_le_sqrt ?_
-        rw [mul_pow]
-        linarith only [le_self_pow₀ hm_ge two_ne_zero, hm0]
-      have hA : 16 * Real.sqrt zeta ≤ 16 * ↑params.m * Real.rpow zeta (1 / (4 : ℝ)) := by
-        linarith only [h_sqrt_z, le_mul_of_one_le_left hz4 hm_ge]
-      have hB : 4 * (↑params.m * ↑params.d / ↑params.q) ≤
-          6 * ↑params.m * Real.rpow ((params.d : ℝ) / params.q) (1 / (4 : ℝ)) := by
-        rw [mul_div_assoc]
-        linarith only [mul_le_mul_of_nonneg_left h_dq hm0, mul_nonneg hm0 hdq4]
-      have hC : 2 * Real.sqrt (48 * ↑params.m *
-            (Real.rpow gamma (1 / (2 : ℝ)) + Real.rpow zeta (1 / (2 : ℝ)))) ≤
-          14 * ↑params.m *
-            (Real.rpow gamma (1 / (4 : ℝ)) + Real.rpow zeta (1 / (4 : ℝ))) := by
-        linarith only [hsqrt_cdpg, mul_le_mul_of_nonneg_right hsqrt_48m (add_nonneg hg4 hz4)]
-      -- `14m γ^¼ + 30m ζ^¼ + 6m (d/q)^¼ ≤ 30m (γ^¼ + ζ^¼ + (d/q)^¼)`.
-      linarith only [hA, hB, hC, mul_nonneg hm0 hg4, mul_nonneg hm0 hdq4]
-    exact ⟨hTransport.trans hArith⟩
+    exact ⟨hTransport.trans (commDataProcessedGError_to_comMainError_arith params gamma zeta
+      hgamma_nonneg hzeta_nonneg hzeta_le hdq_le)⟩
   · -- Large-parameter case: `sddErrorOp ≤ 4` by the triangle inequality through the zero
     -- family, while `comMainError ≥ 30 m ≥ 30`, since some `x^¼ ≥ 1`.
     have hfour : strategy.state.SDDOpRel 𝒟 P Q 4 :=
