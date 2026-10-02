@@ -221,6 +221,8 @@ public import MIPRE.Background.LIDT.Co.Test.SchwartzZippelStep
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Theorems.MainTheorems
 public import MIPRE.Background.LIDT.Co.Commutativity.Main.Results
 public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Orthonormalization
+public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.SelfImprovementTop.Core
+public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.Final
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
@@ -3542,5 +3544,28 @@ orthonormalization tier in place of the vendored finite-dimensional route. -/
   MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalization,
   MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalizationMeasurement_of_consistency_from_projectivizationRepair_heterogeneous,
   MIPRE.LIDT.Co.MakingMeasurementsProjective.orthonormalizationMeasurement_right_of_consistency_from_projectivizationRepair_heterogeneous
+
+/-! Self-improvement and pasting in a symmetric model (C6b, M10 and M11 of
+`planning/c6b-plan.md`): `lem:co-self-improvement`
+(`MIPRE/Background/LIDT/Co/SelfImprovement/`), whose semidefinite program is M9's summed form
+through `SdpStatementWithSlackness.of_isSummedSdp` and whose rounding is M8's orthonormalization,
+and `lem:co-ld-pasting` (`MIPRE/Background/LIDT/Co/Pasting/`). -/
+
+-- blueprint `lem:co-self-improvement`
+#guard_sorry_free MIPRE.LIDT.Co.SelfImprovement.SdpStatementWithSlackness.of_isSummedSdp,
+  MIPRE.LIDT.Co.SelfImprovement.sdp_statement_with_slackness,
+  MIPRE.LIDT.Co.SelfImprovement.selfImprovementHelper,
+  MIPRE.LIDT.Co.SelfImprovement.selfImprovementHelperError_pos,
+  MIPRE.LIDT.Co.SelfImprovement.SelfImprovementConclusion,
+  MIPRE.LIDT.Co.SelfImprovement.selfImprovement,
+  MIPRE.LIDT.Co.SelfImprovement.selfImprovement_of_axisParallel_selfConsistency
+
+-- blueprint `lem:co-ld-pasting`
+#guard_sorry_free MIPRE.LIDT.Co.Pasting.chernoffBernoulliMatrix,
+  MIPRE.LIDT.Co.Pasting.LdPastingConclusion,
+  MIPRE.LIDT.Co.Pasting.ldPastingNCompleteness,
+  MIPRE.LIDT.Co.Pasting.ldPastingSubMeas,
+  MIPRE.LIDT.Co.Pasting.ldPastingNontrivial,
+  MIPRE.LIDT.Co.Pasting.ldPasting
 
 end
