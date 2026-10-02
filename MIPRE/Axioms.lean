@@ -208,6 +208,8 @@ public import MIPRE.Tsirelson
 public import MIPRE.MIPCo
 public import MIPRE.Background.Orthonormalization.FinitePairOrtho
 public import MIPRE.Background.Orthonormalization.DyadicOrtho
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.BridgeTheorems.DropBridges
+public import MIPRE.Background.LIDT.Co.CommutativityPoints.AnswerTheorems
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
@@ -3381,5 +3383,20 @@ keeps its guard in the C6a block above. -/
 -- blueprint `cor:orthonormalization-dyadic-pair`
 #guard_sorry_free MIPRE.Orthonormalization.povm_orthogonalization_dyadicPair,
   MIPRE.Orthonormalization.povm_orthogonalization_dyadicPairB
+
+/-! The commuting-operator track, C6b's port (`planning/c6b-plan.md`, M0–M1): swap symmetry as
+three theorems of the symmetric model, `lem:sym-model-swap`
+(`MIPRE/Background/LIDT/Co/Basic/QuantumState.lean`), and the commutativity of points over it,
+`lem:co-commutativity-points` (`MIPRE/Background/LIDT/Co/CommutativityPoints/BridgeTheorems/
+DropBridges.lean` and `AnswerTheorems.lean`). The port is not a vendored tree, so its guards live
+here. The model itself, `def:sym-model`, is a definition and carries no proof-level mark. -/
+
+-- blueprint `lem:sym-model-swap`
+#guard_sorry_free MIPRE.LIDT.Co.SymModel.ev_flip, MIPRE.LIDT.Co.SymModel.ev_L_eq_ev_R,
+  MIPRE.LIDT.Co.SymModel.ev_L_mul_R_comm
+
+-- blueprint `lem:co-commutativity-points`
+#guard_sorry_free MIPRE.LIDT.Co.CommutativityPoints.commutativityPoints,
+  MIPRE.LIDT.Co.CommutativityPoints.answerCommutativityPoints
 
 end

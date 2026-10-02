@@ -2782,7 +2782,8 @@ a port of the vendored proof needs where it uses the dimension: the symmetrizati
 players, the semidefinite step, and orthonormalization, which in a finite von Neumann algebra is de
 la Salle's theorem; and the matrix units exclude abelian projections
 (Theorem~\ref{thm:no-abelian-dyadic}), which makes that theorem unconditional in the class
-(Corollary~\ref{cor:orthonormalization-dyadic-pair}). The port is still to be done. This subsection
+(Corollary~\ref{cor:orthonormalization-dyadic-pair}). The port has begun
+(Lemma~\ref{lem:co-commutativity-points}). This subsection
 proves that the restriction suffices (Corollary~\ref{cor:mipco-from-lidt-fin}). Answer reduction and
 the Pauli basis test use the hypothesis only in the model of one near-optimal projective strategy
 and in its ancilla extensions, and by Lin's tracial density (Theorem~\ref{thm:tracial-density}),
@@ -3221,6 +3222,103 @@ Neither player's operators contain a nonzero abelian projection
 applies to the first player, and to the second in the model with the players exchanged, which is
 again a dyadic pair. This is the form the orthonormalization sites of the port call, with no
 hypothesis beyond the class (\texttt{reports/c6b-paper-proofs.md}, Section~3.7).
+\end{proof}
+
+The port has begun (\texttt{planning/c6b-plan.md}, Section~3, milestones M0 and M1). It replaces the
+vendored state on $\C^\iota \otimes \C^\iota$, and the swap hypotheses that come with it, by a
+\emph{symmetric model} (Definition~\ref{def:sym-model}), in which swap symmetry is a theorem
+(Lemma~\ref{lem:sym-model-swap}), and rewrites the vendored proof over it file by file, under
+\texttt{MIPRE/Background/LIDT/Co/}, keeping the vendored names and importing the vendored classical
+layer rather than porting it. The first section ported in full is the commutativity of points
+(Lemma~\ref{lem:co-commutativity-points}).
+
+\begin{definition}[Symmetric models]
+\label{def:sym-model}
+\lean{MIPRE.LIDT.Co.VecState, MIPRE.LIDT.Co.VecState.ev, MIPRE.LIDT.Co.SymModel,
+  MIPRE.LIDT.Co.SymModel.flip, MIPRE.LIDT.Co.SymModel.R}
+\leanok
+A \emph{vector state} on a Hilbert space $K$ is a unit vector $\Psi \in K$, with the expectation
+$\mathrm{ev}(X) = \mathrm{Re}\, \langle \Psi, X \Psi \rangle$ of a bounded operator $X$ on $K$. A
+\emph{symmetric model} over a C$^*$-algebra $\cal{P}$ consists of a vector state $\Psi$ on $K$, a
+unital $*$-homomorphism $L : \cal{P} \to B(K)$, the first player's placement, and a linear
+isometry $J$ of $K$ onto itself with $J^2 = 1$ and $J \Psi = \Psi$, such that $L(x)$ commutes with
+$J L(y) J$ for all $x, y \in \cal{P}$. The \emph{flip} is the $*$-automorphism $X \mapsto J X J$
+of $B(K)$, and the second player's placement is $R = \mathrm{flip} \circ L$, so that $L(x)$ and
+$R(y)$ commute.
+
+The vendored proof of Theorem~\ref{thm:lidt-cl-soundness} works with a state on $\C^\iota \otimes
+\C^\iota$: its local operators are the $\iota \times \iota$ matrices, its joint operators those of
+the tensor product, and its placements $A \mapsto A \otimes \Id$ and $A \mapsto \Id \otimes A$. A
+symmetric model replaces them by $\cal{P}$, $B(K)$, $L$ and $R$, and the Kronecker product $A
+\otimes B$ by $L(A)\, R(B)$. Measurements are generic over the ring of operators, local ones in
+$\cal{P}$ and joint ones in $B(K)$. A quantity that uses only the state, not the placements,
+belongs to the vector state, so that it applies as well to a state on one space, tensored with an
+ancilla, or reduced.
+\end{definition}
+
+\begin{lemma}[Swap symmetry in a symmetric model]
+\label{lem:sym-model-swap}
+\uses{def:sym-model}
+\lean{MIPRE.LIDT.Co.SymModel.ev_flip, MIPRE.LIDT.Co.SymModel.ev_L_eq_ev_R,
+  MIPRE.LIDT.Co.SymModel.ev_L_mul_R_comm}
+\leanok
+In a symmetric model (Definition~\ref{def:sym-model}), $\mathrm{ev}(J X J) = \mathrm{ev}(X)$ for
+every bounded operator $X$ on $K$. Consequently $\mathrm{ev}(L(x)) = \mathrm{ev}(R(x))$ and
+$\mathrm{ev}(L(x)\, R(y)) = \mathrm{ev}(L(y)\, R(x))$ for all $x, y \in \cal{P}$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+$J$ is isometric and fixes $\Psi$, so $\langle \Psi, J X J \Psi \rangle = \langle J \Psi, J X \Psi
+\rangle = \langle \Psi, X \Psi \rangle$. The flip carries $L(x)$ to $R(x)$ by definition, and $R(x)$
+to $L(x)$ because $J^2 = 1$; so it carries $L(x)\, R(y)$ to $R(x)\, L(y)$, which is $L(y)\, R(x)$
+because the two placements commute. The vendored development takes these facts as hypotheses of a
+symmetric strategy --- the swap fixes the state's density, and the state is permutation invariant
+--- and here they are theorems of the model, so the ported statements drop those hypotheses
+(\texttt{planning/c6b-plan.md}, ``Port conventions'').
+\end{proof}
+
+\begin{lemma}[Commutativity of points, in a symmetric model]
+\label{lem:co-commutativity-points}
+\uses{def:sym-model}
+\lean{MIPRE.LIDT.Co.CommutativityPoints.commutativityPoints,
+  MIPRE.LIDT.Co.CommutativityPoints.answerCommutativityPoints}
+\leanok
+Let $S$ be a symmetric model over $\cal{P}$ (Definition~\ref{def:sym-model}), with state $\Psi$
+and first placement $L$, and consider a symmetric strategy in $S$ for the low individual degree
+test of Theorem~\ref{thm:lidt-cl-soundness}, with parameters $q$, $m$ and $d$: projective
+measurements $A^u$ in $\cal{P}$ for the points $u \in \Fq^m$, and axis-parallel and diagonal-line
+measurements in $\cal{P}$, the diagonal-line measurement answering a polynomial of degree at
+most $d$ on the line or, in the answer-valued variant, an arbitrary function on the line. If the
+strategy is $(\eps, \delta, \gamma)$-good --- the axis-parallel, self-consistency and diagonal-line
+tests fail with probability at most $\eps$, $\delta$ and $\gamma$ --- then
+\[
+  \E_{u, v} \sum_{a, b} \bigl\| L\bigl(A^u_a A^v_b - A^v_b A^u_a\bigr) \Psi \bigr\|^2 \leq 32\,
+  \gamma\, m,
+\]
+for independent uniformly random points $u$ and $v$.
+\end{lemma}
+
+\begin{proof}
+\uses{def:bipartite-model}
+\leanok
+The proof is the vendored one, \texttt{MIPStarRE.LDT.CommutativityPoints.commutativityPoints} in
+\texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/}, rewritten over the symmetric
+model declaration by declaration (\texttt{planning/c6b-plan.md}, milestone M1 and ``Port
+conventions''). A uniformly random pair of points has the law of two points sampled on a random
+diagonal line, so it suffices to compare the two orders of the product for points $u$ and $v$ on a
+shared diagonal line $\ell$. By the diagonal-line test, the point measurement $A^u$ placed by $L$ is
+within $2 \gamma m$, in averaged squared state-dependent distance, of the line measurement of $\ell$
+evaluated at $u$ and placed by $R$. Multiplying such an approximation by a family $C$ with $\sum_c
+C_c^* C_c \leq 1$ keeps its error, so four replacements carry $L(A^u_a A^v_b)$ to the product of
+the line measurement's two evaluations, placed by $R$, and from there to $L(A^v_b A^u_a)$; the two
+evaluations commute, being post-processings of one projective measurement. The triangle inequality
+for the squared distance loses a factor $2$, which gives $2 (2 \gamma m + 2 \gamma m) = 8 \gamma m$
+for each half and $2 (8 \gamma m + 8 \gamma m) = 32 \gamma m$ in all. The Cauchy--Schwarz
+inequalities behind these steps are those of the vector state read as a state model
+(Definition~\ref{def:bipartite-model}). The flip of the model is never used. The answer-valued
+variant has the same proof; it is ported as a separate statement, as the vendored development
+states it and its consumers use it.
 \end{proof}
 
 \subsection{Further directions}
