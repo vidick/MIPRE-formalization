@@ -2783,7 +2783,9 @@ players, the semidefinite step, and orthonormalization, which in a finite von Ne
 la Salle's theorem; and the matrix units exclude abelian projections
 (Theorem~\ref{thm:no-abelian-dyadic}), which makes that theorem unconditional in the class
 (Corollary~\ref{cor:orthonormalization-dyadic-pair}). The port has begun
-(Lemma~\ref{lem:co-commutativity-points}). This subsection
+(Lemma~\ref{lem:co-commutativity-points}), with the doubling that supplies its symmetric model
+(Definition~\ref{def:doubled-model}) and the semidefinite step (Theorem~\ref{thm:summed-sdp}). This
+subsection
 proves that the restriction suffices (Corollary~\ref{cor:mipco-from-lidt-fin}). Answer reduction and
 the Pauli basis test use the hypothesis only in the model of one near-optimal projective strategy
 and in its ancilla extensions, and by Lin's tracial density (Theorem~\ref{thm:tracial-density}),
@@ -3224,7 +3226,7 @@ again a dyadic pair. This is the form the orthonormalization sites of the port c
 hypothesis beyond the class (\texttt{reports/c6b-paper-proofs.md}, Section~3.7).
 \end{proof}
 
-The port has begun (\texttt{planning/c6b-plan.md}, Section~3, milestones M0 and M1). It replaces the
+The port has begun (\texttt{planning/c6b-plan.md}, Section~3, milestones M0, M1, M2 and M9). It replaces the
 vendored state on $\C^\iota \otimes \C^\iota$, and the swap hypotheses that come with it, by a
 \emph{symmetric model} (Definition~\ref{def:sym-model}), in which swap symmetry is a theorem
 (Lemma~\ref{lem:sym-model-swap}), and rewrites the vendored proof over it file by file, under
@@ -3319,6 +3321,340 @@ inequalities behind these steps are those of the vector state read as a state mo
 (Definition~\ref{def:bipartite-model}). The flip of the model is never used. The answer-valued
 variant has the same proof; it is ported as a separate statement, as the vendored development
 states it and its consumers use it.
+\end{proof}
+
+For a finite pair the symmetric model is supplied by a doubling on $\mH \oplus \mH$
+(\texttt{planning/c6b-plan.md}, milestone M2; \texttt{reports/c6b-paper-proofs.md}, Section~4),
+which replaces the vendored role-register symmetrization, a construction for tensor products only.
+Entering and leaving the doubled model costs the vendored constants: $3\eps$ for the goodness of the
+symmetric strategy (Theorem~\ref{thm:doubled-symmetrization}) and $100 \eta^{1/4}$ for
+orthonormalization (Theorem~\ref{thm:doubled-orthonormalization}). The unsymmetrization at the
+vendored cut, at $2\sigma$, has its arithmetic here (Lemma~\ref{lem:doubled-model-role-average});
+its input, the point consistency of the ported main induction, is not yet ported. The semidefinite
+step of the vendored proof, Lemma~9.2 of \cite{JNVWY21qld}, is proved there by strong duality in
+finite dimension. Here it is replaced by a summed form proved with the trace
+(Theorem~\ref{thm:summed-sdp}; milestone M9, Section~5 of the report), solved componentwise in the
+doubled model (Corollary~\ref{cor:summed-sdp-doubled}).
+
+\begin{lemma}[The players' algebras of a finite pair, as commutants with their order]
+\label{lem:finite-pair-order}
+\uses{def:finite-pair,lem:finite-pair-expand}
+\lean{MIPRE.BipartiteModel.IsFinitePair.equivA, MIPRE.BipartiteModel.IsFinitePair.equivB,
+  MIPRE.BipartiteModel.IsFinitePair.nonneg_iff_A, MIPRE.BipartiteModel.IsFinitePair.nonneg_iff_B,
+  MIPRE.BipartiteModel.IsFinitePair.le_iff_A, MIPRE.BipartiteModel.IsFinitePair.le_iff_B,
+  MIPRE.POVMIn.mapHom, MIPRE.isPVMIn_map_equiv_iff}
+\leanok
+Let $M$ be a finite pair (Definition~\ref{def:finite-pair}) with algebras $\cal{A}$ and $\cal{B}$
+represented on $\mH$, and let $\cal{A}_c$ and $\cal{B}_c$ be the commutants in $B(\mH)$ of the
+second and of the first player's operators. They are norm-closed $*$-subalgebras, hence
+C$^*$-algebras, and star-ordered by the operator order. The map $a \mapsto \pi(\pi_A(a))$ is a
+$*$-isomorphism of $\cal{A}$ onto $\cal{A}_c$, and $b \mapsto \pi(\pi_B(b))$ one of $\cal{B}$ onto
+$\cal{B}_c$. If $\cal{A}$ is a star-ordered ring, then $a \geq 0$ if and only if $\pi(\pi_A(a))
+\geq 0$, and likewise for $\cal{B}$. So positive operator valued measurements transfer along these
+isomorphisms in both directions, and so do projective measurements.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The first player's operators commute with the second player's and with their adjoints, so they lie
+in $\cal{A}_c$. The commutant clause of a finite pair says that an operator commuting with the
+second player's operators is one of the first player's, so they are all of $\cal{A}_c$; and the
+representation is injective, so $a \mapsto \pi(\pi_A(a))$ is bijective onto $\cal{A}_c$. A
+commutant is norm closed, and it is star-ordered because a positive element of it is the square of
+its square root, which commutes with everything the element commutes with. A $*$-homomorphism
+between star-ordered rings is monotone, and both the isomorphism and its inverse are
+$*$-homomorphisms, so the two orders agree (\texttt{reports/c6b-paper-proofs.md}, Section~5.6,
+Lemma~13). The second player's statements are the first player's for the model with the players
+exchanged.
+\end{proof}
+
+\begin{definition}[The doubled model]
+\label{def:doubled-model}
+\uses{def:sym-model,lem:finite-pair-order}
+\lean{MIPRE.LIDT.Co.Doubling.LocA, MIPRE.LIDT.Co.Doubling.LocB, MIPRE.LIDT.Co.Doubling.Loc,
+  MIPRE.LIDT.Co.Doubling.model, MIPRE.LIDT.Co.Doubling.model_L, MIPRE.LIDT.Co.Doubling.model_R,
+  MIPRE.LIDT.Co.Doubling.equiv}
+\leanok
+Let $M$ be a finite pair in a unit state $\psi$, with commutants $\cal{A}_c$ and $\cal{B}_c$ as in
+Lemma~\ref{lem:finite-pair-order}. Its \emph{doubled model} $D(M)$ is the following symmetric model
+(Definition~\ref{def:sym-model}). Its local algebra is the C$^*$-algebra $\cal{P} = \cal{A}_c \times
+\cal{B}_c$, with componentwise operations and order, and its space is $K = \mH \oplus \mH$. The state
+is $\Psi = (\psi, \psi)/\sqrt{2}$, the first placement is $L(a, b) = a \oplus b$, and the flip is
+$J(\xi, \eta) = (\eta, \xi)$. The second placement is then $R(a, b) = b \oplus a$, and $L(x)$
+commutes with $R(y)$ because $\cal{A}_c$ commutes with $\cal{B}_c$.
+
+By Lemma~\ref{lem:finite-pair-order}, $\cal{P}$ is $*$-isomorphic to $\cal{A} \times \cal{B}$, the
+product of the players' algebras, which is how \texttt{reports/c6b-paper-proofs.md} writes the
+doubled model's local algebra. The model is built over the commutants because a symmetric model
+needs a C$^*$-algebra, and $\cal{A}$ and $\cal{B}$ need not be C$^*$-algebras.
+\end{definition}
+
+\begin{lemma}[The doubled model is a finite pair, with the order of its parts]
+\label{lem:doubled-model-finite-pair}
+\uses{def:doubled-model,def:dyadic-pair,thm:no-abelian-dyadic}
+\lean{MIPRE.LIDT.Co.Doubling.isFinitePair, MIPRE.LIDT.Co.Doubling.tr_diag2_L,
+  MIPRE.LIDT.Co.Doubling.L_nonneg_iff, MIPRE.LIDT.Co.Doubling.R_nonneg_iff,
+  MIPRE.LIDT.Co.Doubling.equiv_nonneg_iff, MIPRE.LIDT.Co.Doubling.isDyadicPair,
+  MIPRE.LIDT.Co.Doubling.model_L_injective, MIPRE.LIDT.Co.SymModel.L_cfc,
+  MIPRE.LIDT.Co.Doubling.cfc_mem_opsA}
+\leanok
+Let $M$ be a finite pair in a unit state, and $D(M)$ its doubled model
+(Definition~\ref{def:doubled-model}), read as a bipartite model with the placements $L$ and $R$.
+\begin{enumerate}
+  \item $D(M)$ is a finite pair. Its placements are injective. The first player's operators
+  $\{a \oplus b\}$ are the commutant of the second player's $\{b \oplus a\}$, and conversely. A
+  vector trace $\tau$ of $M$'s first player's operators and a vector trace $\sigma$ of its second
+  player's give the vector trace $\tau_D(a \oplus b) = \frac{1}{2}(\tau(a) + \sigma(b))$ of the first
+  player's operators of $D(M)$, and symmetrically for the second player.
+  \item The orders agree: $x \geq 0$ in $\cal{P}$ if and only if $L(x) \geq 0$, if and only if
+  $R(x) \geq 0$. When $\cal{A}$ and $\cal{B}$ are star-ordered, these also hold if and only if
+  the preimage of $x$ in $\cal{A} \times \cal{B}$ is nonnegative.
+  \item If $M$ is a dyadic pair (Definition~\ref{def:dyadic-pair}), so is $D(M)$.
+  \item The continuous functional calculus of $\cal{P}$ is that of the operators: $L(f(x)) =
+  f(L(x))$ for self-adjoint $x \in \cal{P}$ and every $f : \R \to \R$. The first player's
+  operators of $M$ are closed under the functional calculus.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\leanok
+An operator on $\mH \oplus \mH$ that commutes with $R(0, 1) = 1 \oplus 0$ is block diagonal. Its
+first block commutes with $\cal{B}_c$, so it lies in $\cal{A}_c$, and its second block lies in
+$\cal{B}_c$ in the same way. So an operator commuting with every $R(y)$ is an $L(x)$, and
+symmetrically. The trace vectors are $(g_k, 0)/\sqrt{2}$ and $(0, h_l)/\sqrt{2}$, for the trace
+vectors $g_k$ of $\tau$ and $h_l$ of $\sigma$. Traciality and separation hold blockwise. A
+block-diagonal operator is positive exactly when each block is, which gives item~2 together with
+Lemma~\ref{lem:finite-pair-order}. The dyadic matrix units of $\cal{A}$ and of $\cal{B}$ transfer to
+$\cal{A}_c$ and $\cal{B}_c$, and pair componentwise into units of $\cal{P}$. For item~4, $L$ is an
+injective $*$-homomorphism of C$^*$-algebras, so it preserves spectra and commutes with the
+functional calculus. The first player's operators of $M$ are a closed commutant, which contains the
+functional calculus of each of its self-adjoint elements (\texttt{reports/c6b-paper-proofs.md},
+Section~4, Theorem~A and Proposition~H).
+\end{proof}
+
+\begin{lemma}[The role average in the doubled model]
+\label{lem:doubled-model-role-average}
+\uses{def:doubled-model,def:model-proj-strategy}
+\lean{MIPRE.LIDT.Co.Doubling.ev_L, MIPRE.LIDT.Co.Doubling.inner_L_mul_R,
+  MIPRE.LIDT.Co.Doubling.bornProb_model_eq, MIPRE.LIDT.Co.Doubling.qBipartiteConsDefect_model,
+  MIPRE.LIDT.Co.Doubling.dis_model, MIPRE.LIDT.Co.Doubling.inconsistency_model,
+  MIPRE.LIDT.Co.Doubling.bipartiteConsError_model,
+  MIPRE.LIDT.Co.Doubling.bipartiteConsError_components_le_two_mul,
+  MIPRE.LIDT.Co.bipartiteConsError_eq_inconsistency}
+\leanok
+Let $M$ be a finite pair in a unit state $\psi$, and $D(M)$ its doubled model
+(Definition~\ref{def:doubled-model}). Write $x = (x^1, x^2)$ for $x \in \cal{P}$. For all $x, y \in
+\cal{P}$,
+\[
+  \langle \Psi, L(x) R(y) \Psi \rangle = \tfrac{1}{2} \bigl( \langle \psi, x^1 y^2 \psi \rangle +
+  \langle \psi, y^1 x^2 \psi \rangle \bigr).
+\]
+So the Born probability of $D(M)$ at $(x, y)$ is the average of the Born probabilities of $M$ at
+$(x^1, y^2)$ and at $(y^1, x^2)$. The same holds exactly for the submeasurement consistency defect
+$\max(0, \mathrm{total} - \mathrm{match})$ of two submeasurements, for its average over a question
+distribution, and for the disagreement and the inconsistency of positive operator valued
+measurements. Consequently, if the averaged defect of two families $X$, $Y$ in $D(M)$ is at most
+$\sigma$, then each of the two defects of $M$, at $(X^1, Y^2)$ and at $(Y^1, X^2)$, is at most
+$2\sigma$. For measurements, the averaged defect of $M$ is its inconsistency, weighted by the
+question distribution.
+\end{lemma}
+
+\begin{proof}
+\leanok
+$L(x) R(y) = x^1 y^2 \oplus y^1 x^2$, because $y^1 \in \cal{A}_c$ and $x^2 \in \cal{B}_c$ commute.
+The vector state $\Psi = (\psi, \psi)/\sqrt{2}$ averages the two blocks. In the defect the
+maximum with $0$ is inactive on both sides, since the summands are Born probabilities of positive
+elements, so the defect is the sum of the off-diagonal Born probabilities, and that sum halves too.
+The two defects of $M$ are nonnegative and average to at most $\sigma$, so each is at most
+$2\sigma$ (\texttt{reports/c6b-paper-proofs.md}, Section~4, Theorems~C and~E).
+\end{proof}
+
+\begin{lemma}[No abelian projections in the doubled model]
+\label{lem:doubled-model-no-abelian}
+\uses{def:doubled-model}
+\lean{MIPRE.NoAbelianProj, MIPRE.noAbelianProj_diag2Set_iff,
+  MIPRE.LIDT.Co.Doubling.noAbelianProj_iff,
+  MIPRE.LIDT.Co.Doubling.noAbelianProj_opsA_of_isDyadicPair,
+  MIPRE.LIDT.Co.Doubling.noAbelianProj_opsB_of_isDyadicPair}
+\leanok
+Let $M$ be a finite pair in a unit state. Both players' operators of the doubled model $D(M)$
+(Definition~\ref{def:doubled-model}) contain no nonzero abelian projection if and only if both
+players' operators of $M$ contain none. In particular this holds when $M$ is a dyadic pair. Here
+a projection $r$ of a set $s$ of operators is \emph{abelian} when its corner $r s r$ is
+commutative, which is the hypothesis of
+Corollary~\ref{cor:orthonormalization-finite-pair}.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:dyadic-pair-closure}
+\leanok
+The players' operators of $D(M)$ are the block-diagonal operators $u \oplus v$ with $u$ and $v$ in
+the players' operators of $M$ (Lemma~\ref{lem:doubled-model-finite-pair}). A projection $p \oplus q$
+there is abelian exactly when $p$ and $q$ are, since its corner is the product of theirs. For a
+dyadic pair, neither player's operators contain a nonzero abelian projection
+(Lemma~\ref{lem:dyadic-pair-closure}) (\texttt{reports/c6b-paper-proofs.md}, Section~4,
+Theorem~F).
+\end{proof}
+
+\begin{theorem}[Symmetrization after the bridge]
+\label{thm:doubled-symmetrization}
+\uses{lem:doubled-model-role-average}
+\lean{MIPRE.LIDT.Co.ProjStrat.lowIndividualDegreeFailureProbability,
+  MIPRE.LIDT.Co.ProjStrat.PassesLowIndividualDegreeTest, MIPRE.LIDT.Co.Doubling.pairProjMeas,
+  MIPRE.LIDT.Co.Doubling.symmStrat,
+  MIPRE.LIDT.Co.Doubling.symmStrat_axisParallel_eq_roleAverage,
+  MIPRE.LIDT.Co.Doubling.symmStrat_selfConsistency_eq_pointAgreement,
+  MIPRE.LIDT.Co.Doubling.symmStrat_diagonal_eq_roleAverage,
+  MIPRE.LIDT.Co.Doubling.symmStrat_isGood_three_mul}
+\leanok
+Let $S$ be a projective strategy for the low individual degree test whose two players act in a
+finite pair $M$ with a unit state: for each player, projective point measurements and
+axis-parallel and diagonal-line measurements, the line measurements covariant under
+reparametrization. Pairing each measurement of the first player with the corresponding measurement
+of the second, componentwise in $\cal{P}$, gives a symmetric strategy $S_D$ in the doubled model
+$D(M)$ (Definition~\ref{def:doubled-model}), covariant componentwise. Its failure probabilities
+are the role averages of those of $S$: the axis-parallel and diagonal-line tests of $S_D$ fail
+with the average, over the two assignments of the line and point roles to the players, of the
+corresponding failure probability of $S$; and its self-consistency test fails with the probability
+that the two players' point measurements disagree. Hence, if $S$ fails the test with probability at
+most $\eps$, then $S_D$ is $(3\eps, 3\eps, 3\eps)$-good, in the sense of
+Lemma~\ref{lem:co-commutativity-points}. These are the constants of the vendored role-register
+symmetrization, which this replaces.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Each failure probability of $S_D$ is a bipartite consistency defect of $D(M)$ between two paired
+families, so it is the average of the two two-space defects of $M$
+(Lemma~\ref{lem:doubled-model-role-average}). The paired families have the families of $S$ as
+components. The failure probability of $S$ is the mean of the three role averages, which are
+nonnegative, so each is at most $3\eps$ (\texttt{reports/c6b-paper-proofs.md}, Section~4,
+Theorem~D).
+\end{proof}
+
+\begin{theorem}[Orthonormalization in the doubled model]
+\label{thm:doubled-orthonormalization}
+\uses{lem:doubled-model-no-abelian,cor:orthonormalization-finite-pair}
+\lean{MIPRE.LIDT.Co.SymModel.orthonormalization_of_isFinitePair,
+  MIPRE.LIDT.Co.SymModel.orthonormalization_of_isFinitePair_sddRel,
+  MIPRE.LIDT.Co.Doubling.orthonormalization_model,
+  MIPRE.LIDT.Co.Doubling.orthonormalization_of_isDyadicPair,
+  MIPRE.LIDT.Co.Doubling.orthonormalization_model_sddRel}
+\leanok
+Let $M$ be a finite pair in a unit state whose two players' operators contain no nonzero abelian
+projection, for instance a dyadic pair, and let $D(M)$ be its doubled model
+(Definition~\ref{def:doubled-model}). Let $X$ be a submeasurement in $\cal{P}$, with total $X_{\mathrm{total}} = \sum_a X_a$, whose
+bipartite strong self-consistency defect
+\[
+  \max\Bigl(0,\ \mathrm{ev}\bigl(L(X_{\mathrm{total}})\bigr) - \sum_a \mathrm{ev}\bigl(L(X_a)\,
+  R(X_a)\bigr)\Bigr)
+\]
+is at most $\eta$, where $\eta > 0$ and $\mathrm{ev}$ is the expectation of the model's state
+(Definition~\ref{def:sym-model}). Then there is a projective
+submeasurement $P$ in $\cal{P}$ with
+\[
+  \sum_a \bigl\| \bigl(L(X_a) - L(P_a)\bigr) \Psi \bigr\|^2 \leq 100\, \eta^{1/4}.
+\]
+This is the vendored orthonormalization step with its constant. The same holds in any symmetric
+model whose bipartite reading is a finite pair whose first player's operators contain no nonzero
+abelian projection; the doubled model is one by Lemmas~\ref{lem:doubled-model-finite-pair}
+and~\ref{lem:doubled-model-no-abelian}.
+\end{theorem}
+
+\begin{proof}
+\uses{lem:doubled-model-finite-pair,lem:sym-model-swap}
+\leanok
+Complete $X$ to a positive operator valued measurement by one further outcome, $1 -
+X_{\mathrm{total}}$. In any symmetric model, $1 - \sum_o \|L(\tilde X_o) \Psi\|^2$ for the completion
+$\tilde X$ is at most twice the defect of $X$, using $\|R(y) \Psi\| = \|L(y) \Psi\|$ and the
+Cauchy--Schwarz inequality for $\langle \Psi, L(y) R(y) \Psi \rangle$; so it is less than $3
+\min(\eta, 1)$. The doubled model is a finite pair without abelian projections
+(Lemmas~\ref{lem:doubled-model-finite-pair} and~\ref{lem:doubled-model-no-abelian}), so
+Corollary~\ref{cor:orthonormalization-finite-pair} gives a projective measurement $Q$ of the first
+player's algebra of $D(M)$ within $9 \cdot 3 \min(\eta, 1)$ of $\tilde X$. Dropping the added
+outcome gives $P$, and $27 \min(\eta, 1) \leq 100 \eta^{1/4}$
+(\texttt{reports/c6b-paper-proofs.md}, Section~4, Theorem~G). The case $\eta = 0$ is excluded
+because the hypothesis of Corollary~\ref{cor:orthonormalization-finite-pair} is strict.
+\end{proof}
+
+\begin{theorem}[The summed semidefinite form, in a commutant with a vector trace]
+\label{thm:summed-sdp}
+\uses{def:finite-pair}
+\lean{MIPRE.SummedSdp.IsSummedSdp, MIPRE.SummedSdp.IsSummedSdp.sum_mul_eq,
+  MIPRE.SummedSdp.IsFaithfulTrace, MIPRE.SummedSdp.isSummedSdp_of_firstOrder,
+  MIPRE.SummedSdp.isSummedSdp_of_isMaxOn, MIPRE.SummedSdp.isSummedSdp_of_le,
+  MIPRE.Orthonormalization.exists_isMaxOn_obj, MIPRE.Orthonormalization.exists_isSummedSdp,
+  MIPRE.Orthonormalization.exists_isSummedSdp_centralizer,
+  MIPRE.Orthonormalization.exists_isSummedSdp_finitePairA,
+  MIPRE.Orthonormalization.exists_isSummedSdp_finitePairB}
+\leanok
+Let $t$ be a set of bounded operators on a Hilbert space $\mH$, and let $\cal{M}$ be the commutant
+of $t \cup t^*$: the operators commuting with every element of $t$ and with its adjoint.
+Let $\xi_1, \dots, \xi_n \in \mH$ be vectors such that $\tau(x) = \sum_k \langle \xi_k, x \xi_k
+\rangle$ is tracial on $\cal{M}$ and separates it. Let $A_1, \dots, A_m \in \cal{M}$ be self-adjoint.
+Then there is a measurement $T$ in $\cal{M}$, positive elements $T_1, \dots, T_m$ with $\sum_i T_i =
+1$, such that $Z = \sum_i T_i A_i$ satisfies:
+\begin{enumerate}
+  \item $Z$ is self-adjoint;
+  \item $A_i \leq Z$ for every $i$;
+  \item $T_i Z = T_i A_i$ for every $i$.
+\end{enumerate}
+Conversely, for a measurement $T$ in $\cal{M}$, items~1 and~2 imply item~3. In a finite pair
+(Definition~\ref{def:finite-pair}), each player's operators are such a commutant, with the pair's
+vector trace, so the conclusion holds in each of them. These are the data of the semidefinite
+program that the vendored proof obtains from Lemma~9.2 of \cite{JNVWY21qld}, which this replaces.
+\end{theorem}
+
+\begin{proof}
+\leanok
+The measurements of $\cal{M}$ form a weak-operator compact set, and $f(T) = \sum_i \mathrm{Re}\,
+\tau(T_i A_i)$ is weak-operator continuous, being a finite sum of matrix coefficients. So $f$ has
+a maximizer $T$. Perturbing $T$ toward a single outcome $h$ by $T'_i = K T_i K + \delta_{ih}(1 -
+K^2)$, with $K = 1 - \eps P$ for $0 \leq P \leq 1$ in $\cal{M}$, expands $f(T')$ exactly to second
+order in $\eps$. Maximality then gives the first-order condition $\mathrm{Re}\, \tau(P A_h) \leq
+\mathrm{Re}\, \tau(P Z)$ for all such $P$. Let $W = \frac{1}{2}(Z + Z^*)$, and let $N$ be the
+negative part of $W - A_h$, which lies in $\cal{M}$. The condition at $P = N / (1 + \|N\|)$ gives
+$\mathrm{Re}\, \tau(N^2) \leq 0$, since $N (W - A_h) = -N^2$; so $N = 0$ by faithfulness, and $A_h
+\leq W$. Then
+$\mathrm{Re}\, \tau(T_h (W - A_h)) \geq 0$ for every $h$, with sum $\mathrm{Re}\, \tau(W - Z) = 0$, and
+faithfulness of $\tau$ makes each product vanish: $W T_h = A_h T_h$. Summing over $h$ gives $W =
+Z^*$, hence $Z = W$ (\texttt{reports/c6b-paper-proofs.md}, Section~5, Theorem~10 and
+Corollary~11). The weak-operator compactness of the unit ball is that of the vendored
+orthonormalization development.
+\end{proof}
+
+\begin{corollary}[The summed semidefinite form in the doubled model]
+\label{cor:summed-sdp-doubled}
+\uses{thm:summed-sdp,lem:doubled-model-finite-pair}
+\lean{MIPRE.LIDT.Co.Doubling.isSummedSdp_prod_iff,
+  MIPRE.LIDT.Co.Doubling.isSummedSdp_map_iff_of_nonneg_iff,
+  MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_loc, MIPRE.LIDT.Co.Doubling.isSummedSdp_L_iff,
+  MIPRE.LIDT.Co.Doubling.isSummedSdp_R_iff, MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_model,
+  MIPRE.LIDT.Co.Doubling.isSummedSdp_equivA_iff, MIPRE.LIDT.Co.Doubling.isSummedSdp_equivB_iff,
+  MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_A, MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_B,
+  MIPRE.LIDT.Co.Doubling.isSummedSdp_equiv_iff, MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_prod}
+\leanok
+Let $M$ be a finite pair in a unit state, with doubled model $D(M)$
+(Definition~\ref{def:doubled-model}). For self-adjoint $A_1, \dots, A_m$ in its local algebra
+$\cal{P}$ there is a measurement $T$ in $\cal{P}$ such that $Z = \sum_i T_i A_i$ satisfies
+items~1--3 of Theorem~\ref{thm:summed-sdp} in $\cal{P}$, and so do the images of $A$, $T$ and $Z$
+under each placement $L$ and $R$. When $\cal{A}$ and $\cal{B}$ are star-ordered, the summed form
+transfers in both directions between $\cal{A}$ and $\cal{A}_c$, between $\cal{B}$ and $\cal{B}_c$,
+and between $\cal{A} \times \cal{B}$ and $\cal{P}$. So the conclusion of
+Theorem~\ref{thm:summed-sdp} holds in $\cal{A}$, in $\cal{B}$ and in $\cal{A} \times \cal{B}$
+themselves.
+\end{corollary}
+
+\begin{proof}
+\leanok
+In a product with componentwise operations and order, the summed form holds exactly when it holds
+in each factor. Theorem~\ref{thm:summed-sdp} solves it in $\cal{A}_c$ and in $\cal{B}_c$, and the
+pair of solutions solves it in $\cal{P}$, with $Z = \sum_i T_i A_i$. A $*$-homomorphism between
+star-ordered rings that preserves and reflects nonnegativity is injective and an order embedding,
+so it carries the summed form both ways. This applies to $L$ and $R$
+(Lemma~\ref{lem:doubled-model-finite-pair}) and to the isomorphisms of
+Lemma~\ref{lem:finite-pair-order} (\texttt{reports/c6b-paper-proofs.md}, Section~5, Corollary~12
+and Lemma~13). Neither a trace on the doubled algebra nor its commutant is used.
 \end{proof}
 
 \subsection{Further directions}

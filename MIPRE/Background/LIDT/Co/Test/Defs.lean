@@ -148,7 +148,7 @@ theorem postprocess_total {α β : Type*} [Fintype α] [Fintype β]
 end Evaluation
 
 /-- An average against a distribution, written over the whole question type. -/
-private theorem avgOver_eq_sum_weight {Question : Type*} [Fintype Question]
+theorem avgOver_eq_sum_weight {Question : Type*} [Fintype Question]
     (𝒟 : Distribution Question) (f : Question → ℝ) :
     avgOver 𝒟 f = ∑ q, 𝒟.weight q * f q :=
   (MIPStarRE.LDT.Distribution.sum_univ_eq_sum_support 𝒟 _ fun q hq => by

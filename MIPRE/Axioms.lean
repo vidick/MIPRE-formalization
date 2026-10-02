@@ -210,6 +210,9 @@ public import MIPRE.Background.Orthonormalization.FinitePairOrtho
 public import MIPRE.Background.Orthonormalization.DyadicOrtho
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.BridgeTheorems.DropBridges
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.AnswerTheorems
+public import MIPRE.Background.LIDT.Co.Doubling.Orthonormalization
+public import MIPRE.Background.LIDT.Co.Doubling.Sdp
+public import MIPRE.Background.LIDT.Co.Doubling.Strategy
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
@@ -3398,5 +3401,79 @@ here. The model itself, `def:sym-model`, is a definition and carries no proof-le
 -- blueprint `lem:co-commutativity-points`
 #guard_sorry_free MIPRE.LIDT.Co.CommutativityPoints.commutativityPoints,
   MIPRE.LIDT.Co.CommutativityPoints.answerCommutativityPoints
+
+/-! The doubling and the summed semidefinite form (C6b, M2 and M9 of `planning/c6b-plan.md`).
+The order of a finite pair's algebras, `lem:finite-pair-order`
+(`MIPRE/Foundations/FinitePairOrder.lean`); the doubled model of a finite pair as a finite pair,
+its role average and its abelian projections, `lem:doubled-model-finite-pair`,
+`lem:doubled-model-role-average` and `lem:doubled-model-no-abelian`
+(`MIPRE/Foundations/Doubling.lean` and `MIPRE/Background/LIDT/Co/Doubling/`); the symmetric
+strategy, `thm:doubled-symmetrization`, and orthonormalization in the doubled model,
+`thm:doubled-orthonormalization`; the summed form in a commutant with a vector trace,
+`thm:summed-sdp` (`MIPRE/Foundations/SummedSdp.lean` and
+`MIPRE/Background/Orthonormalization/SdpMaximizer.lean`), and in the doubled model,
+`cor:summed-sdp-doubled` (`Co/Doubling/Sdp.lean`). The doubled model itself, `def:doubled-model`,
+is a definition and carries no proof-level mark. -/
+
+-- blueprint `lem:finite-pair-order`
+#guard_sorry_free MIPRE.BipartiteModel.IsFinitePair.equivA,
+  MIPRE.BipartiteModel.IsFinitePair.equivB, MIPRE.BipartiteModel.IsFinitePair.nonneg_iff_A,
+  MIPRE.BipartiteModel.IsFinitePair.nonneg_iff_B, MIPRE.BipartiteModel.IsFinitePair.le_iff_A,
+  MIPRE.BipartiteModel.IsFinitePair.le_iff_B, MIPRE.POVMIn.mapHom, MIPRE.isPVMIn_map_equiv_iff
+
+-- blueprint `lem:doubled-model-finite-pair`
+#guard_sorry_free MIPRE.LIDT.Co.Doubling.isFinitePair, MIPRE.LIDT.Co.Doubling.tr_diag2_L,
+  MIPRE.LIDT.Co.Doubling.L_nonneg_iff, MIPRE.LIDT.Co.Doubling.R_nonneg_iff,
+  MIPRE.LIDT.Co.Doubling.equiv_nonneg_iff, MIPRE.LIDT.Co.Doubling.isDyadicPair,
+  MIPRE.LIDT.Co.Doubling.model_L_injective, MIPRE.LIDT.Co.SymModel.L_cfc,
+  MIPRE.LIDT.Co.Doubling.cfc_mem_opsA
+
+-- blueprint `lem:doubled-model-role-average`
+#guard_sorry_free MIPRE.LIDT.Co.Doubling.ev_L, MIPRE.LIDT.Co.Doubling.inner_L_mul_R,
+  MIPRE.LIDT.Co.Doubling.bornProb_model_eq, MIPRE.LIDT.Co.Doubling.qBipartiteConsDefect_model,
+  MIPRE.LIDT.Co.Doubling.dis_model, MIPRE.LIDT.Co.Doubling.inconsistency_model,
+  MIPRE.LIDT.Co.Doubling.bipartiteConsError_model,
+  MIPRE.LIDT.Co.Doubling.bipartiteConsError_components_le_two_mul,
+  MIPRE.LIDT.Co.bipartiteConsError_eq_inconsistency
+
+-- blueprint `lem:doubled-model-no-abelian`
+#guard_sorry_free MIPRE.NoAbelianProj, MIPRE.noAbelianProj_diag2Set_iff,
+  MIPRE.LIDT.Co.Doubling.noAbelianProj_iff,
+  MIPRE.LIDT.Co.Doubling.noAbelianProj_opsA_of_isDyadicPair,
+  MIPRE.LIDT.Co.Doubling.noAbelianProj_opsB_of_isDyadicPair
+
+-- blueprint `thm:doubled-symmetrization`
+#guard_sorry_free MIPRE.LIDT.Co.ProjStrat.lowIndividualDegreeFailureProbability,
+  MIPRE.LIDT.Co.ProjStrat.PassesLowIndividualDegreeTest, MIPRE.LIDT.Co.Doubling.pairProjMeas,
+  MIPRE.LIDT.Co.Doubling.symmStrat,
+  MIPRE.LIDT.Co.Doubling.symmStrat_axisParallel_eq_roleAverage,
+  MIPRE.LIDT.Co.Doubling.symmStrat_selfConsistency_eq_pointAgreement,
+  MIPRE.LIDT.Co.Doubling.symmStrat_diagonal_eq_roleAverage,
+  MIPRE.LIDT.Co.Doubling.symmStrat_isGood_three_mul
+
+-- blueprint `thm:doubled-orthonormalization`
+#guard_sorry_free MIPRE.LIDT.Co.SymModel.orthonormalization_of_isFinitePair,
+  MIPRE.LIDT.Co.SymModel.orthonormalization_of_isFinitePair_sddRel,
+  MIPRE.LIDT.Co.Doubling.orthonormalization_model,
+  MIPRE.LIDT.Co.Doubling.orthonormalization_of_isDyadicPair,
+  MIPRE.LIDT.Co.Doubling.orthonormalization_model_sddRel
+
+-- blueprint `thm:summed-sdp`
+#guard_sorry_free MIPRE.SummedSdp.IsSummedSdp, MIPRE.SummedSdp.IsSummedSdp.sum_mul_eq,
+  MIPRE.SummedSdp.IsFaithfulTrace, MIPRE.SummedSdp.isSummedSdp_of_firstOrder,
+  MIPRE.SummedSdp.isSummedSdp_of_isMaxOn, MIPRE.SummedSdp.isSummedSdp_of_le,
+  MIPRE.Orthonormalization.exists_isMaxOn_obj, MIPRE.Orthonormalization.exists_isSummedSdp,
+  MIPRE.Orthonormalization.exists_isSummedSdp_centralizer,
+  MIPRE.Orthonormalization.exists_isSummedSdp_finitePairA,
+  MIPRE.Orthonormalization.exists_isSummedSdp_finitePairB
+
+-- blueprint `cor:summed-sdp-doubled`
+#guard_sorry_free MIPRE.LIDT.Co.Doubling.isSummedSdp_prod_iff,
+  MIPRE.LIDT.Co.Doubling.isSummedSdp_map_iff_of_nonneg_iff,
+  MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_loc, MIPRE.LIDT.Co.Doubling.isSummedSdp_L_iff,
+  MIPRE.LIDT.Co.Doubling.isSummedSdp_R_iff, MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_model,
+  MIPRE.LIDT.Co.Doubling.isSummedSdp_equivA_iff, MIPRE.LIDT.Co.Doubling.isSummedSdp_equivB_iff,
+  MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_A, MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_B,
+  MIPRE.LIDT.Co.Doubling.isSummedSdp_equiv_iff, MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_prod
 
 end
