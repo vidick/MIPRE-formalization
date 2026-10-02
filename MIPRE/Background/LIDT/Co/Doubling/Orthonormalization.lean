@@ -9,6 +9,8 @@ public import MIPRE.Background.LIDT.Co.Basic.OperatorExpectations
 public import MIPRE.Background.LIDT.Co.Test.Defs
 public import MIPRE.Background.Orthonormalization.FinitePairOrtho
 public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Defs
+public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Statements
+public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Orthonormalization.RestrictSome
 
 @[expose] public section
 
@@ -38,9 +40,9 @@ outcome `none` (`MakingMeasurementsProjective.restrictSomeProjSubMeas`): `27 min
 100 ζ^{1/4}`. The hypothesis `ζ > 0` is the strictness of the tier's hypothesis; the case `ζ = 0`
 is not covered (report §4.7).
 
-The completion and its restriction carry the names of their vendored counterparts
-(`LDT/MakingMeasurementsProjective/Statements.lean` and `.../Orthonormalization/RestrictSome.lean`),
-so that the port of those files (M8) finds them here.
+The completion and its restriction carry the names of their vendored counterparts and live in
+the ports of those files, `Co/MakingMeasurementsProjective/Statements.lean` and
+`Co/MakingMeasurementsProjective/Orthonormalization/RestrictSome.lean`, which this file imports.
 
 **Proposition H** (membership): every continuous functional calculus of a local self-adjoint
 operator stays local.
@@ -67,49 +69,6 @@ namespace MIPRE.LIDT.Co
 open MIPStarRE.LDT (Distribution avgOver uniformDistribution)
 open MIPStarRE.LDT.MakingMeasurementsProjective (orthonormalizationError)
 open MIPRE.Orthonormalization (povm_orthogonalization_finitePair)
-
-/-! ### The completion of a submeasurement, and its restriction -/
-
-namespace MakingMeasurementsProjective
-
-variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
-  {Outcome : Type*} [Fintype Outcome]
-
-/-- **The completion of a submeasurement** by the residual `1 − ∑ₐ Aₐ` at the fresh outcome
-`none` (the vendored `optionCompletion`, over an ordered `⋆`-ring). -/
-def optionCompletion (A : SubMeas Outcome R) : Measurement (Option Outcome) R where
-  outcome o := o.elim (1 - A.total) A.outcome
-  total := 1
-  outcome_pos
-    | none => sub_nonneg.2 A.total_le_one
-    | some a => A.outcome_pos a
-  sum_eq_total := (Fintype.sum_option _).trans <|
-    (congrArg (1 - A.total + ·) A.sum_eq_total).trans (sub_add_cancel 1 A.total)
-  total_le_one := le_rfl
-  total_eq_one := rfl
-
-/-- The outcome `none` of the completion is the residual `1 − ∑ₐ Aₐ`. -/
-@[simp] theorem optionCompletion_outcome_none (A : SubMeas Outcome R) :
-    (optionCompletion A).outcome none = 1 - A.total :=
-  rfl
-
-/-- The outcomes `some a` of the completion are those of the submeasurement. -/
-@[simp] theorem optionCompletion_outcome_some (A : SubMeas Outcome R) (a : Outcome) :
-    (optionCompletion A).outcome (some a) = A.outcome a :=
-  rfl
-
-/-- **The outcomes `some a` of a projective submeasurement on `Option Outcome`**, a projective
-submeasurement (the vendored `restrictSomeProjSubMeas`): the fresh outcome `none` is discarded. -/
-def restrictSomeProjSubMeas (P : ProjSubMeas (Option Outcome) R) : ProjSubMeas Outcome R where
-  outcome a := P.outcome (some a)
-  total := ∑ a, P.outcome (some a)
-  outcome_pos a := P.outcome_pos (some a)
-  sum_eq_total := rfl
-  total_le_one := ((le_add_of_nonneg_left (P.outcome_pos none)).trans_eq
-    ((Fintype.sum_option P.outcome).symm.trans P.sum_eq_total)).trans P.total_le_one
-  proj a := P.proj (some a)
-
-end MakingMeasurementsProjective
 
 /-! ### The arithmetic of Theorem G -/
 
