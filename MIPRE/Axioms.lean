@@ -213,6 +213,10 @@ public import MIPRE.Background.LIDT.Co.CommutativityPoints.AnswerTheorems
 public import MIPRE.Background.LIDT.Co.Doubling.Orthonormalization
 public import MIPRE.Background.LIDT.Co.Doubling.Sdp
 public import MIPRE.Background.LIDT.Co.Doubling.Strategy
+public import MIPRE.Background.LIDT.Co.Preliminaries.SwitchSandwichMain.Completeness
+public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.DataProcessing
+public import MIPRE.Background.LIDT.Co.Preliminaries.CompletionTransfer
+public import MIPRE.Background.LIDT.Co.ExpansionHypercubeGraph.Theorems.Results
 public import MIPRE.Foundations.Expanded
 public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
@@ -3475,5 +3479,29 @@ is a definition and carries no proof-level mark. -/
   MIPRE.LIDT.Co.Doubling.isSummedSdp_equivA_iff, MIPRE.LIDT.Co.Doubling.isSummedSdp_equivB_iff,
   MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_A, MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_B,
   MIPRE.LIDT.Co.Doubling.isSummedSdp_equiv_iff, MIPRE.LIDT.Co.Doubling.exists_isSummedSdp_prod
+
+/-! The rest of the preliminaries and the local-to-global variance inequality (C6b, M3 and M5 of
+`planning/c6b-plan.md`): the switch sandwich and the self-consistency calculus over a symmetric
+model, `lem:co-switch-sandwich-self-consistency`
+(`MIPRE/Background/LIDT/Co/Preliminaries/SwitchSandwichMain/Completeness.lean`,
+`BipartiteSelfConsistency/`, `SelfConsistency/` and `CompletionTransfer.lean`), and the
+local-to-global inequality on any vector state by Gram positivity, `lem:co-local-to-global`
+(`MIPRE/Background/LIDT/Co/ExpansionHypercubeGraph/`). -/
+
+-- blueprint `lem:co-switch-sandwich-self-consistency`
+#guard_sorry_free MIPRE.LIDT.Co.Preliminaries.switchSandwich,
+  MIPRE.LIDT.Co.Preliminaries.twoNotionsOfSelfConsistency,
+  MIPRE.LIDT.Co.Preliminaries.bipartiteSSC_implies_localSSC_liftLeft,
+  MIPRE.LIDT.Co.Preliminaries.otherTwoNotionsOfSelfConsistency,
+  MIPRE.LIDT.Co.Preliminaries.selfConsistencyImpliesDataProcessing,
+  MIPRE.LIDT.Co.Preliminaries.completingToMeasurement
+
+-- blueprint `lem:co-local-to-global`
+#guard_sorry_free MIPRE.LIDT.Co.ExpansionHypercubeGraph.localVariance,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.globalVariance,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.re_combinedTraceForm_nonneg,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.traceForm_localToGlobal,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.localToGlobal,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.localToGlobalBipartite
 
 end

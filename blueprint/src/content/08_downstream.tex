@@ -3226,7 +3226,7 @@ again a dyadic pair. This is the form the orthonormalization sites of the port c
 hypothesis beyond the class (\texttt{reports/c6b-paper-proofs.md}, Section~3.7).
 \end{proof}
 
-The port has begun (\texttt{planning/c6b-plan.md}, Section~3, milestones M0, M1, M2 and M9). It replaces the
+The port has begun (\texttt{planning/c6b-plan.md}, Section~3, milestones M0, M1, M2, M3, M5 and M9). It replaces the
 vendored state on $\C^\iota \otimes \C^\iota$, and the swap hypotheses that come with it, by a
 \emph{symmetric model} (Definition~\ref{def:sym-model}), in which swap symmetry is a theorem
 (Lemma~\ref{lem:sym-model-swap}), and rewrites the vendored proof over it file by file, under
@@ -3655,6 +3655,117 @@ so it carries the summed form both ways. This applies to $L$ and $R$
 (Lemma~\ref{lem:doubled-model-finite-pair}) and to the isomorphisms of
 Lemma~\ref{lem:finite-pair-order} (\texttt{reports/c6b-paper-proofs.md}, Section~5, Corollary~12
 and Lemma~13). Neither a trace on the doubled algebra nor its commutant is used.
+\end{proof}
+
+The rest of the vendored preliminaries is ported too (\texttt{planning/c6b-plan.md}, milestone M3):
+the comparison, triangle, Cauchy--Schwarz, completion and self-consistency lemmas that every later
+section of the vendored proof applies, over the symmetric model, with the swap and normalization
+hypotheses of the vendored statements dropped. Its two load-bearing propositions are the switch
+sandwich and the calculus of self-consistency (Lemma~\ref{lem:co-switch-sandwich-self-consistency}).
+So is the local-to-global variance inequality of the hypercube graph (milestone M5), for every
+family of operators and every vector state (Lemma~\ref{lem:co-local-to-global}).
+
+\begin{lemma}[The switch sandwich and self-consistency, in a symmetric model]
+\label{lem:co-switch-sandwich-self-consistency}
+\uses{def:sym-model,lem:sym-model-swap}
+\lean{MIPRE.LIDT.Co.Preliminaries.switchSandwich,
+  MIPRE.LIDT.Co.Preliminaries.twoNotionsOfSelfConsistency,
+  MIPRE.LIDT.Co.Preliminaries.bipartiteSSC_implies_localSSC_liftLeft,
+  MIPRE.LIDT.Co.Preliminaries.otherTwoNotionsOfSelfConsistency,
+  MIPRE.LIDT.Co.Preliminaries.selfConsistencyImpliesDataProcessing,
+  MIPRE.LIDT.Co.Preliminaries.completingToMeasurement}
+\leanok
+Let $S$ be a symmetric model over $\cal{P}$ (Definition~\ref{def:sym-model}), with state $\Psi$,
+expectation $\mathrm{ev}$ and placements $L$ and $R$, and let $\E_x$ be the average over a
+distribution of questions $x$ of total weight at most $1$. For a family of submeasurements $A^x$ in
+$\cal{P}$ write $A^x = \sum_a A^x_a$ for the total, and say that $A$ is \emph{$\delta$-self-consistent
+across the players} if
+\[
+  \E_x \max\Bigl(0,\ \mathrm{ev}\bigl(L(A^x)\bigr) - \sum_a \mathrm{ev}\bigl(L(A^x_a)\, R(A^x_a)\bigr)\Bigr)
+  \leq \delta.
+\]
+\begin{enumerate}
+  \item \emph{Switch sandwich.} Let the $A^x$ be projective and $0 \leq B \leq 1$ in $\cal{P}$. If
+    $\E_x \sum_a \| (L(A^x_a) - R(A^x_a)) \Psi \|^2 \leq \delta$, then
+    \[
+      \Bigl| \E_x \sum_a \mathrm{ev}\bigl(L(A^x_a B A^x_a)\bigr) - \E_x \sum_a
+      \mathrm{ev}\bigl(L(B)\, R(A^x_a)\bigr) \Bigr| \leq 2 \sqrt{\delta}, \qquad
+      \Bigl| \E_x \sum_a \mathrm{ev}\bigl(L(B)\, R(A^x_a)\bigr) - \E_x \sum_a
+      \mathrm{ev}\bigl(L(B A^x_a)\bigr) \Bigr| \leq \sqrt{\delta}.
+    \]
+  \item \emph{Two notions of self-consistency.} If $A$ is $\delta$-self-consistent across the
+    players, then $\E_x \sum_a \| (L(A^x_a) - R(A^x_a)) \Psi \|^2 \leq 2 \delta$; $L(A)$ is
+    $\delta$-self-consistent on one space, $\E_x \max(0, \mathrm{ev}(L(A^x)) - \sum_a
+    \mathrm{ev}(L(A^x_a)^2)) \leq \delta$; and $A$ is $\delta$-consistent with itself,
+    $\E_x \max(0, \mathrm{ev}(L(A^x)\, R(A^x)) - \sum_a \mathrm{ev}(L(A^x_a)\, R(A^x_a))) \leq
+    \delta$.
+  \item \emph{Data processing.} If moreover the $P^x$ are projective submeasurements in $\cal{P}$
+    with $\E_x \sum_a \| L(P^x_a - A^x_a) \Psi \|^2 \leq \eps$, then for all maps $f_x$ on the
+    outcomes, $\E_x \sum_b \| L(P^x_{[f_x = b]} - A^x_{[f_x = b]}) \Psi \|^2 \leq 8 \delta + 8
+    \sqrt{\eps}$, where $A_{[f = b]} = \sum_{a : f(a) = b} A_a$.
+  \item \emph{Completing to a measurement.} For a single question, let $A$ be a measurement that
+    is $\eta$-self-consistent across the players and $B$ a submeasurement with $\sum_a \| L(A_a -
+    B_a) \Psi \|^2 \leq \delta$. Adding $1 - \sum_a B_a$ to one outcome of $B$ gives a measurement
+    $C$ with $\sum_a \| L(A_a - C_a) \Psi \|^2 \leq 2 \delta + 4 \sqrt{\delta} + 2 \eta$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\uses{def:bipartite-model}
+\leanok
+The proofs are the vendored ones, in
+\texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/}, rewritten over the symmetric model
+declaration by declaration (\texttt{planning/c6b-plan.md}, milestone M3 and ``Port conventions'').
+Each estimate is a Cauchy--Schwarz inequality for the vector state read as a state model
+(Definition~\ref{def:bipartite-model}), $|\mathrm{ev}(X^* Y)|^2 \leq \mathrm{ev}(X^* X)\,
+\mathrm{ev}(Y^* Y)$, applied question by question and averaged with
+$\E_x \sqrt{f} \leq \sqrt{\E_x f}$, which needs the total weight to be at most $1$. The Kronecker
+identities of the vendored proofs are the commutation of $L(x)$ with $R(y)$ and the multiplicativity
+of $L$ and $R$. Swap symmetry enters items~2 and~3 through $\mathrm{ev}(L(x)) = \mathrm{ev}(R(x))$
+(Lemma~\ref{lem:sym-model-swap}): it expands $\| (L(x) - R(x)) \Psi \|^2 = 2 (\mathrm{ev}(L(x^2)) -
+\mathrm{ev}(L(x)\, R(x)))$ for self-adjoint $x$. The vendored statements assume it, with the
+normalization of the state; here both are theorems of the model.
+\end{proof}
+
+\begin{lemma}[Local-to-global variance on the hypercube, for any vector state]
+\label{lem:co-local-to-global}
+\uses{def:sym-model}
+\lean{MIPRE.LIDT.Co.ExpansionHypercubeGraph.localVariance,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.globalVariance,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.re_combinedTraceForm_nonneg,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.traceForm_localToGlobal,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.localToGlobal,
+  MIPRE.LIDT.Co.ExpansionHypercubeGraph.localToGlobalBipartite}
+\leanok
+Let $\Psi$ be a vector state on a Hilbert space $K$ (Definition~\ref{def:sym-model}), and let
+$(A^u)_{u \in \Fq^m}$ be bounded operators on $K$ indexed by the points. Then
+\[
+  \frac12 \E_{u, v} \bigl\| (A^u - A^v) \Psi \bigr\|^2 \leq m \cdot \frac12 \E_{(u, v)}
+  \bigl\| (A^u - A^v) \Psi \bigr\|^2 ,
+\]
+where on the left $u$ and $v$ are independent uniformly random points, and on the right $u$ is a
+uniformly random point and $v$ is $u$ with a uniformly random coordinate replaced by a uniformly
+random element of $\Fq$. In particular, in a symmetric model over $\cal{P}$, the same holds for
+the family $L(A^u)$ for any $A^u \in \cal{P}$.
+\end{lemma}
+
+\begin{proof}
+\uses{def:bipartite-model}
+\leanok
+The vendored proof, \texttt{MIPStarRE.LDT.ExpansionHypercubeGraph.localToGlobal}, realizes the
+family as a block matrix and traces the scalar inequality $g P_\perp \leq \Delta$ against the
+state's density, where $\Delta$ is the Laplacian of the hypercube graph, $P_\perp$ the projection
+onto the vectors of mean zero and $g = 1/(m q^m)$ its spectral gap. A vector state has no density;
+here the inequality is read through Gram positivity instead. For a positive semidefinite scalar
+matrix $Q$ indexed by the points, $\mathrm{Re} \sum_{u, v} Q_{u v} \langle A^v \Psi, A^u \Psi
+\rangle \geq 0$, because $Q$ is a sum of matrices $s^* s$, for which the sum is $\sum_k \| \sum_u
+s_{k u} A^u \Psi \|^2$. At $Q = \Delta - g P_\perp$, which is positive semidefinite (the scalar
+spectral estimate, imported from the vendored development), this reads $g \cdot q^m V_{\mathrm{glob}}
+\leq V_{\mathrm{loc}}$: the sum at $\Delta$ is the local variance $V_{\mathrm{loc}}$, the sum at $P_\perp$
+is $\sum_u \| (A^u - \E_v A^v) \Psi \|^2 = q^m V_{\mathrm{glob}}$, and $g q^m = 1/m$
+(\texttt{planning/c6b-plan.md}, milestone M5). The expectations are those of the vector state read
+as a state model (Definition~\ref{def:bipartite-model}). The matrix realization of the vendored
+development is not ported.
 \end{proof}
 
 \subsection{Further directions}
