@@ -1428,7 +1428,7 @@ Theorem~\ref{thm:direct-repetition-co}.
 
 \begin{lemma}[Soundness of oracularization, in a bipartite model]
 \label{lem:oracular-soundness-model}
-\uses{def:oracular-game,def:bipartite-model,def:cross-distance}
+\uses{def:oracular-game,def:bipartite-model}
 \lean{MIPRE.SeededGame.povmValue_sound_ge, MIPRE.StateModel.sum_snorm_sq_ge_of_close,
   MIPRE.StateModel.sum_snorm_sq_eq_one_of_isPVMIn, MIPRE.BipartiteModel.sum_snorm_sq_chain,
   MIPRE.SeededGame.oracleView, MIPRE.SeededGame.isPVMIn_oracleJoint,
@@ -1446,7 +1446,6 @@ $1 - 24\sqrt{\eps}$ in the game of $S$.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:qld-combined-points}
 \leanok
 Fix a seed $z$ and write $O$ for the first player's measurement at $(\oracle, z)$, $O^\alice_u$
 and $O^\bob_v$ for its sums over the answers whose Alice, respectively Bob, component is $u$,
@@ -3950,7 +3949,7 @@ projection.
 
 \begin{proof}
 \uses{cor:orthonormalization-finite-pair,cor:orthonormalization-dyadic-pair,
-  thm:doubled-orthonormalization,lem:qld-combined-points}
+  thm:doubled-orthonormalization}
 \leanok
 The vendored proof, in \texttt{MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/},
 passes from consistency to an almost projective measurement and rounds that to a projective one in

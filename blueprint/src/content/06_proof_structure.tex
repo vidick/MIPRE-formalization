@@ -5755,7 +5755,7 @@ that seed (\texttt{one\_sub\_povmValue\_typed}).
 \begin{lemma}[Global PCP consistency tests]
 \label{lem:ar-global-tests}
 \ledgernode{1.3.4.4}
-\uses{def:ar-seed-index,def:cross-distance,def:ar-typed-game}
+\uses{def:ar-seed-index,def:ar-typed-game}
 \lean{MIPRE.AnswerReduction.sum_edges_le, MIPRE.AnswerReduction.sum_copyFail_le,
   MIPRE.AnswerReduction.sum_copyFail6_le, MIPRE.AnswerReduction.sum_dis_edge_le}
 \leanok
@@ -5767,8 +5767,7 @@ low-degree theorem is applied to line--point success alone.
 \end{lemma}
 
 \begin{proof}
-\uses{def:ar-seed-index,def:cross-distance,lem:oracular-typed-transfers,lem:transports-model,
-  lem:model-proj-strategy}
+\uses{def:ar-seed-index,lem:oracular-typed-transfers,lem:transports-model,lem:model-proj-strategy}
 \leanok
 The typed game samples a uniform ordered pair of the $54$ types and a uniform seed, so the
 failure conditioned on one type pair is at most $54^2\theta=2916\theta$
@@ -5858,7 +5857,7 @@ suffice for the next lemma.
 \end{lemma}
 
 \begin{proof}
-\uses{lem:ar-common-polynomials,lem:ar-input-tests}
+\uses{lem:ar-common-polynomials,lem:ar-input-tests,lem:qld-combined-points}
 \leanok
 The simultaneous test at $(q,m',d,m'+6)$ extracts $J$ per seed (\texttt{exists\_ext6},
 \texttt{ext6\_spec}), in the model as for the single copies, and averaged as for them
