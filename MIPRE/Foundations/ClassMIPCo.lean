@@ -25,8 +25,9 @@ the generic development needs. This module instantiates that development
   `thm:halting-co`) from a gap compression sound in the commuting-operator model
   (`GapCompression.Sound ValueModel.commuting`), which is `halting_reduction_upper_of`;
 * `Halting.core_subset_mipco_of`, `Halting.mipco_eq_core_of`: `MIP^co = coRE` (blueprint
-  `thm:mipco-eq-core`) from the same hypothesis. `MIPRE/MIPCo.lean` states them for the
-  compression of the main theorem.
+  `thm:mipco-eq-core`) from the same hypothesis. `MIPRE/MIPCo.lean` proves the hypothesis for
+  `gapCompressionCo`, the main theorem's pipeline with the commuting-operator repetition
+  constant, and so states them without it.
 -/
 
 namespace MIPRE

@@ -290,8 +290,8 @@ counterpart, at 0.54× (562.3 s against 1,033.4 s; "Port conventions").
    `lem:co-lidt-canonical-line`, `lem:lidt-sound-in-of-model-lidt`, `thm:lidt-sound-fin`,
    `thm:mipco-eq-core-unconditional`) and axiom guards (§3). `MIPRE.LIDT.Simul.soundFin : SoundFin` (`Co/SoundFin.lean`, `thm:lidt-sound-fin`) closes
    C6b, and `MIPRE.mipco_eq_core : MIPCo = IsCoRE` holds without hypothesis
-   (`thm:mipco-eq-core-unconditional`); the conditional theorem of that name is renamed
-   `mipco_eq_core_of_compression`. The departures are recorded under "Departures in M12, M13 and
+   (`thm:mipco-eq-core-unconditional`); the conditional theorem of that name was renamed
+   `mipco_eq_core_of_compression`, and later removed (see "The rename"). The departures are recorded under "Departures in M12, M13 and
    M14".
    Left for later, off the route: the cleanup of M11 (the two scoped decidability instances of
    `LineInterpolation/BadMass`), the case `ζ = 0` of Theorem G, Remarks R1–R2, and the statement
@@ -1649,7 +1649,11 @@ M13 and M14:
   `MIPRE/Axioms.lean`). The name `MIPRE.mipco_eq_core` is the unconditional theorem
   `mipco_eq_core_of_lidtFin LIDT.Simul.soundFin` (`thm:mipco-eq-core-unconditional`). The mentions
   in `planning/mipco-track.md` and `planning/formalization-plan.md` say so; `reports/` is left as
-  written.
+  written. After #235 closed, `mipco_eq_core_of_compression` was removed, since nothing needed it:
+  `gapCompressionCo_sound` (`gapCompressionCo_sound_of_lidtFin LIDT.Simul.soundFin`) proves the
+  commuting-operator soundness of `gapCompressionCo`, so `halting_reduction_commuting` and
+  `core_subset_mipco` are stated without hypothesis, and all four are guarded under
+  `thm:mipco-eq-core-unconditional`.
 - **`SoundFin` has a module of its own**, `Co/SoundFin.lean`, because the consumers of the
   hypothesis import `LIDT/FinModel.lean` and do not need the port. `MIPRE/MIPCo.lean` imports it.
   This creates no cycle, since nothing under `Co/` imports `MIPCo`.
