@@ -329,53 +329,6 @@ theorem item_consistency (hM : ‖M.ψ‖ = 1)
       rw [subtests, ite_eq_left rfl] at hs
       exact congrArg φ (of_decide_eq_true hs)
 
-/-! ### Inverting the format check
-
-`accepts` rejects before any rule runs unless both answers have the shape their question's type
-prescribes, so each rule may be read on one pair of constructors only. These are the inversions,
-one per answer format; they are what keeps the proofs of the items below to a single branch
-instead of the forty-nine a blind case split would produce. -/
-
-omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem eq_val_of_fmtOk {W : Bas} {y : Point F m} {a : Answer F m d}
-    (h : (Question.point W y).fmtOk a = true) : ∃ a', a = .val a' := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem eq_apoly_of_fmtOk {W : Bas} {u₀ : Point F m} {s : F} {a : Answer F m d}
-    (h : (Question.aline W u₀ s).fmtOk a = true) : ∃ p, a = .apoly p := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem eq_dpoly_of_fmtOk {W : Bas} {u₀ : Point F m} {s : F} {w : Point F m} {a : Answer F m d}
-    (h : (Question.dline W u₀ s w).fmtOk a = true) : ∃ p, a = .dpoly p := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem eq_pauliAns_of_fmtOk {W : Bas} {a : Answer F m d}
-    (h : (Question.pauli W : Question F m).fmtOk a = true) : ∃ h', a = .pauliAns h' := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem eq_bit_of_fmtOk_pairB {W : Bas} {ω : Omega F m} {a : Answer F m d}
-    (h : (Question.pairB W ω).fmtOk a = true) : ∃ b, a = .bit b := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem eq_bitPair_of_fmtOk {ω : Omega F m} {a : Answer F m d}
-    (h : (Question.pair ω).fmtOk a = true) : ∃ β, a = .bitPair β := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem eq_bit_of_fmtOk_var {j : Fin layout.s} {ω : Omega F m} {a : Answer F m d}
-    (h : (Question.var j ω).fmtOk a = true) : ∃ b, a = .bit b := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-omit [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] in
-theorem eq_bitTriple_of_fmtOk {i : Fin layout.r} {ω : Omega F m} {a : Answer F m d}
-    (h : (Question.con i ω).fmtOk a = true) : ∃ α, a = .bitTriple α := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
 omit [Algebra (ZMod 2) F] [NeZero m] in
 /-- The parameter agreement a line-against-point acceptance yields. -/
 theorem eval_eq_of_lowDeg {n : ℕ} {u₀ w y : Point F m} {p : LinePoly F n} {a : F}

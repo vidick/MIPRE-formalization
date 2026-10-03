@@ -946,7 +946,7 @@ theorem sum_hatOrdZX {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModu
     {P : Question F m → POVMIn (Answer F m d) R}
     (hP : ∀ q, IsPVMIn (P q).op) (x z : Point F m) :
     ∑ p : F × F, hatOrdZX P x z p = 1 := by
-  rw [sum_prod_swap (fun p : F × F => hatOrdZX P x z p)]
+  rw [Fintype.sum_prod_type_right (fun p : F × F => hatOrdZX P x z p)]
   rw [Finset.sum_congr rfl fun b (_ : b ∈ univ) => show
       (∑ a : F, hatOrdZX P x z (a, b)) = hatMats P .Z z b from by
     rw [show (∑ a : F, hatOrdZX P x z (a, b))
@@ -960,7 +960,7 @@ theorem sum_hatOrdXZ {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModu
     {P : Question F m → POVMIn (Answer F m d) R}
     (hP : ∀ q, IsPVMIn (P q).op) (x z : Point F m) :
     ∑ p : F × F, hatOrdXZ P x z p = 1 := by
-  rw [sum_prod_id (fun p : F × F => hatOrdXZ P x z p)]
+  rw [Fintype.sum_prod_type (fun p : F × F => hatOrdXZ P x z p)]
   rw [Finset.sum_congr rfl fun a (_ : a ∈ univ) => show
       (∑ b : F, hatOrdXZ P x z (a, b)) = hatMats P .X x a from by
     rw [show (∑ b : F, hatOrdXZ P x z (a, b))

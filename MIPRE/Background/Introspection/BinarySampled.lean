@@ -32,12 +32,6 @@ def sampleCheck (hm : m ∣ Fintype.card F) (c : QLD.Content F m) :=
   TypedPredicate.check L (.pauli .X : QLD.Ty) (.pauli .Z) (project β) D
     (fun p q => QLD.accepts hm (c.question hm p) (c.question hm q) (d := d))
 
-theorem pauli_adj (p q : QLD.Ty)
-    (h : TypeGraph.Adj (ℓ := ℓ) QLD.adj (.pauli .X) (.pauli .Z) (.inl p) (.inl q)) :
-    QLD.adj p q = true := by
-  change TypeGraph.adj QLD.adj (.pauli .X) (.pauli .Z) (.inl p) (.inl q) = true at h
-  rwa [TypeGraph.adj_pauli QLD.adj _ _ QLD.adj_symm QLD.adj_self] at h
-
 theorem pauli_pair_commute (hm : m ∣ Fintype.card F) (c : QLD.Content F m)
     (p q : QLD.Ty) (h : QLD.adj p q = true) (a b : Answer F A m t d) :
     Commute (pauliOp β L D R hm (c.question hm p) a)
@@ -73,7 +67,7 @@ theorem sampleOp_commute (hβ : LowDegree.IsSelfDualBasis β) (hm : m ∣ Fintyp
   cases p with
   | inl p =>
     cases q with
-    | inl q => exact pauli_pair_commute β L D R hm c p q (pauli_adj p q h) a b
+    | inl q => exact pauli_pair_commute β L D R hm c p q (Complete.pauli_adj p q h) a b
     | inr q =>
       obtain ⟨q,w⟩ := q
       rcases (TypeGraph.adj_pauli_aux_iff QLD.adj (.pauli .X) (.pauli .Z) p q w).mp h with
@@ -104,7 +98,7 @@ theorem sampleOp_reject (hβ : LowDegree.IsSelfDualBasis β) (hm : m ∣ Fintype
   cases p with
   | inl p =>
     cases q with
-    | inl q => exact pauli_pair_reject β L D R hm hd c p q (pauli_adj p q h) a b hr
+    | inl q => exact pauli_pair_reject β L D R hm hd c p q (Complete.pauli_adj p q h) a b hr
     | inr q =>
       obtain ⟨q,w⟩ := q
       rcases (TypeGraph.adj_pauli_aux_iff QLD.adj (.pauli .X) (.pauli .Z) p q w).mp h with

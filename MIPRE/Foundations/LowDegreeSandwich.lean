@@ -548,7 +548,7 @@ theorem one_sub_sum_bornProb_le_sqrt {ψ : dA × dB → ℂ} (hψ : ‖evec ψ�
           le_trans (le_abs_self _) (abs_qform_conjTranspose_mul_le ψ _ _)
     _ ≤ Real.sqrt (∑ a, snorm ψ (aOp (P a) : Matrix (dA × dB) _ ℂ) ^ 2)
           * Real.sqrt (∑ a, snorm ψ ((aOp (P a) : Matrix (dA × dB) _ ℂ) - bOp (C a)) ^ 2) :=
-        sum_mul_le_sqrt _ _
+        Real.sum_mul_le_sqrt_mul_sqrt _ _ _
     _ = Real.sqrt (∑ a, xSqNorm ψ (P a) (C a)) := by
         rw [hmass, Real.sqrt_one, one_mul]
         congr 1

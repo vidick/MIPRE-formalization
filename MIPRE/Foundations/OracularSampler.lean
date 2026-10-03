@@ -95,12 +95,6 @@ theorem indicatorBits_empty_eq (s : ℕ) :
     indicatorBits (∅ : Finset (Fin s)) = List.replicate s false := by
   simp [indicatorBits]
 
-theorem map_const_eq_replicate {α β : Type*} (b : β) (l : List α) :
-    l.map (fun _ => b) = List.replicate l.length b := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => simp [ih, List.replicate_succ]
-
 @[simp] theorem _root_.MIPRE.Cost.PolyTimeFun.const_toFun {α β : Type*} [SizedEncoding α]
     [SizedEncoding β] (b : β) : (PolyTimeFun.const b : PolyTimeFun α β).toFun = fun _ => b := rfl
 
@@ -375,7 +369,7 @@ noncomputable def oracleSampler : TypedSampler (ℓ + 1) Role where
         | succ k =>
           simp only [roleFamily, Nat.add_sub_cancel, CLFun.mapOfPrefix_ident_succ,
             LinearMap.zero_apply, oracleAnswer, show k + 1 + 1 ≠ 1 by omega, if_false,
-            toBits_zero', map_const_eq_replicate, hy]
+            toBits_zero', List.map_const', hy]
       rw [h]
       exact prog_runs_oracle n S _
     | alice =>
@@ -396,11 +390,11 @@ noncomputable def oracleSampler : TypedSampler (ℓ + 1) Role where
         cases k with
         | zero =>
           simp only [roleFamily, Nat.add_sub_cancel, CLFun.factorOfPrefix_ident_zero,
-            oracleAnswer, if_true, indicatorBits_univ_eq, map_const_eq_replicate, hlen]
+            oracleAnswer, if_true, indicatorBits_univ_eq, List.map_const', hlen]
         | succ k =>
           simp only [roleFamily, Nat.add_sub_cancel, CLFun.factorOfPrefix_ident_succ,
             oracleAnswer, show k + 1 + 1 ≠ 1 by omega, if_false, indicatorBits_empty_eq,
-            map_const_eq_replicate, hlen]
+            List.map_const', hlen]
       rw [h]
       exact prog_runs_oracle n S _
     | alice =>

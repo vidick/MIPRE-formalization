@@ -35,10 +35,6 @@ def lastThree {ℓ r : ℕ}
 
 /-! ## The renaming reads the right bits -/
 
-theorem getD_append_left {α : Type*} (pre u : List α) (d : α) {k : ℕ} (h : k < pre.length) :
-    (pre ++ u).getD k d = pre.getD k d := by
-  rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_append_left h]
-
 theorem getD_append_right {α : Type*} (pre u : List α) (d : α) (t : ℕ) :
     (pre ++ u).getD (pre.length + t) d = u.getD t d := by
   rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD,
@@ -63,8 +59,8 @@ theorem getD_rho {ℓ r : ℕ}
     rw [clauseInput, hpre, lastThree]
   rcases lt_or_ge k (3 * r) with h | h
   · rw [rho, if_pos h, Nat.add_comm k (2 * ℓ), ← getD_drop_eq, drop_two',
-      getD_append_left pre (sgList c) false (by rw [hlen]; exact h), h5,
-      getD_append_left pre _ false (by rw [hlen]; exact h)]
+      List.getD_append pre (sgList c) false _ (by rw [hlen]; exact h), h5,
+      List.getD_append pre _ false _ (by rw [hlen]; exact h)]
   · obtain ⟨t, rfl⟩ : ∃ t, k = 3 * r + t := ⟨k - 3 * r, by omega⟩
     have ht : t < 3 := by omega
     have hL : (clauseInput5 ℓ r c).getD (rho ℓ r (3 * r + t)) false =

@@ -109,7 +109,7 @@ theorem sum_snorm_sq_ge_of_close {ι : Type*} [Fintype ι] (R O : ι → 𝒞)
       rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]]
     exact Real.sqrt_le_sqrt hs2
   have hcs : ∑ i, D i * s i ≤ 2 * √(∑ i, D i ^ 2) :=
-    calc ∑ i, D i * s i ≤ √(∑ i, D i ^ 2) * √(∑ i, s i ^ 2) := sum_mul_le_sqrt D s
+    calc ∑ i, D i * s i ≤ √(∑ i, D i ^ 2) * √(∑ i, s i ^ 2) := Real.sum_mul_le_sqrt_mul_sqrt Finset.univ D s
       _ ≤ √(∑ i, D i ^ 2) * 2 := mul_le_mul_of_nonneg_left hsq (Real.sqrt_nonneg _)
       _ = 2 * √(∑ i, D i ^ 2) := by ring
   have hDsq : ∑ i, D i ^ 2 = ∑ i, M.snorm (R i - O i) ^ 2 := rfl

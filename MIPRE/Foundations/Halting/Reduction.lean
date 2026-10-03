@@ -297,14 +297,8 @@ end CompressorSpec
 
 /-- `2 ^ ·` is primitive recursive: the level at which the recursion of the criterion runs is
 `2 ^ (K + 1 + esize e)`, and the reduction has to compute it. -/
-theorem two_pow_iterate (n : ℕ) : (fun b : ℕ => 2 * b)^[n] 1 = 2 ^ n := by
-  induction n with
-  | zero => rfl
-  | succ n ih => rw [Function.iterate_succ_apply', ih, pow_succ]; ring
-
 theorem primrec_two_pow : Primrec fun n : ℕ => 2 ^ n :=
-  (Primrec.nat_iterate Primrec.id (Primrec.const 1)
-    (Primrec.nat_mul.comp (Primrec.const 2) Primrec.snd).to₂).of_eq fun n => two_pow_iterate n
+  primrec_nat_pow.comp (Primrec.const 2) Primrec.id
 
 -- The tabulation is opaque from here on. The reductions only ever feed it to
 -- `tab_computable` and `tab_val` (once as an equality, once through `.le`); letting

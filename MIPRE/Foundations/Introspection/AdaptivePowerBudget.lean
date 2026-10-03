@@ -52,20 +52,12 @@ theorem iteratedRoot_add (m n : ℕ) (t : ℝ) :
   | zero => simp only [Nat.zero_add, iteratedRoot]
   | succ m ih => simp only [Nat.succ_add, iteratedRoot, ih]
 
-theorem self_le_sqrt_of_unit {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
-    t ≤ Real.sqrt t := by
-  have hs := Real.sq_sqrt ht0
-  have hr0 := Real.sqrt_nonneg t
-  have hr1 := Real.sqrt_le_one.mpr ht1
-  nlinarith [mul_nonneg hr0 (sub_nonneg.mpr hr1)]
-
 theorem self_le_iteratedRoot (n : ℕ) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     t ≤ iteratedRoot n t := by
   induction n with
   | zero => exact le_rfl
   | succ n ih =>
-    exact ih.trans (self_le_sqrt_of_unit (iteratedRoot_nonneg n ht0)
-      (iteratedRoot_le_one n ht1))
+    exact ih.trans (Real.le_sqrt_self_iff.mpr (iteratedRoot_le_one n ht1))
 
 theorem sqrt_scale_le {c t : ℝ} (hc : 1 ≤ c) :
     Real.sqrt (c * t) ≤ c * Real.sqrt t := by

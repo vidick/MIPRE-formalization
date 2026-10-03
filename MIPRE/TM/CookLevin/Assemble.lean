@@ -36,13 +36,6 @@ open Interp SAT Cost Cost.PolyTimeFun
 
 /-! ## Sizes of encodings -/
 
-theorem esize_nat_le (k : ℕ) : esize k ≤ 4 * Nat.size k + 1 := by
-  have h : esize k = esize k.bits := rfl
-  have h2 := esize_bitStr_le k.bits
-  rw [Nat.size_eq_bits_len] at h2
-  rw [h]
-  exact h2
-
 theorem size_le_self (k : ℕ) : Nat.size k ≤ k := Nat.size_le.2 Nat.lt_two_pow_self
 
 /-! ## The tableau is long enough -/

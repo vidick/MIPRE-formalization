@@ -313,7 +313,7 @@ private theorem one_sub_two_mul_le_sum_norm_sq {Outcome : Type*} [Fintype Outcom
   have hoverlap0 : 0 ≤ overlap :=
     Finset.sum_nonneg fun a _ => M.bornProb_nonneg (A.outcome_pos a) (B.outcome_pos a)
   have hcs : overlap ≤ Real.sqrt diagA * Real.sqrt diagB :=
-    (Finset.sum_le_sum fun a _ => hterm a).trans (MIPRE.sum_mul_le_sqrt sA sB)
+    (Finset.sum_le_sum fun a _ => hterm a).trans (Real.sum_mul_le_sqrt_mul_sqrt Finset.univ sA sB)
   have hsq : overlap ^ 2 ≤ diagA * diagB := by
     calc overlap ^ 2 ≤ (Real.sqrt diagA * Real.sqrt diagB) ^ 2 :=
           pow_le_pow_left₀ hoverlap0 hcs 2

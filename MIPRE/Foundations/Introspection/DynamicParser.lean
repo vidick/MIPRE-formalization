@@ -44,10 +44,6 @@ def tripleParts : PolyTimeFun (BitStr × ℕ) (BitStr × BitStr × BitStr) :=
     tripleParts (bs, Q) = AnswerParser.tripleParts Q bs := by
   simp [tripleParts, AnswerParser.tripleParts, AnswerParser.pairParts]
 
-theorem decide_and_if (p q : Prop) [Decidable p] [Decidable q] :
-    (if p then decide q else false) = decide (p ∧ q) := by
-  by_cases h : p <;> simp [h]
-
 /-- Introspect/Sample validation, uniformly in the binary bounds `Q` and `R`. -/
 def pairCheck : PolyTimeFun (BitStr × ℕ × ℕ) Bool :=
   let q : PolyTimeFun (BitStr × ℕ × ℕ) ℕ := fst.comp snd
@@ -64,7 +60,7 @@ theorem pairCheck_apply (bs : BitStr) (Q R : ℕ) :
     AnswerParser.pairBitsProg_apply, pairParts_apply, lengthNat_apply,
     SAT.ArrayProg.eqNat_apply, leNat_apply, const_apply, encode_injective.eq_iff,
     decide_eq_true_eq]
-  rw [decide_and_if, decide_and_if]
+  rw [AnswerParser.decide_and_if, AnswerParser.decide_and_if]
   rfl
 
 /-- Read or Hide validation, with all numeric parameters supplied in binary. -/
@@ -87,7 +83,7 @@ theorem tripleCheck_apply (bs : BitStr) (Q R : ℕ) (exactLast : Bool) :
       encoded_apply, treeEq_apply, AnswerParser.tripleBitsProg_apply, tripleParts_apply,
       lengthNat_apply, SAT.ArrayProg.eqNat_apply, leNat_apply, const_apply,
       encode_injective.eq_iff, decide_eq_true_eq] <;>
-    rw [decide_and_if, decide_and_if, decide_and_if]
+    rw [AnswerParser.decide_and_if, AnswerParser.decide_and_if, AnswerParser.decide_and_if]
 
 theorem pairCheck_iff (bs : BitStr) (Q R : ℕ) : pairCheck (bs, Q, R) = true ↔
     ∃ y a, y.length = Q ∧ a.length ≤ R ∧ bs = AnswerParser.pairBits y a := by
