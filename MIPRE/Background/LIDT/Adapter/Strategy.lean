@@ -23,7 +23,7 @@ through:
 
 * a point `u` to the point `ρ u`, reversal exchanging the two diagonal conventions;
 * an axis-parallel line to `(ρ ℓ.1, s)` — no `rep` is needed, the two tests' base points agree
-  exactly there (`rep_single_eq_through`) — with `s` the chosen seed of the fibre over
+  exactly there — with `s` the chosen seed of the fibre over
   `rev (axisIdx ℓ)`;
 * a diagonal line to `(rep (ρ ℓ.2) (ρ ℓ.1), s, ρ ℓ.2)`, carrying the direction *unrescaled*.
   That is legitimate because the seeded test's `DLine` questions carry the raw direction, and it
@@ -316,8 +316,7 @@ theorem hD_axis (u : Point F m) (i : Fin m) (a b : CL.Answer F m d 1)
 /-- The diagonal case, and the one the affine rebasing exists for. The two tests' base points
 differ by `shiftOf ℓ` times the direction and the directions by the scale `c`, so the point at
 the target's parameter `t` sits at the source's `(t + shiftOf ℓ) / c`; `reparam c⁻¹ (c⁻¹ · shiftOf ℓ)`
-undoes exactly that. This is where `lineParam_smul` and the general two-parameter `reparam` are
-used. -/
+undoes exactly that, through the general two-parameter `reparam`. -/
 theorem hD_diag (hc : c ≠ 0) (u : Point F m) (j : Fin m) (v : Fin ((j : ℕ) + 1) → F)
     (a b : CL.Answer F m d 1)
     (hacc : (clGame (d := d) (ldc := 1) hm).D

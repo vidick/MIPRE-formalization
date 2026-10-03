@@ -173,6 +173,41 @@ def questionEquiv (s : ℕ) : Fin (2 ^ s) ≃ (Fin s → CL.𝔽₂) :=
 
 open HaltingGameValue (GameData)
 
+/-- **A game description can match `𝒱_n` only if `𝒱_n` is synchronous.** `GameData.game`
+rejects unequal answers at equal questions by construction (`GameData.game_D`), whatever the
+acceptance table holds, while `Verifier.game` accepts exactly what the decider accepts. So the
+`hD` of `quantumValue_toGame_eq_valStar` below forces the decider to reject those tuples --- for
+every question and every pair of in-range answers.
+
+This is what rules the *un-doubled* bridges out of the halting reduction. Every statement
+whose `hD` matches a description against `V.game n T` --- `quantumValue_toGame_eq_valStar`
+below, and `gameValue_toGame_le_of_valStar_le` of `Foundations/SyncTransport.lean` --- is
+satisfiable only at a verifier synchronous at `n`, while their hypotheses mention no
+synchronicity, so it is forced on them anyway. (Three un-doubled completeness bridges once sat
+beside them; they went when `HasPerfectPCC` moved to the doubled game, issue #77.) `IsBounded n` does not supply it (the
+wrapper of `Decider.wrap` enforces `accepts_length` and nothing else), and neither does
+`MIPRE.Halting.classB`, which is the class the soundness branch of the halting reduction runs
+in. That is why `Foundations/GameDouble.lean` and the `_doubled` bridges beside them exist:
+`MIPRE.Halting.tab_match` matches `(Vof G U x).doubledGame`, whose distribution puts no weight
+on the diagonal, and asks the verifier for no synchronicity at all.
+
+Nothing consumes this lemma, and that is deliberate: it is the machine-checked form of the
+obstruction, so that a match stated against `V.game n T` again --- the shape an earlier
+`tab_match` had, with the `IsSynchronousAt n` hypothesis it needed --- can be met with it
+rather than with a commit message. -/
+theorem isSynchronousAt_of_game_matches {ℓ : ℕ} (V : Verifier ℓ) (n T : ℕ) (g : GameData)
+    (eX : Fin (g.nX + 1) ≃ V.Questions n) (eA : Fin (g.nA + 1) ≃ Answers T)
+    (hD : ∀ i j k l, g.game.D i j k l = (V.game n T).D (eX i) (eX j) (eA k) (eA l))
+    (q : V.Questions n) (a b : Answers T) (hab : a ≠ b) :
+    ¬ V.decider.Accepts n (CL.toBits q) (CL.toBits q) a.1 b.1 := by
+  have h := hD (eX.symm q) (eX.symm q) (eA.symm a) (eA.symm b)
+  rw [GameData.game_D] at h
+  simp only [Equiv.apply_symm_apply] at h
+  have hne : eA.symm a ≠ eA.symm b := fun hc => hab (by simpa using congrArg eA hc)
+  rw [if_pos ⟨trivial, hne⟩] at h
+  have hfalse : (V.game n T).D q q a b = false := h.symm
+  simpa [Verifier.game] using hfalse
+
 /-- **The bridge to game descriptions.** A game description whose question distribution and
 decision predicate match those of `𝒱_n` along the two indexings has the same quantum value.
 The semidecision procedure of `lem:value-lower-approx` runs on game descriptions, and this is

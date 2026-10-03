@@ -49,6 +49,13 @@ def mergeByQuestion (P : ProjectiveMeasurement X A' (Matrix H H ℂ)) (r : X →
     (P : ProjectiveMeasurement X A' (Matrix H H ℂ)) (r : X → A' → A) (x : X) (a : A) :
     (P.mergeByQuestion r).M x a = ∑ a' ∈ univ.filter (fun a' => r x a' = a), P.M x a' := rfl
 
+/-- **The merged measurement is a coarse-graining in the matrix algebra**: at each question, the
+fiber sums of the original POVM along that question's decoder (`POVMIn.map`). -/
+theorem mergeByQuestion_toIn (P : ProjectiveMeasurement X A' (Matrix H H ℂ)) (r : X → A' → A)
+    (x : X) : ((P.mergeByQuestion r).toPOVM x).toIn = (P.toPOVM x).toIn.map (r x) :=
+  POVMIn.ext' fun a => by
+    rw [POVMIn.map_op]
+    rfl
 end ProjectiveMeasurement
 
 /-! ## In a bipartite model -/
@@ -117,6 +124,21 @@ end BipartiteModel.ProjStrat
 namespace TensorProductStrategy
 variable {X Y A B A' B' : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
   [Fintype A'] [Fintype B'] [DecidableEq A] [DecidableEq B]
+
+/-- Decode answers by a question-dependent function, preserving registers and state. -/
+def mergeAnswersByQuestion {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
+    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) : TensorProductStrategy G :=
+  ⟨S'.dA, S'.dB, S'.ψ, S'.ψ_unit, S'.PA.mergeByQuestion rA, S'.PB.mergeByQuestion rB⟩
+
+/-- **The merged strategy is the model's merged strategy**: its value is that of the projective
+strategy of `S'` in its tensor-product model (`toModel`), merged question by question. -/
+theorem value_mergeAnswersByQuestion {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
+    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) :
+    (S'.mergeAnswersByQuestion G rA rB).value
+      = (S'.toModel.mergeAnswersByQuestion G rA rB).value := by
+  rw [value_eq_tensor_povmValue]
+  exact congrArg₂ ((BipartiteModel.tensor S'.ψ).povmValue G)
+    (funext (S'.PA.mergeByQuestion_toIn rA)) (funext (S'.PB.mergeByQuestion_toIn rB))
 
 end TensorProductStrategy
 

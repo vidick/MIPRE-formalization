@@ -256,6 +256,11 @@ theorem sum_star_mul_self_of_selfAdjoint : ∑ a, star (s a) * s a = 1 := by
   simp only [hs]
   exact hsum
 
+/-- `wᴴ w` is the matrix unit at `(a₀, a₀)`. -/
+theorem conjTranspose_naimark_mul_naimark (a₀ : m) :
+    (naimark s a₀)ᴴ * naimark s a₀ = diagonal fun j => if j = a₀ then 1 else 0 :=
+  conjTranspose_naimark_mul_naimark' (sum_star_mul_self_of_selfAdjoint hs hsum) a₀
+
 /-- **The Naimark matrix is a partial isometry.** -/
 theorem naimark_mul_conjTranspose_mul (a₀ : m) :
     naimark s a₀ * (naimark s a₀)ᴴ * naimark s a₀ = naimark s a₀ :=

@@ -219,6 +219,14 @@ def Question.ty : Question F m → Ty
   | .con i _ => .con i
   | .var j _ => .var j
 
+/-- The tuple a question carries, `0` for the types that carry none. -/
+def Question.omega : Question F m → Omega F m
+  | .pairB _ ω => ω
+  | .pair ω => ω
+  | .con _ ω => ω
+  | .var _ ω => ω
+  | _ => ⟨0, 0, 0, 0⟩
+
 /-! ## The sample space -/
 
 /-- The ambient content of a sample: two points, a seed, a raw diagonal direction, and the two

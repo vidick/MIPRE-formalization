@@ -16,9 +16,7 @@ public import MIPRE.Foundations.SAT.Cnf
 inputs and `gv g` for its gates (`lem:circuit-to-sat-reduction`, `lem:tseitin` with the
 output-wire conjunct of the F7.2 erratum): for every gate the clauses saying that its
 variable is the gate's function of its arguments' variables, and the unit clause on the
-output gate. `tseitin_sat_iff`: for a circuit reading only earlier gates, `C(x) = 1` iff some
-assignment agreeing with `x` on the inputs satisfies the formula; `tseitin_values`: a
-satisfying assignment carries the gate values. The tableau of the Cook–Levin theorem is
+output gate. `tseitin_values`: a satisfying assignment carries the gate values. The tableau of the Cook–Levin theorem is
 this reduction applied to the local check circuit at every window
 (`planning/succinct-cook-levin.md`, S1).
 -/

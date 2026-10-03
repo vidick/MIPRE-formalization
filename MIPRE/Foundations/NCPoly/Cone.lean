@@ -64,9 +64,8 @@ multiples by the taxicab norm of the scalar, so no topology on `NCPoly G` is nee
 * `NCPoly.one_sub_gen_sq_mem`, `NCPoly.one_sub_star_word_mem`, `NCPoly.herm_add_const_mem`,
   `NCPoly.archimedean_of_gen`;
 * `NCPoly.l1`, with `NCPoly.l1_nonneg`, `NCPoly.l1_zero`, `NCPoly.l1_single`,
-  `NCPoly.l1_add_le`, `NCPoly.l1_neg`, `NCPoly.l1_sub_le`, `NCPoly.l1_sub_comm`,
-  `NCPoly.l1_smul_le`, `NCPoly.l1_sum_le`, `NCPoly.l1_list_sum_le`, `NCPoly.l1_star`,
-  `NCPoly.l1_mul_le`, `NCPoly.abs_re_add_abs_im_coeff_le_l1`;
+  `NCPoly.l1_add_le`, `NCPoly.l1_neg`, `NCPoly.l1_smul_le`, `NCPoly.l1_sum_le`,
+  `NCPoly.l1_star`, `NCPoly.l1_mul_le`;
 * `MIPRE.exists_nonneg_functional_of_archimedean`,
   `MIPRE.exists_separating_functional_of_archimedean`.
 -/

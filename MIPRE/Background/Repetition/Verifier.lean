@@ -198,6 +198,15 @@ theorem val_repVerifier (ω : ValueModel) (T : ℕ) (hT : Repetition.reps lam ta
   exact ω.eq_of_equiv _ _ (questionsEquiv V lam tau beta n) (questionsEquiv V lam tau beta n)
     (Equiv.refl _) (Equiv.refl _) (fun _ _ => rfl) (fun _ _ _ _ => rfl)
 
+/-- The value of the output's game is that of the repeated game: `val_repVerifier` in the
+tensor-product model. -/
+theorem valStar_repVerifier (T : ℕ) (hT : Repetition.reps lam tau n *
+      (4 * Repetition.parseBound lam beta n + 2) + 1 ≤ T) :
+    (repVerifier V lam tau beta).valStar n T =
+      quantumValue ((V.game n (Repetition.parseBound lam beta n)).repeat
+        (Repetition.reps lam tau n)) :=
+  val_repVerifier V lam tau beta n .tensor T hT
+
 /-- **Completeness**: a value-`1` PCC strategy for `𝒱_n` at the parse length gives one for the
 output's game, the tensor power relabeled and extended to the output's answers. -/
 theorem hasPerfectPCC_repVerifier (T : ℕ) (hT : Repetition.reps lam tau n *

@@ -31,11 +31,11 @@ The construction has three layers.
 vector space `V` (`PSDForm`) makes the type synonym `Pre β` of `V` a pre-inner-product space
 (`PreInnerProductSpace.Core`, `InnerProductSpace.ofCore`). Its null vectors have norm zero
 but need not vanish, so `Pre β` is not `T0`; its completion `H β` is a Hilbert space, into
-which `ι : V → H β` maps with dense range (`denseRange_ι`), killing every null vector
+which `ι : V → H β` maps with dense range, killing every null vector
 (`ι_eq_zero_of_null`). A linear map `T` of `V` that is bounded for the seminorm of `β`
 (`Bdd`) lifts to a continuous operator `lift β T` on `H β`, with `lift β T (ι v) = ι (T v)`
 (`lift_ι`). Identities between lifts are checked on the dense image of `ι`, where it suffices
-that they hold up to null vectors: `lift_eq_of_null`, `sum_lift_eq_one`, `commute_lift`.
+that they hold up to null vectors: `sum_lift_eq_one`, `commute_lift`.
 A lift is positive as soon as `T` is symmetric and positive for `β` (`lift_isPositive`).
 
 **States.** A state on `P` (`State`) is a `ℂ`-linear `L : P → ℂ` with `L 1 = 1`,
@@ -58,8 +58,8 @@ All carriers live in `Type`, since the Hilbert space of a `CommutingOperatorStra
 
 ## Main declarations
 
-* `PSDForm`, `Pre`, `H`, `ι`, `denseRange_ι`, `ι_eq_zero_of_null`;
-* `Bdd`, `lift`, `lift_ι`, `lift_eq_of_null`, `sum_lift_eq_one`, `commute_lift`,
+* `PSDForm`, `Pre`, `H`, `ι`, `ι_eq_zero_of_null`;
+* `Bdd`, `lift`, `lift_ι`, `sum_lift_eq_one`, `commute_lift`,
   `lift_isPositive`;
 * `State`, `State.form`, `State.bdd_mulLeft`, `State.contraction_of_povm`,
   `State.null_of_ideal`, `State.sum_lift_mulLeft`, `State.commute_lift_mulLeft`,
@@ -200,6 +200,15 @@ theorem ext_ι {S S' : H β →L[ℂ] H β} (h : ∀ v, S (ι β v) = S' (ι β 
   ext x
   refine ι_induction β (p := fun x => S x = S' x) ?_ h x
   exact isClosed_eq S.continuous S'.continuous
+
+/-- Composites of bounded maps are bounded. -/
+theorem Bdd.comp {T T' : V →ₗ[ℂ] V} (hT : Bdd β T) (hT' : Bdd β T') : Bdd β (T ∘ₗ T') := by
+  obtain ⟨C, hC⟩ := hT
+  obtain ⟨C', hC'⟩ := hT'
+  refine ⟨max C 0 * C', fun v => ?_⟩
+  rw [LinearMap.comp_apply, mul_assoc]
+  exact (hC _).trans ((mul_le_mul_of_nonneg_right (le_max_left _ _) (β.re_nonneg _)).trans
+    (mul_le_mul_of_nonneg_left (hC' v) (le_max_right _ _)))
 
 /-- A finite sum of lifts, evaluated on the image of `ι`. -/
 theorem sum_lift_ι {ι' : Type*} (s : Finset ι') (T : ι' → V →ₗ[ℂ] V) (hT : ∀ i, Bdd β (T i))

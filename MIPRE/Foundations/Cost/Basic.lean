@@ -108,7 +108,6 @@ depends on it formally, since the final theorem only claims `Computable`.
   `Eval.size_le`, and the scoping lemmas `Eval.append_of_wellScoped` /
   `Eval.of_append_of_wellScoped` (extra environment entries are inert for well-scoped
   programs).
-* `MIPRE.Cost.evalFuel`: an executable evaluator with fuel, sound for `Eval`.
 * `MIPRE.Cost.Halts`, `HaltsWithin`, `TimeBound`.
 
 Blueprint: this file is part of `sec:rr-computability` (efficient computability

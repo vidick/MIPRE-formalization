@@ -13,8 +13,7 @@ public import MIPRE.TM.CookLevin.FieldFml
 
 For the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a
 variable of that kind (with its range checks), the characterization of `decodeVar` by them
-(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the
-same variable up to the aliasing of unused fields), and the formulas computing all of these
+(`decodeVar_cell_iff`, …), and the formulas computing all of these
 on the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics
 (`planning/succinct-cook-levin.md`, S3).
 -/

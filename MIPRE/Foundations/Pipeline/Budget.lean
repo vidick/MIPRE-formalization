@@ -62,6 +62,8 @@ def uniform (z k : ℕ) : Budget := ⟨z, z, z, k, z⟩
 def Le (R R' : Budget) : Prop :=
   R.S ≤ R'.S ∧ R.d ≤ R'.d ∧ R.D ≤ R'.D ∧ R.k ≤ R'.k ∧ R.B ≤ R'.B
 
+theorem Le.refl (R : Budget) : R.Le R := ⟨le_rfl, le_rfl, le_rfl, le_rfl, le_rfl⟩
+
 end Budget
 
 namespace Verifier

@@ -619,6 +619,22 @@ def povm (S : SyncStrategy G) (x : X) : POVM A (Fin S.d) where
     rw [AddSubmonoidClass.coe_finsetSum]
     exact S.P.normalized x
 
+/-- Build a synchronous strategy from POVM data with a projectivity certificate (the
+packaging of `MIPRE.HaltingGameValue.SyncStrategy`). -/
+def ofPOVM (d : ℕ) (d_pos : 0 < d) (povm : X → POVM A (Fin d))
+    (projective : ∀ x a,
+      ((povm x).mats a).val * ((povm x).mats a).val = ((povm x).mats a).val) :
+    SyncStrategy G where
+  d := d
+  d_pos := d_pos
+  P :=
+    { M := fun x a => ((povm x).mats a).val
+      selfAdjoint := fun x a => selfAdjoint.mem_iff.mp ((povm x).mats a).property
+      projective := projective
+      normalized := fun x => by
+        have h := congrArg Subtype.val (povm x).normalized
+        rwa [AddSubmonoidClass.coe_finsetSum, selfAdjoint.val_one] at h }
+
 /-- A synchronous strategy is *PCC* (*projective, consistent, and commuting*, following
 JNVWY Section 5.2; blueprint `def:pcc`) if the measurement operators associated with any
 pair of questions asked with positive probability commute. Projectivity is part of

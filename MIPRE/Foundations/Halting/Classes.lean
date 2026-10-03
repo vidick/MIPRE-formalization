@@ -39,7 +39,7 @@ criterion.
   for all questions the players return a fixed answer", which is where `y_yes` comes from.
   `HasPerfectPCC` lives on the doubled game, so nothing is asked of the decider on the
   diagonal; `y_yes` still accepts only the empty answers, which keeps it rejecting long ones.
-* `Verifier.valStar_eq_zero_of_rejects_all` and `isSynchronousAt_of_rejects_all`: a decider that
+* `Verifier.valStar_eq_zero_of_rejects_all`: a decider that
   accepts nothing at `n` gives value `0` in every model, where `y_no` comes from.
 
 What remains for the classes is the reading of a string as a verifier — the wrapper decider

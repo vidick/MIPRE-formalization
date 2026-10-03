@@ -187,6 +187,13 @@ theorem coeff_one : (1 : NCPoly G).coeff = Finsupp.single 1 1 := rfl
     single w c * single w' c' = single (w * w') (c * c') :=
   MonoidAlgebra.single_mul_single w w' c c'
 
+/-- The coefficients of a product: the coefficient of `w` in `x y` is the sum of the
+`x_u y_v` over the factorizations `w = u v`. -/
+theorem coeff_mul [DecidableEq (FreeMonoid G)] (x y : NCPoly G) (w : FreeMonoid G) :
+    (x * y).coeff w =
+      x.coeff.sum fun u a => y.coeff.sum fun v b => if u * v = w then a * b else 0 :=
+  MonoidAlgebra.coeff_mul x y w
+
 /-- Every polynomial is the sum of its monomials. -/
 @[simp] theorem sum_single (x : NCPoly G) : x.coeff.sum single = x :=
   MonoidAlgebra.sum_coeff_single x
@@ -225,6 +232,11 @@ def lift : (FreeMonoid G →* A) ≃ (NCPoly G →ₐ[ℂ] A) := MonoidAlgebra.l
 @[simp] theorem lift_single (F : FreeMonoid G →* A) (w : FreeMonoid G) (c : ℂ) :
     lift F (single w c) = c • F w :=
   MonoidAlgebra.lift_single F w c
+
+/-- Two algebra homs out of `NCPoly G` that agree on words are equal. -/
+theorem algHom_ext {φ ψ : NCPoly G →ₐ[ℂ] A} (h : ∀ w, φ (single w 1) = ψ (single w 1)) :
+    φ = ψ :=
+  lift.symm.injective (MonoidHom.ext h)
 
 end Lift
 
@@ -306,6 +318,9 @@ def gen (g : G) : NCPoly G := single (FreeMonoid.of g) 1
 /-- Generators are fixed by the star. -/
 @[simp] theorem star_gen (g : G) : star (gen g) = gen g := by
   simp [gen, star_single]
+
+/-- Generators are self-adjoint. -/
+theorem isSelfAdjoint_gen (g : G) : IsSelfAdjoint (gen g) := star_gen g
 
 /-- A word `g w` is the product of the generator `g` and the word `w`. -/
 theorem single_of_mul (g : G) (w : FreeMonoid G) (c : ℂ) :

@@ -164,6 +164,13 @@ theorem ctrlRepr_ret (v : Data) : ctrlRepr (.ret v) = .one :: S v := rfl
 
 /-! ## List facts -/
 
+theorem overwrite_cons_one_add (a : Sym) (l : List Sym) (p : ℕ) (w : List Sym) :
+    overwrite (a :: l) (1 + p) w = a :: overwrite l p w := by
+  rw [Nat.add_comm]; exact overwrite_cons_succ a l p w
+
+theorem overwrite_append_nil' (a w : List Sym) {p : ℕ} (hp : p = a.length) :
+    overwrite a p w = a ++ w := overwrite_append_nil a w hp
+
 theorem kontRepr_nil_or_fr (k : List Frame) :
     kontRepr k = [] ∨ ∃ l₀, kontRepr k = l₀ ++ [.fr] := by
   cases k with

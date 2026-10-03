@@ -48,6 +48,9 @@ theorem neg (hS : IsSkewHermitian S) : IsSkewHermitian (-S) := by
   unfold IsSkewHermitian at *
   rw [conjTranspose_neg, hS]
 
+theorem zero : IsSkewHermitian (0 : Matrix n n ℂ) := by
+  simp [IsSkewHermitian]
+
 variable [Fintype n]
 
 /-- The quadratic form of a skew-Hermitian matrix is purely imaginary. -/

@@ -112,6 +112,11 @@ variable (v : N → ℂ)
 /-- `‖M v‖`, for a fixed state `v`. -/
 def snorm (M : Matrix N N ℂ) : ℝ := ‖evec (M *ᵥ v)‖
 
+/-- **The state norm is that of the matrix model**, by definition. -/
+theorem snorm_eq_mat [DecidableEq N] (M : Matrix N N ℂ) :
+    snorm v M = (StateModel.mat v).snorm M :=
+  rfl
+
 theorem snorm_nonneg (M : Matrix N N ℂ) : 0 ≤ snorm v M := by
   classical
   exact (StateModel.mat v).snorm_nonneg M

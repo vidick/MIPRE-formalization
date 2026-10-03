@@ -46,8 +46,8 @@ theorem pull_family (w : Bool) (x : J → F) :
     CL.pull e ((family e L w).eval x) = (L w).eval (CL.pull e x) := by
   rw [family, CL.CLFun.eval_embed, CL.pull_push]
 
-/-- Consume unused coordinates by the zero part of the existing first factor.
-Unlike `fullFamily`, this construction preserves the original depth. -/
+/-- Consume unused coordinates by the zero part of the existing first factor, preserving the
+original depth. -/
 def depthFamily (w : Bool) : CL.CLFun F J ℓ :=
   (family e L w).directSum (CL.CLFun.zeroOn (univ.map e)ᶜ ℓ)
 

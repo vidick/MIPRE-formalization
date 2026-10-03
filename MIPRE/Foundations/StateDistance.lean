@@ -285,6 +285,11 @@ noncomputable def stateDist (μ : X → ℝ) (ψ : dA × dB → ℂ) (A B : X �
 def IsStateClose (μ : X → ℝ) (ψ : dA × dB → ℂ) (δ : ℝ) (A B : X → Matrix dA dA ℂ) : Prop :=
   stateDist μ ψ A B ≤ δ
 
+theorem stateDist_eq_tensor [DecidableEq dA] (μ : X → ℝ) (ψ : dA × dB → ℂ)
+    (A B : X → Matrix dA dA ℂ) :
+    stateDist μ ψ A B = (BipartiteModel.tensor ψ).stateDist μ A B :=
+  rfl
+
 section POVMs
 
 open scoped MatrixOrder
@@ -299,6 +304,12 @@ noncomputable def povmStateDist (μ : X → ℝ) (ψ : dA × dB → ℂ) (M N : 
 /-- `M_a ≈_δ N_a` on `ψ`, relative to `μ`. -/
 def IsPOVMStateClose (μ : X → ℝ) (ψ : dA × dB → ℂ) (δ : ℝ) (M N : X → POVM A dA) : Prop :=
   povmStateDist μ ψ M N ≤ δ
+
+omit [DecidableEq A] in
+theorem povmStateDist_eq_tensor (μ : X → ℝ) (ψ : dA × dB → ℂ) (M N : X → POVM A dA) :
+    povmStateDist μ ψ M N =
+      (BipartiteModel.tensor ψ).povmStateDist μ (fun x => (M x).toIn) (fun x => (N x).toIn) :=
+  rfl
 
 /-! ## The two closeness lemmas of the appendix's preliminaries -/
 

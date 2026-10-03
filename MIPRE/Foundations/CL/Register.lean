@@ -96,6 +96,9 @@ theorem proj_eq_self_iff {S : Finset ι} {x : ι → F} : proj S x = x ↔ ∀ i
     · simp [hi]
     · simp [hi, h i hi]
 
+/-- The register subspace `V_S`, as a submodule: the vectors vanishing outside `S`. -/
+def register (S : Finset ι) : Submodule F (ι → F) := LinearMap.range (proj S)
+
 /-! ## Linear maps on a register subspace -/
 
 variable (F) in

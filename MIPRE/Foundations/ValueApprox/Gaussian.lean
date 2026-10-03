@@ -63,6 +63,10 @@ def GaussianRat : Subfield ℂ where
 
 namespace GaussianRat
 
+theorem mem_iff {z : ℂ} :
+    z ∈ GaussianRat ↔ (∃ a : ℚ, (a : ℝ) = z.re) ∧ ∃ b : ℚ, (b : ℝ) = z.im :=
+  Iff.rfl
+
 theorem ratCast_mem (q : ℚ) : (q : ℂ) ∈ GaussianRat := ⟨⟨q, by simp⟩, ⟨0, by simp⟩⟩
 
 theorem I_mem : Complex.I ∈ GaussianRat := ⟨⟨0, by simp⟩, ⟨1, by simp⟩⟩
@@ -109,6 +113,8 @@ namespace EntriesIn
 
 variable {m n p : Type*} {M N : Matrix m n ℂ}
 
+theorem zero : EntriesIn K (0 : Matrix m n ℂ) := fun _ _ => zero_mem K
+
 theorem add (hM : EntriesIn K M) (hN : EntriesIn K N) : EntriesIn K (M + N) :=
   fun i j => add_mem (hM i j) (hN i j)
 
@@ -117,6 +123,11 @@ theorem sub (hM : EntriesIn K M) (hN : EntriesIn K N) : EntriesIn K (M - N) :=
 
 theorem smul {c : ℂ} (hc : c ∈ K) (hM : EntriesIn K M) : EntriesIn K (c • M) :=
   fun i j => mul_mem hc (hM i j)
+
+theorem sum {ι : Type*} (s : Finset ι) {f : ι → Matrix m n ℂ}
+    (hf : ∀ i ∈ s, EntriesIn K (f i)) : EntriesIn K (∑ i ∈ s, f i) := fun i j => by
+  rw [Matrix.sum_apply]
+  exact sum_mem fun k hk => hf k hk i j
 
 theorem conjTranspose (hK : ∀ z ∈ K, star z ∈ K) (hM : EntriesIn K M) : EntriesIn K Mᴴ :=
   fun i j => hK _ (hM j i)

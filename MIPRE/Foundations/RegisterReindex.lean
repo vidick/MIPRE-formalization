@@ -241,6 +241,15 @@ theorem TensorProductStrategy.value_ofProjective (G : Game X Y A B) (ψ : dA × 
   exact povmValue_reindex (Fintype.equivFin dA) (Fintype.equivFin dB) G ψ
     (fun x => PA.toPOVM x) (fun y => PB.toPOVM y)
 
+/-- A strategy given by POVM families with projective elements, packaged as a
+`TensorProductStrategy`. -/
+noncomputable def TensorProductStrategy.ofPVM (G : Game X Y A B) (ψ : dA × dB → ℂ)
+    (hψ : star ψ ⬝ᵥ ψ = 1) (MA : X → POVM A dA) (MB : Y → POVM B dB)
+    (hA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
+    (hB : ∀ y, IsPVM fun b => ((MB y).mats b).val) : TensorProductStrategy G :=
+  TensorProductStrategy.ofProjective G ψ hψ (ProjectiveMeasurement.ofIsPVM MA hA)
+    (ProjectiveMeasurement.ofIsPVM MB hB)
+
 end Strategy
 
 end MIPRE

@@ -71,6 +71,13 @@ theorem factor_correct (U : ClockedUniversalMachine) (v : BitStr)
     (encode (n, CL.Sampler.Query.factor (Player.ofBool w) j u)) b.length)) = v
   rw [h, treeTail_cons, readBits_encode]
 
+/-- Collect the matrix using a polynomial number of source calls. -/
+def matrix (U : ClockedUniversalMachine) : PolyTimeFun Context (List BitStr) :=
+  let width := length.comp inputPrefix
+  let columns := (mapWith (linear U)).comp
+    ((identityBitsProg.comp width).pair (PolyTimeFun.id _))
+  transposeBitsProg.comp (width.pair columns)
+
 end MIPRE.Introspection.AuxiliarySource
 end
 

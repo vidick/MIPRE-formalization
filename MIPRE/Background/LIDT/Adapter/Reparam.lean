@@ -29,8 +29,8 @@ Doing this directly on coefficient vectors means a Taylor shift, hence the binom
 hand. Going through `Polynomial F` avoids that entirely: `toPoly` and `ofPoly` are mutually
 inverse between coefficient vectors and polynomials of degree at most `k`
 (`ofPoly_toPoly`, `toPoly_ofPoly`), `natDegree_comp_le` gives the degree bound for free, and
-the inverse substitution is the composition with the inverse affine map, so `reparamEquiv` is a
-bijection with no computation on coefficients at all.
+the inverse substitution is the composition with the inverse affine map, so the
+reparametrization is a bijection with no computation on coefficients at all.
 -/
 
 namespace MIPRE.LIDT.Adapter

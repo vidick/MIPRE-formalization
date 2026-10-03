@@ -461,6 +461,16 @@ end BipartiteModel
 variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]
   [DecidableEq dB]
 
+/-- **The disagreement** of Alice's POVM `M` and Bob's POVM `N` on the state `ψ`: the probability
+that their outcomes differ. -/
+def dis (ψ : dA × dB → ℂ) (M : POVM Λ dA) (N : POVM Λ dB) : ℝ :=
+  1 - ∑ a, bornProb ψ ((M.mats a).val) ((N.mats a).val)
+
+/-- **The matrix disagreement is that of the tensor-product model.** -/
+theorem dis_eq_tensor (ψ : dA × dB → ℂ) (M : POVM Λ dA) (N : POVM Λ dB) :
+    dis ψ M N = (BipartiteModel.tensor ψ).dis M.toIn N.toIn := by
+  simp only [dis, BipartiteModel.dis, bornProb_eq_tensor, POVM.toIn_op]
+
 /-! ## Families on a uniform index -/
 
 section Uniform

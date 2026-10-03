@@ -45,7 +45,7 @@ its position among the bit strings of length at most `T`, the enumeration `answe
 predicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly
 what is in it. It takes the two question indexings `fA`, `fB` as parameters, because the
 tabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case
-`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing
+`fA = fB = bitsToIdx` and is the same list definitionally, so nothing
 downstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the
 index of a question determines it, among the strings of a fixed length — and `tagEquiv` is the
 tagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by
@@ -85,6 +85,11 @@ theorem accepts_iff_runForD {n T k : ℕ} (hb : D.TimeBoundAt n T k) (x y a b : 
         (acceptBudget T k x y a b) = some (encode true) :=
   (Machine.runForD_eq_some_iff (hb (encode (x, y, a, b)))).symm
 
+/-- Hence acceptance is decidable, for a decider that obeys a time bound at the index. -/
+def decidableAccepts {n T k : ℕ} (hb : D.TimeBoundAt n T k) (x y a b : BitStr) :
+    Decidable (D.Accepts n x y a b) :=
+  decidable_of_iff _ (D.accepts_iff_runForD hb x y a b).symm
+
 end Decider
 
 namespace Verifier
@@ -98,6 +103,11 @@ theorem accepts_iff_runForD {n : ℕ} (hb : V.IsBounded n) (hn : 2 ≤ n) (x y a
       Machine.runForD (encode V.decider.prog) (encode (n, x, y, a, b))
         (Decider.acceptBudget (n ^ n) n x y a b) = some (encode true) :=
   V.decider.accepts_iff_runForD (hb.1 n hn).2.2 x y a b
+
+/-- Hence acceptance by an `n`-bounded verifier is decidable. -/
+def decidableAccepts {n : ℕ} (hb : V.IsBounded n) (hn : 2 ≤ n) (x y a b : BitStr) :
+    Decidable (V.decider.Accepts n x y a b) :=
+  V.decider.decidableAccepts (hb.1 n hn).2.2 x y a b
 
 end Verifier
 

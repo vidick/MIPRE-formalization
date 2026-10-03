@@ -32,9 +32,6 @@ index, well formed or not, so no stage may assume it is handed a question pair:
 * `Prog.wrapCheckEnvN` and `wrapCheckD_cost_of_eq`, `wrapCheckD_cost_of_ne`: one length check,
   which compares `Data.spine` with the sampler's dimension — on `encode l` that is `l.length`,
   and on anything else it is what the program actually computes.
-* `Prog.wrapHead_cost` and `wrapPre_cost`: the head, whose cost depends on the index alone (the
-  dimension query runs on a fixed input), and the prefix, which on a tail too short to hold two
-  questions rejects outright.
 * `Prog.wrapCore_hasPolyCost`: the whole, by the three outcomes — the first check fails, the
   second fails, or both pass and the string's own decider runs through the universal machine.
 * `Verifier.ofSamplerDecider_isBounded`: the verifier a pair denotes is `n`-bounded at every

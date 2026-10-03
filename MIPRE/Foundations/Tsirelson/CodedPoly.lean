@@ -26,8 +26,7 @@ the words and conjugates the coefficients (the letters are self-adjoint), and `c
 `cword w`, `cletter l` are the one-monomial polynomials.
 
 **Merged coefficients and dominance.** The coefficient of a word `w` in `l` is the sum of the
-coefficients of the monomials of `l` with word `w` (`coeffRaw`); its complex value is the sum of
-the complex values of those coefficients (`toC_coeffRaw`, `toC_coeffRaw_eq_sum_ite`). The
+coefficients of the monomials of `l` with word `w` (`coeffRaw`). The
 distinct words of `l` are `words l = (l.map Prod.fst).dedup`, and the off-diagonal mass
 `offMass l` is the sum, over the nonempty distinct words, of the taxicab norm `taxi` of the merged
 coefficient, where `taxi z = |Re z| + |Im z|` is computed on naturals (`taxi_eq`). A coded
@@ -62,8 +61,8 @@ enumerable.
 ## Main declarations
 
 * `Letter`, `CPoly`, `cadd`, `cneg`, `cscale`, `cmul`, `cstar`, `cconst`, `cword`, `cletter`;
-* `gneg`, `ptaxi`, `taxi`, `taxi_eq`, `taxi_congr`;
-* `coeffRaw`, `toC_coeffRaw`, `toC_coeffRaw_eq_sum_ite`, `coeffRaw_eq_zero_of_notMem`, and the
+* `gneg`, `ptaxi`, `taxi`, `taxi_eq`;
+* `coeffRaw`, `coeffRaw_eq_zero_of_notMem`, and the
   coefficients of `cadd`, `cneg`, `cscale`, `cstar`;
 * `words`, `dedup_eq_foldr`, `offMass`, `offMass_eq_sum`, `offMass_eq_sum_of_subset`,
   `IsDominant`, `isDominant_iff`, `isDominant_iff_sum`;

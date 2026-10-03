@@ -190,6 +190,45 @@ theorem natToBits_bitsToNat : ∀ (l : List Bool), l.getLast? ≠ some false →
 
 /-! ## The length of the digit string -/
 
+/-- `natToBits n` has enough digits for `n`. -/
+theorem lt_two_pow_natToBits (n : ℕ) : n < 2 ^ (natToBits n).length := by
+  induction n using Nat.strongRecOn with
+  | ind n ih =>
+    match n with
+    | 0 => simp
+    | n + 1 =>
+      rw [natToBits_succ]
+      have h := ih ((n + 1) / 2) (by omega)
+      simp only [List.length_cons, Nat.pow_succ]
+      omega
+
+/-- `natToBits n` has no more digits than any binary bound on `n`. -/
+theorem natToBits_length_le : ∀ {n k : ℕ}, n < 2 ^ k → (natToBits n).length ≤ k := by
+  intro n
+  induction n using Nat.strongRecOn with
+  | ind n ih =>
+    match n with
+    | 0 => intro k _; simp
+    | n + 1 =>
+      intro k h
+      cases k with
+      | zero =>
+        rw [Nat.pow_zero] at h
+        omega
+      | succ k =>
+        rw [natToBits_succ]
+        simp only [List.length_cons]
+        have hdiv : (n + 1) / 2 < 2 ^ k := by
+          rw [Nat.pow_succ] at h
+          omega
+        have := ih ((n + 1) / 2) (by omega) hdiv
+        omega
+
+/-- The digit count is monotone. -/
+theorem natToBits_length_mono {m n : ℕ} (h : m ≤ n) :
+    (natToBits m).length ≤ (natToBits n).length :=
+  natToBits_length_le (Nat.lt_of_le_of_lt h (lt_two_pow_natToBits n))
+
 /-! ## The self-delimiting code -/
 
 /-- The self-delimiting code of a natural number: the digit count in unary, a `false`
@@ -279,6 +318,18 @@ theorem parseNat_sound {s rest : List Bool} {n : ℕ} (h : parseNat s = some (n,
           simp [List.take_append_drop]
       · rw [if_neg hle] at h
         exact absurd h (by simp)
+
+theorem encodeNat_length (n : ℕ) :
+    (encodeNat n).length = 2 * (natToBits n).length + 1 := by
+  simp [encodeNat]
+  omega
+
+/-- The code length is monotone. -/
+theorem encodeNat_length_mono {m n : ℕ} (h : m ≤ n) :
+    (encodeNat m).length ≤ (encodeNat n).length := by
+  rw [encodeNat_length, encodeNat_length]
+  have := natToBits_length_mono h
+  omega
 
 end Turing
 

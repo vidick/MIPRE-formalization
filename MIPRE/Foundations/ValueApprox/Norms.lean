@@ -24,8 +24,7 @@ The analytic input of `lem:value-lower-approx`, in the L2 operator norm on matri
 * `l2_opNorm_le_card_mul_of_entry_le`: an entrywise bound `δ` gives `‖E‖ ≤ n δ`, which is what
   rounding a matrix entrywise costs;
 * unitaries and projections have norm at most `1` (`norm_le_one_of_mem_unitaryGroup`,
-  `norm_le_one_of_isProj`), and so do the subset sums of a projective measurement
-  (`IsPVM.norm_sum_le_one`).
+  `norm_le_one_of_isProj`).
 -/
 
 namespace MIPRE.ValueApprox

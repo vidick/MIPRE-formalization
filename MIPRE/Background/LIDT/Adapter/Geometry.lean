@@ -21,7 +21,7 @@ The seeded test's base point for direction `w` is `rep w u = canonLin (span {w})
 canonical linear map with kernel `span {w}` applied to `u`. The canonical-line test's is the
 first component of `Line.through u w`, which for a normalized direction moves `u` so that the
 coordinate of the direction's first nonzero entry vanishes. For `w = eᵢ` both are
-`u - uᵢ • eᵢ` (`rep_single`, `through_single`, and `rep_single_eq_through` for the conjunction),
+`u - uᵢ • eᵢ` (`rep_single`, `through_single`),
 so on axis-parallel lines the two games agree on the base point exactly, with no choice
 involved. The seed is the only thing the seeded question carries beyond the line.
 
@@ -39,15 +39,15 @@ than of content.
 
 **The diagonal convention.** The seeded test's diagonal directions have their *first* `i`
 coordinates zero (`CL.zeroBelow`), the canonical-line test's have their coordinates *past* `j`
-zero (`Sample.extend`). Coordinate reversal exchanges them (`revPoint_zeroBelow`), and is the
+zero (`Sample.extend`). Coordinate reversal exchanges them, and is the
 `ρ` of the paper's own reduction, there for the same reason against the tensor code test.
 
 **The direction scale.** A `DLine` question of the seeded test carries the direction itself,
 scale included, while the canonical-line test normalizes it. So the seeded questions
 `(u₀, s, c • w)`, `c ≠ 0`, all describe one canonical line, and an answer in the parameter of
-`u₀ + t (c • w)` has to be reparametrized. The parameter scales inversely
-(`lineParam_smul`) and the polynomial follows by `rescale`, which is a bijection of the
-coefficient vectors preserving the degree bound (`rescaleEquiv`) --- so no answer alphabet
+`u₀ + t (c • w)` has to be reparametrized. The parameter scales inversely and the polynomial
+follows by `rescale`, which is a bijection of the coefficient vectors preserving the degree
+bound --- so no answer alphabet
 changes and no degree is lost.
 
 What is *not* here is the reconciliation of `CL.lineParam` with `Line.param`, the last of the
@@ -222,8 +222,8 @@ theorem revPoint_rep_single [DecidableEq F] (i : Fin n) (u : Fin n → F) :
 A `DLine` question of the seeded test carries the direction `v'` itself, scale included, while
 the canonical-line test normalizes the direction. So one canonical diagonal line is described
 by the seeded questions `(u₀, s, c • w)` for every `c ≠ 0`, and an answer given in the
-parameter of `u₀ + t (c • w)` has to be reparametrized into that of `u₀ + t w`. Both halves are
-here: `lineParam_smul` for the parameter and `rescale` for the polynomial. -/
+parameter of `u₀ + t (c • w)` has to be reparametrized into that of `u₀ + t w`; `rescale` does
+it for the polynomial. -/
 
 /-- Rescaling the variable of a polynomial: `rescale c f` is `t ↦ f (c t)`, on coefficients. -/
 def rescale (c : F) {k : ℕ} (f : LinePoly F k) : LinePoly F k :=
@@ -307,8 +307,8 @@ coordinate of `dir`, whereas `Line.through` zeroes the coordinate at the **first
 coordinate of `dir`. So on a diagonal line the two tests pick *different* base points, and the
 reparametrization between their answer polynomials is affine rather than linear --- this is the
 "canonicalization and rebasing" of `rem:lidt-cl-adapter`. On an axis-parallel line the first and
-last nonzero coordinates coincide and the shift vanishes, which is why `rep_single_eq_through`
-came out clean. -/
+last nonzero coordinates coincide and the shift vanishes, which is why the two base points agree
+there. -/
 
 /-- The pivot set of any line is its direction's first nonzero coordinate. -/
 theorem pivots_span_singleton {w : Fin n → F} (hw : ∃ j, w j ≠ 0) :

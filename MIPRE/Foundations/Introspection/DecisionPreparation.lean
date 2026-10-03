@@ -42,6 +42,14 @@ def kernelInput (c : ℕ) (M : Metadata) (x : Data) : KernelInput :=
   (x, M, unary (ansBound 5 M.2 n), 2 ^ n, PauliSamplerParameters.parameters c M.2 n,
     registerBits c M.2 n, originalBound M.2 n)
 
+/-- Getters are total even on malformed output trees. Program metadata is
+retained as data; its canonical sampler/decider projections are named below. -/
+def raw : PolyTimeFun Data Data := treeHead
+def rest : PolyTimeFun Data Data := treeTail
+def metadata : PolyTimeFun Data Data := treeHead.comp rest
+def resourceTail : PolyTimeFun Data Data := treeTail.comp rest
+def budget : PolyTimeFun Data Unary := readUnary.comp (treeHead.comp resourceTail)
+
 @[simp] theorem inputLambda_canonical (S D : Prog) (lam : ℕ) (x : Data) :
     inputLambda (.cons (encode ((S,D),lam)) x) = lam := by
   simp [inputLambda, inputMetadata, encode_prod, readNat_encode]

@@ -230,6 +230,26 @@ theorem one_sub_povmValue_adapt_le_sum (G' : Game X' Y' A' B') (qA : X' → X)
         refine Finset.sum_congr rfl fun y' hy' => ?_
         rw [(Finset.mem_filter.1 hx').2, (Finset.mem_filter.1 hy').2]
 
+/-- **The cost of the adapter.** If the push-forward of `G'`'s question distribution along
+`(qA, qB)` is dominated by `C` times `G`'s, the adapted strategy's failure is at most `C` times
+the original's. -/
+theorem one_sub_povmValue_adapt_le (hψ : ‖M.ψ‖ = 1) (G' : Game X' Y' A' B') (qA : X' → X)
+    (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (C : ℝ)
+    (hD : ∀ x' y' a b, G'.μ x' y' ≠ 0 →
+      G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true)
+    (hμ : ∀ x y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') ≤ C * G.μ x y) :
+    1 - M.povmValue G' (fun x' => (MA (qA x')).map (rA x'))
+        (fun y' => (MB (qB y')).map (rB y'))
+      ≤ C * (1 - M.povmValue G MA MB) := by
+  refine (M.one_sub_povmValue_adapt_le_sum MA MB G' qA qB rA rB hD).trans ?_
+  rw [M.one_sub_povmValue_eq, Finset.mul_sum]
+  refine Finset.sum_le_sum fun x _ => ?_
+  rw [Finset.mul_sum]
+  refine Finset.sum_le_sum fun y _ => ?_
+  rw [← mul_assoc]
+  exact mul_le_mul_of_nonneg_right (hμ x y) (M.condFail_nonneg hψ x y)
+
 /-- **The summed form of `one_sub_povmValue_adapt_le`** over a finite family of question maps,
 when the push-forward bound holds on average. -/
 theorem sum_one_sub_povmValue_adapt_le {Seed : Type*} [Fintype Seed] (hψ : ‖M.ψ‖ = 1)
@@ -430,6 +450,20 @@ theorem failAt_adapt_le (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
 /-! ## The cost of the adapter is the push-forward of the distribution -/
 
 variable [DecidableEq X] [DecidableEq Y]
+
+/-- **The cost of the adapter.** If the push-forward of `G'`'s question distribution along
+`(qA, qB)` is dominated by `C` times `G`'s, the adapted strategy's failure is at most `C` times
+`S`'s. -/
+theorem one_sub_value_adapt_le (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
+    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (C : ℝ)
+    (hD : ∀ x' y' a b, G'.μ x' y' ≠ 0 →
+      G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true)
+    (hμ : ∀ x y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
+        ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') ≤ C * G.μ x y) :
+    1 - (S.adapt G' qA qB rA rB).value ≤ C * (1 - S.value) := by
+  rw [value_adapt, value_eq_tensor_povmValue]
+  exact (BipartiteModel.tensor S.ψ).one_sub_povmValue_adapt_le (fun x => (S.PA.toPOVM x).toIn) (fun y => (S.PB.toPOVM y).toIn)
+    (norm_evec_eq_one S.ψ_unit) G' qA qB rA rB C hD hμ
 
 /-! ## Derandomization -/
 

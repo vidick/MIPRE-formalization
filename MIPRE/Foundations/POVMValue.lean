@@ -345,6 +345,11 @@ theorem condFail_eq_tensor (x : X) (y : Y) :
       (BipartiteModel.tensor ψ).condFail G (fun x => (MA x).toIn) (fun y => (MB y).toIn) x y := by
   simp only [condFail, BipartiteModel.condFail, condWin_eq_tensor]
 
+theorem condFail_nonneg (hψ : star ψ ⬝ᵥ ψ = 1) (x : X) (y : Y) :
+    0 ≤ condFail G ψ MA MB x y := by
+  rw [condFail_eq_tensor]
+  exact (BipartiteModel.tensor ψ).condFail_nonneg (norm_evec_eq_one hψ) x y
+
 /-- **The failure probability is the average of the conditional failures.** -/
 theorem one_sub_povmValue_eq :
     1 - povmValue G ψ MA MB = ∑ x, ∑ y, G.μ x y * condFail G ψ MA MB x y := by

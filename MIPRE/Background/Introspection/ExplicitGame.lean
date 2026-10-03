@@ -18,7 +18,7 @@ including mixed Pauli/auxiliary edges. The parsed predicate is intertwined on
 every question and every answer, including malformed answers and loops.
 
 Stated in a bipartite model (Phase 4 of `planning/mipco-track.md`): the soundness transports
-`toExplicit` and `toLegacy` relabel a projective strategy of one model `M` along the question
+`toLegacy` relabels a projective strategy of one model `M` along the question
 equivalence (`BipartiteModel.ProjStrat.relabel`), so the transported strategy lives in the same
 model and the state is unchanged by construction. The Pauli lemmas are equalities of POVMs. The
 completeness transports (`pccToExplicit*`) stay on synchronous matrix strategies.
