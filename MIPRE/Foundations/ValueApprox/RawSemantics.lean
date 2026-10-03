@@ -198,14 +198,6 @@ namespace RawStrategy
 
 variable (nX nA : ℕ) (r : RawStrategy)
 
-theorem interp_PA (x : Fin (nX + 1)) (a : Fin (nA + 1)) :
-    (r.interp nX nA).PA x a = mat (r.matA x a) r.dA r.k := rfl
-
-theorem interp_PB (y : Fin (nX + 1)) (b : Fin (nA + 1)) :
-    (r.interp nX nA).PB y b = mat (r.matB y b) r.dB r.k := rfl
-
-theorem interp_u : (r.interp nX nA).u = vec r.dA r.dB r.v r.k := rfl
-
 end RawStrategy
 
 end MIPRE.ValueApprox

@@ -82,11 +82,6 @@ theorem ofFn_single (g : F → α) (c : Fin 6) (a : F) (l : List α)
   rw [this, ofFn_placeV g c (by omega) _ l hl]
   rfl
 
-theorem ofFn_zero (g : F → α) {N : ℕ} (l : List α) (hl : l.length = N) :
-    List.ofFn (fun _ : Fin N => g 0) = l.map (fun _ => g 0) := by
-  subst hl
-  apply List.ext_getElem <;> simp
-
 end MIPRE.AnswerReduction.Pcp
 
 end

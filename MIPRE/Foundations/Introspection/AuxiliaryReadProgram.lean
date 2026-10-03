@@ -42,9 +42,6 @@ theorem equal_iff {α : Type*} [SizedEncoding α] {β : Type*} [SizedEncoding β
   simp only [equal, ap₂_apply, comp_apply, encoded_apply, treeEq_apply,
     decide_eq_true_eq, encode_injective.eq_iff]
 
-def leftTriple : PolyTimeFun GuardInput (BitStr × BitStr × BitStr) :=
-  DynamicParser.tripleParts.comp (inputLeft.pair inputQ)
-
 def rightTriple : PolyTimeFun GuardInput (BitStr × BitStr × BitStr) :=
   DynamicParser.tripleParts.comp (inputRight.pair inputQ)
 
@@ -68,12 +65,6 @@ def pairRight : PolyTimeFun GuardInput Bool :=
 /-- Full-Q Read format: there is deliberately no original-subspace test on the dual field. -/
 def readRight : PolyTimeFun GuardInput Bool :=
   (DynamicParser.tripleCheck false).comp (inputRight.pair (inputQ.pair inputR))
-
-def hideLeft : PolyTimeFun GuardInput Bool :=
-  (DynamicParser.tripleCheck true).comp (inputLeft.pair (inputQ.pair inputQ))
-
-def hideRight : PolyTimeFun GuardInput Bool :=
-  (DynamicParser.tripleCheck true).comp (inputRight.pair (inputQ.pair inputQ))
 
 /-- The actual Introspect/Read branch, with all bounds supplied in binary. -/
 def readingCheck : PolyTimeFun GuardInput Bool :=
@@ -124,10 +115,6 @@ theorem readingCheck_vectors {Q R : ℕ} (hQ : 4 ≤ Q) (hR : 3 * R ≤ Q)
 /-- Reject arbitrary noncanonical input trees before running the supplied pure check. -/
 def rawCheck (check : PolyTimeFun GuardInput Bool) : PolyTimeFun Data Bool :=
   andCheck (equal (PolyTimeFun.id Data) (encoded.comp readInput)) (check.comp readInput)
-
-theorem rawCheck_iff (check : PolyTimeFun GuardInput Bool) (x : Data) :
-    rawCheck check x = true ↔ x = encode (readInput x) ∧ check (readInput x) = true := by
-  simp only [rawCheck, andCheck_iff, equal_iff, id_apply, comp_apply, encoded_apply]
 
 @[simp] theorem rawCheck_encode (check : PolyTimeFun GuardInput Bool) (x : GuardInput) :
     rawCheck check (encode x) = check x := by

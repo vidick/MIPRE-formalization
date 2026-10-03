@@ -110,23 +110,6 @@ theorem replaceExtended_value (G : Game X Y A B) (hΨ : ‖Ψ.ψ‖ = 1) (t₀ :
   · exact hMB
   · exact hd
 
-/-- The replacement is a projective strategy of the one-sided extension. -/
-def replacementStrategy (G : Game X Y A B) (hΨ : ‖Ψ.ψ‖ = 1) (t₀ : T)
-    (MA : X → POVMIn A 𝒜) (MB : Y → POVMIn B ℬ) (q : X) (R : POVMIn A (Matrix T T 𝒜))
-    (hMA : ∀ x, IsPVMIn (MA x).op) (hMB : ∀ y, IsPVMIn (MB y).op) (hR : IsPVMIn R.op) :
-    (Ψ.expandA t₀).ProjStrat G where
-  PA := replaceExtended MA q R
-  PB := MB
-  projA := replaceExtended_isPVM MA q R hMA hR
-  projB := hMB
-  ψ_unit := by rw [BipartiteModel.norm_expandA_ψ, hΨ]
-
-theorem replacementStrategy_value (G : Game X Y A B) (hΨ : ‖Ψ.ψ‖ = 1) (t₀ : T)
-    (MA : X → POVMIn A 𝒜) (MB : Y → POVMIn B ℬ) (q : X) (R : POVMIn A (Matrix T T 𝒜))
-    (hMA : ∀ x, IsPVMIn (MA x).op) (hMB : ∀ y, IsPVMIn (MB y).op) (hR : IsPVMIn R.op) :
-    (replacementStrategy Ψ G hΨ t₀ MA MB q R hMA hMB hR).value =
-      (Ψ.expandA t₀).povmValue G (replaceExtended MA q R) MB := rfl
-
 end MIPRE.Introspection
 end
 

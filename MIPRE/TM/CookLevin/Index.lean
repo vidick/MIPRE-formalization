@@ -55,9 +55,6 @@ def valOf (j : ℕ) : CellVal Sym := if rOf T j % 2 = 1 then .sym .one else .bla
 
 theorem tapeIdx_lt (j : ℕ) : tapeIdx T j < 7 := by unfold tapeIdx; split_ifs <;> omega
 
-theorem symCode_valOf (j : ℕ) : symCode (valOf T j) = if rOf T j % 2 = 1 then 1 else 5 := by
-  unfold valOf; split_ifs <;> rfl
-
 theorem rOf_lt (j : ℕ) (hj : j < 4 * T) : rOf T j < 2 * T := by
   unfold rOf; split_ifs <;> omega
 

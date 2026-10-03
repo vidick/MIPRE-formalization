@@ -58,22 +58,6 @@ theorem span_rows_eq_perp_ker (A : Matrix (Fin m) (Fin n) F) :
     Submodule.span F (Set.range A) = CL.perp A.mulVecLin.ker := by
   rw [← perp_span_rows A, CL.perp_perp]
 
-/-- Uniform polynomial-time evaluation of a square binary map's canonical dual. -/
-def dualProg : PolyTimeFun (List BitStr × BitStr) BitStr :=
-  AuxiliaryCanonical.canonicalProg
-
-theorem dualProg_correct (A : Matrix (Fin n) (Fin n) (ZMod 2))
-    (v : Fin n → ZMod 2) :
-    dualProg (matrixBits A, vectorBits v) =
-      vectorBits (CL.lperp A.mulVecLin v) := by
-  have hr : {x | x ∈ List.ofFn A} = Set.range A := by
-    ext x
-    simp only [Set.mem_ofPred_eq, List.mem_ofFn, Set.mem_range]
-  have hb : matrixBits A = (List.ofFn A).map vectorBits := by
-    simp only [matrixBits, List.map_ofFn, Function.comp_def]
-  rw [dualProg, hb, AuxiliaryCanonical.canonicalProg_correct, hr, span_rows_eq_perp_ker]
-  rfl
-
 /-- Membership in the supplied row span, tested by exact canonical reduction.
 The zero vector has the input vector's width, so malformed widths do not become
 an implicit promise about the program's termination. -/

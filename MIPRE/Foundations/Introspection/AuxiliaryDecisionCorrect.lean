@@ -37,12 +37,6 @@ theorem padded_supported {n Q : ℕ} (V : Verifier 7)
   (depthFamily_exactlyOn (firstEmbedding hQ) (sourceFamily V n) (by decide)
     (fun w => V.sampler.cl_exactlyOn _ _) w).supportedOn
 
-omit [Fintype P] [DecidableEq P] in
-theorem canonical_types (V : Verifier 7) (lam n Q R : ℕ) (t u : QuestionType P 7)
-    (a b : BitStr) :
-    leftType (canonical V lam n Q R parameters t u a b) = t ∧
-      rightType (canonical V lam n Q R parameters t u a b) = u := ⟨rfl,rfl⟩
-
 theorem directed_canonical (U : ClockedUniversalMachine) (X Z : P)
     (project : PolyTimeFun (Input P 7) BitStr) (V : Verifier 7) (lam n Q R : ℕ)
     (t u : QuestionType P 7) (a b : BitStr) :
@@ -199,13 +193,6 @@ theorem directed_cross (U : ClockedUniversalMachine) (X Z : P)
   rw [directed_canonical]
   simp only [route]
   exact ClockedSourceChecks.cross_original U V hV hn (V.sampler.dim (2 ^ n)) a b
-
-/-- Unlisted directed type pairs impose no auxiliary comparison. -/
-theorem directed_default (U : ClockedUniversalMachine) (X Z : P)
-    (project : PolyTimeFun (Input P 7) BitStr) (x : Input P 7)
-    (h : (route X Z (leftType x,rightType x)).1 = 7) : directed U X Z project x = true := by
-  rw [directed_apply, h]
-  rfl
 
 end MIPRE.Introspection.AuxiliaryDecision
 end

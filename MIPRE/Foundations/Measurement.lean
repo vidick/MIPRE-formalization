@@ -272,8 +272,6 @@ variable {X : Type*} [Fintype X] [Ring R] [StarRing R] [PartialOrder R]
 /-- The measurement operator of an outcome, as an element of `R`. -/
 def op (M : POVMIn X R) (x : X) : R := (M.mats x : R)
 
-theorem op_eq (M : POVMIn X R) (x : X) : M.op x = (M.mats x : R) := rfl
-
 /-- **A POVM is determined by its operators**; the other fields are propositions. -/
 theorem ext' {M N : POVMIn X R} (h : ∀ x, M.op x = N.op x) : M = N := by
   obtain ⟨m, _, _⟩ := M

@@ -76,13 +76,6 @@ def complete {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (hne : (Graph.e
         · simp
         · exact S.P.normalized _ }
 
-/-- Detyping keeps the Hilbert space dimension exactly. -/
-theorem complete_d {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (hne : (Graph.edges E).Nonempty)
-    (P : Bool → T → CLFun (ZMod 2) ι ℓ)
-    (D : Question T ι → Question T ι → A → A → Bool)
-    (S : SyncStrategy (typedGame E hne P D).doubled) (a₀ : A) :
-    (complete E hne P D S a₀).d = S.d := rfl
-
 /-- The canonical tensor realizations use literally the same shared state. -/
 theorem complete_state {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]
     (hne : (Graph.edges E).Nonempty) (P : Bool → T → CLFun (ZMod 2) ι ℓ)

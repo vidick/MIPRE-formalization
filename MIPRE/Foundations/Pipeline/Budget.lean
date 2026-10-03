@@ -64,9 +64,6 @@ def Le (R R' : Budget) : Prop :=
 
 theorem Le.refl (R : Budget) : R.Le R := ⟨le_rfl, le_rfl, le_rfl, le_rfl, le_rfl⟩
 
-theorem uniform_le_uniform {z z' k k' : ℕ} (hz : z ≤ z') (hk : k ≤ k') :
-    (uniform z k).Le (uniform z' k') := ⟨hz, hz, hz, hk, hz⟩
-
 end Budget
 
 namespace Verifier

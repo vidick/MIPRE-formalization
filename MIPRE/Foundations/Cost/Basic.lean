@@ -108,7 +108,6 @@ depends on it formally, since the final theorem only claims `Computable`.
   `Eval.size_le`, and the scoping lemmas `Eval.append_of_wellScoped` /
   `Eval.of_append_of_wellScoped` (extra environment entries are inert for well-scoped
   programs).
-* `MIPRE.Cost.evalFuel`: an executable evaluator with fuel, sound for `Eval`.
 * `MIPRE.Cost.Halts`, `HaltsWithin`, `TimeBound`.
 
 Blueprint: this file is part of `sec:rr-computability` (efficient computability
@@ -271,10 +270,6 @@ inductive Eval : Env → Prog → Data → ℕ → Prop
 
 namespace Eval
 
-/-- Costs are positive. -/
-theorem pos {env : Env} {p : Prog} {r : Data} {t : ℕ} (h : Eval env p r t) : 0 < t := by
-  cases h <;> first | omega | exact Data.size_pos _
-
 /-- The semantics is deterministic in both result and cost. -/
 theorem deterministic {env : Env} {p : Prog} {r r' : Data} {t t' : ℕ}
     (h : Eval env p r t) (h' : Eval env p r' t') : r = r' ∧ t = t' := by
@@ -424,107 +419,11 @@ theorem of_append_of_wellScoped {env extra : Env} {p : Prog} {r : Data} {t : ℕ
 
 end Eval
 
-/-- Executable evaluator with fuel (one unit of fuel per rule), returning the result and
-its cost. -/
-def evalFuel : ℕ → Env → Prog → Option (Data × ℕ)
-  | 0, _, _ => none
-  | _ + 1, env, .var i => some (env.get i, (env.get i).size + 1)
-  | _ + 1, _, .nil => some (.nil, 1)
-  | _ + 1, _, .const d => some (d, d.size)
-  | f + 1, env, .cons h t =>
-    match evalFuel f env h, evalFuel f env t with
-    | some (a, s), some (b, u) => some (.cons a b, s + u + 1)
-    | _, _ => none
-  | f + 1, env, .elim i n c =>
-    match env.get i with
-    | .nil => (evalFuel f env n).map fun x => (x.1, x.2 + 1)
-    | .cons a b => (evalFuel f (a :: b :: env) c).map fun x => (x.1, x.2 + 1)
-  | f + 1, env, .let_ e b =>
-    match evalFuel f env e with
-    | some (v, s) => (evalFuel f (v :: env) b).map fun x => (x.1, s + x.2 + 1)
-    | none => none
-  | f + 1, env, .loop b =>
-    match evalFuel f env b with
-    | some (.nil, s) => some (.nil, s + 1)
-    | some (.cons .nil r, s) => some (r, s + 1)
-    | some (.cons (.cons _ _) v, s) =>
-      (evalFuel f (v :: env.tail) (.loop b)).map fun x => (x.1, s + x.2 + 1)
-    | none => none
-
-/-- The fuel evaluator is sound for the semantics. -/
-theorem evalFuel_sound : ∀ (f : ℕ) (env : Env) (p : Prog) (r : Data) (t : ℕ),
-    evalFuel f env p = some (r, t) → Eval env p r t := by
-  intro f
-  induction f with
-  | zero => intro env p r t h; simp [evalFuel] at h
-  | succ f ih =>
-    intro env p r t h
-    cases p with
-    | var i =>
-      simp only [evalFuel, Option.some.injEq, Prod.mk.injEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      exact .var env i
-    | nil =>
-      simp only [evalFuel, Option.some.injEq, Prod.mk.injEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      exact .nil env
-    | const d =>
-      simp only [evalFuel, Option.some.injEq, Prod.mk.injEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      exact .const env d
-    | cons h₁ t₁ =>
-      simp only [evalFuel] at h
-      rcases hh : evalFuel f env h₁ with _ | ⟨a, s⟩ <;>
-        rcases ht : evalFuel f env t₁ with _ | ⟨b, u⟩ <;>
-        simp only [hh, ht, Option.some.injEq, Prod.mk.injEq, reduceCtorEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      exact .cons (ih _ _ _ _ hh) (ih _ _ _ _ ht)
-    | elim i n c =>
-      simp only [evalFuel] at h
-      rcases hg : env.get i with _ | ⟨a, b⟩ <;> simp only [hg] at h
-      · rcases hn : evalFuel f env n with _ | ⟨r', t'⟩ <;>
-          simp only [hn, Option.map_some, Option.map_none, Option.some.injEq,
-            Prod.mk.injEq, reduceCtorEq] at h
-        obtain ⟨rfl, rfl⟩ := h
-        exact .elim_nil hg (ih _ _ _ _ hn)
-      · rcases hc : evalFuel f (a :: b :: env) c with _ | ⟨r', t'⟩ <;>
-          simp only [hc, Option.map_some, Option.map_none, Option.some.injEq,
-            Prod.mk.injEq, reduceCtorEq] at h
-        obtain ⟨rfl, rfl⟩ := h
-        exact .elim_cons hg (ih _ _ _ _ hc)
-    | let_ e b =>
-      simp only [evalFuel] at h
-      rcases he : evalFuel f env e with _ | ⟨v, s⟩ <;> simp only [he, reduceCtorEq] at h
-      rcases hb : evalFuel f (v :: env) b with _ | ⟨r', t'⟩ <;>
-        simp only [hb, Option.map_some, Option.map_none, Option.some.injEq,
-          Prod.mk.injEq, reduceCtorEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      exact .let_ (ih _ _ _ _ he) (ih _ _ _ _ hb)
-    | loop b =>
-      simp only [evalFuel] at h
-      rcases hb : evalFuel f env b with _ | ⟨w, s⟩ <;> simp only [hb, reduceCtorEq] at h
-      rcases w with _ | ⟨_ | ⟨x, y⟩, v⟩
-      · simp only [Option.some.injEq, Prod.mk.injEq] at h
-        obtain ⟨rfl, rfl⟩ := h
-        exact .loop_nil (ih _ _ _ _ hb)
-      · simp only [Option.some.injEq, Prod.mk.injEq] at h
-        obtain ⟨rfl, rfl⟩ := h
-        exact .loop_stop (ih _ _ _ _ hb)
-      · rcases hl : evalFuel f (v :: env.tail) (.loop b) with _ | ⟨r', t'⟩ <;>
-          simp only [hl, Option.map_some, Option.map_none, Option.some.injEq,
-            Prod.mk.injEq, reduceCtorEq] at h
-        obtain ⟨rfl, rfl⟩ := h
-        exact .loop_step (ih _ _ _ _ hb) (ih _ _ _ _ hl)
-
 /-- `p` halts on input `x` (run in the environment `[x]`). -/
 def Halts (p : Prog) (x : Data) : Prop := ∃ r t, Eval [x] p r t
 
 /-- `p` halts on `x` within cost `t`. -/
 def HaltsWithin (p : Prog) (x : Data) (t : ℕ) : Prop := ∃ r t', t' ≤ t ∧ Eval [x] p r t'
-
-/-- A (total) time bound for `p` as a function of the input size. This is the notion
-`TIME_𝒮, TIME_𝒟 ≤ ⋯` of blueprint `def:lambda-bounded` specializes. -/
-def TimeBound (p : Prog) (T : ℕ → ℕ) : Prop := ∀ x : Data, HaltsWithin p x (T x.size)
 
 end MIPRE.Cost
 

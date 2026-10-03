@@ -1250,12 +1250,6 @@ section QF
 
 variable {N : Type*} [Fintype N] [DecidableEq N]
 
-theorem dotProduct_star_comm (u w : N → ℂ) : star u ⬝ᵥ w = star (star w ⬝ᵥ u) := by
-  rw [dotProduct, dotProduct, star_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [star_mul']
-  simp [Pi.star_apply, mul_comm]
-
 /-- The quadratic form does not see the adjoint: it is a real part, and the adjoint conjugates. -/
 theorem qform_conjTranspose (v : N → ℂ) (M : Matrix N N ℂ) : qform v (Mᴴ) = qform v M := by
   rw [qform_eq_mat, qform_eq_mat]
@@ -1275,21 +1269,6 @@ section Mass
 variable {N : Type*} [Fintype N] [DecidableEq N] {C : Type*} [Fintype C] [DecidableEq C]
 
 /-! ## A sub-measurement close to a projective measurement -/
-
-/-- **NW19's Fact 4.31.** A family of positive operators summing to at most the identity, which is
-`delta`-close to a projective measurement on a state, carries all but `2 sqrt(delta)` of the mass.
-Two Cauchy--Schwarz steps against the same deviation: one moves from `1` to `sum <M_c P_c>`, the
-other from there to `sum <P_c^2>`, and `P_c^2 <= P_c`. -/
-theorem qform_sum_ge_of_close {v : N → ℂ} (hv : ‖evec v‖ = 1) {M P : C → Matrix N N ℂ}
-    (hM : IsPVM M) (hP0 : ∀ c, (0 : Matrix N N ℂ) ≤ P c)
-    (hPsum : ∑ c, P c ≤ (1 : Matrix N N ℂ))
-    {δ : ℝ} (hclose : ∑ c, snorm v (M c - P c) ^ 2 ≤ δ) :
-    1 - 2 * Real.sqrt δ ≤ ∑ c, qform v (P c) := by
-  simp only [qform_eq_mat]
-  refine (StateModel.mat v).qform_sum_ge_of_close hv hM.toIn
-    (fun c => (StateModel.mat v).π_nonneg (hP0 c)) ?_ hclose
-  have h := OrderHomClass.mono (StateModel.mat v).π hPsum
-  rwa [map_sum, map_one] at h
 
 end Mass
 
@@ -1322,9 +1301,6 @@ variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq
 theorem aOp_zero : (aOp (0 : Matrix dA dA ℂ) : Matrix (dA × dB) (dA × dB) ℂ) = 0 := by
   rw [aOp, Matrix.zero_kronecker]
 
-theorem bOp_zero : (bOp (0 : Matrix dB dB ℂ) : Matrix (dA × dB) (dA × dB) ℂ) = 0 := by
-  rw [bOp, Matrix.kronecker_zero]
-
 /-- Bob's squared state norm is the second player's in the tensor-product model. -/
 theorem snorm_bOp_sq_eq_tensor (ψ : dA × dB → ℂ) (Y : Matrix dB dB ℂ) :
     snorm ψ (bOp Y : Matrix (dA × dB) _ ℂ) ^ 2 = (BipartiteModel.tensor ψ).swap.stateSqNorm Y :=
@@ -1335,20 +1311,6 @@ theorem sum_aOp_conjTranspose_mul_self_of_isPVM {ι : Type*} [Fintype ι]
     ∑ i, ((aOp (P i) : Matrix (dA × dB) (dA × dB) ℂ))ᴴ * aOp (P i) = 1 := by
   classical
   exact (h.toIn.map (BipartiteModel.aOpStarAlgHom (dB := dB))).sum_star_mul_self
-
-theorem bornProb_sub_right (ψ : dA × dB → ℂ) (X : Matrix dA dA ℂ) (M N : Matrix dB dB ℂ) :
-    bornProb ψ X (M - N) = bornProb ψ X M - bornProb ψ X N := by
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).bornProb_sub_right X M N
-
-/-- A product of two commuting projections is a projection, so its squared state norm is its
-quadratic form --- a Born probability. -/
-theorem snorm_sq_prod_proj (ψ : dA × dB → ℂ) {P : Matrix dA dA ℂ} {Q : Matrix dB dB ℂ}
-    (hPsa : Pᴴ = P) (hPi : P * P = P) (hQsa : Qᴴ = Q) (hQi : Q * Q = Q) :
-    snorm ψ ((aOp P : Matrix (dA × dB) _ ℂ) * bOp Q) ^ 2
-      = bornProb ψ P Q := by
-  rw [← BipartiteModel.snorm_tensor, bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).snorm_sq_prod_proj ⟨hPi, hPsa⟩ ⟨hQi, hQsa⟩
 
 theorem bornProb_sum_left {ι : Type*} (ψ : dA × dB → ℂ) (s : Finset ι)
     (A : ι → Matrix dA dA ℂ) (B : Matrix dB dB ℂ) :
@@ -1713,7 +1675,6 @@ theorem xSqNorm_extVec2_aOp (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc) {P
       rw [bornProb_extVec2, compress_aOp, compress_aOp]]
 
 end Transport
-
 
 /-! ## The pasting lemma
 

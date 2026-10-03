@@ -158,12 +158,6 @@ theorem isPositive_toCLM_of_isStarProjection {P : Matrix ι ι (H →L[ℂ] H)}
     (hP : IsStarProjection P) : (toCLM P).IsPositive :=
   ContinuousLinearMap.IsPositive.of_isStarProjection (isStarProjection_toCLM hP)
 
-omit [CompleteSpace H] in
-/-- The diagonal action of an idempotent operator is idempotent. -/
-theorem isIdempotentElem_toCLM_diagonal {c : H →L[ℂ] H} (hc : IsIdempotentElem c) :
-    IsIdempotentElem (toCLM (diagonal fun _ : ι => c)) := by
-  rw [IsIdempotentElem, ← toCLM_mul, diagonal_mul_diagonal, hc.eq]
-
 /-- The diagonal action `c ⊗ 1` of a positive operator is positive. -/
 theorem isPositive_toCLM_diagonal {c : H →L[ℂ] H} (hc : c.IsPositive) :
     (toCLM (diagonal fun _ : ι => c)).IsPositive := by

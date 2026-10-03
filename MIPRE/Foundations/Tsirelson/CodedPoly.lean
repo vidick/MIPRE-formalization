@@ -26,8 +26,7 @@ the words and conjugates the coefficients (the letters are self-adjoint), and `c
 `cword w`, `cletter l` are the one-monomial polynomials.
 
 **Merged coefficients and dominance.** The coefficient of a word `w` in `l` is the sum of the
-coefficients of the monomials of `l` with word `w` (`coeffRaw`); its complex value is the sum of
-the complex values of those coefficients (`toC_coeffRaw`, `toC_coeffRaw_eq_sum_ite`). The
+coefficients of the monomials of `l` with word `w` (`coeffRaw`). The
 distinct words of `l` are `words l = (l.map Prod.fst).dedup`, and the off-diagonal mass
 `offMass l` is the sum, over the nonempty distinct words, of the taxicab norm `taxi` of the merged
 coefficient, where `taxi z = |Re z| + |Im z|` is computed on naturals (`taxi_eq`). A coded
@@ -62,8 +61,8 @@ enumerable.
 ## Main declarations
 
 * `Letter`, `CPoly`, `cadd`, `cneg`, `cscale`, `cmul`, `cstar`, `cconst`, `cword`, `cletter`;
-* `gneg`, `ptaxi`, `taxi`, `taxi_eq`, `taxi_congr`;
-* `coeffRaw`, `toC_coeffRaw`, `toC_coeffRaw_eq_sum_ite`, `coeffRaw_eq_zero_of_notMem`, and the
+* `gneg`, `ptaxi`, `taxi`, `taxi_eq`;
+* `coeffRaw`, `coeffRaw_eq_zero_of_notMem`, and the
   coefficients of `cadd`, `cneg`, `cscale`, `cstar`;
 * `words`, `dedup_eq_foldr`, `offMass`, `offMass_eq_sum`, `offMass_eq_sum_of_subset`,
   `IsDominant`, `isDominant_iff`, `isDominant_iff_sum`;
@@ -112,11 +111,6 @@ theorem taxi_eq (z : GInt) : (taxi z : ℝ) = |(GInt.toC z).re| + |(GInt.toC z).
 
 /-- The coded zero has taxicab norm `0`. -/
 @[simp] theorem taxi_zero : taxi GInt.zero = 0 := rfl
-
-/-- The taxicab norm depends only on the complex number denoted. -/
-theorem taxi_congr {z z' : GInt} (h : GInt.toC z = GInt.toC z') : taxi z = taxi z' := by
-  have h' : (taxi z : ℝ) = taxi z' := by rw [taxi_eq, taxi_eq, h]
-  exact_mod_cast h'
 
 /-! ## Coded polynomials -/
 
@@ -336,22 +330,6 @@ theorem coeffRaw_cons (m : List Letter × GInt) (l : CPoly) (w : List Letter) :
     coeffRaw (m :: l) w = if m.1 = w then GInt.add m.2 (coeffRaw l w) else coeffRaw l w := by
   by_cases h : m.1 = w <;> simp [coeffRaw, h, GInt.sum]
 
-/-- The complex value of a merged coefficient is the sum of the values of the coefficients of
-the matching monomials. -/
-theorem toC_coeffRaw (l : CPoly) (w : List Letter) :
-    GInt.toC (coeffRaw l w) = ((l.filter fun m => m.1 = w).map fun m => GInt.toC m.2).sum := by
-  rw [coeffRaw, GInt.toC_sum, List.map_map]
-  rfl
-
-/-- The complex value of a merged coefficient, as a sum over all monomials. -/
-theorem toC_coeffRaw_eq_sum_ite (l : CPoly) (w : List Letter) :
-    GInt.toC (coeffRaw l w) = (l.map fun m => if m.1 = w then GInt.toC m.2 else 0).sum := by
-  induction l with
-  | nil => simp [coeffRaw_nil]
-  | cons m l ih =>
-    rw [coeffRaw_cons, List.map_cons, List.sum_cons, ← ih]
-    split_ifs <;> simp
-
 /-- The merged coefficient of a word that does not occur in `l` is zero. -/
 theorem coeffRaw_eq_zero_of_notMem {l : CPoly} {w : List Letter} (h : w ∉ l.map Prod.fst) :
     coeffRaw l w = GInt.zero := by
@@ -361,53 +339,6 @@ theorem coeffRaw_eq_zero_of_notMem {l : CPoly} {w : List Letter} (h : w ∉ l.ma
     exact h (List.mem_map.mpr ⟨m, hm, of_decide_eq_true hmw⟩)
   rw [coeffRaw, hf]
   rfl
-
-/-- The complex value of a merged coefficient is additive under concatenation. -/
-theorem toC_coeffRaw_append (p q : CPoly) (w : List Letter) :
-    GInt.toC (coeffRaw (p ++ q) w) = GInt.toC (coeffRaw p w) + GInt.toC (coeffRaw q w) := by
-  rw [toC_coeffRaw_eq_sum_ite, toC_coeffRaw_eq_sum_ite, toC_coeffRaw_eq_sum_ite, List.map_append,
-    List.sum_append]
-
-/-- The complex value of a merged coefficient of a coded sum. -/
-theorem toC_coeffRaw_cadd (p q : CPoly) (w : List Letter) :
-    GInt.toC (coeffRaw (cadd p q) w) = GInt.toC (coeffRaw p w) + GInt.toC (coeffRaw q w) :=
-  toC_coeffRaw_append p q w
-
-/-- The complex value of a merged coefficient of a coded negation. -/
-theorem toC_coeffRaw_cneg (p : CPoly) (w : List Letter) :
-    GInt.toC (coeffRaw (cneg p) w) = -GInt.toC (coeffRaw p w) := by
-  induction p with
-  | nil => simp [cneg, coeffRaw_nil]
-  | cons m p ih =>
-    simp only [cneg, List.map_cons] at ih ⊢
-    rw [coeffRaw_cons, coeffRaw_cons]
-    split_ifs <;> simp [ih]
-    ring
-
-/-- The complex value of a merged coefficient of a coded multiple. -/
-theorem toC_coeffRaw_cscale (c : GInt) (p : CPoly) (w : List Letter) :
-    GInt.toC (coeffRaw (cscale c p) w) = GInt.toC c * GInt.toC (coeffRaw p w) := by
-  induction p with
-  | nil => simp [cscale, coeffRaw_nil]
-  | cons m p ih =>
-    simp only [cscale, List.map_cons] at ih ⊢
-    rw [coeffRaw_cons, coeffRaw_cons]
-    split_ifs <;> simp [ih]
-    ring
-
-/-- The merged coefficient of `w` in `p⋆` is the conjugate of that of `w.reverse` in `p`. -/
-theorem toC_coeffRaw_cstar (p : CPoly) (w : List Letter) :
-    GInt.toC (coeffRaw (cstar p) w) = star (GInt.toC (coeffRaw p w.reverse)) := by
-  induction p with
-  | nil => simp [cstar, coeffRaw_nil]
-  | cons m p ih =>
-    simp only [cstar, List.map_cons] at ih ⊢
-    rw [coeffRaw_cons, coeffRaw_cons]
-    have hiff : m.1.reverse = w ↔ m.1 = w.reverse := List.reverse_eq_iff
-    by_cases h : m.1 = w.reverse
-    · rw [if_pos (hiff.mpr h), if_pos h]
-      simp [ih]
-    · rw [if_neg (mt hiff.mp h), if_neg h, ih]
 
 /-! ## Distinct words and dominance -/
 
@@ -452,11 +383,6 @@ theorem offMass_eq_sum_of_subset (l : CPoly) {S : Finset (List Letter)}
     have hw' : w ∉ l.map Prod.fst := fun h =>
       hw (Finset.mem_erase.mpr ⟨(Finset.mem_erase.mp hwS).1, List.mem_toFinset.mpr h⟩)
     rw [coeffRaw_eq_zero_of_notMem hw', taxi_zero]
-
-/-- The real part of a merged coefficient, read as an integer. -/
-theorem toInt_coeffRaw_fst (l : CPoly) (w : List Letter) :
-    (((coeffRaw l w).1.toInt : ℤ) : ℝ) = (GInt.toC (coeffRaw l w)).re :=
-  (GInt.re_toC _).symm
 
 /-- Dominance in real numbers. -/
 theorem isDominant_iff (l : CPoly) :
@@ -614,9 +540,6 @@ theorem primrec_ptaxi : Primrec ptaxi :=
 theorem primrec_taxi : Primrec taxi :=
   nat_add.comp (primrec_ptaxi.comp fst) (primrec_ptaxi.comp snd)
 
-/-- The sum of coded polynomials is primitive recursive. -/
-theorem primrec_cadd : Primrec₂ cadd := list_append
-
 /-- The negation of coded polynomials is primitive recursive. -/
 theorem primrec_cneg : Primrec cneg :=
   list_map Primrec.id ((fst.comp snd).pair (primrec_gneg.comp (snd.comp snd))).to₂
@@ -639,10 +562,6 @@ theorem primrec_cmul : Primrec₂ cmul := by
 theorem primrec_cstar : Primrec cstar :=
   list_map Primrec.id
     ((list_reverse.comp (fst.comp snd)).pair (GInt.primrec_conj.comp (snd.comp snd))).to₂
-
-/-- The constant coded polynomial is primitive recursive. -/
-theorem primrec_cconst : Primrec cconst :=
-  list_cons.comp ((const []).pair Primrec.id) (const [])
 
 /-- The monomial of a word is primitive recursive. -/
 theorem primrec_cword : Primrec cword :=

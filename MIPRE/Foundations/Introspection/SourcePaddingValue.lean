@@ -160,16 +160,6 @@ theorem exists_projStrat_value_ge
     ∃ R : Ψ.ProjStrat (Honest.sourceGame L D), S.value ≤ R.value :=
   ⟨restrictStrategy e L D S, (restrictStrategy_value e L D S).ge⟩
 
-/-- Filling the spectator coordinates inside the existing first factor gives the same source
-game (`sourceGame_depthFamily`), so its strategies restrict without loss too: the model form of
-`quantumValue_depthFamily_le`. -/
-theorem exists_projStrat_depthFamily_value_ge (hℓ : 0 < ℓ) (hL : ∀ w, (L w).SupportedOn univ)
-    (S : Ψ.ProjStrat (Honest.sourceGame (depthFamily e L) (decider e D))) :
-    ∃ R : Ψ.ProjStrat (Honest.sourceGame L D), S.value ≤ R.value := by
-  revert S
-  rw [sourceGame_depthFamily e L D hℓ hL]
-  exact exists_projStrat_value_ge e L D
-
 end Restrict
 
 section Value

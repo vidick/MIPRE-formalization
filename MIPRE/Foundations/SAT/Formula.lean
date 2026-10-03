@@ -344,8 +344,6 @@ def refCount (gs : List Gate) (u : ℕ) : ℕ := (gs.map fun g => g.refs.count u
 @[simp] theorem refCount_singleton (g : Gate) (u : ℕ) : refCount [g] u = g.refs.count u := by
   simp [refCount]
 
-theorem Circuit.fanout_eq_refCount (C : Circuit) (u : ℕ) : C.fanout u = refCount C.gates u := rfl
-
 /-- A gate list whose references at position `k` are in `[base, base + k)` references no `u`
 outside `[base, base + length - 1)`. -/
 theorem refCount_eq_zero_of_forall (gs : List Gate) (u : ℕ)
@@ -428,9 +426,6 @@ theorem refCount_flattenAt_le (base : ℕ) : ∀ (f : Fml) (u : ℕ), refCount (
     · rw [hf0 (by omega)]; subst h1; simp
     · have : List.count u [base + f.size - 1] = 0 := by simp [List.count_cons, Ne.symm h1]
       rw [this]; omega
-
-theorem input_mem_flattenAt (base : ℕ) : ∀ (f : Fml) (i : ℕ), Gate.input i ∈ f.flattenAt base →
-    ∃ j, inp j = f ∨ True := fun _ _ _ => ⟨0, Or.inr trivial⟩
 
 theorem inputsLt_of_mem_flattenAt {n : ℕ} (base : ℕ) :
     ∀ (f : Fml), f.InputsLt n → ∀ i, Gate.input i ∈ f.flattenAt base → i < n

@@ -78,30 +78,6 @@ def matrix (U : ClockedUniversalMachine) : PolyTimeFun Context (List BitStr) :=
     ((identityBitsProg.comp width).pair (PolyTimeFun.id _))
   transposeBitsProg.comp (width.pair columns)
 
-set_option backward.isDefEq.respectTransparency false in
-theorem matrix_correct (U : ClockedUniversalMachine) (ctx : Context) {n : ℕ}
-    (L : (Fin n → CL.𝔽₂) →ₗ[CL.𝔽₂] (Fin n → CL.𝔽₂))
-    (hn : (inputPrefix ctx).length = n)
-    (h : ∀ x : Fin n → CL.𝔽₂, linear U (vectorBits x, ctx) = vectorBits (L x)) :
-    matrix U ctx = matrixBits (LinearMap.toMatrix' L) := by
-  change transposeBits (unary (inputPrefix ctx).length).length
-    ((identityBits (unary (inputPrefix ctx).length).length).map
-      (fun v => linear U (v, ctx))) = _
-  simp only [length_unary]
-  rw [hn, identityBits_eq_matrixBits]
-  have hc : (matrixBits (1 : Matrix (Fin n) (Fin n) CL.𝔽₂)).map
-      (fun v => linear U (v, ctx)) = matrixBits (LinearMap.toMatrix' L).transpose := by
-    simp only [matrixBits, List.map_ofFn]
-    apply congrArg List.ofFn
-    funext j
-    simp only [Function.comp_apply]
-    have hi : (1 : Matrix (Fin n) (Fin n) CL.𝔽₂) j = Pi.single j 1 := by
-      funext i
-      simp [Matrix.one_apply, Pi.single_apply, eq_comm]
-    rw [hi, h]
-    congr 1
-  rw [hc, transposeBits_matrixBits, Matrix.transpose_transpose]
-
 end MIPRE.Introspection.AuxiliarySource
 end
 

@@ -94,10 +94,6 @@ theorem powK (hX : 1 ≤ X) : Dom W X K 1 0 1 (X ^ K) := by
   simp only [Dom, one_mul, pow_zero]
   exact Nat.pow_le_pow_right hX (by omega)
 
-/-- `X^{K+1}`. -/
-theorem powK1 : Dom W X K 1 0 1 (X ^ (K + 1)) := by
-  simp [Dom]
-
 end Dom
 
 end MIPRE.Repeat

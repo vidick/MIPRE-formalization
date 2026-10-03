@@ -93,12 +93,6 @@ def POVM.reindex (e : d ≃ d') (M : POVM A d) : POVM A d' where
 @[simp] theorem POVM.reindex_mats (e : d ≃ d') (M : POVM A d) (a : A) :
     ((M.reindex e).mats a).val = Matrix.reindex e e (M.mats a).val := rfl
 
-/-- Reindexing there and back is the identity. -/
-theorem POVM.reindex_reindex_symm (e : d ≃ d') (M : POVM A d) :
-    (M.reindex e).reindex e.symm = M :=
-  POVM.ext' fun a => by
-    rw [POVM.reindex_mats, POVM.reindex_mats, ← Matrix.reindex_symm, Equiv.symm_apply_apply]
-
 /-- Reindexing back and forth is the identity, in the other order. -/
 theorem POVM.reindex_symm_reindex (e : d ≃ d') (M : POVM A d') :
     (M.reindex e.symm).reindex e = M :=
@@ -147,9 +141,6 @@ variable {dA dB dA' dB' : Type*}
 /-- Reindex a bipartite state along equivalences of the two registers. -/
 def reindexVec (eA : dA ≃ dA') (eB : dB ≃ dB') (ψ : dA × dB → ℂ) : dA' × dB' → ℂ :=
   ψ ∘ (Equiv.prodCongr eA eB).symm
-
-theorem reindexVec_apply (eA : dA ≃ dA') (eB : dB ≃ dB') (ψ : dA × dB → ℂ)
-    (p : dA' × dB') : reindexVec eA eB ψ p = ψ (eA.symm p.1, eB.symm p.2) := rfl
 
 /-- The Kronecker product of two reindexed matrices is the reindexing of the Kronecker product
 along the product equivalence. -/
@@ -258,14 +249,6 @@ noncomputable def TensorProductStrategy.ofPVM (G : Game X Y A B) (ψ : dA × dB 
     (hB : ∀ y, IsPVM fun b => ((MB y).mats b).val) : TensorProductStrategy G :=
   TensorProductStrategy.ofProjective G ψ hψ (ProjectiveMeasurement.ofIsPVM MA hA)
     (ProjectiveMeasurement.ofIsPVM MB hB)
-
-theorem TensorProductStrategy.value_ofPVM (G : Game X Y A B) (ψ : dA × dB → ℂ)
-    (hψ : star ψ ⬝ᵥ ψ = 1) (MA : X → POVM A dA) (MB : Y → POVM B dB)
-    (hA : ∀ x, IsPVM fun a => ((MA x).mats a).val)
-    (hB : ∀ y, IsPVM fun b => ((MB y).mats b).val) :
-    (TensorProductStrategy.ofPVM G ψ hψ MA MB hA hB).value = povmValue G ψ MA MB := by
-  rw [TensorProductStrategy.ofPVM, TensorProductStrategy.value_ofProjective]
-  simp only [ProjectiveMeasurement.toPOVM_ofIsPVM]
 
 end Strategy
 

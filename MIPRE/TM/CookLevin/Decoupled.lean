@@ -28,10 +28,6 @@ open Interp SAT Cost Fml
 indices, and its three signs after the two answer signs. -/
 def rho (ℓ r : ℕ) (k : ℕ) : ℕ := if k < 3 * r then k + 2 * ℓ else k + 2 * ℓ + 2
 
-theorem rho_lt {ℓ r k : ℕ} (h : k < 3 * r + 3) : rho ℓ r k < 2 * ℓ + 3 * r + 5 := by
-  unfold rho
-  split <;> omega
-
 /-- The 3-clause of the last three literals of a decoupled clause. -/
 def lastThree {ℓ r : ℕ}
     (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ)) (Fin (2 ^ r)) (Fin (2 ^ r)) (Fin (2 ^ r))) :
@@ -47,11 +43,6 @@ theorem getD_append_right {α : Type*} (pre u : List α) (d : α) (t : ℕ) :
     (pre ++ u).getD (pre.length + t) d = u.getD t d := by
   rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD,
     List.getElem?_append_right (Nat.le_add_right _ _), Nat.add_sub_cancel_left]
-
-theorem clauseInput_eq' (r : ℕ) (c : Clause3 (Fin (2 ^ r))) :
-    clauseInput r c = (bitsOfNat r c.l₁.var ++ bitsOfNat r c.l₂.var ++ bitsOfNat r c.l₃.var) ++
-      [c.l₁.pos, c.l₂.pos, c.l₃.pos] := by
-  rw [clauseInput]
 
 theorem drop_two' {ℓ r : ℕ}
     (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ)) (Fin (2 ^ r)) (Fin (2 ^ r)) (Fin (2 ^ r))) :
@@ -201,10 +192,6 @@ theorem descFml5_inputsLt (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
 theorem descCirc5_wellFormed (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)
     (hℓr : ℓ ≤ mOf e Gc) : (descCirc5 ℓ T e D n x y).WellFormed :=
   Fml.toCircuit_wellFormed _ (descFml5_inputsLt ℓ T e D n x y hℓr)
-
-theorem descCirc5_size (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr) :
-    (descCirc5 ℓ T e D n x y).size = (descFml5 ℓ T e D n x y).size :=
-  Fml.toCircuit_size _ _
 
 /-- **What the decoupled describer accepts**: a clause is accepted exactly when the 3-clause
 of its last three literals is accepted by the 3SAT describer, or the clause satisfies one of

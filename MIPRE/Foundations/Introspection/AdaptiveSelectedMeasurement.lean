@@ -125,22 +125,6 @@ theorem canonicalizeIntro_adaptive_selected (P : CL.CLFun F ι ℓ)
     ((MA (QuestionType.introspect w, 0)).map TypedEstimates.introspectPair) hform hsupport
   rw [← hd, POVMIn.map_map]
 
-omit [StarModule ℂ 𝒜] in
-/-- Normalization preserves the option-valued prefix form used to derive
-the analytic stage bounds from the current actual game. -/
-theorem canonicalizeIntro_prefix_form (P : CL.CLFun F ι ℓ) (k : ℕ)
-    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜)) (w : Bool)
-    (M : (y : ι → F) → Option ((ι → F) × A) →
-      Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜)
-    (hform : ∀ a, ((MA (QuestionType.introspect w, 0)).map
-      TypedEstimates.introspectPair).op a = ∑ y, prefixResidualOp P k y (M y a))
-    (a : Option ((ι → F) × A)) :
-    ((canonicalizeIntro MA w (QuestionType.introspect w, 0)).map
-      TypedEstimates.introspectPair).op a = ∑ y, prefixResidualOp P k y (M y a) := by
-  rw [canonicalizeIntro_recover]
-  exact hform a
-
 /-- Canonicalization at the selected question is overwritten by the actual
 replacement. All other old questions are retained identically. -/
 theorem registeredReplacement_canonicalizeIntro

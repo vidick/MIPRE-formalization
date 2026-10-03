@@ -45,7 +45,7 @@ its position among the bit strings of length at most `T`, the enumeration `answe
 predicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly
 what is in it. It takes the two question indexings `fA`, `fB` as parameters, because the
 tabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case
-`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing
+`fA = fB = bitsToIdx` and is the same list definitionally, so nothing
 downstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the
 index of a question determines it, among the strings of a fixed length — and `tagEquiv` is the
 tagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by
@@ -293,7 +293,6 @@ theorem totalWeight_weightList (nX nA s : ℕ) (fA fB : BitStr → ℕ)
   simp only [questionWeight_weightList]
   rw [sum_filter_length fA fB _ hA hB, Data.length_bitStrsOfLen]
 
-
 /-- **Counting over `𝔽₂^s` by enumerating bit strings.** The bit strings of length `s` are the
 vectors of `𝔽₂^s`, so a count over one is a count over the other — which is what turns the
 tabulation's weight list into the numerator of `CL.clDist`. -/
@@ -454,7 +453,6 @@ theorem mem_accList_iff {s T : ℕ} {acc? : BitStr → BitStr → BitStr → Bit
   · rintro ⟨x, hx, y, hy, a, ha, b, hb, hc, rfl, rfl, rfl, rfl⟩
     exact ⟨x, hx, y, hy, a, ha, b, hb, by rw [if_pos hc]⟩
 
-
 /-! ## The acceptance table is primitive recursive
 
 Written as four nested `Primrec.list_flatMap` the proof diverges at `whnf`: each body carries
@@ -495,7 +493,6 @@ theorem primrec_tuples : Primrec₂ tuples := by
     Primrec.list_flatMap (Data.primrec_bitStrsOfLen.comp (Primrec.fst.comp Primrec.fst)) h3.to₂
   exact (Primrec.list_flatMap (Data.primrec_bitStrsOfLen.comp Primrec.fst) h2.to₂).to₂
 
-
 def accListW (s T : ℕ) (fA fB : BitStr → ℕ)
     (acc? : BitStr → BitStr → BitStr → BitStr → Bool) : List (ℕ × ℕ × ℕ × ℕ) :=
   (Data.bitStrsOfLen s).flatMap fun x =>
@@ -505,9 +502,6 @@ def accListW (s T : ℕ) (fA fB : BitStr → ℕ)
           if acc? x y a b then
             some (fA x, fB y, (Data.bitStrsLE T).idxOf a, (Data.bitStrsLE T).idxOf b)
           else none
-
-theorem accList_eq_accListW (s T : ℕ) (acc? : BitStr → BitStr → BitStr → BitStr → Bool) :
-    accList s T acc? = accListW s T bitsToIdx bitsToIdx acc? := rfl
 
 theorem mem_accListW_iff {s T : ℕ} {fA fB : BitStr → ℕ}
     {acc? : BitStr → BitStr → BitStr → BitStr → Bool} {i j k l : ℕ} :
@@ -561,16 +555,6 @@ theorem primrec_accListW {α : Type*} [Primcodable α] {s T : α → ℕ} {fA fB
               (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))) hbl))))
   exact (Primrec.listFilterMap (primrec_tuples.comp hs hT) hbody).of_eq fun a =>
     (accListW_eq_filterMap (s a) (T a) fA fB (acc? a)).symm
-
-/-- The original `primrec_accList` is the case `fA = fB = bitsToIdx`, so generalizing costs
-nothing downstream. -/
-theorem primrec_accList_of_W {α : Type*} [Primcodable α] {s T : α → ℕ}
-    {acc? : α → BitStr → BitStr → BitStr → BitStr → Bool}
-    (hs : Primrec s) (hT : Primrec T)
-    (hacc : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
-      acc? q.1 q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2) :
-    Primrec fun a => Verifier.accList (s a) (T a) (acc? a) :=
-  primrec_accListW hs hT primrec_bitsToIdx primrec_bitsToIdx hacc
 
 /-- Prepending a fixed tag bit is primitive recursive. -/
 theorem primrec_tagIdxOf (b : Bool) : Primrec fun z : BitStr => bitsToIdx (b :: z) :=

@@ -183,9 +183,6 @@ theorem F_apply (S' M : Prog) (lam : ℕ) (d : Prog) :
 point of `F`. -/
 noncomputable def dec (S' M : Prog) (lam : ℕ) : Prog := kleeneFix U (F G U UT S' M lam)
 
-theorem dec_wellScoped (S' M : Prog) (lam : ℕ) : (dec G U UT S' M lam).WellScoped 1 :=
-  kleeneFix_wellScoped U _
-
 /-- **The verifier `𝒱^halt`** of the machine `M` at the parameter `λ`. -/
 noncomputable def Vhalt (S' M : Prog) (lam : ℕ) : Verifier 7 :=
   Verifier.ofSamplerDecider U (G.sampler lam) (dec G U UT S' M lam)

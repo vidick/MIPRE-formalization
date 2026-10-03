@@ -34,34 +34,6 @@ open Cost Cost.PolyTimeFun CL CL.Detyping.Program Pipeline SAT Pcp StageProg Par
 
 /-! ## Sizes -/
 
-theorem size_treeHead_le (d : Data) : (treeHead d).size ≤ d.size :=
-  ProductSampler.size_treeHead_le d
-
-theorem size_treeTail_le (d : Data) : (treeTail d).size ≤ d.size :=
-  ProductSampler.size_treeTail_le d
-
-theorem size_tails_le (k : ℕ) (d : Data) : (tails k d).size ≤ d.size := by
-  induction k generalizing d with
-  | zero => exact le_rfl
-  | succ k ih =>
-    simp only [tails, comp_apply]
-    exact (ih _).trans (size_treeTail_le d)
-
-/-- A marginal query's oracle half is no longer than the question field it is read from. -/
-theorem length_oBits_le (j i : ℕ) (X : Data) : (oBits j i X).length ≤ (inp j i X).size := by
-  simp only [oBits, comp_apply, pair_apply, leftBP_apply, qBits, List.length_take]
-  exact (min_le_right _ _).trans (ProductSampler.length_readBits_le _)
-
-/-- A question field of the input is part of the input. -/
-theorem size_inp_le (j i : ℕ) (hi : 1 ≤ i) (r : Data) (n : ℕ) (d : Data)
-    (hX : tails j r = .cons (treeHead (tails j r)) (.cons (encode n) d)) :
-    (inp j i r).size ≤ d.size := by
-  simp only [inp, comp_apply]
-  rw [hX, treeTail_cons]
-  obtain ⟨i', rfl⟩ : ∃ i', i = i' + 1 := ⟨i - 1, by omega⟩
-  rw [tails_cons]
-  exact (size_treeHead_le _).trans (size_tails_le i' d)
-
 /-- **A marginal query is linear in the input.** -/
 theorem size_margQuery_le (ℓ : ℕ) (w : Player) (ob : BitStr) (d : Data) (hob : ob.length ≤ d.size) :
     (encode ((1 : ℕ), w, ℓ + 1, ob, ([] : BitStr)) : Data).size ≤ 4 * d.size + 4 * ℓ + 40 := by

@@ -80,11 +80,6 @@ theorem axisDirectionProg_correct (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj : j ≤
   simp only [axisDirectionProg, comp_apply, pair_apply, fst_apply, snd_apply,
     selectorProg_correct (shoupBinField k hk) j hj, unitDirectionProg_correct k hk]
 
-theorem axisDirectionProg_runs (input : (Unary × Unary × Unary) × BitStr) :
-    ∃ t ≤ axisDirectionProg.timeBound.eval (esize input),
-      axisDirectionProg.code.Runs (encode input) (encode (axisDirectionProg input)) t :=
-  axisDirectionProg.computes input
-
 end MIPRE.Introspection.FieldQuestionProgram
 end
 

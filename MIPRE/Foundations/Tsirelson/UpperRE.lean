@@ -204,10 +204,6 @@ def interp (nX nA : ℕ) (l : CPoly) : NCPoly (FinGen nX nA) :=
 theorem interp_append (p q : CPoly) : interp nX nA (p ++ q) = interp nX nA p + interp nX nA q := by
   simp [interp]
 
-/-- The decoding of a coded sum. -/
-theorem interp_cadd (p q : CPoly) : interp nX nA (cadd p q) = interp nX nA p + interp nX nA q :=
-  interp_append p q
-
 /-- The decoding of a coded negation. -/
 theorem interp_cneg (p : CPoly) : interp nX nA (cneg p) = -interp nX nA p := by
   induction p with

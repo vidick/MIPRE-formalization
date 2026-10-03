@@ -76,12 +76,6 @@ def SynchronousGame.repeat [DecidableEq A] (G : SynchronousGame X A) (n : ℕ) :
     rw [h i] at hfalse
     exact absurd hfalse (by simp)
 
-/-- The repetition of a synchronous game, viewed as a game, is the repetition of the
-underlying game. -/
-theorem SynchronousGame.repeat_toGame [DecidableEq A] (G : SynchronousGame X A) (n : ℕ) :
-    (G.repeat n).toGame = G.toGame.repeat n :=
-  rfl
-
 end MIPRE
 
 end

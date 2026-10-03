@@ -225,13 +225,6 @@ theorem stateEq_of_decode {F F' : Fields} {t q} (h : decodeVar e G F = some (.st
   obtain ⟨-, h1', h2'⟩ := (decodeVar_state_iff e G F' t q).mp h'
   exact ⟨by omega, by omega⟩
 
-theorem decodeVar_emitOne_congr {F F' : Fields} (h : IsEmitOne e F) (h' : IsEmitOne e F')
-    (heq : F.t = F'.t) : decodeVar e G F = decodeVar e G F' := by
-  obtain ⟨t, hd⟩ := exists_emitOne e G h
-  obtain ⟨-, h1⟩ := (decodeVar_emitOne_iff e G F t).mp hd
-  rw [hd, eq_comm, decodeVar_emitOne_iff]
-  exact ⟨h', heq ▸ h1⟩
-
 theorem decodeVar_emitBad_congr {F F' : Fields} (h : IsEmitBad e F) (h' : IsEmitBad e F')
     (heq : F.t = F'.t) : decodeVar e G F = decodeVar e G F' := by
   obtain ⟨t, hd⟩ := exists_emitBad e G h
@@ -261,7 +254,6 @@ theorem auxEq_of_decode {F F' : Fields} {t js g} (h : decodeVar e G F = some (.a
   obtain ⟨d, hd⟩ := tapeOfCode_of_lt k.isLt
   have hk : k = ⟨tapeCode d, tapeCode_lt d⟩ := by ext; simp [tapeOfCode_eq_some hd]
   rw [hk, h2 d, h2' d]
-
 
 theorem symCode_inj {v v' : CellVal Sym} : symCode v = symCode v' ↔ v = v' :=
   ⟨fun h => by
@@ -763,7 +755,6 @@ theorem freePred_iff (c : Cand) :
   rw [exists_mem_union, exists_mem_union, exists_mem_union, exists_mem_union, exists_mem_union,
     ← freeBdry_iff, ← freeOther_iff, ← freeTwo_iff, ← freeOneOf_iff, ← freeNand_iff, ← freeBlank_iff]
   tauto
-
 
 /-! ## The boundary family -/
 

@@ -51,12 +51,6 @@ theorem growingClock_size (k lam : ℕ) :
     esize (growingClock k lam).prog = esize (uniformProg k) + esize lam + 35 :=
   hardcode_size _ _
 
-theorem growingClock_size_le (k lam : ℕ) :
-    esize (growingClock k lam).prog ≤ esize (uniformProg k) + 4 * Nat.size lam + 36 := by
-  rw [growingClock_size]
-  have := esize_nat_le lam
-  omega
-
 /-- The actual uniform compiler for the parameterized clocks. -/
 def growingClockCompiler (k : ℕ) : PolyTimeFun ℕ Prog :=
   (smn ℕ).comp ((const (uniformProg k)).pair (PolyTimeFun.id ℕ))

@@ -163,18 +163,9 @@ theorem coeff_single_apply (w v : FreeMonoid G) (c : ℂ) [Decidable (w = v)] :
 @[simp] theorem single_zero (w : FreeMonoid G) : single w (0 : ℂ) = 0 :=
   MonoidAlgebra.single_zero w
 
-/-- `single w` is additive. -/
-theorem single_add (w : FreeMonoid G) (c c' : ℂ) : single w (c + c') = single w c + single w c' :=
-  MonoidAlgebra.single_add w c c'
-
 /-- `single w` commutes with negation. -/
 theorem single_neg (w : FreeMonoid G) (c : ℂ) : single w (-c) = -single w c := by
   ext v; simp [Finsupp.single_neg]
-
-/-- `single w` commutes with subtraction. -/
-theorem single_sub (w : FreeMonoid G) (c c' : ℂ) :
-    single w (c - c') = single w c - single w c' := by
-  rw [sub_eq_add_neg, single_add, single_neg, ← sub_eq_add_neg]
 
 /-- A complex multiple of a monomial. -/
 @[simp] theorem smul_single (c' : ℂ) (w : FreeMonoid G) (c : ℂ) :
@@ -202,9 +193,6 @@ theorem coeff_mul [DecidableEq (FreeMonoid G)] (x y : NCPoly G) (w : FreeMonoid 
     (x * y).coeff w =
       x.coeff.sum fun u a => y.coeff.sum fun v b => if u * v = w then a * b else 0 :=
   MonoidAlgebra.coeff_mul x y w
-
-/-- The scalars: `algebraMap ℂ (NCPoly G) c` is the monomial of the empty word. -/
-theorem algebraMap_apply (c : ℂ) : algebraMap ℂ (NCPoly G) c = single 1 c := rfl
 
 /-- Every polynomial is the sum of its monomials. -/
 @[simp] theorem sum_single (x : NCPoly G) : x.coeff.sum single = x :=

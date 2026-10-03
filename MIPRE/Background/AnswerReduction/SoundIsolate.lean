@@ -156,9 +156,6 @@ omit [NeZero P.m] in
 def pcpBitsEquiv : (Coord P → Fq P hk) ≃ (Fin (Pcp.pcpDim P * P.k) → 𝔽₂) :=
   ((downsizeEquiv (basis P hk)).trans (reindexEquiv (Pcp.bitIndex P P.k))).toEquiv
 
-omit [NeZero P.m] in
-theorem pcpBitsEquiv_apply (w : Coord P → Fq P hk) : pcpBitsEquiv P hk w = pcpBits P hk w := rfl
-
 /-- **The typed question of copy `i` at type `τ`**, on the vector whose oracle half is `x` and whose
 PCP half is `w`: the typed question `arQ1` of the sample copy `i`'s registers carry. -/
 theorem cl_eval_append (r : Role) (i : Fin 5) (τ : LIDT.CL.Ty) (x : Fin (V.sampler.dim n) → 𝔽₂)
@@ -177,11 +174,6 @@ def edgeFail (T : M.ProjStrat (typedGame V n P hk S S' check B)) (uv : ArTy × A
     (x : Fin (V.sampler.dim n) → 𝔽₂) (w : Coord P → Fq P hk) : ℝ :=
   T.failAt (uv.1, (cl V n P hk S S' uv.1).eval (Fin.append x (pcpBits P hk w)))
     (uv.2, (cl V n P hk S S' uv.2).eval (Fin.append x (pcpBits P hk w)))
-
-theorem edgeFail_nonneg (T : M.ProjStrat (typedGame V n P hk S S' check B))
-    (uv : ArTy × ArTy) (x : Fin (V.sampler.dim n) → 𝔽₂) (w : Coord P → Fq P hk) :
-    0 ≤ edgeFail V n P hk S S' check B T uv x w :=
-  T.failAt_nonneg _ _
 
 set_option maxRecDepth 10000 in
 /-- **Any set of type pairs inside the typed failure**: the failures at an injective family of type

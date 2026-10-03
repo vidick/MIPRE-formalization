@@ -34,14 +34,6 @@ def stageAnswerDecode (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F)
   | none => none
   | some a => some (advancePrefix P k y z + CL.proj (stageRemaining P (k + 1) y) a.1, a.2)
 
-theorem stageAnswerDecode_none (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F)
-    (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) :
-    stageAnswerDecode (A := A) P k y z none = none := rfl
-
-theorem stageAnswerDecode_eq_none (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F)
-    (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) (a : Option ((ι → F) × A)) :
-    stageAnswerDecode P k y z a = none ↔ a = none := by cases a <;> simp [stageAnswerDecode]
-
 /-- Every fixed old prefix remains fixed after inserting arbitrary current
 coordinates; no membership in the linear map's image is required. -/
 theorem advancePrefix_outputPrefix_fixed {P : CL.CLFun F ι ℓ} {T : Finset ι}

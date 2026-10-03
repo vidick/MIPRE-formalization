@@ -67,10 +67,6 @@ noncomputable def pushQ (S : SyncStrategy G) {X' A' : Type*} [Fintype X'] [Finty
     SyncStrategy G' :=
   ⟨S.d, S.d_pos, S.pushQMeas g f⟩
 
-theorem pushQ_M (S : SyncStrategy G) {X' A' : Type*} [Fintype X'] [Fintype A'] [DecidableEq A']
-    (G' : SynchronousGame X' A') (g : X' → X) (f : X' → A → A') (x' : X') (a' : A') :
-    (S.pushQ G' g f).P.M x' a' = ∑ u ∈ univ.filter fun u => f x' u = a', S.P.M (g x') u := rfl
-
 /-- **The read strategy is PCC** when the old one is and pairs of positive weight are read as
 pairs of positive weight. -/
 theorem isPCC_pushQ {S : SyncStrategy G} (hS : S.IsPCC) {X' A' : Type*} [Fintype X']

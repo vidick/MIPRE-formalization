@@ -144,13 +144,6 @@ extension `BipartiteModel.regExtend`, and depends on nothing else. -/
 def regExtendHom (e : I ≃ J × R) : Matrix J J A →⋆ₙₐ[ℂ] Matrix I I A :=
   (submatrixHom (e.trans (Equiv.prodComm J R))).comp (compHom.comp diagHom)
 
-theorem regExtendHom_apply (e : I ≃ J × R) (X : Matrix J J A) (i i' : I) :
-    regExtendHom e X i i' = if (e i).2 = (e i').2 then X (e i).1 (e i').1 else 0 := by
-  show (diagonal fun _ : R => X) (e i).2 (e i').2 (e i).1 (e i').1 = _
-  by_cases h : (e i).2 = (e i').2
-  · rw [h, diagonal_apply_eq, ite_eq_left rfl]
-  · rw [diagonal_apply_ne _ h, ite_eq_right h, Matrix.zero_apply]
-
 theorem regExtendHom_one (e : I ≃ J × R) : regExtendHom e (1 : Matrix J J A) = 1 := by
   simp only [regExtendHom, NonUnitalStarAlgHom.comp_apply, diagHom_one, compHom_one,
     submatrixHom_one]
@@ -229,14 +222,6 @@ theorem regSplit_W_ψ (e : I ≃ J × R) : (N.regSplit e).W ((N.reg R).reg J).ψ
 
 theorem regSplit_ΦA_eq (e : I ≃ J × R) : (N.regSplit e).ΦA = regSplitHom e := rfl
 
-theorem regSplit_ΦB_eq (e : I ≃ J × R) : (N.regSplit e).ΦB = regSplitHom e := rfl
-
-theorem regSplit_ΦA (e : I ≃ J × R) (X : Matrix J J (Matrix R R 𝒜)) (i i' : I) :
-    (N.regSplit e).ΦA X i i' = X (e i).1 (e i').1 (e i).2 (e i').2 := rfl
-
-theorem regSplit_ΦB (e : I ≃ J × R) (Y : Matrix J J (Matrix R R ℬ)) (i i' : I) :
-    (N.regSplit e).ΦB Y i i' = Y (e i).1 (e i').1 (e i).2 (e i').2 := rfl
-
 /-- **Extending the register** along `e : I ≃ J × R` by a register `R` on which nothing acts: the
 register model on `J` into the register model on `I`, an operator `X` on `J` becoming `X ⊗ 1_R`
 read along `e`. -/
@@ -256,23 +241,6 @@ theorem regExtend_W_ψ [Nonempty R] (e : I ≃ J × R) :
 
 theorem regExtend_ΦA_eq [Nonempty R] (e : I ≃ J × R) : (N.regExtend e).ΦA = regExtendHom e :=
   rfl
-
-theorem regExtend_ΦB_eq [Nonempty R] (e : I ≃ J × R) : (N.regExtend e).ΦB = regExtendHom e :=
-  rfl
-
-theorem regExtend_ΦA [Nonempty R] (e : I ≃ J × R) (X : Matrix J J 𝒜) (i i' : I) :
-    (N.regExtend e).ΦA X i i' = if (e i).2 = (e i').2 then X (e i).1 (e i').1 else 0 := by
-  show (diagonal fun _ : R => X) (e i).2 (e i').2 (e i).1 (e i').1 = _
-  by_cases h : (e i).2 = (e i').2
-  · rw [h, diagonal_apply_eq, ite_eq_left rfl]
-  · rw [diagonal_apply_ne _ h, ite_eq_right h, Matrix.zero_apply]
-
-theorem regExtend_ΦB [Nonempty R] (e : I ≃ J × R) (Y : Matrix J J ℬ) (i i' : I) :
-    (N.regExtend e).ΦB Y i i' = if (e i).2 = (e i').2 then Y (e i).1 (e i').1 else 0 := by
-  show (diagonal fun _ : R => Y) (e i).2 (e i').2 (e i).1 (e i').1 = _
-  by_cases h : (e i).2 = (e i').2
-  · rw [h, diagonal_apply_eq, ite_eq_left rfl]
-  · rw [diagonal_apply_ne _ h, ite_eq_right h, Matrix.zero_apply]
 
 /-- **Exchanging the players** of the register model. -/
 def regSwap : LocalIsometry (N.reg I).swap (N.swap.reg I) :=

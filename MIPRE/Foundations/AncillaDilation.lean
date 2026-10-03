@@ -89,10 +89,6 @@ def expandA (M : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) :
 
 variable (M : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
 
-theorem expandA_ψ : (M.expandA t₀).ψ = emb t₀ M.ψ := rfl
-
-theorem expandA_π_apply (Z : Matrix T T 𝒞) : (M.expandA t₀).π Z = toCLM (Z.map M.π) := rfl
-
 theorem expandA_πA (X : Matrix T T 𝒜) : (M.expandA t₀).πA X = X.map M.πA := rfl
 
 theorem expandA_πB (b : ℬ) : (M.expandA t₀).πB b = diagonal fun _ => M.πB b := rfl

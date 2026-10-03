@@ -84,10 +84,6 @@ theorem booleanInput_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
   simp only [booleanInput, endpointProg, comp_apply, pair_apply, fst_apply, snd_apply,
     fieldsProg_binaryVector k hk hodd]
 
-theorem program_runs (input : Input) :
-    ∃ t ≤ program.timeBound.eval (esize input),
-      program.code.Runs (encode input) (encode (program input)) t := program.computes input
-
 end MIPRE.QLD.PauliBinaryProgram
 end
 

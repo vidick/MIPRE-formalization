@@ -141,11 +141,6 @@ instance : SizedEncoding (QuestionType PauliType ℓ) where
   decode := ofData
   decode_encode := ofData_toData
 
-/-- Existing Pauli encodings are extended with constant overhead. -/
-theorem esize_pauli (p : PauliType) : esize (pauli (ℓ := ℓ) p) = esize p + 2 := by
-  change 1 + esize p + 1 = _
-  omega
-
 /-- The complete encoding of an auxiliary type has logarithmic size in `ℓ`. -/
 theorem esize_aux_le (t : AuxType ℓ) (w : Bool) :
     esize (.inr (t, w) : QuestionType PauliType ℓ) ≤ 4 * Nat.size (ℓ + 3) + 9 := by

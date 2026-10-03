@@ -60,15 +60,6 @@ theorem size_parse_bitsOf_le (d : Data) : (parse (bitsOf (toList d))).size ≤ d
   have := size_pos d
   omega
 
-theorem size_le_of_mem_list {a : Data} {l : List Data} (h : a ∈ l) : a.size ≤ (list l).size := by
-  induction l with
-  | nil => simp at h
-  | cons b l ih =>
-    simp only [size_list_cons]
-    rcases List.mem_cons.mp h with rfl | h
-    · omega
-    · have := ih h; omega
-
 /-- Every query of the loop has the shape `(D̄, (n, xᵢ, yᵢ, aᵢ, bᵢ))` with each component no
 larger than the list it is cut from. -/
 theorem mem_decQueries {dD nD : Data} {s : ℕ} :

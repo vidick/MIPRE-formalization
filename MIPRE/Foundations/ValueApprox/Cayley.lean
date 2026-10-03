@@ -51,11 +51,6 @@ theorem neg (hS : IsSkewHermitian S) : IsSkewHermitian (-S) := by
 theorem zero : IsSkewHermitian (0 : Matrix n n ℂ) := by
   simp [IsSkewHermitian]
 
-theorem sub {T : Matrix n n ℂ} (hS : IsSkewHermitian S) (hT : IsSkewHermitian T) :
-    IsSkewHermitian (S - T) := by
-  unfold IsSkewHermitian at *
-  rw [conjTranspose_sub, hS, hT, neg_sub_neg, neg_sub]
-
 variable [Fintype n]
 
 /-- The quadratic form of a skew-Hermitian matrix is purely imaginary. -/

@@ -115,42 +115,6 @@ def mergeAt {X X' A A' : Type*} [Fintype A] [Fintype A'] [DecidableEq A'] {n : T
 
 end ProjectiveMeasurement
 
-omit [Fintype X] [Fintype Y] in
-/-- **The push-forward of a distribution over a family of question maps, counted the other way
-round.** Summing over the family and then over the fibres is the same as summing over the target
-pairs weighted by *how many members of the family* send them where they need to go.
-
-This is the form in which the push-forward bound of `exists_one_sub_value_adapt_le` is checked in
-practice: the count is usually easy, because a member of the family typically constrains only a
-small part of the question, while the fibres of the maps themselves are awkward to describe. -/
-theorem sum_sum_fibre_eq_sum_card {Seed : Type*} [Fintype Seed] [DecidableEq X] [DecidableEq Y]
-    (qA : Seed → X' → X) (qB : Seed → Y' → Y) (w : X' → Y' → ℝ) (x : X) (y : Y) :
-    (∑ σ : Seed, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
-        ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), w x' y')
-      = ∑ x', ∑ y', w x' y' *
-          (Finset.univ.filter (fun σ : Seed => qA σ x' = x ∧ qB σ y' = y)).card := by
-  classical
-  have hstep : ∀ σ : Seed, (∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
-      ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), w x' y')
-      = ∑ x', ∑ y', (if qA σ x' = x ∧ qB σ y' = y then w x' y' else 0) := by
-    intro σ
-    rw [Finset.sum_filter]
-    refine Finset.sum_congr rfl fun x' _ => ?_
-    rw [Finset.sum_filter]
-    by_cases hx : qA σ x' = x
-    · rw [if_pos hx]
-      exact Finset.sum_congr rfl fun y' _ => by
-        by_cases hy : qB σ y' = y
-        · rw [if_pos hy, if_pos ⟨hx, hy⟩]
-        · rw [if_neg hy, if_neg (fun hc => hy hc.2)]
-    · rw [if_neg hx, Finset.sum_eq_zero fun y' _ => if_neg (fun hc => hx hc.1)]
-  rw [Finset.sum_congr rfl fun σ (_ : σ ∈ Finset.univ) => hstep σ]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun x' _ => ?_
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun y' _ => ?_
-  rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, mul_comm]
-
 /-! ## Playing a strategy through maps, in a bipartite model
 
 A strategy in a bipartite model is a family of POVMs in each player's algebra, and its value is
@@ -360,10 +324,6 @@ theorem born_eq_bornProb (S : TensorProductStrategy G) (x : X) (y : Y) (a : A) (
       ((S.PB.toPOVM y).toIn.op b) :=
   bornProb_eq_tensor S.ψ (S.PA.M x a) (S.PB.M y b)
 
-theorem born_nonneg (S : TensorProductStrategy G) (x : X) (y : Y) (a : A) (b : B) :
-    0 ≤ S.born x y a b :=
-  S.re_dotProduct_nonneg x y a b
-
 theorem sum_born (S : TensorProductStrategy G) (x : X) (y : Y) :
     ∑ a, ∑ b, S.born x y a b = 1 := by
   simpa [born, Complex.re_sum] using congrArg Complex.re (S.sum_dotProduct_kronecker x y)
@@ -387,21 +347,12 @@ theorem failAt_eq_tensor_condFail (S : TensorProductStrategy G) (x : X) (y : Y) 
       (fun y => (S.PB.toPOVM y).toIn) x y := by
   rw [failAt, succAt_eq_tensor_condWin, BipartiteModel.condFail]
 
-theorem succAt_nonneg (S : TensorProductStrategy G) (x : X) (y : Y) : 0 ≤ S.succAt x y := by
-  rw [succAt_eq_tensor_condWin]
-  exact (BipartiteModel.tensor S.ψ).condWin_nonneg x y
-
 theorem succAt_le_one (S : TensorProductStrategy G) (x : X) (y : Y) : S.succAt x y ≤ 1 := by
   rw [succAt_eq_tensor_condWin]
   exact (BipartiteModel.tensor S.ψ).condWin_le_one (norm_evec_eq_one S.ψ_unit) x y
 
 theorem failAt_nonneg (S : TensorProductStrategy G) (x : X) (y : Y) : 0 ≤ S.failAt x y :=
   sub_nonneg.mpr (S.succAt_le_one x y)
-
-theorem failAt_le_one (S : TensorProductStrategy G) (x : X) (y : Y) : S.failAt x y ≤ 1 := by
-  have := S.succAt_nonneg x y
-  simp only [failAt]
-  linarith
 
 /-- The value is the `μ`-average of the conditional success probability. -/
 theorem value_eq_sum_succAt (S : TensorProductStrategy G) :
@@ -477,34 +428,6 @@ theorem succAt_adapt_eq_condWin (S : TensorProductStrategy G) (G' : Game X' Y' A
     (fun y' => ((S.PB.mergeAt qB rB).toPOVM y').toIn) x' y' = _
   rw [ProjectiveMeasurement.mergeAt_toIn, ProjectiveMeasurement.mergeAt_toIn]
 
-/-- The adapted Born-rule probability is the sum over the fibres of the coarse-graining. -/
-theorem born_adapt (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y')
-    (a' : A') (b' : B') :
-    (S.adapt G' qA qB rA rB).born x' y' a' b'
-      = ∑ a ∈ Finset.univ.filter (fun a => rA x' a = a'),
-          ∑ b ∈ Finset.univ.filter (fun b => rB y' b = b'), S.born (qA x') (qB y') a b := by
-  rw [born_eq_bornProb]
-  show (BipartiteModel.tensor S.ψ).bornProb (((S.PA.mergeAt qA rA).toPOVM x').toIn.op a')
-    (((S.PB.mergeAt qB rB).toPOVM y').toIn.op b') = _
-  rw [congrFun (ProjectiveMeasurement.mergeAt_toIn S.PA qA rA) x',
-    congrFun (ProjectiveMeasurement.mergeAt_toIn S.PB qB rB) y', POVMIn.map_op, POVMIn.map_op,
-    BipartiteModel.bornProb_sum_left]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  rw [BipartiteModel.bornProb_sum_right]
-  exact Finset.sum_congr rfl fun b _ => (born_eq_bornProb S _ _ a b).symm
-
-/-- The adapted conditional success probability, as a sum over `G`'s answers: the
-coarse-graining disappears into the decision predicate. -/
-theorem succAt_adapt_eq (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y') :
-    (S.adapt G' qA qB rA rB).succAt x' y'
-      = ∑ a, ∑ b, (if G'.D x' y' (rA x' a) (rB y' b) then 1 else 0)
-          * S.born (qA x') (qB y') a b := by
-  rw [succAt_adapt_eq_condWin, (BipartiteModel.tensor S.ψ).condWin_adapt
-    (fun x => (S.PA.toPOVM x).toIn) (fun y => (S.PB.toPOVM y).toIn) G' qA qB rA rB x' y']
-  simp only [born_eq_bornProb]
-
 /-- **The adapter does not lose acceptance.** If every tuple `G` accepts at `(qA x', qB y')` is
 still accepted by `G'` at `(x', y')` after coarse-graining, the adapted strategy succeeds at
 least as often there. -/
@@ -527,20 +450,6 @@ theorem failAt_adapt_le (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
 /-! ## The cost of the adapter is the push-forward of the distribution -/
 
 variable [DecidableEq X] [DecidableEq Y]
-
-/-- The failure of the adapted strategy, bounded by `G`'s failure weighted by the push-forward
-of `G'`'s distribution. -/
-theorem one_sub_value_adapt_le_sum (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B')
-    (hD : ∀ x' y' a b, G'.μ x' y' ≠ 0 →
-      G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true) :
-    1 - (S.adapt G' qA qB rA rB).value
-      ≤ ∑ x, ∑ y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),
-          ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') * S.failAt x y := by
-  rw [value_adapt]
-  simp only [failAt_eq_tensor_condFail]
-  exact (BipartiteModel.tensor S.ψ).one_sub_povmValue_adapt_le_sum (fun x => (S.PA.toPOVM x).toIn) (fun y => (S.PB.toPOVM y).toIn)
-    G' qA qB rA rB hD
 
 /-- **The cost of the adapter.** If the push-forward of `G'`'s question distribution along
 `(qA, qB)` is dominated by `C` times `G`'s, the adapted strategy's failure is at most `C` times
@@ -577,29 +486,9 @@ theorem exists_one_sub_value_adapt_le {Seed : Type*} [Fintype Seed] [Nonempty Se
   exact (BipartiteModel.tensor S.ψ).exists_one_sub_povmValue_adapt_le (fun x => (S.PA.toPOVM x).toIn) (fun y => (S.PB.toPOVM y).toIn)
     (norm_evec_eq_one S.ψ_unit) G' qA qB rA rB C hD hμ
 
-/-- **The summed form of `one_sub_value_adapt_le`**: over a finite family of question maps, the
-adapted strategies' failures add up to at most `|Seed| · C` times `S`'s, when the push-forward
-bound holds on average. Each member is a genuine strategy for `G'`, so this is the form a
-per-seed argument uses: it keeps every member, not only the best one. -/
-theorem sum_one_sub_value_adapt_le {Seed : Type*} [Fintype Seed]
-    (S : TensorProductStrategy G) (G' : Game X' Y' A' B')
-    (qA : Seed → X' → X) (qB : Seed → Y' → Y) (rA : Seed → X' → A → A')
-    (rB : Seed → Y' → B → B') (C : ℝ)
-    (hD : ∀ σ x' y' a b, G'.μ x' y' ≠ 0 →
-      G.D (qA σ x') (qB σ y') a b = true → G'.D x' y' (rA σ x' a) (rB σ y' b) = true)
-    (hμ : ∀ x y, (∑ σ, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),
-        ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y')
-      ≤ (Fintype.card Seed : ℝ) * (C * G.μ x y)) :
-    ∑ σ : Seed, (1 - (S.adapt G' (qA σ) (qB σ) (rA σ) (rB σ)).value)
-      ≤ (Fintype.card Seed : ℝ) * (C * (1 - S.value)) := by
-  simp only [value_adapt, value_eq_tensor_povmValue S]
-  exact (BipartiteModel.tensor S.ψ).sum_one_sub_povmValue_adapt_le (fun x => (S.PA.toPOVM x).toIn) (fun y => (S.PB.toPOVM y).toIn)
-    (norm_evec_eq_one S.ψ_unit) G' qA qB rA rB C hD hμ
-
 end Adapt
 
 end TensorProductStrategy
-
 
 end MIPRE
 

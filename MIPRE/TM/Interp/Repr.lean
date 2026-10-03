@@ -31,9 +31,6 @@ theorem S_cons (a b : Data) : S (.cons a b) = .one :: (S a ++ S b) := by
 
 @[simp] theorem length_S (v : Data) : (S v).length = v.size := by simp [S]
 
-theorem S_ne_nil (v : Data) : S v ≠ [] := by
-  cases v <;> simp [S_cons]
-
 /-- The symbols of a value are bits. -/
 theorem mem_S (v : Data) : ∀ s ∈ S v, s = .zero ∨ s = .one := by
   intro s hs

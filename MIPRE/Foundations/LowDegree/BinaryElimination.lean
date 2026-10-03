@@ -110,14 +110,6 @@ theorem represents_typedReduce {n t : ℕ}
     exact ih _ (represents_typedReduceStep L r p hr (hb p (by simp)))
       (fun q hq => hb q (by simp [hq]))
 
-/-- A zero remainder's certificate is a vector in the kernel of the original map. -/
-theorem typedReduce_certificate_mem_ker {n t : ℕ}
-    (L : (Fin t → ZMod 2) →ₗ[ZMod 2] (Fin n → ZMod 2))
-    (b : List (Pivot n t)) (r : Row n t) (hr : Represents L r)
-    (hb : ∀ p ∈ b, Represents L p.2) (hzero : (typedReduce b r).1 = 0) :
-    (typedReduce b r).2 ∈ L.ker := by
-  rw [LinearMap.mem_ker, represents_typedReduce L b r hr hb, hzero]
-
 noncomputable def reduceStepProg : PolyTimeFun (RawRow × RawPivot) RawRow :=
   let pivot := fst.comp snd
   let v := fst.comp fst

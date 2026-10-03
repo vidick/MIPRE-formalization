@@ -46,26 +46,6 @@ theorem adaptiveFailureBudget_nonneg (r n : ℕ) (edges z h : ℝ)
     0 ≤ adaptiveFailureBudget r edges z h initial n := by
   exact hi.trans (adaptiveFailureBudget_mono r edges z h initial (Nat.zero_le n))
 
-/-- Increasing any recurrence parameter increases the resulting failure
-bound. Only the original edge multiplier and initial failure need be
-nonnegative; the square-root losses themselves are always nonnegative. -/
-theorem adaptiveFailureBudget_mono_parameters {r s : ℕ} (hrs : r ≤ s)
-    {edges edges' z z' h h' initial initial' : ℝ}
-    (hE : 0 ≤ edges) (hEE : edges ≤ edges') (hz : z ≤ z') (hh : h ≤ h')
-    (hi0 : 0 ≤ initial) (hi : initial ≤ initial') (n : ℕ) :
-    adaptiveFailureBudget r edges z h initial n ≤
-      adaptiveFailureBudget s edges' z' h' initial' n := by
-  induction n with
-  | zero => exact hi
-  | succ n ih =>
-    rw [adaptiveFailureBudget_step, adaptiveFailureBudget_step]
-    apply add_le_add ih
-    apply adaptiveStepLoss_mono
-    have hn := adaptiveFailureBudget_nonneg r n edges z h hi0
-    exact (adaptiveStageBudget_mono_depth hrs (mul_nonneg hE hn)).trans
-      (adaptiveStageBudget_mono_errors s
-        (mul_le_mul hEE ih hn (hE.trans hEE)) hz hh)
-
 /-- A coefficient controlling the whole stage when its three error inputs
 are all at most the same number. -/
 def adaptiveBudgetCoefficient (r : ℕ) (edges : ℝ) : ℝ :=
@@ -187,16 +167,6 @@ theorem adaptiveStageBudget_le_one_of_threshold (r N : ℕ) {edges z h initial :
     _ ≤ adaptiveBudgetCoefficient r edges * adaptiveSmallThreshold r edges 0 :=
       adaptiveStageBudget_le_coefficient r hE hf (hz.trans ht₀) (hh.trans ht₀)
     _ = 1 := by simp [adaptiveSmallThreshold, ne_of_gt hC]
-
-/-- For every finite depth there is a strictly positive, explicitly defined
-uniform error threshold making all recurrence stage budgets admissible. -/
-theorem exists_adaptive_small_threshold (r N : ℕ) {edges : ℝ} (hE : 0 ≤ edges) :
-    ∃ t : ℝ, 0 < t ∧ ∀ initial z h : ℝ, initial ≤ t → z ≤ t → h ≤ t →
-      ∀ n, n ≤ N →
-        adaptiveStageBudget r (edges * adaptiveFailureBudget r edges z h initial n) z h ≤ 1 := by
-  refine ⟨adaptiveSmallThreshold r edges N, adaptiveSmallThreshold_pos r N hE, ?_⟩
-  intro initial z h hi hz hh n hn
-  exact adaptiveStageBudget_le_one_of_threshold r N hE hi hz hh n hn
 
 end MIPRE.Introspection
 end

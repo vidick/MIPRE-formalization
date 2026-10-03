@@ -165,10 +165,6 @@ noncomputable def classV : PolyVerifier where
   decider_closed := decProg_wellScoped G U UT Λ₀ K R
   bound := classP G U UT Λ₀ K R
 
-theorem classV_B (z : BitStr) :
-    (classV G U UT Λ₀ K R).B z = (classP G U UT Λ₀ K R).eval z.length :=
-  rfl
-
 theorem dimz_le_B (z : BitStr) : dimz G Λ₀ R z ≤ (classV G U UT Λ₀ K R).B z :=
   (dimz_le G Λ₀ R z z.length le_rfl).trans (dimB_le G U UT Λ₀ K R _)
 
@@ -224,9 +220,6 @@ noncomputable def qEmb (z : BitStr) :
     have := congrArg Subtype.val h
     simp only at this
     rw [← ofBits_toBits v, ← ofBits_toBits w, this]
-
-theorem qEmb_val (z : BitStr) (v : (Vz G U UT Λ₀ R z).Questions (C G)) :
-    (qEmb G U UT Λ₀ K R z v).1 = toBits v := rfl
 
 /-- The number of seeds producing a given question pair: a count over `𝔽₂^{s(C)}` times
 `2 ^ (B - s(C))`. -/

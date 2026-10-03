@@ -145,10 +145,6 @@ theorem descCirc_wellFormed (e T : ℕ) (D : Prog) (n : ℕ) (x y : BitStr) :
     (descCirc e T D n x y).WellFormed :=
   Fml.toCircuit_wellFormed _ (descFml_inputsLt e T D n x y)
 
-theorem descCirc_size (e T : ℕ) (D : Prog) (n : ℕ) (x y : BitStr) :
-    (descCirc e T D n x y).size = (descFml e T D n x y).size :=
-  Fml.toCircuit_size _ _
-
 /-! ## What the circuit describes -/
 
 /-- The candidate of a clause: the fields of its three indices and its three signs. -/

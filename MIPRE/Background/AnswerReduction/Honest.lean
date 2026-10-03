@@ -137,10 +137,6 @@ theorem q6_eval (w : Coord P → F) {i : Fin 6} (τ : Ty) (h : (i : ℕ) = 5) :
   rw [pres_six S S' w τ h, q6]
   exact Regs.sampleOf_eval_question _ _ _ _
 
-theorem ptOf_regs6_point (w : Coord P → F) {i : Fin 6} (h : (i : ℕ) = 5) :
-    (regs6 P).ptOf ((pres P S S' (i, .point)).eval w) = (regs6 P).ptOf w := by
-  rw [pres_six S S' w .point h, ptOf_point_eval]
-
 /-! ## Reading the honest answers -/
 
 theorem val1_honest (H : HPolys P F) (v : Fin 5) (y : Coord P → F) :

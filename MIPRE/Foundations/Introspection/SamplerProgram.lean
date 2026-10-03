@@ -106,8 +106,6 @@ theorem route_preserves (n : ℕ) (q a : Data)
 
 def post : PolyTimeFun (Data × Data) Data := snd
 
-theorem post_apply (ctx r : Data) : post (ctx, r) = r := rfl
-
 def prog {P : Type*} [SizedEncoding P] (S : TypedSampler 3 P) : Prog :=
   Prog.routeOneCall route S.prog post
 

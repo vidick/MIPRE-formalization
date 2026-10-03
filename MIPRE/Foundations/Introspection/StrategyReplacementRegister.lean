@@ -26,12 +26,6 @@ namespace MIPRE.Introspection
 open Finset Matrix Classical
 set_option linter.unusedSectionVars false
 
-/-- Pushing a POVM forward along the identity changes nothing. -/
-theorem POVMIn.pushforward_id {X R : Type*} [Fintype X] [Ring R] [StarRing R] [Algebra ℂ R]
-    [PartialOrder R] [StarOrderedRing R] (M : POVMIn X R) :
-    M.pushforward (NonUnitalStarAlgHom.id ℂ R) rfl = M :=
-  POVMIn.ext' fun _ => rfl
-
 variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
   [Algebra ℂ 𝒜] [StarModule ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜]
   [StarOrderedRing 𝒜] [StarProper 𝒜] [PartialOrder ℬ] [StarOrderedRing ℬ] [StarModule ℂ ℬ]

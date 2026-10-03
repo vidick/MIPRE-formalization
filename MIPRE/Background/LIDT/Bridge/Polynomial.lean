@@ -83,18 +83,6 @@ def diagEquiv : LinePoly F (m * d) ≃ MIPStarRE.LDT.DiagonalLinePolynomial (lid
 @[simp] theorem diagEquiv_poly (c : LinePoly F (m * d)) :
     (diagEquiv (d := d) c).poly = ofCoeffs c := rfl
 
-/-- Evaluating an axis-line answer at a coded parameter. -/
-theorem axisEquiv_apply_enc (c : LinePoly F d) (t : F) :
-    (axisEquiv (m := m) c) (enc t) = enc (c.eval t) := by
-  change evalLinePolynomialModel _ _ _ = _
-  simp [evalLinePolynomialModel, eval_ofCoeffs]
-
-/-- Evaluating a diagonal-line answer at a coded parameter. -/
-theorem diagEquiv_apply_enc (c : LinePoly F (m * d)) (t : F) :
-    (diagEquiv (d := d) c) (enc t) = enc (c.eval t) := by
-  change evalLinePolynomialModel _ _ _ = _
-  simp [evalLinePolynomialModel, eval_ofCoeffs]
-
 /-! ## Multivariate polynomials from coefficient tables -/
 
 /-- The exponent vector of a monomial index. -/

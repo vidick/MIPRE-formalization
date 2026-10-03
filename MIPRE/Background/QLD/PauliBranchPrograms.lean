@@ -62,20 +62,9 @@ theorem route_lt_nine (T U : Ty) : (route T U).1 < 9 := by
   revert T U
   decide
 
-/-- In particular no two different constraint or variable indices become a
-consistency test, despite sharing the same sampling stages and answer format. -/
-theorem route_adj (T U : Ty) (h : adj T U = true) : (route T U).1 < 8 := by
-  revert T U
-  decide
-
 theorem route_con_var (i : Fin LCS.MagicSquare.layout.r)
     (j : Fin LCS.MagicSquare.layout.s) :
     route (.con i) (.var j) = (6, false, i.val, j.val) := by
-  simp [route, pairRoute]
-
-theorem route_var_con (i : Fin LCS.MagicSquare.layout.r)
-    (j : Fin LCS.MagicSquare.layout.s) :
-    route (.var j) (.con i) = (6, true, i.val, j.val) := by
   simp [route, pairRoute]
 
 /-- The first eight supplied Boolean checks have the order of the route
@@ -85,12 +74,6 @@ def selectProg : PolyTimeFun (Route × List Bool) Bool :=
 
 theorem selectProg_apply (r : Route) (checks : List Bool) :
     selectProg (r, checks) = checks.getD r.1 true := rfl
-
-def dispatchProg : PolyTimeFun ((Ty × Ty) × List Bool) Bool :=
-  selectProg.comp ((routeProg.comp fst).pair snd)
-
-theorem dispatchProg_apply (T U : Ty) (checks : List Bool) :
-    dispatchProg ((T, U), checks) = checks.getD (route T U).1 true := rfl
 
 /-- Put the distinguished point, half-pair or constraint on the left before
 calling the corresponding uniform field/bit check. -/

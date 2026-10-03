@@ -62,9 +62,6 @@ theorem length_overwrite {l : List Sym} {p : ℕ} (hp : p ≤ l.length) (w : Lis
     (overwrite l p w).length = max l.length (p + w.length) := by
   simp [overwrite]; omega
 
-theorem overwrite_nil (l : List Sym) (p : ℕ) : overwrite l p [] = l := by
-  simp [overwrite]
-
 @[simp] theorem overwrite_cons_succ (a : Sym) (l : List Sym) (p : ℕ) (w : List Sym) :
     overwrite (a :: l) (p + 1) w = a :: overwrite l p w := by
   simp only [overwrite, List.take_succ_cons, List.cons_append, List.cons.injEq, true_and]
@@ -91,9 +88,6 @@ theorem read (h : TapeIs τ pos s) (n : ℕ) : τ n = s.l[n]? := by
 /-- The cell under the head. -/
 theorem read_pos (h : TapeIs τ pos s) : τ pos = s.l[s.p]? := by
   rw [h.pos_eq]; exact h.read s.p
-
-theorem read_at (h : TapeIs τ pos s) {p : ℕ} (hp : pos = p) : τ pos = s.l[p]? := by
-  rw [hp]; exact h.read p
 
 /-- A middle segment is held at its offset. -/
 theorem holds_sub (h : TapeIs τ pos s) {l₁ l₂ l₃ : List Sym} (e : s.l = l₁ ++ l₂ ++ l₃) :
@@ -190,10 +184,6 @@ theorem of_unary {n : ℕ} (hu : Unary τ n) (hpos : pos = n) :
 theorem unary {n : ℕ} (h : TapeIs τ pos ⟨List.replicate n .one, n⟩) : Unary τ n :=
   ⟨h.holds, fun q hq => h.beyond q (by simpa using hq), fun q hq => h.before q hq⟩
 
-theorem of_envTape {env : Env} (h : EnvTape τ env) {p : ℕ} (hpos : pos = p) :
-    TapeIs τ pos ⟨envRepr env, p⟩ :=
-  ⟨h.holds, fun q hq => h.before q hq, fun q hq => h.beyond q hq, hpos⟩
-
 theorem envTape {env : Env} {p : ℕ} (h : TapeIs τ pos ⟨envRepr env, p⟩) : EnvTape τ env :=
   ⟨h.holds, fun q hq => h.before q hq, fun q hq => h.beyond q hq⟩
 
@@ -218,9 +208,6 @@ theorem read (h : Desc c q ds) (t : WT) : c.workTapes t (c.workTapePos t) = (ds 
 theorem cast (h : Desc c q ds) {q' : Option Ctl} {ds' : WT → TapeSt} (hq : q = q')
     (hds : ds = ds') : Desc c q' ds' := hq ▸ hds ▸ h
 
-theorem cast_ds (h : Desc c q ds) {ds' : WT → TapeSt} (hds : ∀ t, ds t = ds' t) : Desc c q ds' :=
-  h.cast rfl (funext hds)
-
 /-- A run touching only the tapes in `SW`, whose new descriptions are given. -/
 theorem of_untouched (h : Desc c q ds) {c' : Cfg input} {SW : List WT}
     (hu : Untouched c c' [] SW) {q' : Option Ctl} (hq' : c'.state = q') {ds' : WT → TapeSt}
@@ -233,9 +220,6 @@ theorem of_untouched (h : Desc c q ds) {c' : Cfg input} {SW : List WT}
     exact h.tape t
 
 end Desc
-
-theorem not_mem_of_ne {t : WT} {SW : List WT} (h : ∀ t' ∈ SW, t ≠ t') : t ∉ SW :=
-  fun hm => h t hm rfl
 
 /-! ## The routines on descriptions -/
 
@@ -400,15 +384,6 @@ theorem D_branch_not {t : WT} {s : Option Sym} {target : ProgId}
 theorem D_jump {target : ProgId} (hins : instrAt k pc = .jump target) (hd : Desc c (at_ k pc) ds) :
     ∃ c', Reach c 1 c' [] ∧ Desc c' (at_ target ⟨0, by decide⟩) ds := by
   obtain ⟨c', hr, hst, hu, hall⟩ := exec_jump hins c hd.state
-  exact ⟨c', hr, hd.of_untouched (SW := []) (hu.mono (by simp) (by simp)) hst (by simp)
-    (fun _ _ => rfl)⟩
-
-theorem D_halt (hins : instrAt k pc = .halt) (hd : Desc c (at_ k pc) ds) : HaltsIn c 1 :=
-  exec_halt hins c hd.state
-
-theorem D_emit {s : Sym} (hins : instrAt k pc = .emit s) (hpc : pc.val + 1 < maxPc)
-    (hd : Desc c (at_ k pc) ds) : ∃ c', Reach c 1 c' [s] ∧ Desc c' (next_ k pc hpc) ds := by
-  obtain ⟨c', hr, hst, hu, hall⟩ := exec_emit hins hpc c hd.state
   exact ⟨c', hr, hd.of_untouched (SW := []) (hu.mono (by simp) (by simp)) hst (by simp)
     (fun _ _ => rfl)⟩
 

@@ -211,9 +211,6 @@ noncomputable def divisionStepProg : PolyTimeFun (DivisionState × Bool) Divisio
     (ite snd (xorBitsProg.comp ((shiftReduceProg.comp (p.pair r)).pair (oneBitsProg.comp p)))
       (shiftReduceProg.comp (p.pair r))))
 
-theorem divisionStepProg_apply (s : DivisionState) (b : Bool) :
-    divisionStepProg (s, b) = divisionStep s b := rfl
-
 theorem divisionStep_bounded : FoldBounded divisionStepProg (12 * X + 12) := by
   intro l s pre post h
   change esize (pre.foldl divisionStep s) ≤ _

@@ -41,12 +41,6 @@ theorem arithmeticFold_cons (mul : Bool) (p a b : BitStr) (l : List BitStr) :
     arithmeticFold mul p a (b :: l) =
       arithmeticFold mul p (if mul then mulReduce p a b else xorBits a b) l := rfl
 
-theorem arithmeticFold_mul_width (p a : BitStr) (l : List BitStr) (ha : a.length = p.length) :
-    (arithmeticFold true p a l).length = p.length := by
-  induction l generalizing a with
-  | nil => exact ha
-  | cons b l ih => exact ih _ (length_mulReduce _ _ _ ha)
-
 theorem arithmeticFold_add_width (p a : BitStr) (l : List BitStr) (ha : a.length = p.length)
     (hl : ∀ b ∈ l, b.length = p.length) :
     (arithmeticFold false p a l).length = p.length := by
@@ -89,9 +83,6 @@ noncomputable def arithmeticStepProg (mul : Bool) :
   (fst.comp fst).pair (ite (const mul)
     (mulReduceProg.comp ((fst.comp fst).pair ((snd.comp fst).pair snd)))
     (xorBitsProg.comp ((snd.comp fst).pair snd)))
-
-theorem arithmeticStepProg_apply (mul : Bool) (s : BitStr × BitStr) (b : BitStr) :
-    arithmeticStepProg mul (s, b) = arithmeticStep mul s b := rfl
 
 theorem arithmeticStep_bounded (mul : Bool) :
     FoldBounded (arithmeticStepProg mul) (5 * X + 5) := by

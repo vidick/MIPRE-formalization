@@ -159,10 +159,6 @@ theorem nodup_answerList (T : ℕ) : (answerList T).Nodup := by
   rwa [List.take_of_length_le ((mem_bitStrsLE T l).1 hl),
     List.take_of_length_le ((mem_bitStrsLE T l').1 hl')] at e
 
-theorem length_answerList_pos (T : ℕ) : 0 < (answerList T).length := by
-  rw [answerList, List.length_map]
-  exact length_bitStrsLE_pos T
-
 /-- The answer alphabet, indexed. -/
 noncomputable def answerEquiv (T : ℕ) : Fin (answerList T).length ≃ Answers T :=
   List.Nodup.getEquivOfForallMemList _ (nodup_answerList T) (mem_answerList T)
@@ -234,14 +230,6 @@ theorem not_inClassB_iff {ℓ : ℕ} (V : Verifier ℓ) (ω : ValueModel) (n T :
     ¬ V.InClassB ω n T ↔
       (¬ V.IsBounded n ∨ ¬ V.RejectsLong n T ∨ 1 / 2 < V.val ω n T) := by
   rw [InClassB, not_and_or, not_and_or, not_le]
-
-/-- A verifier that *is* `n`-bounded lies outside `B` exactly when it accepts a long answer
-or its value exceeds `1/2`. -/
-theorem not_inClassB_iff_of_isBounded {ℓ : ℕ} (V : Verifier ℓ) (ω : ValueModel) {n T : ℕ}
-    (hb : V.IsBounded n) :
-    ¬ V.InClassB ω n T ↔ (¬ V.RejectsLong n T ∨ 1 / 2 < V.val ω n T) := by
-  rw [not_inClassB_iff]
-  simp [hb]
 
 end Verifier
 

@@ -42,9 +42,6 @@ open Finset
 variable {ι : Type*} [DecidableEq ι] [Fintype ι] {n : ℕ} (R : Regs ι n)
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F]
 
-omit [DecidableEq ι] [Fintype ι] [Field F] [Fintype F] [DecidableEq F] in
-theorem ptOf_eq_comp (x : ι → F) : R.ptOf x = x ∘ R.pt := rfl
-
 omit [Field F] in
 /-- **Uniform content gives a uniform point**: summing a function of the point the registers
 carry over all vectors is summing it over all points, `q^{|ι| - n}` times. -/

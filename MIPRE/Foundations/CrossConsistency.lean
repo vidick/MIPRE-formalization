@@ -132,15 +132,6 @@ question distribution: the appendix's `M^x_a ⊗ Id ≃_δ Id ⊗ N^x_a`. -/
 def xPovmDist (μ : X → ℝ) (MA : X → POVMIn C 𝒜) (MB : X → POVMIn C ℬ) : ℝ :=
   ∑ x, μ x * ∑ c, M.xSqNorm ((MA x).op c) ((MB x).op c)
 
-/-- `M^x_a ⊗ Id ≃_δ Id ⊗ N^x_a` on the state, relative to `μ`. -/
-def IsXPOVMClose (μ : X → ℝ) (δ : ℝ) (MA : X → POVMIn C 𝒜) (MB : X → POVMIn C ℬ) : Prop :=
-  M.xPovmDist μ MA MB ≤ δ
-
-theorem xPovmDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (MA : X → POVMIn C 𝒜)
-    (MB : X → POVMIn C ℬ) : 0 ≤ M.xPovmDist μ MA MB :=
-  Finset.sum_nonneg fun x _ =>
-    mul_nonneg (hμ x) (Finset.sum_nonneg fun _ _ => M.xSqNorm_nonneg _ _)
-
 /-- **From POVM elements to generalized observables, across the two parties**: the triangle
 inequality, then Cauchy--Schwarz over the outcome set, at the factor `|𝒜|`. -/
 theorem xStateDist_obsOf_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (MA : X → POVMIn C 𝒜)
@@ -281,10 +272,6 @@ theorem bnd_πA_of_star_mul_self_le {a : 𝒜} (h : star a * a ≤ 1) : M.Bnd (M
 theorem π_πA_le_one {t : 𝒜} (h1 : t ≤ 1) : M.π (M.πA t) ≤ 1 := by
   have h' := OrderHomClass.mono (M.π.comp M.πA) h1
   rwa [map_one] at h'
-
-/-- A POVM element is represented by a contraction. -/
-theorem bnd_πA_of_nonneg_of_le_one {t : 𝒜} (h0 : 0 ≤ t) (h1 : t ≤ 1) : M.Bnd (M.πA t) 1 :=
-  Op.bnd_one_of_nonneg_of_le_one (M.π_πA_nonneg h0) (M.π_πA_le_one h1)
 
 /-- **The difference of two POVM elements is represented by a contraction**, with no
 projectivity: this is what makes a two-outcome coarse-graining a `±1`-observable in every
@@ -557,12 +544,6 @@ theorem xPovmDist_eq_tensor (μ : X → ℝ) (ψ : dA × dB → ℂ) (M : X → 
     xPovmDist μ ψ M N =
       (BipartiteModel.tensor ψ).xPovmDist μ (fun x => (M x).toIn) (fun x => (N x).toIn) := by
   simp only [xPovmDist, BipartiteModel.xPovmDist, xSqNorm_eq_tensor, POVM.toIn_op]
-
-omit [DecidableEq C] in
-theorem xPovmDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
-    (M : X → POVM C dA) (N : X → POVM C dB) : 0 ≤ xPovmDist μ ψ M N := by
-  rw [xPovmDist_eq_tensor]
-  exact (BipartiteModel.tensor ψ).xPovmDist_nonneg hμ _ _
 
 /-! ## The cross-party distance of generalized observables
 

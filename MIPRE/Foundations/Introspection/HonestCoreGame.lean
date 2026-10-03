@@ -28,13 +28,6 @@ variable {F ι A : Type*} [Field F] [Fintype F] [DecidableEq F]
 
 def CoreAdj (t u : CoreType) : Prop := t.2 = u.2 ∨ t.1 = false ∧ u.1 = false
 
-theorem coreAdj_iff {P : Type*} [DecidableEq P] (E : P → P → Bool) (X Z : P)
-    (t u : CoreType) :
-    TypeGraph.Adj E X Z (coreType (ℓ := ℓ) t) (coreType u) ↔ CoreAdj t u := by
-  rcases t with ⟨s, w⟩; rcases u with ⟨t, v⟩
-  cases s <;> cases t <;> cases w <;> cases v <;>
-    simp [CoreAdj, coreType, TypeGraph.Adj, TypeGraph.adj, TypeGraph.oriented]
-
 variable (L : Bool → CL.CLFun F ι ℓ) (D : (ι → F) → (ι → F) → A → A → Bool)
 
 /-- Restrict the actual parsed predicate to core types and pair-format answers. -/

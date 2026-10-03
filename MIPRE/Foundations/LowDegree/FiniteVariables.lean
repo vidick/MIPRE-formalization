@@ -66,11 +66,6 @@ theorem degreeOf_killCompl_le (p : MvPolynomial τ F) (i : σ) :
   simp only [degreeOf_eq_sup]
   exact Finset.sup_mono (support_rename_killCompl_subset hf)
 
-/-- In particular, uniform individual-degree bounds survive restriction. -/
-theorem degreeOf_killCompl_le_of_bound (p : MvPolynomial τ F) {d : ℕ}
-    (h : ∀ j, p.degreeOf j ≤ d) : ∀ i, (killCompl hf p).degreeOf i ≤ d :=
-  fun i => (degreeOf_killCompl_le hf p i).trans (h (f i))
-
 end MIPRE.LowDegree
 
 end

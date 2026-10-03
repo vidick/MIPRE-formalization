@@ -215,14 +215,6 @@ theorem readCheck_original_cutoff (Q R : ℕ) (bs : BitStr)
   rw [tripleCheck_apply, decide_eq_true_eq] at h
   exact h.2.2.2
 
-/-- Parser output carries the validity flag and the decoded fields together. -/
-def pairParser (Q R : ℕ) : PolyTimeFun BitStr (Bool × (BitStr × BitStr)) :=
-  (pairCheck Q R).pair (pairPartsProg Q)
-
-def tripleParser (Q R : ℕ) (exactLast : Bool) :
-    PolyTimeFun BitStr (Bool × (BitStr × BitStr × BitStr)) :=
-  (tripleCheck Q R exactLast).pair (triplePartsProg Q)
-
 end MIPRE.Introspection.AnswerParser
 
 end

@@ -38,9 +38,6 @@ def fieldEnumeration {k : ℕ} (E : BinField k) : E.carrier ≃ Fin (2 ^ k) :=
     ((Fintype.bijective_iff_injective_and_card _).mpr
       ⟨fieldIndex_injective E, by simp only [Fintype.card_fin, E.card_carrier]⟩)
 
-theorem fieldEnumeration_val {k : ℕ} (E : BinField k) (a : E.carrier) :
-    (fieldEnumeration E a).val = bitsVal (E.toBits a) := rfl
-
 def selector {k : ℕ} (E : BinField k) (j : ℕ) (hj : j ≤ k) (a : E.carrier) : Fin (2 ^ j) :=
   ⟨(fieldIndex E a).val / 2 ^ (k - j), Nat.div_lt_of_lt_mul (by
     rw [← pow_add, Nat.sub_add_cancel hj]

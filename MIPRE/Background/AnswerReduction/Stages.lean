@@ -61,15 +61,8 @@ variable (P : PcpParams) {F : Type*} [Field F]
 variable (o sz : ℕ) (c : Fin 6) (h : o + sz ≤ P.m')
 
 omit [Field F] in
-theorem ptOf_regsAt (x : Coord P → F) :
-    (regsAt P o sz c h).ptOf x = sliceV o sz h (ptOf6 P x) := rfl
-
-omit [Field F] in
 theorem dirOf_regsAt (x : Coord P → F) :
     (regsAt P o sz c h).dirOf x = sliceV o sz h (dirOf6 P x) := rfl
-
-omit [Field F] in
-theorem coord_regsAt (x : Coord P → F) : x (regsAt P o sz c h).coord = seedsOf P x c := rfl
 
 theorem pt6_eq_iff (r : Fin P.m') (j : Fin sz) :
     (regsAt P o sz c h).pt j = pt6 P r ↔ (r : ℕ) = o + j := by
@@ -205,17 +198,6 @@ theorem dirOf6_proj_coordSet (x : Coord P → F) :
 /-- The three runs of a vector. -/
 def comps (x : Coord P → F) : (Fin P.m' → F) × (Fin P.m' → F) × (Fin 6 → F) :=
   (ptOf6 P x, dirOf6 P x, seedsOf P x)
-
-omit [Field F] in
-theorem comps_injective : Function.Injective (comps P (F := F)) := by
-  intro x y hxy
-  simp only [comps, Prod.mk.injEq] at hxy
-  funext c'
-  rw [← (layout P).symm_apply_apply c']
-  rcases (layout P) c' with r | r | c''
-  · exact congrFun hxy.1 r
-  · exact congrFun hxy.2.1 r
-  · exact congrFun hxy.2.2 c''
 
 theorem comps_add (x y : Coord P → F) : comps P (x + y) = comps P x + comps P y := rfl
 

@@ -90,16 +90,11 @@ def arVerifier {ℓ : ℕ} (V : Verifier (ℓ + 1)) : Verifier (level ℓ + 2) :
 def parPF : PolyTimeFun (ℕ × ℕ × ℕ) Prog :=
   (PolyTimeFun.smn (ℕ × ℕ × ℕ)).comp ((const (ParRoutine.core PD)).pair (PolyTimeFun.id _))
 
-theorem parPF_apply : parPF PD (lam, mu, sigma) = parProg PD lam mu sigma := rfl
-
 /-- The typed sampler's program, from the input sampler's and `(λ, μ, σ)`. -/
 def typedPF (ℓ : ℕ) : PolyTimeFun (Prog × ℕ × ℕ × ℕ) Prog :=
   (PolyTimeFun.smn (Prog × ℕ × Prog)).comp
     ((const (ProductSampler.core answerProg dimProg)).pair
       ((OracleSampler.samplerProgFun.comp fst).pair ((const (ℓ + 1)).pair ((parPF PD).comp snd))))
-
-theorem typedPF_apply {ℓ : ℕ} (S : Sampler (ℓ + 1)) :
-    typedPF PD ℓ (S.prog, lam, mu, sigma) = (typedSampler S PD lam mu sigma).prog := rfl
 
 /-- **The answer-reduced sampler's program**, from the input sampler's and `(λ, μ, σ)`. -/
 def arSamplerProg (ℓ : ℕ) : PolyTimeFun (Prog × ℕ × ℕ × ℕ) Prog :=

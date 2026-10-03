@@ -75,9 +75,6 @@ def commutingToLiehr (S : CommutingOperatorStrategy X Y A B) :
   bob y := ⟨S.F y, S.F_pos y, S.F_sum y⟩
   commuting x y a b := (S.commutes x y a b).eq
 
-theorem corr_commutingToLiehr (S : CommutingOperatorStrategy X Y A B) :
-    (commutingToLiehr S).corr = S.correlation := rfl
-
 /-- A commuting-operator strategy of the vendored core, as one of this repository. -/
 def commutingOfLiehr (S : Tsirelson.CommutingStrategy X Y A B) :
     CommutingOperatorStrategy X Y A B where
@@ -91,9 +88,6 @@ def commutingOfLiehr (S : Tsirelson.CommutingStrategy X Y A B) :
   E_sum x := (S.alice x).sum_eq_one
   F_sum y := (S.bob y).sum_eq_one
   commutes x y a b := S.commuting x y a b
-
-theorem correlation_commutingOfLiehr (S : Tsirelson.CommutingStrategy X Y A B) :
-    (commutingOfLiehr S).correlation = S.corr := rfl
 
 /-- **The two commuting correlation sets coincide.** -/
 theorem commutingCorrelations_eq_Cqc :

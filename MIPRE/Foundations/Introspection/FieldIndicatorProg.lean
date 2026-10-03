@@ -85,12 +85,6 @@ theorem indicatorProg_indVec (k : ℕ) (hk : 1 ≤ k) {m : ℕ}
   have h := indicatorProg_correct k hk (List.ofFn fun i => (x i, y i))
   simpa only [List.map_ofFn, List.prod_ofFn, indVec_apply, Function.comp_def] using h
 
-/-- The raw indicator program has one ambient input-size polynomial. -/
-theorem indicatorProg_runs (input : Unary × List (BitStr × Bool)) :
-    ∃ t ≤ indicatorProg.timeBound.eval (esize input),
-      indicatorProg.code.Runs (encode input) (encode (indicatorProg input)) t :=
-  indicatorProg.computes input
-
 end MIPRE.Introspection.FieldIndicatorProgram
 end
 

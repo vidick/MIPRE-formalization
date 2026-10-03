@@ -39,11 +39,6 @@ def selectedEdge (E : T → T → Prop) [DecidableRel E]
   | some u, some v => if E u v ∧ x = view E false u ∧ y = view E true v then some (u, v) else none
   | _, _ => none
 
-/-- Valid embedded views recover precisely their original edge. -/
-theorem selectedEdge_views (E : T → T → Prop) [DecidableRel E]
-    (u v : T) (h : E u v) : selectedEdge E (view E false u) (view E true v) = some (u, v) := by
-  simp [selectedEdge, select_view, h]
-
 def edgeData (E : T → T → Prop) [DecidableRel E]
     (x y : Graph.Coord T → 𝔽₂) : Data :=
   match selectedEdge E x y with
@@ -76,9 +71,6 @@ def outerReader : PolyTimeFun Data ℕ := readNat.comp (treeTail.comp treeTail)
 /-- The typed decider is called using the seven-field input convention from the source. -/
 def typedArgument (n : ℕ) (u v : Data) (x y a b : BitStr) : Data :=
   .cons (encode n) (.cons u (.cons (encode x) (.cons v (encode (y, a, b)))))
-
-theorem typedArgument_encode (n : ℕ) (u v : T) (x y a b : BitStr) :
-    typedArgument n (encode u) (encode v) x y a b = encode (n, u, x, v, y, a, b) := rfl
 
 /-- The precise routing rule, including every malformed-input branch. -/
 def routeResult (E : T → T → Prop) [DecidableRel E] (c : Data) : Bool × Data :=

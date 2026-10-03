@@ -319,25 +319,9 @@ theorem parseNat_sound {s rest : List Bool} {n : ℕ} (h : parseNat s = some (n,
       · rw [if_neg hle] at h
         exact absurd h (by simp)
 
-theorem encodeNat_injective : Function.Injective encodeNat := by
-  intro a b hab
-  have h1 : (some (a, ([] : List Bool)) : Option (ℕ × List Bool)) = some (b, []) := by
-    calc (some (a, ([] : List Bool)) : Option (ℕ × List Bool))
-        = parseNat (encodeNat a ++ []) := (parseNat_encodeNat a []).symm
-      _ = parseNat (encodeNat b ++ []) := by rw [hab]
-      _ = some (b, []) := parseNat_encodeNat b []
-  simpa using h1
-
 theorem encodeNat_length (n : ℕ) :
     (encodeNat n).length = 2 * (natToBits n).length + 1 := by
   simp [encodeNat]
-  omega
-
-/-- The code of `n < 2^k` takes at most `2k + 1` bits. -/
-theorem encodeNat_length_le {n k : ℕ} (h : n < 2 ^ k) :
-    (encodeNat n).length ≤ 2 * k + 1 := by
-  have := natToBits_length_le h
-  rw [encodeNat_length]
   omega
 
 /-- The code length is monotone. -/

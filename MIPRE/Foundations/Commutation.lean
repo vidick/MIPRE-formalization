@@ -240,11 +240,6 @@ theorem isColContraction_πA [PartialOrder 𝒜] [StarOrderedRing 𝒜] {ι : Ty
   refine (Finset.sum_le_sum fun i _ => hterm i).trans (le_of_eq ?_)
   rw [← map_sum, ← map_sum, P.sum_op, map_one, map_one]
 
-/-- A POVM of the second player is a column contraction. -/
-theorem isColContraction_πB [PartialOrder ℬ] [StarOrderedRing ℬ] {ι : Type*} [Fintype ι]
-    (P : POVMIn ι ℬ) : M.IsColContraction fun i => M.πB (P.op i) :=
-  M.swap.isColContraction_πA P
-
 /-- **The commutation analysis** (`lem:commutation-analysis`) in a bipartite model: two POVMs of
 the first player, each cross-party close to the corresponding marginal of one **projective**
 measurement of the second player, commute on the state at `16 δ`. -/

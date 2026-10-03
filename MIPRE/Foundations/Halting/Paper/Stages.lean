@@ -73,20 +73,6 @@ theorem runUK_runs {univ : Prog} (hU : univ.WellScoped 1) {A B r : Data} {t : �
         (Eval.var_of_get (env := [r, A, B, .cons A B]) (i := 0) (v := r) (by simp))))⟩
   omega
 
-/-- Run the universal program on the pair in the input's first component, dropping the
-second: `encode ((c, v), s) ↦ r`. -/
-def runU (univ : Prog) : Prog := .elim 0 .nil (callVar 0 univ)
-
-theorem runU_wellScoped {univ : Prog} (hU : univ.WellScoped 1) : (runU univ).WellScoped 1 :=
-  ⟨Nat.zero_lt_one, trivial, Nat.zero_lt_succ _, hU.mono (by omega) _⟩
-
-theorem runU_runs {univ : Prog} (hU : univ.WellScoped 1) {A B r : Data} {t : ℕ}
-    (h : univ.Runs A r t) :
-    ∃ t' ≤ A.size + t + 3, (runU univ).Runs (.cons A B) r t' := by
-  refine ⟨_, ?_, Eval.elim_cons (env := [Data.cons A B]) (i := 0) (n := .nil) (by simp)
-    (callVar_eval (env := [A, B, .cons A B]) (i := 0) hU (v := A) (by simp) h)⟩
-  omega
-
 /-- Convert the second component from binary to unary: `encode (s, n) ↦ encode (s, unary n)`. -/
 def unaryStage : Prog := .elim 0 .nil (.cons (.var 0) (callVar 1 toUnaryProg))
 

@@ -62,14 +62,6 @@ omit [Fintype N] in
 omit [Fintype N] in
 theorem evec_sub (v w : N → ℂ) : evec (v - w) = evec v - evec w := rfl
 
-omit [Fintype N] in
-theorem evec_sum {ι : Type*} (s : Finset ι) (f : ι → N → ℂ) :
-    evec (∑ i ∈ s, f i) = ∑ i ∈ s, evec (f i) := by
-  classical
-  induction s using Finset.induction with
-  | empty => rfl
-  | insert i s hi ih => rw [Finset.sum_insert hi, evec_add, ih, Finset.sum_insert hi]
-
 /-- The sesquilinear form of two matrices applied to the same vector, moved onto one side:
 `⟨A v, B v⟩ = ⟨v, A† B v⟩`. -/
 theorem star_mulVec_dotProduct {M : Type*} [Fintype M] (A B : Matrix M N ℂ) (v : N → ℂ) :
@@ -102,43 +94,10 @@ theorem norm_evec_mulVec_eq {M : Type*} [Fintype M] {A : Matrix M N ℂ} [Decida
 /-- `‖M v‖ ≤ K ‖v‖` for every `v`: the `ℓ²` operator norm of `M` is at most `K`. -/
 def Bnd (M : Matrix N N ℂ) (K : ℝ) : Prop := ∀ v : N → ℂ, ‖evec (M *ᵥ v)‖ ≤ K * ‖evec v‖
 
-/-- A matrix sends `evec v` to `evec (M *ᵥ v)` as an operator on `EuclideanSpace ℂ N`. -/
-theorem toEuclideanCLM_evec [DecidableEq N] (M : Matrix N N ℂ) (v : N → ℂ) :
-    Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ) M (evec v) = evec (M *ᵥ v) :=
-  rfl
-
 /-- **The bound is that of the matrix model**, whatever its state. -/
 theorem bnd_iff [DecidableEq N] {M : Matrix N N ℂ} {K : ℝ} (w : N → ℂ) :
     Bnd M K ↔ (StateModel.mat w).Bnd M K :=
   ⟨fun h v => h (WithLp.ofLp v), fun h v => h (evec v)⟩
-
-theorem Bnd.mono {M : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (hKL : K ≤ L) : Bnd M L := by
-  classical
-  exact (bnd_iff 0).2 (StateModel.Bnd.mono _ ((bnd_iff 0).1 h) hKL)
-
-theorem Bnd.add {M M' : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (h' : Bnd M' L) :
-    Bnd (M + M') (K + L) := by
-  classical
-  exact (bnd_iff 0).2 (StateModel.Bnd.add _ ((bnd_iff 0).1 h) ((bnd_iff 0).1 h'))
-
-theorem Bnd.sub {M M' : Matrix N N ℂ} {K L : ℝ} (h : Bnd M K) (h' : Bnd M' L) :
-    Bnd (M - M') (K + L) := by
-  classical
-  exact (bnd_iff 0).2 (StateModel.Bnd.sub _ ((bnd_iff 0).1 h) ((bnd_iff 0).1 h'))
-
-theorem Bnd.mul {M M' : Matrix N N ℂ} {K L : ℝ} (hK : 0 ≤ K) (h : Bnd M K) (h' : Bnd M' L) :
-    Bnd (M * M') (K * L) := by
-  classical
-  exact (bnd_iff 0).2 (StateModel.Bnd.mul _ hK ((bnd_iff 0).1 h) ((bnd_iff 0).1 h'))
-
-theorem Bnd.smul {M : Matrix N N ℂ} {K : ℝ} (c : ℂ) (h : Bnd M K) :
-    Bnd (c • M) (‖c‖ * K) := by
-  classical
-  exact (bnd_iff 0).2 (StateModel.Bnd.smul _ c ((bnd_iff 0).1 h))
-
-theorem bnd_zero (K : ℝ) (hK : 0 ≤ K) : Bnd (0 : Matrix N N ℂ) K := by
-  classical
-  exact (bnd_iff 0).2 ((StateModel.mat 0).bnd_zero K hK)
 
 /-! ## The norm on a fixed state
 
@@ -178,31 +137,11 @@ theorem snorm_smul (c : ℂ) (M : Matrix N N ℂ) : snorm v (c • M) = ‖c‖ 
   classical
   exact (StateModel.mat v).snorm_smul c M
 
-theorem snorm_one [DecidableEq N] (hv : ‖evec v‖ = 1) :
-    snorm v (1 : Matrix N N ℂ) = 1 :=
-  (StateModel.mat v).snorm_one hv
-
 /-- A bound in front of anything. -/
 theorem snorm_mul_le {M : Matrix N N ℂ} {K : ℝ} (h : Bnd M K) (M' : Matrix N N ℂ) :
     snorm v (M * M') ≤ K * snorm v M' := by
   classical
   exact (StateModel.mat v).snorm_mul_le ((bnd_iff v).1 h) M'
-
-/-- An isometry in front changes nothing. -/
-theorem snorm_mul_of_isometry [DecidableEq N] {M : Matrix N N ℂ} (h : Mᴴ * M = 1)
-    (M' : Matrix N N ℂ) :
-    snorm v (M * M') = snorm v M' :=
-  (StateModel.mat v).snorm_mul_of_isometry h M'
-
-/-- **Replacing an operator by an isometry it is close to, in front of anything.** If `W` and
-the isometry `WD` agree on the state to within `δ`, and `WD` commutes with `Z`, then `Z W` is
-within `K δ` of `Z`, where `K` bounds `Z`. This is the suffix-insertion bound of the Magic
-Square argument, and it is the only place the commutation of the two parties is used. -/
-theorem snorm_mul_swap [DecidableEq N] {W WD Z : Matrix N N ℂ} {δ K : ℝ}
-    (hWD : WDᴴ * WD = 1) (hcomm : WD * Z = Z * WD) (hZ : Bnd Z K) (hK : 0 ≤ K)
-    (hd : snorm v (W - WD) ≤ δ) :
-    snorm v (Z * W) ≤ snorm v Z + K * δ :=
-  (StateModel.mat v).snorm_mul_swap hWD hcomm ((bnd_iff v).1 hZ) hK hd
 
 end SNorm
 
@@ -257,9 +196,6 @@ end QForm
 
 variable [DecidableEq N]
 
-theorem bnd_one : Bnd (1 : Matrix N N ℂ) 1 :=
-  (bnd_iff 0).2 (StateModel.mat 0).bnd_one
-
 /-- **A self-adjoint contraction is bounded by one.** The hypothesis is the *matrix*
 inequality `M† M ≤ 1`, which is `Matrix.PosSemidef` of the difference. -/
 theorem bnd_one_of_conjTranspose_mul_self_le {M : Matrix N N ℂ}
@@ -300,9 +236,6 @@ theorem norm_evec_mulVec_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) (v 
   have h1 : (0 : ℝ) ≤ ‖evec (M *ᵥ v)‖ := norm_nonneg _
   have h2 : (0 : ℝ) ≤ ‖evec v‖ := norm_nonneg _
   nlinarith [hsq]
-
-theorem bnd_one_of_isometry {M : Matrix N N ℂ} (h : Mᴴ * M = 1) : Bnd M 1 :=
-  (bnd_iff 0).2 ((StateModel.mat 0).bnd_one_of_isometry h)
 
 /-! ## The bipartite structure
 
@@ -414,15 +347,6 @@ theorem bnd_bOp {Y : Matrix HB HB ℂ} (h : (Yᴴ * Y) ≤ (1 : Matrix HB HB ℂ
   refine sub_nonneg.mp ?_
   rw [← bOp_sub]
   exact bOp_nonneg (sub_nonneg.mpr h)
-
-/-- An isometry on the first factor is an isometry on the product space. -/
-theorem isometry_aOp {X : Matrix HA HA ℂ} (h : Xᴴ * X = 1) :
-    ((aOp X : Matrix (HA × HB) _ ℂ))ᴴ * aOp X = 1 := by
-  rw [aOp_conjTranspose, ← aOp_mul, h, aOp_one]
-
-theorem isometry_bOp {Y : Matrix HB HB ℂ} (h : Yᴴ * Y = 1) :
-    ((bOp Y : Matrix (HA × HB) _ ℂ))ᴴ * bOp Y = 1 := by
-  rw [bOp_conjTranspose, ← bOp_mul, h, bOp_one]
 
 end Bipartite
 

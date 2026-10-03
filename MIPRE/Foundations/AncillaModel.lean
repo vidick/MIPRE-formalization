@@ -100,11 +100,6 @@ theorem smulKron_add_right (X : R) (P Q : Matrix α α ℂ) :
   ext a b
   simp only [smulKron_apply, Matrix.add_apply, add_smul]
 
-theorem smulKron_sub_right (X : R) (P Q : Matrix α α ℂ) :
-    smulKron X (P - Q) = smulKron X P - smulKron X Q := by
-  ext a b
-  simp only [smulKron_apply, Matrix.sub_apply, sub_smul]
-
 theorem smulKron_smul_right (X : R) (c : ℂ) (P : Matrix α α ℂ) :
     smulKron X (c • P) = c • smulKron X P := by
   ext a b

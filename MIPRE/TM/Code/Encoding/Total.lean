@@ -49,8 +49,6 @@ theorem decodeCode_encodeCode {i : ℕ} (c : Code i) : decodeCode i (encodeCode 
 /-- The description size `|α|` of a machine code. -/
 def codeSize {i : ℕ} (c : Code i) : ℕ := (encodeCode c).length
 
-theorem codeSize_eq {i : ℕ} (c : Code i) : codeSize c = (encodeCode c).length := rfl
-
 theorem encodeMove_length_le (m : Move) : (encodeMove m).length ≤ 2 := by
   cases m <;> simp [encodeMove]
 

@@ -176,9 +176,6 @@ noncomputable def gcdStepProg : PolyTimeFun (GCDState × Bool) GCDState :=
     ((snd.comp fst).pair (snd.comp (divModBitsProg.comp
       ((dropLastBitsProg.comp (snd.comp fst)).pair (fst.comp fst)))))
 
-theorem gcdStepProg_apply (s : GCDState) (b : Bool) :
-    gcdStepProg (s, b) = gcdStep s b := rfl
-
 theorem gcdStep_bounded : FoldBounded gcdStepProg (10 * X + 10) := by
   intro l s pre post _
   change esize (pre.foldl gcdStep s) ≤ _

@@ -47,12 +47,6 @@ theorem registerVector_bits {F : Type*} [Field F] [Algebra (ZMod 2) F] {m k : �
   simp only [registerVector_apply]
   rfl
 
-/-- This is precisely the coordinate projection used by binary Pauli measurements. -/
-theorem registerVector_binEquiv {F : Type*} [Field F] [Fintype F] [DecidableEq F]
-    [Algebra (ZMod 2) F] {m k : ℕ} (b : Module.Basis (Fin k) (ZMod 2) F)
-    (h : (Fin m → Bool) → F) :
-    registerVector b h = fun i => Weyl.binEquiv b h ((registerNumbering m k).symm i) := rfl
-
 abbrev Input := Unary × Unary × BitStr
 
 /-- The validity flag and the full-register bits, in one polynomial-time program. -/
@@ -69,14 +63,6 @@ theorem program_answerBits (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
     PauliAnswerProgram.answerBits, PauliAnswerProgram.answerRows,
     fullPauliParserProg_vecBits _ hk, encodeBlocksProg_correct k hk hodd,
     registerVector_bits]
-
-theorem program_valid (m k : Unary) (bs : BitStr) :
-    (program (m, k, bs)).1 = true ↔ 0 < k.length ∧ bs.length = 2 ^ m.length * k.length :=
-  fullPauliParserProg_valid m k bs
-
-theorem program_runs (input : Input) :
-    ∃ t ≤ program.timeBound.eval (esize input),
-      program.code.Runs (encode input) (encode (program input)) t := program.computes input
 
 end MIPRE.QLD.PauliFullAnswerProgram
 end

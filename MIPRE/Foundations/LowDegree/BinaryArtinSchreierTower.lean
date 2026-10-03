@@ -84,11 +84,6 @@ def parameterOrbitBits (p : BitStr) : BitStr :=
     (parameterOrbitBits p).length = p.length + 1 := by
   simp [parameterOrbitBits, orbitPolynomialBits, descendBits, unary]
 
-/-- A linear width bound on every input, independent of validity of the modulus. -/
-theorem towerStepBits_width (p : BitStr) : (towerStepBits p).length ≤ 2 * (p.length + 1) := by
-  exact (substituteArtinSchreierBits_width (parameterOrbitBits p)).trans_eq
-    (congrArg (2 * ·) (parameterOrbitBits_length p))
-
 local instance quotientFintype (p : BitStr) : Fintype (AdjoinRoot (polyOfBits (p ++ [true]))) :=
   Fintype.ofEquiv (Fin (polyOfBits (p ++ [true])).natDegree → ZMod 2)
     (coordinateEquiv _ (monic_polyOfBits_append_true p)).symm.toEquiv

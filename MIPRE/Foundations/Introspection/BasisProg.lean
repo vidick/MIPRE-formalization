@@ -61,33 +61,6 @@ theorem fromSelfDualProg_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd
     vectorBits ((shoupSelfDualNormalBasis k hk hodd).equivFun a)) = _
   rw [shoupSelfDualNormalBasisProg_correct k hk hodd, fromBasisProg_correct]
 
-/-- The coordinates used in the CL downsizing definition are literally the
-coordinates printed by the conversion program. -/
-theorem toSelfDualProg_repr (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
-    (a : (shoupBinField k hk).carrier) :
-    toSelfDualProg (unary k, (shoupBinField k hk).toBits a) =
-      List.ofFn (fun i => bit ((shoupSelfDualNormalBasis k hk hodd).repr a i)) :=
-  toSelfDualProg_correct k hk hodd a
-
-theorem fromSelfDualProg_vector (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
-    (v : Fin k → ZMod 2) :
-    fromSelfDualProg (unary k, vectorBits v) =
-      (shoupBinField k hk).toBits ((shoupSelfDualNormalBasis k hk hodd).equivFun.symm v) := by
-  simpa only [LinearEquiv.apply_symm_apply] using
-    fromSelfDualProg_correct k hk hodd ((shoupSelfDualNormalBasis k hk hodd).equivFun.symm v)
-
-theorem toSelfDual_fromSelfDual (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
-    (v : BitStr) (hv : v.length = k) :
-    toSelfDualProg (unary k, fromSelfDualProg (unary k, v)) = v := by
-  rw [← vectorBits_vectorValue k v hv, fromSelfDualProg_vector k hk hodd,
-    toSelfDualProg_correct k hk hodd, LinearEquiv.apply_symm_apply]
-
-theorem fromSelfDual_toSelfDual (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
-    (v : BitStr) (hv : v.length = k) :
-    fromSelfDualProg (unary k, toSelfDualProg (unary k, v)) = v := by
-  have he := shoupBinField_toBits_ofBits k hk v hv
-  rw [← he, toSelfDualProg_correct k hk hodd, fromSelfDualProg_correct k hk hodd, he]
-
 /-- Construct the basis once for the row list, then convert each row. -/
 def toSelfDualRowsProg : PolyTimeFun (Unary × List BitStr) (List BitStr) :=
   (mapWith (shoupInBasisProg.comp
@@ -123,49 +96,6 @@ theorem fromSelfDualRowsProg_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd :
   apply congrArg List.ofFn
   funext i
   exact fromSelfDualProg_correct k hk hodd (u i)
-
-theorem toSelfDualProg_runs (x : Unary × BitStr) :
-    ∃ r ≤ toSelfDualProg.timeBound.eval (esize x),
-      toSelfDualProg.code.Runs (encode x) (encode (toSelfDualProg x)) r :=
-  toSelfDualProg.computes x
-
-theorem fromSelfDualProg_runs (x : Unary × BitStr) :
-    ∃ r ≤ fromSelfDualProg.timeBound.eval (esize x),
-      fromSelfDualProg.code.Runs (encode x) (encode (fromSelfDualProg x)) r :=
-  fromSelfDualProg.computes x
-
-theorem toSelfDualRowsProg_runs (x : Unary × List BitStr) :
-    ∃ r ≤ toSelfDualRowsProg.timeBound.eval (esize x),
-      toSelfDualRowsProg.code.Runs (encode x) (encode (toSelfDualRowsProg x)) r :=
-  toSelfDualRowsProg.computes x
-
-theorem fromSelfDualRowsProg_runs (x : Unary × List BitStr) :
-    ∃ r ≤ fromSelfDualRowsProg.timeBound.eval (esize x),
-      fromSelfDualRowsProg.code.Runs (encode x) (encode (fromSelfDualRowsProg x)) r :=
-  fromSelfDualRowsProg.computes x
-
-/-- Uniform cost for either conversion on a canonical-width input. -/
-theorem basisProg_time_le : ∃ R : Polynomial ℕ, ∀ (k : ℕ) (v : BitStr), v.length = k →
-    (∃ r ≤ R.eval k, toSelfDualProg.code.Runs (encode (unary k, v))
-      (encode (toSelfDualProg (unary k, v))) r) ∧
-    (∃ r ≤ R.eval k, fromSelfDualProg.code.Runs (encode (unary k, v))
-      (encode (fromSelfDualProg (unary k, v))) r) := by
-  let B : Polynomial ℕ := 6 * X + 3
-  refine ⟨(toSelfDualProg.timeBound + fromSelfDualProg.timeBound).comp B, fun k v hv => ?_⟩
-  have hs : esize (unary k, v) ≤ B.eval k := by
-    have h := esize_bitStr_le v
-    rw [hv] at h
-    simp only [esize_prod, esize_unary, B, eval_add, eval_mul, eval_ofNat, eval_X]
-    omega
-  obtain ⟨r, hr, hrun⟩ := toSelfDualProg_runs (unary k, v)
-  obtain ⟨s, hs', hsrun⟩ := fromSelfDualProg_runs (unary k, v)
-  constructor
-  · refine ⟨r, hr.trans ((polynomial_eval_mono _ hs).trans ?_), hrun⟩
-    simp only [eval_comp, eval_add]
-    omega
-  · refine ⟨s, hs'.trans ((polynomial_eval_mono _ hs).trans ?_), hsrun⟩
-    simp only [eval_comp, eval_add]
-    omega
 
 end MIPRE.Introspection.BasisProgram
 end

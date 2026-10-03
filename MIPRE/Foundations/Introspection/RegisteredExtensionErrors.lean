@@ -38,30 +38,6 @@ variable {T α β α' β' : Type*} [Fintype T] [DecidableEq T]
   [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
   [Fintype α'] [DecidableEq α'] [Fintype β'] [DecidableEq β']
 
-/-- Relabelling the registers of an extension, along a bijection for each player, preserves the
-cross norm. -/
-theorem xSqNorm_registerOp (e : α × β → ℂ) (e' : α' × β' → ℂ) (f : α' ≃ α) (g : β' ≃ β)
-    (he : ∀ p, e' p = e (f p.1, g p.2)) (M : Matrix α α 𝒜) (N : Matrix β β ℬ) :
-    (Ψ.expand e').xSqNorm (M.submatrix f f) (N.submatrix g g) = (Ψ.expand e).xSqNorm M N :=
-  (Ψ.relabel e e' f g).xSqNorm_of_W_ψ (Ψ.relabel_W_ψ e e' f g he) M N
-
-/-- The old deviation vector is extended by the same fixed isometry. -/
-theorem deviation_extVecA (t₀ : T) (M : 𝒜) (N : ℬ) :
-    (Ψ.expandA t₀).π ((Ψ.expandA t₀).πA (diagonal fun _ => M) - (Ψ.expandA t₀).πB N)
-        (Ψ.expandA t₀).ψ =
-      (Ψ.inertA t₀).W (Ψ.π (Ψ.πA M - Ψ.πB N) Ψ.ψ) := by
-  have hA := (Ψ.inertA t₀).intertwineA M Ψ.ψ
-  have hB := (Ψ.inertA t₀).intertwineB N Ψ.ψ
-  rw [BipartiteModel.inertA_ΦA] at hA
-  rw [BipartiteModel.inertA_ΦB] at hB
-  rw [← Ψ.inertA_W_ψ t₀, map_sub, map_sub, _root_.sub_apply, _root_.sub_apply, hA, hB, map_sub]
-
-theorem xSqNorm_extVecA (t₀ : T) (M : 𝒜) (N : ℬ) :
-    (Ψ.expandA t₀).xSqNorm (diagonal fun _ => M) N = Ψ.xSqNorm M N := by
-  show ‖(Ψ.expandA t₀).π ((Ψ.expandA t₀).πA (diagonal fun _ => M) - (Ψ.expandA t₀).πB N)
-      (Ψ.expandA t₀).ψ‖ ^ 2 = ‖Ψ.π (Ψ.πA M - Ψ.πB N) Ψ.ψ‖ ^ 2
-  rw [deviation_extVecA, LinearIsometry.norm_map]
-
 end Raw
 
 variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
@@ -167,10 +143,6 @@ theorem registeredExtendPOVM_map (M : POVMIn A (Matrix I I 𝒜)) (f : A → B) 
   refine POVMIn.ext' fun b => ?_
   rw [registeredExtendPOVM_mats, POVMIn.map_op, POVMIn.map_op]
   simp only [registeredExtendPOVM_mats, registeredExtendOp_eq, map_sum]
-
-theorem registeredExtendPOVM_isPVM (M : POVMIn A (Matrix I I 𝒜)) (hM : IsPVMIn M.op) :
-    IsPVMIn (registeredExtendPOVM (T := T) M).op :=
-  (hM.pushforward (diagHom_one (α := T))).pushforward BipartiteModel.layerSwap_one
 
 end POVM
 

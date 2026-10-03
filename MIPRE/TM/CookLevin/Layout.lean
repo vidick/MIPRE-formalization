@@ -210,12 +210,6 @@ theorem bitsOfNat_bitsVal (l : BitStr) : bitsOfNat l.length (bitsVal l) = l := b
 /-- The value of the bits `off .. off + w` of a bit string. -/
 def bitField (ib : BitStr) (off w : ℕ) : ℕ := bitsVal ((ib.drop off).take w)
 
-theorem bitField_lt (ib : BitStr) (off w : ℕ) : bitField ib off w < 2 ^ w := by
-  unfold bitField
-  have := bitsVal_lt ((ib.drop off).take w)
-  have hl : ((ib.drop off).take w).length ≤ w := by simp
-  exact lt_of_lt_of_le this (Nat.pow_le_pow_right (by omega) hl)
-
 /-! ## The fields of an index -/
 
 /-- The fields read from an index: the top bit, the structured fields, and for an answer

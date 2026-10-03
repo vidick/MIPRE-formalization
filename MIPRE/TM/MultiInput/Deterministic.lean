@@ -194,10 +194,6 @@ lemma configs_zero {cfg : Cfg i w Symbol State input} :
     tm.configs cfg 0 = cfg := by
   simp [configs]
 
-lemma configs_succ_eq_step {cfg : Cfg i w Symbol State input} {t : ℕ} :
-    tm.configs cfg (t + 1) = tm.configs (tm.step cfg) t := by
-  simp [configs, Function.iterate_succ_apply]
-
 lemma configs_succ_eq_step' {cfg : Cfg i w Symbol State input} {t : ℕ} :
     tm.configs cfg (t + 1) = tm.step (tm.configs cfg t) := by
   simp [configs, Function.iterate_succ_apply']
@@ -222,16 +218,6 @@ lemma configs_of_halts (cfg : Cfg i w Symbol State input) (h : cfg.state = none)
 lemma outputSymbol_of_halt {cfg : Cfg i w Symbol State input} (h_halt : cfg.state = none) :
     tm.outputSymbol cfg = none := by
   simp [outputSymbol, h_halt]
-
-/-- Each work-tape head moves by at most one cell in a single step. -/
-lemma workTapePos_step_le (c : Cfg i w Symbol State input) (d : Fin w) :
-    |(tm.step c).workTapePos d - c.workTapePos d| ≤ 1 := by
-  unfold step
-  cases hstate : c.state with
-  | none => simp
-  | some q =>
-    simp only [add_sub_cancel_left, abs_le, SignType.cast]
-    grind
 
 end Cfg
 
@@ -268,11 +254,6 @@ lemma spaceUsed_zero_tapes_eq_zero (cfg : Cfg i w Symbol State input) (t : ℕ)
   unfold spaceUsed
   subst h_zero
   simp
-
-/-- Each tape's space usage is bounded by the total space used. -/
-lemma spaceUsedByTape_le_spaceUsed (cfg : Cfg i w Symbol State input) (t : ℕ) (d : Fin w) :
-    tm.spaceUsedByTape cfg t d ≤ tm.spaceUsed cfg t :=
-  Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ d)
 
 end Space
 
@@ -362,56 +343,6 @@ def haltsAtStep (tm : MultiInputTM i w Symbol State) (input : Fin i → List Sym
     (t : ℕ) : Bool :=
   (tm.configs (tm.initCfg input) t).state.isNone &&
   !(tm.configs (tm.initCfg input) (t - 1)).state.isNone
-
-/-- If a Turing machine halts, the time step is uniquely determined. -/
-lemma halting_step_unique
-    {tm : MultiInputTM i w Symbol State}
-    {input : Fin i → List Symbol}
-    {t₁ t₂ : ℕ}
-    (h_halts₁ : tm.haltsAtStep input t₁)
-    (h_halts₂ : tm.haltsAtStep input t₂) :
-    t₁ = t₂ := by
-  wlog h : t₁ ≤ t₂
-  · exact (this h_halts₂ h_halts₁ (Nat.le_of_not_le h)).symm
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
-  cases d with
-  | zero => rfl
-  | succ d =>
-    have halts₁ : (tm.configs (tm.initCfg input) t₁).state = none := by
-      simp [haltsAtStep] at h_halts₁
-      exact h_halts₁.left
-    have halts₂ : (tm.configs (tm.initCfg input) (d + t₁)).state ≠ none := by
-      grind [haltsAtStep, configs]
-    refine absurd ?_ halts₂
-    rw [Nat.add_comm, configs_add, tm.configs_of_halts _ halts₁]
-    exact halts₁
-
-/-- If a deterministic machine repeats a non-halting configuration, it never halts,
-because the sequence between the two configurations will loop forever.
-Note that this can be applied to two arbitrary and different time steps `t` and `t + Δ`
-using `tm.configs_add`. -/
-lemma not_halts_of_repeat_nonhalt
-    (cfg : Cfg i w Symbol State input)
-    (h_not_halt : cfg.state ≠ none)
-    (t : ℕ)
-    (heq : tm.configs cfg (t + 1) = cfg) :
-    ∀ t', (tm.configs cfg t').state ≠ none := by
-  intro t'
-  -- The configuration will repeat every `t + 1` steps.
-  have hloop : ∀ n, tm.configs cfg (n * (t + 1)) = cfg := by
-    intro n
-    induction n with
-    | zero => simp
-    | succ n ih =>
-      rw [show (n + 1) * (t + 1) = n * (t + 1) + (t + 1) by grind, tm.configs_add, ih, heq]
-  by_contra hnh
-  -- Assuming the machine halts at step `t'`, it is also halted at step `t' * (t + 1)`
-  have h₁ : (tm.configs cfg (t' * (t + 1))).state = none := by
-    have hle : t' ≤ t' * (t + 1) := by grind
-    obtain ⟨tΔ , htΔ⟩ := Nat.exists_eq_add_of_le hle
-    rw [htΔ, tm.configs_add]
-    simp [hnh]
-  simp [hloop t', h_not_halt] at h₁
 
 end MultiInputTM
 

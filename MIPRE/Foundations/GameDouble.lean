@@ -177,13 +177,6 @@ theorem isPCC_relabel_of_support {X' A' : Type*} [Fintype X'] [Fintype A'] [Deci
 
 end SyncStrategy
 
-/-- **The doubling preserves the synchronous value from below**, which is the direction
-completeness needs: a value-`1` PCC strategy of `G` is one of `G.toGame.doubled`. -/
-theorem exists_perfectPCC_doubled {G : SynchronousGame X A} {S : SyncStrategy G}
-    (hS : S.IsPCC) (hval : S.value = 1) :
-    ∃ S' : SyncStrategy G.toGame.doubled, S'.IsPCC ∧ S'.value = 1 :=
-  ⟨S.double, SyncStrategy.isPCC_double hS, by rw [SyncStrategy.value_double, hval]⟩
-
 end MIPRE
 
 end

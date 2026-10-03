@@ -96,14 +96,6 @@ theorem evalBits_frobeniusTrace (z : R) (p a : BitStr) (u : Unary)
   have h := evalBits_fold_traceStep z p a (zeroBits p) u hroot ha (length_zeroBits p)
   simpa only [frobeniusTrace, evalBits_zeroBits, zero_add] using h
 
-/-- The full field-degree iteration returns the original element. -/
-theorem evalBits_frobeniusTrace_period {F : Type*} [Field F] [Fintype F] [CharP F 2]
-    (z : F) (p a : BitStr) (hcard : Fintype.card F = 2 ^ p.length)
-    (hroot : z ^ p.length = evalBits z p) (ha : a.length = p.length) :
-    evalBits z (frobeniusTrace p a (unary p.length)).1 = evalBits z a := by
-  rw [(evalBits_frobeniusTrace z p a _ hroot ha).1, length_unary, ← hcard]
-  exact FiniteField.pow_card _
-
 /-- The accumulated sum is the algebraic trace, embedded into the extension field. -/
 theorem evalBits_frobeniusTrace_trace {F : Type*} [Field F] [Finite F] [CharP F 2]
     [Algebra (ZMod 2) F] (z : F) (p a : BitStr)
@@ -120,9 +112,6 @@ noncomputable def traceStepProg : PolyTimeFun (PowerState × Unit) PowerState :=
   let a := fst.comp (snd.comp fst)
   let c := snd.comp (snd.comp fst)
   p.pair ((mulReduceProg.comp (p.pair (a.pair a))).pair (xorBitsProg.comp (c.pair a)))
-
-theorem traceStepProg_apply (s : PowerState) (u : Unit) :
-    traceStepProg (s, u) = traceStep s u := rfl
 
 theorem traceStep_bounded : FoldBounded traceStepProg (9 * X + 9) := by
   intro l s pre post _

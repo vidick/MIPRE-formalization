@@ -163,11 +163,6 @@ theorem isometricTensor_isometry (V : Matrix R H ℂ) (W : Matrix S K ℂ)
   rw [Matrix.conjTranspose_kronecker, ← Matrix.mul_kronecker_mul,
     hV, hW, Matrix.one_kronecker_one]
 
-theorem isometricState_norm (V : Matrix R H ℂ) (W : Matrix S K ℂ)
-    (hV : Vᴴ * V = 1) (hW : Wᴴ * W = 1) (ψ : H × K → ℂ) :
-    ‖evec (isometricState V W ψ)‖ = ‖evec ψ‖ :=
-  norm_evec_mulVec_eq (isometricTensor_isometry V W hV hW) ψ
-
 theorem isometricState_unit (V : Matrix R H ℂ) (W : Matrix S K ℂ)
     (hV : Vᴴ * V = 1) (hW : Wᴴ * W = 1)
     (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1) :
@@ -201,25 +196,6 @@ theorem povmValue_isometricState (G : Game X Y A B)
       (fun y => isometricPOVM W hW b₀ (MB y) (hMB y)) = povmValue G ψ MA MB := by
   unfold povmValue condWin
   simp only [isometricPOVM_mats, bornProb_isometricState V W hV hW]
-
-/-- The exact rectangular deviation vector on Alice's side, against any
-target operator. This is the local-isometry form of a Pauli estimate. -/
-theorem isometricState_alice_deviation (V : Matrix R H ℂ) (W : Matrix S K ℂ)
-    (hV : Vᴴ * V = 1) (ψ : H × K → ℂ)
-    (a₀ : A) (M : A → Matrix H H ℂ) (a : A) (T : Matrix R R ℂ) :
-    aOp (isometricEffect V a₀ M a - T) *ᵥ isometricState V W ψ =
-      ((V * M a - T * V) ⊗ₖ W) *ᵥ ψ := by
-  rw [isometricState, Matrix.mulVec_mulVec, aOp, ← Matrix.mul_kronecker_mul,
-    Matrix.one_mul, Matrix.sub_mul, isometricEffect_intertwine V hV]
-
-/-- The corresponding exact rectangular deviation vector on Bob's side. -/
-theorem isometricState_bob_deviation (V : Matrix R H ℂ) (W : Matrix S K ℂ)
-    (hW : Wᴴ * W = 1) (ψ : H × K → ℂ)
-    (b₀ : B) (N : B → Matrix K K ℂ) (b : B) (T : Matrix S S ℂ) :
-    bOp (isometricEffect W b₀ N b - T) *ᵥ isometricState V W ψ =
-      (V ⊗ₖ (W * N b - T * W)) *ᵥ ψ := by
-  rw [isometricState, Matrix.mulVec_mulVec, bOp, ← Matrix.mul_kronecker_mul,
-    Matrix.one_mul, Matrix.sub_mul, isometricEffect_intertwine W hW]
 
 /-- Alice's same intertwining identity after any answer projection. -/
 theorem isometricState_map_alice_deviation {C : Type*} [Fintype C]

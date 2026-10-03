@@ -106,10 +106,6 @@ theorem LowIndDegPoly.blockPoly_liftIdx {idx : Fin n' → Fin n} (hinj : Functio
   funext j
   exact expandIdx_apply_idx hinj e' j
 
-theorem LowIndDegPoly.liftIdx_injective {idx : Fin n' → Fin n} (hinj : Function.Injective idx) :
-    Function.Injective (LowIndDegPoly.liftIdx (F := F) (d := d) idx) := fun g g' h => by
-  rw [← LowIndDegPoly.blockPoly_liftIdx hinj g, h, LowIndDegPoly.blockPoly_liftIdx hinj]
-
 /-- **A placed vector evaluates through the block.** -/
 theorem LowIndDegPoly.eval_liftIdx {idx : Fin n' → Fin n} (hinj : Function.Injective idx)
     (g : LowIndDegPoly (F := F) (m := n') (d := d)) (u : Point F n) :

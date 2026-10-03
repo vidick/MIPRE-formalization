@@ -118,8 +118,6 @@ theorem zero : EntriesIn K (0 : Matrix m n ℂ) := fun _ _ => zero_mem K
 theorem add (hM : EntriesIn K M) (hN : EntriesIn K N) : EntriesIn K (M + N) :=
   fun i j => add_mem (hM i j) (hN i j)
 
-theorem neg (hM : EntriesIn K M) : EntriesIn K (-M) := fun i j => neg_mem (hM i j)
-
 theorem sub (hM : EntriesIn K M) (hN : EntriesIn K N) : EntriesIn K (M - N) :=
   fun i j => sub_mem (hM i j) (hN i j)
 
@@ -144,10 +142,6 @@ theorem one [DecidableEq n] : EntriesIn K (1 : Matrix n n ℂ) := fun i j => by
   split_ifs
   · exact one_mem K
   · exact zero_mem K
-
-theorem kronecker {m' n' : Type*} {M : Matrix m n ℂ} {N : Matrix m' n' ℂ} (hM : EntriesIn K M)
-    (hN : EntriesIn K N) : EntriesIn K (M ⊗ₖ N) :=
-  fun i j => mul_mem (hM i.1 j.1) (hN i.2 j.2)
 
 theorem patternProj {A : Type*} [DecidableEq n] [DecidableEq A] (r : n → A) (a : A) :
     EntriesIn K (patternProj r a) := fun i j => by

@@ -99,16 +99,6 @@ theorem qIdx_inj (T : ℕ) {tg tg' : Bool} {x x' : BitStr} (hx : x ∈ Data.bitS
   refine ⟨rfl, (List.idxOf_inj hx).1 ?_⟩
   cases tg <;> simp at h <;> omega
 
-theorem qIdx_eq_iff (T : ℕ) (tg : Bool) {x : BitStr} (hx : x ∈ Data.bitStrsLE T)
-    (i : Fin (2 * N T)) :
-    qIdx T tg x = (i : ℕ) ↔ tg = (qEquiv T i).1 ∧ x = (qEquiv T i).2.1 := by
-  constructor
-  · intro h
-    exact qIdx_inj T hx ((Data.mem_bitStrsLE _ _).2 (qEquiv T i).2.2)
-      (h.trans (qEquiv_apply T i).symm)
-  · rintro ⟨rfl, rfl⟩
-    exact qEquiv_apply T i
-
 /-! ## The table -/
 
 /-- The sampler's pair on `(z, r)` under the budget `T`, read off a budgeted run; `([], [])`

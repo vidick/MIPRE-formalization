@@ -52,8 +52,6 @@ theorem chk_spec : chk.WellFormed ∧ chk.inputs = winCard 7 6 Sym Ctl ∧
 /-- The number of gates of the check circuit. -/
 noncomputable def Gc : ℕ := chk.gates.length
 
-theorem Gc_eq : Gc = chk.gates.length := rfl
-
 theorem chk_wellFormed : chk.WellFormed := chk_spec.1
 
 theorem chk_inputs : chk.inputs = winCard 7 6 Sym Ctl := chk_spec.2.1
@@ -63,12 +61,6 @@ theorem chk_refsLt : chk.RefsLt := chk_wellFormed.refsLt
 theorem chk_inputsLt : chk.InputsLt := chk_wellFormed.inputsLt
 
 theorem chk_gates_ne : chk.gates ≠ [] := chk_wellFormed.nonempty
-
-theorem chk_size_le : chk.size ≤ 7 * 2 ^ winCard 7 6 Sym Ctl := chk_spec.2.2.1
-
-theorem Gc_le : Gc ≤ 7 * 2 ^ winCard 7 6 Sym Ctl := chk_size_le
-
-theorem Gc_pos : 0 < Gc := List.length_pos_iff.mpr chk_gates_ne
 
 /-- The check circuit computes the local check predicate: the hypothesis of the correctness
 of the tableau (`IsCheckCircuit`, `lem:correct-tableau`). -/

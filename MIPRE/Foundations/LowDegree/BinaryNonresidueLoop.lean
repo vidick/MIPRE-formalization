@@ -87,9 +87,6 @@ noncomputable def nonresidueStepProg : PolyTimeFun (NonresidueState × Bool) Non
       (take.comp (((PolyTimeFun.headD []).comp candidates).pair cap)))))))
     (fun s => nonresidueStep s.1 s.2) (by intro s; rfl)
 
-theorem nonresidueStepProg_apply (s : NonresidueState) (b : Bool) :
-    nonresidueStepProg (s, b) = nonresidueStep s b := rfl
-
 theorem nonresidueStep_bounded : FoldBounded nonresidueStepProg (10 * X + 10) := by
   intro l s pre post _
   change esize (pre.foldl nonresidueStep s) ≤ _

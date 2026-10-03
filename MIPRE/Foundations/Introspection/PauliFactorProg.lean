@@ -63,10 +63,6 @@ theorem factorBits_length (p : Parameters) (r : ℕ) :
     | cons b l ih => simp [ih, Nat.add_mul, Nat.add_comm]
   rw [he, factorFlags_length]
 
-theorem factorBits_runs (x : Parameters × ℕ) :
-    ∃ r ≤ factorBits.timeBound.eval (esize x),
-      factorBits.code.Runs (encode x) (encode (factorBits x)) r := factorBits.computes x
-
 end MIPRE.Introspection.PauliStageProgram
 end
 

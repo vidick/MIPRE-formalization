@@ -75,10 +75,6 @@ def stackRun (x : BitStr) (s : List Data) : List Data := x.foldl stackStep s
 @[simp] theorem stackRun_cons (bit : Bool) (x : BitStr) (s : List Data) :
     stackRun (bit :: x) s = stackRun x (stackStep s bit) := rfl
 
-theorem stackRun_append (x y : BitStr) (s : List Data) :
-    stackRun (x ++ y) s = stackRun y (stackRun x s) :=
-  List.foldl_append ..
-
 /-- The stack machine reads a serialization by pushing the datum. -/
 theorem stackRun_toBitsPost (d : Data) (rest : BitStr) (s : List Data) :
     stackRun (d.toBitsPost ++ rest) s = stackRun rest (d :: s) := by
@@ -325,13 +321,6 @@ theorem size_parse_le (x : BitStr) : (parse x).size ≤ max 1 x.length := by
     simp only [List.map_cons, List.sum_cons] at h
     simp only [List.headD_cons]
     exact le_max_of_le_right (by omega)
-
-theorem primrec_isBit : Primrec isBit := by
-  refine (Primrec.ite (PrimrecRel.comp Primrec.eq Primrec.id (Primrec.const nil))
-    (Primrec.const true) (Primrec.ite (PrimrecRel.comp Primrec.eq Primrec.id
-      (Primrec.const (cons nil nil))) (Primrec.const true) (Primrec.const false))).of_eq
-    fun d => ?_
-  rcases d with _ | ⟨_ | ⟨a, b⟩, _ | ⟨c, e⟩⟩ <;> simp [isBit]
 
 theorem primrec_isCanonBin : Primrec isCanonBin := by
   have hA : PrimrecPred fun l : BitStr => l = [] :=

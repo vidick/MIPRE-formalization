@@ -380,9 +380,6 @@ def prog : ProgId → List Instr
 /-- The length bound on the programs. -/
 def maxPc : ℕ := 32
 
-theorem length_prog_le (k : ProgId) : (prog k).length ≤ maxPc := by
-  cases k <;> decide
-
 end MIPRE.TM.Interp
 
 end

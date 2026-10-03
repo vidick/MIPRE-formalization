@@ -35,9 +35,6 @@ def certificateValue (p : BitStr) (l : List (BitStr × BitStr)) : BitStr :=
 def CorrectPairs (p : BitStr) (l : List (BitStr × BitStr)) : Prop :=
   ∀ a ∈ l, a.1.length = p.length ∧ a.2.length = p.length
 
-theorem length_literalProduct (p : BitStr) (l : List (BitStr × BitStr)) :
-    (literalProduct p l).length = p.length := arithmeticFold_mul_width _ _ _ (length_oneBits p)
-
 theorem length_formulaValue (p φ : BitStr) (l : List (BitStr × BitStr))
     (hφ : φ.length = p.length) : (formulaValue p φ l).length = p.length :=
   length_mulReduce _ _ _ hφ

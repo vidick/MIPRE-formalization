@@ -28,10 +28,6 @@ variable {I J R H K : Type*}
 def registerState (I : Type*) [Fintype I] [DecidableEq I] (ξ : H × K → ℂ) :
     (I × H) × (I × K) → ℂ := expVec (registerEPR I) ξ
 
-theorem registerState_norm [Nonempty I] (ξ : H × K → ℂ) (hξ : ‖evec ξ‖ = 1) :
-    ‖evec (registerState I ξ)‖ = 1 := by
-  rw [registerState, norm_evec_expVec, registerEPR_norm, hξ, one_mul]
-
 /-- Split a local basis and keep the original ancilla last. -/
 def registerParty (e : I ≃ J × R) (H : Type*) : I × H ≃ J × (R × H) :=
   (e.prodCongr (Equiv.refl H)).trans (Equiv.prodAssoc J R H)
@@ -50,13 +46,6 @@ theorem registerState_split (e : I ≃ J × R) (ξ : H × K → ℂ) :
       (registerEPR R ((e p.1.1).2, (e p.2.1).2) * ξ (p.1.2, p.2.2))
   rw [← hp]
   exact mul_assoc _ _ _
-
-/-- A local operator has exactly the same error in the split register presentation. -/
-theorem stateSqNorm_registerState_split (e : I ≃ J × R) (ξ : H × K → ℂ)
-    (M : Matrix (J × (R × H)) (J × (R × H)) ℂ) :
-    stateSqNorm (registerState I ξ) (registerOp (registerParty e H) M) =
-      stateSqNorm (registerState J (registerState R ξ)) M := by
-  rw [registerState_split e ξ, stateSqNorm_registerOp]
 
 /-- The complementary register is moved behind the original auxiliary register. -/
 def registerOutside (e : I ≃ J × R) (H : Type*) : I × H ≃ (J × H) × R :=

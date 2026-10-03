@@ -112,27 +112,6 @@ theorem reindexedGame_D (q r : CL.Detyping.Question (QuestionType PT ℓ) Q)
       (game E X Z P L project D DP).D q r a b :=
   check_reindex e L X Z project D _ _ _ _ _
 
-/-- Return to the original coordinate type by an exact answer relabeling. -/
-abbrev originalStrategy (S : TensorProductStrategy (reindexedGame e E X Z P L project D DP)) :
-    TensorProductStrategy (game E X Z P L project D DP) :=
-  S.relabel _ (Equiv.refl _) (Equiv.refl _) (answerEquiv e) (answerEquiv e)
-
-theorem originalStrategy_value
-    (S : TensorProductStrategy (reindexedGame e E X Z P L project D DP)) :
-    (originalStrategy e E X Z P L project D DP S).value = S.value := by
-  apply S.value_relabel _ (Equiv.refl _) (Equiv.refl _) (answerEquiv e) (answerEquiv e) (fun _ _ => rfl)
-  intro q r a b
-  exact (reindexedGame_D e E X Z P L project D DP q r a b).symm
-
-theorem reindexedGame_quantumValue :
-    quantumValue (reindexedGame e E X Z P L project D DP) =
-      quantumValue (game E X Z P L project D DP) := by
-  symm
-  apply quantumValue_eq_of_equiv _ _ (Equiv.refl _) (Equiv.refl _) (answerEquiv e) (answerEquiv e)
-    (fun _ _ => rfl)
-  intro q r a b
-  exact (reindexedGame_D e E X Z P L project D DP q r a b).symm
-
 section Model
 
 variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
@@ -208,34 +187,9 @@ abbrev reindexedPCC (S : SyncStrategy (game E X Z P L project D DP).doubled) :
     SyncStrategy (reindexedGame e E X Z P L project D DP).doubled :=
   S.relabel _ (Equiv.refl _) (answerEquiv e).symm
 
-theorem reindexedPCC_isPCC (S : SyncStrategy (game E X Z P L project D DP).doubled)
-    (hS : S.IsPCC) : (reindexedPCC e E X Z P L project D DP S).IsPCC :=
-  SyncStrategy.isPCC_relabel hS _ _ _ (fun _ _ => rfl)
-
-theorem reindexedPCC_value (S : SyncStrategy (game E X Z P L project D DP).doubled) :
-    (reindexedPCC e E X Z P L project D DP S).value = S.value := by
-  apply S.value_relabel _ (Equiv.refl _) (answerEquiv e).symm (fun _ _ => rfl)
-  intro q r a b
-  obtain ⟨a,rfl⟩ := (answerEquiv (F := F) (A := A) (PA := PA) e).surjective a
-  obtain ⟨b,rfl⟩ := (answerEquiv (F := F) (A := A) (PA := PA) e).surjective b
-  simp only [Game.doubled_D, Equiv.refl_apply, Equiv.symm_apply_apply, reindexedGame_D]
-
 @[simp] theorem reindexedPCC_dimension
     (S : SyncStrategy (game E X Z P L project D DP).doubled) :
     (reindexedPCC e E X Z P L project D DP S).d = S.d := rfl
-
-set_option backward.isDefEq.respectTransparency false in
-theorem reindexedPCC_prefixGuard (S : SyncStrategy (game E X Z P L project D DP).doubled)
-    (hS : ∀ q a, S.P.M q a ≠ 0 → PrefixGuard.holds L q.2.1 a)
-    (q : Bool × CL.Detyping.Question (QuestionType PT ℓ) Q)
-    (a : ParsedAnswer (κ → F) A PA)
-    (ha : (reindexedPCC e E X Z P L project D DP S).P.M q a ≠ 0) :
-    PrefixGuard.holds (fun w => (L w).reindex e) q.2.1 a := by
-  obtain ⟨a,rfl⟩ := (answerEquiv (F := F) (A := A) (PA := PA) e).surjective a
-  apply (prefixGuard_reindex e L q.2.1 a).mpr
-  apply hS q a
-  simpa only [reindexedPCC, SyncStrategy.relabel_P_M, Equiv.refl_apply,
-    Equiv.symm_apply_apply, SyncStrategy.relabel_d] using ha
 
 end MIPRE.Introspection.AuxiliaryQuotient
 end

@@ -84,12 +84,6 @@ theorem advancePrefix_register {P : CL.CLFun F ι ℓ} {T : Finset ι}
       CLChecks.prefixRegister P (k + 1) y :=
   CLChecks.prefixRegister_congr hP k (advancePrefix_old_prefix hP k y z)
 
-theorem advancePrefix_factor {P : CL.CLFun F ι ℓ} {T : Finset ι}
-    (hP : P.SupportedOn T) (k : ℕ) (y : ι → F)
-    (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) :
-    P.factorOfPrefix k (advancePrefix P k y z) = P.factorOfPrefix k y :=
-  CLChecks.stageFactor_congr hP k (advancePrefix_old_prefix hP k y z)
-
 theorem advancePrefix_remaining {P : CL.CLFun F ι ℓ} {T : Finset ι}
     (hP : P.SupportedOn T) (k : ℕ) (y : ι → F)
     (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) :

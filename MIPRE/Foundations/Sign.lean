@@ -48,8 +48,6 @@ theorem star_sgn (x : ZMod 2) : star (sgn x) = sgn x := by
 @[simp] theorem sgn_one : sgn 1 = -1 := by
   rw [sgn, show ZMod.val (1 : ZMod 2) = 1 from rfl, if_pos rfl]
 
-theorem sgn_mul_self_eq_one (x : ZMod 2) : sgn x * sgn x = 1 := sgn_mul_self x
-
 /-- `sgn` turns a sum of bits into a product of signs: it is a character of `𝔽₂`. -/
 theorem sgn_sum {α : Type*} (s : Finset α) (f : α → ZMod 2) :
     sgn (∑ i ∈ s, f i) = ∏ i ∈ s, sgn (f i) := by
@@ -62,13 +60,6 @@ theorem sgn_sum {α : Type*} (s : Finset α) (f : α → ZMod 2) :
 /-- `sgn` takes values `±1`, hence modulus one. -/
 theorem norm_sgn (x : ZMod 2) : ‖sgn x‖ = 1 := by
   rw [sgn]; split_ifs <;> norm_num
-
-theorem sgn_ne_zero (x : ZMod 2) : sgn x ≠ 0 := by
-  rw [sgn]; split_ifs <;> norm_num
-
-/-- `sgn` is its own inverse, so dividing by it is multiplying by it. -/
-theorem inv_sgn (x : ZMod 2) : (sgn x)⁻¹ = sgn x :=
-  inv_eq_of_mul_eq_one_left (sgn_mul_self x)
 
 /-- Summing `sgn` over both bits gives zero: the character is nontrivial. -/
 theorem sum_sgn : ∑ x : ZMod 2, sgn x = 0 := by

@@ -13,8 +13,7 @@ public import MIPRE.TM.CookLevin.FieldFml
 
 For the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a
 variable of that kind (with its range checks), the characterization of `decodeVar` by them
-(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the
-same variable up to the aliasing of unused fields), and the formulas computing all of these
+(`decodeVar_cell_iff`, …), and the formulas computing all of these
 on the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics
 (`planning/succinct-cook-levin.md`, S3).
 -/
@@ -24,14 +23,6 @@ namespace MIPRE.TM.CookLevin.Desc
 open SAT Cost Fml
 
 /-! ## Numeric equality of fields -/
-
-/-- The numeric fields of two records agree (the flags may differ: an answer index and the
-structured index of the same cell). -/
-def Fields.numEq (F F' : Fields) : Prop :=
-  F.tag = F'.tag ∧ F.t = F'.t ∧ F.d = F'.d ∧ F.p = F'.p ∧ F.v = F'.v ∧ F.q = F'.q ∧
-    (∀ k, F.js k = F'.js k) ∧ F.g = F'.g
-
-theorem Fields.numEq_refl (F : Fields) : F.numEq F := ⟨rfl, rfl, rfl, rfl, rfl, rfl, fun _ => rfl, rfl⟩
 
 /-- The lengths of the field formulas of a literal. -/
 structure FieldsF.Lengths (e G : ℕ) (A : FieldsF) : Prop where
@@ -59,36 +50,6 @@ def numEqF (A B : FieldsF) : Fml :=
   andList ([eqFields A.tag B.tag, eqFields A.t B.t, eqFields A.d B.d, eqFields A.p B.p,
     eqFields A.v B.v, eqFields A.q B.q, eqFields A.g B.g] ++
     List.ofFn fun k : Fin 13 => eqFields (A.js k) (B.js k))
-
-theorem eval_numEqF {e G : ℕ} {A B : FieldsF} (hA : A.Lengths e G) (hB : B.Lengths e G) (x : ℕ → Bool) :
-    (numEqF A B).eval x = true ↔ (evalFields A x).numEq (evalFields B x) := by
-  simp only [numEqF, eval_andList_eq_true, List.mem_append, List.mem_cons, List.mem_ofFn,
-    List.not_mem_nil, or_false, Fields.numEq, evalFields]
-  constructor
-  · intro h
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, fun k => ?_, ?_⟩
-    · exact (eval_eqFields_iff _ _ (by rw [hA.tag, hB.tag]) x).mp (h _ (Or.inl (Or.inl rfl)))
-    · exact (eval_eqFields_iff _ _ (by rw [hA.t, hB.t]) x).mp (h _ (Or.inl (Or.inr (Or.inl rfl))))
-    · exact (eval_eqFields_iff _ _ (by rw [hA.d, hB.d]) x).mp (h _ (Or.inl (Or.inr (Or.inr (Or.inl rfl)))))
-    · exact (eval_eqFields_iff _ _ (by rw [hA.p, hB.p]) x).mp
-        (h _ (Or.inl (Or.inr (Or.inr (Or.inr (Or.inl rfl))))))
-    · exact (eval_eqFields_iff _ _ (by rw [hA.v, hB.v]) x).mp
-        (h _ (Or.inl (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))))
-    · exact (eval_eqFields_iff _ _ (by rw [hA.q, hB.q]) x).mp
-        (h _ (Or.inl (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))))))
-    · exact (eval_eqFields_iff _ _ (by rw [hA.js, hB.js]) x).mp (h _ (Or.inr ⟨k, rfl⟩))
-    · exact (eval_eqFields_iff _ _ (by rw [hA.g, hB.g]) x).mp
-        (h _ (Or.inl (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr rfl))))))))
-  · rintro ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ f hf
-    rcases hf with (rfl | rfl | rfl | rfl | rfl | rfl | rfl) | ⟨k, rfl⟩
-    · exact (eval_eqFields_iff _ _ (by rw [hA.tag, hB.tag]) x).mpr h1
-    · exact (eval_eqFields_iff _ _ (by rw [hA.t, hB.t]) x).mpr h2
-    · exact (eval_eqFields_iff _ _ (by rw [hA.d, hB.d]) x).mpr h3
-    · exact (eval_eqFields_iff _ _ (by rw [hA.p, hB.p]) x).mpr h4
-    · exact (eval_eqFields_iff _ _ (by rw [hA.v, hB.v]) x).mpr h5
-    · exact (eval_eqFields_iff _ _ (by rw [hA.q, hB.q]) x).mpr h6
-    · exact (eval_eqFields_iff _ _ (by rw [hA.g, hB.g]) x).mpr h8
-    · exact (eval_eqFields_iff _ _ (by rw [hA.js, hB.js]) x).mpr (h7 k)
 
 /-! ## Kinds -/
 

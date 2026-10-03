@@ -6,7 +6,7 @@ module
 public import MIPRE.Background.Introspection.DecisionCompilerRoute
 public import MIPRE.Background.Introspection.DecisionCompilerZero
 public import MIPRE.Foundations.Introspection.SourceDescriptionCompiler
-public import MIPRE.Foundations.Introspection.DecisionPreparationBound
+public import MIPRE.Foundations.Introspection.DecisionPreparationCost
 
 @[expose] public section
 
@@ -109,15 +109,6 @@ theorem zero_runs (c : ℕ) (U : ClockedUniversalMachine) (S D : Prog)
     subst n
     obtain ⟨t,_,hr⟩ := zeroWrap_runs_zero (positiveCompiler c U _) d
     exact ⟨t,hr⟩
-
-theorem decider_total (c : ℕ) (U : ClockedUniversalMachine) (S D : Prog)
-    (lam n : ℕ) (d : Data) : Halts (decider c U S D lam).prog (.cons (encode n) d) := by
-  by_cases h : lam = 0 ∨ n = 0
-  · obtain ⟨t,hr⟩ := zero_runs c U S D lam n h d
-    exact ⟨_,t,hr⟩
-  · push_neg at h
-    obtain ⟨t,hr⟩ := positive_runs c U S D (by omega : 1 ≤ lam) (by omega : 1 ≤ n) d
-    exact ⟨_,t,hr⟩
 
 theorem accepts_positive (c : ℕ) (U : ClockedUniversalMachine) (S D : Prog)
     {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) (x y a b : BitStr) :

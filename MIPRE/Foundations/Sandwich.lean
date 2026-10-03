@@ -199,10 +199,6 @@ def POVMIn.sand {A R : Type*} [Fintype A] [Ring R] [StarRing R] [PartialOrder R]
     rw [AddSubmonoidClass.coe_finsetSum]
     exact hX.sum_sand hZ
 
-theorem POVMIn.sand_op {A R : Type*} [Fintype A] [Ring R] [StarRing R] [PartialOrder R]
-    [StarOrderedRing R] {X Z : A → R} (hX : IsPVMIn X) (hZ : IsPVMIn Z) (p : A × A) :
-    (POVMIn.sand hX hZ).op p = MIPRE.sand X Z p := rfl
-
 namespace StateModel
 
 open scoped InnerProductSpace
@@ -650,13 +646,6 @@ theorem abs_qform_aOp_mul_bOp_le (ψ : dA × dB → ℂ) (U : Matrix dA dA ℂ) 
   rw [← BipartiteModel.qform_tensor, norm_stateVecB_eq_tensor, stateNorm_eq_tensor]
   exact (BipartiteModel.tensor ψ).abs_qform_πA_mul_πB_le U V
 
-/-- Cauchy--Schwarz for a mixed product, with the deviation on **Bob's** side. -/
-theorem abs_qform_aOp_mul_bOp_le' (ψ : dA × dB → ℂ) (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
-    |qform ψ ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V)|
-      ≤ stateNorm ψ (Uᴴ) * ‖stateVecB ψ V‖ := by
-  rw [← BipartiteModel.qform_tensor, norm_stateVecB_eq_tensor, stateNorm_eq_tensor]
-  exact (BipartiteModel.tensor ψ).abs_qform_πA_mul_πB_le' U V
-
 /-- **A contraction in front costs nothing**, on Alice's side. -/
 theorem stateNorm_mul_le (ψ : dA × dB → ℂ) {P : Matrix dA dA ℂ}
     (hP : Pᴴ * P ≤ (1 : Matrix dA dA ℂ)) (N : Matrix dA dA ℂ) :
@@ -681,17 +670,6 @@ section Proj
 
 variable {N : Type*} [Fintype N] [DecidableEq N]
 
-/-- **A sum of mutually orthogonal projections is a projection.** -/
-theorem conjTranspose_sum_of_orth {ι : Type*} [Fintype ι] {P : ι → Matrix N N ℂ}
-    (hsa : ∀ i, (P i)ᴴ = P i) : (∑ i, P i)ᴴ = ∑ i, P i := by
-  rw [Matrix.conjTranspose_sum]
-  exact Finset.sum_congr rfl fun i _ => hsa i
-
-theorem mul_self_sum_of_orth {ι : Type*} [Fintype ι] [DecidableEq ι] {P : ι → Matrix N N ℂ}
-    (hidem : ∀ i, P i * P i = P i) (horth : ∀ i j, i ≠ j → P i * P j = 0) :
-    (∑ i, P i) * (∑ i, P i) = ∑ i, P i :=
-  (isIdempotentElem_sum_of_orth hidem horth).eq
-
 end Proj
 
 /-! ## Products of the two factors -/
@@ -699,16 +677,6 @@ end Proj
 section Bipartite2
 
 variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
-
-theorem aOp_bOp_mul_aOp_bOp (U U' : Matrix dA dA ℂ) (V V' : Matrix dB dB ℂ) :
-    ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V) * ((aOp U' : Matrix (dA × dB) _ ℂ) * bOp V')
-      = (aOp (U * U') : Matrix (dA × dB) _ ℂ) * bOp (V * V') :=
-  (BipartiteModel.tensor (fun _ : dA × dB => (0 : ℂ))).πA_mul_πB_mul U U' V V'
-
-theorem aOp_bOp_conjTranspose (U : Matrix dA dA ℂ) (V : Matrix dB dB ℂ) :
-    ((aOp U : Matrix (dA × dB) _ ℂ) * bOp V)ᴴ
-      = (aOp (Uᴴ) : Matrix (dA × dB) _ ℂ) * bOp (Vᴴ) :=
-  (BipartiteModel.tensor (fun _ : dA × dB => (0 : ℂ))).star_πA_mul_πB U V
 
 theorem stateSqNorm_eq_qform (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
     stateSqNorm ψ M = qform ψ ((aOp (Mᴴ * M) : Matrix (dA × dB) _ ℂ)) := by
@@ -782,11 +750,6 @@ def sandPOVM (hX : IsPVM X) (hZ : IsPVM Z) : POVM (A × A) d where
 @[simp] theorem sandPOVM_mats (hX : IsPVM X) (hZ : IsPVM Z) (p : A × A) :
     (((sandPOVM hX hZ).mats p).val) = sand X Z p := rfl
 
-/-- The matrix sandwich POVM is the sandwich POVM of the matrix algebra. -/
-theorem sandPOVM_toIn (hX : IsPVM X) (hZ : IsPVM Z) :
-    (sandPOVM hX hZ).toIn = POVMIn.sand hX.toIn hZ.toIn :=
-  POVMIn.ext' fun _ => rfl
-
 end Sand
 
 /-! ## The chain
@@ -833,34 +796,6 @@ theorem abs_link2_le (hX : IsPVM X) (hZ : IsPVM Z) (hZ' : IsPVM Z') :
         * Real.sqrt (∑ p : A × A, ‖stateVecB ψ (X' p.1 * Z' p.2 - Z' p.2 * X' p.1)‖ ^ 2) := by
   simp only [← BipartiteModel.qform_tensor, stateSqNorm_eq_tensor, normSq_stateVecB_eq_tensor]
   exact (BipartiteModel.tensor ψ).abs_link2_le hX.toIn hZ.toIn hZ'.toIn
-
-/-- The diagonal `Z`-agreement operator, and the `X`-disagreement operator: both projections,
-because their summands are mutually orthogonal projections. -/
-theorem isProj_diag (hZ : IsPVM Z) (hZ' : IsPVM Z') :
-    ((∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))ᴴ
-        = ∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
-      ∧ (∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
-          * (∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b))
-        = ∑ b : A, (aOp (Z b) : Matrix (dA × dB) _ ℂ) * bOp (Z' b) :=
-  have h := (BipartiteModel.tensor (fun _ : dA × dB => (0 : ℂ))).isStarProjection_diag hZ.toIn hZ'.toIn
-  ⟨h.isSelfAdjoint.star_eq, h.isIdempotentElem.eq⟩
-
-theorem isProj_disag (hX : IsPVM X) (hX' : IsPVM X') :
-    ((∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))ᴴ
-        = ∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
-      ∧ (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
-          * (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
-        = ∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a) :=
-  have h := (BipartiteModel.tensor (fun _ : dA × dB => (0 : ℂ))).isStarProjection_disag hX.toIn hX'.toIn
-  ⟨h.isSelfAdjoint.star_eq, h.isIdempotentElem.eq⟩
-
-/-- The `X`-disagreement operator's expectation is the `X`-consistency defect. -/
-theorem qform_disag (hψ : ‖evec ψ‖ = 1) (hX : IsPVM X) (hX' : IsPVM X') :
-    qform ψ (∑ a : A, (aOp (1 - X a) : Matrix (dA × dB) _ ℂ) * bOp (X' a))
-      = (∑ a : A, xSqNorm ψ (X a) (X' a)) / 2 := by
-  rw [← BipartiteModel.qform_tensor]
-  simp only [xSqNorm_eq_tensor]
-  exact (BipartiteModel.tensor ψ).qform_disag hψ hX.toIn hX'.toIn
 
 /-- **Link 3**: dropping Alice's `X`-outcome costs her `X`-consistency with Bob, and nothing that
 depends on the number of outcomes: the whole outcome sum is one operator product. -/

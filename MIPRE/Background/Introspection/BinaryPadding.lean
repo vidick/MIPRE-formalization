@@ -80,37 +80,6 @@ theorem exists_padded_perfectPCC
   change 2 * 2^(2^m*t) * R.d = 2^(2^m*t+1)*R.d
   rw [pow_succ, Nat.mul_comm 2]
 
-/-- The same binary source with one final zero stage, so the factor registers
-partition the entire padded register as required by soundness. -/
-def exactPaddedGame (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
-    (hs : s ≤ 2^m*t) :=
-  game (d := d) (SourcePadding.fullFamily (paddingEmbedding hs) L)
-    (SourcePadding.decider (paddingEmbedding hs) D) hm b
-
-/-- Exact-partition padding keeps the source game and dimension unchanged;
-only the auxiliary hiding-chain level count increases by one. -/
-theorem exists_exactPadded_perfectPCC
-    (R : SyncStrategy (Honest.sourceGame L D).doubled)
-    (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
-    (hb : LowDegree.IsSelfDualBasis b) (hd : 1 ≤ d) (hs : s ≤ 2^m*t)
-    (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hv : R.value = 1) :
-    (∀ w, (SourcePadding.fullFamily (paddingEmbedding hs) L w).ExactlyOn univ) ∧
-    ∃ Q : SyncStrategy (exactPaddedGame (d := d) L D hm b hs).doubled,
-      Q.IsPCC ∧ Q.value = 1 ∧ Q.d = 2^(2^m*t+1)*R.d := by
-  let e := paddingEmbedding hs
-  have hfull := SourcePadding.fullFamily_exactlyOn e L hL
-  refine ⟨hfull,?_⟩
-  have hex : ∃ R' : SyncStrategy
-      (Honest.sourceGame (SourcePadding.fullFamily e L) (SourcePadding.decider e D)).doubled,
-      R'.IsPCC ∧ R'.value = 1 ∧ R'.d = R.d := by
-    rw [SourcePadding.sourceGame_fullFamily]
-    exact SourcePadding.exists_perfectPCC e L D R hR hv
-  obtain ⟨R',hR',hv',hdim⟩ := hex
-  obtain ⟨Q,hQ,hvQ,hDim⟩ := exists_perfectPCC (SourcePadding.fullFamily e L)
-    (SourcePadding.decider e D) R' hm b hb hd (fun w => (hfull w).supportedOn) hR' hv'
-  refine ⟨Q,hQ,hvQ,?_⟩
-  rw [hDim, card_seed, hdim, pow_succ, Nat.mul_comm 2]
-
 /-- The exact-partition construction at the original positive depth. -/
 def depthPaddedGame (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)
     (hs : s ≤ 2^m*t) :=

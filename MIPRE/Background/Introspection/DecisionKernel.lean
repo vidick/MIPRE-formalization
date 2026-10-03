@@ -133,19 +133,11 @@ theorem auxiliaryInput_apply (U : ClockedUniversalMachine) (z : Input) :
 theorem sourceContext_apply (z : Input) :
     sourceContext z = (budget z, sourceSampler z, sourceIndex z, false, 1, zeroPrefix z) := rfl
 
-theorem project_apply (z : AuxiliaryDecision.Input QLD.Ty 7) :
-    project z = (QLD.PauliBinaryProgram.fullAnswer
-      (AuxiliaryDecision.pauliParameters z, AuxiliaryDecision.leftBits z)).2 := rfl
-
 set_option maxRecDepth 4096 in
 theorem pauli_apply (z : Input) :
     pauli z = if andCheck leftIsPauli rightIsPauli z then
       QLD.PauliBinaryProgram.program
         (parameters z, leftPauliPayload z, rightPauliPayload z) else true := rfl
-
-theorem program_runs (U : ClockedUniversalMachine) (z : Input) :
-    ∃ t ≤ (program U).timeBound.eval (esize z),
-      (program U).code.Runs (encode z) (encode (program U z)) t := (program U).computes z
 
 end MIPRE.Introspection.DecisionKernel
 end

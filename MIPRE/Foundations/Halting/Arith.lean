@@ -512,9 +512,6 @@ def mulBody : Prog :=
 /-- `mulProg` on `cons (ofNat a) (ofNat b)` computes `ofNat (a * b)`. -/
 def mulProg : Prog := .elim 0 .nil (.let_ (.cons (.var 1) .nil) (.loop mulBody))
 
-theorem mulBody_wellScoped : mulBody.WellScoped 4 := by
-  simp [mulBody, WellScoped, addProg, lenBody]
-
 theorem mulProg_wellScoped : mulProg.WellScoped 1 := by
   simp [mulProg, WellScoped, mulBody, addProg, lenBody]
 

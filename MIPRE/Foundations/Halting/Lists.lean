@@ -43,11 +43,6 @@ def spine : Data → ℕ
 @[simp] theorem spine_nil : spine nil = 0 := rfl
 @[simp] theorem spine_cons (a r : Data) : spine (cons a r) = spine r + 1 := rfl
 
-theorem spine_list (l : List Data) : spine (list l) = l.length := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => simp [ih]
-
 theorem spine_ofNat (n : ℕ) : spine (ofNat n) = n := by
   induction n with
   | zero => rfl

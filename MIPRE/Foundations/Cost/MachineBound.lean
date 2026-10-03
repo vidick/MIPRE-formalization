@@ -86,9 +86,6 @@ theorem esize_let_right (e b : Prog) : esize b ≤ esize (Prog.let_ e b) := by
 theorem esize_loop (b : Prog) : esize b ≤ esize (Prog.loop b) := by
   simp only [Prog.esize_eq_size_toData, Prog.toData, Data.size_cons]; omega
 
-theorem size_const_le (d : Data) : d.size ≤ esize (Prog.const d) := by
-  simp only [Prog.esize_eq_size_toData, Prog.toData, Data.size_cons]; omega
-
 /-! ## Chaining bounds along runs -/
 
 theorem bound_chain {B : Cfg → Prop} {c₁ c₂ : Cfg} {m₁ m₂ : ℕ} (h₁ : step^[m₁] c₁ = c₂)

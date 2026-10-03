@@ -45,17 +45,6 @@ def stageAnswerRefinementPOVM {R : Type*} [Ring R] [StarRing R] [PartialOrder R]
     (M : POVMIn (Option ((ι → F) × A)) R) :=
   graphRefinementPOVM M (stageAnswerCoordinate P k y)
 
-theorem stageAnswerRefinement_none {R : Type*} [Ring R] (P : CL.CLFun F ι ℓ) (k : ℕ)
-    (y : ι → F) (M : Option ((ι → F) × A) → R)
-    (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) :
-    stageAnswerRefinement P k y M (z, none) = if z = 0 then M none else 0 := rfl
-
-theorem stageAnswerRefinement_some {R : Type*} [Ring R] (P : CL.CLFun F ι ℓ) (k : ℕ)
-    (y : ι → F) (M : Option ((ι → F) × A) → R)
-    (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F) (x : ι → F) (a : A) :
-    stageAnswerRefinement P k y M (z, some (x, a)) =
-      if z = coordinateRestrict (P.factorOfPrefix k y) x then M (some (x, a)) else 0 := rfl
-
 section POVM
 
 variable {R : Type*} [Ring R] [StarRing R] [PartialOrder R] [StarOrderedRing R]
@@ -64,11 +53,6 @@ theorem stageAnswerRefinementPOVM_mats (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι
     (M : POVMIn (Option ((ι → F) × A)) R) (p) :
     (stageAnswerRefinementPOVM P k y M).op p = stageAnswerRefinement P k y M.op p :=
   graphRefinementPOVM_mats _ _ _
-
-theorem stageAnswerRefinementPOVM_recover (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F)
-    (M : POVMIn (Option ((ι → F) × A)) R) :
-    (stageAnswerRefinementPOVM P k y M).map Prod.snd = M :=
-  graphRefinementPOVM_recover _ _
 
 theorem stageAnswerRefinementPOVM_isPVM (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F)
     (M : POVMIn (Option ((ι → F) × A)) R) (hM : IsPVMIn M.op) :
@@ -101,23 +85,6 @@ theorem stageAnswerRefinement_commutator [StarModule ℂ 𝒜] [StarModule ℂ �
   intro y _
   congr 1
   exact graphRefinement_commutator_sum _ _ _ _
-
-/-- Forgetting the added coordinate recovers the exact old ambient family,
-with no support premise and with every malformed-answer block retained. -/
-theorem stageAnswerRefinement_reassemble (P : CL.CLFun F ι ℓ) (k : ℕ)
-    (M : (y : ι → F) → Option ((ι → F) × A) →
-      Matrix (stageRemaining P k y → F) (stageRemaining P k y → F) 𝒜)
-    (a : Option ((ι → F) × A)) :
-    fibSumIn (fun p : AdaptiveStageAnswer P k (Option ((ι → F) × A)) =>
-      prefixResidualOp P k p.1 (stageAnswerRefinement P k p.1 (M p.1) p.2))
-      (fun p => p.2.2) a = ∑ y, prefixResidualOp P k y (M y a) := by
-  simp only [fibSumIn, Finset.sum_filter, Fintype.sum_sigma, Fintype.sum_prod_type]
-  apply Finset.sum_congr rfl
-  intro y _
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
-  rw [← prefixResidualOp_sum]
-  congr 1
-  exact graphRefinement_sum_coordinate _ _ _
 
 end MIPRE.Introspection
 end

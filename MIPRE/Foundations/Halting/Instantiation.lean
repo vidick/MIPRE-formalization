@@ -207,9 +207,6 @@ At `ValueModel.tensor` this is the class of the halting reduction of `MIP* = RE`
 def classB (ω : ValueModel) (n : ℕ) : Set BitStr :=
   {x | (Vof G U x).InClassB ω n (ansBound G x n)}
 
-theorem mem_classA_iff {n : ℕ} {x : BitStr} :
-    x ∈ classA G U n ↔ (Vof G U x).InClassA n (ansBound G x n) := Iff.rfl
-
 theorem mem_classB_iff {ω : ValueModel} {n : ℕ} {x : BitStr} :
     x ∈ classB G U ω n ↔ (Vof G U x).InClassB ω n (ansBound G x n) := Iff.rfl
 

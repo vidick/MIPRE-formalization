@@ -66,12 +66,6 @@ theorem game_accepts_iff (q r : Q) (a b : ParsedAnswer (ι → F) A PA) :
       holds L (type q) a ∧ holds L (type r) b ∧ G.D q r a b = true := by
   simp [game, and_assoc]
 
-/-- Guarding cannot increase the game's quantum value. -/
-theorem quantumValue_le : quantumValue (game L type G) ≤ quantumValue G := by
-  apply quantumValue_mono (game L type G) G (fun _ _ => rfl)
-  intro q r a b h
-  exact ((game_accepts_iff L type G q r a b).mp h).2.2
-
 /-- Any strategy whose nonzero effects satisfy the guard retains its exact
 value, without requiring perfection as an intermediate premise. -/
 theorem copied_value (S : SyncStrategy G.doubled)

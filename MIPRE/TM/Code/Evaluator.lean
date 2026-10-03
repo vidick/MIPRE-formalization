@@ -196,18 +196,6 @@ theorem produces_iff_exists_evalWithin (c : Code i) (x : Fin i → List Bool)
     exact (map_bitEmbedding_decodeBitOutput c
       (outputString_isBit c (c.toTM.initCfg (c.bitInputs x)) T)).symm
 
-/-- Outputs are deterministic. -/
-theorem Produces.unique {c : Code i} {x : Fin i → List Bool} {y y' : List Bool}
-    (h : c.Produces x y) (h' : c.Produces x y') : y = y' := by
-  rw [produces_iff_exists_evalWithin] at h h'
-  obtain ⟨T, hT⟩ := h
-  obtain ⟨T', hT'⟩ := h'
-  rcases Nat.le_total T T' with hle | hle
-  · have h2 := (evalWithin_halted_mono hle hT).symm.trans hT'
-    simpa using h2
-  · have h2 := (evalWithin_halted_mono hle hT').symm.trans hT
-    simpa using h2.symm
-
 /-! ## Executable pins (Milestone B machines) -/
 
 example : Code.copyBit.evalWithin (fun _ => [true]) 2 = .halted [true] := by decide

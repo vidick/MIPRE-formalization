@@ -98,13 +98,6 @@ theorem hideCoarseOp_epr_mirror (P : CL.CLFun F ι ℓ) (k : ℕ)
   rw [hideCoarseOp_transpose, ← registerEPR_eq_weyl] at he
   exact congrArg WithLp.ofLp he
 
-theorem hidingPrefixOp_epr_mirror (P : CL.CLFun F ι ℓ) (k : ℕ) (y : Option (ι → F)) :
-    aOp (hidingPrefixOp P k y) *ᵥ registerEPR (ι → F) =
-      bOp (hidingPrefixOp P k y) *ᵥ registerEPR (ι → F) := by
-  have he := stateVec_epr (hidingPrefixOp P k y)
-  rw [hidingPrefixOp_transpose, ← registerEPR_eq_weyl] at he
-  exact congrArg WithLp.ofLp he
-
 end MIPRE.Introspection.Honest
 
 end

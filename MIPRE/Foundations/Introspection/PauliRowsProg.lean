@@ -73,14 +73,6 @@ def linearBits : PolyTimeFun BinaryInput BitStr :=
 def marginalBits : PolyTimeFun BinaryInput BitStr :=
   BinaryBlock.encodeBlocksProg.comp ((fst.comp fst).pair (marginalRows.comp binaryInput))
 
-theorem linearBits_runs (x : BinaryInput) :
-    ∃ t ≤ linearBits.timeBound.eval (esize x),
-      linearBits.code.Runs (encode x) (encode (linearBits x)) t := linearBits.computes x
-
-theorem marginalBits_runs (x : BinaryInput) :
-    ∃ t ≤ marginalBits.timeBound.eval (esize x),
-      marginalBits.code.Runs (encode x) (encode (marginalBits x)) t := marginalBits.computes x
-
 end MIPRE.Introspection.PauliStageProgram
 end
 

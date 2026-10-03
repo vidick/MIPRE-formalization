@@ -148,13 +148,6 @@ theorem cells_commute {A B : Matrix I I ℂ}
   · exact h12.symm
   · exact Commute.refl _
 
-theorem sameEquation_commute {A B : Matrix I I ℂ}
-    (hAB : A * B = -(B * A)) (c : Fin layout.r) :
-    Pairwise (fun j k : layout.V c => Commute (grid A B j.1) (grid A B k.1)) := by
-  intro j k _
-  simpa only [cellIndex, cell_cellIdx j.2, cell_cellIdx k.2] using
-    cells_commute hAB c (cellIdx c j.1) (cellIdx c k.1)
-
 /-- Every row has even parity and the last column has odd parity. -/
 theorem row_product {A B : Matrix I I ℂ}
     (hA : IsObservable A) (hB : IsObservable B) (hAB : A * B = -(B * A))
@@ -165,14 +158,6 @@ theorem row_product {A B : Matrix I I ℂ}
   congr 1
   exact (observable_mul (grid_isObservable hA hB hAB _) (grid_isObservable hA hB hAB _)
     (first_second_commute hAB c)).involutive
-
-/-- The resulting observable strategy; its input pair occupies the required cells. -/
-def observableStrategy {A B : Matrix I I ℂ}
-    (hA : IsObservable A) (hB : IsObservable B) (hAB : A * B = -(B * A)) :
-    BipartiteObservableStrategy (I × Fin 2) layout where
-  obs := grid A B
-  isObservable := grid_isObservable hA hB hAB
-  sameEquation_comm := sameEquation_commute hAB
 
 /-- The binary measurement of an arbitrary cell. -/
 def variableOp (A B : Matrix I I ℂ) (j : Fin 9) (b : ZMod 2) :

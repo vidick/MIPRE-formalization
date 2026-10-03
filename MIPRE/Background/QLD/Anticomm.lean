@@ -145,17 +145,6 @@ theorem repPOVM_eq (PA : layout.Question → POVMIn layout.Answer 𝒜) (c : Fin
     repPOVM PA c k
       = ∑ d ∈ {d ∈ (univ : Finset layout.Answer) | rep c d = k}, (PA (Sum.inl c)).op d := rfl
 
-theorem repPOVM_nonneg [StarOrderedRing 𝒜] (PA : layout.Question → POVMIn layout.Answer 𝒜)
-    (c : Fin layout.r) (k : PV) : 0 ≤ repPOVM PA c k :=
-  Finset.sum_nonneg fun d _ => (PA (Sum.inl c)).op_nonneg d
-
-theorem sum_repPOVM (PA : layout.Question → POVMIn layout.Answer 𝒜) (c : Fin layout.r) :
-    ∑ k, repPOVM PA c k = 1 := by
-  classical
-  rw [Finset.sum_congr rfl fun k (_ : k ∈ univ) => repPOVM_eq PA c k,
-    Finset.sum_fiberwise (univ : Finset layout.Answer) (rep c) fun d => (PA (Sum.inl c)).op d]
-  exact (PA (Sum.inl c)).sum_op
-
 /-- **The repaired measurement of a projective measurement is projective**: it is a
 coarse-graining. -/
 theorem isPVMIn_repPOVM {PA : layout.Question → POVMIn layout.Answer 𝒜}
@@ -301,8 +290,6 @@ def dd (M : BipartiteModel 𝒞 𝒜 ℬ) (X Y : ℬ) : ℝ := M.snorm (M.πB X 
 
 theorem dd_comm (M : BipartiteModel 𝒞 𝒜 ℬ) (X Y : ℬ) : dd M X Y = dd M Y X :=
   M.snorm_sub_comm _ _
-
-theorem dd_nonneg (M : BipartiteModel 𝒞 𝒜 ℬ) (X Y : ℬ) : 0 ≤ dd M X Y := M.snorm_nonneg _
 
 theorem dd_triangle (M : BipartiteModel 𝒞 𝒜 ℬ) (X Y Z : ℬ) :
     dd M X Z ≤ dd M X Y + dd M Y Z := by

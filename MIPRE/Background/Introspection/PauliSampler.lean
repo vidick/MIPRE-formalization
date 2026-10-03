@@ -184,8 +184,6 @@ def compiler (c : ℕ) : PolyTimeFun ℕ Prog :=
       ((PolyTimeFun.smn ℕ).comp ((const (PauliSamplerParameters.prog c)).pair (PolyTimeFun.id ℕ)))).pair
         (const QLD.PauliCL.SamplerProgram.query.code))
 
-theorem compiler_apply (c lam : ℕ) : compiler c lam = prog c lam := rfl
-
 end MIPRE.Introspection.PauliSampler
 end
 

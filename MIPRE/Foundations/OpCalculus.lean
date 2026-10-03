@@ -47,9 +47,6 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 /-- `‖T v‖ ≤ K ‖v‖` for every `v`: the operator norm of `T` is at most `K`, as a relation. -/
 def Bnd (T : H →L[ℂ] H) (K : ℝ) : Prop := ∀ v, ‖T v‖ ≤ K * ‖v‖
 
-theorem Bnd.mono {T : H →L[ℂ] H} {K L : ℝ} (h : Bnd T K) (hKL : K ≤ L) : Bnd T L := fun v =>
-  le_trans (h v) (mul_le_mul_of_nonneg_right hKL (norm_nonneg _))
-
 theorem Bnd.add {T T' : H →L[ℂ] H} {K L : ℝ} (h : Bnd T K) (h' : Bnd T' L) :
     Bnd (T + T') (K + L) := fun v => by
   show ‖T v + T' v‖ ≤ (K + L) * ‖v‖
@@ -67,21 +64,6 @@ theorem Bnd.mul {T T' : H →L[ℂ] H} {K L : ℝ} (hK : 0 ≤ K) (h : Bnd T K) 
   show ‖T (T' v)‖ ≤ K * L * ‖v‖
   rw [mul_assoc]
   exact le_trans (h (T' v)) (mul_le_mul_of_nonneg_left (h' v) hK)
-
-theorem Bnd.smul {T : H →L[ℂ] H} {K : ℝ} (c : ℂ) (h : Bnd T K) : Bnd (c • T) (‖c‖ * K) :=
-  fun v => by
-  show ‖c • T v‖ ≤ ‖c‖ * K * ‖v‖
-  rw [norm_smul, mul_assoc]
-  exact mul_le_mul_of_nonneg_left (h v) (norm_nonneg c)
-
-theorem bnd_zero (K : ℝ) (hK : 0 ≤ K) : Bnd (0 : H →L[ℂ] H) K := fun v => by
-  show ‖(0 : H)‖ ≤ K * ‖v‖
-  rw [norm_zero]
-  positivity
-
-theorem bnd_one : Bnd (1 : H →L[ℂ] H) 1 := fun v => by
-  show ‖v‖ ≤ 1 * ‖v‖
-  rw [one_mul]
 
 /-- An operator of norm at most `K` is bounded by `K`. -/
 theorem bnd_of_norm_le {T : H →L[ℂ] H} {K : ℝ} (h : ‖T‖ ≤ K) : Bnd T K := fun v =>

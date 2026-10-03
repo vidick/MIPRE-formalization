@@ -160,24 +160,6 @@ theorem partrec_evalData : Partrec₂ evalData :=
   (Partrec.fix computable_evalStep).comp
     (primrec_initData.to_comp.comp Computable.fst Computable.snd)
 
-theorem mem_fix_of_iterate (d : Data) (N : ℕ) (hfin : IsFinalD (stepData^[N] d))
-    (hstep : ∀ n < N, ¬ IsFinalD (stepData^[n] d)) :
-    resultD (stepData^[N] d) ∈ PFun.fix (fun d => Part.some (evalStep d)) d := by
-  induction N generalizing d with
-  | zero =>
-    refine PFun.mem_fix_iff.2 (Or.inl ?_)
-    simp only [Function.iterate_zero, id] at hfin ⊢
-    simp [evalStep, hfin]
-  | succ N ih =>
-    refine PFun.mem_fix_iff.2 (Or.inr ⟨stepData d, ?_, ?_⟩)
-    · have h0 := hstep 0 (Nat.succ_pos N)
-      simp only [Function.iterate_zero, id] at h0
-      simp [evalStep, h0]
-    · rw [Function.iterate_succ_apply] at hfin ⊢
-      exact ih _ hfin fun n hn => by
-        have := hstep (n + 1) (Nat.succ_lt_succ hn)
-        rwa [Function.iterate_succ_apply] at this
-
 theorem exists_iterate_of_mem_fix {d r : Data}
     (h : r ∈ PFun.fix (fun d => Part.some (evalStep d)) d) :
     ∃ N, IsFinalD (stepData^[N] d) ∧ resultD (stepData^[N] d) = r := by
@@ -273,7 +255,6 @@ theorem PolyTimeFun.computable_comp {α β γ : Type*} [SizedEncoding α] [Sized
     hβ.comp (F.computable_encode_comp h hh)
   refine (Primrec.option_getD_default.to_comp.comp h2).of_eq fun c => ?_
   simp [SizedEncoding.decode_encode]
-
 
 end MIPRE.Cost
 

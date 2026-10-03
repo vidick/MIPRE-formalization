@@ -112,24 +112,6 @@ def BlankBeyond (τ : Tape) (p : ℤ) : Prop := ∀ q, p ≤ q → τ q = none
 /-- The tape is blank before `p`. -/
 def BlankBefore (τ : Tape) (p : ℤ) : Prop := ∀ q, q < p → τ q = none
 
-theorem BlankBeyond.update_of_lt {τ : Tape} {p : ℤ} (h : BlankBeyond τ p) {q : ℤ} (hq : q < p)
-    (s : Option Sym) : BlankBeyond (Function.update τ q s) p := by
-  intro r hr
-  rw [Function.update_of_ne (by omega)]
-  exact h r hr
-
-theorem BlankBefore.update_of_le {τ : Tape} {p : ℤ} (h : BlankBefore τ p) {q : ℤ} (hq : p ≤ q)
-    (s : Option Sym) : BlankBefore (Function.update τ q s) p := by
-  intro r hr
-  rw [Function.update_of_ne (by omega)]
-  exact h r hr
-
-theorem BlankBeyond.mono {τ : Tape} {p p' : ℤ} (h : BlankBeyond τ p) (hp : p ≤ p') :
-    BlankBeyond τ p' := fun q hq => h q (by omega)
-
-theorem BlankBefore.mono {τ : Tape} {p p' : ℤ} (h : BlankBefore τ p) (hp : p' ≤ p) :
-    BlankBefore τ p' := fun q hq => h q (by omega)
-
 /-- The bits of a bit string as symbols. -/
 def bits : List Bool → List Sym := List.map fun b => if b then Sym.one else Sym.zero
 

@@ -42,14 +42,6 @@ def reference (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachin
     (constantCutoff (answerBound (SourceCompiler.registerBits c lam n)
       (SourceCompiler.originalBound lam n))) (by decide) (typedDecider_total c U _)
 
-theorem kernelInput_cons (c : ℕ) (M : DecisionPreparation.Metadata) (n : ℕ) (d : Data) :
-    DecisionPreparation.kernelInput c M (.cons (encode n) d) =
-      (.cons (encode n) d,M,unary (ansBound 5 M.2 n),2^n,
-        PauliSamplerParameters.parameters c M.2 n,
-        SourceCompiler.registerBits c M.2 n,SourceCompiler.originalBound M.2 n) := by
-  simp only [DecisionPreparation.kernelInput]
-  rw [show ClockSimulation.indexReader (.cons (encode n) d) = n from readNat_encode n]
-
 set_option maxHeartbeats 600000 in
 /-- Sharing preparation changes no positive-index acceptance decision. -/
 theorem accepts_reference (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
@@ -112,12 +104,6 @@ theorem val_reference (ω : ValueModel) (c : ℕ) (hc : 1 ≤ c) (he : Even c)
     (output c hc he U source lam).val ω n B = (reference c hc he U source lam n).val ω n B :=
   Verifier.val_congr_at ω (samplerAgreement_reference c hc he U source hl hn)
     (accepts_reference c hc he U source hl hn)
-
-theorem valStar_reference (c : ℕ) (hc : 1 ≤ c) (he : Even c)
-    (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n : ℕ}
-    (hl : 1 ≤ lam) (hn : 1 ≤ n) (B : ℕ) :
-    (output c hc he U source lam).valStar n B = (reference c hc he U source lam n).valStar n B :=
-  val_reference .tensor c hc he U source hl hn B
 
 theorem hasPerfectPCC_reference (c : ℕ) (hc : 1 ≤ c) (he : Even c)
     (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n : ℕ}

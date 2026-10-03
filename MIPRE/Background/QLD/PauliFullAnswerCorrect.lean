@@ -32,13 +32,6 @@ theorem program_raw (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
   rw [← decodeBits_pauli, answerBits_decodeBits k hk m 1 (.pauli W) bs hvalid] at he
   exact he
 
-theorem program_output_length (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
-    (m : ℕ) (W : Bas) (bs : BitStr)
-    (hvalid : (parser (.pauli W, unary m, unary k, unary 1, bs)).1 = true) :
-    (program (unary m, unary k, bs)).2.length = 2 ^ m * k := by
-  rw [program_raw k hk hodd m W bs hvalid]
-  exact List.length_ofFn
-
 end MIPRE.QLD.PauliFullAnswerProgram
 end
 

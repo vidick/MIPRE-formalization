@@ -30,7 +30,7 @@ empty input (`Cost.exists_polyTime_reduction`): on input `z` they play the game 
   `𝒱^halt`'s decider (`wrapCore` around `dec M λ(z)`, `decBuild`), rejects if `a` or `b` is
   longer than the cutoff `2 ^ (K + deg · |λ(z)|)` (`cutF`, at least the compressor's answer
   bound `poly(C, λ(z))` by `exists_cut_ge`), and otherwise runs the description on
-  `(C, x, y, a, b)` through the universal machine (`runU`). It accepts exactly when both
+  `(C, x, y, a, b)` through the universal machine. It accepts exactly when both
   answers are within the cutoff and `𝒱^halt`'s decider accepts (`decProg_accepts`).
 
 The costs are bounded by explicit expressions in the total input length (`sampB`, `decB`),

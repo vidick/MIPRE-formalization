@@ -30,11 +30,6 @@ def residualDepth : ℕ → ℕ → ℕ
   | k + 1, ℓ + 1 => residualDepth k ℓ
 termination_by structural k _ => k
 
-theorem residualDepth_eq_sub (ℓ k : ℕ) : residualDepth k ℓ = ℓ - k := by
-  induction ℓ generalizing k with
-  | zero => cases k <;> simp [residualDepth]
-  | succ ℓ ih => cases k <;> simp [residualDepth, ih]
-
 /-- Continue after `k` reported components; the remaining depth is `ℓ-k`. -/
 def residual : {ℓ : ℕ} → CL.CLFun F ι ℓ → (k : ℕ) → (ι → F) →
     CL.CLFun F ι (residualDepth k ℓ)

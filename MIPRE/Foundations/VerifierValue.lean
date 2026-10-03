@@ -58,8 +58,6 @@ def Answers.castLE {T T' : ℕ} (h : T ≤ T') : Answers T ↪ Answers T' :=
 
 instance (T : ℕ) : Nonempty (Answers T) := ⟨⟨[], Nat.zero_le T⟩⟩
 
-theorem game_μ (n T : ℕ) (x y : V.Questions n) : (V.game n T).μ x y = V.sampler.dist n x y := rfl
-
 theorem game_D (n T : ℕ) (x y : V.Questions n) (a b : Answers T) :
     ((V.game n T).D x y a b = true) ↔
       V.decider.Accepts n (CL.toBits x) (CL.toBits y) a.1 b.1 := by
@@ -79,8 +77,6 @@ noncomputable def val (ω : ValueModel) (n T : ℕ) : ℝ := ω.val (V.game n T)
 /-- Every model dominates `val*`. -/
 theorem valStar_le_val (ω : ValueModel) (n T : ℕ) : V.valStar n T ≤ V.val ω n T :=
   ω.quantumValue_le _
-
-theorem val_nonneg (ω : ValueModel) (n T : ℕ) : 0 ≤ V.val ω n T := ω.nonneg _
 
 theorem val_le_one (ω : ValueModel) (n T : ℕ) : V.val ω n T ≤ 1 := ω.le_one _
 
@@ -106,11 +102,6 @@ theorem val_congr (ω : ValueModel) {V W : Verifier ℓ} {n T : ℕ} (hS : W.sam
     V.val ω n T = W.val ω n T :=
   le_antisymm (val_le_of_accepts_imp ω hS fun x y a b => (h x y a b).1)
     (val_le_of_accepts_imp ω hS.symm fun x y a b => (h x y a b).2)
-
-theorem valStar_le_of_accepts_imp {V W : Verifier ℓ} {n T : ℕ} (hS : W.sampler = V.sampler)
-    (h : ∀ x y a b, V.decider.Accepts n x y a b → W.decider.Accepts n x y a b) :
-    V.valStar n T ≤ W.valStar n T :=
-  val_le_of_accepts_imp .tensor hS h
 
 theorem valStar_congr {V W : Verifier ℓ} {n T : ℕ} (hS : W.sampler = V.sampler)
     (h : ∀ x y a b, V.decider.Accepts n x y a b ↔ W.decider.Accepts n x y a b) :
@@ -151,9 +142,6 @@ theorem val_le_of_le (ω : ValueModel) {n T T' : ℕ} (hT : T ≤ T') :
     V.val ω n T ≤ V.val ω n T' :=
   ω.le_extendAnswers (V.game n T) (V.game n T') (Answers.castLE hT) (Answers.castLE hT)
     (fun _ _ => rfl) (fun _ _ _ _ => rfl)
-
-theorem valStar_le_of_le {n T T' : ℕ} (hT : T ≤ T') : V.valStar n T ≤ V.valStar n T' :=
-  V.val_le_of_le .tensor hT
 
 /-- **The decider rejects every answer longer than `T` at index `n`.** The property a compressed
 decider has beyond its time bound (`GapCompression.output_rejects_long`), and the third clause

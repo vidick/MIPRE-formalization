@@ -113,10 +113,6 @@ theorem samplingPost_apply (x r : Data) : samplingPost (x,r) =
 def samplingProg (k lam : ℕ) (U : ClockedUniversalMachine) (S : Prog) : Prog :=
   routeOneCall samplingRoute (ClockSimulation.prog k lam U S) samplingPost
 
-theorem samplingProg_closed (k lam : ℕ) (U : ClockedUniversalMachine) (S : Prog) :
-    (samplingProg k lam U S).WellScoped 1 :=
-  routeOneCall_closed _ (ClockSimulation.prog_closed k lam U S) _
-
 def samplingResult (k lam : ℕ) (S : Prog) (x : SamplingInput) : Data :=
   clockedResult S (ClockSimulation.reindexed (samplingCall x))
     (ansBound k lam (ClockSimulation.indexReader (samplingCall x)))
@@ -137,12 +133,6 @@ theorem samplingProg_run (k lam : ℕ) (U : ClockedUniversalMachine) (S : Prog) 
       samplingPost x (encode false) (by rw [samplingRoute_apply,if_neg h])
     exact ⟨t,by simpa only [samplingProg,if_neg h] using ht⟩
 
-/-- Totality does not require the source program to terminate. -/
-theorem samplingProg_halts (k lam : ℕ) (U : ClockedUniversalMachine) (S : Prog) (x : Data) :
-    Halts (samplingProg k lam U S) x := by
-  obtain ⟨t,hr⟩ := samplingProg_run k lam U S x
-  exact ⟨_,t,hr⟩
-
 theorem samplingProg_accepts_iff (k lam : ℕ) (U : ClockedUniversalMachine) (S : Prog) (x : Data) :
     (∃ t, (samplingProg k lam U S).Runs x (encode true) t) ↔
       SamplingRawReady x ∧ samplingResult k lam S (readSamplingInput x) =
@@ -161,27 +151,6 @@ theorem samplingProg_accepts_iff (k lam : ℕ) (U : ClockedUniversalMachine) (S 
       cases encode_injective (ht.deterministic ha).1
     · rintro ⟨hr,_⟩
       exact (h hr).elim
-
-def samplingCost (k lam : ℕ) (U : ClockedUniversalMachine) (S : Prog) (x : Data) : ℕ :=
-  SourceCompiler.callCost samplingRoute samplingPost x (samplingCall (readSamplingInput x)) x
-    (SourceCompiler.rawSimulationCost k lam U S (samplingCall (readSamplingInput x))) + 5
-
-/-- Explicit compositional runtime on arbitrary raw inputs and arbitrary source code. -/
-theorem samplingProg_haltsWithin (k lam : ℕ) (U : ClockedUniversalMachine) (S : Prog) (x : Data) :
-    HaltsWithin (samplingProg k lam U S) x (samplingCost k lam U S x) := by
-  by_cases h : SamplingRawReady x
-  · obtain ⟨t,hb,hr⟩ := SourceCompiler.rawSimulation_runs_cost k lam U S
-      (samplingCall (readSamplingInput x))
-    obtain ⟨time,ht,hout⟩ := SourceCompiler.call_runs_cost samplingRoute samplingPost
-      (ClockSimulation.prog_closed k lam U S) x _ x _ _ t hb
-      (by rw [samplingRoute_apply,if_pos h]) hr
-    exact ⟨_,time,ht.trans (Nat.le_add_right _ _),hout⟩
-  · obtain ⟨time,ht,hout⟩ := routeOneCall_direct_cost samplingRoute (ClockSimulation.prog k lam U S)
-      samplingPost x (encode false) (by rw [samplingRoute_apply,if_neg h])
-    refine ⟨_,time,ht.trans ?_,hout⟩
-    change _ + 1 + 4 ≤ _
-    dsimp only [samplingCost,SourceCompiler.callCost]
-    omega
 
 end MIPRE.Introspection.AuxiliaryProgram
 end

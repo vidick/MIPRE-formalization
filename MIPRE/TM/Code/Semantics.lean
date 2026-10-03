@@ -128,13 +128,6 @@ theorem toTM_tr_q'_map_val (c : Code i) (q : c.State) (as : Fin i → Option c.S
     (fun _wa hwa _s hs => Code.actionAt_write_lt hwa hs)
     (fun _q' hq' => Code.actionAt_nextState_lt hq')
 
-/-- A coded machine halts on an observation exactly when the table entry says to. -/
-theorem toTM_tr_q'_eq_none_iff (c : Code i) (q : c.State) (as : Fin i → Option c.Symbol)
-    (bs : Fin c.workTapeCount → Option c.Symbol) :
-    (c.toTM.tr q as bs).q' = none ↔ (c.actionAt q as bs).nextState = none := by
-  rw [← toTM_tr_q'_map_val]
-  cases (c.toTM.tr q as bs).q' <;> simp
-
 /-- Every symbol a coded machine emits is one of the two reserved bit symbols. -/
 theorem outputSymbol_isBit (c : Code i) {input : Fin i → List c.Symbol}
     (cfg : MultiInputTM.Cfg i c.workTapeCount c.Symbol c.State input) :

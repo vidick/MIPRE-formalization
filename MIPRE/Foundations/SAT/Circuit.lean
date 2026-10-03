@@ -107,9 +107,6 @@ def valueAt (C : Circuit) (x : ℕ → Bool) : ℕ → Bool
   | g => (C.gates.getD g (.const false)).eval x (List.ofFn fun k : Fin g => C.valueAt x k)
   decreasing_by exact k.isLt
 
-/-- The values of all gates of `C` on the input bits `x`. -/
-def values (C : Circuit) (x : ℕ → Bool) : List Bool := List.ofFn fun g : Fin C.gates.length => C.valueAt x g
-
 /-- The output of `C` on the input bits `x`: the value of the last gate (`false` for the
 empty circuit). -/
 def eval (C : Circuit) (x : ℕ → Bool) : Bool :=

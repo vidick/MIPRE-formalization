@@ -155,29 +155,6 @@ theorem povmValue_swapped_le (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε)
     1 - M.swap.povmValue (qldGame hm) PB PA ≤ ε := by
   rw [povmValue_qldGame_swapVec]; exact hfail
 
-/-- **The commutation half of `lem:qld-expanded-points` for the other player.** Exactly
-`hatObs_commutation`, applied to the swapped strategy in the swapped model; the second player's
-measurements are the projective ones it needs. -/
-theorem hatObs_commutation_swap [StarModule ℂ ℬ] (hM : ‖M.ψ‖ = 1)
-    (hPB : ∀ q, IsPVMIn (PB q).op)
-    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) :
-    ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        (M.swap.reg (Anc F m)).stateSqNorm
-          (hatObs hm PB .X c * hatObs hm PB .Z c - hatObs hm PB .Z c * hatObs hm PB .X c)
-      ≤ 57676416 * ε :=
-  hatObs_commutation (PB := PA) (swapVec_unit hM) hPB (povmValue_swapped_le hfail)
-
-/-- **The self-consistency half for the other player**, which is the same statement: the
-cross-party deviation is symmetric under exchanging the two parties. -/
-theorem hatPOVM_consistency_swap [StarModule ℂ 𝒜] [StarProper 𝒜] [StarModule ℂ ℬ]
-    [StarProper ℬ] (hM : ‖M.ψ‖ = 1)
-    (hfail : 1 - M.povmValue (qldGame hm) PA PB ≤ ε) (W : Bas) :
-    ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *
-        ∑ a : F, (M.swap.reg (Anc F m)).xSqNorm
-          ((hatPOVM hm PB W c).op a) ((hatPOVM hm PA W c).op a)
-      ≤ 172 * ε :=
-  hatPOVM_consistency (PB := PA) (swapVec_unit hM) (povmValue_swapped_le hfail) W
-
 end MIPRE.QLD
 
 end

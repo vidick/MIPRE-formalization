@@ -141,44 +141,6 @@ the instances of `IsPVMIn.pvmObs_mul` and its companions. -/
 
 variable {P : Λ → Matrix n n ℂ}
 
-/-- **`pvmObs P` is multiplicative.** This is the whole content of the file. -/
-theorem pvmObs_mul (h : IsPVM P) (ε δ : Λ → ℂ) :
-    pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ) :=
-  h.toIn.pvmObs_mul ε δ
-
-theorem pvmObs_const (h : IsPVM P) (c : ℂ) :
-    pvmObs P (fun _ => c) = c • (1 : Matrix n n ℂ) :=
-  h.toIn.pvmObs_const c
-
-theorem pvmObs_one (h : IsPVM P) : pvmObs P 1 = (1 : Matrix n n ℂ) :=
-  h.toIn.pvmObs_one
-
-theorem pvmObs_conjTranspose (h : IsPVM P) (ε : Λ → ℂ) :
-    (pvmObs P ε)ᴴ = pvmObs P (star ε) :=
-  h.toIn.star_pvmObs ε
-
-/-- A real weighting gives a self-adjoint operator. -/
-theorem pvmObs_isSelfAdjoint (h : IsPVM P) {ε : Λ → ℂ} (hε : ∀ a, star (ε a) = ε a) :
-    (pvmObs P ε)ᴴ = pvmObs P ε :=
-  h.toIn.pvmObs_star_eq hε
-
-/-- A weighting squaring to one pointwise gives an operator squaring to one. -/
-theorem pvmObs_mul_self (h : IsPVM P) {ε : Λ → ℂ} (hε : ∀ a, ε a * ε a = 1) :
-    pvmObs P ε * pvmObs P ε = 1 :=
-  h.toIn.pvmObs_mul_self hε
-
-/-- Two weightings of the *same* measurement commute. -/
-theorem pvmObs_comm (h : IsPVM P) (ε δ : Λ → ℂ) :
-    pvmObs P ε * pvmObs P δ = pvmObs P δ * pvmObs P ε :=
-  h.toIn.pvmObs_comm ε δ
-
-/-- Three weightings whose pointwise product is the constant `s` multiply to `s • 1`
-**exactly**. -/
-theorem pvmObs_mul_mul (h : IsPVM P) {ε δ η : Λ → ℂ} {s : ℂ}
-    (hs : ∀ a, ε a * δ a * η a = s) :
-    pvmObs P ε * pvmObs P δ * pvmObs P η = s • (1 : Matrix n n ℂ) :=
-  h.toIn.pvmObs_mul_mul hs
-
 end MIPRE
 
 end

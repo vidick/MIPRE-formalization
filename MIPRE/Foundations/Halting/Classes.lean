@@ -39,7 +39,7 @@ criterion.
   for all questions the players return a fixed answer", which is where `y_yes` comes from.
   `HasPerfectPCC` lives on the doubled game, so nothing is asked of the decider on the
   diagonal; `y_yes` still accepts only the empty answers, which keeps it rejecting long ones.
-* `Verifier.valStar_eq_zero_of_rejects_all` and `isSynchronousAt_of_rejects_all`: a decider that
+* `Verifier.valStar_eq_zero_of_rejects_all`: a decider that
   accepts nothing at `n` gives value `0` in every model, where `y_no` comes from.
 
 What remains for the classes is the reading of a string as a verifier — the wrapper decider
@@ -99,11 +99,6 @@ theorem hasPerfectPCC_of_accepts_diagonal {n T : ℕ} (a₀ : Answers T)
 
 /-! ## The trivially rejecting verifier -/
 
-/-- A decider that accepts nothing at index `n` is synchronous there. -/
-theorem isSynchronousAt_of_rejects_all {n : ℕ}
-    (hrej : ∀ x y a b, ¬ V.decider.Accepts n x y a b) : V.IsSynchronousAt n :=
-  fun x a b _ => hrej x x a b
-
 /-- A decider that accepts nothing at index `n` gives quantum value `0`. -/
 theorem valStar_eq_zero_of_rejects_all {n T : ℕ}
     (hrej : ∀ x y a b, ¬ V.decider.Accepts n x y a b) : V.valStar n T = 0 :=
@@ -126,13 +121,6 @@ theorem inClassA_of_accepts_diagonal {n T : ℕ} (hb : V.IsBounded n) (hrej : V.
   ⟨hb, hrej, V.hasPerfectPCC_of_accepts_diagonal a₀ hacc⟩
 
 /-! ## Transport along the frozen verifier -/
-
-/-- The frozen verifier's class membership at any index is the original's at the frozen index,
-as far as the game is concerned (boundedness is transferred separately by
-`Verifier.freeze_isBounded`). -/
-theorem freeze_inClassA {k n T : ℕ} (hb : (V.freeze k).IsBounded n) (hrej : V.RejectsLong k T)
-    (h : V.HasPerfectPCC k T) : (V.freeze k).InClassA n T :=
-  ⟨hb, (V.freeze_rejectsLong k n T).2 hrej, (V.freeze_hasPerfectPCC k n T).2 h⟩
 
 theorem freeze_inClassB (ω : ValueModel) {k n T : ℕ} (hb : (V.freeze k).IsBounded n)
     (hrej : V.RejectsLong k T) (h : V.val ω k T ≤ 1 / 2) : (V.freeze k).InClassB ω n T :=

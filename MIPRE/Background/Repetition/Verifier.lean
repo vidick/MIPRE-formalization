@@ -65,11 +65,6 @@ def Game.reindex (G : Game X Y A B) (eX : X' ≃ X) (eY : Y' ≃ Y) : Game X' Y'
     exact Fintype.sum_equiv eX _ _ fun x => Fintype.sum_equiv eY _ _ fun y => rfl
   D x y a b := G.D (eX x) (eY y) a b
 
-theorem quantumValue_reindex (G : Game X Y A B) (eX : X' ≃ X) (eY : Y' ≃ Y) :
-    quantumValue (G.reindex eX eY) = quantumValue G :=
-  quantumValue_eq_of_equiv G (G.reindex eX eY) eX eY (Equiv.refl A) (Equiv.refl B)
-    (fun _ _ => rfl) (fun _ _ _ _ => rfl)
-
 end Reindex
 
 /-! ## Blocks of a question -/
@@ -127,11 +122,6 @@ noncomputable def midGame : Game ((repVerifier V lam tau beta).Questions n)
     (Fin (Repetition.reps lam tau n) → Answers (Repetition.parseBound lam beta n)) :=
   ((V.game n (Repetition.parseBound lam beta n)).repeat (Repetition.reps lam tau n)).reindex
     (questionsEquiv V lam tau beta n) (questionsEquiv V lam tau beta n)
-
-theorem quantumValue_midGame : quantumValue (midGame V lam tau beta n) =
-    quantumValue ((V.game n (Repetition.parseBound lam beta n)).repeat
-      (Repetition.reps lam tau n)) :=
-  quantumValue_reindex _ _ _
 
 /-- The distribution of the output's game is that of the repeated game. -/
 theorem game_μ_eq (T : ℕ) (x y : (repVerifier V lam tau beta).Questions n) :

@@ -60,11 +60,6 @@ instance instStarOrderedRingCentralizer (s : Set (H →L[ℂ] H)) :
     StarOrderedRing (StarSubalgebra.centralizer ℂ s) :=
   starOrderedRing_centralizer s
 
-/-- An element of a commutant is nonnegative exactly when it is a positive operator. -/
-theorem centralizer_nonneg_iff {s : Set (H →L[ℂ] H)} {x : StarSubalgebra.centralizer ℂ s} :
-    0 ≤ x ↔ 0 ≤ (x : H →L[ℂ] H) :=
-  Iff.rfl
-
 end Commutant
 
 /-! ## Transport of measurements along `⋆`-homomorphisms -/
@@ -208,11 +203,6 @@ theorem IsFinitePair.coe_equivA (hM : M.IsFinitePair) (a : 𝒜) :
 theorem IsFinitePair.coe_equivB (hM : M.IsFinitePair) (b : ℬ) :
     (hM.equivB b : M.H →L[ℂ] M.H) = M.π (M.πB b) :=
   rfl
-
-/-- The inverse of `equivA` recovers an element of `𝒜` from its operator. -/
-theorem IsFinitePair.equivA_symm_apply (hM : M.IsFinitePair) (a : 𝒜) :
-    hM.equivA.symm ⟨M.π (M.πA a), M.opsA_subset_centralizer ⟨a, rfl⟩⟩ = a :=
-  hM.equivA.symm_apply_apply a
 
 /-- The operator of the inverse of `equivA` is the element of the commutant. -/
 theorem IsFinitePair.π_πA_equivA_symm (hM : M.IsFinitePair)

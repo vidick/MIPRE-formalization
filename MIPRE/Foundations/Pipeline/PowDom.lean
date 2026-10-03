@@ -39,8 +39,6 @@ namespace PDom
 
 variable {W X K : ℕ}
 
-theorem le {c m e v : ℕ} (h : PDom W X K c m e v) : v ≤ (c * (W + 1) ^ m * X ^ e) ^ (K + 1) := h
-
 theorem of_le {c m e v v' : ℕ} (h : PDom W X K c m e v) (hv : v' ≤ v) : PDom W X K c m e v' :=
   hv.trans h
 
@@ -78,17 +76,6 @@ theorem ofLeX {v : ℕ} (h : v ≤ X) : PDom W X K 1 0 1 v := by
   simp only [PDom, pow_zero, pow_one, Nat.mul_one, Nat.one_mul]
   exact h.trans (le_pow_succ)
 
-/-- An affine function of `X`. -/
-theorem ofAffineX (hX : 1 ≤ X) {a b v : ℕ} (h : v ≤ a * X + b) : PDom W X K (a + b) 0 1 v := by
-  simp only [PDom, pow_zero, pow_one, Nat.mul_one]
-  by_cases hab : a + b = 0
-  · have : a = 0 := by omega
-    have : b = 0 := by omega
-    subst_vars
-    simpa using h
-  refine h.trans ((?_ : a * X + b ≤ (a + b) * X).trans le_pow_succ)
-  nlinarith
-
 /-- `K + 1 ≤ 2^{K + 1}`: the input sampler's degree itself is dominated. -/
 theorem ofLeK {v : ℕ} (h : v ≤ K + 1) : PDom W X K 2 0 0 v := by
   simp only [PDom, pow_zero, Nat.mul_one]
@@ -119,16 +106,6 @@ theorem pow {c m e v : ℕ} (h : PDom W X K c m e v) (p : ℕ) :
   refine (Nat.pow_le_pow_left h p).trans (le_of_eq ?_)
   rw [← pow_mul, Nat.mul_comm (K + 1) p, pow_mul]
   simp only [mul_pow, ← pow_mul]
-
-/-- The unpowered domination of `MIPRE.Repeat.Dom` is powered domination. -/
-theorem ofDom {c m e v : ℕ} (h : Repeat.Dom W X K c m e v) : PDom W X K c m e v := by
-  unfold Repeat.Dom at h
-  unfold PDom
-  refine h.trans ?_
-  rw [mul_pow, pow_mul]
-  by_cases h0 : c * (W + 1) ^ m = 0
-  · rw [h0]; simp
-  · exact Nat.mul_le_mul_right _ (le_pow_succ)
 
 /-- **A fixed polynomial of a dominated quantity.** -/
 theorem poly (hX : 1 ≤ X) (P : Polynomial ℕ) {c m e y : ℕ} (h : PDom W X K c m e y) :

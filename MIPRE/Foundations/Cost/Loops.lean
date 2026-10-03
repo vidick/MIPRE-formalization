@@ -46,9 +46,6 @@ theorem ofList_eq_list {α : Type*} (f : α → Data) (l : List α) : ofList f l
 @[simp] theorem size_list_cons (a : Data) (l : List Data) :
     (list (a :: l)).size = a.size + (list l).size + 1 := rfl
 
-theorem length_le_size_list (l : List Data) : l.length ≤ (list l).size :=
-  length_le_size_ofList _ l
-
 end Data
 
 /-! ## The loop principle -/

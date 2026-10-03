@@ -31,17 +31,6 @@ def decode {k : ℕ} (E : BinField k) (m Q R : ℕ) (t : Label) (bs : BitStr) :
     (T : QLD.Ty) (bs : BitStr) :
     decode E m Q R (.inl T) bs = .pauli (QLD.PauliAnswerProgram.decodeBits E m 1 T bs) := rfl
 
-/-- In particular every raw full-Pauli outcome lands in the legal full-table constructor. -/
-theorem decode_pauli_full {k : ℕ} (E : BinField k) (m Q R : ℕ)
-    (W : QLD.Bas) (bs : BitStr) :
-    decode E m Q R (.inl (.pauli W)) bs =
-      .pauli (.pauliAns (QLD.PauliFullAnswerProgram.decodedOutcome E m W bs)) := rfl
-
-theorem decode_fits {k : ℕ} (E : BinField k) (m Q R : ℕ) (t : Label) (bs : BitStr) :
-    TypedPredicate.fits t (decode E m Q R t bs) = true := by
-  simp only [decode, ParsedAnswer.fits_mapPauli, ParsedAnswer.fits_mapAnswer,
-    AuxiliaryAnswer.decode_fits]
-
 theorem questionOfBits_ty (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
     (j : ℕ) (T : QLD.Ty) (q : BitStr) :
     (QLD.PauliBinaryProgram.questionOfBits k hk hodd j T q).ty = T := by
@@ -61,12 +50,6 @@ def pauliProject {F : Type*} [Field F] [Algebra (ZMod 2) F] {m k : ℕ}
     (basis : Module.Basis (Fin k) (ZMod 2) F) : QLD.Answer F m 1 → Fin (2 ^ m * k) → CL.𝔽₂
   | .pauliAns h => QLD.PauliFullAnswerProgram.registerVector basis h
   | _ => 0
-
-theorem pauliProject_numbering {F : Type*} [Field F] [Fintype F] [DecidableEq F]
-    [Algebra (ZMod 2) F] {m k : ℕ} (basis : Module.Basis (Fin k) (ZMod 2) F)
-    (h : (Fin m → Bool) → F) :
-    pauliProject basis (.pauliAns h) =
-      fun i => Weyl.binEquiv basis h ((QLD.PauliFullAnswerProgram.registerNumbering m k).symm i) := rfl
 
 /-- Read the executable projection at a fixed finite register size. -/
 def rawProject (p : PauliSamplerParameters.Parameters) (Q : ℕ) (bs : BitStr) : Fin Q → CL.𝔽₂ :=

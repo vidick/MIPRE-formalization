@@ -49,28 +49,6 @@ def rest : PolyTimeFun Data Data := treeTail
 def metadata : PolyTimeFun Data Data := treeHead.comp rest
 def resourceTail : PolyTimeFun Data Data := treeTail.comp rest
 def budget : PolyTimeFun Data Unary := readUnary.comp (treeHead.comp resourceTail)
-def sourceIndex : PolyTimeFun Data ℕ := readNat.comp (treeHead.comp (treeTail.comp resourceTail))
-def parameterTail : PolyTimeFun Data Data := treeTail.comp (treeTail.comp resourceTail)
-def parameters : PolyTimeFun Data PauliSamplerParameters.Parameters :=
-  (readUnary.comp (treeHead.comp (treeHead.comp parameterTail))).pair
-    ((readUnary.comp (treeHead.comp (treeTail.comp (treeHead.comp parameterTail)))).pair
-      (readUnary.comp (treeTail.comp (treeTail.comp (treeHead.comp parameterTail)))))
-def registerWidth : PolyTimeFun Data ℕ := readNat.comp (treeHead.comp (treeTail.comp parameterTail))
-def originalCutoff : PolyTimeFun Data ℕ := readNat.comp (treeTail.comp (treeTail.comp parameterTail))
-def samplerData : PolyTimeFun Data Data := treeHead.comp (treeHead.comp metadata)
-def deciderData : PolyTimeFun Data Data := treeTail.comp (treeHead.comp metadata)
-def lambda : PolyTimeFun Data ℕ := readNat.comp (treeTail.comp metadata)
-
-def decodeResources : PolyTimeFun Data Resources :=
-  raw.pair (metadata.pair (budget.pair (sourceIndex.pair
-    (parameters.pair (registerWidth.pair originalCutoff)))))
-
-theorem decodeResources_encode (c : ℕ) (z : Data) :
-    decodeResources (encode (resources c z)) = resources c z := by
-  simp [decodeResources, raw, metadata, rest, resourceTail, budget, sourceIndex,
-    parameterTail, parameters, registerWidth, originalCutoff, resources,
-    PauliSamplerParameters.parameters, encode_prod, encode_unary, readUnary_ofNat,
-    readNat_encode]
 
 @[simp] theorem inputLambda_canonical (S D : Prog) (lam : ℕ) (x : Data) :
     inputLambda (.cons (encode ((S,D),lam)) x) = lam := by
@@ -83,13 +61,6 @@ theorem encode_kernelInput (c : ℕ) (M : Metadata) (x : Data) :
     encode (kernelInput c M x) = encode (resources c (.cons (encode M) x)) := by
   rcases M with ⟨⟨S,D⟩,lam⟩
   simp [kernelInput, resources, inputRaw, inputMetadata, inputLambda, encode_prod, readNat_encode]
-
-theorem source_metadata (c : ℕ) (S D : Prog) (lam : ℕ) (x : Data) :
-    samplerData (encode (resources c (.cons (encode ((S,D),lam)) x))) = encode S ∧
-    deciderData (encode (resources c (.cons (encode ((S,D),lam)) x))) = encode D ∧
-    lambda (encode (resources c (.cons (encode ((S,D),lam)) x))) = lam := by
-  simp [samplerData, deciderData, lambda, metadata, rest, resources, inputMetadata,
-    encode_prod, readNat_encode]
 
 /-- Append a subroutine result while retaining its entire input as context. -/
 def appendRoute (arg : PolyTimeFun Data Data) : PolyTimeFun Data (Bool × Data) :=

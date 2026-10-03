@@ -262,14 +262,6 @@ theorem eval_routedArith_bool (C : Circuit) (hC : C.WellFormed) (x w : ℕ → B
   · simp only [hp, one_mul, Sum.elim_inr]
     cases w (C.size - 1) <;> simp [ofBool]
 
-/-- Acceptance is equivalent to an auxiliary Boolean assignment on which the
-bounded-degree consistency polynomial takes value one. -/
-theorem eval_iff_exists_routedArith (C : Circuit) (hC : C.WellFormed) (x : ℕ → Bool) :
-    C.eval x = true ↔ ∃ w : ℕ → Bool, MvPolynomial.eval
-      (Sum.elim (fun i => (ofBool (x i) : F)) (fun j => ofBool (w j))) C.routedArith = 1 := by
-  simp_rw [eval_routedArith_iff C hC]
-  exact eval_iff_routedConsistent C hC.nonempty x
-
 end MIPRE.SAT.Circuit
 
 end

@@ -41,13 +41,6 @@ def cutoff : PolyTimeFun (ℕ × ℕ) ℕ :=
   simp [cutoff, answerBound]
   omega
 
-theorem answerBound_covers (Q R : ℕ) : 3*Q+R+3 ≤ answerBound Q R := by
-  have hQ := (le_max_left Q R).trans (le_max_right 1 (max Q R))
-  have hR := (le_max_right Q R).trans (le_max_right 1 (max Q R))
-  have h1 := le_max_left 1 (max Q R)
-  unfold answerBound
-  omega
-
 /-- The concrete binary cutoff fits one fixed introspection answer budget. -/
 theorem answerBound_ansBound {c : ℕ} (hc : 1 ≤ c) :
     ∃ K, ∀ lam n, 1 ≤ lam → 1 ≤ n →

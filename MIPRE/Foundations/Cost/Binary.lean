@@ -57,11 +57,6 @@ theorem esize_bitStr_append (l₁ l₂ : BitStr) : esize (l₁ ++ l₂) + 1 = es
   | nil => simp only [List.nil_append, esize_bitStr_nil]; omega
   | cons b l ih => simp only [List.cons_append, esize_bitStr_cons]; omega
 
-theorem length_le_esize_bitStr' (l : BitStr) : 2 * l.length + 1 ≤ esize l := by
-  induction l with
-  | nil => simp
-  | cons b l ih => cases b <;> simp only [esize_true_cons, esize_false_cons, List.length_cons] <;> omega
-
 theorem esize_replicate_true (j : ℕ) : esize (List.replicate j true) = 4 * j + 1 := by
   induction j with
   | zero => rfl
@@ -115,11 +110,6 @@ theorem esize_incBits_le (l : BitStr) : esize (incBits l) ≤ esize l + 4 := by
     cases b with
     | false => simp only [incBits, esize_true_cons, esize_false_cons]; omega
     | true => simp only [incBits, esize_true_cons, esize_false_cons]; omega
-
-theorem length_incBits_le (l : BitStr) : (incBits l).length ≤ l.length + 1 := by
-  induction l with
-  | nil => simp [incBits]
-  | cons b l ih => cases b <;> simp only [incBits, List.length_cons] <;> omega
 
 /-- The tail of the successor after the leading `1`s: `[]` becomes `[1]`, `0 · r` becomes `1 · r`. -/
 def incTail : BitStr → BitStr

@@ -105,11 +105,6 @@ theorem CL.Sampler.hasPolyCost_of_timeBound {ℓ : ℕ} {S : CL.Sampler ℓ} {T 
     (hT : PolyBounded T) (h : ∀ n, S.TimeBoundAt n (T n) k) : S.prog.HasPolyCost :=
   Cost.Prog.hasPolyCost_of_bound hT fun n d => h n d
 
-/-- The decider form. -/
-theorem Decider.hasPolyCost_of_timeBound {D : Decider} {T : ℕ → ℕ} {k : ℕ}
-    (hT : PolyBounded T) (h : ∀ n, D.TimeBoundAt n (T n) k) : D.prog.HasPolyCost :=
-  Cost.Prog.hasPolyCost_of_bound hT fun n d => h n d
-
 /-! ## `λ`-boundedness of a verifier -/
 
 namespace Verifier

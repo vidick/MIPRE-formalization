@@ -450,25 +450,6 @@ theorem ofSamplerDecider_accepts (n : ℕ) (x y a b : BitStr) :
         ∃ t, dec.Runs (encode (n, x, y, a, b)) (encode true) t) :=
   Decider.wrap_accepts_prog U S dec n x y a b
 
-/-- Two strings with the same sampler whose deciders agree at index `n` denote verifiers with
-the same `val*` and the same perfect PCC strategies there. -/
-theorem ofSamplerDeciderD_congr {decD decD' : Data} {n T : ℕ}
-    (h : ∀ x y a b : BitStr,
-      (∃ t, U.univ.Runs (.cons decD (encode (n, x, y, a, b))) (encode true) t) ↔
-        ∃ t, U.univ.Runs (.cons decD' (encode (n, x, y, a, b))) (encode true) t) :
-    (ofSamplerDeciderD U S decD).valStar n T = (ofSamplerDeciderD U S decD').valStar n T :=
-  valStar_congr rfl fun x y a b => by
-    rw [ofSamplerDeciderD_accepts, ofSamplerDeciderD_accepts]
-    exact and_congr_right fun _ => and_congr_right fun _ => h x y a b
-
-theorem ofSamplerDecider_congr {dec dec' : Prog} {n T : ℕ}
-    (h : ∀ x y a b : BitStr, (∃ t, dec.Runs (encode (n, x, y, a, b)) (encode true) t) ↔
-      ∃ t, dec'.Runs (encode (n, x, y, a, b)) (encode true) t) :
-    (ofSamplerDecider U S dec).valStar n T = (ofSamplerDecider U S dec').valStar n T :=
-  valStar_congr rfl fun x y a b => by
-    rw [ofSamplerDecider_accepts, ofSamplerDecider_accepts]
-    exact and_congr_right fun _ => and_congr_right fun _ => h x y a b
-
 end Verifier
 
 namespace Cost.Prog
@@ -500,14 +481,6 @@ def dC (h t : Data) : Data := .cons (.ofNat 2) (.cons h t)
 def dE (i : ℕ) (n c : Data) : Data := .cons (.ofNat 3) (.cons (.ofNat i) (.cons n c))
 def dL (e b : Data) : Data := .cons (.ofNat 4) (.cons e b)
 def dK (d : Data) : Data := .cons (.ofNat 6) d
-
-theorem dV_eq (i : ℕ) : (encode (Prog.var i) : Data) = dV i := rfl
-theorem dNil_eq : (encode Prog.nil : Data) = dNil := rfl
-theorem dC_eq (h t : Prog) : (encode (Prog.cons h t) : Data) = dC (encode h) (encode t) := rfl
-theorem dE_eq (i : ℕ) (n c : Prog) :
-    (encode (Prog.elim i n c) : Data) = dE i (encode n) (encode c) := rfl
-theorem dL_eq (e b : Prog) : (encode (Prog.let_ e b) : Data) = dL (encode e) (encode b) := rfl
-theorem dK_eq (d : Data) : (encode (Prog.const d) : Data) = dK d := rfl
 
 theorem primrec_dC : Primrec₂ dC :=
   (Data.primrec_cons.comp (Primrec.const (Data.ofNat 2))
@@ -545,7 +518,6 @@ def dWrapCore (univ sampD decD : Data) : Data :=
 theorem dWrapCore_eq (univ sampProg : Prog) (decD : Data) :
     dWrapCore (encode univ) (encode sampProg) decD
       = encode (Prog.wrapCore univ sampProg decD) := rfl
-
 
 theorem primrec_dWrapCheck (i j : ℕ) : Primrec (dWrapCheck i j) :=
   (primrec_dL.comp (Primrec.const _)

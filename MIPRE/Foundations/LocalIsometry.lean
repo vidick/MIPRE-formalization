@@ -107,8 +107,6 @@ theorem withState_πB (b : ℬ) : (M.withState φ).πB b = M.πB b := rfl
 @[simp]
 theorem withState_self : M.withState M.ψ = M := rfl
 
-theorem withState_swap : (M.withState φ).swap = M.swap.withState φ := rfl
-
 end BipartiteModel
 
 /-! ## Pushing a measurement forward along a unital `⋆`-homomorphism -/
@@ -265,10 +263,6 @@ theorem intertwine (a : 𝒜) (b : ℬ) (v : M.H) :
 /-- The image of the unit of the first player's algebra fixes the image of the isometry. -/
 theorem π_πA_ΦA_one (v : M.H) : M'.π (M'.πA (Φ.ΦA 1)) (Φ.W v) = Φ.W v := by
   rw [Φ.intertwineA, map_one, map_one, one_apply_eq_self]
-
-/-- The image of the unit of the second player's algebra fixes the image of the isometry. -/
-theorem π_πB_ΦB_one (v : M.H) : M'.π (M'.πB (Φ.ΦB 1)) (Φ.W v) = Φ.W v :=
-  Φ.swap.π_πA_ΦA_one v
 
 /-- **Born probabilities are carried over exactly**, on the transported state. -/
 theorem bornProb_withState (a : 𝒜) (b : ℬ) :

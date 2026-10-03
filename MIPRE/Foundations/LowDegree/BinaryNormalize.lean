@@ -92,10 +92,6 @@ noncomputable def normalizeStepProg : PolyTimeFun (BitStr × Bool) BitStr :=
     ((casesList (const []) (cons (const false) fst)).comp (fst.pair fst)))
     (fun p => normalizeStep p.1 p.2) (by rintro ⟨a, b⟩; cases b <;> cases a <;> rfl)
 
-theorem normalizeStepProg_apply (a : BitStr) (b : Bool) :
-    normalizeStepProg (a, b) = normalizeStep a b := by
-  cases b <;> cases a <;> rfl
-
 theorem normalizeStep_esize (a : BitStr) (b : Bool) :
     esize (normalizeStep a b) ≤ esize a + esize b + 1 := by
   cases b <;> cases a <;> simp [normalizeStep, esize_list_cons] <;> omega

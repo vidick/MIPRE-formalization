@@ -86,13 +86,6 @@ def POVM.compress (a₀ : Anc) (M : POVM A (d × Anc)) : POVM A d where
 @[simp] theorem POVM.compress_mats (a₀ : Anc) (M : POVM A (d × Anc)) (a : A) :
     ((M.compress a₀).mats a).val = ancCompress a₀ (M.mats a).val := rfl
 
-/-- Compression commutes with relabelling the outcomes. -/
-theorem POVM.map_compress {B : Type*} [Fintype B] [DecidableEq B] (a₀ : Anc) (f : A → B)
-    (M : POVM A (d × Anc)) : (M.map f).compress a₀ = (M.compress a₀).map f :=
-  POVM.ext' fun b => by
-    rw [POVM.compress_mats, POVM.map_mats, POVM.map_mats, ancCompress_sum]
-    rfl
-
 end Compress
 
 /-! ## The Born rule on the twice-extended state -/

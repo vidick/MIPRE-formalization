@@ -105,11 +105,6 @@ theorem gammaProg_correct (k : ℕ) (hk : 1 ≤ k) {m : ℕ}
     shoupTraceBitProg_correct]
   rfl
 
-theorem gammaProg_runs (input : Unary × List (BitStr × BitStr) × BitStr × BitStr) :
-    ∃ t ≤ gammaProg.timeBound.eval (esize input),
-      gammaProg.code.Runs (encode input) (encode (gammaProg input)) t :=
-  gammaProg.computes input
-
 /-- The two-outcome scalar probe used by the point consistency rules. -/
 def probeProg : PolyTimeFun (Unary × BitStr × BitStr) Bool :=
   shoupTraceBitProg.comp (fst.pair shoupMulProg)

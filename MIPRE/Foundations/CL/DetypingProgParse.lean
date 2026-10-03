@@ -91,9 +91,6 @@ theorem parse_query (n : ℕ) (q : Sampler.Query) :
     readNat_encode, readBits_encode]
   cases w <;> rfl
 
-/-- The index is retained literally, including its binary encoding. -/
-theorem parse_index (n q : Data) : (parse (.cons n q)).1 = n := rfl
-
 instance vectorEncoding (d : ℕ) : SizedEncoding (Fin d → 𝔽₂) where
   encode v := encode (toBits v)
   decode d' := (decode d' : Option BitStr).map (ofBits d)

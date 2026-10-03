@@ -315,7 +315,6 @@ theorem prepProg_prefix {univ : Prog} (hU : univ.WellScoped 1) (sP dP : Data)
   simp only [size_cons, size_encode_dimension, size_nil]
   omega
 
-
 /-! ## The full preparation, the main program and the core -/
 
 /-- The four verdicts of the checks: `|x| = |y| = k s`, and `a`, `b` canonical. -/
@@ -499,13 +498,6 @@ theorem repDecCore_wellScoped {univ : Prog} (hU : univ.WellScoped 1) :
     trivial, by omega, trivial, by omega, trivial, by omega, trivial, by omega, trivial,
     ⟨by omega, by omega, by omega, by omega, by omega, by omega, by omega, by omega, by omega, by omega⟩,
     by omega, (decMain_wellScoped hU).mono (by omega) _⟩
-
-/-- The environment of the core after its input is taken apart. -/
-def coreDecEnv (sP dP lamD tauD betaD nD xD yD aD bD : Data) : Env :=
-  [aD, bD, yD, .cons aD bD, xD, .cons yD (.cons aD bD), nD, .cons xD (.cons yD (.cons aD bD)), tauD,
-    betaD, lamD, .cons tauD betaD, sP, dP, .cons sP dP, .cons lamD (.cons tauD betaD),
-    decParams sP dP lamD tauD betaD, .cons nD (.cons xD (.cons yD (.cons aD bD))),
-    .cons (decParams sP dP lamD tauD betaD) (.cons nD (.cons xD (.cons yD (.cons aD bD))))]
 
 theorem repDecCore_runs {univ : Prog} (hU : univ.WellScoped 1) (sP dP lamD tauD betaD nD xD yD aD bD : Data)
     {r : Data} {t : ℕ}

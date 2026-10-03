@@ -36,7 +36,6 @@ def endpointTypes : PolyTimeFun Input (Ty × Ty) :=
   (fst.comp (fst.comp endpoints)).pair (fst.comp (snd.comp endpoints))
 def route : PolyTimeFun Input PauliBranchProgram.Route :=
   PauliBranchProgram.routeProg.comp endpointTypes
-def rule : PolyTimeFun Input ℕ := fst.comp route
 def basis : PolyTimeFun Input ℕ := fst.comp (snd.comp (snd.comp route))
 def oriented : PolyTimeFun Input (Payload × Payload) :=
   PauliBranchProgram.orientProg.comp ((fst.comp (snd.comp route)).pair endpoints)
@@ -142,18 +141,6 @@ theorem program_apply (input : Input) : program input =
   simp only [program, comp_apply, pair_apply, fst_apply,
     PauliBranchProgram.formatGuard_apply, PauliBranchProgram.selectProg_apply,
     checks, cons_apply, const_apply]
-
-theorem program_runs (input : Input) :
-    ∃ t ≤ program.timeBound.eval (esize input),
-      program.code.Runs (encode input) (encode (program input)) t := program.computes input
-
-theorem program_rejects_left (input : Input) (h : (leftParser input).1 = false) :
-    program input = false := by
-  simp [program, PauliBranchProgram.formatGuard_apply, h]
-
-theorem program_rejects_right (input : Input) (h : (rightParser input).1 = false) :
-    program input = false := by
-  simp [program, PauliBranchProgram.formatGuard_apply, h]
 
 end MIPRE.QLD.PauliBooleanProgram
 end
