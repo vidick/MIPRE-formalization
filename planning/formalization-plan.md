@@ -1019,7 +1019,12 @@ sampler and decider, is efficient on every input, and its game has that verifier
 now holds for the paper's class. `def:mipstar`'s sampler clause was repaired on the way (time in
 the total input length, as the decider's).
 
-**The commuting-operator class, `MIP^co = coRE` (#235), planned 2026-09-28.** Lin's theorem
+**The commuting-operator class, `MIP^co = coRE` (#235): proved, 2026-10-02.**
+`MIPRE.mipco_eq_core : MIPCo = IsCoRE` holds without hypothesis (`MIPRE/MIPCo.lean`, blueprint
+`thm:mipco-eq-core-unconditional`), as `mipco_eq_core_of_lidtFin LIDT.Simul.soundFin`: Phase 6
+proved the soundness of the seeded low-individual-degree test in every dyadic pair by porting the
+vendored proof to the commuting-operator setting (`planning/c6b-plan.md`). The rest of this
+paragraph is the record of the route, planned 2026-09-28. Lin's theorem
 (arXiv:2510.07162) by the value-form architecture: [mipco-track.md](mipco-track.md) has the
 plan. Phase 0 is in (#236), and has since been folded into the tensor-product halting layer
 rather than kept beside it: the halting reduction, the classes, the semideciders and the class
@@ -1031,8 +1036,8 @@ semidecider exists — `val*` is r.e. from below (`lem:value-lower-approx`), `ω
 (`commutingUpperRE`) — and so in which class soundness must preserve; the compressibility
 criterion generalized to nested classes (`Cost.compressibility_criterion_nested`) is what lets
 the *tensor* completeness of compression be reused in the `coRE` shape and makes
-co-completeness unnecessary. The conditional theorem `MIPRE.mipco_eq_core` (`MIPRE/MIPCo.lean`)
-proves `MIPCo = IsCoRE` from the single hypothesis
+co-completeness unnecessary. The conditional theorem `MIPRE.mipco_eq_core_of_compression`
+(`MIPRE/MIPCo.lean`; it was `MIPRE.mipco_eq_core` until the hypothesis was discharged) proves `MIPCo = IsCoRE` from the single hypothesis
 `MIPRE.gapCompression.Sound ValueModel.commuting`, the soundness clause of compression read in
 `ω_co`; `MIPCo ⊆ coRE` (`MIPRE.MIPCo.isCoRE`) is unconditional. Blueprint chapter 8,
 `def:value-model` and `thm:mipco-eq-core`. What remains — the commuting-operator soundness of
@@ -1043,7 +1048,7 @@ instance, rather than written a second time: `reports/co-generalization-audit.md
 four soundness chains and found them bipartite and vector-state throughout, with finite
 dimension used only at identified, replaceable places — except in the vendored
 low-individual-degree test, which becomes the single remaining hypothesis of
-`MIPRE.mipco_eq_core` once Phases 1–5 of the plan are done, and is Phase 6. Phase 1 is tracked
+`MIPRE.mipco_eq_core_of_compression` once Phases 1–5 of the plan are done, and is Phase 6. Phase 1 is tracked
 by #240. Its first item is in (#241): `ω_co` is attained on projective strategies, by a
 dilation that preserves commutation with the other player (`MIPRE.exists_isProjective_lt_value`,
 blueprint `thm:co-value-projective`), so the generalized analyses may assume projective
@@ -1083,9 +1088,10 @@ follows from a different hypothesis, `LIDT.Simul.SoundFin`: soundness in every d
 finite pair, two algebras that are each other's commutants and carry faithful tracial states, whose
 two algebras have unital matrix units of every size 2ⁿ), reached through the vendored tracial
 density and an amplification by the twisted Pauli algebra (C6a and C6b T2–T5,
-`MIPRE.mipco_eq_core_of_lidtFin`). What remains is `SoundFin` itself, by a port of the vendored
-proof to dyadic pairs of about 70–120k lines (C6b, `planning/c6b-plan.md`), with the II₁
-orthonormalization tier done (C6b T1–T5).
+`MIPRE.mipco_eq_core_of_lidtFin`). `SoundFin` itself is proved (C6b, `planning/c6b-plan.md`,
+`LIDT.Simul.soundFin`, blueprint `thm:lidt-sound-fin`), by the II₁ orthonormalization tier (T1–T5,
+about 3.0k lines) and a port of the vendored proof to dyadic pairs (M0–M14, 71.7k lines, against
+the 70–120k estimated), which closes Phase 6.
 
 ## Working rules for this track
 

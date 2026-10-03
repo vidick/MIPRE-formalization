@@ -2787,7 +2787,7 @@ the commuting-operator instances are `MIPRE/Foundations/ClassMIPCo.lean` and
   MIPRE.Halting.classA_subset_classOne,
   MIPRE.Halting.val_tab_eq_one_of_mem_classOne
 
-#guard_sorry_free MIPRE.mipco_eq_core,
+#guard_sorry_free MIPRE.mipco_eq_core_of_compression,
   MIPRE.core_subset_mipco,
   MIPRE.Halting.mipco_eq_core_of,
   MIPRE.Halting.core_subset_mipco_of,
@@ -3567,5 +3567,40 @@ and `lem:co-ld-pasting` (`MIPRE/Background/LIDT/Co/Pasting/`). -/
   MIPRE.LIDT.Co.Pasting.ldPastingSubMeas,
   MIPRE.LIDT.Co.Pasting.ldPastingNontrivial,
   MIPRE.LIDT.Co.Pasting.ldPasting
+
+/-! The end of the port (C6b, M12–M14 of `planning/c6b-plan.md`): the main induction over a
+symmetric model, `lem:co-main-induction`
+(`MIPRE/Background/LIDT/Co/MainInductionStep/Theorems/MainTheorems/Successor.lean`); the main
+theorem in a dyadic pair,
+`thm:co-main-formal` (`MIPRE/Background/LIDT/Co/Test/MainTheorem/MainFormal.lean`), through the
+main induction in the doubled model and the unsymmetrization of Theorem E,
+`lem:doubled-unsymmetrization` (`MIPRE/Background/LIDT/Co/Doubling/Unsymmetrization.lean`); the
+canonical-line theorem in a dyadic pair, `lem:co-lidt-canonical-line`
+(`MIPRE/Background/LIDT/Co/Bridge/`), and the model chain to `SoundIn`,
+`lem:lidt-sound-in-of-model-lidt` (`MIPRE/Background/LIDT/Co/Chain/`); `SoundFin`,
+`thm:lidt-sound-fin` (`MIPRE/Background/LIDT/Co/SoundFin.lean`); and `MIP^co = coRE` without
+hypothesis, `thm:mipco-eq-core-unconditional` (`MIPRE/MIPCo.lean`). -/
+
+-- blueprint `lem:co-main-induction`
+#guard_sorry_free MIPRE.LIDT.Co.MainInductionStep.mainInduction
+
+-- blueprint `lem:doubled-unsymmetrization`
+#guard_sorry_free MIPRE.LIDT.Co.Doubling.symmStrat_pointConsistency_unsymmetrize
+
+-- blueprint `thm:co-main-formal`
+#guard_sorry_free MIPRE.LIDT.Co.Test.mainFormal
+
+-- blueprint `lem:co-lidt-canonical-line`
+#guard_sorry_free MIPRE.LIDT.Co.Bridge.soundness,
+  MIPRE.LIDT.Co.Bridge.soundLidtIn_of_isDyadicPair
+
+-- blueprint `lem:lidt-sound-in-of-model-lidt`
+#guard_sorry_free MIPRE.LIDT.Co.Chain.soundIn_of_soundLidtIn
+
+-- blueprint `thm:lidt-sound-fin`
+#guard_sorry_free MIPRE.LIDT.Simul.soundFin
+
+-- blueprint `thm:mipco-eq-core-unconditional`
+#guard_sorry_free MIPRE.mipco_eq_core
 
 end

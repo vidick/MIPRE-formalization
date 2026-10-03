@@ -1,8 +1,13 @@
 # The commuting-operator class, `MIP^co = coRE`: plan
 
-**Status: Phase 0 done (#235, #236), made generic in #239; Phase 1 done (#241, #243, #245);
+**Status: done (2026-10-02). `MIPRE.mipco_eq_core : MIPCo = IsCoRE` holds without hypothesis**
+(`MIPRE/MIPCo.lean`, blueprint `thm:mipco-eq-core-unconditional`): it is
+`mipco_eq_core_of_lidtFin LIDT.Simul.soundFin`, the soundness of the seeded low-individual-degree
+test in every dyadic pair being proved by the commuting-operator port of the vendored soundness
+proof (C6b, `planning/c6b-plan.md`). Only Phase 7, the paper's class, is left, and it is optional.
+**Phase 0 done (#235, #236), made generic in #239; Phase 1 done (#241, #243, #245);
 Phase 2 done (#247); Phase 3 done (#249); Phase 4 done (#251); Phase 5 done (#253); Phase 6, the
-one new theorem, open: its paper trail and the vendored proof audited (#255,
+one new theorem, done (2026-10-02): its paper trail and the vendored proof audited (#255,
 `reports/lidt-co-audit.md`), its hypothesis reduced to finite pairs (C6a,
 `MIPRE.mipco_eq_core_of_lidtFin`) and narrowed to dyadic pairs, with the orthonormalization tier
 done (C6b, T1–T5); the port of the soundness proof begun, its base layer over a symmetric model
@@ -11,8 +16,9 @@ the symmetric model for a finite pair and the summed semidefinite form (C6b M2 a
 and the rest of the preliminaries and the local-to-global variance inequality (C6b M3 and M5, 4.2k
 lines), and the Schwartz–Zippel step, the global variance of the points, the commutation of the
 slice measurements and orthonormalization in a symmetric model (C6b M4 and M6–M8, 14.8k lines),
-and self-improvement and pasting (C6b M10 and M11, 29.0k lines); the rest (M12–M14, about 9–15k
-lines) open.** The conditional theorem — `MIP^co = coRE` given the commuting-operator
+and self-improvement and pasting (C6b M10 and M11, 29.0k lines), and the rest (C6b M12–M14: the
+main induction, the main theorem in a dyadic pair and the model chain to `SoundFin`) done.** The
+rest of this paragraph is the record from before Phase 6 closed. The conditional theorem — `MIP^co = coRE` given the commuting-operator
 soundness of gap compression — is in, with all of its plumbing, written once for both values.
 Since Phase 5 it follows from the soundness of the low-individual-degree test in the
 commuting-operator model alone (`MIPRE.mipco_eq_core_of_lidt`, hypothesis `LIDT.Simul.SoundCo`):
@@ -39,7 +45,9 @@ commutation of the slice measurements and the dimension-free part of making meas
 projective, whose rounding calls the tier in place of the vendored finite-dimensional route, at
 0.65× the vendored elaboration time, and M10 and M11, self-improvement, whose semidefinite program
 is the summed form and whose rounding is that orthonormalization, and pasting, at 0.78× and 0.40×
-the vendored elaboration time; M12–M14 are open.
+the vendored elaboration time; M12–M14 were then open. They are done: the main induction over the
+symmetric model, the main theorem in a dyadic pair and the model chain to `SoundFin` (Phase 6,
+"C6b, done", below).
 
 Written 2026-09-28, after the explicit separation (#222) and the paper's class (#230–#233).
 Target: Lin's theorem `MIP^co = coRE` (`Lin25`, arXiv:2510.07162, STOC 2026), proved by
@@ -134,7 +142,7 @@ Piece by piece:
 | tracial value at most bipartite value | `lem:tracial-le-co`, #29 | not on the critical path (§5); open for the Tsirelson chapter |
 | Pauli basis rigidity, model `co` | `thm:qld` in a bipartite model from the LIDT hypothesis (`QLD.soundIn_of_lidt`), `QLD.soundCo_of_lidt` | done (Phase 5) |
 | introspection soundness, model `co` | `Introspection.seven`, finite-dimensional; generalized over the model | Phase 4 |
-| low-individual-degree test soundness, model `co` | not formalized; no source proves it for an arbitrary vector state; the vendored proof is dimension-free except at three isolated steps (`reports/lidt-co-audit.md`); the theorem needs it only in dyadic pairs (`LIDT.Simul.SoundFin`, `cor:mipco-from-lidt-fin`) | Phase 6, the one new theorem; audited (#255); reduced to finite pairs (C6a) and narrowed to dyadic pairs (C6b's tier); the port begun (#259), M0–M11 done |
+| low-individual-degree test soundness, model `co` | in dyadic pairs, formalized (`LIDT.Simul.soundFin`); no source proves it for an arbitrary vector state; the vendored proof is dimension-free except at three isolated steps (`reports/lidt-co-audit.md`); the theorem needs it only in dyadic pairs (`LIDT.Simul.SoundFin`, `cor:mipco-from-lidt-fin`) | Phase 6, the one new theorem; audited (#255); reduced to finite pairs (C6a) and narrowed to dyadic pairs (C6b's tier); ported (#259), M0–M14 done: `LIDT.Simul.soundFin`, `thm:lidt-sound-fin` |
 | oracularization soundness, model `co` | generalized over the model (`OracularModel.lean`, `SeededGame.povmValue_sound_ge`), with `OracularTensor.lean` its tensor instance; `SeededGame.commutingOperatorValue_ge_of_oracular` | done (Phase 2) |
 
 ## 3. The dual criterion, and why co-completeness is not needed
@@ -208,7 +216,7 @@ the other, and `thm:separation` says the two values differ.
 | the semideciders | `Halting/Semidecider.lean` | `exists_sem_of_tab ω hlow` and `exists_sem_lower`, off `classB ω` from `ω.LowerRE`; `exists_sem_upper`, off `classOne ω` from `ω.UpperRE`; `exists_sem` is the tensor instance |
 | the reduction | `Halting/Reduction.lean`, `Halting/CompressorProgram.lean` | `Obligations ω`, `CompressorSpec.toObligations ω (hs : G.Sound ω)`; `halting_reduction_lower` (the `RE` shape, from `ω.LowerRE`) and `halting_reduction_upper` (the `coRE` shape, from `ω.UpperRE`, by the nested criterion), each with a `_strings` form and an `_of` form on the compressor program; `halting_reduction` is the tensor instance |
 | the class | `Foundations/ClassMIPStarComputable.lean`, `Halting/Corollaries.lean` | `IsRE`, `IsCoRE`, `MIPClass ω`; `MIPStarComputable := MIPClass .tensor`, `MIPCo := MIPClass .commuting`; `MIPClass.isRE` from `LowerRE`, `MIPClass.isCoRE` from `UpperRE`; `re_subset_mipclass_of_reduction`, `mipclass_eq_re_of_reduction`, `core_subset_mipclass_of_reduction`, `mipclass_eq_core_of_reduction` |
-| the co instances | `Foundations/ClassMIPCo.lean`, `MIPRE/MIPCo.lean` | `MIPCo.isCoRE` (unconditional), `halting_reduction_commuting_of`, `core_subset_mipco_of`, `mipco_eq_core_of`; `halting_reduction_commuting`, `core_subset_mipco`, `mipco_eq_core`, each with the single hypothesis `MIPRE.gapCompression.Sound ValueModel.commuting` |
+| the co instances | `Foundations/ClassMIPCo.lean`, `MIPRE/MIPCo.lean` | `MIPCo.isCoRE` (unconditional), `halting_reduction_commuting_of`, `core_subset_mipco_of`, `mipco_eq_core_of`; `halting_reduction_commuting`, `core_subset_mipco`, `mipco_eq_core_of_compression`, each with the single hypothesis `MIPRE.gapCompression.Sound ValueModel.commuting`; and the unconditional `mipco_eq_core` (`mipco_eq_core_of_lidtFin LIDT.Simul.soundFin`, `thm:mipco-eq-core-unconditional`) |
 | the Tsirelson chapter | `Foundations/Tsirelson/Conditional.lean` | `HaltingReductionQuantum` and `CommutingUpperRE` are `ValueModel.tensor.HaltingReductionRE` and `ValueModel.commuting.UpperRE` |
 | blueprint | chapter 8 | `def:value-model`, `def:core`, `def:mipco`, `lem:mipco-sub-core`, `lem:compressible-criterion-nested` (chapter 4), `def:compression-co-sound`, `thm:halting-co`, `thm:mipco-eq-core`, `rem:mipco-route`; `thm:halting`, `lem:halting-semidecider`, `def:mipstar-computable`, `lem:mipstar-sub-re` and `thm:mipstar-eq-re` cite the generic declarations |
 
@@ -583,7 +591,7 @@ orthogonalization at `QLD/Commutation.lean:587`, is removed by threading project
 `hatObs_commutation` and `comm_signed_commutation` (the audit's inference — verify before
 relying on it; the fallback is the vendored `B(H)` tier, unconditional); M3:
 `PaddedLIDT.lean` consumes `LIDTSoundness`; M4: the statement shape. The ancilla-side EPR
-and Weyl material is unchanged. **After: `MIPRE.mipco_eq_core` is conditional on exactly one
+and Weyl material is unchanged. **After: `MIPRE.mipco_eq_core` (now `mipco_eq_core_of_compression`) is conditional on exactly one
 named theorem, `thm:lidt-cl-soundness-one` in the commuting-operator model.** Touched:
 ≈ 25k lines. (Corrected when it was done: the one theorem is the simultaneous contract
 `LIDT.Simul.SoundCo`, the commuting form of `thm:lidt-cl-soundness`. The chain applies it at
@@ -740,6 +748,34 @@ asks only for dyadic pairs, which exclude the type I pairs with diffuse centre, 
 for orthonormalization there. And the value lemma amplifies by the twisted Pauli algebra
 (`MIPRE/Background/Repetition/{PauliAlgebra,Amplify}.lean`), not by a II₁ factor.
 
+*C6b, done (2026-10-02).* `MIPRE.LIDT.Simul.soundFin : SoundFin` (`Co/SoundFin.lean`, blueprint
+`thm:lidt-sound-fin`), so `MIPRE.mipco_eq_core : MIPCo = IsCoRE` holds without hypothesis
+(`thm:mipco-eq-core-unconditional`); the conditional theorem formerly of that name is
+`mipco_eq_core_of_compression`. The tier T1–T5 is about 3.0k lines and the port 71.7k, at the low
+end of the audit's 70–120k.
+- **M0–M11** build the symmetric model `SymModel 𝔓 K`, in which swap symmetry is a theorem, the
+  doubling `D(M)` of a finite pair and the summed semidefinite form, and port the vendored proof
+  over the symmetric model up to self-improvement and pasting (60.4k lines; sizes and elaboration
+  in `planning/c6b-plan.md` §3 and "Port conventions").
+- **M12**, the main induction (`Co.MainInductionStep.mainInduction`, `lem:co-main-induction`; 20
+  modules, 6.4k lines), over any symmetric model whose bipartite reading is a finite pair without
+  abelian projections, with `1 ≤ d`: the three hypotheses that self-improvement's semidefinite
+  program and rounding ask for.
+- **M13**, the main theorem in a dyadic pair (`Co.Test.mainFormal`, `thm:co-main-formal`; 7
+  modules, 2.7k lines). The induction runs in the doubling `D(M)`, which discharges those
+  hypotheses; Theorem E (`lem:doubled-unsymmetrization`) unsymmetrizes its output at the vendored
+  constant `2σ`; the vendored tail runs on `M` itself through a two-space calculus, so every
+  vendored constant, and `mainFormalError`, is kept.
+- **M14**, the model chain (12 modules, 2.2k lines): the canonical-line theorem in a dyadic pair
+  (`Co.Bridge.soundLidtIn_of_isDyadicPair`, `lem:co-lidt-canonical-line`) and the simultaneous
+  contract from it in any model (`Co.Chain.soundIn_of_soundLidtIn`,
+  `lem:lidt-sound-in-of-model-lidt`), the model forms of the repository's matrix bridge and
+  adapters, which stay because they prove `soundIn_tensor`. `1 ≤ d` comes from `SoundIn`'s own
+  hypotheses, so `SoundIn` and `SoundFin` are unchanged.
+
+The paper was not consulted for M12–M14, which translate the vendored statements; the departures
+are recorded in `planning/c6b-plan.md`, "Departures in M12, M13 and M14".
+
 *Decisions for the maintainer.*
 - Where the port lives: under `MIPRE/Background/LIDT/`, the only directory that may name
   `MIPStarRE`, or upstream and then vendored. Default taken for C6b: `MIPRE/Background/LIDT/Co/`.
@@ -843,7 +879,7 @@ end with a sharper conditional theorem, stated in `MIPRE/MIPCo.lean` and in blue
 | C3 | Phase 3: answer reduction in the model with `LIDTSoundness` as the hypothesis | 8k–10k touched | done (#249): ≈ 0.55k new, the ≈ 4k-line chain restated; the LIDT adapter deferred to C6 |
 | C4 | Phase 4: introspection in the model with `QLDSoundness` as the hypothesis | ≈ 20k touched | done (#251): ≈ 3k new, ≈ 110 modules restated; `mipco_eq_core` conditional on the Pauli basis and LIDT tests in the commuting model |
 | C5 | Phase 5: the Pauli basis test in the model; `mipco_eq_core` conditional on the commuting LIDT soundness alone | ≈ 25k touched | done (#253): ≈ 5.2k new, ≈ 50 modules restated; `mipco_eq_core_of_lidt` conditional on `LIDT.Simul.SoundCo` alone |
-| C6 | Phase 6: the low-individual-degree test in the commuting-operator model. C6a: `SoundFin → MIPCo = IsCoRE` with the adapters; C6b: the core theorem on class C | C6a 2–3k; C6b 70–120k new, plus an orthonormalization tier (4–8k with a II₁ restriction) | audit done (#255, `reports/lidt-co-audit.md`); C6a done (#258): target `SoundFin`, `mipco_eq_core_of_lidtFin`, ≈ 0.8k new lines; C6b planned (#259, `planning/c6b-plan.md`): II₁ tier chosen and done, ≈ 3.0k — the orthonormalization core (T1, ≈ 1.25k), the dyadic class, the twisted Pauli algebra, the amplification and C6a restated to the class (T2–T5, ≈ 1.75k), so `SoundFin` asks only for dyadic pairs and Theorem 1.2 is unconditional in them; the port begun: M0, the base layer over a symmetric model (`SymModel 𝔓 K`, 18 modules, 5.7k lines), and M1, `CommutativityPoints` over it (7 modules, 3.0k lines, `Co.CommutativityPoints.commutativityPoints`, blueprint `lem:co-commutativity-points`), done at 1.02× the vendored elaboration time; M2, the doubling `D(M)` of a finite pair (8 modules, 2.75k lines: a symmetric model, finite pair and, for a dyadic pair, dyadic pair; the role average; the symmetric strategy, `(3ε, 3ε, 3ε)`-good; orthonormalization in it at `100 ζ^{1/4}`; blueprint `def:doubled-model` and six results), and M9, the summed semidefinite form (3 modules, 0.93k lines: Theorem 10 in a commutant with a vector trace, Corollary 12 in `D(M)`, the pull-back to the players' algebras; blueprint `thm:summed-sdp`, `cor:summed-sdp-doubled`), done, with unsymmetrization left to M13 and the semidefinite adapter to M10; M3, the rest of `Preliminaries` (23 modules, 3.37k lines: the switch sandwich, the two notions of self-consistency, data processing and completion, with the swap and normalization hypotheses dropped; blueprint `lem:co-switch-sandwich-self-consistency`), and M5, `ExpansionHypercubeGraph` (5 modules, 0.85k lines: `localToGlobal` for every family on every vector state, by Gram positivity in place of the vendored matrix realization; blueprint `lem:co-local-to-global`), done at 0.62× and 0.24× the vendored elaboration time and under their estimates (5.0–7.2k and 1.0–1.9k); M4, the main induction step's definitions and statements with the Schwartz–Zippel step (4 modules, 1771 lines, blueprint `lem:co-schwartz-zippel-step`), M6, `GlobalVariance` (15 modules, 3558 lines, `Co.GlobalVariance.globalVarianceOfPoints`, `lem:co-global-variance-of-points`), M7, `Commutativity` (43 modules, 8025 lines, `Co.Commutativity.comMain`, `lem:co-commutation-g`) and M8, the dimension-free part of `MakingMeasurementsProjective` (7 modules, 1442 lines, its 17 other vendored files replaced by the tier or imported, `lem:co-orthonormalization`), done at 0.65× the vendored elaboration time; M10, `SelfImprovement` (30 modules, 11,411 lines, `Co.SelfImprovement.selfImprovement`, `lem:co-self-improvement`; its semidefinite program M9's summed form and its rounding M8's orthonormalization, under the model hypotheses `hS hA` and `1 ≤ params.d`, the 8 matrix-realization files dropped), and M11, `Pasting` (76 modules, 17,577 lines, `Co.Pasting.ldPasting`, `lem:co-ld-pasting`), done at 0.78× and 0.40× the vendored elaboration time; M12–M14 open, about 11–15k lines at the estimates and 9–14k at the rates M10 and M11 measured (the port 71–76k, or 70–74k) |
+| C6 | Phase 6: the low-individual-degree test in the commuting-operator model. C6a: `SoundFin → MIPCo = IsCoRE` with the adapters; C6b: the core theorem on class C | C6a 2–3k; C6b 70–120k new, plus an orthonormalization tier (4–8k with a II₁ restriction) | **done (2026-10-02): `MIPRE.mipco_eq_core : MIPCo = IsCoRE` without hypothesis; C6a ≈ 0.8k, the tier ≈ 3.0k, the port 71.7k.** Audit done (#255, `reports/lidt-co-audit.md`); C6a done (#258): target `SoundFin`, `mipco_eq_core_of_lidtFin`, ≈ 0.8k new lines; C6b planned (#259, `planning/c6b-plan.md`): II₁ tier chosen and done, ≈ 3.0k — the orthonormalization core (T1, ≈ 1.25k), the dyadic class, the twisted Pauli algebra, the amplification and C6a restated to the class (T2–T5, ≈ 1.75k), so `SoundFin` asks only for dyadic pairs and Theorem 1.2 is unconditional in them; the port begun: M0, the base layer over a symmetric model (`SymModel 𝔓 K`, 18 modules, 5.7k lines), and M1, `CommutativityPoints` over it (7 modules, 3.0k lines, `Co.CommutativityPoints.commutativityPoints`, blueprint `lem:co-commutativity-points`), done at 1.02× the vendored elaboration time; M2, the doubling `D(M)` of a finite pair (8 modules, 2.75k lines: a symmetric model, finite pair and, for a dyadic pair, dyadic pair; the role average; the symmetric strategy, `(3ε, 3ε, 3ε)`-good; orthonormalization in it at `100 ζ^{1/4}`; blueprint `def:doubled-model` and six results), and M9, the summed semidefinite form (3 modules, 0.93k lines: Theorem 10 in a commutant with a vector trace, Corollary 12 in `D(M)`, the pull-back to the players' algebras; blueprint `thm:summed-sdp`, `cor:summed-sdp-doubled`), done, with unsymmetrization left to M13 and the semidefinite adapter to M10; M3, the rest of `Preliminaries` (23 modules, 3.37k lines: the switch sandwich, the two notions of self-consistency, data processing and completion, with the swap and normalization hypotheses dropped; blueprint `lem:co-switch-sandwich-self-consistency`), and M5, `ExpansionHypercubeGraph` (5 modules, 0.85k lines: `localToGlobal` for every family on every vector state, by Gram positivity in place of the vendored matrix realization; blueprint `lem:co-local-to-global`), done at 0.62× and 0.24× the vendored elaboration time and under their estimates (5.0–7.2k and 1.0–1.9k); M4, the main induction step's definitions and statements with the Schwartz–Zippel step (4 modules, 1771 lines, blueprint `lem:co-schwartz-zippel-step`), M6, `GlobalVariance` (15 modules, 3558 lines, `Co.GlobalVariance.globalVarianceOfPoints`, `lem:co-global-variance-of-points`), M7, `Commutativity` (43 modules, 8025 lines, `Co.Commutativity.comMain`, `lem:co-commutation-g`) and M8, the dimension-free part of `MakingMeasurementsProjective` (7 modules, 1442 lines, its 17 other vendored files replaced by the tier or imported, `lem:co-orthonormalization`), done at 0.65× the vendored elaboration time; M10, `SelfImprovement` (30 modules, 11,411 lines, `Co.SelfImprovement.selfImprovement`, `lem:co-self-improvement`; its semidefinite program M9's summed form and its rounding M8's orthonormalization, under the model hypotheses `hS hA` and `1 ≤ params.d`, the 8 matrix-realization files dropped), and M11, `Pasting` (76 modules, 17,577 lines, `Co.Pasting.ldPasting`, `lem:co-ld-pasting`), done at 0.78× and 0.40× the vendored elaboration time; M12, the main induction (20 modules, `MainInductionStep/Theorems/`), M13, the main theorem in a dyadic pair (`Co.Test.mainFormal`, `thm:co-main-formal`, with Theorem E, `lem:doubled-unsymmetrization`) and M14, the model chain to `SoundIn` and `SoundFin` (`LIDT.Simul.soundFin`, `thm:lidt-sound-fin`), done: **`MIPRE.mipco_eq_core : MIPCo = IsCoRE` holds without hypothesis** (`thm:mipco-eq-core-unconditional`; the conditional form is renamed `mipco_eq_core_of_compression`); sizes and elaboration in `planning/c6b-plan.md` |
 | C7 | Phase 7: the paper's class `MIP^co_{1,1/2}(2,1)` | ~1k | open |
 
 C1 is the prerequisite of everything after it; C3 and C4 need only C1 and are independent
