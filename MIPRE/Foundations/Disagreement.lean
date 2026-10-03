@@ -461,106 +461,11 @@ end BipartiteModel
 variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]
   [DecidableEq dB]
 
-/-- **The disagreement** of Alice's POVM `M` and Bob's POVM `N` on the state `ψ`: the probability
-that their outcomes differ. -/
-def dis (ψ : dA × dB → ℂ) (M : POVM Λ dA) (N : POVM Λ dB) : ℝ :=
-  1 - ∑ a, bornProb ψ ((M.mats a).val) ((N.mats a).val)
-
-/-- **The matrix disagreement is that of the tensor-product model.** -/
-theorem dis_eq_tensor (ψ : dA × dB → ℂ) (M : POVM Λ dA) (N : POVM Λ dB) :
-    dis ψ M N = (BipartiteModel.tensor ψ).dis M.toIn N.toIn := by
-  simp only [dis, BipartiteModel.dis, bornProb_eq_tensor, POVM.toIn_op]
-
-theorem bornProb_one_right (ψ : dA × dB → ℂ) (EA : Matrix dA dA ℂ) (N : POVM Λ dB) :
-    bornProb ψ EA (1 : Matrix dB dB ℂ) = ∑ b, bornProb ψ EA ((N.mats b).val) := by
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).bornProb_one_right EA N.toIn
-
-theorem bornProb_one_left (ψ : dA × dB → ℂ) (M : POVM Λ dA) (EB : Matrix dB dB ℂ) :
-    bornProb ψ (1 : Matrix dA dA ℂ) EB = ∑ a, bornProb ψ ((M.mats a).val) EB := by
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).bornProb_one_left M.toIn EB
-
-theorem sum_bornProb_diag_le {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (M : POVM Λ dA)
-    (N : POVM Λ dB) : ∑ a, bornProb ψ ((M.mats a).val) ((N.mats a).val) ≤ 1 := by
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).sum_bornProb_diag_le (norm_evec_eq_one hψ) M.toIn N.toIn
-
-theorem dis_nonneg {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (M : POVM Λ dA) (N : POVM Λ dB) :
-    0 ≤ dis ψ M N := by
-  rw [dis_eq_tensor]
-  exact (BipartiteModel.tensor ψ).dis_nonneg (norm_evec_eq_one hψ) M.toIn N.toIn
-
-/-- **Data processing**: a common coarse-graining can only decrease the disagreement. -/
-theorem dis_map_le {C : Type*} [Fintype C] [DecidableEq C] (ψ : dA × dB → ℂ) (M : POVM Λ dA)
-    (N : POVM Λ dB) (f : Λ → C) : dis ψ (M.map f) (N.map f) ≤ dis ψ M N := by
-  rw [dis_eq_tensor, dis_eq_tensor]
-  exact (BipartiteModel.tensor ψ).dis_map_le M.toIn N.toIn f
-
-/-- The disagreement is the sum of the off-diagonal Born probabilities. -/
-theorem dis_eq_sum_ne {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ] (M : POVM Λ dA)
-    (N : POVM Λ dB) :
-    dis ψ M N = ∑ a, ∑ b, if a = b then 0 else bornProb ψ ((M.mats a).val) ((N.mats b).val) := by
-  rw [dis_eq_tensor]
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).dis_eq_sum_ne (norm_evec_eq_one hψ) M.toIn N.toIn
-
-/-- **An event transfers across the parties**: its probability under Alice's measurement is at
-most its probability under Bob's plus their disagreement. -/
-theorem sum_ite_bornProb_one_le {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ]
-    (M : POVM Λ dA) (N : POVM Λ dB) (E : Λ → Prop) [DecidablePred E] :
-    ∑ a, (if E a then bornProb ψ ((M.mats a).val) (1 : Matrix dB dB ℂ) else 0)
-      ≤ ∑ b, (if E b then bornProb ψ (1 : Matrix dA dA ℂ) ((N.mats b).val) else 0)
-        + dis ψ M N := by
-  rw [dis_eq_tensor]
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).sum_ite_bornProb_one_le (norm_evec_eq_one hψ) M.toIn N.toIn E
-
-/-- The mirror image: an event transfers from Bob's measurement to Alice's. -/
-theorem sum_ite_bornProb_one_le' {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ]
-    (M : POVM Λ dA) (N : POVM Λ dB) (E : Λ → Prop) [DecidablePred E] :
-    ∑ b, (if E b then bornProb ψ (1 : Matrix dA dA ℂ) ((N.mats b).val) else 0)
-      ≤ ∑ a, (if E a then bornProb ψ ((M.mats a).val) (1 : Matrix dB dB ℂ) else 0)
-        + dis ψ M N := by
-  rw [dis_eq_tensor]
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).sum_ite_bornProb_one_le' (norm_evec_eq_one hψ) M.toIn N.toIn E
-
-/-- **From evaluations to outcomes**: when distinct outcomes are separated by an evaluation map at
-a point drawn from `ν`, colliding with probability at most `ε`, the disagreement of the outcomes is
-at most the average disagreement of the evaluations, plus `ε`. Neither measurement need be
-projective. -/
-theorem dis_le_sum_dis_map_add {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ]
-    (M : POVM Λ dA) (N : POVM Λ dB) {Y R : Type*} [Fintype Y] [Fintype R] [DecidableEq R]
-    {ν : Y → ℝ} (hν0 : ∀ y, 0 ≤ ν y) (hν1 : ∑ y, ν y = 1) (ev : Y → Λ → R) {ε : ℝ}
-    (hε : 0 ≤ ε)
-    (hsep : ∀ g g', g ≠ g' → ∑ y, ν y * (if ev y g = ev y g' then 1 else 0) ≤ ε) :
-    dis ψ M N ≤ ∑ y, ν y * dis ψ (M.map (ev y)) (N.map (ev y)) + ε := by
-  simp only [dis_eq_tensor]
-  exact (BipartiteModel.tensor ψ).dis_le_sum_dis_map_add (norm_evec_eq_one hψ) M.toIn N.toIn
-    hν0 hν1 ev hε hsep
-
 /-! ## Families on a uniform index -/
 
 section Uniform
 
 variable {X : Type*} [Fintype X] [Nonempty X]
-
-theorem one_sub_agreeSum_uniform (ψ : dA × dB → ℂ) (M : X → POVM Λ dA) (N : X → POVM Λ dB) :
-    1 - agreeSum (uniform X) ψ M N = (∑ x, dis ψ (M x) (N x)) / Fintype.card X := by
-  rw [agreeSum_eq_tensor]
-  simp only [dis_eq_tensor]
-  exact (BipartiteModel.tensor ψ).one_sub_agreeSum_uniform _ _
-
-/-- **The disagreement triangle** across the two parties, on a uniform index: Alice's `A` against
-Bob's `D`, through Bob's `B` and Alice's `C`. -/
-theorem sum_dis_triangle {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (A C : X → POVM Λ dA)
-    (B D : X → POVM Λ dB) :
-    ∑ x, dis ψ (A x) (D x)
-      ≤ 11 * (∑ x, dis ψ (A x) (B x) + ∑ x, dis ψ (C x) (B x) + ∑ x, dis ψ (C x) (D x)) := by
-  simp only [dis_eq_tensor]
-  exact (BipartiteModel.tensor ψ).sum_dis_triangle (norm_evec_eq_one hψ) (fun x => (A x).toIn)
-    (fun x => (C x).toIn) (fun x => (B x).toIn) (fun x => (D x).toIn)
 
 end Uniform
 
@@ -570,55 +475,6 @@ section Subtests
 
 variable {X Y A B C : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] [Fintype C]
   [DecidableEq C] {G : Game X Y A B} {ψ : dA × dB → ℂ} {MA : X → POVM A dA} {MB : Y → POVM B dB}
-
-/-- **An agreement subtest bounds the disagreement of the two readings.** -/
-theorem dis_map_le_condFail {x : X} {y : Y} (f : A → C) (g : B → C)
-    (hD : ∀ a b, G.D x y a b = true → f a = g b) :
-    dis ψ ((MA x).map f) ((MB y).map g) ≤ condFail G ψ MA MB x y :=
-  one_sub_sum_bornProb_le_condFail f g hD
-
-/-- **A subtest excluding an event of Bob's answer bounds its probability.** -/
-theorem sum_ite_bornProb_le_condFail (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (E : B → Prop)
-    [DecidablePred E] (hD : ∀ a b, G.D x y a b = true → ¬ E b) :
-    ∑ b, (if E b then bornProb ψ (1 : Matrix dA dA ℂ) (((MB y).mats b).val) else 0)
-      ≤ condFail G ψ MA MB x y := by
-  rw [condFail_eq_tensor]
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).sum_ite_bornProb_le_condFail (MA := fun x => (MA x).toIn)
-    (MB := fun y => (MB y).toIn) (norm_evec_eq_one hψ) E hD
-
-/-- The mirror image, for an event of Alice's answer. -/
-theorem sum_ite_bornProb_le_condFail' (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (E : A → Prop)
-    [DecidablePred E] (hD : ∀ a b, G.D x y a b = true → ¬ E a) :
-    ∑ a, (if E a then bornProb ψ (((MA x).mats a).val) (1 : Matrix dB dB ℂ) else 0)
-      ≤ condFail G ψ MA MB x y := by
-  rw [condFail_eq_tensor]
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).sum_ite_bornProb_le_condFail' (MA := fun x => (MA x).toIn)
-    (MB := fun y => (MB y).toIn) (norm_evec_eq_one hψ) E hD
-
-/-- The disagreement of two readings is the weight of the outcome pairs they read differently. -/
-theorem dis_map_eq_sum {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (M : POVM A dA) (N : POVM B dB)
-    (f : A → C) (g : B → C) :
-    dis ψ (M.map f) (N.map g) = ∑ a, ∑ b, (if f a = g b then 0 else 1)
-      * bornProb ψ ((M.mats a).val) ((N.mats b).val) := by
-  rw [dis_eq_tensor]
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).dis_map_eq_sum (norm_evec_eq_one hψ) M.toIn N.toIn f g
-
-/-- **A subtest accepting when two events are avoided and two readings agree** fails at most the
-events' probabilities plus the readings' disagreement. -/
-theorem condFail_le_of (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (EA : A → Prop) (EB : B → Prop)
-    [DecidablePred EA] [DecidablePred EB] (f : A → C) (g : B → C)
-    (hD : ∀ a b, ¬ EA a → ¬ EB b → f a = g b → G.D x y a b = true) :
-    condFail G ψ MA MB x y
-      ≤ ∑ a, (if EA a then bornProb ψ (((MA x).mats a).val) (1 : Matrix dB dB ℂ) else 0)
-        + ∑ b, (if EB b then bornProb ψ (1 : Matrix dA dA ℂ) (((MB y).mats b).val) else 0)
-        + dis ψ ((MA x).map f) ((MB y).map g) := by
-  rw [condFail_eq_tensor, dis_eq_tensor]
-  simp only [bornProb_eq_tensor]
-  exact (BipartiteModel.tensor ψ).condFail_le_of (MA := fun x => (MA x).toIn)
-    (MB := fun y => (MB y).toIn) (norm_evec_eq_one hψ) EA EB f g hD
 
 end Subtests
 

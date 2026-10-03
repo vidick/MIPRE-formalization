@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 public import MIPRE.Foundations.Introspection.AuxiliaryScanProgram
-public import MIPRE.Foundations.Introspection.AuxiliaryPrefixScan
+public import MIPRE.Foundations.Introspection.AuxiliaryPrefixSolve
 
 @[expose] public section
 
@@ -107,26 +107,6 @@ theorem program_sound (f : PolyTimeFun AuxiliarySource.Context BitStr)
     · rw [hr]
       simp only [hz, decide_true]
     · exact AuxiliaryPrefix.extend_claimed hP k y x _ hx hz
-
-/-- Every honest full output passes the actual executable scan. -/
-theorem program_honest (f : PolyTimeFun AuxiliarySource.Context BitStr)
-    (m : PolyTimeFun AuxiliarySource.Context (List BitStr)) (ctx : AuxiliarySource.Context)
-    {P : CL.CLFun CL.𝔽₂ (Fin n) ℓ} {T : Finset (Fin n)} (hP : P.SupportedOn T)
-    (x : Fin n → CL.𝔽₂) (k : ℕ) (hq : ∀ j < k, QueriesCorrectAt f m ctx P j) :
-    (program f m k (ctx, CL.toBits (P.eval x))).1 = true := by
-  induction k with
-  | zero => rfl
-  | succ k ih =>
-    have hp := ih (fun j hj => hq j (by omega))
-    obtain ⟨z, he, hz⟩ := program_sound f m ctx hP (P.eval x) k
-      (fun j hj => hq j (by omega)) hp
-    have hs := stage_at_claimed f m ctx hP k (P.eval x) z hz (hq k (by omega))
-    rw [program_succ, he, advance_apply]
-    simp only [if_true]
-    rw [hs]
-    dsimp only
-    apply decide_eq_true
-    exact AuxiliaryPrefix.solveStage_correct _ _ ⟨x, AuxiliaryPrefix.stage_of_honest hP k x⟩
 
 /-- Hiding answers only need the prefix requested at their own level to be
 attainable; the unvisited components are unrestricted. -/

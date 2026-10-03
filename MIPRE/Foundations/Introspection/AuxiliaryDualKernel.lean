@@ -87,10 +87,6 @@ theorem registerDual_idempotent (L : CL.RegLinear F S) (x : ι → F) :
 section FiniteCoordinates
 variable {n : ℕ} {T : Finset (Fin n)}
 
-theorem coordinate_dot (x y : Fin n → F) :
-    CL.dotForm F (Fintype.card T) (coordinateRestrict T x) (coordinateRestrict T y) =
-      CL.dotForm F n x (CL.proj T y) := coordinate_dot_sum x y
-
 /-- The local-coordinate dual kernel can be tested on a projected ambient vector. -/
 theorem registerDual_zero_iff (L : CL.RegLinear F T) (x : Fin n → F) :
     registerDual L x = 0 ↔ CL.proj T x ∈ CL.perp L.toLinearMap.ker := by

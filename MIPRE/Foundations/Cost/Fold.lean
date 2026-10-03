@@ -541,11 +541,6 @@ theorem unary_length (u : Unary) : unary u.length = u := by
   | nil => rfl
   | cons _ u ih => rw [List.length_cons, unary, List.replicate_succ, ← unary, ih]
 
-theorem unary_injective : Function.Injective unary := by
-  intro a b h
-  have := congrArg List.length h
-  simpa using this
-
 namespace PolyTimeFun
 
 variable {α β γ : Type*} [SizedEncoding α] [SizedEncoding β] [SizedEncoding γ]

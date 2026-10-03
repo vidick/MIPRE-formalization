@@ -169,11 +169,6 @@ theorem state_transfer_loss_le_three_sqrt {δ : ℝ} (hδ0 : 0 ≤ δ) (hδ1 : �
   have hroot1 : Real.sqrt δ ≤ 1 := by nlinarith
   nlinarith [sq_nonneg (Real.sqrt δ - 1)]
 
-/-- One may choose the final exponent strictly below one by taking a strict concave power. -/
-theorem power_exponent_lt_one {b r : ℝ} (hb1 : b ≤ 1) (hr0 : 0 ≤ r) (hr1 : r < 1) :
-    b * r < 1 := by
-  exact (mul_le_mul_of_nonneg_right hb1 hr0).trans_lt (by simpa using hr1)
-
 end MIPRE.Introspection
 
 end

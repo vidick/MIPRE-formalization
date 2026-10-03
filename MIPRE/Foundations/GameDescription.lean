@@ -131,9 +131,6 @@ theorem bddAbove_range_strategyValue (g : GameData) :
 theorem gameValue_nonneg (g : GameData) : 0 ≤ gameValue g.toGame :=
   Real.iSup_nonneg fun S => g.strategyValue_nonneg S
 
-theorem gameValue_le_one (g : GameData) : gameValue g.toGame ≤ 1 :=
-  Real.iSup_le (fun S => g.strategyValue_le_one S) zero_le_one
-
 /-- **The two synchronous values agree.** `HaltingGameValue.gameValue`, the value in which the
 headline `HaltingGameValue.halting_reduces_to_gameValue` is stated, is `MIPRE.syncValue` of the
 same description read in the foundations. -/

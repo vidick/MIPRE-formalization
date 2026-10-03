@@ -124,44 +124,6 @@ theorem exists_perfectPCC_with_format
   rw [CLFun.eval_reindex'] at hx
   exact (reindexEquiv e).injective hx
 
-/-- Compatibility statement retaining the original coordinate witness API. -/
-theorem coordinate_exists_perfectPCC
-    (R : SyncStrategy (Honest.sourceGame L D).doubled)
-    (hb : LowDegree.IsSelfDualBasis b) (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
-    (hd : 1 ≤ d) (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hv : R.value = 1) :
-    ∃ Q : SyncStrategy (AuxiliaryQuotient.reindexedGame e QLD.adj (.pauli .X) (.pauli .Z)
-        (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) L (project (d := d) e b) D
-        (ExplicitGame.pauliCheck hm π b)).doubled,
-      Q.IsPCC ∧ Q.value = 1 ∧ Q.d = 2 * Fintype.card (Seed m t) * R.d ∧
-      (∀ q a, Q.P.M q a ≠ 0 →
-        PrefixGuard.holds (SourceReindex.family e L) q.2.1 a) ∧
-      (∀ side w payload y a,
-        Q.P.M (side, .inr (.introspect,w), payload) (.pair y a) ≠ 0 →
-        ∃ x, (SourceReindex.family e L w).eval x = y) := by
-  obtain ⟨Q,hQ,hvQ,hdQ,hg,hi,_⟩ :=
-    coordinate_exists_perfectPCC_with_format e L D hm b χ π R hb hχ hd hL hR hv
-  exact ⟨Q,hQ,hvQ,hdQ,hg,hi⟩
-
-/-- Compatibility statement retaining the original guarded witness API. -/
-theorem exists_perfectPCC
-    (R : SyncStrategy (Honest.sourceGame L D).doubled)
-    (hb : LowDegree.IsSelfDualBasis b) (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)
-    (hd : 1 ≤ d) (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hv : R.value = 1) :
-    ∃ Q : SyncStrategy (guardedGame (d := d) e L D hm b χ π).doubled,
-      Q.IsPCC ∧ Q.value = 1 ∧ Q.d = 2 * Fintype.card (Seed m t) * R.d ∧
-      (∀ q a, Q.P.M q a ≠ 0 → PrefixGuard.holds L q.2.1 a) ∧
-      (∀ side w payload y a,
-        Q.P.M (side, .inr (.introspect,w), payload) (.pair y a) ≠ 0 →
-        ∃ x, (L w).eval x = y) := by
-  obtain ⟨Q,hQ,hvQ,hdQ,hg,hi,_⟩ :=
-    exists_perfectPCC_with_format e L D hm b χ π R hb hχ hd hL hR hv
-  exact ⟨Q,hQ,hvQ,hdQ,hg,hi⟩
-
-/-- The concrete executable numbering is the same projection, exactly. -/
-theorem project_registerNumbering (a : QLD.Honest.Register F m) :
-    project (QLD.PauliFullAnswerProgram.registerNumbering m t).symm b
-      (.pauliAns (d := d) a) = QLD.PauliFullAnswerProgram.registerVector b a := rfl
-
 end MIPRE.Introspection.NumberedComplete
 end
 

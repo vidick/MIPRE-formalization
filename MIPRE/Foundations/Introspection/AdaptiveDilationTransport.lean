@@ -68,26 +68,8 @@ theorem reassociatedConditionalDilation_isPVM (e : V ≃ I × R)
     (hP : ∀ y, IsPVMIn (P y)) : IsPVMIn (reassociatedConditionalDilation e Z P) :=
   (transportedConditionalDilation_isPVM e Z hZ P hP).pushforward BipartiteModel.layerSwap_one
 
-/-- The new readout remains an exact tensor factor. The second factor is
-the dilated residual operator on precisely the remaining coordinates. -/
-theorem reassociatedConditionalDilation_factor (e : V ≃ I × R)
-    (Z : Y → Matrix I I ℂ)
-    (P : Y → A → Matrix T T (Matrix R R 𝒜)) (p : Y × A) :
-    reassociatedConditionalDilation e Z P p =
-      regSplitHom e (smulKron (BipartiteModel.layerSwap (P p.1 p.2)) (Z p.1)) := by
-  ext v v' t t'
-  rfl
-
 variable [PartialOrder 𝒜] [StarOrderedRing 𝒜] [StarProper 𝒜] [PartialOrder ℬ]
   [StarOrderedRing ℬ] [StarModule ℂ ℬ] [StarProper ℬ] (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
-
-/-- The coordinate split transports squared errors exactly along the one-sided ancilla. -/
-theorem stateSqNorm_transported (e : V ≃ I × R) (t₀ : T)
-    (X : Matrix T T (Matrix I I (Matrix R R 𝒜))) :
-    ((Ξ.reg V).expandA t₀).stateSqNorm (X.map (regSplitHom e)) =
-      (((Ξ.reg R).reg I).expandA t₀).stateSqNorm X :=
-  BipartiteModel.LocalIsometry.stateSqNorm_of_W_ψ
-    (BipartiteModel.LocalIsometry.expandA_W_ψ (Ξ.regSplit_W_ψ e) t₀) X
 
 /-- Reassociation transports the squared error exactly to the new register
 state, with no state replacement or dimension factor. -/

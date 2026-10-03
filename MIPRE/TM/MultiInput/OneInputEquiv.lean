@@ -101,106 +101,11 @@ lemma cfgEquiv_workTapePos (c : MultiTapeTM.Cfg w Symbol State input) :
 lemma cfgEquiv_symm_state (c : Cfg 1 w Symbol State (fun _ => input)) :
     ((cfgEquiv input).symm c).state = c.state := rfl
 
-/-- The input symbol read is preserved by the configuration correspondence. -/
-lemma cfgEquiv_inputSymbol (c : MultiTapeTM.Cfg w Symbol State input) (j : Fin 1) :
-    (cfgEquiv input c).inputSymbol j = c.inputSymbol := rfl
-
-/-- The tuple of input symbols of a transported configuration. -/
-lemma cfgEquiv_inputSymbols (c : MultiTapeTM.Cfg w Symbol State input) :
-    (cfgEquiv input c).inputSymbols = fun _ : Fin 1 => c.inputSymbol := rfl
-
-/-- The work symbols read are preserved by the configuration correspondence. -/
-lemma cfgEquiv_workTapeSymbols (c : MultiTapeTM.Cfg w Symbol State input) :
-    (cfgEquiv input c).workTapeSymbols = c.workTapeSymbols := rfl
-
 end CfgEquiv
 
 section Transfer
 
 variable {input : List Symbol}
-
-/-- The step functions agree along the configuration correspondence. -/
-theorem toCSLib_step (M : MultiInputTM 1 w Symbol State)
-    (c : MultiTapeTM.Cfg w Symbol State input) :
-    cfgEquiv input (M.toCSLib.step c) = M.step (cfgEquiv input c) := by
-  cases hstate : c.state with
-  | none =>
-    rw [MultiTapeTM.step_of_halt hstate,
-      step_of_halt (show (cfgEquiv input c).state = none from hstate)]
-  | some q =>
-    refine Cfg.ext ?_ ?_ ?_ ?_
-    · simp only [MultiTapeTM.step, step, toCSLib, cfgEquiv_state, cfgEquiv_inputSymbols,
-        cfgEquiv_workTapeSymbols, hstate]
-    · funext j
-      simp only [MultiTapeTM.step, step, toCSLib, cfgEquiv_state, cfgEquiv_inputSymbols,
-        cfgEquiv_workTapeSymbols, cfgEquiv_inputPos, hstate]
-      rw [Fin.fin_one_eq_zero j]
-    · simp only [MultiTapeTM.step, step, toCSLib, cfgEquiv_state, cfgEquiv_inputSymbols,
-        cfgEquiv_workTapeSymbols, cfgEquiv_workTapes, cfgEquiv_workTapePos, hstate]
-      rfl
-    · simp only [MultiTapeTM.step, step, toCSLib, cfgEquiv_state, cfgEquiv_inputSymbols,
-        cfgEquiv_workTapeSymbols, cfgEquiv_workTapePos, hstate]
-
-/-- The step-indexed runs agree along the configuration correspondence. -/
-theorem toCSLib_configs (M : MultiInputTM 1 w Symbol State)
-    (c : MultiTapeTM.Cfg w Symbol State input) (t : ℕ) :
-    cfgEquiv input (M.toCSLib.configs c t) = M.configs (cfgEquiv input c) t := by
-  induction t with
-  | zero => simp
-  | succ t ih =>
-    rw [MultiTapeTM.configs_succ_eq_step', configs_succ_eq_step', ← ih, toCSLib_step]
-
-/-- The emitted symbols agree along the configuration correspondence. -/
-theorem toCSLib_outputSymbol (M : MultiInputTM 1 w Symbol State)
-    (c : MultiTapeTM.Cfg w Symbol State input) :
-    M.toCSLib.outputSymbol c = M.outputSymbol (cfgEquiv input c) := by
-  cases hstate : c.state with
-  | none =>
-    rw [MultiTapeTM.outputSymbol_of_halt hstate,
-      outputSymbol_of_halt (show (cfgEquiv input c).state = none from hstate)]
-  | some q =>
-    simp only [MultiTapeTM.outputSymbol, outputSymbol, toCSLib, cfgEquiv_state,
-      cfgEquiv_inputSymbols, cfgEquiv_workTapeSymbols, hstate]
-
-/-- The output strings agree along the configuration correspondence. -/
-theorem toCSLib_outputString (M : MultiInputTM 1 w Symbol State)
-    (c : MultiTapeTM.Cfg w Symbol State input) (t : ℕ) :
-    M.toCSLib.outputString c t = M.outputString (cfgEquiv input c) t := by
-  unfold MultiTapeTM.outputString outputString
-  congr 1
-  funext t'
-  rw [← toCSLib_configs, toCSLib_outputSymbol]
-
-/-- The visited work-tape cells agree along the configuration correspondence. -/
-theorem toCSLib_visitedByTapeHead (M : MultiInputTM 1 w Symbol State)
-    (c : MultiTapeTM.Cfg w Symbol State input) (t : ℕ) (d : Fin w) :
-    M.toCSLib.visitedByTapeHead c t d = M.visitedByTapeHead (cfgEquiv input c) t d := by
-  unfold MultiTapeTM.visitedByTapeHead visitedByTapeHead
-  congr 1
-  funext t'
-  rw [← toCSLib_configs]
-  rfl
-
-/-- The space usage agrees along the configuration correspondence. -/
-theorem toCSLib_spaceUsed (M : MultiInputTM 1 w Symbol State)
-    (c : MultiTapeTM.Cfg w Symbol State input) (t : ℕ) :
-    M.toCSLib.spaceUsed c t = M.spaceUsed (cfgEquiv input c) t := by
-  unfold MultiTapeTM.spaceUsed spaceUsed MultiTapeTM.spaceUsedByTape spaceUsedByTape
-  exact Finset.sum_congr rfl fun d _ => by rw [toCSLib_visitedByTapeHead]
-
-/-- The initial configurations correspond. -/
-theorem toCSLib_initCfg (M : MultiInputTM 1 w Symbol State) (input : List Symbol) :
-    cfgEquiv input (M.toCSLib.initCfg input) = M.initCfg (fun _ => input) := rfl
-
-/-- A one-input machine and its CSLib avatar compute the same input/output/time/space
-quadruples. -/
-theorem toCSLib_computesInTimeAndSpace (M : MultiInputTM 1 w Symbol State)
-    (input output : List Symbol) (t s : ℕ) :
-    M.toCSLib.ComputesInTimeAndSpace input output t s ↔
-      M.ComputesInTimeAndSpace (fun _ => input) output t s := by
-  unfold MultiTapeTM.ComputesInTimeAndSpace ComputesInTimeAndSpace
-  rw [← toCSLib_initCfg, ← toCSLib_configs, ← toCSLib_outputString, ← toCSLib_spaceUsed,
-    cfgEquiv_state]
 
 end Transfer
 

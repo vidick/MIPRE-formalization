@@ -55,24 +55,6 @@ def serMeasureD : Data → ℕ
   | cons nil r => 1 + serMeasureD r
   | cons (cons _ d) r => 3 * d.size + 1 + serMeasureD r
 
-theorem serMeasureD_list (items : List (Option Data)) :
-    serMeasureD (list (items.map itemD)) = serMeasure items := by
-  induction items with
-  | nil => rfl
-  | cons it r ih => cases it <;> simp [itemD, serMeasureD, serMeasure, ih]
-
-theorem size_list_map_itemD (items : List (Option Data)) :
-    (list (items.map itemD)).size ≤ 2 * serMeasure items + 1 := by
-  induction items with
-  | nil => simp
-  | cons it r ih =>
-    cases it with
-    | none => simp only [List.map_cons, itemD, list_cons, size_cons, size_nil, serMeasure]; omega
-    | some d =>
-      simp only [List.map_cons, itemD, list_cons, size_cons, size_nil, serMeasure]
-      have := size_pos d
-      omega
-
 end Data
 
 namespace Prog

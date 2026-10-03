@@ -149,22 +149,6 @@ theorem adaptiveFailureBudget_le_power (r n : ℕ) {edges z h initial t : ℝ}
             iteratedRoot 3 (iteratedRoot (3 * n) t) := add_le_add hpre hl'
       _ = _ := by rw [he, pow_succ]; unfold adaptivePowerCoefficient; ring
 
-/-- A direct paper-profile corollary for the accumulated recurrence in the
-unit-error regime. All coefficients are fixed before `x` and `ε` are chosen. -/
-theorem adaptiveFailureBudget_le_errorProfile (r n : ℕ)
-    {edges z h initial a b x ε : ℝ}
-    (hE : 0 ≤ edges) (ha : 0 ≤ a) (hx : 1 ≤ x) (hε : 0 ≤ ε)
-    (ht1 : errorProfile a b x ε ≤ 1)
-    (hi : initial ≤ errorProfile a b x ε)
-    (hz : z ≤ errorProfile a b x ε) (hh : h ≤ errorProfile a b x ε) :
-    adaptiveFailureBudget r edges z h initial n ≤
-      errorProfile (powerCoefficient (adaptivePowerCoefficient r edges ^ n) a
-        (rootExponent (3 * n))) (b * rootExponent (3 * n)) x ε := by
-  have ht0 := errorProfile_nonneg (b := b) ha (by linarith : 0 ≤ x) hε
-  exact (adaptiveFailureBudget_le_power r n hE ht0 ht1 hi hz hh).trans
-    (errorProfile_iteratedRoot (3 * n)
-      (pow_nonneg (by linarith [adaptivePowerCoefficient_one_le r hE]) n) ha hx hε)
-
 theorem adaptiveSmallThreshold_le_one (r n : ℕ) {edges : ℝ} (hE : 0 ≤ edges) :
     adaptiveSmallThreshold r edges n ≤ 1 := by
   have hC := adaptiveBudgetCoefficient_pos r hE
@@ -214,15 +198,6 @@ theorem one_le_soundness_power_of_threshold_le (r n : ℕ) {edges t : ℝ}
     _ ≤ adaptiveSoundnessCoefficient r edges n * iteratedRoot (3 * n) t :=
       mul_le_mul_of_nonneg_right (le_max_right _ _) hroot0
 
-/-- A nonvacuous power bound automatically implies the concrete smallness
-needed by the existing strategy constructor. -/
-theorem threshold_of_soundness_power_lt_one (r n : ℕ) {edges t : ℝ}
-    (hE : 0 ≤ edges)
-    (ht : adaptiveSoundnessCoefficient r edges n * iteratedRoot (3 * n) t < 1) :
-    t < adaptiveSmallThreshold r edges n := by
-  by_contra hn
-  exact (not_le_of_gt ht) (one_le_soundness_power_of_threshold_le r n hE (le_of_not_gt hn))
-
 /-- The full numerical dichotomy for any finite number of replacements:
 either the original admissibility threshold holds and the actual recurrence
 is bounded, or the very same power bound makes probability loss vacuous. -/
@@ -247,25 +222,6 @@ theorem adaptiveSoundness_power_le_errorProfile (r n : ℕ)
         (rootExponent (3 * n))) (b * rootExponent (3 * n)) x ε :=
   errorProfile_iteratedRoot (3 * n)
     (by linarith [adaptiveSoundnessCoefficient_one_le r n hE]) ha hx hε
-
-/-- The paper-shaped error bound directly separates the constructible
-small-error regime from the trivial large-error regime. -/
-theorem adaptiveSoundness_errorProfile_cases (r n : ℕ)
-    {edges z h initial a b x ε : ℝ}
-    (hE : 0 ≤ edges) (ha : 0 ≤ a) (hx : 1 ≤ x) (hε : 0 ≤ ε)
-    (hi : initial ≤ errorProfile a b x ε)
-    (hz : z ≤ errorProfile a b x ε) (hh : h ≤ errorProfile a b x ε) :
-    let a' := powerCoefficient (adaptiveSoundnessCoefficient r edges n) a (rootExponent (3 * n))
-    let b' := b * rootExponent (3 * n)
-    (errorProfile a b x ε ≤ adaptiveSmallThreshold r edges n ∧
-      adaptiveFailureBudget r edges z h initial n ≤ errorProfile a' b' x ε) ∨
-      1 ≤ errorProfile a' b' x ε := by
-  dsimp only
-  have hp := adaptiveSoundness_power_le_errorProfile (b := b) r n hE ha hx hε
-  rcases adaptiveSoundness_power_cases r n hE
-    (errorProfile_nonneg (b := b) ha (by linarith : 0 ≤ x) hε) hi hz hh with hsmall | hlarge
-  · exact Or.inl ⟨hsmall.1, hsmall.2.trans hp⟩
-  · exact Or.inr (hlarge.trans hp)
 
 /-- Constants for the final soundness profile depend only on fixed depth,
 edge count, number of replacements, and the primitive profile constants. -/

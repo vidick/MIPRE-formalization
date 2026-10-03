@@ -89,12 +89,6 @@ theorem splitBlocks_flatten (k : ℕ) (vs : List BitStr)
     simp only [List.length_cons, splitBlocks, List.flatten_cons, ht, hd]
     rw [ih (fun w hw => hv w (by simp [hw]))]
 
-theorem splitBlocksProg_flatten (k : ℕ) (vs : List BitStr)
-    (hv : ∀ v ∈ vs, v.length = k) :
-    splitBlocksProg (unary vs.length, unary k, flattenProg vs) = vs := by
-  simp only [splitBlocksProg_apply, length_unary, flattenProg_apply]
-  exact splitBlocks_flatten k vs hv
-
 /-- Read a flat self-dual vector as canonical Shoup field rows. -/
 def decodeBlocksProg : PolyTimeFun (Unary × Unary × BitStr) (List BitStr) :=
   fromSelfDualRowsProg.comp ((fst.comp snd).pair splitBlocksProg)
@@ -128,28 +122,6 @@ theorem decodeBlocksProg_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd
       simp [vectorBits])
   simp only [List.length_ofFn] at he
   rw [he, fromSelfDualRowsProg_correct k hk hodd]
-
-theorem decodeBlocksProg_encodeBlocksProg (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)
-    {n : ℕ} (u : Fin n → (shoupBinField k hk).carrier) :
-    decodeBlocksProg (unary n, unary k,
-      encodeBlocksProg (unary k, (shoupBinField k hk).vecBits u)) =
-      (shoupBinField k hk).vecBits u := by
-  rw [encodeBlocksProg_correct k hk hodd, decodeBlocksProg_correct k hk hodd]
-
-theorem splitBlocksProg_runs (x : Unary × Unary × BitStr) :
-    ∃ r ≤ splitBlocksProg.timeBound.eval (esize x),
-      splitBlocksProg.code.Runs (encode x) (encode (splitBlocksProg x)) r :=
-  splitBlocksProg.computes x
-
-theorem decodeBlocksProg_runs (x : Unary × Unary × BitStr) :
-    ∃ r ≤ decodeBlocksProg.timeBound.eval (esize x),
-      decodeBlocksProg.code.Runs (encode x) (encode (decodeBlocksProg x)) r :=
-  decodeBlocksProg.computes x
-
-theorem encodeBlocksProg_runs (x : Unary × List BitStr) :
-    ∃ r ≤ encodeBlocksProg.timeBound.eval (esize x),
-      encodeBlocksProg.code.Runs (encode x) (encode (encodeBlocksProg x)) r :=
-  encodeBlocksProg.computes x
 
 end MIPRE.Introspection.BinaryBlock
 end

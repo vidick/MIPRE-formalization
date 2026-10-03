@@ -51,8 +51,6 @@ omit [Fintype P] [DecidableEq P] in
 @[simp] theorem swap_apply (ctx : AuxiliarySource.Context) (b : Bounds)
     (a d : Endpoint P ℓ) : swap ((ctx,b),a,d) = ((ctx,b),d,a) := rfl
 
-def leftPair : PolyTimeFun (Input P ℓ) (BitStr × BitStr) :=
-  DynamicParser.pairParts.comp (leftBits.pair width)
 def rightPair : PolyTimeFun (Input P ℓ) (BitStr × BitStr) :=
   DynamicParser.pairParts.comp (rightBits.pair width)
 def leftTriple : PolyTimeFun (Input P ℓ) (BitStr × BitStr × BitStr) :=

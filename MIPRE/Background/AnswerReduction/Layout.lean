@@ -252,12 +252,6 @@ theorem toBits_pcp (v : Coord P → (shoupBinField k hk).carrier) :
   funext j
   rw [reindexEquiv_apply, bitIndex_symm, downsizeEquiv_apply]
 
-theorem length_flatBits (v : Coord P → (shoupBinField k hk).carrier) :
-    (flatBits P hk v).length = pcpDim P * k := by
-  have h := congrArg (List.length (α := Bool)) (toBits_pcp P hk v)
-  rw [length_toBits] at h
-  exact h.symm
-
 /-- Every bit string of the right length is the bits of a vector of `V^pcp`. -/
 theorem exists_flatBits {z : BitStr} (hz : z.length = pcpDim P * k) :
     ∃ v : Coord P → (shoupBinField k hk).carrier, z = flatBits P hk v := by

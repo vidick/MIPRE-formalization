@@ -339,15 +339,6 @@ theorem l1_nonneg (z : NCPoly G) : 0 ≤ l1 z :=
 @[simp] theorem l1_zero : l1 (0 : NCPoly G) = 0 := by
   simp [l1]
 
-/-- Each coefficient is bounded by the `ℓ¹` norm, in taxicab norm. -/
-theorem abs_re_add_abs_im_coeff_le_l1 (z : NCPoly G) (w : FreeMonoid G) :
-    |(z.coeff w).re| + |(z.coeff w).im| ≤ l1 z := by
-  by_cases hw : w ∈ z.coeff.support
-  · exact Finset.single_le_sum (f := fun w => |(z.coeff w).re| + |(z.coeff w).im|)
-      (fun _ _ => add_nonneg (abs_nonneg _) (abs_nonneg _)) hw
-  · rw [Finsupp.notMem_support_iff.mp hw]
-    simpa using l1_nonneg z
-
 /-- The `ℓ¹` norm of a monomial is the taxicab norm of its coefficient. -/
 @[simp] theorem l1_single (w : FreeMonoid G) (c : ℂ) : l1 (single w c) = |c.re| + |c.im| := by
   rw [l1_eq_sum_of_subset _ (s := {w}) (by simpa using Finsupp.support_single_subset),
@@ -366,14 +357,6 @@ theorem l1_add_le (x y : NCPoly G) : l1 (x + y) ≤ l1 x + l1 y := by
 @[simp] theorem l1_neg (z : NCPoly G) : l1 (-z) = l1 z := by
   simp [l1, Finsupp.support_neg]
 
-/-- The `ℓ¹` norm of a difference is at most the sum of the norms. -/
-theorem l1_sub_le (x y : NCPoly G) : l1 (x - y) ≤ l1 x + l1 y := by
-  simpa [sub_eq_add_neg] using l1_add_le x (-y)
-
-/-- The `ℓ¹` distance is symmetric. -/
-theorem l1_sub_comm (x y : NCPoly G) : l1 (x - y) = l1 (y - x) := by
-  rw [← l1_neg, neg_sub]
-
 /-- The `ℓ¹` norm of a complex multiple is at most the taxicab norm of the scalar times the
 `ℓ¹` norm. -/
 theorem l1_smul_le (c : ℂ) (z : NCPoly G) : l1 (c • z) ≤ (|c.re| + |c.im|) * l1 z := by
@@ -389,14 +372,6 @@ theorem l1_sum_le {ι : Type*} (s : Finset ι) (f : ι → NCPoly G) :
   | empty => simp
   | insert i s hi ih =>
     rw [Finset.sum_insert hi, Finset.sum_insert hi]
-    exact (l1_add_le _ _).trans (add_le_add le_rfl ih)
-
-/-- The `ℓ¹` norm of the sum of a list is at most the sum of the norms. -/
-theorem l1_list_sum_le (l : List (NCPoly G)) : l1 l.sum ≤ (l.map l1).sum := by
-  induction l with
-  | nil => simp
-  | cons z l ih =>
-    rw [List.sum_cons, List.map_cons, List.sum_cons]
     exact (l1_add_le _ _).trans (add_le_add le_rfl ih)
 
 /-- The `ℓ¹` norm is invariant under the star: it conjugates the coefficients and permutes the

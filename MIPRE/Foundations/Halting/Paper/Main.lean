@@ -52,11 +52,6 @@ noncomputable def Vpaper (M : Prog) (lam : ℕ) : Verifier 7 := Vhalt G U UT (se
 /-- The threshold of `lem:lambda` for the search program `semL`. -/
 noncomputable def lamThreshold : ℕ := Lam0 G U UT (semL G U)
 
-/-- `𝒱^halt M λ` is `λ`-bounded for `λ ≥ Λ₀ + 4|M|`. -/
-theorem Vpaper_isBounded (M : Prog) (lam : ℕ) (h : lamThreshold G U UT + 4 * esize M ≤ lam) :
-    (Vpaper G U UT M lam).IsBounded lam :=
-  (Lam0_spec G U UT (semL G U) M lam h).1
-
 /-- **`thm:halting`, the paper's form**: for `λ ≥ Λ₀ + 4|M|`, at the fixed level `C`, the game
 of `𝒱^halt M λ` with answers of length at most `poly(C, λ)` has a value-`1` PCC strategy if `M`
 halts on the empty input, and value at most `1/2` if it does not. -/

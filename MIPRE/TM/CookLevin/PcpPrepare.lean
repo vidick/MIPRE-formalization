@@ -70,35 +70,6 @@ theorem pcpCircuitProg_eq_fixed (D : Prog) (n T Q σ : ℕ) (x y : BitStr) (z ev
   rw [hb]
   rfl
 
-theorem pcpCircuitProg_wellFormed (p : PcpInput) : (pcpCircuitProg p).WellFormed := by
-  rw [pcpCircuitProg_apply]
-  exact describeExact_wellFormed p.1 (gateBudgetProg p)
-
-theorem pcpCircuitProg_inputs (D : Prog) (n T Q σ : ℕ) (x y : BitStr) (z ev : List BitStr) :
-    (pcpCircuitProg (pcpInput D n T Q σ x y z ev)).inputs = (5 * (pcpParams n T Q σ).m + 5) := by
-  rw [pcpCircuitProg_apply]
-  exact describeExact_inputs _ _
-
-theorem pcpCircuitProg_size (D : Prog) (n T Q σ : ℕ) (x y : BitStr) (z ev : List BitStr)
-    (hV : Valid D n T Q σ x y) (hf : ViewFormat (pcpParams n T Q σ) z ev) :
-    (pcpCircuitProg (pcpInput D n T Q σ x y z ev)).size = (pcpParams n T Q σ).s := by
-  rw [pcpCircuitProg_apply]
-  exact describeExact_gateCount D n T Q σ x y hV _ (gateBudgetProg_exact D n T Q σ x y z ev hf)
-
-theorem pcpCircuitProg_variables (D : Prog) (n T Q σ : ℕ) (x y : BitStr) (z ev : List BitStr)
-    (hV : Valid D n T Q σ x y) (hf : ViewFormat (pcpParams n T Q σ) z ev) :
-    (pcpCircuitProg (pcpInput D n T Q σ x y z ev)).inputs +
-      (pcpCircuitProg (pcpInput D n T Q σ x y z ev)).size = (pcpParams n T Q σ).m' := by
-  rw [pcpCircuitProg_inputs, pcpCircuitProg_size D n T Q σ x y z ev hV hf]
-  rfl
-
-theorem pcpCircuitProg_describes (D : Decider) (n T Q σ : ℕ) (x y : BitStr) (z ev : List BitStr)
-    (hV : Valid D.prog n T Q σ x y) :
-    (pcpCircuitProg (pcpInput D.prog n T Q σ x y z ev)).DescribesDecider
-      (pcpParams n T Q σ).m (pcpParams n T Q σ).m D n x y T := by
-  rw [pcpCircuitProg_apply]
-  exact describeExact_describes D n T Q σ x y hV _
-
 theorem fieldDegreeU_apply (p : ParamInput) :
     fieldDegreeU p = unary ((pcpParams p.1 p.2.1 p.2.2.1 p.2.2.2).k) := by
   apply List.ext_getElem

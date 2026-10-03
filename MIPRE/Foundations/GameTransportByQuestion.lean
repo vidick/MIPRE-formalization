@@ -49,19 +49,6 @@ def mergeByQuestion (P : ProjectiveMeasurement X A' (Matrix H H ℂ)) (r : X →
     (P : ProjectiveMeasurement X A' (Matrix H H ℂ)) (r : X → A' → A) (x : X) (a : A) :
     (P.mergeByQuestion r).M x a = ∑ a' ∈ univ.filter (fun a' => r x a' = a), P.M x a' := rfl
 
-/-- Questions whose decoder is the identity have exactly the original effects. -/
-theorem mergeByQuestion_M_of_id (P : ProjectiveMeasurement X A (Matrix H H ℂ))
-    (r : X → A → A) (x : X) (hr : ∀ a, r x a = a) (a : A) :
-    (P.mergeByQuestion r).M x a = P.M x a := by
-  simp [mergeByQuestion_M, hr, Finset.sum_filter]
-
-/-- **The merged measurement is a coarse-graining in the matrix algebra**: at each question, the
-fiber sums of the original POVM along that question's decoder (`POVMIn.map`). -/
-theorem mergeByQuestion_toIn (P : ProjectiveMeasurement X A' (Matrix H H ℂ)) (r : X → A' → A)
-    (x : X) : ((P.mergeByQuestion r).toPOVM x).toIn = (P.toPOVM x).toIn.map (r x) :=
-  POVMIn.ext' fun a => by
-    rw [POVMIn.map_op]
-    rfl
 end ProjectiveMeasurement
 
 /-! ## In a bipartite model -/
@@ -130,70 +117,6 @@ end BipartiteModel.ProjStrat
 namespace TensorProductStrategy
 variable {X Y A B A' B' : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
   [Fintype A'] [Fintype B'] [DecidableEq A] [DecidableEq B]
-
-/-- Decode answers by a question-dependent function, preserving registers and state. -/
-def mergeAnswersByQuestion {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) : TensorProductStrategy G :=
-  ⟨S'.dA, S'.dB, S'.ψ, S'.ψ_unit, S'.PA.mergeByQuestion rA, S'.PB.mergeByQuestion rB⟩
-
-/-- **The merged strategy is the model's merged strategy**: its value is that of the projective
-strategy of `S'` in its tensor-product model (`toModel`), merged question by question. -/
-theorem value_mergeAnswersByQuestion {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) :
-    (S'.mergeAnswersByQuestion G rA rB).value
-      = (S'.toModel.mergeAnswersByQuestion G rA rB).value := by
-  rw [value_eq_tensor_povmValue]
-  exact congrArg₂ ((BipartiteModel.tensor S'.ψ).povmValue G)
-    (funext (S'.PA.mergeByQuestion_toIn rA)) (funext (S'.PB.mergeByQuestion_toIn rB))
-
-/-- Acceptance-preserving answer decoding can only increase the strategy value: the
-tensor-product instance of `BipartiteModel.ProjStrat.value_le_mergeAnswersByQuestion`. -/
-theorem value_le_mergeAnswersByQuestion {G' : Game X Y A' B'}
-    (S' : TensorProductStrategy G') (G : Game X Y A B)
-    (rA : X → A' → A) (rB : Y → B' → B) (hμ : ∀ x y, G.μ x y = G'.μ x y)
-    (hD : ∀ x y a' b', G'.D x y a' b' = true → G.D x y (rA x a') (rB y b') = true) :
-    S'.value ≤ (S'.mergeAnswersByQuestion G rA rB).value := by
-  rw [value_mergeAnswersByQuestion, ← S'.value_toModel]
-  exact S'.toModel.value_le_mergeAnswersByQuestion G rA rB hμ hD
-
-/-- Exact state equality for a question-dependent answer merge. The named
-proposition avoids comparing concrete game definitions in dependent registers. -/
-def MergeByQuestionStateEq {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) : Prop :=
-  (S'.mergeAnswersByQuestion G rA rB).ψ = S'.ψ
-
-/-- Question-dependent answer merging preserves the original state. -/
-theorem mergeByQuestionStateEq {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) :
-    S'.MergeByQuestionStateEq G rA rB := rfl
-
-/-- Both finite register dimensions are unchanged by answer merging. -/
-theorem mergeAnswersByQuestion_dimensions {G' : Game X Y A' B'} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A' → A) (rB : Y → B' → B) :
-    (S'.mergeAnswersByQuestion G rA rB).dA = S'.dA ∧
-      (S'.mergeAnswersByQuestion G rA rB).dB = S'.dB := ⟨rfl, rfl⟩
-
-/-- Exact equality of an Alice effect under a same-alphabet answer merge. -/
-def MergeByQuestionPAEq {G' : Game X Y A B} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A → A) (rB : Y → B → B) (x : X) (a : A) : Prop :=
-  (S'.mergeAnswersByQuestion G rA rB).PA.M x a = S'.PA.M x a
-
-/-- Identity decoding at an Alice question preserves its effects literally. -/
-theorem mergeByQuestionPAEq {G' : Game X Y A B} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A → A) (rB : Y → B → B) (x : X) (a : A)
-    (hr : ∀ a, rA x a = a) : S'.MergeByQuestionPAEq G rA rB x a :=
-  S'.PA.mergeByQuestion_M_of_id rA x hr a
-
-/-- Exact equality of a Bob effect under a same-alphabet answer merge. -/
-def MergeByQuestionPBEq {G' : Game X Y A B} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A → A) (rB : Y → B → B) (y : Y) (b : B) : Prop :=
-  (S'.mergeAnswersByQuestion G rA rB).PB.M y b = S'.PB.M y b
-
-/-- Identity decoding at a Bob question preserves its effects literally. -/
-theorem mergeByQuestionPBEq {G' : Game X Y A B} (S' : TensorProductStrategy G')
-    (G : Game X Y A B) (rA : X → A → A) (rB : Y → B → B) (y : Y) (b : B)
-    (hr : ∀ b, rB y b = b) : S'.MergeByQuestionPBEq G rA rB y b :=
-  S'.PB.mergeByQuestion_M_of_id rB y hr b
 
 end TensorProductStrategy
 

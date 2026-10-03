@@ -120,12 +120,6 @@ theorem tableProg_correct (k : ℕ) (hk : 1 ≤ k) {m : ℕ}
   exact (Equiv.sum_comp (cubeEnumeration m).symm
     (fun y => h y * indVec x y))
 
-/-- A single ambient polynomial bounds the evaluator on every raw input. -/
-theorem tableProg_runs (input : Unary × List BitStr × List BitStr) :
-    ∃ t ≤ tableProg.timeBound.eval (esize input),
-      tableProg.code.Runs (encode input) (encode (tableProg input)) t :=
-  tableProg.computes input
-
 end MIPRE.Introspection.FieldTableProgram
 end
 

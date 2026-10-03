@@ -29,7 +29,6 @@ variable {input : Fin 7 → List Sym}
 
 instance : NeZero maxPc := ⟨by decide⟩
 
-
 /-! ## The tape names are distinct -/
 
 @[simp] theorem C_ne_E : C ≠ E := by decide
@@ -122,20 +121,7 @@ theorem PreTo1.mono {c : Cfg input} {B B' : ℕ} {q : Option Ctl} {m' : Machine.
   obtain ⟨n, h1, hn, c', ds', hr, hd, hrep, hxl⟩ := h
   exact ⟨n, h1, by omega, c', ds', hr, hd, hrep, by omega⟩
 
-theorem PreTo1.toPreTo {c : Cfg input} {B : ℕ} {q : Option Ctl} {m' : Machine.Cfg}
-    {r' pC pK xl : ℕ} (h : PreTo1 c B q m' r' pC pK xl) : PreTo c B q m' r' pC pK xl := by
-  obtain ⟨n, _, hn, c', ds', hr, hd, hrep, hxl⟩ := h
-  exact ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩
-
-theorem PreTo.mono {c : Cfg input} {B B' : ℕ} {q : Option Ctl} {m' : Machine.Cfg}
-    {r' pC pK xl xl' : ℕ} (h : PreTo c B q m' r' pC pK xl) (hB : B ≤ B') (hx : xl ≤ xl') :
-    PreTo c B' q m' r' pC pK xl' := by
-  obtain ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩ := h
-  exact ⟨n, by omega, c', ds', hr, hd, hrep, by omega⟩
-
 /-! ## The control words -/
-
-theorem S_ofNat_zero : S (Data.ofNat 0) = [.zero] := rfl
 
 theorem ctrlRepr_var (i : ℕ) :
     ctrlRepr (.ev (.var i)) = .zero :: .one :: .zero :: S (Data.ofNat i) := by
@@ -177,13 +163,6 @@ theorem ctrlRepr_const (d : Data) :
 theorem ctrlRepr_ret (v : Data) : ctrlRepr (.ret v) = .one :: S v := rfl
 
 /-! ## List facts -/
-
-theorem overwrite_cons_one_add (a : Sym) (l : List Sym) (p : ℕ) (w : List Sym) :
-    overwrite (a :: l) (1 + p) w = a :: overwrite l p w := by
-  rw [Nat.add_comm]; exact overwrite_cons_succ a l p w
-
-theorem overwrite_append_nil' (a w : List Sym) {p : ℕ} (hp : p = a.length) :
-    overwrite a p w = a ++ w := overwrite_append_nil a w hp
 
 theorem kontRepr_nil_or_fr (k : List Frame) :
     kontRepr k = [] ∨ ∃ l₀, kontRepr k = l₀ ++ [.fr] := by
@@ -680,7 +659,6 @@ theorem case_evCons {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evCo
     simp only [sz, ctrlRepr_cons, List.length_cons, List.length_append, length_S, List.length_drop]
     omega
 
-
 /-! ## Finishing a case: the charge and the jump -/
 
 theorem PreTo.charge_jump {c : Cfg input} {B : ℕ} {k : ProgId} {pc : Fin maxPc} {m' : Machine.Cfg}
@@ -707,13 +685,6 @@ theorem PreTo.charge_fail {c : Cfg input} {B : ℕ} {k : ProgId} {pc : Fin maxPc
     HaltsIn c (B + 2) := by
   obtain ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩ := h
   exact (HaltsIn.after hr (D_charge_fail hins hd (by simpa using hrep.bud))).mono (by omega)
-
-theorem PreTo.jump {c : Cfg input} {B : ℕ} {k : ProgId} {pc : Fin maxPc} {m' : Machine.Cfg}
-    {r xl : ℕ} (h : PreTo c B (at_ k pc) m' r (ctrlRepr m'.ctrl).length (kontRepr m'.kont).length xl)
-    (hins : instrAt k pc = .jump .dispatch) : StepTo c (B + 1) m' r xl := by
-  obtain ⟨n, hn, c', ds', hr, hd, hrep, hxl⟩ := h
-  obtain ⟨c₁, hr₁, hd₁⟩ := D_jump hins hd
-  exact ⟨n + 1, by omega, c₁, _, (hr.trans hr₁).cast_out (by simp <;> omega), hd₁, hrep, hxl⟩
 
 /-! ## `ev elim` -/
 
@@ -1007,7 +978,6 @@ theorem case_evLoop {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evLo
   · norm_ds_goal
     simp only [sz, ctrlRepr_loop, List.length_cons, List.length_append, length_S, List.length_drop]
     omega
-
 
 /-! ## The dispatcher on `ret` -/
 
@@ -1415,7 +1385,6 @@ theorem case_retLet1 {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .ret
       length_S, List.length_singleton, List.length_drop, List.length_nil, Data.size_cons, Data.size_nil]
     omega
 
-
 /-! ## `ret` to a `loop1` frame -/
 
 theorem case_retLoopNil {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLoop1 0) ds)
@@ -1736,7 +1705,6 @@ theorem case_retLoopCont {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ 
       length_S, List.length_singleton, List.length_drop, List.length_nil, Data.size_cons, Data.size_nil,
       S_cons, S_nil]
     omega
-
 
 /-! ## The final check -/
 

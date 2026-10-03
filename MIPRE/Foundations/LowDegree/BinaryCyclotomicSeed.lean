@@ -136,18 +136,6 @@ theorem cyclotomicSeedBits_degree_coprime (q : ℕ) (hq : q.Prime) (hq2 : q ≠ 
     simpa only [Nat.sub_add_cancel hq.one_le] using hc
   exact hc.of_dvd_left h
 
-/-- The seed's specified root is a primitive `q`-th root of unity. -/
-theorem cyclotomicSeedBits_root_primitive (q : ℕ) (hq : q.Prime) (hq2 : q ≠ 2) :
-    IsPrimitiveRoot (AdjoinRoot.root (polyOfBits (cyclotomicSeedBits (unary q)))) q := by
-  let f := polyOfBits (cyclotomicSeedBits (unary q))
-  have h := cyclotomicSeedBits_correct q hq hq2
-  let : Fact (Irreducible f) := ⟨h.2.1⟩
-  let : NeZero (q : ZMod 2) := ⟨oddPrime_cast_ne_zero q hq hq2⟩
-  let : NeZero (q : AdjoinRoot f) := NeZero.of_injective (algebraMap (ZMod 2) (AdjoinRoot f)).injective
-  have hd : f.map (algebraMap (ZMod 2) (AdjoinRoot f)) ∣ cyclotomic q (AdjoinRoot f) := by
-    simpa using Polynomial.map_dvd (algebraMap (ZMod 2) (AdjoinRoot f)) h.2.2
-  exact isRoot_cyclotomic_iff.mp ((AdjoinRoot.isRoot_root f).dvd hd)
-
 end MIPRE.LowDegree.BinaryPolynomial
 
 end

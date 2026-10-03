@@ -50,8 +50,6 @@ instance : SizedEncoding LIDT.CL.Ty where
   decode d := (decode d : Option ℕ).bind tyOfNat
   decode_encode τ := by cases τ <;> simp [SizedEncoding.decode_encode, tyNat, tyOfNat]
 
-theorem encode_ty (τ : LIDT.CL.Ty) : (encode τ : Data) = encode (tyNat τ) := rfl
-
 /-! ## The downsized presentation in bits -/
 
 section Bits

@@ -158,30 +158,10 @@ theorem game_D (q r : Question m t ℓ)
 
 set_option backward.isDefEq.respectTransparency true
 
-include hχ in
-/-- The two full typed presentations have the same quantum value. -/
-theorem quantumValue_eq : quantumValue (game hm χ π b L project D) =
-    quantumValue (PauliRestriction.fullGame hm b L project D) :=
-  quantumValue_eq_of_equiv _ _ (questionEquiv π b) (questionEquiv π b) (.refl _) (.refl _)
-    (game_mu hm χ π hχ b L project D) (game_D hm χ π b L project D)
-
 section Model
 variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
   [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] [PartialOrder 𝒜] [StarOrderedRing 𝒜]
   [PartialOrder ℬ] [StarOrderedRing ℬ] {M : BipartiteModel 𝒞 𝒜 ℬ}
-
-/-- Transport any projective strategy of the legacy full game to the explicit full game, in the
-same model. -/
-def toExplicit (S : M.ProjStrat (PauliRestriction.fullGame hm b L project D)) :
-    M.ProjStrat (game hm χ π b L project D) :=
-  S.relabel _ (questionEquiv π b) (questionEquiv π b) (.refl _) (.refl _)
-
-include hχ in
-/-- Transport to the explicit game preserves the strategy value. -/
-theorem toExplicit_value (S : M.ProjStrat (PauliRestriction.fullGame hm b L project D)) :
-    (toExplicit hm χ π b L project D S).value = S.value :=
-  S.value_relabel _ (questionEquiv π b) (questionEquiv π b) (.refl _) (.refl _)
-    (game_mu hm χ π hχ b L project D) (game_D hm χ π b L project D)
 
 /-- Transport an explicit strategy back to the legacy full game, in the same model. -/
 abbrev toLegacy (S : M.ProjStrat (game hm χ π b L project D)) :
@@ -265,14 +245,6 @@ theorem pccToExplicit_value
   · intro q r a a'
     simp only [Game.doubled_D, Equiv.prodCongr_apply, Prod.map, Equiv.refl_apply,
       game_D hm χ π b L project D]
-
-set_option linter.defProp false in
-/-- Relabeling the doubled game preserves the honest strategy dimension.
-The inferred proof type keeps the concrete game parameters opaque. -/
-def pccToExplicit_dimension
-    (S : SyncStrategy (PauliRestriction.fullGame hm b L project D).doubled) :=
-  S.relabel_d (game hm χ π b L project D).doubled
-    (Equiv.prodCongr (.refl Bool) (questionEquiv π b)) (.refl _)
 
 end MIPRE.Introspection.ExplicitGame
 

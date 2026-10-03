@@ -30,10 +30,6 @@ def family (P : PauliType → CL.CLFun F ι 3) : QuestionType PauliType ℓ → 
   | .inl p => P p
   | .inr _ => CL.CLFun.zeroOn univ 3
 
-/-- The inherited Pauli presentations are unchanged. -/
-theorem family_pauli (P : PauliType → CL.CLFun F ι 3) (p : PauliType) :
-    family (ℓ := ℓ) P (QuestionType.pauli p) = P p := rfl
-
 /-- The auxiliary zero presentation still partitions the full register. -/
 theorem family_exactlyOn (P : PauliType → CL.CLFun F ι 3)
     (hP : ∀ p, (P p).ExactlyOn univ) (t : QuestionType PauliType ℓ) :

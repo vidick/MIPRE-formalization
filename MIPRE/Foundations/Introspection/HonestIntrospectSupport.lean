@@ -54,16 +54,6 @@ theorem auxOp_introspect_output_attained (hL : ∀ w, (L w).SupportedOn univ)
     (ha : auxOp (PA := PA) L D R hL (.introspect,w) (.pair y a) ≠ 0) :
     ∃ x, (L w).eval x = y := parsedIntrospectOp_output_attained (PA := PA) L D R w y a ha
 
-/-- The complete parsed alphabet has no additional nonzero Introspect labels. -/
-theorem auxOp_introspect_nonzero (hL : ∀ w, (L w).SupportedOn univ)
-    (w : Bool) (a : ParsedAnswer (ι → F) A PA)
-    (ha : auxOp L D R hL (.introspect,w) a ≠ 0) :
-    ∃ y b x, a = .pair y b ∧ (L w).eval x = y := by
-  cases a <;> simp only [auxOp, parsedCoreOp, ne_eq, not_true_eq_false] at ha
-  case pair y b =>
-    obtain ⟨x,hx⟩ := introspectOp_output_attained L D R w y b ha
-    exact ⟨y,b,x,rfl,hx⟩
-
 end MIPRE.Introspection.Honest
 
 end

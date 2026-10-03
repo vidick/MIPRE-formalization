@@ -121,32 +121,6 @@ theorem natDegree_comp_affineMap_le (a b : F) (f : LinePoly F k) :
   rw [reparam, eval_ofPoly (natDegree_comp_affineMap_le a b f), eval_comp, eval_affineMap,
     eval_toPoly]
 
-/-- The inverse substitution. -/
-theorem affineMap_comp_affineMap {a : F} (ha : a ≠ 0) (b : F) :
-    (affineMap a b).comp (affineMap a⁻¹ (-(a⁻¹ * b))) = Polynomial.X := by
-  simp only [affineMap, add_comp, mul_comp, C_comp, X_comp, mul_add, ← mul_assoc,
-    ← Polynomial.C_mul]
-  rw [mul_inv_cancel₀ ha, Polynomial.C_1, one_mul,
-    show a * -(a⁻¹ * b) = -b from by field_simp, Polynomial.C_neg, add_assoc,
-    neg_add_cancel, add_zero]
-
-theorem reparam_reparam {a : F} (ha : a ≠ 0) (b : F) (f : LinePoly F k) :
-    reparam a⁻¹ (-(a⁻¹ * b)) (reparam a b f) = f := by
-  rw [reparam, reparam, toPoly_ofPoly (natDegree_comp_affineMap_le a b f), comp_assoc,
-    affineMap_comp_affineMap ha, comp_X, ofPoly_toPoly]
-
-/-- **Affine reparametrization is a bijection of the answer alphabet.** The degree bound is
-preserved in both directions, so an answer of one test becomes an answer of the other with no
-change of alphabet. -/
-noncomputable def reparamEquiv {a : F} (ha : a ≠ 0) (b : F) :
-    LinePoly F k ≃ LinePoly F k where
-  toFun := reparam a b
-  invFun := reparam a⁻¹ (-(a⁻¹ * b))
-  left_inv f := reparam_reparam ha b f
-  right_inv f := by
-    have h := reparam_reparam (a := a⁻¹) (inv_ne_zero ha) (-(a⁻¹ * b)) f
-    rwa [inv_inv, show -(a * -(a⁻¹ * b)) = b by field_simp] at h
-
 end MIPRE.LIDT.Adapter
 
 end

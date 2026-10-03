@@ -99,13 +99,6 @@ theorem widthProg_length (T : Ty) (m k d : Unary) (bs : BitStr) :
 def parser : PolyTimeFun Input (Bool × List BitStr) :=
   parserProg.comp (countProg.pair (widthProg.pair answer))
 
-theorem parser_valid (T : Ty) (m k d : Unary) (bs : BitStr) :
-    (parser (T, m, k, d, bs)).1 = true ↔
-      0 < width T k.length ∧ bs.length = count T m.length d.length * width T k.length := by
-  change readyProg (countProg _, widthProg _, answer _) = true ↔ _
-  rw [readyProg_iff_length, countProg_apply, widthProg_length]
-  rfl
-
 /-- Every canonical payload is returned exactly, including the unit-width bit rows. -/
 theorem parser_flatten (T : Ty) (m k d : Unary) (rows : List BitStr)
     (hk : 0 < width T k.length) (hn : rows.length = count T m.length d.length)
@@ -116,10 +109,6 @@ theorem parser_flatten (T : Ty) (m k d : Unary) (rows : List BitStr)
   change parserProg (countProg _, widthProg _, answer _) = _
   rw [countProg_apply, huw, ← hn]
   exact parserProg_flatten rows _ hk hw
-
-theorem parser_runs (input : Input) :
-    ∃ t ≤ parser.timeBound.eval (esize input),
-      parser.code.Runs (encode input) (encode (parser input)) t := parser.computes input
 
 end MIPRE.QLD.PauliAnswerProgram
 end

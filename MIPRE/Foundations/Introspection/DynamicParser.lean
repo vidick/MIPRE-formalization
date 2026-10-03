@@ -112,13 +112,6 @@ theorem readCheck_original_cutoff (bs : BitStr) (Q R : ℕ)
   rw [tripleCheck_apply, decide_eq_true_eq] at h
   simpa only [tripleParts_apply, Bool.false_eq_true, if_false] using h.2.2.2
 
-def pairParser : PolyTimeFun (BitStr × ℕ × ℕ) (Bool × (BitStr × BitStr)) :=
-  pairCheck.pair (pairParts.comp (fst.pair (fst.comp snd)))
-
-def tripleParser (exactLast : Bool) :
-    PolyTimeFun (BitStr × ℕ × ℕ) (Bool × (BitStr × BitStr × BitStr)) :=
-  (tripleCheck exactLast).pair (tripleParts.comp (fst.pair (fst.comp snd)))
-
 end MIPRE.Introspection.DynamicParser
 
 end

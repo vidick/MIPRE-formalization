@@ -29,12 +29,6 @@ theorem le_ceilPower (n : ℕ) : n ≤ ceilPower n := by
   unfold ceilPower
   omega
 
-theorem ceilPower_le {n j : ℕ} (h : n ≤ 2 ^ j) : ceilPower n ≤ 2 ^ j := by
-  apply Nat.pow_le_pow_right (by decide)
-  apply Nat.size_le.mpr
-  have hp := Nat.two_pow_pos j
-  omega
-
 theorem ceilPower_le_twice (n : ℕ) : ceilPower n ≤ 2 * n + 1 := by
   by_cases h : Nat.size (n - 1) = 0
   · simp [ceilPower, h]

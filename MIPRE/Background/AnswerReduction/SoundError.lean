@@ -36,11 +36,6 @@ irreducible_def simAN : ℕ := ⌈Simul.simA⌉₊
 
 theorem simA_le_simAN : Simul.simA ≤ simAN := by rw [simAN_def]; exact Nat.le_ceil _
 
-theorem one_le_simAN : 1 ≤ simAN := by
-  have h := Simul.forty_le_simA
-  have := simA_le_simAN
-  exact_mod_cast (show (1 : ℝ) ≤ simAN by linarith)
-
 /-- **The exponent of the field-size hypothesis**: `q ≥ Z^{fieldExp}` puts `q^{clB}` above
 `Z^{3A + 4}`. -/
 irreducible_def fieldExp : ℕ := 40000 * (3 * simAN + 4)

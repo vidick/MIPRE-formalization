@@ -80,28 +80,11 @@ theorem single (c : Cfg input) : Reach c 1 (U.step c) (U.outputSymbol c).toList 
   rw [outputString_succ, outputString, List.range_zero, List.flatMap_nil, List.nil_append,
     configs_zero]
 
-/-- A single silent step. -/
-theorem step {c : Cfg input} {q : Ctl} (hq : c.state = some q) (hout : (actOf q c).out = none) :
-    Reach c 1 (applyAct (actOf q c) (resolve q.k q.pc (actOf q c).next) c) [] := by
-  have := single c
-  rwa [step_eq c hq, outputSymbol_eq c hq, hout] at this
-
-theorem cast {c c' c'' : Cfg input} {n : ℕ} {out : List Sym} (h : Reach c n c' out)
-    (e : c' = c'') : Reach c n c'' out := e ▸ h
-
 theorem cast_n {c c' : Cfg input} {n n' : ℕ} {out : List Sym} (h : Reach c n c' out)
     (e : n = n') : Reach c n' c' out := e ▸ h
 
 theorem cast_out {c c' : Cfg input} {n : ℕ} {out out' : List Sym} (h : Reach c n c' out)
     (e : out = out') : Reach c n c' out' := e ▸ h
-
-/-- A silent step followed by a run. -/
-theorem step_trans {c c'' : Cfg input} {q : Ctl} (hq : c.state = some q)
-    (hout : (actOf q c).out = none) {m : ℕ} {out : List Sym}
-    (h : Reach (applyAct (actOf q c) (resolve q.k q.pc (actOf q c).next) c) m c'' out) :
-    Reach c (m + 1) c'' out := by
-  have := (step hq hout).trans h
-  rwa [Nat.add_comm, List.nil_append] at this
 
 end Reach
 
@@ -126,11 +109,6 @@ theorem HaltsIn.after {c c' : Cfg input} {n m : ℕ} (h : Reach c n c' []) (h' :
   unfold HaltsIn at *
   rw [configs_add, outputString_add_eq_append, h.1, h.2, h'.2]
   exact ⟨h'.1, rfl⟩
-
-/-- The state stays `none` and nothing more is emitted: a silent halt is final. -/
-theorem HaltsIn.configs_state {c : Cfg input} {n : ℕ} (h : HaltsIn c n) (m : ℕ) :
-    (U.configs c (n + m)).state = none ∧ U.outputString c (n + m) = [] :=
-  h.mono (Nat.le_add_right n m)
 
 /-! ## Reading and writing under `applyAct` -/
 

@@ -57,10 +57,6 @@ theorem presentation_exactlyOn (χ : F → Fin m) (t : Ty) :
     rw [he]
     exact ⟨Subset.rfl, fun _ => by simp⟩
 
-theorem presentation_pauli_eval (χ : F → Fin m) (W : Bas) (x : Coord m → F) :
-    (presentation χ (.pauli W)).eval x = 0 := by
-  simp [presentation, seedMap, secondMap, finalMap]
-
 /-- Permute just the shared seed; all other random content stays fixed. -/
 def contentPermutation (π : F ≃ F) : Content F m ≃ Content F m where
   toFun c := ⟨c.uX, c.uZ, π c.s, c.v, c.rX, c.rZ⟩
@@ -103,27 +99,6 @@ theorem decode_presentation (hm : m ∣ Fintype.card F) (χ : F → Fin m) (π :
 def samplePermutation (π : F ≃ F) : Sample F m ≃ (TyEdge × (Coord m → F)) :=
   Equiv.prodCongr (Equiv.refl _) ((contentPermutation π).symm.trans contentEquiv)
 
-/-- Exact legacy QLD question law under the content permutation. -/
-theorem qldGame_mu_presentation [Algebra (ZMod 2) F] {d : ℕ}
-    (hm : m ∣ Fintype.card F) (χ : F → Fin m) (π : F ≃ F)
-    (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s) (x y : Question F m) :
-    (qldGame (d := d) hm).μ x y =
-      SampledGame.dist
-        (fun p : TyEdge × (Coord m → F) =>
-          decode π p.1.val.1 ((presentation χ p.1.val.1).eval p.2))
-        (fun p : TyEdge × (Coord m → F) =>
-          decode π p.1.val.2 ((presentation χ p.1.val.2).eval p.2)) x y := by
-  change (∑ p : Sample F m, (Fintype.card (Sample F m) : ℝ)⁻¹ *
-    if (p.2.question hm p.1.val.1, p.2.question hm p.1.val.2) = (x, y)
-      then 1 else 0) = _
-  unfold SampledGame.dist
-  rw [← Finset.mul_sum, Fintype.card_congr (samplePermutation (m := m) π)]
-  congr 1
-  refine Fintype.sum_equiv (samplePermutation π) _ _ fun p => ?_
-  simp only [samplePermutation, Equiv.prodCongr_apply, Prod.map, Equiv.refl_apply,
-    Equiv.trans_apply, contentEquiv, Equiv.coe_fn_mk, decode_presentation hm χ π hχ,
-    Equiv.apply_symm_apply]
-
 section Binary
 variable [Algebra (ZMod 2) F] {t : ℕ}
 
@@ -145,13 +120,6 @@ theorem binaryPresentation_eval (χ : F → Fin m)
     (CL.reindexEquiv (binaryCoordEquiv m t) (CL.downsizeEquiv b x)) = _
   rw [CL.CLFun.eval_reindex, CL.CLFun.eval_downsize]
   rfl
-
-theorem binaryPresentation_pauli_eval (χ : F → Fin m)
-    (b : Module.Basis (Fin t) (ZMod 2) F) (W : Bas)
-    (x : Fin ((3 * m + 3) * t) → ZMod 2) :
-    (binaryPresentation χ b (.pauli W)).eval x = 0 := by
-  obtain ⟨z, rfl⟩ := (binaryVectorEquiv (m := m) b).surjective x
-  rw [binaryPresentation_eval, presentation_pauli_eval, map_zero]
 
 def binaryDecode (π : F ≃ F) (b : Module.Basis (Fin t) (ZMod 2) F)
     (T : Ty) (x : Fin ((3 * m + 3) * t) → ZMod 2) : Question F m :=

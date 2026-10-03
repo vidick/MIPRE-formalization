@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 module
-public import MIPRE.TM.MultiInput.TapeLemmas
+public import MIPRE.TM.MultiInput.Deterministic
 
 @[expose] public section
 
@@ -38,20 +38,6 @@ def ComputesInTimeAndSpace
   (tm.configs (tm.initCfg input) t).state = none ∧
   tm.outputString (tm.initCfg input) t = output ∧
   tm.spaceUsed (tm.initCfg input) t = s
-
-/-- A proof that the Turing machine `tm` computes the function `f` on `i`-tuples of
-strings over an input/output alphabet embedded into the machine alphabet, within time
-`timeBound` and space `spaceBound` — both arbitrary functions of the tuple of input
-lengths. -/
-def ComputesFunWithBounds
-    (tm : MultiInputTM i w Symbol State)
-    {IOSymbol : Type*}
-    (f : (Fin i → List IOSymbol) → List IOSymbol)
-    (emb : IOSymbol ↪ Symbol)
-    (timeBound spaceBound : (Fin i → ℕ) → ℕ) : Prop :=
-  ∀ x : Fin i → List IOSymbol,
-    ∃ t ≤ timeBound (fun j => (x j).length), ∃ s ≤ spaceBound (fun j => (x j).length),
-      tm.ComputesInTimeAndSpace (fun j => (x j).map emb) ((f x).map emb) t s
 
 end Turing.MultiInputTM
 

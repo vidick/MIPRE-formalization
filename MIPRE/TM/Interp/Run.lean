@@ -259,13 +259,6 @@ def initBound (D : Prog) (n : ℕ) (x y a b : BitStr) (Tb : ℕ) : ℕ :=
   3 * Tb + 8 * (a.length + b.length) + (S D.toData).length + (S (encode n)).length +
     (S (encode x)).length + (S (encode y)).length + 40
 
-theorem length_answerBits (l : List Sym) : (answerBits l).length ≤ 4 * l.length + 1 := by
-  induction l with
-  | nil => simp [answerBits_nil]
-  | cons s l ih =>
-    rcases s with _ | _ | _ | _ | _ <;> simp [answerBits, boolOf, Data.ofList, Data.ofBool, S_cons,
-      length_S] at ih ⊢ <;> omega
-
 /-- The initial configuration is described by empty tapes. -/
 theorem desc_initCfg (input : Fin 7 → List Sym) :
     Desc (U.initCfg input) (at_ .init 0) (fun _ => ⟨[], 0⟩) := by
@@ -358,7 +351,6 @@ theorem init_run (D : Prog) (n : ℕ) (x y a b : BitStr) (Tb : ℕ) (ha : a.leng
   · simp
   · simp
   · simp
-
 
 /-! ## The size of a bounded representation -/
 

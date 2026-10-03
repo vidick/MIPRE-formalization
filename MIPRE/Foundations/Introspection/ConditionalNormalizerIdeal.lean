@@ -203,9 +203,6 @@ def hideNextRetain : Option (ι → F) × Option (HideLabel F ι) → Option (Hi
   | (some y, some (_, yp, x)) => some (y, yp, x)
   | _ => none
 
-theorem hideNextRetain_label (P : CL.CLFun F ι ℓ) (k : ℕ) (a : HideLabel F ι) :
-    hideNextRetain (hideLabelNext P k a) = hideLabelCoarse P (k + 1) a := rfl
-
 set_option backward.isDefEq.respectTransparency false in
 /-- Forgetting the redundant conditioning bookkeeping yields precisely the
 next fine ideal hiding family, ready for the next induction stage. -/

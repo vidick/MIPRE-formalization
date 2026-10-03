@@ -157,11 +157,6 @@ section Consistent
 variable {i w : ℕ} {Symbol State : Type*} [DecidableEq Symbol] [DecidableEq State]
   (M : MultiInputTM i w Symbol State) (acc : Symbol)
 
-/-- Whether a tape is an input tape. -/
-def Tape.isInput : Tape i w → Bool
-  | .inl _ => true
-  | .inr _ => false
-
 /-- The full transition check, when every tape has its head at the offset `δ d` of the
 central three cells: the time-`t + 1` values are those of the machine's transition. -/
 def FullStep (L : LocalCfg i w Symbol State) (δ : Tape i w → Fin 5) : Prop :=

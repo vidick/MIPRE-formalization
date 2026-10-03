@@ -67,10 +67,6 @@ noncomputable def tensorSound (N : TensorProductStrategy S.oracular.toGame) :
   N.adapt S.toGame (fun x => (Role.alice, x)) (fun y => (Role.bob, y))
     (fun _ => OAns.singlePart) (fun _ => OAns.singlePart)
 
-omit [Inhabited A] in
-theorem tensorSound_ψ (N : TensorProductStrategy S.oracular.toGame) [Inhabited A] :
-    (S.tensorSound N).ψ = N.ψ := rfl
-
 variable {S}
 
 /-! ## Soundness -/

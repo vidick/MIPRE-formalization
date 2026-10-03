@@ -197,9 +197,6 @@ noncomputable def syncGame (n T : ℕ) (h : V.IsSynchronousAt n) :
     rw [decide_eq_false_iff_not]
     exact h _ _ _ fun h' => hab (Subtype.ext h')
 
-theorem syncGame_toGame (n T : ℕ) (h : V.IsSynchronousAt n) :
-    (V.syncGame n T h).toGame = V.game n T := rfl
-
 /-- `def:lambda-bounded`: `TIME_𝒮(n), TIME_𝒟(n) ≤ n^λ` — at degree `λ` in the size of the
 input (`TimeBoundAt`) — and `s(n) ≤ n^λ`, for all `n ≥ 2`, and `|𝒱| ≤ λ`. The clause
 `s(n) ≤ n^λ` is, in the paper, a consequence of the time bound (the sampler writes `s(n)`

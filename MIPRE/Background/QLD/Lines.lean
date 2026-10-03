@@ -256,9 +256,6 @@ theorem bijective_shift_gen {sh : Point F m → Content F m → Content F m}
 
 instance : Nonempty (Content F m) := ⟨⟨0, 0, 0, 0, 0, 0⟩⟩
 
-theorem card_content_pos : 0 < Fintype.card (Content F m) :=
-  Fintype.card_pos_iff.mpr ⟨⟨0, 0, 0, 0, 0, 0⟩⟩
-
 /-- **The change of variables.** Averaging a quantity over contents is averaging it over
 `(content, shift)` pairs with the shift applied --- the content average is the product of the line
 average and the uniform average along the direction, without any quotient being formed. -/
@@ -417,13 +414,6 @@ theorem param_shiftAlong (P : LinePres F m hm W) {c : Content F m}
   rw [param, param, Content.shiftAlong_eq, P.base_shift, P.dir_shift, Content.shiftPt_pt,
     lineParam_add_smul hdeg]
 
-/-- A degenerate line is not moved at all. -/
-theorem param_shiftAlong_of_deg (P : LinePres F m hm W) {c : Content F m}
-    (hdeg : P.dir c = 0) (t : F) :
-    P.param (Content.shiftAlong W P.dir t c) = P.param c := by
-  rw [param, param, Content.shiftAlong_eq, P.base_shift, P.dir_shift, Content.shiftPt_pt, hdeg,
-    smul_zero, add_zero]
-
 section Ops
 
 variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R] [PartialOrder R]
@@ -467,14 +457,6 @@ theorem lineMats_shiftAlong (P : LinePres F m hm W) (d : ℕ)
   congrArg POVMIn.op
     (hatLinePOVM_congr hm S W P.ty P.base P.dir (P.question_shift c t) (P.base_shift c t)
       (P.dir_shift _ _))
-
-/-- The same, for a shift of the other side's point. -/
-theorem lineMats_shiftPt_other (P : LinePres F m hm W) (d : ℕ)
-    (S : Question F m → POVMIn (Answer F m d) R) (c : Content F m) (w : Point F m) :
-    P.lineMats d S (Content.shiftPt W.other w c) = P.lineMats d S c :=
-  congrArg POVMIn.op
-    (hatLinePOVM_congr hm S W P.ty P.base P.dir (P.question_shift_other c w)
-      (P.base_shift_other c w) (P.dir_shift_other c w))
 
 end Ops
 
@@ -1262,7 +1244,6 @@ theorem sum_content_collProb_aPres (hm : m ∣ Fintype.card F) (W : Bas) (d : �
         = (Fintype.card (Content F m) : ℝ)⁻¹ * ((m * d : ℝ) / (Fintype.card F : ℝ)) from by
     rw [collProb, if_pos (aPres_dir_ne_zero hm W c)], ← Finset.sum_mul, sum_uniform_content,
     one_mul]
-
 
 /-! ### The items of `lem:qld-expanded-lines`, in the shape the assembly wants -/
 

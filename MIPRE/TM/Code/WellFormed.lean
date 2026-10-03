@@ -106,8 +106,6 @@ variable {c : RawCode i} {a : RawAction}
 
 theorem two_le_alphabetSize (h : c.WellFormed) : 2 ≤ c.alphabetSize := h.1
 
-theorem stateCount_pos (h : c.WellFormed) : 0 < c.stateCount := h.2.1
-
 theorem startState_lt (h : c.WellFormed) : c.startState < c.stateCount := h.2.2.1
 
 theorem table_size (h : c.WellFormed) :

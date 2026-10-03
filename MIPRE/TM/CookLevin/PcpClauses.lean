@@ -169,14 +169,6 @@ theorem inputSlice_pointFromClause (P : PcpParams)
   apply clauseInput5_injective P.m
   rw [clauseInput5_pointClause, inputSlice_pointFromClause]
 
-theorem block_pointFromClause (P : PcpParams)
-    (c : Clause5 (Fin (2 ^ P.m)) (Fin (2 ^ P.m)) (Fin (2 ^ P.m))
-      (Fin (2 ^ P.m)) (Fin (2 ^ P.m))) (i : Fin 5) :
-    P.block i (P.pointFromClause c) = indexCube (c.literals i).var := by
-  have h := congrArg (fun d => (d.literals i).var) (P.pointClause_pointFromClause c)
-  simp only [pointClause_literals] at h
-  simpa using congrArg indexCube h
-
 @[simp] theorem sign_pointFromClause (P : PcpParams)
     (c : Clause5 (Fin (2 ^ P.m)) (Fin (2 ^ P.m)) (Fin (2 ^ P.m))
       (Fin (2 ^ P.m)) (Fin (2 ^ P.m))) (i : Fin 5) :

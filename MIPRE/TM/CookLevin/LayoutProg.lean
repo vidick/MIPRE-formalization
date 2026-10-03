@@ -101,24 +101,6 @@ theorem getD_false_cons (bs : BitStr) (k : ℕ) (h : ∀ i, bs.getD i false = k.
     congr 1
     omega
 
-theorem getD_replicate_false_append (e : ℕ) :
-    ∀ i, (List.replicate e false ++ [true]).getD i false = (2 ^ e).testBit i := by
-  intro i
-  rcases lt_trichotomy i e with h | h | h
-  · rw [List.getD_eq_getElem?_getD,
-      List.getElem?_append_left (by rw [List.length_replicate]; omega),
-      List.getElem?_replicate_of_lt h, Option.getD_some,
-      Nat.testBit_two_pow_of_ne (by omega)]
-  · subst h
-    rw [List.getD_eq_getElem?_getD,
-      List.getElem?_append_right (by rw [List.length_replicate]), List.length_replicate,
-      Nat.testBit_two_pow_self]
-    simp
-  · rw [List.getD_eq_getElem?_getD,
-      List.getElem?_append_right (by rw [List.length_replicate]; omega), List.length_replicate,
-      List.getElem?_eq_none (by simp; omega), Option.getD_none,
-      Nat.testBit_two_pow_of_ne (by omega)]
-
 /-! ### Powers of two -/
 
 theorem bits_two_pow : ∀ e : ℕ, (2 ^ e).bits = List.replicate e false ++ [true]
@@ -187,10 +169,6 @@ theorem cstR_apply {w : PolyTimeFun ι Unary} {bs : PolyTimeFun ι BitStr} {i : 
 theorem nbitsR_num (w : PolyTimeFun ι Unary) (kR : PolyTimeFun ι ℕ) (i : ι) :
     nbitsR w (ap₁ natBits kR) i = nbits (w i).length (kR i) :=
   nbitsR_apply _ (getD_bits (kR i))
-
-theorem cstR_num (w : PolyTimeFun ι Unary) (kR : PolyTimeFun ι ℕ) (i : ι) :
-    cstR w (ap₁ natBits kR) i = cst (w i).length (kR i) :=
-  cstR_apply _ (getD_bits (kR i))
 
 /-- The bits of a numeral, as a reader. -/
 noncomputable def bitsR (k : ℕ) : PolyTimeFun ι BitStr := const k.bits

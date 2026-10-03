@@ -104,9 +104,6 @@ noncomputable def powerStepProg : PolyTimeFun (PowerState × Bool) PowerState :=
   p.pair ((mulReduceProg.comp (p.pair (a.pair a))).pair
     (ite snd (mulReduceProg.comp (p.pair (c.pair a))) c))
 
-theorem powerStepProg_apply (s : PowerState) (b : Bool) :
-    powerStepProg (s, b) = powerStep s b := rfl
-
 theorem powerStep_bounded : FoldBounded powerStepProg (9 * X + 9) := by
   intro l s pre post _
   change esize (pre.foldl powerStep s) ≤ _

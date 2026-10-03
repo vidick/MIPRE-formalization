@@ -165,27 +165,6 @@ theorem dimensionMajorant_polyBounded (c : ℕ) : PolyBounded (dimensionMajorant
     | apply PolyBounded.const
     | exact PolyBounded.id
 
-/-- One exponent bounds the canonical sampler's query time and question
-dimension at every positive index and positive boundedness parameter. -/
-theorem sampler_uniform_bound (c : ℕ) (hc : 1 ≤ c) (he : Even c) :
-    ∃ C, ∀ lam n, 1 ≤ lam → 1 ≤ n →
-      (sampler c hc he lam).TimeBoundAt n ((lam * n + 1) ^ C) C ∧
-      (sampler c hc he lam).dim n ≤ (lam * n + 1) ^ C := by
-  obtain ⟨D, hD⟩ := ((coefficientMajorant_polyBounded c).add
-    (dimensionMajorant_polyBounded c)).exists_le_pow
-  refine ⟨max D degree, fun lam n hl hn => ?_⟩
-  have hlv : lam ≤ lam * n + 1 := by nlinarith
-  have hnv : n ≤ lam * n + 1 := by nlinarith
-  have hv : 2 ≤ lam * n + 1 := by nlinarith
-  have hb := hD (lam * n + 1) hv
-  have hp : (lam * n + 1) ^ D ≤ (lam * n + 1) ^ max D degree :=
-    Nat.pow_le_pow_right (by omega) (le_max_left _ _)
-  have hcoef := coefficient_le_majorant hc hlv hnv (Nat.le_succ (lam * n))
-  have hdim := dimension_le_majorant hc (show lam * n ≤ lam * n + 1 by omega)
-  constructor
-  · exact (sampler_timeBoundAt c hc he lam n).mono (by omega) (le_max_right _ _)
-  · exact hdim.trans (by omega)
-
 end MIPRE.Introspection.PauliSampler
 end
 

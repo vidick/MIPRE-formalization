@@ -317,15 +317,6 @@ theorem toModel_πA (S : CommutingOperatorStrategy X Y A B) (a : S.aliceAlg) :
 theorem toModel_πB (S : CommutingOperatorStrategy X Y A B) (b : S.bobAlg) :
     S.toModel.πB b = (b : S.H →L[ℂ] S.H) := rfl
 
-/-- **The correlation of a strategy is the quadratic form of its model** at the product of the
-two players' operators. -/
-theorem correlation_eq_qform (S : CommutingOperatorStrategy X Y A B) (x : X) (y : Y) (a : A)
-    (b : B) :
-    S.correlation x y a b = S.toModel.qform
-      (S.toModel.πA ⟨S.E x a, S.E_mem_aliceAlg x a⟩ *
-        S.toModel.πB ⟨S.F y b, S.F_mem_bobAlg y b⟩) :=
-  rfl
-
 end CommutingOperatorStrategy
 
 end MIPRE

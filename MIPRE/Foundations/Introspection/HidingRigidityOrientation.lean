@@ -68,13 +68,6 @@ def hidingBobError (L : Bool → CL.CLFun F ι ℓ) (w : Bool)
     (smulKron 1 (Honest.hideCoarseOp (L w) j.val hL i))
     (((MB (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).op i)
 
-theorem hidingAliceError_nonneg (L : Bool → CL.CLFun F ι ℓ) (w : Bool)
-    (hL : (L w).SupportedOn univ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
-    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜)) (j : Fin ℓ) :
-    0 ≤ hidingAliceError L w hL Ξ MA j :=
-  Finset.sum_nonneg fun _ _ => BipartiteModel.xSqNorm_nonneg _ _ _
-
 theorem hidingBobError_nonneg (L : Bool → CL.CLFun F ι ℓ) (w : Bool)
     (hL : (L w).SupportedOn univ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ)
     (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →

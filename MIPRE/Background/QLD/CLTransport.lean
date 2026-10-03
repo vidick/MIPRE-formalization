@@ -83,11 +83,6 @@ def encodeQuestion (b : Module.Basis (Fin t) (ZMod 2) F) (q : Question F m) :
 def decodeQuestion (b : Module.Basis (Fin t) (ZMod 2) F) (q : BinaryQuestion m t) :
     Question F m := binaryQuestion b q.1 q.2
 
-theorem decode_encode (b : Module.Basis (Fin t) (ZMod 2) F) (q : Question F m) :
-    decodeQuestion b (encodeQuestion b q) = q := by
-  simp only [decodeQuestion, encodeQuestion, binaryQuestion,
-    LinearEquiv.symm_apply_apply, questionOfVector_canonical]
-
 theorem encodeQuestion_seed (hm : m ∣ Fintype.card F)
     (b : Module.Basis (Fin t) (ZMod 2) F) (T : Ty) (c : Content F m) :
     encodeQuestion b (c.question hm T) =

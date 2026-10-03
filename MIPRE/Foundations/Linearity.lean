@@ -146,13 +146,6 @@ theorem sum_fourierOf_sq (O : (n → F) → Matrix d d ℂ) (hinv : ∀ a, O a *
   rw [h, Finset.sum_congr rfl fun a (_ : a ∈ univ) => hinv a, Finset.sum_const, Finset.card_univ,
     ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ card_ne_zero, one_smul]
 
-omit [DecidableEq F] [DecidableEq d] in
-theorem fourierOf_sub (A B : (n → F) → Matrix d d ℂ) (e : n → F) :
-    fourierOf (fun v => A v - B v) e = fourierOf A e - fourierOf B e := by
-  rw [fourierOf, fourierOf, fourierOf, ← smul_sub, ← Finset.sum_sub_distrib]
-  congr 1
-  exact Finset.sum_congr rfl fun v _ => by rw [smul_sub]
-
 /-- **The two-field transform of a product family factorizes.** The combined measurement of a
 pair of parameters is the product of the two one-parameter measurements --- with no hypothesis, the
 double average simply splitting. -/
@@ -172,25 +165,6 @@ theorem fourierOf_pair_mul (A B : F → Matrix d d ℂ) (a b : F) :
   rw [Matrix.smul_mul, Finset.mul_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [Matrix.mul_smul, smul_smul, trDot_pairVec, sgn_add, pairVec_zero, pairVec_one]
-
-/-- The same with the two factors in the other order. -/
-theorem fourierOf_pair_mul' (A B : F → Matrix d d ℂ) (a b : F) :
-    fourierOf (fun v : Fin 2 → F => B (v 1) * A (v 0)) (pairVec a b)
-      = trFourier B b * trFourier A a := by
-  classical
-  have hcard : (Fintype.card (Fin 2 → F) : ℂ) = (Fintype.card F : ℂ) * (Fintype.card F : ℂ) := by
-    rw [Fintype.card_fun, Fintype.card_fin]
-    push_cast
-    ring
-  rw [fourierOf, sum_pairVec, hcard, trFourier, trFourier, Matrix.smul_mul, Matrix.mul_smul,
-    smul_smul, mul_inv, mul_comm ((Fintype.card F : ℂ))⁻¹ ((Fintype.card F : ℂ))⁻¹,
-    Finset.sum_mul]
-  refine congrArg _ ?_
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun s _ => ?_
-  rw [Matrix.smul_mul, Finset.mul_sum, Finset.smul_sum]
-  refine Finset.sum_congr rfl fun r _ => ?_
-  rw [Matrix.mul_smul, smul_smul, trDot_pairVec, sgn_add, pairVec_zero, pairVec_one, mul_comm]
 
 /-- **Parseval for a family of operators against a state.** The transform is an isometry up to
 the normalization, so an average bound on the family is a summed bound on the transform and
@@ -385,7 +359,6 @@ theorem stateSqNorm_sub_of_isometry {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖
   rw [snorm_sq_eq_qform, aOp_conjTranspose, ← aOp_mul, hexp, aOp_add, qform_add, aOp_sub,
     aOp_sub, qform_sub, qform_sub, hone]
   ring
-
 
 /-! ## The theorem -/
 

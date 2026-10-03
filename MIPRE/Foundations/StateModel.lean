@@ -185,9 +185,6 @@ theorem snorm_sq_eq_qform (T : 𝒞) : M.snorm T ^ 2 = M.qform (star T * T) := b
 theorem qform_nonneg {T : 𝒞} (h : 0 ≤ M.π T) : 0 ≤ M.qform T :=
   Op.qform_nonneg_of_nonneg _ h
 
-theorem Bnd.mono {T : 𝒞} {K L : ℝ} (h : M.Bnd T K) (hKL : K ≤ L) : M.Bnd T L :=
-  Op.Bnd.mono h hKL
-
 theorem Bnd.add {T T' : 𝒞} {K L : ℝ} (h : M.Bnd T K) (h' : M.Bnd T' L) :
     M.Bnd (T + T') (K + L) := by
   unfold Bnd at *
@@ -205,21 +202,6 @@ theorem Bnd.mul {T T' : 𝒞} {K L : ℝ} (hK : 0 ≤ K) (h : M.Bnd T K) (h' : M
   unfold Bnd at *
   rw [map_mul]
   exact h.mul hK h'
-
-theorem Bnd.smul {T : 𝒞} {K : ℝ} (c : ℂ) (h : M.Bnd T K) : M.Bnd (c • T) (‖c‖ * K) := by
-  unfold Bnd at *
-  rw [map_smul]
-  exact h.smul c
-
-theorem bnd_zero (K : ℝ) (hK : 0 ≤ K) : M.Bnd 0 K := by
-  unfold Bnd
-  rw [map_zero]
-  exact Op.bnd_zero K hK
-
-theorem bnd_one : M.Bnd 1 1 := by
-  unfold Bnd
-  rw [map_one]
-  exact Op.bnd_one
 
 theorem bnd_one_of_isometry {T : 𝒞} (h : star T * T = 1) : M.Bnd T 1 :=
   Op.bnd_one_of_isometry (M.star_π_mul_self h)
@@ -348,11 +330,6 @@ noncomputable def mat (v : N → ℂ) : StateModel (Matrix N N ℂ) where
   H := EuclideanSpace ℂ N
   ψ := WithLp.toLp 2 v
   π := (Matrix.toEuclideanCLM (n := N) (𝕜 := ℂ)).toStarAlgHom
-
-theorem mat_ψ (v : N → ℂ) : (mat v).ψ = WithLp.toLp 2 v := rfl
-
-theorem mat_π_apply (v : N → ℂ) (T : Matrix N N ℂ) (w : N → ℂ) :
-    (mat v).π T (WithLp.toLp 2 w) = WithLp.toLp 2 (T *ᵥ w) := rfl
 
 end Matrix
 

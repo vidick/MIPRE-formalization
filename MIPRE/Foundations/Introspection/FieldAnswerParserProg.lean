@@ -140,23 +140,11 @@ def scalePowerOfTwoProg : PolyTimeFun (ℕ × Unary) ℕ :=
 def fullPauliParserProg : PolyTimeFun (Unary × Unary × BitStr) (Bool × List BitStr) :=
   parserProg.comp ((scalePowerOfTwoProg.comp ((const 1).pair fst)).pair snd)
 
-theorem fullPauliParserProg_valid (m k : Unary) (bs : BitStr) :
-    (fullPauliParserProg (m, k, bs)).1 = true ↔
-      0 < k.length ∧ bs.length = 2 ^ m.length * k.length := by
-  change readyProg (scalePowerOfTwoProg (1, m), k, bs) = true ↔ _
-  simpa using readyProg_iff_length (scalePowerOfTwoProg (1, m)) k bs
-
 theorem fullPauliParserProg_vecBits {m k : ℕ} (E : BinField k) (hk : 0 < k)
     (v : Fin (2 ^ m) → E.carrier) :
     fullPauliParserProg (unary m, unary k, (E.vecBits v).flatten) = (true, E.vecBits v) := by
   change parserProg (1 * 2 ^ (unary m).length, unary k, (E.vecBits v).flatten) = _
   simpa using parserProg_vecBits E hk v
-
-/-- One ambient polynomial applies even when the declared table is enormous. -/
-theorem fullPauliParserProg_runs (input : Unary × Unary × BitStr) :
-    ∃ t ≤ fullPauliParserProg.timeBound.eval (esize input),
-      fullPauliParserProg.code.Runs (encode input) (encode (fullPauliParserProg input)) t :=
-  fullPauliParserProg.computes input
 
 end MIPRE.Introspection.FieldAnswerParser
 end

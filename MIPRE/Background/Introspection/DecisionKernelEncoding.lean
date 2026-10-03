@@ -87,11 +87,6 @@ theorem prefixGuard_toRaw {k m Q R : ℕ} (E : BinField k)
   · cases a <;> rfl
   · cases t <;> cases a <;> rfl
 
-theorem valid_bits {k m Q R : ℕ} (E : BinField k) (T : Label)
-    (a : ParsedAnswer (Fin Q → CL.𝔽₂) (Verifier.Answers R) (QLD.Answer E.carrier m 1))
-    (ha : TypedPredicate.fits T a = true) : AuxiliaryAnswer.Valid Q R T (bits E a) :=
-  AuxiliaryDecision.valid_bits T (toRaw E a) (by simpa using ha) (answerBound_toRaw E a)
-
 theorem flatten_vecBits_length {k m : ℕ} (E : BinField k) (v : Fin m → E.carrier) :
     (E.vecBits v).flatten.length = m*k := by
   have hf (rows : List BitStr) (h : ∀ row ∈ rows, row.length = k) :

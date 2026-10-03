@@ -42,12 +42,6 @@ theorem assignment_parity (c : Fin layout.r) (a : Fin 3 → ZMod 2) :
 def constraintAnswer (c : Fin layout.r) (a : Fin 3 → ZMod 2) : layout.Answer :=
   .inl (assignment c a)
 
-theorem constraintAnswer_injective (c : Fin layout.r) : Function.Injective (constraintAnswer c) := by
-  intro a b h
-  have hfun := Sum.inl.inj h
-  funext j
-  simpa only [assignment_cell] using congrFun hfun (cell c j)
-
 /-- The actual shared answer alphabet, including zero effects for wrong shapes. -/
 def questionOp (A B : Matrix I I ℂ) : layout.Question → layout.Answer →
     Matrix (I × Fin 2) (I × Fin 2) ℂ

@@ -98,10 +98,6 @@ def linear : PolyTimeFun (ℕ × Input) Fields :=
 @[simp] theorem linear_two (x : Input) : linear (2, x) = stageTwo x := rfl
 @[simp] theorem linear_three (x : Input) : linear (3, x) = stageThree x := rfl
 
-theorem linear_runs (x : ℕ × Input) :
-    ∃ t ≤ linear.timeBound.eval (esize x),
-      linear.code.Runs (encode x) (encode (linear x)) t := linear.computes x
-
 /-- Assemble three disjoint output registers without performing field arithmetic. -/
 def assemble : PolyTimeFun (Fields × Fields × Fields) Fields :=
   pack (pointX.comp (snd.comp snd)) (pointZ.comp (snd.comp snd)) (seed.comp fst)

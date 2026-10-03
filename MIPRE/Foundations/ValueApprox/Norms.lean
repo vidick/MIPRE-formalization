@@ -353,26 +353,6 @@ namespace IsPVM
 
 variable {A : Type*} [Fintype A] {M : A → Matrix n n ℂ}
 
-theorem conjTranspose_sum (hM : IsPVM M) (s : Finset A) : (∑ a ∈ s, M a)ᴴ = ∑ a ∈ s, M a := by
-  rw [Matrix.conjTranspose_sum]
-  exact Finset.sum_congr rfl fun a _ => hM.conjTranspose_eq a
-
-theorem sum_mul_sum_self (hM : IsPVM M) (s : Finset A) :
-    (∑ a ∈ s, M a) * (∑ a ∈ s, M a) = ∑ a ∈ s, M a := by
-  classical
-  rw [Finset.sum_mul_sum]
-  refine Finset.sum_congr rfl fun a ha => ?_
-  rw [Finset.sum_eq_single a]
-  · exact hM.mul_self a
-  · intro b _ hba
-    exact hM.mul_eq_zero' (Ne.symm hba)
-  · intro h
-    exact absurd ha h
-
-/-- Subset sums of a projective measurement are projections, hence of norm at most `1`. -/
-theorem norm_sum_le_one (hM : IsPVM M) (s : Finset A) : ‖∑ a ∈ s, M a‖ ≤ 1 :=
-  norm_le_one_of_isProj (hM.conjTranspose_sum s) (hM.sum_mul_sum_self s)
-
 theorem norm_le_one (hM : IsPVM M) (a : A) : ‖M a‖ ≤ 1 :=
   norm_le_one_of_isProj (hM.conjTranspose_eq a) (hM.mul_self a)
 

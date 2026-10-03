@@ -37,10 +37,6 @@ theorem eval_eqN {fs : List Fml} {w k : ℕ} (hl : fs.length = w) (hk : k < 2 ^ 
     (eqConst fs (nbits w k)).eval x = true ↔ val fs x = k := by
   rw [eval_eqConst_iff _ _ (by rw [hl, length_nbits]), bitsVal_nbits_of_lt hk]
 
-theorem eval_eqN_eq {fs : List Fml} {w k : ℕ} (hl : fs.length = w) (hk : k < 2 ^ w) (x : ℕ → Bool) :
-    (eqConst fs (nbits w k)).eval x = decide (val fs x = k) :=
-  Bool.eq_decide_of_iff (eval_eqN hl hk x)
-
 theorem eval_ltN {fs : List Fml} {w k : ℕ} (hl : fs.length = w) (hk : k < 2 ^ w) (x : ℕ → Bool) :
     (ltConst fs (nbits w k)).eval x = true ↔ val fs x < k := by
   rw [eval_ltConst_iff _ _ (by rw [hl, length_nbits]), bitsVal_nbits_of_lt hk]
@@ -128,15 +124,11 @@ theorem InputsLt.or' {n : ℕ} {f g : Fml} (hf : f.InputsLt n) (hg : g.InputsLt 
 
 theorem InputsLt.not' {n : ℕ} {f : Fml} (hf : f.InputsLt n) : (Fml.not f).InputsLt n := hf
 
-theorem InputsLt.const' {n : ℕ} (b : Bool) : (Fml.const b).InputsLt n := trivial
-
 theorem InputsLt.list_cons {n : ℕ} {f : Fml} {l : List Fml} (hf : f.InputsLt n) (hl : ∀ g ∈ l, g.InputsLt n) :
     ∀ g ∈ f :: l, g.InputsLt n := by
   simpa [List.forall_mem_cons] using ⟨hf, hl⟩
 
 theorem InputsLt.list_nil {n : ℕ} : ∀ g ∈ ([] : List Fml), g.InputsLt n := by simp
-
-theorem InputsLt.nbitsC {n w c : ℕ} : ∀ f ∈ constBits (nbits w c), f.InputsLt n := InputsLt.constBits _
 
 /-! ## Input bounds of the field formulas -/
 
@@ -730,7 +722,6 @@ theorem InputsLt.unaryValF (T : ℕ) : (unaryValF e T A).InputsLt n :=
 
 end ValInputs
 
-
 /-! ## More helpers -/
 
 theorem eval_andList_cons (a : Fml) (l : List Fml) (x : ℕ → Bool) :
@@ -1301,7 +1292,6 @@ theorem InputsLt.mainF {n : ℕ} (tabs : List (ℕ × Fml)) (htabs : ∀ jv ∈ 
   InputsLt.orList _ (InputsLt.list_cons (InputsLt.startF e tabs htabs hC) (InputsLt.list_cons (InputsLt.freeF e frees hC)
     (InputsLt.list_cons (InputsLt.bdryPredF e hC) (InputsLt.list_cons (InputsLt.emitPredF e hC)
     (InputsLt.list_cons (InputsLt.finalPredF e hC) InputsLt.list_nil)))))
-
 
 /-! ## The window family
 

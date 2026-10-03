@@ -46,20 +46,6 @@ theorem flat_prime_power_root_pow_minpoly {F : Type*} [Field F]
     simpa only [aeval_def, eval₂_comp, eval₂_pow, eval₂_X] using hz'
   exact (minpoly.eq_of_irreducible_of_monic hg hz hgm).symm
 
-/-- The top root raised to the requested extension degree has the original minimal polynomial. -/
-theorem flat_prime_power_root_pow_all_minpoly {F : Type*} [Field F]
-    (f : Polynomial F) (hf : f.Monic) (hi : Irreducible f)
-    (q e : ℕ) (hq : q.Prime) (hq2 : q ≠ 2)
-    (hn : ∀ b : AdjoinRoot f, b ^ q ≠ AdjoinRoot.root f) :
-    minpoly F (AdjoinRoot.root (f.comp (X ^ (q ^ e))) ^ (q ^ e)) = f := by
-  let h := f.comp (X ^ (q ^ e))
-  let : Fact (Irreducible h) :=
-    ⟨irreducible_comp_prime_pow_of_nonresidue f hf hi q e hq hq2 hn⟩
-  have hz : aeval (AdjoinRoot.root h ^ (q ^ e)) f = 0 := by
-    have hz' : aeval (AdjoinRoot.root h) h = 0 := by simp
-    simpa only [h, aeval_def, eval₂_comp, eval₂_pow, eval₂_X] using hz'
-  exact (minpoly.eq_of_irreducible_of_monic hi hz hf).symm
-
 end MIPRE.LowDegree.BinaryPolynomial
 
 end

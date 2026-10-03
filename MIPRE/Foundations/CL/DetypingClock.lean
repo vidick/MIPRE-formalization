@@ -32,11 +32,6 @@ structure ClockProgram where
 
 namespace ClockProgram
 
-/-- Every valid index call to the clock terminates. -/
-theorem halts (C : ClockProgram) (n : ℕ) : Halts C.prog (encode n) := by
-  obtain ⟨time, hr⟩ := C.runs n
-  exact ⟨_, time, hr⟩
-
 /-- A concrete executable clock, useful independently of any index-growth routine. -/
 def constant (k : ℕ) : ClockProgram where
   budget _ := k
@@ -88,9 +83,6 @@ def clockPost (source : Prog) : PolyTimeFun (Data × Data) Data :=
 
 def checkResult : PolyTimeFun Data Bool :=
   ap₂ treeEq (PolyTimeFun.id Data) (const (Data.cons (encode true) (encode true)))
-
-theorem checkResult_apply (x : Data) :
-    checkResult x = decide (x = .cons (encode true) (encode true)) := rfl
 
 def clockStage (C : ClockProgram) (source : Prog) : Prog :=
   Prog.routeOneCall clockRoute C.prog (clockPost source)
@@ -204,17 +196,6 @@ theorem wrap_accepts_iff {T : Type*} [SizedEncoding T] (C : ClockProgram)
   change (∃ time, (wrapProg C U source).Runs _ _ time) ↔ _
   rw [wrapProg_accepts_iff]
   simp only [encode_prod, treeHead_cons, readNat_encode]
-
-/-- An in-budget source run is preserved, with nonaccepting results normalized to false. -/
-theorem wrapProg_preserves_run (C : ClockProgram) (U : ClockedUniversalMachine)
-    (source : Prog) (n : ℕ) (d r : Data) (time : ℕ)
-    (hr : source.Runs (.cons (encode n) d) r time) (ht : time ≤ C.budget n) :
-    ∃ t, (wrapProg C U source).Runs (.cons (encode n) d)
-      (encode (decide (r = encode true))) t := by
-  have hc := (clockedResult_eq_iff source (.cons (encode n) d) r (C.budget n)).mpr ⟨time, ht, hr⟩
-  obtain ⟨t, hout⟩ := wrapProg_runs C U source (.cons (encode n) d)
-  exact ⟨t, by simpa only [treeHead_cons, readNat_encode, hc, Data.cons.injEq,
-    true_and] using hout⟩
 
 /-- Whenever a source run is known to fit, clocking preserves its acceptance predicate. -/
 theorem wrap_accepts_iff_of_bounded {T : Type*} [SizedEncoding T] (C : ClockProgram)

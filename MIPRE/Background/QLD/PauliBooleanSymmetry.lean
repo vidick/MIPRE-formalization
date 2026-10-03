@@ -31,11 +31,6 @@ theorem route_flip (T U : Ty) (h0 : 0 < (PauliBranchProgram.route T U).1)
   revert T U
   decide
 
-theorem route_default_orientation (T U : Ty) (h : (PauliBranchProgram.route T U).1 = 8) :
-    (PauliBranchProgram.route T U).2.1 = false := by
-  revert T U
-  decide
-
 theorem route_kind_swap (input : Input) : (route (swapInput input)).1 = (route input).1 :=
   route_kind_symm _ _
 

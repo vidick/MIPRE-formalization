@@ -87,13 +87,6 @@ theorem sum_snorm_state_transfer (φ : Ψ.H) {M R : C → 𝒞} (hM : IsPVMIn M)
     _ ≤ 2 * ∑ c, Ψ.snorm (M c - R c) ^ 2 + 2 * (4 * ‖Ψ.ψ - φ‖ ^ 2) := by gcongr
     _ = _ := by ring
 
-/-- A hypothesis form of state transfer for joint-space PVM errors. -/
-theorem sum_snorm_state_transfer_le (φ : Ψ.H) {M R : C → 𝒞} (hM : IsPVMIn M) (hR : IsPVMIn R)
-    {δ η : ℝ} (hδ : ∑ c, Ψ.snorm (M c - R c) ^ 2 ≤ δ) (hdist : ‖Ψ.ψ - φ‖ ^ 2 ≤ η) :
-    ∑ c, (Ψ.withState φ).snorm (M c - R c) ^ 2 ≤ 2 * δ + 8 * η := by
-  have ht := sum_snorm_state_transfer Ψ φ hM hR
-  linarith
-
 end State
 
 section Bipartite

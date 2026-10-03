@@ -86,13 +86,6 @@ def POVM.compress (a₀ : Anc) (M : POVM A (d × Anc)) : POVM A d where
 @[simp] theorem POVM.compress_mats (a₀ : Anc) (M : POVM A (d × Anc)) (a : A) :
     ((M.compress a₀).mats a).val = ancCompress a₀ (M.mats a).val := rfl
 
-/-- Compression commutes with relabelling the outcomes. -/
-theorem POVM.map_compress {B : Type*} [Fintype B] [DecidableEq B] (a₀ : Anc) (f : A → B)
-    (M : POVM A (d × Anc)) : (M.map f).compress a₀ = (M.compress a₀).map f :=
-  POVM.ext' fun b => by
-    rw [POVM.compress_mats, POVM.map_mats, POVM.map_mats, ancCompress_sum]
-    rfl
-
 end Compress
 
 /-! ## The Born rule on the twice-extended state -/
@@ -101,11 +94,6 @@ section Ext
 
 variable {dA dB Anc Bnc : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]
   [Fintype Anc] [DecidableEq Anc] [Fintype Bnc] [DecidableEq Bnc]
-
-omit [DecidableEq dA] [DecidableEq dB] in
-/-- The Born probability, in the form the definitions of the value and the inconsistency use. -/
-theorem bornProb_def (ψ : dA × dB → ℂ) (EA : Matrix dA dA ℂ) (EB : Matrix dB dB ℂ) :
-    (star ψ ⬝ᵥ ((EA ⊗ₖ EB) *ᵥ ψ)).re = bornProb ψ EA EB := rfl
 
 /-- `bornProb_extVec2`, with the compressions named. -/
 theorem bornProb_extVec2_ancCompress (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc)
@@ -123,14 +111,6 @@ theorem povmValue_extVec2 (G : Game X Y A B) (ψ : dA × dB → ℂ) (a₀ : Anc
       = povmValue G ψ (fun x => (MA x).compress a₀) (fun y => (MB y).compress b₀) := by
   unfold povmValue condWin
   simp only [POVM.compress_mats, bornProb_extVec2_ancCompress]
-
-/-- **Inconsistency on the twice-extended state is inconsistency of the compressions.** -/
-theorem inconsistency_extVec2 [DecidableEq A] (μ : X → ℝ) (ψ : dA × dB → ℂ) (a₀ : Anc)
-    (b₀ : Bnc) (M : X → POVM A (dA × Anc)) (N : X → POVM A (dB × Bnc)) :
-    inconsistency μ (extVec2 ψ a₀ b₀) M N
-      = inconsistency μ ψ (fun x => (M x).compress a₀) (fun x => (N x).compress b₀) := by
-  unfold inconsistency
-  simp only [bornProb_def, POVM.compress_mats, bornProb_extVec2_ancCompress]
 
 end Ext
 

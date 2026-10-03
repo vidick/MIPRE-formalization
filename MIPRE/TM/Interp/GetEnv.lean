@@ -32,34 +32,11 @@ theorem S_ofNat_succ (i : ℕ) : S (Data.ofNat (i + 1)) = .one :: .zero :: S (Da
 
 theorem length_S_ofNat (i : ℕ) : (S (Data.ofNat i)).length = 2 * i + 1 := by simp
 
-/-- The environment representation of a suffix is a prefix of the whole. -/
-theorem envRepr_drop_prefix (env : Env) (j : ℕ) :
-    ∃ l, envRepr env = envRepr (env.drop j) ++ l := by
-  induction j generalizing env with
-  | zero => exact ⟨[], by simp⟩
-  | succ j ih =>
-    cases env with
-    | nil => exact ⟨[], by simp⟩
-    | cons v env =>
-      obtain ⟨l, hl⟩ := ih env
-      exact ⟨l ++ S v ++ [.sep], by simp only [List.drop_succ_cons, envRepr_cons, hl]; simp⟩
-
-/-- The last symbol of a nonempty environment is `#`. -/
-theorem envRepr_getLast (v : Data) (rest : Env) :
-    envRepr (v :: rest) = envRepr rest ++ S v ++ [.sep] := rfl
-
 /-- A tape holding the environment from `0`, blank before. -/
 structure EnvTape (τ : Tape) (env : Env) : Prop where
   holds : Holds τ 0 (envRepr env)
   before : BlankBefore τ 0
   beyond : BlankBeyond τ (envRepr env).length
-
-theorem EnvTape.cell_of_lt {τ : Tape} {env : Env} (h : EnvTape τ env) {k : ℕ}
-    (hk : k < (envRepr env).length) : τ k = some (envRepr env)[k] := by
-  simpa using h.holds k hk
-
-theorem EnvTape.cell_neg {τ : Tape} {env : Env} (h : EnvTape τ env) {q : ℤ} (hq : q < 0) :
-    τ q = none := h.before q hq
 
 /-! ## The scans -/
 

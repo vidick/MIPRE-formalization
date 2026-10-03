@@ -289,15 +289,6 @@ theorem transitionIndex_decodeTransitionIndex (n : Fin (Q * (σ + 1) ^ (i + w)))
   rw [Nat.mul_comm]
   exact Nat.div_add_mod n.val ((σ + 1) ^ (i + w))
 
-/-- The transition index determines the observation. -/
-theorem transitionIndex_inj {q q' : Fin Q} {as as' : Fin i → Option (Fin σ)}
-    {bs bs' : Fin w → Option (Fin σ)}
-    (h : transitionIndex q as bs = transitionIndex q' as' bs') :
-    q = q' ∧ as = as' ∧ bs = bs' := by
-  have h' := congrArg decodeTransitionIndex h
-  rw [decodeTransitionIndex_transitionIndex, decodeTransitionIndex_transitionIndex] at h'
-  simpa [Prod.ext_iff] using h'
-
 end Turing
 
 end

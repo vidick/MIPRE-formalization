@@ -53,11 +53,6 @@ def game : Game (CL.Detyping.Question (QuestionType PauliType ℓ) κ)
     (ParsedAnswer (ι → F) A PauliAnswer) (ParsedAnswer (ι → F) A PauliAnswer) :=
   TypedPresentation.game E X Z ℓ P (questionCheck X Z L project D DP)
 
-/-- The quotient and legacy games have exactly the same question law. -/
-theorem game_mu (q r : CL.Detyping.Question (QuestionType PauliType ℓ) κ) :
-    (game E X Z P L project D DP).μ q r =
-      (TypedEstimates.parsedGame E X Z P L project D DP).μ q r := rfl
-
 /-- Legacy acceptance implies quotient acceptance on every raw tuple. -/
 theorem game_accepts_of_legacy (hL : ∀ w, (L w).SupportedOn Finset.univ)
     (q r : CL.Detyping.Question (QuestionType PauliType ℓ) κ)
@@ -110,20 +105,6 @@ theorem decodedStrategy_pauli_B (S : Ψ.ProjStrat (game E X Z P L project D DP))
 
 end Model
 
-/-- The quotient relaxation has exactly the legacy quantum value: a tensor-product strategy is a
-projective strategy of its tensor-product model, where decoding does not lose value. -/
-theorem quantumValue_eq (hL : ∀ w, (L w).SupportedOn Finset.univ) :
-    quantumValue (game E X Z P L project D DP) =
-      quantumValue (TypedEstimates.parsedGame E X Z P L project D DP) := by
-  apply le_antisymm
-  · refine Real.iSup_le (fun S => ?_) (quantumValue_nonneg _)
-    rw [← S.value_toModel]
-    refine (value_le_decodedStrategy E X Z P L project D DP hL S.toModel).trans ?_
-    rw [← BipartiteModel.ProjStrat.value_toTensor]
-    exact le_ciSup (TensorProductStrategy.bddAbove_range_value _) _
-  · exact quantumValue_mono _ _ (game_mu E X Z P L project D DP)
-      (game_accepts_of_legacy E X Z P L project D DP hL)
-
 variable [DecidableEq A] [DecidableEq PauliAnswer]
 
 /-- Copy the honest synchronous data to the doubled quotient game. -/
@@ -145,12 +126,6 @@ theorem copiedPCC_value_eq_one (hL : ∀ w, (L w).SupportedOn Finset.univ)
   simp only [Game.doubled_D] at h ⊢
   split_ifs at h ⊢ with ht
   · exact game_accepts_of_legacy E X Z P L project D DP hL q.2 r.2 a b h
-
-set_option linter.defProp false in
-/-- Copying to the quotient game preserves the honest PCC dimension exactly. -/
-def copiedPCC_dimension
-    (S : SyncStrategy (TypedEstimates.parsedGame E X Z P L project D DP).doubled) :=
-  S.copy_d (game E X Z P L project D DP).doubled
 
 end MIPRE.Introspection.AuxiliaryQuotient
 

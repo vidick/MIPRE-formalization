@@ -106,15 +106,6 @@ theorem re_hsInner_neg_left (A B : Matrix n n ℂ) :
     (hsInner (-A) B).re = -(hsInner A B).re := by
   rw [← re_hsInner_comm (-A) B, re_hsInner_neg_right B A, re_hsInner_comm A B]
 
-theorem re_hsInner_add_left (A B C : Matrix n n ℂ) :
-    (hsInner (A + B) C).re = (hsInner A C).re + (hsInner B C).re := by
-  rw [re_hsInner_eq, re_hsInner_eq, re_hsInner_eq, Matrix.conjTranspose_add, Matrix.add_mul,
-    ntr_add]
-
-theorem re_hsInner_add_right (A B C : Matrix n n ℂ) :
-    (hsInner A (B + C)).re = (hsInner A B).re + (hsInner A C).re := by
-  rw [re_hsInner_eq, re_hsInner_eq, re_hsInner_eq, Matrix.mul_add, ntr_add]
-
 theorem re_hsInner_sub_left (A B C : Matrix n n ℂ) :
     (hsInner (A - B) C).re = (hsInner A C).re - (hsInner B C).re := by
   rw [re_hsInner_eq, re_hsInner_eq, re_hsInner_eq, Matrix.conjTranspose_sub, Matrix.sub_mul,
@@ -367,7 +358,6 @@ theorem sum_hsNormSq_sub_le {ι : Type*} [Fintype ι] (O C D : ι → Matrix n n
   rw [hlhs, hmid]
   have := abs_le.mp hcs
   linarith [this.1, this.2]
-
 
 omit [DecidableEq n] in
 /-- **Close measurements have close values**: the measurement-level statement of

@@ -143,14 +143,6 @@ theorem readout_mul_readOp {ℓ : ℕ} (P : CL.CLFun F ι ℓ)
     rw [hs]
     by_cases hy : y = a.1 <;> simp [hy, eq_comm]
 
-theorem readOp_mul_readout {ℓ : ℕ} (P : CL.CLFun F ι ℓ)
-    (h : P.SupportedOn Finset.univ) (y : ι → F) (a : ReadLabel F ι) :
-    readOp P h a * readout P.eval y = if y = a.1 then readOp P h a else 0 := by
-  have he := congrArg Matrix.conjTranspose (readout_mul_readOp P h y a)
-  rw [Matrix.conjTranspose_mul, (readout_isPVM P.eval).isSelfAdjoint,
-    (readOp_isPVM P h).isSelfAdjoint] at he
-  by_cases hy : y = a.1 <;> simpa [hy, (readOp_isPVM P h).isSelfAdjoint] using he
-
 theorem readOp_marginal {ℓ : ℕ} (P : CL.CLFun F ι ℓ)
     (h : P.SupportedOn Finset.univ) (y : ι → F) :
     (∑ yp, readOp P h (y, yp)) = readout P.eval y := by

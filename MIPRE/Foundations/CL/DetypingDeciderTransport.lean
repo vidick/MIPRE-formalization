@@ -188,10 +188,6 @@ def fromFiniteSync (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
     SyncStrategy ((verifier E S D C hℓ hD).game n (C.outer n)).doubled :=
   R.relabel _ (doubledVectorEquiv (S.dim n)) (.refl _)
 
-theorem fromFiniteSync_d (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
-    (R : SyncStrategy (Detyping.game E (sourceFamily S n) (typedPredicate S D C n)).doubled) :
-    (fromFiniteSync E S D C hℓ hD n R).d = R.d := rfl
-
 theorem fromFiniteSync_value (hℓ : 0 < ℓ) (hD : D.Total) (n : ℕ)
     (R : SyncStrategy (Detyping.game E (sourceFamily S n) (typedPredicate S D C n)).doubled) :
     (fromFiniteSync E S D C hℓ hD n R).value = R.value :=

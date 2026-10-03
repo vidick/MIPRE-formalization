@@ -333,15 +333,6 @@ theorem value_le_of_mem (G : Game X Y A B) {r : ℝ}
     ← value_eq] at this
   simpa using this
 
-/-- **The commuting-operator value under a cone certificate**: `r·1 - W_G ∈ M` with `0 ≤ r`
-bounds the commuting-operator value by `r`. The sign hypothesis replaces nonemptiness of the
-type of strategies (`Real.iSup_le`); it cannot be dropped, since if `A` is empty and `X` is not,
-every polynomial lies in the cone. -/
-theorem commutingOperatorValue_le_of_mem (G : Game X Y A B) {r : ℝ} (hr : 0 ≤ r)
-    (h : r • (1 : NCPoly (Gen X Y A B)) - gamePoly G ∈ cone X Y A B) :
-    commutingOperatorValue G ≤ r :=
-  Real.iSup_le (fun S => value_le_of_mem S G h) hr
-
 end Strategy
 
 /-! ## The state of a strategy -/

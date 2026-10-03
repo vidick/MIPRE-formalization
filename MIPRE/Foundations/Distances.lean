@@ -69,13 +69,6 @@ theorem hsNormSq_nonneg (A : Matrix n n ℂ) : 0 ≤ hsNormSq A := by
   rw [← Complex.ofReal_natCast, Complex.div_ofReal_re]
   exact div_nonneg hre (Nat.cast_nonneg _)
 
-/-- For a Hermitian matrix, the squared normalized Hilbert--Schmidt norm is the
-normalized trace of the square, which is the form used in blueprint `def:distance`. -/
-theorem hsNormSq_of_isHermitian {A : Matrix n n ℂ} (hA : A.IsHermitian) :
-    hsNormSq A = ((A * A).trace / (Fintype.card n : ℂ)).re := by
-  unfold hsNormSq hsInner
-  rw [hA.eq]
-
 /-! ## POVM distance -/
 
 variable {X A d : Type*} [Fintype X] [Fintype A] [Fintype d] [DecidableEq d]

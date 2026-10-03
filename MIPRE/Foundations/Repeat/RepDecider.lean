@@ -43,10 +43,6 @@ theorem encode_decParams (sp dp : Prog) (lam tau beta : ℕ) :
     (encode ((sp, dp), lam, tau, beta) : Data) =
       decParams (encode sp) (encode dp) (encode lam) (encode tau) (encode beta) := rfl
 
-theorem encode_decInput (n : ℕ) (x y a b : BitStr) :
-    (encode (n, x, y, a, b) : Data) =
-      .cons (encode n) (.cons (encode x) (.cons (encode y) (.cons (encode a) (encode b)))) := rfl
-
 /-- The run of the repeated decider on a well-formed input, from a run of `decMain`. -/
 theorem repDeciderProg_runs (sp dp : Prog) (lam tau beta n : ℕ) (x y a b : BitStr) {r : Data} {t : ℕ}
     (h : Eval [decInput (encode sp) (encode dp) (encode lam) (encode tau) (encode beta) (encode n)

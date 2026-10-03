@@ -69,9 +69,6 @@ def tails : ℕ → PolyTimeFun Data Data
 @[simp] theorem tails_cons (k : ℕ) (a d : Data) : tails (k + 1) (.cons a d) = tails k d := by
   simp [tails, treeTail_cons]
 
-theorem tails_closed_comp {α : Type*} [SizedEncoding α] (f : PolyTimeFun Data α) (k : ℕ)
-    (d : Data) : (f.comp (tails k)) d = f (tails k d) := rfl
-
 /-- The result of the stage `k` stages back. -/
 def res (k : ℕ) : PolyTimeFun Data Data := treeHead.comp (tails k)
 

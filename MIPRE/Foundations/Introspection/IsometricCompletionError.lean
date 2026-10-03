@@ -97,12 +97,6 @@ theorem isometricEffect_alice_completion_error {A : Type*} [Fintype A] [Decidabl
     simp [h, map_zero, M'.snorm_zero]
   · simp
 
-theorem isometricEffect_bob_completion_error {B : Type*} [Fintype B] [DecidableEq B] (b₀ : B)
-    (Q : B → ℬ) :
-    (∑ b, M'.snorm (M'.πB (Φ.swap.transportOpA b₀ Q b - Φ.ΦB (Q b))) ^ 2) =
-      M'.snorm (M'.πB (1 - Φ.ΦB 1)) ^ 2 :=
-  isometricEffect_alice_completion_error Φ.swap b₀ Q
-
 /-- Primitive ideal-state image estimates survive completing the measurement
 to a normalized PVM, with no factor for the number of outcomes. -/
 theorem isometricEffect_alice_error_le {A : Type*} [Fintype A] [DecidableEq A] (a₀ : A)

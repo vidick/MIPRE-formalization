@@ -78,10 +78,6 @@ theorem proj_add_proj_compl [Fintype ι] (S : Finset ι) (x : ι → F) :
     proj S x + proj Sᶜ x = x := by
   ext i; by_cases h : i ∈ S <;> simp [h]
 
-theorem proj_compl_add_proj [Fintype ι] (S : Finset ι) (x : ι → F) :
-    proj Sᶜ x + proj S x = x := by
-  rw [add_comm, proj_add_proj_compl]
-
 theorem proj_union_of_disjoint {S T : Finset ι} (h : Disjoint S T) (x : ι → F) :
     proj (S ∪ T) x = proj S x + proj T x := by
   ext i
@@ -89,10 +85,6 @@ theorem proj_union_of_disjoint {S T : Finset ι} (h : Disjoint S T) (x : ι → 
   · have hT : i ∉ T := Finset.disjoint_left.mp h hS
     simp [hS, hT]
   · by_cases hT : i ∈ T <;> simp [hS, hT]
-
-theorem proj_sdiff [Fintype ι] (S T : Finset ι) (x : ι → F) :
-    proj (T \ S) x = proj T (proj Sᶜ x) := by
-  rw [proj_proj, Finset.sdiff_eq_inter_compl]
 
 theorem proj_eq_self_iff {S : Finset ι} {x : ι → F} : proj S x = x ↔ ∀ i, i ∉ S → x i = 0 := by
   constructor
@@ -103,23 +95,6 @@ theorem proj_eq_self_iff {S : Finset ι} {x : ι → F} : proj S x = x ↔ ∀ i
     by_cases hi : i ∈ S
     · simp [hi]
     · simp [hi, h i hi]
-
-/-- The register subspace `V_S`, as a submodule: the vectors vanishing outside `S`. -/
-def register (S : Finset ι) : Submodule F (ι → F) := LinearMap.range (proj S)
-
-theorem mem_register_iff {S : Finset ι} {x : ι → F} : x ∈ register (F := F) S ↔ proj S x = x := by
-  constructor
-  · rintro ⟨y, rfl⟩
-    exact proj_proj_self S y
-  · intro h
-    exact ⟨x, h⟩
-
-theorem proj_mem_register (S : Finset ι) (x : ι → F) : proj S x ∈ register (F := F) S :=
-  ⟨x, rfl⟩
-
-theorem register_mono {S T : Finset ι} (h : S ⊆ T) : register (F := F) S ≤ register T := by
-  rintro x ⟨y, rfl⟩
-  exact ⟨proj S y, proj_proj_of_subset' h y⟩
 
 /-! ## Linear maps on a register subspace -/
 

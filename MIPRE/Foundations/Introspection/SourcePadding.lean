@@ -46,31 +46,6 @@ theorem pull_family (w : Bool) (x : J → F) :
     CL.pull e ((family e L w).eval x) = (L w).eval (CL.pull e x) := by
   rw [family, CL.CLFun.eval_embed, CL.pull_push]
 
-/-- A final zero stage consumes every remaining coordinate. -/
-theorem lift_exact {k : ℕ} (P : CL.CLFun F J k) (S : Finset J)
-    (hP : P.SupportedOn S) : (P.lift S).ExactlyOn S := by
-  induction P generalizing S with
-  | zero => exact ⟨Finset.Subset.refl S, fun _ => Finset.sdiff_self S⟩
-  | cons U M next ih => exact ⟨hP.1, fun x => ih _ _ (hP.2 x)⟩
-
-def fullFamily (w : Bool) : CL.CLFun F J (ℓ+1) := (family e L w).lift univ
-
-theorem fullFamily_exactlyOn (hL : ∀ w, (L w).SupportedOn univ) (w : Bool) :
-    (fullFamily e L w).ExactlyOn univ :=
-  lift_exact (family e L w) univ (family_supported e L hL w)
-
-theorem fullFamily_eval (w : Bool) (x : J → F) :
-    (fullFamily e L w).eval x = (family e L w).eval x :=
-  CL.CLFun.eval_lift univ _ x
-
-theorem sourceGame_fullFamily :
-    Honest.sourceGame (fullFamily e L) (decider e D) =
-      Honest.sourceGame (family e L) (decider e D) := by
-  have hf (w : Bool) : (fullFamily e L w).eval = (family e L w).eval :=
-    funext (fullFamily_eval e L w)
-  change SampledGame.game (fullFamily e L false).eval (fullFamily e L true).eval _ = _
-  rw [hf, hf]
-
 /-- Consume unused coordinates by the zero part of the existing first factor.
 Unlike `fullFamily`, this construction preserves the original depth. -/
 def depthFamily (w : Bool) : CL.CLFun F J ℓ :=

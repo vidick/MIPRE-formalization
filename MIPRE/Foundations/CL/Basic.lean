@@ -132,12 +132,6 @@ def liftN (T : Finset ι) : (n : ℕ) → CLFun F ι ℓ → CLFun F ι (ℓ + n
   | 0, P => P
   | n + 1, P => (P.liftN T n).lift T
 
-theorem SupportedOn.liftN {P : CLFun F ι ℓ} {T T' : Finset ι} (hP : P.SupportedOn T)
-    (h : T' ⊆ T) (n : ℕ) : (P.liftN T' n).SupportedOn T := by
-  induction n with
-  | zero => exact hP
-  | succ n ih => exact ih.lift h
-
 /-- The first `k` levels of `P`: the `k`-th marginal `L_{≤k}` of `lem:cl-kth`. When `k` exceeds
 the level of `P`, the missing levels are trivial. -/
 def truncate : (k : ℕ) → {ℓ : ℕ} → CLFun F ι ℓ → CLFun F ι k
@@ -241,14 +235,6 @@ theorem SupportedOn.eval_proj_of_subset {P : CLFun F ι ℓ} {T U : Finset ι} (
     simp only [eval_cons, L₁.apply_proj_of_subset (hS.trans hTU), proj_proj]
     rw [ih _ (hnext _) (Finset.subset_inter hsub (Finset.sdiff_subset.trans hTU)) x,
       ih _ (hnext _) hsub x]
-
-theorem SupportedOn.eval_proj {P : CLFun F ι ℓ} {T : Finset ι} (hP : P.SupportedOn T)
-    (x : ι → F) : P.eval (proj T x) = P.eval x :=
-  hP.eval_proj_of_subset (Finset.Subset.refl T) x
-
-theorem SupportedOn.eval_proj_of_disjoint {P : CLFun F ι ℓ} {T U : Finset ι}
-    (hP : P.SupportedOn T) (h : Disjoint T U) (x : ι → F) : P.eval (proj U x) = 0 := by
-  rw [← hP.eval_proj (proj U x), proj_proj_of_disjoint h, eval_zero_vec]
 
 /-- A presentation on `V_T` takes its values in `V_T`. -/
 theorem SupportedOn.proj_eval {P : CLFun F ι ℓ} {T : Finset ι} (hP : P.SupportedOn T)
@@ -387,11 +373,6 @@ theorem SupportedOn.eval_truncate_eq_sum {P : CLFun F ι ℓ} {T : Finset ι} (h
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [mapAt_cons_succ, (hnext (L₁ x)).mapAt_apply_proj hsub i (proj Sᶜ x) x]
 
-/-- Item (3) of `lem:cl-kth` at the top level: `L(x) = ∑_{i ≤ ℓ} x^{L_i}`. -/
-theorem SupportedOn.eval_eq_sum {P : CLFun F ι ℓ} {T : Finset ι} (hP : P.SupportedOn T)
-    (x : ι → F) : P.eval x = ∑ i ∈ Finset.range ℓ, P.mapAt i x x := by
-  rw [← hP.eval_truncate_eq_sum ℓ x, truncate_self]
-
 /-! ## Stage data from the prefix -/
 
 /-- The factor space at stage `k + 1`, read off the prefix `u = L_{≤k}(x)` rather than the
@@ -513,23 +494,6 @@ some `ℓ`-level presentation on `V_T` evaluates to it. -/
 def IsCLFun (ℓ : ℕ) (T : Finset ι) (f : (ι → F) → (ι → F)) : Prop :=
   ∃ P : CLFun F ι ℓ, P.SupportedOn T ∧ P.eval = f
 
-theorem CLFun.SupportedOn.isCLFun {P : CLFun F ι ℓ} {T : Finset ι} (hP : P.SupportedOn T) :
-    IsCLFun ℓ T P.eval :=
-  ⟨P, hP, rfl⟩
-
-theorem isCLFun_zero_iff {T : Finset ι} {f : (ι → F) → (ι → F)} : IsCLFun 0 T f ↔ f = 0 := by
-  constructor
-  · rintro ⟨P, -, rfl⟩
-    rw [P.eq_zero]
-    rfl
-  · rintro rfl
-    exact ⟨.zero, trivial, rfl⟩
-
-theorem IsCLFun.mono {T T' : Finset ι} {f : (ι → F) → (ι → F)} (h : IsCLFun ℓ T f)
-    (hT : T ⊆ T') : IsCLFun ℓ T' f := by
-  obtain ⟨P, hP, rfl⟩ := h
-  exact ⟨P, hP.mono hT, rfl⟩
-
 /-- The paper's `rk:higher-level`: an `ℓ`-level CL function is `(ℓ + 1)`-level. -/
 theorem IsCLFun.succ {T : Finset ι} {f : (ι → F) → (ι → F)} (h : IsCLFun ℓ T f) :
     IsCLFun (ℓ + 1) T f := by
@@ -541,26 +505,6 @@ theorem IsCLFun.of_le {ℓ' : ℕ} {T : Finset ι} {f : (ι → F) → (ι → F
   induction hℓ with
   | refl => exact h
   | step _ ih => exact ih.succ
-
-theorem IsCLFun.apply_zero {T : Finset ι} {f : (ι → F) → (ι → F)} (h : IsCLFun ℓ T f) :
-    f 0 = 0 := by
-  obtain ⟨P, -, rfl⟩ := h
-  exact P.eval_zero_vec
-
-/-- The paper's `rk:level-1-is-linear`, as an equivalence: the `1`-level CL functions on `V_T`
-are exactly the linear maps on `V_T`. -/
-theorem isCLFun_one_iff {T : Finset ι} {f : (ι → F) → (ι → F)} :
-    IsCLFun 1 T f ↔ ∃ L : RegLinear F T, ⇑L = f := by
-  constructor
-  · rintro ⟨P, hP, rfl⟩
-    cases P with
-    | cons S L₁ next =>
-      refine ⟨L₁.castLE hP.1, funext fun x => ?_⟩
-      rw [CLFun.eval_cons, (next (L₁ x)).eq_zero, CLFun.eval_zero, add_zero,
-        RegLinear.castLE_apply]
-  · rintro ⟨L, rfl⟩
-    exact ⟨.cons T L fun _ => .zero, ⟨Finset.Subset.refl T, fun _ => trivial⟩,
-      funext fun x => by simp⟩
 
 end MIPRE.CL
 

@@ -81,15 +81,6 @@ theorem through_add_smul (u v : Point F m) (t : F) :
     simp [hv]
 
 omit [Fintype F] in
-/-- The base point of a canonical presentation lies on it. -/
-theorem mem_through (u v : Point F m) : (through u v).Mem u := by
-  unfold through Mem
-  split_ifs with h
-  · refine ⟨u (Fin.find (fun j => v j ≠ 0) h), ?_⟩
-    simp only [sub_add_cancel]
-  · exact ⟨0, by simp⟩
-
-omit [Fintype F] in
 /-- The parameter of the base point on its canonical presentation. -/
 theorem param_through (u v : Point F m) :
     (through u v).param u =

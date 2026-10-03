@@ -40,9 +40,6 @@ def paddedPredicate {n Q : ℕ} (V : Verifier 7) (hs : V.sampler.dim (2^n) ≤ Q
     (Fin Q → 𝔽₂) → (Fin Q → 𝔽₂) → Verifier.Answers B → Verifier.Answers B → Bool :=
   fun x y a b => AuxiliaryDecision.sourcePredicate V hs x y a.val b.val
 
-theorem paddedPredicate_eq {n Q : ℕ} (V : Verifier 7) (hs : V.sampler.dim (2^n) ≤ Q) (B : ℕ) :
-    paddedPredicate V hs B = SourcePadding.decider (firstEmbedding hs) (predicate V n B) := rfl
-
 /-- Canonical registers contain the entire original question space. -/
 theorem dimension_le_registerBits {c lam n : ℕ} (hc : 2 ≤ c) (V : Verifier 7)
     (hV : V.IsBounded lam) (hn : 1 ≤ n) :

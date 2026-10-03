@@ -41,11 +41,6 @@ theorem readoutWeight_nonneg (f : I → X) (x : X) : 0 ≤ readoutWeight f x :=
 theorem sum_readoutWeight [Nonempty I] (f : I → X) : ∑ x, readoutWeight f x = 1 := by
   simpa only [readoutWeight, Fintype.sum_unique] using SampledGame.sum_dist f (fun _ => ())
 
-theorem sum_readoutWeight_mul (f : I → X) (v : X → ℝ) :
-    (∑ x, readoutWeight f x * v x) = (∑ i, v (f i)) / Fintype.card I := by
-  simpa only [readoutWeight, Fintype.sum_unique] using
-    SampledGame.sum_dist_mul f (fun _ => ()) (fun x _ => v x)
-
 theorem readout_const_unit : readout (fun _ : I => ()) () = 1 := by
   ext i j
   simp [readout]
@@ -58,14 +53,6 @@ theorem stateSqNorm_registerEPR_readout (f : I → X) (x : X) :
   change bornProb (registerEPR I) (readout f x) 1 = _
   rw [← readout_const_unit, bornProb_registerEPR_readout]
   rfl
-
-theorem normalizedTrace_readout [Nonempty I] (f : I → X) (x : X) :
-    ((normalizedTrace I) (readout f x)).re = readoutWeight f x := by
-  rw [normalizedTrace_apply, readout, Matrix.trace_diagonal, readoutWeight_eq_card]
-  simp only [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, mul_one]
-  simp only [← Complex.ofReal_natCast, ← Complex.ofReal_inv, ← Complex.ofReal_mul,
-    Complex.ofReal_re]
-  ring
 
 end Readout
 
@@ -112,11 +99,6 @@ theorem sum_prefixWeight_supported (P : CL.CLFun F ι ℓ) (k : ℕ) :
       exact prefixWeight_eq_zero P k y hy)
     _ = 1 := sum_prefixWeight P k
 
-theorem sum_prefixWeight_mul (P : CL.CLFun F ι ℓ) (k : ℕ) (v : (ι → F) → ℝ) :
-    (∑ y, prefixWeight P k y * v y) =
-      (∑ z, v ((P.truncate k).eval z)) / Fintype.card (ι → F) :=
-  sum_readoutWeight_mul _ _
-
 /-- The concrete honest prefix measurement has exactly the actual CL law. -/
 theorem hidingPrefixOp_weight [Algebra (ZMod 2) F]
     (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F) :
@@ -124,20 +106,6 @@ theorem hidingPrefixOp_weight [Algebra (ZMod 2) F]
       prefixWeight P k y := by
   rw [Honest.hidingPrefixOp_some]
   exact stateSqNorm_registerEPR_readout _ _
-
-theorem hidingPrefixOp_trace [Algebra (ZMod 2) F]
-    (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F) :
-    ((normalizedTrace (ι → F)) (Honest.hidingPrefixOp P k (some y))).re =
-      prefixWeight P k y := by
-  rw [Honest.hidingPrefixOp_some]
-  exact normalizedTrace_readout _ _
-
-theorem hidingPrefixOp_born [Algebra (ZMod 2) F]
-    (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F) :
-    bornProb (registerEPR (ι → F)) (Honest.hidingPrefixOp P k (some y)) 1 =
-      prefixWeight P k y := by
-  rw [Honest.hidingPrefixOp_some, ← readout_const_unit, bornProb_registerEPR_readout]
-  rfl
 
 end MIPRE.Introspection
 

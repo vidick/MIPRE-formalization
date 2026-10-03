@@ -195,36 +195,6 @@ theorem exec_checkLen {k : ProgId} {pc : Fin maxPc} {j ref : IT}
     exact ⟨c', ((h.trans hr).cast_n (by omega)).cast_out (List.nil_append _), hst,
       (hu.trans hu').mono (by simp) (by simp), hpj', hpr'⟩
 
-/-- `checkLen` halts when `j` is longer than `ref`. -/
-theorem exec_checkLen_fail {k : ProgId} {pc : Fin maxPc} {j ref : IT}
-    (hins : instrAt k pc = .checkLen j ref) (hjr : j ≠ ref) (m : ℕ) :
-    ∀ (c : Cfg input) (q : ℕ), c.state = at_ k pc → (c.inputPos j : ℕ) = q + 1 →
-      (c.inputPos ref : ℕ) = q + 1 → (input ref).length = q + m → q + m < (input j).length →
-    HaltsIn c (m + 1) := by
-  induction m with
-  | zero =>
-    intro c q hq hpj hpr hlen hlt
-    have h := step_instr hq hins
-    simp only [execInstr, inputSymbol_of_lt c j hpj (by omega), inputSymbol_end c ref (by omega),
-      Act.base_out, Option.toList_none, Act.base_next, resolve_halt] at h
-    exact HaltsIn.of_reach h rfl
-  | succ m ih =>
-    intro c q hq hpj hpr hlen hlt
-    have h := step_instr hq hins
-    simp only [execInstr, inputSymbol_of_lt c j hpj (by omega), inputSymbol_of_lt c ref hpr (by omega),
-      Act.mi_out, Act.base_out, Option.toList_none, Act.mi_next, Act.base_next, resolve_stay] at h
-    set c₁ := applyAct (((Act.base (.stay p0)).mi j 1).mi ref 1) (some ⟨k, pc, p0⟩) c with hc₁
-    have hpj₁ : (c₁.inputPos j : ℕ) = (q + 1) + 1 := by
-      simp only [hc₁, applyAct_inputPos, Act.mi_inMoves, Function.update_of_ne hjr,
-        Function.update_self]
-      rw [moveInputPos_val_one (c.inputPos j) (by omega), hpj]
-    have hpr₁ : (c₁.inputPos ref : ℕ) = (q + 1) + 1 := by
-      simp only [hc₁, applyAct_inputPos, Act.mi_inMoves, Function.update_self]
-      rw [moveInputPos_val_one (c.inputPos ref) (by omega), hpr]
-    have := ih c₁ (q + 1) (by simp [hc₁]) hpj₁ hpr₁ (by omega) (by omega)
-    rw [show m + 1 + 1 = 1 + (m + 1) by omega]
-    exact HaltsIn.after (h.cast_out (List.nil_append _)) this
-
 /-! ## `buildAnswer` -/
 
 /-- The bit of an input symbol. -/

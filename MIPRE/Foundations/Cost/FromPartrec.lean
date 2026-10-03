@@ -39,21 +39,6 @@ def encL (v : List ℕ) : Data := Data.list (v.map Data.ofNat)
 
 @[simp] theorem encL_cons (n : ℕ) (v : List ℕ) : encL (n :: v) = .cons (.ofNat n) (encL v) := rfl
 
-theorem encL_injective : Function.Injective encL := by
-  intro v w h
-  induction v generalizing w with
-  | nil => cases w <;> simp_all
-  | cons n v ih =>
-    cases w with
-    | nil => simp at h
-    | cons m w =>
-      simp only [encL_cons, Data.cons.injEq] at h
-      obtain ⟨h1, h2⟩ := h
-      have := Data.toNat?_ofNat n
-      rw [h1, Data.toNat?_ofNat] at this
-      obtain rfl := Option.some.inj this
-      rw [ih h2]
-
 namespace Prog
 
 /-- The body of the translation of `fix f`: run `f`, then dispatch on the head of the

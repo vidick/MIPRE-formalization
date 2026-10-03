@@ -46,13 +46,6 @@ theorem inputs_add_gateCount (n T Q σ : ℕ) :
   unfold gateCount
   omega
 
-theorem gateCount_le (n T Q σ : ℕ) :
-    gateCount n T Q σ ≤ 7 * innerDim T σ + 6 + 2 * roundUp gatePoly n T Q σ := by
-  have h := ceilPower_le_twice (6 * innerDim T σ + 5 + roundUp gatePoly n T Q σ)
-  change outerDim n T Q σ ≤ _ at h
-  have he := inputs_add_gateCount n T Q σ
-  omega
-
 /-- Both dimensions have a polynomial bound in the source runtime parameter. -/
 theorem outerDim_polynomial : ∃ P : Polynomial ℕ, ∀ n T Q σ,
     outerDim n T Q σ ≤ P.eval (LOf n T Q σ) := by

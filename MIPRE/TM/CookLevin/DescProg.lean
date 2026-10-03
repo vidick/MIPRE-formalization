@@ -159,17 +159,6 @@ theorem size_le_esize (C : Circuit) : C.size ≤ esize C := by
   rw [h2, esize_prod]
   omega
 
-/-- The gate-count bound of the describer: the time bound of the program that writes it. -/
-noncomputable def descSize : Polynomial ℕ := descCircP.timeBound
-
-/-- **The describer circuit is small** (item 3 of `thm:succinct-sat`): its gate count is at
-most an explicit polynomial in the size of the parameters. -/
-theorem descCirc_size_le (p : DInp) :
-    (descCirc p.1.1.length p.1.2 p.2.1.1 p.2.1.2 p.2.2.1 p.2.2.2).size ≤
-      descSize.eval (esize p) := by
-  rw [← descCircP_apply]
-  exact (size_le_esize _).trans (descCircP.esize_apply_le p)
-
 /-! ## The width `e` and the index width (item 5) -/
 
 /-- `Nat.size`, in unary: one unit per bit. -/
@@ -189,8 +178,6 @@ noncomputable def eP : PolyTimeFun (ℕ × ℕ) Unary :=
   rw [eP, ap₂_apply, length_addU, ap₂_apply, length_addU, ap₁_apply, length_nsmulU, ap₁_apply,
     length_sizeU, ap₁_apply, length_nsmulU, ap₁_apply, length_sizeU, const_apply, length_unary,
     fst_apply, snd_apply, eOf]
-
-
 
 /-- The index width `m`, as a program: it is affine in `e`, so it is an `append` in unary. -/
 noncomputable def mP : PolyTimeFun Unary ℕ := ap₁ unaryToBin (mU (PolyTimeFun.id _))

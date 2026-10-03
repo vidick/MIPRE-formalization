@@ -285,13 +285,6 @@ theorem l1_eq_add_sum_erase_one [DecidableEq (FreeMonoid G)] (z : NCPoly G) :
   exact (Finset.add_sum_erase _ (fun w => |(z.coeff w).re| + |(z.coeff w).im|)
     (Finset.mem_insert_self 1 _)).symm
 
-/-- Dominance in terms of the `ℓ¹` norm. -/
-theorem dominant_iff_l1 (z : NCPoly G) :
-    Dominant z ↔ l1 z < (z.coeff 1).re + (|(z.coeff 1).re| + |(z.coeff 1).im|) := by
-  classical
-  rw [dominant_iff, l1_eq_add_sum_erase_one]
-  constructor <;> intro h <;> linarith
-
 /-- **A perturbation of a positive multiple of the unit is dominant**: if `‖e‖₁ < c`, then
 `c·1 + e` is dominant. -/
 theorem dominant_smul_one_add {c : ℝ} {e : NCPoly G} (h : l1 e < c) :

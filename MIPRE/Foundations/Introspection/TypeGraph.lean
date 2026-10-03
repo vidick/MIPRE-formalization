@@ -138,17 +138,6 @@ theorem edges_nonempty (E : PauliType → PauliType → Bool) (X Z : PauliType) 
   refine ⟨(introspect false, introspect false), ?_⟩
   simp [edges, CL.Graph.edges, Adj]
 
-/-- The graph's ordered edge count is bounded by the square of its explicit vertex count. -/
-theorem card_edges_le (E : PauliType → PauliType → Bool) (X Z : PauliType) (ℓ : ℕ) :
-    (edges E X Z ℓ).card ≤ (Fintype.card PauliType + 2 * ℓ + 6) ^ 2 := by
-  have h := Finset.card_le_card (Finset.subset_univ (edges E X Z ℓ))
-  simpa only [Finset.card_univ, Fintype.card_prod, QuestionType.card, pow_two] using h
-
-/-- The detyping loss has the explicit exponent dictated by the type set. -/
-theorem detyping_factor (ℓ : ℕ) :
-    (16 : ℝ) ^ Fintype.card (QuestionType PauliType ℓ) =
-      (16 : ℝ) ^ (Fintype.card PauliType + 2 * ℓ + 6) := by rw [QuestionType.card]
-
 /-- In particular, the source's 26-type Pauli test gives the factor `16^(2ℓ + 32)`. -/
 theorem detyping_factor_of_pauli_card (h : Fintype.card PauliType = 26) (ℓ : ℕ) :
     (16 : ℝ) ^ Fintype.card (QuestionType PauliType ℓ) = (16 : ℝ) ^ (2 * ℓ + 32) := by

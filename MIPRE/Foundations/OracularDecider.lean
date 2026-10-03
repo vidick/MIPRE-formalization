@@ -713,9 +713,6 @@ theorem coreTail_closed (j : ℕ) : (coreTail j).WellScoped 1 :=
 noncomputable def core (j : ℕ) : Prog :=
   .let_ (gameStage j cond₁ arg₁ (PolyTimeFun.id Data)) (coreTail j)
 
-theorem core_closed (j : ℕ) : (core j).WellScoped 1 :=
-  ⟨gameStage_closed j _ _ _, (coreTail_closed j).mono (by omega) _⟩
-
 section Stage
 
 variable (j : ℕ) (cond : PolyTimeFun Data Bool) (arg view : PolyTimeFun Data Data)

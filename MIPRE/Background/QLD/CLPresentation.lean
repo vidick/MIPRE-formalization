@@ -46,13 +46,6 @@ def coordEquiv (m : ℕ) : Coord m ≃ ((Bas × Fin m) ⊕ (Unit ⊕ (Fin m ⊕ 
   left_inv c := by cases c <;> rfl
   right_inv c := by rcases c with ⟨W, i⟩ | (u | (i | W)) <;> rfl
 
-theorem card_coord (m : ℕ) : Fintype.card (Coord m) = 3 * m + 3 := by
-  rw [Fintype.card_congr (coordEquiv m)]
-  have hB : Fintype.card Bas = 2 := by decide
-  simp only [Fintype.card_sum, Fintype.card_prod, Fintype.card_fin,
-    Fintype.card_unit, hB]
-  omega
-
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}
 
 def contentVector (c : Content F m) : Coord m → F

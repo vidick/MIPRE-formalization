@@ -117,10 +117,6 @@ theorem mul_eq_zero (hM : IsPVM M) {a b : A} (hab : a ≠ b) : M b * M a = 0 := 
   have := congrFun (hv (Pi.single j 1)) i
   rwa [mulVec_single_one] at this
 
-/-- `M a * M b = 0` for `a ≠ b`. -/
-theorem mul_eq_zero' (hM : IsPVM M) {a b : A} (hab : a ≠ b) : M a * M b = 0 :=
-  hM.mul_eq_zero (Ne.symm hab)
-
 end IsPVM
 
 /-- The coordinate pattern projections of `r : n → A`: `patternProj r a` projects onto the

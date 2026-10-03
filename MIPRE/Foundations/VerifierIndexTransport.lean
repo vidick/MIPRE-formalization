@@ -76,12 +76,6 @@ theorem val_congr_at (ω : ValueModel) (h : SamplerAgreement V W n)
     (fun x y => (game_mu_dimensionEquiv h x y).symm)
     (fun x y a b => (game_D_dimensionEquiv h hD x y a b).symm)
 
-/-- Changing programs away from the current index preserves quantum value. -/
-theorem valStar_congr_at (h : SamplerAgreement V W n)
-    (hD : ∀ x y a b, V.decider.Accepts n x y a b ↔ W.decider.Accepts n x y a b) :
-    V.valStar n T = W.valStar n T :=
-  val_congr_at .tensor h hD
-
 /-- Perfect PCC strategies also depend only on the game at the current index. -/
 theorem hasPerfectPCC_of_congr_at (h : SamplerAgreement V W n)
     (hD : ∀ x y a b, V.decider.Accepts n x y a b ↔ W.decider.Accepts n x y a b)

@@ -206,16 +206,6 @@ theorem sampler_haltsWithin (hℓ : 0 < ℓ) (n B k : ℕ) (h : S.TimeBoundAt n 
     Polynomial.eval_X, Polynomial.eval_C, Data.size_cons, esize, encode_data,
     Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using hr
 
-/-- Polynomial boundedness transfers to the genuine detyped sampler. -/
-theorem sampler_timeBoundAt (hℓ : 0 < ℓ) (n B k : ℕ) (h : S.TimeBoundAt n B k) :
-    ∃ B' k', (sampler E S hℓ).TimeBoundAt n B' k' := by
-  let Q := samplerCost E n B k
-  refine ⟨∑ i ∈ Finset.range (Q.natDegree + 1), Q.coeff i, Q.natDegree, ?_⟩
-  intro q
-  obtain ⟨r, time, ht, hr⟩ := sampler_haltsWithin E S hℓ n B k h q
-  exact ⟨r, time, ht.trans ((polynomial_eval_mono Q (Nat.le_succ q.size)).trans
-    (polynomial_eval_le_sum_coeff_mul_pow Q (by omega))), hr⟩
-
 /-- Detyping preserves a polynomial query bound with a degree independent of `n`. -/
 theorem sampler_timeBoundAt_uniform_degree (hℓ : 0 < ℓ) (n B k : ℕ)
     (h : S.TimeBoundAt n B k) :

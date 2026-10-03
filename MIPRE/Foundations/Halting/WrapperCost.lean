@@ -192,16 +192,6 @@ theorem wrapHead_cost' (Cf : ℕ → ℕ) (kf : ℕ)
   simp only [Data.size_cons, hsz, hszS, hszD]
   omega
 
-/-- **The head.** Its cost depends on the index only: the dimension query runs on a fixed
-input, and the conversion to unary on the dimension. -/
-theorem wrapHead_cost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim) :
-    ∃ H : ℕ → ℕ, PolyBounded H ∧ ∀ (c : Prog) (n : ℕ) (d r : Data) (t : ℕ),
-      Eval (wrapHeadEnv S n d) c r t →
-        ∃ t', t' ≤ t + H n ∧ Eval [.cons (encode n) d] (wrapHead U.univ S.prog c) r t' := by
-  obtain ⟨Cf, kf, hCf, hf⟩ := hS
-  exact ⟨fun n => 60 * wrapHeadZ U S Cf kf n ^ 2,
-    ((polyBounded_wrapHeadZ U S hCf kf hdim).pow 2).const_mul 60, wrapHead_cost' U S Cf kf hf⟩
-
 end Stages
 
 /-! ## The length check, on arbitrary data -/
@@ -210,9 +200,6 @@ end Stages
 length it measured rather than by a bit string: the wrapper is run on malformed inputs too. -/
 def wrapCheckEnvN (k m : ℕ) (env : Env) : Env :=
   .nil :: .nil :: encode true :: .cons (Data.ofNat k) (Data.ofNat m) :: Data.ofNat k :: env
-
-theorem wrapCheckEnv_eq (l : BitStr) (m : ℕ) (env : Env) :
-    wrapCheckEnv l m env = wrapCheckEnvN l.length m env := rfl
 
 /-- A generous bound on the cost of one length check, in the size of the datum tested and the
 number it is compared with. -/
@@ -298,10 +285,6 @@ variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ)
 def wrapPreEnvD (n : ℕ) (A B C : Data) : Env :=
   B :: C :: A :: (Data.cons B C) :: wrapHeadEnv S n (Data.cons A (Data.cons B C))
 
-theorem wrapPreEnvD_eq (n : ℕ) (x y a b : BitStr) :
-    wrapPreEnv S n x y a b
-      = wrapPreEnvD S n (encode x) (encode y) (.cons (encode a) (encode b)) := rfl
-
 /-- **The prefix, on every input, with explicit constants.** On a tail of the shape
 `cons A (cons B C)` it hands the environment `wrapPreEnvD` to its continuation; on a shorter
 tail it rejects outright. Both cost `60 · wrapHeadZ n ^ 2 + 4` beyond the continuation. -/
@@ -335,22 +318,6 @@ theorem wrapPre_cost' (Cf : ℕ → ℕ) (kf : ℕ)
     obtain ⟨u, hu, hrun⟩ := hrej
     obtain ⟨t', ht', h'⟩ := hhead (.elim 4 .nil (.elim 1 .nil c)) n d .nil u hrun
     exact ⟨t', by omega, h'⟩
-
-/-- **The prefix, on every input.** On a tail of the shape `cons A (cons B C)` it hands the
-environment `wrapPreEnvD` to its continuation; on a shorter tail it rejects outright. Both
-cost `H n` beyond the continuation, `H` polynomially bounded. -/
-theorem wrapPre_cost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim) :
-    ∃ H : ℕ → ℕ, PolyBounded H ∧
-      (∀ (c : Prog) (n : ℕ) (A B C r : Data) (t : ℕ),
-        Eval (wrapPreEnvD S n A B C) c r t →
-          ∃ t' ≤ t + H n, Eval [.cons (encode n) (.cons A (.cons B C))]
-            (wrapPre U.univ S.prog c) r t') ∧
-      (∀ (c : Prog) (n : ℕ) (d : Data), d.spine ≤ 1 →
-        ∃ t ≤ H n, Eval [.cons (encode n) d] (wrapPre U.univ S.prog c) .nil t) := by
-  obtain ⟨Cf, kf, hCf, hf⟩ := hS
-  exact ⟨fun n => 60 * wrapHeadZ U S Cf kf n ^ 2 + 4,
-    (((polyBounded_wrapHeadZ U S hCf kf hdim).pow 2).const_mul 60).add_const 4,
-    wrapPre_cost' U S Cf kf hf⟩
 
 end Pre
 

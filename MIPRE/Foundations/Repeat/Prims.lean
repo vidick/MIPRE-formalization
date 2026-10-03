@@ -81,76 +81,8 @@ theorem length_le_size_list' (l : List Data) : l.length + 1 ≤ (list l).size :=
   | nil => simp
   | cons a l ih => simp only [List.length_cons, size_list_cons]; have := size_pos a; omega
 
-/-- The pieces of `s` consecutive elements of a list, the last one possibly shorter
-(`s > 0`). -/
-def chunks {α : Type*} (s : ℕ) (hs : 0 < s) : List α → List (List α)
-  | [] => []
-  | h :: l => (h :: l).take s :: chunks s hs ((h :: l).drop s)
-termination_by l => l.length
-decreasing_by simp; omega
-
-theorem chunks_nil {α : Type*} (s : ℕ) (hs : 0 < s) : chunks s hs ([] : List α) = [] := by
-  rw [chunks]
-
-theorem chunks_cons {α : Type*} (s : ℕ) (hs : 0 < s) (h : α) (l : List α) :
-    chunks s hs (h :: l) = (h :: l).take s :: chunks s hs ((h :: l).drop s) := by rw [chunks]
-
-theorem chunks_of_ne_nil {α : Type*} (s : ℕ) (hs : 0 < s) {l : List α} (hl : l ≠ []) :
-    chunks s hs l = l.take s :: chunks s hs (l.drop s) := by
-  cases l with
-  | nil => exact absurd rfl hl
-  | cons h l => exact chunks_cons s hs h l
-
-/-- The pieces reassemble the list. -/
-theorem flatten_chunks {α : Type*} (s : ℕ) (hs : 0 < s) (l : List α) :
-    (chunks s hs l).flatten = l := by
-  induction l using chunks.induct s hs with
-  | case1 => simp [chunks_nil]
-  | case2 h l ih => rw [chunks_cons, List.flatten_cons, ih, List.take_append_drop]
-
 /-- The `i`-th piece of `s` elements of a list. -/
 def chunk {α : Type*} (s i : ℕ) (l : List α) : List α := (l.drop (i * s)).take s
-
-/-- A list of length `k · s` cuts into the `k` pieces `chunk s i l`. -/
-theorem chunks_eq_ofFn {α : Type*} (s : ℕ) (hs : 0 < s) : ∀ (k : ℕ) (l : List α),
-    l.length = k * s → chunks s hs l = List.ofFn fun i : Fin k => chunk s i l
-  | 0, l, hl => by
-    have : l = [] := List.eq_nil_of_length_eq_zero (by simpa using hl)
-    subst this
-    simp [chunks_nil]
-  | k + 1, l, hl => by
-    have hne : l ≠ [] := by
-      intro h; subst h; simp at hl; nlinarith
-    rw [chunks_of_ne_nil s hs hne, List.ofFn_succ]
-    have hlen : (l.drop s).length = k * s := by
-      rw [List.length_drop, hl]; rw [Nat.succ_mul]; omega
-    rw [chunks_eq_ofFn s hs k (l.drop s) hlen]
-    congr 1
-    · simp [chunk]
-    · congr 1
-      funext i
-      simp only [chunk, Fin.val_succ, List.drop_drop]
-      congr 2
-      ring
-
-theorem chunks_of_length_mul {α : Type*} (s : ℕ) (hs : 0 < s) (k : ℕ) (l : List α)
-    (hl : l.length = k * s) : (chunks s hs l).length = k ∧ ∀ p ∈ chunks s hs l, p.length = s := by
-  rw [chunks_eq_ofFn s hs k l hl]
-  refine ⟨by simp, fun p hp => ?_⟩
-  rw [List.mem_ofFn] at hp
-  obtain ⟨i, rfl⟩ := hp
-  simp only [chunk, List.length_take, List.length_drop, hl]
-  have hi : (i + 1) * s ≤ k * s := Nat.mul_le_mul_right s i.isLt
-  rw [Nat.add_mul, one_mul] at hi
-  rw [min_eq_left (by omega)]
-
-theorem chunks_map {α β : Type*} (s : ℕ) (hs : 0 < s) (f : α → β) (l : List α) :
-    chunks s hs (l.map f) = (chunks s hs l).map (List.map f) := by
-  induction l using chunks.induct s hs with
-  | case1 => simp [chunks_nil]
-  | case2 h l ih =>
-    have e : (h :: l).map f = f h :: l.map f := rfl
-    rw [e, chunks_cons, chunks_cons, List.map_cons, ← e, ← List.map_take, ← List.map_drop, ih]
 
 /-- The pieces of `s` elements of two lists, in lockstep: as many as the first list has, the
 second one's possibly shorter or empty. -/

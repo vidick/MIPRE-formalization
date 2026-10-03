@@ -198,10 +198,6 @@ def matrixIsometry (V : Matrix m n ℂ) (hV : Vᴴ * V = 1) :
     show ‖evec (V *ᵥ v)‖ = ‖evec v‖
     exact norm_evec_mulVec_eq hV v
 
-omit [DecidableEq m] in
-theorem matrixIsometry_apply (V : Matrix m n ℂ) (hV : Vᴴ * V = 1) (v : EuclideanSpace ℂ n) :
-    WithLp.ofLp (matrixIsometry V hV v) = V *ᵥ WithLp.ofLp v := rfl
-
 /-- **Conjugation by a matrix with orthonormal columns**, `X ↦ V X Vᴴ`, a `⋆`-homomorphism. -/
 def conjHom (V : Matrix m n ℂ) (hV : Vᴴ * V = 1) : Matrix n n ℂ →⋆ₙₐ[ℂ] Matrix m m ℂ where
   toFun X := V * X * Vᴴ

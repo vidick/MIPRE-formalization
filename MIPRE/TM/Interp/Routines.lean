@@ -950,7 +950,6 @@ theorem exec_charge_one_fail {k : ProgId} {pc : Fin maxPc}
 
 /-! ## Input heads -/
 
-theorem SignType.one_eq_pos : (1 : SignType) = .pos := rfl
 theorem SignType.neg_one_eq_neg : (-1 : SignType) = .neg := rfl
 
 /-- The symbol under an input head at position `q + 1`, `q < |input j|`. -/

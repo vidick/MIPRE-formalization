@@ -49,10 +49,6 @@ def canonicalIntroAnswer (a : ParsedAnswer (ι → F) A PauliAnswer) :
     TypedEstimates.introspectPair (canonicalIntroAnswer a) = TypedEstimates.introspectPair a :=
   introspectPair_restoreIntroAnswer _
 
-theorem canonicalIntroAnswer_idempotent (a : ParsedAnswer (ι → F) A PauliAnswer) :
-    canonicalIntroAnswer (canonicalIntroAnswer a) = canonicalIntroAnswer a := by
-  simp only [canonicalIntroAnswer, introspectPair_restoreIntroAnswer]
-
 theorem check_canonicalIntroAnswer_left
     (L : Bool → CL.CLFun F ι ℓ) (X Z : PauliType)
     (projectPauli : PauliAnswer → ι → F)
@@ -64,21 +60,6 @@ theorem check_canonicalIntroAnswer_left
       (canonicalIntroAnswer a) b =
       TypedPredicate.check L X Z projectPauli D DP (QuestionType.introspect w) t a b := by
   cases a
-  case pair => rfl
-  all_goals simp [canonicalIntroAnswer, restoreIntroAnswer, TypedEstimates.introspectPair,
-    TypedPredicate.check, TypedPredicate.fits]
-
-theorem check_canonicalIntroAnswer_right
-    (L : Bool → CL.CLFun F ι ℓ) (X Z : PauliType)
-    (projectPauli : PauliAnswer → ι → F)
-    (D : (ι → F) → (ι → F) → A → A → Bool)
-    (DP : PauliType → PauliType → PauliAnswer → PauliAnswer → Bool)
-    (w : Bool) (t : QuestionType PauliType ℓ)
-    (a b : ParsedAnswer (ι → F) A PauliAnswer) :
-    TypedPredicate.check L X Z projectPauli D DP t (QuestionType.introspect w)
-      a (canonicalIntroAnswer b) =
-      TypedPredicate.check L X Z projectPauli D DP t (QuestionType.introspect w) a b := by
-  cases b
   case pair => rfl
   all_goals simp [canonicalIntroAnswer, restoreIntroAnswer, TypedEstimates.introspectPair,
     TypedPredicate.check, TypedPredicate.fits]
@@ -120,19 +101,6 @@ theorem canonicalizeIntro_factor
         restoreIntroAnswer := by
   rw [canonicalizeIntro_at, POVMIn.map_map]
   rfl
-
-theorem restoreIntroAnswer_map_recover (M : POVMIn (Option ((ι → F) × A)) R) :
-    (M.map (restoreIntroAnswer (PauliAnswer := PauliAnswer))).map TypedEstimates.introspectPair = M := by
-  rw [POVMIn.map_map]
-  simp only [introspectPair_restoreIntroAnswer]
-  exact POVMIn.map_id M
-
-theorem canonicalizeIntro_recover
-    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →
-      POVMIn (ParsedAnswer (ι → F) A PauliAnswer) R) (w : Bool) :
-    (canonicalizeIntro MA w (QuestionType.introspect w, 0)).map TypedEstimates.introspectPair =
-      (MA (QuestionType.introspect w, 0)).map TypedEstimates.introspectPair := by
-  rw [canonicalizeIntro_factor, restoreIntroAnswer_map_recover]
 
 theorem canonicalizeIntro_isPVM
     (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →

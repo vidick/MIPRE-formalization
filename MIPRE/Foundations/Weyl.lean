@@ -553,9 +553,6 @@ def dotF (a b : n → F) : F := ∑ l, a l * b l
 theorem dotF_comm (a b : n → F) : dotF a b = dotF b a :=
   Finset.sum_congr rfl fun l _ => mul_comm (a l) (b l)
 
-theorem trDot_eq_trace_dotF (a b : n → F) :
-    trDot a b = Algebra.trace (ZMod 2) F (dotF a b) := rfl
-
 /-- Scaling one argument of the pairing pulls the scalar out. -/
 theorem trDot_smul (r : F) (v e : n → F) :
     trDot (r • v) e = Algebra.trace (ZMod 2) F (r * dotF v e) := by

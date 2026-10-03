@@ -326,14 +326,8 @@ theorem mem_pauliA {a : PauliSpace →L[ℂ] PauliSpace} : a ∈ pauliA ↔ a �
 /-- `W g` as an element of `pauliA`. -/
 def w (g : Label) : pauliA := ⟨W g, W_mem_pauliSpan g⟩
 
-/-- `w g w h = ω(g, h) w (g + h)`. -/
-theorem w_mul (g h : Label) : w g * w h = phase g h • w (g + h) := Subtype.ext (W_mul g h)
-
 /-- `w 0 = 1`. -/
 theorem w_zero : w 0 = 1 := Subtype.ext W_zero
-
-/-- `(w g)⋆ = ω(g, g) w g`. -/
-theorem star_w (g : Label) : star (w g) = phase g g • w g := Subtype.ext (star_W g)
 
 /-- **Induction over the span**, for elements of `pauliA`. -/
 theorem pauliA_induction {p : pauliA → Prop} (hw : ∀ g, p (w g)) (h0 : p 0)

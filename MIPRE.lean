@@ -73,7 +73,6 @@ public import MIPRE.Background.Introspection.DecisionKernelInput
 public import MIPRE.Background.Introspection.DecisionKernelPauli
 public import MIPRE.Background.Introspection.DecisionKernelSoundness
 public import MIPRE.Background.Introspection.ExplicitGame
-public import MIPRE.Background.Introspection.ExplicitStrategy
 public import MIPRE.Background.Introspection.HonestPauliCoarse
 public import MIPRE.Background.Introspection.HonestPauliEdges
 public import MIPRE.Background.Introspection.HonestPauliGame
@@ -1233,7 +1232,6 @@ public import MIPRE.Foundations.Introspection.AuxiliaryHidingCoreProgram
 public import MIPRE.Foundations.Introspection.AuxiliaryHidingNextProgram
 public import MIPRE.Foundations.Introspection.AuxiliaryMaskProgram
 public import MIPRE.Foundations.Introspection.AuxiliaryPrefixGuardProgram
-public import MIPRE.Foundations.Introspection.AuxiliaryPrefixScan
 public import MIPRE.Foundations.Introspection.AuxiliaryPrefixSolve
 public import MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks
 public import MIPRE.Foundations.Introspection.AuxiliaryQuotientProgram
@@ -1280,7 +1278,6 @@ public import MIPRE.Foundations.Introspection.ConditionalNormalizerStepSeed
 public import MIPRE.Foundations.Introspection.ConditionalNormalizerTests
 public import MIPRE.Foundations.Introspection.Conditioning
 public import MIPRE.Foundations.Introspection.DecisionPreparation
-public import MIPRE.Foundations.Introspection.DecisionPreparationBound
 public import MIPRE.Foundations.Introspection.DecisionPreparationCost
 public import MIPRE.Foundations.Introspection.DynamicParser
 public import MIPRE.Foundations.Introspection.DynamicParserSlice
@@ -1745,7 +1742,6 @@ public import MIPRE.TM.MultiInput.Complexity
 public import MIPRE.TM.MultiInput.Congr
 public import MIPRE.TM.MultiInput.Deterministic
 public import MIPRE.TM.MultiInput.OneInputEquiv
-public import MIPRE.TM.MultiInput.TapeLemmas
 public import MIPRE.TM.Universal.Spec
 public import MIPRE.Tactics
 public import MIPRE.Tsirelson

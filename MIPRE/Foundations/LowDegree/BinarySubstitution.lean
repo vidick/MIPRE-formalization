@@ -35,17 +35,6 @@ theorem polyOfBits_substitutePowerBits (a : BitStr) (u : Unary) :
   rw [polyOfBits_eq_evalBits, evalBits_substitutePowerBits]
   exact (eval₂_polyOfBits Polynomial.C (X ^ (u.length + 1)) a).symm
 
-/-- The intermediate and final coefficient lengths grow by at most the unary exponent. -/
-theorem substitutePowerBits_width (a : BitStr) (u : Unary) :
-    (substitutePowerBits a u).length ≤ a.length * (u.length + 1) := by
-  apply (length_normalizeBits_le _).trans
-  have h : (a.flatMap (fun b => b :: List.replicate u.length false)).length =
-      a.length * (u.length + 1) := by
-    induction a with
-    | nil => simp
-    | cons b a ih => simp [ih, Nat.add_mul, Nat.add_comm]; omega
-  exact h.le
-
 noncomputable def coefficientBlockProg : PolyTimeFun (Bool × Unary) BitStr :=
   cons fst (replicate.comp (snd.pair (const false)))
 

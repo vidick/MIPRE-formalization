@@ -68,20 +68,6 @@ theorem seedOf_injective (hm : m ∣ Fintype.card F) (i : Fin m) :
   simp only [equivFin_seedOf] at h'
   exact Fin.ext (by omega)
 
-omit [DecidableEq F] in
-/-- Conversely every seed is one of the `seedOf`, at its own fibre position. -/
-theorem exists_seedOf (hm : m ∣ Fintype.card F) (s : F) :
-    ∃ r : Fin (Fintype.card F / m), seedOf hm (chi hm s) r = s := by
-  have hc0 : 0 < Fintype.card F / m := card_div_pos hm
-  refine ⟨⟨((Fintype.equivFin F) s : ℕ) % (Fintype.card F / m), Nat.mod_lt _ hc0⟩, ?_⟩
-  rw [seedOf, Equiv.symm_apply_eq]
-  refine Fin.ext ?_
-  show (chi hm s : ℕ) * (Fintype.card F / m)
-      + ((Fintype.equivFin F) s : ℕ) % (Fintype.card F / m)
-    = ((Fintype.equivFin F) s : ℕ)
-  rw [chi_val, mul_comm]
-  exact Nat.div_add_mod _ _
-
 end MIPRE.LIDT.Adapter
 
 end

@@ -85,11 +85,6 @@ theorem accepts_iff_runForD {n T k : ℕ} (hb : D.TimeBoundAt n T k) (x y a b : 
         (acceptBudget T k x y a b) = some (encode true) :=
   (Machine.runForD_eq_some_iff (hb (encode (x, y, a, b)))).symm
 
-/-- Hence acceptance is decidable, for a decider that obeys a time bound at the index. -/
-def decidableAccepts {n T k : ℕ} (hb : D.TimeBoundAt n T k) (x y a b : BitStr) :
-    Decidable (D.Accepts n x y a b) :=
-  decidable_of_iff _ (D.accepts_iff_runForD hb x y a b).symm
-
 end Decider
 
 namespace Verifier
@@ -103,11 +98,6 @@ theorem accepts_iff_runForD {n : ℕ} (hb : V.IsBounded n) (hn : 2 ≤ n) (x y a
       Machine.runForD (encode V.decider.prog) (encode (n, x, y, a, b))
         (Decider.acceptBudget (n ^ n) n x y a b) = some (encode true) :=
   V.decider.accepts_iff_runForD (hb.1 n hn).2.2 x y a b
-
-/-- Hence acceptance by an `n`-bounded verifier is decidable. -/
-def decidableAccepts {n : ℕ} (hb : V.IsBounded n) (hn : 2 ≤ n) (x y a b : BitStr) :
-    Decidable (V.decider.Accepts n x y a b) :=
-  V.decider.decidableAccepts (hb.1 n hn).2.2 x y a b
 
 end Verifier
 
@@ -293,7 +283,6 @@ theorem totalWeight_weightList (nX nA s : ℕ) (fA fB : BitStr → ℕ)
   simp only [questionWeight_weightList]
   rw [sum_filter_length fA fB _ hA hB, Data.length_bitStrsOfLen]
 
-
 /-- **Counting over `𝔽₂^s` by enumerating bit strings.** The bit strings of length `s` are the
 vectors of `𝔽₂^s`, so a count over one is a count over the other — which is what turns the
 tabulation's weight list into the numerator of `CL.clDist`. -/
@@ -454,7 +443,6 @@ theorem mem_accList_iff {s T : ℕ} {acc? : BitStr → BitStr → BitStr → Bit
   · rintro ⟨x, hx, y, hy, a, ha, b, hb, hc, rfl, rfl, rfl, rfl⟩
     exact ⟨x, hx, y, hy, a, ha, b, hb, by rw [if_pos hc]⟩
 
-
 /-! ## The acceptance table is primitive recursive
 
 Written as four nested `Primrec.list_flatMap` the proof diverges at `whnf`: each body carries
@@ -495,7 +483,6 @@ theorem primrec_tuples : Primrec₂ tuples := by
     Primrec.list_flatMap (Data.primrec_bitStrsOfLen.comp (Primrec.fst.comp Primrec.fst)) h3.to₂
   exact (Primrec.list_flatMap (Data.primrec_bitStrsOfLen.comp Primrec.fst) h2.to₂).to₂
 
-
 def accListW (s T : ℕ) (fA fB : BitStr → ℕ)
     (acc? : BitStr → BitStr → BitStr → BitStr → Bool) : List (ℕ × ℕ × ℕ × ℕ) :=
   (Data.bitStrsOfLen s).flatMap fun x =>
@@ -505,9 +492,6 @@ def accListW (s T : ℕ) (fA fB : BitStr → ℕ)
           if acc? x y a b then
             some (fA x, fB y, (Data.bitStrsLE T).idxOf a, (Data.bitStrsLE T).idxOf b)
           else none
-
-theorem accList_eq_accListW (s T : ℕ) (acc? : BitStr → BitStr → BitStr → BitStr → Bool) :
-    accList s T acc? = accListW s T bitsToIdx bitsToIdx acc? := rfl
 
 theorem mem_accListW_iff {s T : ℕ} {fA fB : BitStr → ℕ}
     {acc? : BitStr → BitStr → BitStr → BitStr → Bool} {i j k l : ℕ} :
@@ -561,16 +545,6 @@ theorem primrec_accListW {α : Type*} [Primcodable α] {s T : α → ℕ} {fA fB
               (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))) hbl))))
   exact (Primrec.listFilterMap (primrec_tuples.comp hs hT) hbody).of_eq fun a =>
     (accListW_eq_filterMap (s a) (T a) fA fB (acc? a)).symm
-
-/-- The original `primrec_accList` is the case `fA = fB = bitsToIdx`, so generalizing costs
-nothing downstream. -/
-theorem primrec_accList_of_W {α : Type*} [Primcodable α] {s T : α → ℕ}
-    {acc? : α → BitStr → BitStr → BitStr → BitStr → Bool}
-    (hs : Primrec s) (hT : Primrec T)
-    (hacc : Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>
-      acc? q.1 q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2) :
-    Primrec fun a => Verifier.accList (s a) (T a) (acc? a) :=
-  primrec_accListW hs hT primrec_bitsToIdx primrec_bitsToIdx hacc
 
 /-- Prepending a fixed tag bit is primitive recursive. -/
 theorem primrec_tagIdxOf (b : Bool) : Primrec fun z : BitStr => bitsToIdx (b :: z) :=

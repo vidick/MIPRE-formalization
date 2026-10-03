@@ -147,11 +147,6 @@ theorem descendingUnary_eq (u : Unary) :
     descendingUnary u = List.ofFn (fun i : Fin (u.length + 1) => u.drop i) := by
   simp [descendingUnary, recordIterates, List.tail_iterate]
 
-/-- Enumerated values lie between zero and the supplied bound, each exactly once. -/
-theorem descendingUnary_length (u : Unary) : (descendingUnary u).length = u.length + 1 := by
-  simp [descendingUnary_eq]
-
-
 /-- A unary value occurs in the descending enumeration exactly when it is bounded by the input. -/
 theorem mem_descendingUnary_iff (u d : Unary) : d ∈ descendingUnary u ↔ d.length ≤ u.length := by
   rw [descendingUnary_eq, List.mem_ofFn]

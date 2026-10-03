@@ -65,11 +65,6 @@ def Game.reindex (G : Game X Y A B) (eX : X' ≃ X) (eY : Y' ≃ Y) : Game X' Y'
     exact Fintype.sum_equiv eX _ _ fun x => Fintype.sum_equiv eY _ _ fun y => rfl
   D x y a b := G.D (eX x) (eY y) a b
 
-theorem quantumValue_reindex (G : Game X Y A B) (eX : X' ≃ X) (eY : Y' ≃ Y) :
-    quantumValue (G.reindex eX eY) = quantumValue G :=
-  quantumValue_eq_of_equiv G (G.reindex eX eY) eX eY (Equiv.refl A) (Equiv.refl B)
-    (fun _ _ => rfl) (fun _ _ _ _ => rfl)
-
 end Reindex
 
 /-! ## Blocks of a question -/
@@ -127,11 +122,6 @@ noncomputable def midGame : Game ((repVerifier V lam tau beta).Questions n)
     (Fin (Repetition.reps lam tau n) → Answers (Repetition.parseBound lam beta n)) :=
   ((V.game n (Repetition.parseBound lam beta n)).repeat (Repetition.reps lam tau n)).reindex
     (questionsEquiv V lam tau beta n) (questionsEquiv V lam tau beta n)
-
-theorem quantumValue_midGame : quantumValue (midGame V lam tau beta n) =
-    quantumValue ((V.game n (Repetition.parseBound lam beta n)).repeat
-      (Repetition.reps lam tau n)) :=
-  quantumValue_reindex _ _ _
 
 /-- The distribution of the output's game is that of the repeated game. -/
 theorem game_μ_eq (T : ℕ) (x y : (repVerifier V lam tau beta).Questions n) :
@@ -207,15 +197,6 @@ theorem val_repVerifier (ω : ValueModel) (T : ℕ) (hT : Repetition.reps lam ta
     (game_D_range V lam tau beta n T hT)).trans ?_
   exact ω.eq_of_equiv _ _ (questionsEquiv V lam tau beta n) (questionsEquiv V lam tau beta n)
     (Equiv.refl _) (Equiv.refl _) (fun _ _ => rfl) (fun _ _ _ _ => rfl)
-
-/-- The value of the output's game is that of the repeated game: `val_repVerifier` in the
-tensor-product model. -/
-theorem valStar_repVerifier (T : ℕ) (hT : Repetition.reps lam tau n *
-      (4 * Repetition.parseBound lam beta n + 2) + 1 ≤ T) :
-    (repVerifier V lam tau beta).valStar n T =
-      quantumValue ((V.game n (Repetition.parseBound lam beta n)).repeat
-        (Repetition.reps lam tau n)) :=
-  val_repVerifier V lam tau beta n .tensor T hT
 
 /-- **Completeness**: a value-`1` PCC strategy for `𝒱_n` at the parse length gives one for the
 output's game, the tensor power relabeled and extended to the output's answers. -/

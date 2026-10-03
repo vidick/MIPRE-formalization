@@ -24,8 +24,6 @@ variable {F : Type*} [Field F] {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ :
 
 abbrev RegisterHideAnswer (F ι : Type*) := (ι → F) × (ι → F) × (ι → F)
 
-abbrev HideAnswer (F : Type*) (n : ℕ) := RegisterHideAnswer F (Fin n)
-
 def decodeHide (P : CL.CLFun F (ι) ℓ) (a : RegisterHideAnswer F ι) : RegisterHideAnswer F ι :=
   (a.1, decodeDual P a.1 a.2.1, a.2.2)
 

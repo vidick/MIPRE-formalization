@@ -79,12 +79,6 @@ variable {β : Type*} [SizedEncoding β]
 /-- The final transformation is itself a single polynomial-time function. -/
 def compiler (F : PolyTimeFun Input β) : PolyTimeFun Input β := F.comp clamp
 
-theorem compiler_bounded (F : PolyTimeFun Input β) {ℓ lam : ℕ}
-    (V : Verifier ℓ) (hV : V.IsBounded lam) :
-    compiler F ((V.sampler.prog, V.decider.prog), lam) =
-      F ((V.sampler.prog, V.decider.prog), lam) := by
-  simp only [compiler, comp_apply, clamp_bounded V hV]
-
 /-- The output polynomial uses only the fixed compiler and the parameter. -/
 theorem compiler_size_le_eval (F : PolyTimeFun Input β) (S D : Prog) (lam : ℕ) :
     esize (compiler F ((S, D), lam)) ≤ F.timeBound.eval (13 * (lam + 1)) :=

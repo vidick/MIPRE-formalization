@@ -141,12 +141,6 @@ theorem shoupHornerProg_ofFn (k : ℕ) (hk : 1 ≤ k) {n : ℕ}
   rw [← evalCoeffs_ofFn]
   simpa only [BinField.vecBits, List.map_ofFn] using shoupHornerProg_correct k hk x (List.ofFn f)
 
-/-- A single polynomial bounds every raw input, including malformed vectors. -/
-theorem shoupHornerProg_runs (input : Unary × BitStr × List BitStr) :
-    ∃ t ≤ shoupHornerProg.timeBound.eval (esize input),
-      shoupHornerProg.code.Runs (encode input) (encode (shoupHornerProg input)) t :=
-  shoupHornerProg.computes input
-
 end MIPRE.Introspection.FieldPolynomialProgram
 end
 

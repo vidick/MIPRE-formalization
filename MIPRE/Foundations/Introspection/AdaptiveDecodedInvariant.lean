@@ -47,11 +47,6 @@ def nextOptionDecoder (P : CL.CLFun F ι ℓ) (k : ℕ) :
 theorem nextOptionDecoder_none (P : CL.CLFun F ι ℓ) (k : ℕ) (v : ι → F) :
     nextOptionDecoder (A := A) P k (v, none) = none := rfl
 
-theorem nextOptionDecoder_some (P : CL.CLFun F ι ℓ) (k : ℕ)
-    (v x : ι → F) (a : A) :
-    nextOptionDecoder P k (v, some (x, a)) =
-      some (v + CL.proj (stageRemaining P (k + 1) v) x, a) := rfl
-
 theorem stageAnswerDecode_nextOptionDecoder {P : CL.CLFun F ι ℓ} {T : Finset ι}
     (hP : P.SupportedOn T) (k : ℕ) (y : ι → F)
     (z : Fin (Fintype.card (P.factorOfPrefix k y)) → F)
@@ -152,19 +147,6 @@ theorem registeredReplacement_nextOption_mats (P : CL.CLFun F ι ℓ)
         ((nextPrefixDecodedPOVM P hP k none D hD (nextOptionDecoder P k) v).op a) := by
   rw [registeredReplacement_nextOption_at P hP k D hD MA q]
   exact nextPrefixJointPOVM_map_mats P hP k none D hD (nextOptionDecoder P k) a
-
-theorem registeredReplacement_nextOption_isPVM (P : CL.CLFun F ι ℓ)
-    (hP : P.SupportedOn univ) (k : ℕ)
-    (D : AdaptiveDilationFamily P k 𝒜 T (Option ((ι → F) × A)))
-    (hD : ∀ y z, IsPVMIn (D y z))
-    (MA : X → POVMIn (ParsedAnswer (ι → F) A PauliAnswer) (Matrix (ι → F) (ι → F) 𝒜))
-    (q : X) :
-    IsPVMIn ((registeredReplacement MA q ((adaptiveReplacementPOVM P hP k D hD).map
-      (fun p => restoreIntroAnswer (nextOptionDecoder P k (advanceStageAnswer P k p)))) q).map
-        TypedEstimates.introspectPair).op := by
-  rw [registeredReplacement_nextOption_at P hP k D hD MA q]
-  exact POVMIn.isPVMIn_map (M := nextPrefixJointPOVM P hP k none D hD)
-    (nextPrefixJoint_isPVM P hP k none D hD) _
 
 end MIPRE.Introspection
 end

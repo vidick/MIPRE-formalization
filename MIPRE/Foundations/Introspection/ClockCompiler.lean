@@ -45,18 +45,11 @@ def codeContext : PolyTimeFun (Prog × Prog) Prog :=
   ap₂ codeLet (const fstProg)
     (ap₂ codeLet fst (ap₂ codeLet (const (.cons (callVar 2 sndProg) (.var 0))) snd))
 
-theorem codeContext_apply (p : Prog) (post : PolyTimeFun (Data × Data) Data) :
-    codeContext (p, post.code) = callWithContext p post := rfl
-
 def codeRoute (route : PolyTimeFun Data (Bool × Data)) (post : PolyTimeFun (Data × Data) Data) :
     PolyTimeFun Prog Prog :=
   ap₂ codeLet (const route.code)
     (ap₂ codeElim (const .nil) (ap₂ codeElim (const (.var 1))
       ((codeCall 3).comp (codeContext.comp ((PolyTimeFun.id Prog).pair (const post.code))))))
-
-theorem codeRoute_apply (route : PolyTimeFun Data (Bool × Data))
-    (post : PolyTimeFun (Data × Data) Data) (p : Prog) :
-    codeRoute route post p = routeOneCall route p post := rfl
 
 def clockStageCompiler (k : ℕ) : PolyTimeFun ℕ Prog :=
   (codeRoute ClockProgram.clockRoute treePair).comp (growingClockCompiler k)

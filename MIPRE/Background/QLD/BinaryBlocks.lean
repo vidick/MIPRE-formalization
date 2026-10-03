@@ -29,50 +29,12 @@ def numberedRows {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) : List
 theorem numberedRows_length {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
     (numberedRows E x).length = 3 * m + 3 := List.length_ofFn
 
-theorem numberedRows_width {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier)
-    (r : BitStr) (hr : r ∈ numberedRows E x) : r.length = k := by
-  obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hr
-  exact E.length_toBits _
-
 theorem numberedRows_getD {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier)
     (c : Coord m) :
     (numberedRows E x).getD (coordNumbering m c).val [] = E.toBits (x c) := by
   simp only [numberedRows, List.getD_eq_getElem?_getD, List.getElem?_ofFn,
     (coordNumbering m c).isLt, dite_true, Option.getD_some, Fin.eta,
     Equiv.symm_apply_apply]
-
-theorem numberedRows_point_X {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier)
-    (i : Fin m) : (numberedRows E x).getD i.val [] = E.toBits (x (.point .X i)) := by
-  simpa only [coordNumbering_point_X] using numberedRows_getD E x (.point .X i)
-
-theorem numberedRows_point_Z {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier)
-    (i : Fin m) : (numberedRows E x).getD (m + i.val) [] = E.toBits (x (.point .Z i)) := by
-  simpa only [coordNumbering_point_Z] using numberedRows_getD E x (.point .Z i)
-
-theorem numberedRows_seed {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
-    (numberedRows E x).getD (2 * m) [] = E.toBits (x .seed) := by
-  simpa only [coordNumbering_seed] using numberedRows_getD E x .seed
-
-theorem numberedRows_direction {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier)
-    (i : Fin m) : (numberedRows E x).getD (2 * m + 1 + i.val) [] = E.toBits (x (.direction i)) := by
-  simpa only [coordNumbering_direction] using numberedRows_getD E x (.direction i)
-
-theorem numberedRows_scalar_X {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
-    (numberedRows E x).getD (3 * m + 1) [] = E.toBits (x (.scalar .X)) := by
-  simpa only [coordNumbering_scalar_X] using numberedRows_getD E x (.scalar .X)
-
-theorem numberedRows_scalar_Z {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
-    (numberedRows E x).getD (3 * m + 2) [] = E.toBits (x (.scalar .Z)) := by
-  simpa only [coordNumbering_scalar_Z] using numberedRows_getD E x (.scalar .Z)
-
-theorem numberedRows_injective {k m : ℕ} (E : BinField k) :
-    Function.Injective (numberedRows (m := m) E) := by
-  intro x y h
-  funext c
-  have he := congrArg (fun l : List BitStr => l.getD (coordNumbering m c).val []) h
-  rw [numberedRows_getD, numberedRows_getD] at he
-  have hd := congrArg E.ofBits he
-  simpa only [E.ofBits_toBits] using hd
 
 theorem numberedRows_eq_vecBits {k m : ℕ} (E : BinField k) (x : Coord m → E.carrier) :
     numberedRows E x = E.vecBits (fun i => x ((coordNumbering m).symm i)) := by

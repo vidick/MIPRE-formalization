@@ -79,12 +79,6 @@ theorem resources_with_cutoff (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : Clocke
   · intro lam n
     exact (ha lam n).trans (hans lam n hCa)
 
-theorem resources (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine) :
-    ∃ C, (∀ source lam n, (output c hc he U source lam).Within n (budget C lam n)) ∧
-      ∀ source lam, (output c hc he U source lam).decider.size ≤ C*(lam+1)^C := by
-  obtain ⟨C,hw,hs,_⟩ := resources_with_cutoff c hc he U
-  exact ⟨C,hw,hs⟩
-
 end MIPRE.Introspection.DecisionCompiler
 
 end

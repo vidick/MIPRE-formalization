@@ -57,13 +57,6 @@ theorem fold_artinSchreierStep_length (l a : BitStr) :
     rw [List.foldl_cons, ih, artinSchreierStep_length, List.length_cons]
     omega
 
-/-- All inputs have linear output width, including redundant or zero inputs. -/
-theorem substituteArtinSchreierBits_width (a : BitStr) :
-    (substituteArtinSchreierBits a).length ≤ 2 * a.length := by
-  apply (length_normalizeBits_le _).trans
-  rw [← List.foldl_reverse, fold_artinSchreierStep_length]
-  simp
-
 noncomputable def artinSchreierStepProg : PolyTimeFun (BitStr × Bool) BitStr :=
   cons snd (xorBitsProg.comp ((cons (const false) fst).pair
     (append.comp (fst.pair (const [false])))))

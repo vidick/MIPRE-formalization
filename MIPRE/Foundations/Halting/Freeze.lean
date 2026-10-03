@@ -139,8 +139,6 @@ def freeze (k : ℕ) : Sampler ℓ where
 
 @[simp] theorem freeze_cl (k n : ℕ) (w : Player) : (S.freeze k).cl n w = S.cl k w := rfl
 
-theorem freeze_dist (k n : ℕ) : (S.freeze k).dist n = S.dist k := rfl
-
 theorem freeze_size (k : ℕ) : (S.freeze k).size = S.size + esize k + 53 :=
   Prog.esize_freezeProg k S.prog
 
@@ -201,10 +199,6 @@ def freeze (k : ℕ) : Verifier ℓ where
 theorem freeze_size (k : ℕ) : (V.freeze k).size = V.size + esize k + 53 := by
   simp only [size, freeze_sampler, freeze_decider, CL.Sampler.freeze_size, Decider.freeze_size]
   omega
-
-theorem freeze_isSynchronousAt (k n : ℕ) :
-    (V.freeze k).IsSynchronousAt n ↔ V.IsSynchronousAt k := by
-  simp only [IsSynchronousAt, freeze_decider, Decider.freeze_accepts]
 
 /-- The frozen verifier rejects long answers at any index exactly when `V` does at the frozen
 index. -/

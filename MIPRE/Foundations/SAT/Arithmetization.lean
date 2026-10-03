@@ -76,12 +76,6 @@ theorem degreeOf_arith_le [Nontrivial F] (ρ : ℕ → σ) (f : Fml) (j : σ) :
       (Nat.add_le_add ((hnot _).trans hf) ((hnot _).trans hg)))
   | not f hf => exact (hnot _).trans hf
 
-/-- A syntactic occurrence bound supplies the individual-degree bound. -/
-theorem degreeOf_arith_le_of_occurrences [Nontrivial F] (ρ : ℕ → σ) (f : Fml) {d : ℕ}
-    (h : ∀ j, occurrences ρ j f ≤ d) :
-    ∀ j, (arith (F := F) ρ f).degreeOf j ≤ d :=
-  fun j => (degreeOf_arith_le ρ f j).trans (h j)
-
 end MIPRE.SAT.Fml
 
 end

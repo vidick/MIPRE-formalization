@@ -33,13 +33,6 @@ variable {R : Type*} [Ring R]
 def graphRefinement (M : A → R) (c : A → C) (p : C × A) : R :=
   if p.1 = c p.2 then M p.2 else 0
 
-theorem graphRefinement_graph (M : A → R) (c : A → C) (a : A) :
-    graphRefinement M c (c a, a) = M a := by simp [graphRefinement]
-
-theorem graphRefinement_off_graph (M : A → R) (c : A → C)
-    (p : C × A) (hp : p.1 ≠ c p.2) : graphRefinement M c p = 0 := by
-  simp [graphRefinement, hp]
-
 theorem graphRefinement_sum_coordinate (M : A → R) (c : A → C) (a : A) :
     (∑ z, graphRefinement M c (z, a)) = M a := by simp [graphRefinement]
 

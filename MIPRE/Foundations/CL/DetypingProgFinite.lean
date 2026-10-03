@@ -107,12 +107,6 @@ theorem finiteTable_apply_of_mem (f : Data → Data) (xs : List Data) (d : Data)
     · simp only [h, decide_false, Bool.false_eq_true, ↓reduceIte]
       exact ih (List.mem_cons.mp hd |>.resolve_left h)
 
-/-- Finite tables return a value on every raw input, including malformed queries. -/
-theorem finiteTable_halts (f : Data → Data) (xs : List Data) (d : Data) :
-    Halts (finiteTable f xs).code d := by
-  obtain ⟨t, _, hr⟩ := (finiteTable f xs).computes d
-  exact ⟨_, t, hr⟩
-
 /-- Every fixed function on a finite, faithfully encoded domain has a concrete
 polynomial-time table program. No uniform bound in the domain's cardinality is asserted. -/
 noncomputable def finiteFunction {α β : Type*} [Fintype α]

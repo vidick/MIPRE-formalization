@@ -23,11 +23,6 @@ open SourceCompiler PauliSamplerParameters
 def qldError (a b m q ε : ℝ) : ℝ :=
   a * m ^ a * (ε ^ b + q ^ (-b) + (2 : ℝ) ^ (-b * m))
 
-theorem qldError_nonneg {a b m q ε : ℝ} (ha : 0 ≤ a) (hm : 0 ≤ m)
-    (hq : 0 ≤ q) (hε : 0 ≤ ε) : 0 ≤ qldError a b m q ε := by
-  unfold qldError
-  positivity
-
 /-- A coefficient covering the dimension factor and both residual tails. -/
 def profileCoefficient (a c : ℝ) : ℝ := max 1 (max a (2 * a * (c + 1) ^ a))
 
@@ -169,18 +164,6 @@ theorem exists_even_constant (a : ℝ) {b : ℝ} (hb0 : 0 < b) :
   refine ⟨2 * N, by omega, ⟨N, by omega⟩, ?_⟩
   push_cast
   nlinarith
-
-/-- A single even sampler constant and a single profile coefficient work for
-all legal positive indices and all strategy errors. -/
-theorem exists_even_parameters {a b : ℝ} (ha : 1 ≤ a) (hb0 : 0 < b) (hb1 : b ≤ 1) :
-    ∃ (c : ℕ) (a' : ℝ), 2 ≤ c ∧ Even c ∧ 1 ≤ a' ∧
-      ∀ (lam n : ℕ) (ε : ℝ), 2 ≤ lam * n → 0 ≤ ε →
-        qldError a b (registerPower c lam n) (2 ^ fieldBits c lam n : ℕ) ε ≤
-          errorProfile a' b (lam * n) ε := by
-  obtain ⟨c, hc, he, hcb⟩ := exists_even_constant a hb0
-  refine ⟨c, profileCoefficient a c, hc, he, profileCoefficient_one_le _ _, ?_⟩
-  intro lam n ε hx hε
-  exact canonical_qldError_le_profile ha hb0 hb1 c hc hcb lam n hx ε hε
 
 end MIPRE.Introspection.PauliErrorParameters
 end

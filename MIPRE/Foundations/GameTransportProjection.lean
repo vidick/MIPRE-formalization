@@ -38,33 +38,6 @@ variable {X Y A B X' Y' A' B' : Type*}
 @[simp] theorem relabel_PB_M (y : Y') (b : B') :
     (S.relabel G' eX eY eA eB).PB.M y b = S.PB.M (eY y) (eB b) := rfl
 
-/-- Literal equality of states under relabeling. Keeping the proposition named
-avoids comparing concrete game parameters while elaborating dependent registers. -/
-def RelabelStateEq : Prop := (S.relabel G' eX eY eA eB).ψ = S.ψ
-
-/-- Relabeling has the identical state, as the named exact equality. -/
-theorem relabelStateEq : S.RelabelStateEq G' eX eY eA eB := rfl
-
-/-- Literal equality of one relabeled Alice effect with a selected original effect. -/
-def RelabelPAEq (x' : X') (a' : A') (x : X) (a : A) : Prop :=
-  (S.relabel G' eX eY eA eB).PA.M x' a' = S.PA.M x a
-
-/-- Question and answer equalities identify the relabeled Alice effect. -/
-theorem relabelPAEq (x' : X') (a' : A') (x : X) (a : A)
-    (hx : eX x' = x) (ha : eA a' = a) : S.RelabelPAEq G' eX eY eA eB x' a' x a := by
-  simp only [RelabelPAEq, relabel_PA_M, hx, ha]
-  rfl
-
-/-- Literal equality of one relabeled Bob effect with a selected original effect. -/
-def RelabelPBEq (y' : Y') (b' : B') (y : Y) (b : B) : Prop :=
-  (S.relabel G' eX eY eA eB).PB.M y' b' = S.PB.M y b
-
-/-- Question and answer equalities identify the relabeled Bob effect. -/
-theorem relabelPBEq (y' : Y') (b' : B') (y : Y) (b : B)
-    (hy : eY y' = y) (hb : eB b' = b) : S.RelabelPBEq G' eX eY eA eB y' b' y b := by
-  simp only [RelabelPBEq, relabel_PB_M, hy, hb]
-  rfl
-
 end MIPRE.TensorProductStrategy
 
 end

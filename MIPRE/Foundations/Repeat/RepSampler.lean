@@ -322,14 +322,6 @@ theorem lockProg_runs_blocks {univ : Prog} (hU : univ.WellScoped 1) {s : ℕ} (h
   rw [hout, ← encode_bitStr_eq_list z, ← encode_bitStr_eq_list y'] at run
   exact ⟨t, run⟩
 
-/-- A bit string on `Fin (k · 0)` is empty. -/
-theorem toBits_eq_nil_of_dim_zero {k s : ℕ} (hs : s = 0) (v : Fin (k * s) → 𝔽₂) : toBits v = [] :=
-  List.eq_nil_of_length_eq_zero (by rw [CL.length_toBits, hs, mul_zero])
-
-theorem indicatorBits_eq_nil_of_dim_zero {k s : ℕ} (hs : s = 0) (T : Finset (Fin (k * s))) :
-    indicatorBits T = [] :=
-  List.eq_nil_of_length_eq_zero (by rw [length_indicatorBits, hs, mul_zero])
-
 /-- The run of the repeated sampler on a query of nonzero kind, from a run of `lockProg`. -/
 theorem repSampler_runs_of_lock (lam tau n : ℕ) (k₀ k₁ qr : Data) {r : Data} {t td : ℕ}
     (hdim : Eval [Data.cons (encode S.prog) (.cons (encode n) (encode CL.Sampler.Query.dimension))]
@@ -520,10 +512,6 @@ noncomputable def repSampler (lam tau : ℕ) : CL.Sampler ℓ where
 
 @[simp] theorem repSampler_dim (lam tau n : ℕ) :
     (repSampler S lam tau).dim n = Repetition.reps lam tau n * S.dim n := rfl
-
-theorem repSampler_cl (lam tau n : ℕ) (w : Player) :
-    (repSampler S lam tau).cl n w =
-      CLFun.famSum finProdFinEquiv ℓ fun _ : Fin (Repetition.reps lam tau n) => S.cl n w := rfl
 
 end MIPRE.Repeat
 

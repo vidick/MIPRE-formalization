@@ -39,11 +39,6 @@ theorem proj_coordinateInsert_of_subset {S V : Finset ι} (h : S ⊆ V)
   · simp [CL.proj_apply, coordinateInsert, hi, h hi]
   · simp [CL.proj_apply, coordinateInsert, hi]
 
-theorem proj_insertRegister (V : Finset ι) (x : V → F) :
-    CL.proj V (insertRegister V x) = insertRegister V x := by
-  funext i
-  by_cases hi : i ∈ V <;> simp [CL.proj_apply, insertRegister, hi]
-
 /-- All three stopping-Hide vectors are supported on the active register. -/
 theorem stopHideAnswer_supported {ℓ : ℕ} (P : CL.CLFun F ι ℓ)
     (V : Finset ι) (h : P.SupportedOn V) (x : V → F) :

@@ -116,10 +116,6 @@ to a question distribution `μ`: blueprint `def:state-distance`. -/
 def stateDist (μ : X → ℝ) (A B : X → 𝒜) : ℝ :=
   ∑ x, μ x * M.stateSqNorm (A x - B x)
 
-/-- `A ≈_δ B` on the state, relative to `μ`. -/
-def IsStateClose (μ : X → ℝ) (δ : ℝ) (A B : X → 𝒜) : Prop :=
-  M.stateDist μ A B ≤ δ
-
 theorem stateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (A B : X → 𝒜) :
     0 ≤ M.stateDist μ A B :=
   Finset.sum_nonneg fun x _ => mul_nonneg (hμ x) (M.stateSqNorm_nonneg _)
@@ -131,15 +127,6 @@ variable [PartialOrder 𝒜] {A : Type*} [Fintype A]
 /-- **The same distance for families indexed by answers as well.** -/
 def povmStateDist (μ : X → ℝ) (MA NA : X → POVMIn A 𝒜) : ℝ :=
   ∑ x, μ x * ∑ a, M.stateSqNorm ((MA x).op a - (NA x).op a)
-
-/-- `M_a ≈_δ N_a` on the state, relative to `μ`. -/
-def IsPOVMStateClose (μ : X → ℝ) (δ : ℝ) (MA NA : X → POVMIn A 𝒜) : Prop :=
-  M.povmStateDist μ MA NA ≤ δ
-
-theorem povmStateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (MA NA : X → POVMIn A 𝒜) :
-    0 ≤ M.povmStateDist μ MA NA :=
-  Finset.sum_nonneg fun x _ =>
-    mul_nonneg (hμ x) (Finset.sum_nonneg fun _ _ => M.stateSqNorm_nonneg _)
 
 /-- **From POVM elements to generalized observables**, blueprint `lem:qld-povm-to-obs`: the
 weighting costs a factor `|𝒜|`, from Cauchy--Schwarz over the outcome set. -/
@@ -285,29 +272,9 @@ theorem stateSqNorm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
       = (star ψ ⬝ᵥ ((((Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ))) *ᵥ ψ)).re := by
   rw [quadForm_eq, Complex.ofReal_re]
 
-theorem stateNorm_nonneg (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : 0 ≤ stateNorm ψ M := by
-  classical
-  exact (BipartiteModel.tensor ψ).stateNorm_nonneg M
-
 theorem stateSqNorm_nonneg (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) : 0 ≤ stateSqNorm ψ M := by
   classical
   exact (BipartiteModel.tensor ψ).stateSqNorm_nonneg M
-
-theorem sqrt_stateSqNorm (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :
-    Real.sqrt (stateSqNorm ψ M) = stateNorm ψ M := by
-  classical
-  exact (BipartiteModel.tensor ψ).sqrt_stateSqNorm M
-
-theorem stateNorm_smul (ψ : dA × dB → ℂ) (c : ℂ) (M : Matrix dA dA ℂ) :
-    stateNorm ψ (c • M) = ‖c‖ * stateNorm ψ M := by
-  classical
-  exact (BipartiteModel.tensor ψ).stateNorm_smul c M
-
-theorem stateNorm_sum_le {ι : Type*} (ψ : dA × dB → ℂ) (s : Finset ι)
-    (f : ι → Matrix dA dA ℂ) :
-    stateNorm ψ (∑ i ∈ s, f i) ≤ ∑ i ∈ s, stateNorm ψ (f i) := by
-  classical
-  exact (BipartiteModel.tensor ψ).stateNorm_sum_le s f
 
 /-- **The state-dependent distance** of two families of operators on Alice's factor, relative to
 a question distribution `μ` and the state `ψ`: blueprint `def:state-distance`. -/
@@ -317,16 +284,6 @@ noncomputable def stateDist (μ : X → ℝ) (ψ : dA × dB → ℂ) (A B : X �
 /-- `A ≈_δ B` on `ψ`, relative to `μ`. -/
 def IsStateClose (μ : X → ℝ) (ψ : dA × dB → ℂ) (δ : ℝ) (A B : X → Matrix dA dA ℂ) : Prop :=
   stateDist μ ψ A B ≤ δ
-
-theorem stateDist_eq_tensor [DecidableEq dA] (μ : X → ℝ) (ψ : dA × dB → ℂ)
-    (A B : X → Matrix dA dA ℂ) :
-    stateDist μ ψ A B = (BipartiteModel.tensor ψ).stateDist μ A B :=
-  rfl
-
-theorem stateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
-    (A B : X → Matrix dA dA ℂ) : 0 ≤ stateDist μ ψ A B := by
-  classical
-  exact (BipartiteModel.tensor ψ).stateDist_nonneg hμ A B
 
 section POVMs
 
@@ -343,29 +300,12 @@ noncomputable def povmStateDist (μ : X → ℝ) (ψ : dA × dB → ℂ) (M N : 
 def IsPOVMStateClose (μ : X → ℝ) (ψ : dA × dB → ℂ) (δ : ℝ) (M N : X → POVM A dA) : Prop :=
   povmStateDist μ ψ M N ≤ δ
 
-omit [DecidableEq A] in
-theorem povmStateDist_eq_tensor (μ : X → ℝ) (ψ : dA × dB → ℂ) (M N : X → POVM A dA) :
-    povmStateDist μ ψ M N =
-      (BipartiteModel.tensor ψ).povmStateDist μ (fun x => (M x).toIn) (fun x => (N x).toIn) :=
-  rfl
-
-omit [DecidableEq A] in
-theorem povmStateDist_nonneg {μ : X → ℝ} (hμ : ∀ x, 0 ≤ μ x) (ψ : dA × dB → ℂ)
-    (M N : X → POVM A dA) : 0 ≤ povmStateDist μ ψ M N :=
-  (BipartiteModel.tensor ψ).povmStateDist_nonneg hμ (fun x => (M x).toIn) (fun x => (N x).toIn)
-
 /-! ## The two closeness lemmas of the appendix's preliminaries -/
 
 /-- The generalized observable of a POVM family and a weighting of the outcomes:
 `A^x = ∑_a α_a A^x_a`. -/
 noncomputable def obsOf (α : A → ℂ) (M : X → POVM A dA) (x : X) : Matrix dA dA ℂ :=
   ∑ a, α a • ((M x).mats a).val
-
-omit [DecidableEq A] [Fintype X] in
-/-- The generalized observable of a POVM is the observable of its weighting. -/
-theorem obsOf_eq_pvmObs (α : A → ℂ) (M : X → POVM A dA) (x : X) :
-    obsOf α M x = pvmObs (M x).toIn.op α :=
-  rfl
 
 omit [DecidableEq A] in
 /-- **From POVM elements to generalized observables**, blueprint `lem:qld-povm-to-obs`: the

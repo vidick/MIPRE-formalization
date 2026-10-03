@@ -56,91 +56,11 @@ theorem clGame_μ_eq (hm : m ∣ Fintype.card F) (x y : CL.Question F m) :
     (if (sm.question hm sm.tyA, sm.question hm sm.tyB) = (x, y) then 1 else 0) = _
   rw [← Finset.mul_sum, Finset.sum_boole, div_eq_inv_mul]
 
-omit [DecidableEq F] [NeZero m] in
-/-- The seeded test has at least one sample, so its total is nonzero. -/
-theorem card_clSample_pos : 0 < Fintype.card (CL.Sample F m) :=
-  Fintype.card_pos_iff.mpr ⟨⟨.point, .point, 0, 0, 0⟩⟩
-
 /-! ## The canonical-line test, shape by shape
 
 Each shape needs the set of samples producing a given question pair. For the point and
 axis-parallel shapes it is a singleton and the weight is read off directly; the diagonal shape is
 the one where several samples contribute. -/
-
-omit [NeZero m] in
-/-- **Only the self-consistency sample asks the same point twice.** -/
-theorem filter_questions_point (u : Point F m) :
-    Finset.univ.filter (fun s : Sample F m =>
-        s.questions = ((Question.point u : Question F m), Question.point u))
-      = {Sample.selfConsistency u} := by
-  classical
-  refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, ?_⟩
-  · exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩
-  · intro s hs
-    have hq := (Finset.mem_filter.mp hs).2
-    match s, hq with
-    | Sample.selfConsistency u', hq =>
-        have hq' : (Question.point u', Question.point (F := F) u')
-            = (Question.point u, Question.point u) := hq
-        injection hq' with h1 _
-        injection h1 with h2
-        rw [h2]
-    | Sample.axis false u' i, hq =>
-        exact absurd hq (by simp [Sample.questions])
-    | Sample.axis true u' i, hq =>
-        exact absurd hq (by simp [Sample.questions])
-    | Sample.diag false u' j v, hq =>
-        exact absurd hq (by simp [Sample.questions])
-    | Sample.diag true u' j v, hq =>
-        exact absurd hq (by simp [Sample.questions])
-
-/-- **The canonical-line test's weight on a repeated point question**: the self-consistency
-subtest has probability `1/3` and its point is uniform. -/
-theorem lidtGame_μ_point (u : Point F m) :
-    (lidtGame F m d).μ (.point u) (.point u)
-      = 1 / (3 * Fintype.card (Point F m)) := by
-  rw [lidtGame_μ_eq, filter_questions_point, Finset.sum_singleton]
-  rfl
-
-omit [NeZero m] in
-/-- **Only one sample asks a given axis-parallel line against a given point.** The point pins the
-sample's point, and the line pins its direction index, `Pi.single` being injective. -/
-theorem filter_questions_axis (u : Point F m) (i : Fin m) :
-    Finset.univ.filter (fun s : Sample F m =>
-        s.questions
-          = ((Question.axisLine (Line.through u (Pi.single i 1)) : Question F m),
-              Question.point u))
-      = {Sample.axis false u i} := by
-  classical
-  refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, ?_⟩
-  · exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩
-  · intro s hs
-    have hq := (Finset.mem_filter.mp hs).2
-    match s, hq with
-    | Sample.axis false u' i', hq =>
-        have hq' : ((Question.axisLine (Line.through u' (Pi.single i' 1)) : Question F m),
-            Question.point u') = (Question.axisLine (Line.through u (Pi.single i 1)),
-              Question.point u) := hq
-        injection hq' with h1 h2
-        injection h2 with hu
-        subst hu
-        injection h1 with hℓ
-        have hdir : (Pi.single i' 1 : Point F m) = Pi.single i 1 := by
-          simpa [through_single] using congrArg Prod.snd hℓ
-        rw [single_inj hdir]
-    | Sample.axis true u' i', hq => exact absurd hq (by simp [Sample.questions])
-    | Sample.selfConsistency u', hq => exact absurd hq (by simp [Sample.questions])
-    | Sample.diag false u' j v, hq => exact absurd hq (by simp [Sample.questions])
-    | Sample.diag true u' j v, hq => exact absurd hq (by simp [Sample.questions])
-
-/-- **The canonical-line test's weight on an axis-parallel line against a point.** The subtest has
-probability `1/3`, the roles are swapped with probability `1/2`, and the point and direction index
-are uniform. -/
-theorem lidtGame_μ_axis (u : Point F m) (i : Fin m) :
-    (lidtGame F m d).μ (.axisLine (Line.through u (Pi.single i 1))) (.point u)
-      = 1 / (6 * m * Fintype.card (Point F m)) := by
-  rw [lidtGame_μ_eq, filter_questions_axis, Finset.sum_singleton]
-  rfl
 
 /-! ## The diagonal shape
 
@@ -312,45 +232,6 @@ theorem weight_le_of_questions_diag {ℓ : Line F m} (hℓ : ∃ k, ℓ.2 k ≠ 
   refine one_div_le_one_div_of_le hden ?_
   refine mul_le_mul_of_nonneg_left ?_ hA.le
   exact pow_le_pow_right₀ hq1 (by omega)
-
-/-- **The diagonal weight, bounded.** The sum over the contributing samples is at most their
-number times the largest of them, and `le_rev_diagIdx_of_questions` says every one of them has
-`j` at least `rev (diagIdx ℓ)`, which fixes the `q`-exponent. -/
-theorem lidtGame_μ_diag_le {ℓ : Line F m} (hℓ : ∃ k, ℓ.2 k ≠ 0) (u : Point F m) :
-    (lidtGame F m d).μ (.diagLine ℓ) (.point u)
-      ≤ (m * Fintype.card F : ℝ) *
-          (1 / (6 * m * Fintype.card (Point F m) *
-            (Fintype.card F : ℝ) ^ ((Fin.rev (diagIdx ℓ) : ℕ) + 1))) := by
-  classical
-  rw [lidtGame_μ_eq]
-  have hq : (0 : ℝ) < Fintype.card F := by exact_mod_cast Fintype.card_pos
-  have hq1 : (1 : ℝ) ≤ Fintype.card F := by
-    have h : 1 ≤ Fintype.card F := Fintype.card_pos
-    exact_mod_cast h
-  have hm : (0 : ℝ) < m := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne m)
-  have hP : (0 : ℝ) < Fintype.card (Point F m) := by exact_mod_cast Fintype.card_pos
-  have hA : (0 : ℝ) < 6 * m * Fintype.card (Point F m) := by
-    have h6 : (0 : ℝ) < 6 * m := by linarith
-    exact mul_pos h6 hP
-  set S : Finset (Sample F m) := Finset.univ.filter (fun s : Sample F m =>
-    s.questions = ((Question.diagLine ℓ : Question F m), Question.point u)) with hS
-  set B : ℝ := 1 / (6 * m * Fintype.card (Point F m) *
-    (Fintype.card F : ℝ) ^ ((Fin.rev (diagIdx ℓ) : ℕ) + 1)) with hB
-  have hden : (0 : ℝ) < 6 * m * Fintype.card (Point F m) *
-      (Fintype.card F : ℝ) ^ ((Fin.rev (diagIdx ℓ) : ℕ) + 1) := mul_pos hA (pow_pos hq _)
-  have hBpos : 0 < B := by rw [hB]; exact div_pos one_pos hden
-  have hterm : ∀ s ∈ S, s.weight ≤ B := by
-    intro s hs
-    rw [hS, Finset.mem_filter] at hs
-    exact weight_le_of_questions_diag hℓ hs.2
-  calc ∑ s ∈ S, s.weight
-      ≤ S.card • B := Finset.sum_le_card_nsmul _ _ _ hterm
-    _ = (S.card : ℝ) * B := by rw [nsmul_eq_mul]
-    _ ≤ (m * Fintype.card F : ℝ) * B := by
-        refine mul_le_mul_of_nonneg_right ?_ hBpos.le
-        have h := card_filter_diag_le hℓ u
-        rw [← hS] at h
-        exact_mod_cast h
 
 /-! ## The seeded test, shape by shape
 
@@ -582,7 +463,6 @@ theorem filter_qmapS_point_eq_empty (hm : m ∣ Fintype.card F) (σc : Seed F m)
   injection h with h'
   exact hxy h'
 
-
 /-! ### Cardinalities
 
 Three counts enter the arithmetic: the point space, the seeded test's sample space and the
@@ -760,28 +640,6 @@ theorem card_filter_seed_le (hm : m ∣ Fintype.card F) (i : Fin m) (s₀ : F)
     exact seedOf_injective hm j ((hP a (Finset.mem_filter.mp ha).2).trans
       (hP b (Finset.mem_filter.mp hb).2).symm)
   · exact congrFun h1 ⟨j, hj⟩
-
-omit [NeZero m] in
-/-- **A pinned seed index and a pinned scale cost a factor `(q/m)(q-1)`.** -/
-theorem card_filter_seed_scale_le (hm : m ∣ Fintype.card F) (i : Fin m) (s₀ c₀ : F)
-    (P : Seed F m → Prop) [DecidablePred P]
-    (hP : ∀ σc, P σc → seedOf hm i (σc.1 i) = s₀ ∧ (σc.2 : F) = c₀) :
-    (Finset.univ.filter P).card ≤ (Fintype.card F / m) ^ (m - 1) := by
-  classical
-  have hcard : (Fintype.card F / m) ^ (m - 1)
-      = (Finset.univ : Finset ({j : Fin m // j ≠ i} → Fin (Fintype.card F / m))).card := by
-    rw [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, card_ne_singleton]
-  rw [hcard]
-  refine Finset.card_le_card_of_injOn
-    (fun σc => fun j => σc.1 j.1) (fun _ _ => Finset.mem_univ _) ?_
-  intro a ha b hb hab
-  obtain ⟨hsa, hca⟩ := hP a (Finset.mem_filter.mp ha).2
-  obtain ⟨hsb, hcb⟩ := hP b (Finset.mem_filter.mp hb).2
-  refine Prod.ext (funext fun j => ?_) (Subtype.ext (hca.trans hcb.symm))
-  by_cases hj : j = i
-  · subst hj
-    exact seedOf_injective hm j (hsa.trans hsb.symm)
-  · exact congrFun hab ⟨j, hj⟩
 
 @[simp] theorem qmapS_axis (hm : m ∣ Fintype.card F) (σc : Seed F m) (ℓ : Line F m) :
     qmapS hm σc (.axisLine ℓ)

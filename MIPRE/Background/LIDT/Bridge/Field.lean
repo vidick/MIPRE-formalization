@@ -76,9 +76,6 @@ abbrev decP (u : MIPStarRE.LDT.Point (lidtParams F m d)) : Point F m := fun i =>
 theorem enc_injective : Function.Injective (enc (F := F) (m := m) (d := d)) :=
   fun x y h => by simpa using congrArg dec h
 
-theorem dec_injective : Function.Injective (dec (F := F) (m := m) (d := d)) :=
-  fun x y h => by simpa using congrArg (enc (m := m) (d := d)) h
-
 @[simp] theorem decP_encP (u : Point F m) : decP (encP (d := d) u) = u := by
   funext i; simp
 

@@ -107,38 +107,6 @@ theorem commutingOperatorValue_lt_iff [Nonempty A] [Nonempty B] (G : Game X Y A 
   · rintro ⟨r', hr', h⟩
     exact (commutingOperatorValue_le_of_mem_of_nonempty G h).trans_lt hr'
 
-/-- **Strict positive upper bounds on the commuting-operator value**, for arbitrary alphabets:
-for `0 < r`, the value is below `r` exactly when some `r' < r` has a cone certificate
-`r'·1 - W_G ∈ M`. For the converse, a certificate at a negative level `r'` is moved up to level
-`0` by adding `-r'·1 ∈ M`, so that `commutingOperatorValue_le_of_mem` applies. -/
-theorem commutingOperatorValue_lt_iff_of_pos (G : Game X Y A B) {r : ℝ} (hr : 0 < r) :
-    commutingOperatorValue G < r ↔
-      ∃ r' < r, r' • (1 : NCPoly (Gen X Y A B)) - gamePoly G ∈ cone X Y A B := by
-  constructor
-  · intro h
-    obtain ⟨r', h1, h2⟩ := exists_between h
-    exact ⟨r', h2, sub_gamePoly_mem_cone_of_lt G h1⟩
-  · rintro ⟨r', hr', h⟩
-    have hmax : max r' 0 • (1 : NCPoly (Gen X Y A B)) - gamePoly G ∈ cone X Y A B := by
-      have hone : (max r' 0 - r') • (1 : NCPoly (Gen X Y A B)) ∈ cone X Y A B :=
-        PointedCone.smul_mem _ (sub_nonneg.2 (le_max_left r' 0)) NCPoly.one_mem_qmod
-      convert Submodule.add_mem _ h hone using 1
-      rw [sub_smul]
-      abel
-    exact (commutingOperatorValue_le_of_mem G (le_max_right r' 0) hmax).trans_lt
-      (max_lt hr' hr)
-
-/-- **The commuting-operator value is the infimum of the cone certificates**, for nonempty
-answer sets: it is the greatest lower bound of the levels `r` with `r·1 - W_G ∈ M`. -/
-theorem isGLB_commutingOperatorValue [Nonempty A] [Nonempty B] (G : Game X Y A B) :
-    IsGLB {r : ℝ | r • (1 : NCPoly (Gen X Y A B)) - gamePoly G ∈ cone X Y A B}
-      (commutingOperatorValue G) := by
-  refine ⟨fun r hr => commutingOperatorValue_le_of_mem_of_nonempty G hr, fun c hc => ?_⟩
-  by_contra hlt
-  push Not at hlt
-  obtain ⟨r', h1, h2⟩ := exists_between hlt
-  exact (hc (sub_gamePoly_mem_cone_of_lt G h1)).not_gt h2
-
 end Tsirelson
 
 end MIPRE

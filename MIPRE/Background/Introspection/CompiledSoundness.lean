@@ -47,11 +47,6 @@ theorem exponent_le_one : exponent ≤ 1 :=
   (power_exponent_bounds qldExponent_pos qldExponent_lt_one.le
     (rootExponent_pos _) (rootExponent_le_one _)).2
 
-/-- A single even parameter constant suffices for all verifier indices. -/
-theorem exists_parameter_constant :
-    ∃ c : ℕ, 2 ≤ c ∧ Even c ∧ 2 * qldCoefficient + 2 ≤ (c : ℝ) * qldExponent :=
-  PauliErrorParameters.exists_even_constant qldCoefficient qldExponent_pos
-
 theorem scale_error {x ε : ℝ} (c : ℕ) (hx : 1 ≤ x) (hε : 0 ≤ ε) :
     errorProfile (sourceCoefficient c) exponent x (detypingLoss * ε) ≤
       errorProfile (coefficient c) exponent x ε := by

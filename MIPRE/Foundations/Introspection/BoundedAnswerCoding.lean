@@ -53,21 +53,6 @@ theorem valid_aux_length (R : ℕ) (t : AuxType ℓ) (w : Bool) (bs : BitStr)
     have hw := h.2.1
     omega
 
-theorem mapAnswer_bounded_val (R : ℕ) (a : ParsedAnswer V BitStr PA)
-    (h : payloadBound R a) :
-    ParsedAnswer.mapAnswer Subtype.val (ParsedAnswer.mapAnswer (bounded R) a) = a := by
-  cases a <;> simp_all only [payloadBound, ParsedAnswer.mapAnswer, bounded_val]
-
-theorem mapAnswer_val_bounded (R : ℕ) (a : ParsedAnswer V (Verifier.Answers R) PA) :
-    ParsedAnswer.mapAnswer (bounded R) (ParsedAnswer.mapAnswer Subtype.val a) = a := by
-  cases a <;> simp only [ParsedAnswer.mapAnswer, bounded_subtype]
-
-theorem payloadBound_mapAnswer_val (R : ℕ) (a : ParsedAnswer V (Verifier.Answers R) PA) :
-    payloadBound R (ParsedAnswer.mapAnswer Subtype.val a) := by
-  cases a with
-  | pauli a | hide y yp x => trivial
-  | pair y a | read y yp a => exact a.property
-
 end MIPRE.Introspection.AuxiliaryAnswer
 
 end

@@ -37,27 +37,6 @@ def check (L : Bool → CL.CLFun F ι ℓ) (t : QuestionType P ℓ)
     (a : ParsedAnswer (ι → F) A PA) : check L t a = true ↔ holds L t a := by
   simp [check]
 
-/-- Add both local guards to any typed comparison. -/
-def guarded (L : Bool → CL.CLFun F ι ℓ)
-    (D : QuestionType P ℓ → QuestionType P ℓ →
-      ParsedAnswer (ι → F) A PA → ParsedAnswer (ι → F) A PA → Bool)
-    (t u : QuestionType P ℓ) (a b : ParsedAnswer (ι → F) A PA) : Bool :=
-  check L t a && check L u b && D t u a b
-
-theorem guarded_eq_true (L : Bool → CL.CLFun F ι ℓ)
-    (D : QuestionType P ℓ → QuestionType P ℓ →
-      ParsedAnswer (ι → F) A PA → ParsedAnswer (ι → F) A PA → Bool)
-    (t u : QuestionType P ℓ) (a b : ParsedAnswer (ι → F) A PA) :
-    guarded L D t u a b = true ↔ holds L t a ∧ holds L u b ∧ D t u a b = true := by
-  simp [guarded, and_assoc]
-
-theorem guarded_eq_of_holds (L : Bool → CL.CLFun F ι ℓ)
-    (D : QuestionType P ℓ → QuestionType P ℓ →
-      ParsedAnswer (ι → F) A PA → ParsedAnswer (ι → F) A PA → Bool)
-    (t u : QuestionType P ℓ) (a b : ParsedAnswer (ι → F) A PA)
-    (ha : holds L t a) (hb : holds L u b) : guarded L D t u a b = D t u a b := by
-  simp [guarded, check, ha, hb]
-
 end MIPRE.Introspection.PrefixGuard
 
 end

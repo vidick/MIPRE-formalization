@@ -74,12 +74,6 @@ end Act
 
 open Act Phase
 
-/-- Is the symbol a bit? -/
-def Sym.isBit : Option Sym → Bool
-  | some .zero => true
-  | some .one => true
-  | _ => false
-
 /-- The semantics of an instruction phase, given the symbols under the input heads `as`
 and the work heads `bs`. -/
 def execInstr (ins : Instr) (ph : Phase) (as : IT → Option Sym) (bs : WT → Option Sym) : Act :=

@@ -149,25 +149,9 @@ theorem norm_ι (v : V) : ‖ι β v‖ = √(β.B v v).re := by
 theorem ι_add (u v : V) : ι β (u + v) = ι β u + ι β v := by
   rw [ι, ι, ι, map_add, Completion.coe_add]
 
-/-- `ι` is `ℂ`-linear. -/
-theorem ι_smul (c : ℂ) (v : V) : ι β (c • v) = c • ι β v := by
-  rw [ι, ι, LinearEquiv.map_smul, Completion.coe_smul]
-
 /-- `ι` commutes with subtraction. -/
 theorem ι_sub (u v : V) : ι β (u - v) = ι β u - ι β v := by
   rw [ι, ι, ι, map_sub, Completion.coe_sub]
-
-/-- The image of `V` is dense in `H β`. -/
-theorem denseRange_ι : DenseRange (ι β) := by
-  have : Set.range (ι β) = Set.range ((↑) : Pre β → H β) := by
-    ext w
-    constructor
-    · rintro ⟨v, rfl⟩
-      exact ⟨_, rfl⟩
-    · rintro ⟨x, rfl⟩
-      exact ⟨ofPre β x, rfl⟩
-  rw [DenseRange, this]
-  exact denseRange_coe
 
 /-- A null vector of `β` maps to `0`. -/
 theorem ι_eq_zero_of_null {v : V} (hv : β.B v v = 0) : ι β v = 0 := by
@@ -211,75 +195,11 @@ theorem bdd_of_contraction (T : V →ₗ[ℂ] V) (hT : ∀ v, (β.B (T v) (T v))
     Bdd β T :=
   ⟨1, fun v => by simpa using hT v⟩
 
-/-- The identity is bounded. -/
-theorem bdd_id : Bdd β LinearMap.id := bdd_of_contraction β _ fun _ => le_rfl
-
 /-- Two operators on `H β` that agree on the image of `ι` are equal. -/
 theorem ext_ι {S S' : H β →L[ℂ] H β} (h : ∀ v, S (ι β v) = S' (ι β v)) : S = S' := by
   ext x
   refine ι_induction β (p := fun x => S x = S' x) ?_ h x
   exact isClosed_eq S.continuous S'.continuous
-
-/-- The lift of the identity is the identity. -/
-theorem lift_id : lift β LinearMap.id (bdd_id β) = 1 :=
-  ext_ι β fun v => by
-    rw [lift_ι]
-    rfl
-
-/-- Two bounded maps that agree up to null vectors have equal lifts. -/
-theorem lift_eq_of_null (T T' : V →ₗ[ℂ] V) (hT : Bdd β T) (hT' : Bdd β T')
-    (h : ∀ v, β.B ((T - T') v) ((T - T') v) = 0) : lift β T hT = lift β T' hT' :=
-  ext_ι β fun v => by
-    rw [lift_ι, lift_ι, ← sub_eq_zero, ← ι_sub, ← LinearMap.sub_apply]
-    exact ι_eq_zero_of_null β (h v)
-
-/-- Boundedness, restated through the seminorm of `Pre β`. -/
-theorem bdd_iff_norm (T : V →ₗ[ℂ] V) :
-    Bdd β T ↔ ∃ C : ℝ, ∀ v, ‖toPre β (T v)‖ ≤ C * ‖toPre β v‖ := by
-  constructor
-  · rintro ⟨C, hC⟩
-    refine ⟨√(max C 0), fun v => ?_⟩
-    rw [pre_norm_def, pre_norm_def, ofPre_toPre, ofPre_toPre,
-      ← Real.sqrt_mul (le_max_right _ _)]
-    apply Real.sqrt_le_sqrt
-    exact (hC _).trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (β.re_nonneg _))
-  · rintro ⟨C, hC⟩
-    refine ⟨C ^ 2, fun v => ?_⟩
-    have h0 : 0 ≤ ‖toPre β (T v)‖ := norm_nonneg _
-    have hsq : ‖toPre β (T v)‖ ^ 2 ≤ (C * ‖toPre β v‖) ^ 2 := pow_le_pow_left₀ h0 (hC v) 2
-    rw [mul_pow, pre_norm_def, pre_norm_def, ofPre_toPre, ofPre_toPre,
-      Real.sq_sqrt (β.re_nonneg _), Real.sq_sqrt (β.re_nonneg _)] at hsq
-    exact hsq
-
-/-- Sums of bounded maps are bounded. -/
-theorem Bdd.add {T T' : V →ₗ[ℂ] V} (hT : Bdd β T) (hT' : Bdd β T') : Bdd β (T + T') := by
-  rw [bdd_iff_norm] at *
-  obtain ⟨C, hC⟩ := hT
-  obtain ⟨C', hC'⟩ := hT'
-  refine ⟨C + C', fun v => ?_⟩
-  rw [LinearMap.add_apply, map_add, add_mul]
-  exact (norm_add_le _ _).trans (add_le_add (hC v) (hC' v))
-
-/-- Composites of bounded maps are bounded. -/
-theorem Bdd.comp {T T' : V →ₗ[ℂ] V} (hT : Bdd β T) (hT' : Bdd β T') : Bdd β (T ∘ₗ T') := by
-  obtain ⟨C, hC⟩ := hT
-  obtain ⟨C', hC'⟩ := hT'
-  refine ⟨max C 0 * C', fun v => ?_⟩
-  rw [LinearMap.comp_apply, mul_assoc]
-  exact (hC _).trans ((mul_le_mul_of_nonneg_right (le_max_left _ _) (β.re_nonneg _)).trans
-    (mul_le_mul_of_nonneg_left (hC' v) (le_max_right _ _)))
-
-/-- The lift of a sum is the sum of the lifts. -/
-theorem lift_add {T T' : V →ₗ[ℂ] V} (hT : Bdd β T) (hT' : Bdd β T') :
-    lift β (T + T') (hT.add β hT') = lift β T hT + lift β T' hT' :=
-  ext_ι β fun v => by
-    rw [_root_.add_apply, lift_ι, lift_ι, lift_ι, LinearMap.add_apply, ι_add]
-
-/-- The lift of a composite is the product of the lifts. -/
-theorem lift_comp {T T' : V →ₗ[ℂ] V} (hT : Bdd β T) (hT' : Bdd β T') :
-    lift β (T ∘ₗ T') (hT.comp β hT') = lift β T hT * lift β T' hT' :=
-  ext_ι β fun v => by
-    rw [mul_apply_eq_comp, lift_ι, lift_ι, lift_ι, LinearMap.comp_apply]
 
 /-- A finite sum of lifts, evaluated on the image of `ι`. -/
 theorem sum_lift_ι {ι' : Type*} (s : Finset ι') (T : ι' → V →ₗ[ℂ] V) (hT : ∀ i, Bdd β (T i))

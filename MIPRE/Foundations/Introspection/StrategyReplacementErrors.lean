@@ -48,14 +48,6 @@ theorem registeredReplacement_other_map (MA : X → POVMIn A (Matrix I I 𝒜)) 
     (registeredReplacement MA q R x).map f = registeredExtendPOVM ((MA x).map f) := by
   rw [registeredReplacement_other_eq MA q x R hx, registeredExtendPOVM_map]
 
-/-- Projectivity at an unchanged question does not depend on projectivity
-of the selected replacement. -/
-theorem registeredReplacement_other_isPVM (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
-    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) (hM : IsPVMIn (MA x).op) :
-    IsPVMIn (registeredReplacement MA q R x).op := by
-  rw [registeredReplacement_other_eq MA q x R hx]
-  exact registeredExtendPOVM_isPVM (MA x) hM
-
 theorem registeredReplacement_samePartyError_other
     (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
     (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) (f : A → B)
@@ -93,57 +85,6 @@ theorem registeredExtension_bobSamePartyError
     (∑ b, ((Ξ.expandA t₀).reg I).snorm (((Ξ.expandA t₀).reg I).πB (N b)) ^ 2) =
       ∑ b, (Ξ.reg I).snorm ((Ξ.reg I).πB (N b)) ^ 2 := by
   simp only [snorm_bOp_registered_extVecA]
-
-/-- Any unchanged pair of questions has exactly its old outcome law. -/
-theorem registeredReplacement_bornProb_other
-    (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T) (MA : X → POVMIn A (Matrix I I 𝒜)) (q x : X)
-    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hx : x ≠ q) (a : A)
-    (N : Matrix I I ℬ) :
-    ((Ξ.expandA t₀).reg I).bornProb ((registeredReplacement MA q R x).op a) N =
-      (Ξ.reg I).bornProb ((MA x).op a) N := by
-  rw [registeredReplacement_other_eq MA q x R hx, registeredExtendPOVM_mats,
-    bornProb_registeredExtendOp]
-
-/-- An arbitrary weighted consistency test supported away from the replaced
-question is preserved, without assumptions on the replacement measurement. -/
-theorem inconsistency_registeredReplacement_away [DecidableEq A] [PartialOrder ℬ]
-    [StarOrderedRing ℬ] [StarProper ℬ]
-    (μ : X → ℝ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
-    (MA : X → POVMIn A (Matrix I I 𝒜)) (MB : X → POVMIn A (Matrix I I ℬ)) (q : X)
-    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hq : μ q = 0) :
-    ((Ξ.expandA t₀).reg I).inconsistency μ (registeredReplacement MA q R) MB =
-      (Ξ.reg I).inconsistency μ MA MB := by
-  unfold BipartiteModel.inconsistency
-  apply Finset.sum_congr rfl
-  intro x _
-  by_cases hx : x = q
-  · subst x
-    simp only [hq, zero_mul]
-  · congr 1
-    apply Finset.sum_congr rfl
-    intro a _
-    apply Finset.sum_congr rfl
-    intro b _
-    by_cases hab : a = b
-    · rw [ite_eq_left hab, ite_eq_left hab]
-    · rw [ite_eq_right hab, ite_eq_right hab]
-      exact registeredReplacement_bornProb_other Ξ t₀ MA q x R hx a ((MB x).op b)
-
-theorem xPovmDist_registeredReplacement_away [DecidableEq A] [PartialOrder ℬ]
-    [StarOrderedRing ℬ] [StarProper ℬ]
-    (μ : X → ℝ) (Ξ : BipartiteModel 𝒞 𝒜 ℬ) (t₀ : T)
-    (MA : X → POVMIn A (Matrix I I 𝒜)) (MB : X → POVMIn A (Matrix I I ℬ)) (q : X)
-    (R : POVMIn A (Matrix T T (Matrix I I 𝒜))) (hq : μ q = 0) :
-    ((Ξ.expandA t₀).reg I).xPovmDist μ (registeredReplacement MA q R) MB =
-      (Ξ.reg I).xPovmDist μ MA MB := by
-  unfold BipartiteModel.xPovmDist
-  apply Finset.sum_congr rfl
-  intro x _
-  by_cases hx : x = q
-  · subst x
-    simp only [hq, zero_mul]
-  · rw [registeredReplacement_other_eq MA q x R hx]
-    simp only [registeredExtendPOVM_mats, xSqNorm_registeredExtendOp]
 
 end Generic
 

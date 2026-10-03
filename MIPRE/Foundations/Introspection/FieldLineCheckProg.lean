@@ -188,12 +188,6 @@ theorem lineCheckProg_correct (k : ℕ) (hk : 1 ≤ k) {m n : ℕ}
     decide_eq_true_eq, hi.eq_iff, memberProg_correct]
   split <;> simp_all
 
-theorem lineCheckProg_runs (input :
-    (Unary × List BitStr × List BitStr × List BitStr) × List BitStr × BitStr) :
-    ∃ t ≤ lineCheckProg.timeBound.eval (esize input),
-      lineCheckProg.code.Runs (encode input) (encode (lineCheckProg input)) t :=
-  lineCheckProg.computes input
-
 end MIPRE.Introspection.FieldLineCheck
 end
 

@@ -106,10 +106,6 @@ theorem mem_Cq_iff (G : Game X Y A B) {p : X → Y → A → B → ℝ} :
   · rintro ⟨S, rfl⟩
     exact S.correlation_mem_Cq
 
-omit [Fintype X] [Fintype Y] in
-/-- `C_q ⊆ C_qa`. -/
-theorem Cq_subset_Cqa : Cq X Y A B ⊆ Cqa X Y A B := subset_closure
-
 /-- The payoff of a quantum correlation is at most the quantum value. -/
 theorem payoff_le_quantumValue_of_mem_Cq (G : Game X Y A B) {p : X → Y → A → B → ℝ}
     (hp : p ∈ Cq X Y A B) : G.payoff p ≤ quantumValue G := by
@@ -160,16 +156,6 @@ theorem correlation_sum (x : X) (y : Y) : ∑ a, ∑ b, S.correlation x y a b = 
         simp
   have := congrArg Complex.re h
   simpa [correlation, Complex.re_sum] using this
-
-/-- Commuting-operator correlations are at most one. -/
-theorem correlation_le_one (x : X) (y : Y) (a : A) (b : B) : S.correlation x y a b ≤ 1 := by
-  calc S.correlation x y a b ≤ ∑ b', S.correlation x y a b' :=
-        Finset.single_le_sum (fun b' _ => S.correlation_nonneg x y a b') (Finset.mem_univ b)
-    _ ≤ ∑ a', ∑ b', S.correlation x y a' b' :=
-        Finset.single_le_sum (f := fun a' => ∑ b', S.correlation x y a' b')
-          (fun a' _ => Finset.sum_nonneg fun b' _ => S.correlation_nonneg x y a' b')
-          (Finset.mem_univ a)
-    _ = 1 := S.correlation_sum x y
 
 /-- The value of a commuting-operator strategy is nonnegative. -/
 theorem value_nonneg (G : Game X Y A B) : 0 ≤ S.value G := by
