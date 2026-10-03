@@ -12,6 +12,10 @@ homonym noise. A declaration is reported dead when
 * it carries no attribute and is not an instance — a `@[simp]` lemma or an
   instance can fire without an identifier, which the index cannot see;
 * no blueprint `\\lean{}` tag and no `#guard_sorry_free` guard names it;
+* no `macro`, `syntax`, `elab` or `notation` body names it: an identifier there is
+  elaborated only at the expansion site, with synthetic positions that the index does
+  not record, and a `try simp only [...]` macro swallows the error when the name is
+  gone (it cost `TM/Interp/Step.lean` an elaboration that did not finish, 2026-10-03);
 * every recorded usage lies inside its own body or inside a declaration already
   found dead — iterated to a fixpoint, so a definition whose only users were dead
   lemmas is dead too.
@@ -150,6 +154,31 @@ def guarded_names():
     return names
 
 
+MACRO_RE = re.compile(
+    r"^(?:@\[[^\]]*\]\s*)?(?:(?:local|scoped)\s+)?"
+    r"(?:macro_rules|macro|syntax|elab_rules|elab|notation|infixl|infixr|infix|prefix|postfix)\b")
+
+
+def macro_names():
+    """Every identifier, and every dotted suffix of one, in a macro-like command body."""
+    names = set()
+    for rel in source_files([]):
+        lines = open(os.path.join(ROOT, rel), encoding="utf-8").read().split("\n")
+        i = 0
+        while i < len(lines):
+            if MACRO_RE.match(lines[i]):
+                j = i + 1
+                while j < len(lines) and (lines[j][:1] in (" ", "\t") or not lines[j].strip()):
+                    j += 1
+                for t in re.findall(r"[A-Za-z_][\w'.!?\u2080-\u2089]*", "\n".join(lines[i:j])):
+                    parts = t.split(".")
+                    names.update(".".join(parts[k:]) for k in range(len(parts)))
+                i = j
+            else:
+                i += 1
+    return names
+
+
 def index():
     """From every project `.ilean`: defining module of each constant, and its usages."""
     defined = {}
@@ -195,6 +224,7 @@ def main():
         decls.extend((rel,) + d for d in declarations(rel))
     tags = blueprint_tags()
     guards = guarded_names()
+    in_macros = macro_names()
     n_files, defined, usages = index()
     if n_files == 0:
         sys.exit(f"no .ilean files under {LIB}: build the library first")
@@ -235,7 +265,9 @@ def main():
         return
 
     protected = {d[1] for d in decls
-                 if d[3] == "instance" or d[4] or d[1] in tags or d[1] in guards or by_name[d[1]] > 1}
+                 if d[3] == "instance" or d[4] or d[1] in tags or d[1] in guards or by_name[d[1]] > 1
+                 or any(".".join(d[1].split(".")[k:]) in in_macros
+                        for k in range(1, len(d[1].split("."))))}
     cands = [d[1] for d in decls if d[1] in defined and d[1] not in protected
              and d[3] in ("theorem", "lemma", "def", "abbrev")]
     dead = set()

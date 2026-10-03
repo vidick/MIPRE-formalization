@@ -223,3 +223,60 @@ Only the collision: `MIPRE.LIDT.LowIndDegPoly.eval_sub` now has one owner,
 `Background/LIDT/Coefficients.lean`, and the copies in `QLD/Separate.lean` and
 `AnswerReduction/SoundPoly.lean` are gone; both files reach `Coefficients` already. Plus this
 record, the eleven reports, the two lists and `scripts/lean-dead.py`.
+
+## 7. 2026-10-03: the dead declarations deleted
+
+The maintainer asked for the cleanup to be carried out. This pass does the compiler-backed part
+of §3.1 and §3.4 — the dead list — and nothing that needs a blueprint decision (§3.5) or a
+proof rewrite (§3.2, §3.3), which stay recorded.
+
+**What was deleted.** `scripts/lean-dead.py` on `main` at `8a30e7d` found 1,191 dead
+declarations, of which 294 are in the commuting-operator port `Background/LIDT/Co/` (mirrors of
+vendored declarations that `scripts/port-pairing.py` requires to be ported or listed under
+`Not ported`: a decision about the port, not a cleanup), 96 in `MIPRE/LCS/` (contributed code)
+and 39 in `MIPRE/Cslib/` (a frozen upstream copy, §3.6); those three areas are untouched. Of the
+other 762, 696 were deleted, each by the exact source range Lean records for it
+(`findDeclarationRanges?`, docstring and attributes included, with any `set_option`/`omit`/
+`include ... in` prefix), and four modules left with no declarations were removed with their
+imports passed to the importer: `Background/Introspection/ExplicitStrategy.lean`,
+`Foundations/Introspection/AuxiliaryPrefixScan.lean`,
+`Foundations/Introspection/DecisionPreparationBound.lean`, `TM/MultiInput/TapeLemmas.lean`.
+Net about −5,000 lines in 275 files. Thirty-five docstring references to deleted names were
+rewritten. The whole library builds, and every check of `CLAUDE.md` passes.
+
+**What was kept, and why.**
+
+- *Results a module docstring or the blueprint advertises* (35, with what they use): the
+  Positivstellensatz characterizations `isGLB_commutingOperatorValue`,
+  `commutingOperatorValue_lt_iff_of_pos`, `commutingOperatorValue_le_of_mem`, `dominant_iff_l1`;
+  the tensor-model instances `dis_eq_tensor`, `stateDist_eq_tensor`, `povmStateDist_eq_tensor`,
+  `valStar_congr_at`; `one_sub_value_adapt_le` and `one_sub_povmValue_adapt_le` (the statements
+  of `GameAdapt.lean`); `value_mergeAnswersByQuestion`, `mergeByQuestion_toIn`,
+  `SyncStrategy.ofPOVM`, `TensorProductStrategy.ofPVM`, `snorm_eq_mat`,
+  `hsNormSq_of_isHermitian`, `inconsistency_extVec2`, `conjTranspose_naimark_mul_naimark`,
+  `isSynchronousAt_of_game_matches`, `decidableAccepts`, the `NCPoly` API lemmas `coeff_mul`,
+  `algHom_ext`, `isSelfAdjoint_gen`; `valStar_repVerifier` (named in `06_proof_structure.tex`);
+  and in `TM/` the evaluator characterizations of decision D12, the encoding-length lemmas and
+  `ComputesFunWithBounds` (decision D4). Unused is not the same as superseded: these are stated
+  results, and deleting them would make the documentation false. The advertised clusters §3.1
+  already proposed (`IsPVM.norm_sum_le_one`, `tseitin_sat_iff`, the `wrap*_cost` forms,
+  `accList_eq_accListW`, the `toC_coeffRaw` and `l1_*` clusters, the GNS lifting API, the LIDT
+  adapter's `rescale`/`revPoint`/`reparamEquiv` lemmas, `evalFuel`, `Fields.numEq`) were
+  deleted, and their prose rewritten.
+- *The dependency closure of the above* was computed by text, so it over-keeps by short-name
+  homonyms: `Introspection.DecisionPreparation.{raw,rest,metadata,budget,resourceTail}`,
+  `GNS.Bdd.comp`, `Introspection.AuxiliarySource.matrix`, `QLD.Question.omega`,
+  `ValueApprox.{EntriesIn.zero,EntriesIn.sum,IsSkewHermitian.zero,GaussianRat.mem_iff}`,
+  `bornProb_def`. They are still dead, and the next pass can take them.
+- *Names used inside a macro* (four): see below.
+
+**What the index cannot see, learned the hard way.** An identifier inside a `macro`, `syntax`,
+`elab` or `notation` body is elaborated only where the macro expands, with synthetic positions,
+and the `.ilean` index records no usage for it. `TM/Interp/Step.lean` defines `norm_ds` and
+`norm_ds_goal` as `try simp only [..., overwrite_cons_one_add, overwrite_append_nil', ...]`; with
+the two lemmas deleted, `simp only` failed on the unknown names, `try` discarded the error, and
+the file, which elaborates in 65 s, ran for more than 85 CPU-minutes without finishing. Nothing
+reported an error. `scripts/lean-dead.py` now protects every declaration a macro-like body names
+(by any dotted suffix), and the regenerated list in
+[`simplification-2026-09-25/dead-declarations.txt`](simplification-2026-09-25/dead-declarations.txt)
+(480 entries: the three excluded areas and the kept results above) is computed with it.
