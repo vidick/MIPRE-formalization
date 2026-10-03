@@ -1036,8 +1036,9 @@ semidecider exists — `val*` is r.e. from below (`lem:value-lower-approx`), `ω
 (`commutingUpperRE`) — and so in which class soundness must preserve; the compressibility
 criterion generalized to nested classes (`Cost.compressibility_criterion_nested`) is what lets
 the *tensor* completeness of compression be reused in the `coRE` shape and makes
-co-completeness unnecessary. The conditional theorem `MIPRE.mipco_eq_core_of_compression`
-(`MIPRE/MIPCo.lean`; it was `MIPRE.mipco_eq_core` until the hypothesis was discharged) proves `MIPCo = IsCoRE` from the single hypothesis
+co-completeness unnecessary. The conditional theorem (`MIPRE/MIPCo.lean`; `MIPRE.mipco_eq_core`
+until the hypothesis was discharged, then `mipco_eq_core_of_compression`, and removed on
+2026-10-03, since `gapCompressionCo_sound` proves its kind of hypothesis) proved `MIPCo = IsCoRE` from the single hypothesis
 `MIPRE.gapCompression.Sound ValueModel.commuting`, the soundness clause of compression read in
 `ω_co`; `MIPCo ⊆ coRE` (`MIPRE.MIPCo.isCoRE`) is unconditional. Blueprint chapter 8,
 `def:value-model` and `thm:mipco-eq-core`. What remains — the commuting-operator soundness of
@@ -1048,7 +1049,7 @@ instance, rather than written a second time: `reports/co-generalization-audit.md
 four soundness chains and found them bipartite and vector-state throughout, with finite
 dimension used only at identified, replaceable places — except in the vendored
 low-individual-degree test, which becomes the single remaining hypothesis of
-`MIPRE.mipco_eq_core_of_compression` once Phases 1–5 of the plan are done, and is Phase 6. Phase 1 is tracked
+that conditional theorem once Phases 1–5 of the plan were done, and was Phase 6. Phase 1 is tracked
 by #240. Its first item is in (#241): `ω_co` is attained on projective strategies, by a
 dilation that preserves commutation with the other player (`MIPRE.exists_isProjective_lt_value`,
 blueprint `thm:co-value-projective`), so the generalized analyses may assume projective

@@ -729,14 +729,14 @@ formalization.
 Lin proved that the commuting-operator analogue of $\MIPstar$ is $\coRE$~\cite{Lin25}, by
 the compression architecture of this blueprint with the soundness of every stage carried in
 the commuting-operator value. This section states his theorem in the vocabulary of
-Section~\ref{ch:foundations} and proves it from one hypothesis, the commuting-operator
-soundness of gap compression (Definition~\ref{def:compression-co-sound}); the inclusion
-$\MIPco \subseteq \coRE$ is proved outright. Nothing else is proved twice: the halting
+Section~\ref{ch:foundations}, proves it first from one hypothesis, the commuting-operator
+soundness of gap compression (Definition~\ref{def:compression-co-sound}), and then proves the
+hypothesis; the inclusion $\MIPco \subseteq \coRE$ needs none. Nothing else is proved twice: the halting
 reduction, its classes, semideciders and class transfer, and the classes $\MIPstar$ and
 $\MIPco$ themselves are written once against a \emph{value model}
 (Definition~\ref{def:value-model}), an interface that $\valstar$ and $\omegaco$ both satisfy,
 and the two theorems differ only in the direction in which the value is semidecidable. The
-plan for discharging the hypothesis is \texttt{planning/mipco-track.md}; its Phases 1 to 5, the
+plan that discharged the hypothesis is \texttt{planning/mipco-track.md}; its Phases 1 to 5, the
 rest of this section, reduce it to the soundness of the low-individual-degree test in the
 commuting-operator model (Corollary~\ref{cor:mipco-from-lidt}), and Phase 6 to its soundness in
 dyadic pairs (Corollary~\ref{cor:mipco-from-lidt-fin}), which is proved
@@ -843,7 +843,8 @@ is soundness in the model $\valstar$. Soundness in the model $\omegaco$ --- the
 \emph{commuting-operator soundness of compression} --- is the model-$co$ case of the
 soundness clause of Lin's gap compression theorem~\cite{Lin25}, and the one hypothesis of
 Theorems~\ref{thm:halting-co} and~\ref{thm:mipco-eq-core}. No completeness clause in the
-commuting-operator model is asked for.
+commuting-operator model is asked for. It holds for the compression of
+Corollary~\ref{cor:mipco-from-stages} (Theorem~\ref{thm:mipco-eq-core-unconditional}).
 \end{definition}
 
 \begin{definition}[The stages' soundness clauses in a value model]
@@ -902,16 +903,15 @@ Lemma~\ref{lem:compress-sound-in}, which that lemma bounds.
 
 \begin{theorem}[Halting reduces to the commuting-operator value, from co-soundness]
 \label{thm:halting-co}
-\uses{def:compression-co-sound,lem:compressible-criterion-nested,lem:valco-upper-re,
-  thm:halting,lem:dhalt-values,lem:halt-construction,def:game-description,
-  thm:compression-target,def:value-model}
+\uses{def:compression-co-sound,lem:compressible-criterion-nested,lem:valco-upper-re,thm:halting,
+  lem:dhalt-values,lem:halt-construction,def:game-description,def:value-model}
 \lean{MIPRE.Halting.halting_reduction_upper, MIPRE.Halting.halting_reduction_upper_strings,
   MIPRE.Halting.halting_reduction_upper_of, MIPRE.Halting.halting_reduction_commuting_of,
-  MIPRE.halting_reduction_commuting, MIPRE.Halting.classOne,
+  MIPRE.Halting.classOne,
   MIPRE.Halting.classA_subset_classOne, MIPRE.Halting.val_tab_eq_one_of_mem_classOne}
 \leanok
-Assume the gap compression of Theorem~\ref{thm:compression-target} is sound in the model
-$\omegaco$ (Definition~\ref{def:compression-co-sound}). Then there is a computable map
+Assume a gap compression is sound in the model $\omegaco$
+(Definition~\ref{def:compression-co-sound}). Then there is a computable map
 $\machine \mapsto \game_\machine$ from machines to game descriptions such that
 $\omegaco(\game_\machine) \leq \frac12$ if $\machine$ halts on the empty input and
 $\omegaco(\game_\machine) = 1$ otherwise. More generally, every value model that is
@@ -956,14 +956,11 @@ tensor completeness, and with Lemma~\ref{lem:valco-upper-re} in place of the NPA
 
 \begin{theorem}[$\MIPco = \coRE$, from co-soundness]
 \label{thm:mipco-eq-core}
-\uses{thm:halting-co,lem:mipco-sub-core,def:mipco,def:core,thm:halting-undecidable,
-  thm:compression-target,def:value-model}
-\lean{MIPRE.mipco_eq_core_of_compression, MIPRE.core_subset_mipco, MIPRE.Halting.mipco_eq_core_of,
-  MIPRE.Halting.core_subset_mipco_of, MIPRE.Halting.core_subset_mipclass_of_reduction,
+\uses{thm:halting-co,lem:mipco-sub-core,def:mipco,def:core,thm:halting-undecidable,def:value-model}
+\lean{MIPRE.Halting.mipco_eq_core_of, MIPRE.Halting.core_subset_mipco_of, MIPRE.Halting.core_subset_mipclass_of_reduction,
   MIPRE.Halting.mipclass_eq_core_of_reduction}
 \leanok
-Assume the gap compression of Theorem~\ref{thm:compression-target} is sound in the model
-$\omegaco$. Then $\MIPco = \coRE$, for the class of Definition~\ref{def:mipco}. The inclusion
+Assume a gap compression is sound in the model $\omegaco$. Then $\MIPco = \coRE$, for the class of Definition~\ref{def:mipco}. The inclusion
 $\MIPco \subseteq \coRE$ holds without the hypothesis. More generally
 $\MIPClass(\omega) = \coRE$ for every value model $\omega$ that is r.e.\ from above and has a
 halting reduction of $\coRE$ shape.
@@ -983,8 +980,8 @@ exchanged, and in Lean the two are the same theorem in the two shapes.
 
 \begin{corollary}[$\MIPco = \coRE$, from the co-soundness of the Pauli basis test and of the low-individual-degree test]
 \label{cor:mipco-from-stages}
-\uses{thm:mipco-eq-core,thm:pipeline-sound-in,thm:compression-target,
-  thm:parallel-repetition-co,thm:ar-sound-co,thm:intro-sound-co}
+\uses{thm:mipco-eq-core,thm:pipeline-sound-in,thm:parallel-repetition-co,thm:ar-sound-co,
+  thm:intro-sound-co}
 \lean{MIPRE.mipco_eq_core_of_stages, MIPRE.gapCompressionCo}
 \leanok
 If the Pauli basis test is sound in the commuting-operator model
@@ -1076,7 +1073,7 @@ fixed the model is \texttt{reports/co-generalization-audit.md}.
 \subsubsection{The projective commuting-operator model}
 \label{sec:ds-mipco-projective}
 
-The hypothesis of Theorem~\ref{thm:mipco-eq-core} is to be discharged by generalizing the
+The hypothesis of Theorem~\ref{thm:mipco-eq-core} was discharged by generalizing the
 stage analyses of compression, not by writing them a second time
 (\texttt{planning/mipco-track.md}, Phases 1--6). Those analyses are bipartite, vector-state and
 projective: a unit vector on a tensor product, the first player's operators acting on the first
@@ -3162,10 +3159,11 @@ every model on a Hilbert space in a unit state (Lemma~\ref{lem:povm-domination})
 \begin{corollary}[$\MIPco = \coRE$, from the soundness of the low-individual-degree test in dyadic pairs]
 \label{cor:mipco-from-lidt-fin}
 \uses{cor:mipco-from-stages,thm:ar-sound-co-fin,lem:qld-approx-co-fin,lem:co-value-finite-pair}
-\lean{MIPRE.mipco_eq_core_of_lidtFin}
+\lean{MIPRE.mipco_eq_core_of_lidtFin, MIPRE.gapCompressionCo_sound_of_lidtFin}
 \leanok
-If the seeded CL test is sound in dyadic pairs (Definition~\ref{def:lidt-sound-fin}), then
-$\MIPco = \coRE$.
+If the seeded CL test is sound in dyadic pairs (Definition~\ref{def:lidt-sound-fin}), then the
+compression of Corollary~\ref{cor:mipco-from-stages} is sound in $\omegaco$
+(Definition~\ref{def:compression-co-sound}), and $\MIPco = \coRE$.
 \end{corollary}
 
 \begin{proof}
@@ -4264,15 +4262,23 @@ it gives the soundness of the seeded test there (Lemma~\ref{lem:lidt-sound-in-of
 
 \begin{theorem}[$\MIPco = \coRE$]
 \label{thm:mipco-eq-core-unconditional}
-\uses{cor:mipco-from-lidt-fin,thm:lidt-sound-fin}
-\lean{MIPRE.mipco_eq_core}
+\uses{cor:mipco-from-lidt-fin,thm:lidt-sound-fin,thm:halting-co,thm:mipco-eq-core}
+\lean{MIPRE.mipco_eq_core, MIPRE.gapCompressionCo_sound, MIPRE.halting_reduction_commuting,
+  MIPRE.core_subset_mipco}
 \leanok
-$\MIPco = \coRE$, for the class of Definition~\ref{def:mipco}.
+The compression of Corollary~\ref{cor:mipco-from-stages} is sound in $\omegaco$
+(Definition~\ref{def:compression-co-sound}). Hence there is a computable map
+$\machine \mapsto \game_\machine$ from machines to game descriptions such that
+$\omegaco(\game_\machine) \leq \frac12$ if $\machine$ halts on the empty input and
+$\omegaco(\game_\machine) = 1$ otherwise, and $\MIPco = \coRE$, for the class of
+Definition~\ref{def:mipco}.
 \end{theorem}
 
 \begin{proof}
 \leanok
-The hypothesis of Corollary~\ref{cor:mipco-from-lidt-fin} is Theorem~\ref{thm:lidt-sound-fin}.
+The hypothesis of Corollary~\ref{cor:mipco-from-lidt-fin} is Theorem~\ref{thm:lidt-sound-fin},
+which gives the soundness. The halting reduction is then Theorem~\ref{thm:halting-co}, and
+$\MIPco = \coRE$ Theorem~\ref{thm:mipco-eq-core}.
 \end{proof}
 
 \subsection{Further directions}

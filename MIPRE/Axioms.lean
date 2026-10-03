@@ -2765,8 +2765,9 @@ separation from an upper semidecider (`MIPRE/Foundations/Correlations.lean`,
 
 /-! The commuting-operator track (`planning/mipco-track.md`, Phase 0):
 `lem:compressible-criterion-nested`, `lem:mipco-sub-core`, `thm:halting-co` and
-`thm:mipco-eq-core`, the last two conditional on `MIPRE.GapCompression.Sound
-ValueModel.commuting`. The reduction and the classes are generic in a value model
+`thm:mipco-eq-core`, the last two from a gap compression sound in `ValueModel.commuting`
+(`MIPRE.GapCompression.Sound`), which `MIPRE.gapCompressionCo_sound` provides
+(`thm:mipco-eq-core-unconditional`, below). The reduction and the classes are generic in a value model
 (`MIPRE/Foundations/ValueModel.lean`, the `Halting/` modules and `Foundations/ClassMIPStarComputable.lean`);
 the commuting-operator instances are `MIPRE/Foundations/ClassMIPCo.lean` and
 `MIPRE/MIPCo.lean`. -/
@@ -2782,14 +2783,11 @@ the commuting-operator instances are `MIPRE/Foundations/ClassMIPCo.lean` and
   MIPRE.Halting.halting_reduction_upper_strings,
   MIPRE.Halting.halting_reduction_upper_of,
   MIPRE.Halting.halting_reduction_commuting_of,
-  MIPRE.halting_reduction_commuting,
   MIPRE.Halting.classOne,
   MIPRE.Halting.classA_subset_classOne,
   MIPRE.Halting.val_tab_eq_one_of_mem_classOne
 
-#guard_sorry_free MIPRE.mipco_eq_core_of_compression,
-  MIPRE.core_subset_mipco,
-  MIPRE.Halting.mipco_eq_core_of,
+#guard_sorry_free MIPRE.Halting.mipco_eq_core_of,
   MIPRE.Halting.core_subset_mipco_of,
   MIPRE.Halting.core_subset_mipclass_of_reduction,
   MIPRE.Halting.mipclass_eq_core_of_reduction
@@ -3322,7 +3320,8 @@ and the conditional theorem, `cor:mipco-from-lidt-fin` (`MIPRE/MIPCo.lean`). -/
 #guard_sorry_free MIPRE.QLD.approxSoundIn_commuting_of_fin
 
 -- blueprint `cor:mipco-from-lidt-fin`
-#guard_sorry_free MIPRE.mipco_eq_core_of_lidtFin
+#guard_sorry_free MIPRE.mipco_eq_core_of_lidtFin,
+  MIPRE.gapCompressionCo_sound_of_lidtFin
 
 /-! The commuting-operator track, C6b's II₁ orthonormalization tier (`planning/c6b-plan.md`, T1):
 a centre-valued trace for a von Neumann algebra with a faithful tracial vector functional,
@@ -3578,8 +3577,9 @@ main induction in the doubled model and the unsymmetrization of Theorem E,
 canonical-line theorem in a dyadic pair, `lem:co-lidt-canonical-line`
 (`MIPRE/Background/LIDT/Co/Bridge/`), and the model chain to `SoundIn`,
 `lem:lidt-sound-in-of-model-lidt` (`MIPRE/Background/LIDT/Co/Chain/`); `SoundFin`,
-`thm:lidt-sound-fin` (`MIPRE/Background/LIDT/Co/SoundFin.lean`); and `MIP^co = coRE` without
-hypothesis, `thm:mipco-eq-core-unconditional` (`MIPRE/MIPCo.lean`). -/
+`thm:lidt-sound-fin` (`MIPRE/Background/LIDT/Co/SoundFin.lean`); and, without hypothesis, the
+commuting-operator soundness of compression, the halting reduction to `ω_co` and
+`MIP^co = coRE`, `thm:mipco-eq-core-unconditional` (`MIPRE/MIPCo.lean`). -/
 
 -- blueprint `lem:co-main-induction`
 #guard_sorry_free MIPRE.LIDT.Co.MainInductionStep.mainInduction
@@ -3601,6 +3601,9 @@ hypothesis, `thm:mipco-eq-core-unconditional` (`MIPRE/MIPCo.lean`). -/
 #guard_sorry_free MIPRE.LIDT.Simul.soundFin
 
 -- blueprint `thm:mipco-eq-core-unconditional`
-#guard_sorry_free MIPRE.mipco_eq_core
+#guard_sorry_free MIPRE.mipco_eq_core,
+  MIPRE.gapCompressionCo_sound,
+  MIPRE.halting_reduction_commuting,
+  MIPRE.core_subset_mipco
 
 end
