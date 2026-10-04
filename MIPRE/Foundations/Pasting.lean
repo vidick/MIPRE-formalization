@@ -148,7 +148,7 @@ theorem abs_sum_sum_le_sqrt {α β : Type*} [Fintype α] [Fintype β] (f u v : �
   rw [sum_prod_eq f, sum_prod_eq fun a b => u a b ^ 2, sum_prod_eq fun a b => v a b ^ 2]
   refine le_trans (Finset.abs_sum_le_sum_abs _ _) ?_
   exact le_trans (Finset.sum_le_sum fun p _ => hf p.1 p.2)
-    (sum_mul_le_sqrt (fun p : α × β => u p.1 p.2) fun p : α × β => v p.1 p.2)
+    (Real.sum_mul_le_sqrt_mul_sqrt Finset.univ (fun p : α × β => u p.1 p.2) fun p : α × β => v p.1 p.2)
 
 /-! ### Weighted sums -/
 
@@ -383,7 +383,7 @@ theorem qform_sum_ge_of_close (hψ : ‖M.ψ‖ = 1) {C : Type*} [Fintype C] {Q 
     intro G K hG
     refine le_trans (Finset.abs_sum_le_sum_abs _ _) ?_
     refine le_trans (Finset.sum_le_sum fun c _ => ?_)
-      (sum_mul_le_sqrt (fun c => M.snorm (G c)) (fun c => M.snorm (K c)))
+      (Real.sum_mul_le_sqrt_mul_sqrt Finset.univ (fun c => M.snorm (G c)) (fun c => M.snorm (K c)))
     have h := M.abs_qform_star_mul_le (G c) (K c)
     have he : M.qform (star (G c) * K c) = M.qform (G c * K c) := by
       show Op.qform M.ψ (M.π (star (G c) * K c)) = Op.qform M.ψ (M.π (G c * K c))

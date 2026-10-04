@@ -148,29 +148,12 @@ variable {F K : Type*} [Field F] [Fintype F] [DecidableEq F] [Field K] [Fintype 
   [DecidableEq K] [Algebra F K]
 
 omit [DecidableEq K] in
-/-- **A nonzero `𝔽`-linear functional has kernel of index `|𝔽|`.** Every fibre is a translate of
-the kernel, and there are `|𝔽|` of them. -/
+/-- **A nonzero `𝔽`-linear functional has kernel of index `|𝔽|`**: `card_filter_ker_mul'` at
+`V = K`. -/
 theorem card_filter_ker_mul (τ : K →ₗ[F] F) (hτ : τ ≠ 0) :
     #{r ∈ (univ : Finset K) | τ r = 0} * Fintype.card F = Fintype.card K := by
   classical
-  obtain ⟨v, hv⟩ : ∃ v : K, τ v ≠ 0 := by
-    by_contra h
-    exact hτ (LinearMap.ext fun r => not_ne_iff.mp (fun hr => h ⟨r, hr⟩))
-  -- every fibre has the same cardinality as the kernel
-  have hfib : ∀ a : F, #{r ∈ (univ : Finset K) | τ r = a} = #{r ∈ (univ : Finset K) | τ r = 0} := by
-    intro a
-    refine Finset.card_bij' (fun r _ => r - (a / τ v) • v) (fun r _ => r + (a / τ v) • v)
-      ?_ ?_ ?_ ?_ <;> intro r hr <;> simp only [Finset.mem_filter, Finset.mem_univ,
-        true_and, map_sub, map_add, map_smul] at hr ⊢
-    · rw [hr, smul_eq_mul, div_mul_cancel₀ _ hv, sub_self]
-    · rw [hr, smul_eq_mul, div_mul_cancel₀ _ hv, zero_add]
-    · rw [sub_add_cancel]
-    · rw [add_sub_cancel_right]
-  have hcard : Fintype.card K = ∑ a : F, #{r ∈ (univ : Finset K) | τ r = a} := by
-    rw [← Finset.card_univ]
-    exact Finset.card_eq_sum_card_fiberwise fun r _ => Finset.mem_univ (τ r)
-  rw [hcard, Finset.sum_congr rfl fun a (_ : a ∈ univ) => hfib a, Finset.sum_const,
-    Finset.card_univ, mul_comm, smul_eq_mul]
+  exact card_filter_ker_mul' τ hτ
 
 variable [FiniteDimensional F K] [Algebra.IsSeparable F K]
 

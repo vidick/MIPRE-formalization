@@ -280,3 +280,53 @@ reported an error. `scripts/lean-dead.py` now protects every declaration a macro
 (by any dotted suffix), and the regenerated list in
 [`simplification-2026-09-25/dead-declarations.txt`](simplification-2026-09-25/dead-declarations.txt)
 (480 entries: the three excluded areas and the kept results above) is computed with it.
+
+## 8. 2026-10-03: duplicates and Mathlib shadows (§3.2, part of §3.3)
+
+Each candidate was rechecked against `main` after §7, since the dead-code pass had already
+removed several (`two_le_card_field`, `reindex_sum`, the `kron_sum'` forms and others were dead).
+
+**Done.**
+
+- Mathlib shadows: `MIPRE.sum_mul_le_sqrt` → `Real.sum_mul_le_sqrt_mul_sqrt univ` (eight sites,
+  one in the port); `sum_prod_id`/`sum_prod_swap` → `Fintype.sum_prod_type`/`_right`;
+  `CL.map_const_eq_replicate` → `List.map_const'`; `self_le_sqrt_of_unit` →
+  `Real.le_sqrt_self_iff` (whose hypothesis is weaker); `TM.CookLevin.Decoupled.getD_append_left`
+  → `List.getD_append`.
+- The eight `Question.fmtOk` inversions, declared in both `QLD/PauliBooleanDispatch.lean` and
+  `QLD/Win.lean`, now have one home beside `fmtOk` in `QLD/Game.lean`.
+- `Repetition.value_le_one`, `value_nonneg`, `bddAbove_range_value`, `quantumValue_nonneg`
+  (`Repetition/Entangled.lean`) → the `Foundations/Games.lean` forms.
+- One owner, the module the others import: `Cost.Data.isBit_iff` (the `Repeat/DecLoop.lean` copy
+  removed), `Cost.esize_nat_le` (the `TM/CookLevin/Assemble.lean` copy), `Nat.bits_two_pow` (the
+  copies in `Halting/CompressorProgram.lean` and `TM/CookLevin/LayoutProg.lean`),
+  `AnswerParser.decide_and_if` (the `DynamicParser.lean` copy), `Complete.pauli_adj` (the
+  `BinarySampled.lean` copy).
+- `LowDegree.card_filter_ker_mul` is `card_filter_ker_mul'` at `V = K`, by citation instead of a
+  copied proof; `Halting.primrec_two_pow` is `primrec_nat_pow` at base 2, and `two_pow_iterate`
+  is gone.
+
+The blueprint edges were refreshed (`blueprint-edges.py --fix`): six `\uses` edges moved where a
+proof now cites a different lemma. Nothing became dead.
+
+**Left, with the reason.**
+
+- Tagged or guarded, so a blueprint change and not a code one: `QLD.fin2Equiv`
+  (= `finTwoArrowEquiv`), `QLD.mul_card_div` (= `Nat.mul_div_cancel'`), `QLD.sum_kron`/`kron_sum`
+  (one-line wrappers of `smulKron_sum_left/right`), `MIPRE.mul_self_le_self_of_le_one` (the model
+  form, a different statement from `OpBound.mul_self_le_of_le_one`).
+- Not duplicates on inspection: the four `doubled_positive` are about four different games; the
+  two `length_bits` are about two different `bits` (`TM/Interp/Tape.lean`,
+  `TM/CookLevin/Sat.lean`), which would have to be merged first.
+- No copy is imported by the others, so one owner would need a new import edge:
+  `vecBits_eq_ofFn`, `getD_vecBits` (SAT vs AnswerReduction), `esize_bool_le` (three copies),
+  `lit_true_iff` (two `Lit` namespaces), the list-emptiness programs.
+- Kept as convenient forms of a library lemma: `sum_supported` (a `rw` form of
+  `Fintype.sum_of_injective` whose side goals three proofs rely on) and
+  `TM.CookLevin.Decoupled.getD_append_right` (the `pre.length + t` form, which its one site needs).
+- Stale: `TensorProductStrategy.value_le_mergeAnswers` was recorded as verbatim
+  `value_le_mergeAnswersByQuestion`; the latter now exists only in the bipartite model, and
+  `GameTransport.lean` does not import it, so the fold is an import reorganization, not a deletion.
+- Not attempted here, recorded in §3.2–3.3 as medium risk: the binary successor of
+  `Halting/Arith.lean`, `Pipeline.toUnaryProg`, the fibre-sum proofs of `ProjectiveMeasurement.merge`
+  and its kin, `NormalBasis.lean` by transport, `BinaryOrbitPolynomial.lean`, the QLD mirror pairs.

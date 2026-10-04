@@ -19,42 +19,6 @@ noncomputable section
 namespace MIPRE.QLD.PauliBooleanProgram
 open Cost SAT PauliCL LowDegree LIDT LCS.MagicSquare
 
-section Format
-variable {F : Type*} {m d : Nat}
-theorem eq_val_of_fmtOk {W : Bas} {y : Point F m} {a : Answer F m d}
-    (h : (Question.point W y).fmtOk a = true) : ∃ a', a = .val a' := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-theorem eq_apoly_of_fmtOk {W : Bas} {u₀ : Point F m} {s : F} {a : Answer F m d}
-    (h : (Question.aline W u₀ s).fmtOk a = true) : ∃ p, a = .apoly p := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-theorem eq_dpoly_of_fmtOk {W : Bas} {u₀ : Point F m} {s : F} {w : Point F m} {a : Answer F m d}
-    (h : (Question.dline W u₀ s w).fmtOk a = true) : ∃ p, a = .dpoly p := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-theorem eq_pauliAns_of_fmtOk {W : Bas} {a : Answer F m d}
-    (h : (Question.pauli W : Question F m).fmtOk a = true) : ∃ h', a = .pauliAns h' := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-theorem eq_bit_of_fmtOk_pairB {W : Bas} {ω : Omega F m} {a : Answer F m d}
-    (h : (Question.pairB W ω).fmtOk a = true) : ∃ b, a = .bit b := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-theorem eq_bitPair_of_fmtOk {ω : Omega F m} {a : Answer F m d}
-    (h : (Question.pair ω).fmtOk a = true) : ∃ β, a = .bitPair β := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-theorem eq_bit_of_fmtOk_var {j : Fin layout.s} {ω : Omega F m} {a : Answer F m d}
-    (h : (Question.var j ω).fmtOk a = true) : ∃ b, a = .bit b := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-theorem eq_bitTriple_of_fmtOk {i : Fin layout.r} {ω : Omega F m} {a : Answer F m d}
-    (h : (Question.con i ω).fmtOk a = true) : ∃ α, a = .bitTriple α := by
-  cases a <;> first | exact ⟨_, rfl⟩ | simp [Question.fmtOk] at h
-
-end Format
-
 set_option maxHeartbeats 60000 in
 theorem pairTest_unhandled {F : Type*} [Field F] [Fintype F] [DecidableEq F]
     [Algebra (ZMod 2) F] {m d : ℕ} [NeZero m] (hm : m ∣ Fintype.card F)

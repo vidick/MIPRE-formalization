@@ -34,24 +34,11 @@ open Data
 
 /-! ## The parameter in binary -/
 
-/-- The bits of `2 ^ e`: `e` zeros then a one. -/
-theorem bits_two_pow (e : ℕ) : (2 ^ e).bits = List.replicate e false ++ [true] := by
-  have hval : ∀ e, (List.replicate e false ++ [true]).foldr Nat.bit 0 = 2 ^ e := by
-    intro e
-    induction e with
-    | zero => rfl
-    | succ e ih =>
-      rw [List.replicate_succ, List.cons_append, List.foldr_cons, ih, Nat.bit_false, pow_succ]
-      ring
-  have hcanon : List.replicate e false ++ [true] = [] ∨
-      (List.replicate e false ++ [true]).getLast? = some true := Or.inr (by simp)
-  rw [← hval e, bits_foldr_of_canon _ hcanon]
-
 /-- `encode (2 ^ e)`, as a list of `e` `nil`s in front of the numeral `1`. -/
 theorem encode_two_pow_list (e : ℕ) :
     (encode (2 ^ e) : Data) = Data.list (List.replicate e .nil ++ [.cons .nil .nil]) := by
   show (encode (2 ^ e).bits : Data) = _
-  rw [bits_two_pow, encode_bitStr_eq_list, List.map_append, List.map_replicate]
+  rw [Nat.bits_two_pow, encode_bitStr_eq_list, List.map_append, List.map_replicate]
   rfl
 
 /-- `lamProg` on `encode n` computes `encode (2 ^ (2 · size n))`: two walks over the bits of

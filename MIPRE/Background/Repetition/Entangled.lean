@@ -130,29 +130,6 @@ theorem ofTensorProductStrategy_winProbability {G : Game X Y A B}
   · simp [toTP, h]
   · simp [toTP, h]
 
-/-- A tensor-product strategy's value is at most one, because it is the winning probability
-of the vendored strategy it embeds to. -/
-theorem value_le_one {G : Game X Y A B} (S : TensorProductStrategy G) : S.value ≤ 1 := by
-  rw [← ofTensorProductStrategy_winProbability S]
-  exact (ofTensorProductStrategy S).winProbability_le_one
-
-/-- A tensor-product strategy's value is nonnegative, for the same reason. -/
-theorem value_nonneg {G : Game X Y A B} (S : TensorProductStrategy G) : 0 ≤ S.value := by
-  rw [← ofTensorProductStrategy_winProbability S]
-  exact (ofTensorProductStrategy S).winProbability_nonneg
-
-/-- The values of tensor-product strategies are bounded above, so `val*` is attained as a
-genuine supremum and `le_ciSup` applies to it. -/
-theorem bddAbove_range_value (G : Game X Y A B) :
-    BddAbove (Set.range fun S : TensorProductStrategy G => S.value) := by
-  refine ⟨1, ?_⟩
-  rintro _ ⟨S, rfl⟩
-  exact value_le_one S
-
-/-- `val*(G) ≥ 0`, including when no tensor-product strategy exists (then it is `0`). -/
-theorem quantumValue_nonneg (G : Game X Y A B) : 0 ≤ quantumValue G :=
-  Real.iSup_nonneg fun S => value_nonneg S
-
 /-- **The embedding direction of `lem:povm-value-eq`**: every tensor-product strategy is a
 strategy of the vendored kind with the same value, so the quantum value of this repository
 is at most the vendored entangled value. -/
@@ -273,7 +250,7 @@ theorem projective_value_le_quantumValue {HA HB : Type} [Fintype HA] [DecidableE
       rw [hsub, dotProduct_mulVec_submatrix]
     rw [hq]
   rw [← hS]
-  exact le_ciSup (bddAbove_range_value G) S
+  exact le_ciSup (TensorProductStrategy.bddAbove_range_value G) S
 
 /-- Purification with the reference system placed on Bob's side. A density matrix `ρ` on
 `dA × dB` is the reduced state of a pure state on `dA × (dB × R)` with `R = dA × dB`, against

@@ -103,12 +103,6 @@ theorem getD_false_cons (bs : BitStr) (k : ℕ) (h : ∀ i, bs.getD i false = k.
 
 /-! ### Powers of two -/
 
-theorem bits_two_pow : ∀ e : ℕ, (2 ^ e).bits = List.replicate e false ++ [true]
-  | 0 => by rw [pow_zero, Nat.one_bits, List.replicate_zero, List.nil_append]
-  | e + 1 => by
-    rw [pow_succ, mul_comm, Nat.bit0_bits _ (Nat.two_pow_pos e).ne', bits_two_pow e,
-      List.replicate_succ, List.cons_append]
-
 /-! ## Resizing, as a program -/
 
 /-- `resize`, the width in unary. -/
@@ -130,7 +124,7 @@ noncomputable def pow2P : PolyTimeFun Unary ℕ :=
       intro u
       show (encode (2 ^ u.length) : Data) = encode (List.replicate u.length false ++ [true])
       rw [show (encode (2 ^ u.length) : Data) = encode ((2 ^ u.length).bits) from rfl,
-        bits_two_pow])
+        Nat.bits_two_pow])
 
 @[simp] theorem pow2P_apply (u : Unary) : pow2P u = 2 ^ u.length := rfl
 

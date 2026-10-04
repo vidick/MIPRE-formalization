@@ -94,12 +94,6 @@ theorem sum_weighted_mul_le_sqrt {ι : Type*} [Fintype ι] (w u v : ι → ℝ) 
     _ ≤ Real.sqrt ((∑ i, w i * u i ^ 2) * ∑ i, w i * v i ^ 2) := Real.sqrt_le_sqrt hCS
     _ = Real.sqrt (∑ i, w i * u i ^ 2) * Real.sqrt (∑ i, w i * v i ^ 2) := Real.sqrt_mul hnn _
 
-/-- An unweighted Cauchy--Schwarz, in the same shape. -/
-theorem sum_mul_le_sqrt {ι : Type*} [Fintype ι] (u v : ι → ℝ) :
-    ∑ i, u i * v i ≤ Real.sqrt (∑ i, u i ^ 2) * Real.sqrt (∑ i, v i ^ 2) := by
-  have h := sum_weighted_mul_le_sqrt (fun _ : ι => (1 : ℝ)) u v fun _ => zero_le_one
-  simpa using h
-
 /-- **Moving an average inside a square root.** Cauchy--Schwarz against the constant one. -/
 theorem sum_weighted_sqrt_le {ι : Type*} [Fintype ι] (w f : ι → ℝ) (hw0 : ∀ i, 0 ≤ w i)
     (hw1 : ∑ i, w i = 1) (hf : ∀ i, 0 ≤ f i) :
@@ -114,15 +108,6 @@ theorem sum_weighted_sqrt_le {ι : Type*} [Fintype ι] (w f : ι → ℝ) (hw0 :
   exact h
 
 /-! ## Sums over a product of the outcome set -/
-
-theorem sum_prod_id {M : Type*} [AddCommMonoid M] {α : Type*} [Fintype α] (f : α × α → M) :
-    ∑ p : α × α, f p = ∑ a : α, ∑ b : α, f (a, b) := by
-  rw [← Finset.univ_product_univ, Finset.sum_product]
-
-theorem sum_prod_swap {M : Type*} [AddCommMonoid M] {α : Type*} [Fintype α] (f : α × α → M) :
-    ∑ p : α × α, f p = ∑ b : α, ∑ a : α, f (a, b) := by
-  rw [sum_prod_id]
-  exact Finset.sum_comm
 
 /-! ## In a model
 
@@ -327,7 +312,7 @@ theorem abs_link1_le (hZ : IsPVMIn Z) {S' : A × A → ℬ} (hS' : ∀ p, star (
   rw [hstep]
   refine le_trans (Finset.abs_sum_le_sum_abs _ _) ?_
   refine le_trans (Finset.sum_le_sum fun p (_ : p ∈ Finset.univ) => ?_)
-    (sum_mul_le_sqrt (fun p : A × A => M.stateNorm (X p.1 * Z p.2 - Z p.2 * X p.1))
+    (Real.sum_mul_le_sqrt_mul_sqrt univ (fun p : A × A => M.stateNorm (X p.1 * Z p.2 - Z p.2 * X p.1))
       (fun p : A × A => M.swap.stateNorm (S' p)))
   refine le_trans (M.abs_qform_πA_mul_πB_le _ _) (le_of_le_of_eq ?_ (mul_comm _ _))
   rw [hS' p]
@@ -352,7 +337,7 @@ theorem abs_link2_le (hX : IsPVMIn X) (hZ : IsPVMIn Z) (hZ' : IsPVMIn Z') :
   rw [hstep]
   refine le_trans (Finset.abs_sum_le_sum_abs _ _) ?_
   refine le_trans (Finset.sum_le_sum fun p (_ : p ∈ Finset.univ) => ?_)
-    (sum_mul_le_sqrt (fun p : A × A => M.stateNorm (X p.1 * Z p.2))
+    (Real.sum_mul_le_sqrt_mul_sqrt univ (fun p : A × A => M.stateNorm (X p.1 * Z p.2))
       (fun p : A × A => M.swap.stateNorm (X' p.1 * Z' p.2 - Z' p.2 * X' p.1)))
   refine le_trans (M.abs_qform_πA_mul_πB_le' _ _) ?_
   rw [star_mul, hX.star_eq, hZ.star_eq]

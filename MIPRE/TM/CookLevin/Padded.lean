@@ -151,11 +151,11 @@ theorem eval_blankSigns {m : ℕ} (hm : 1 ≤ m)
   simp only [hoff, Nat.add_zero, sgList, List.getD_cons_zero, List.getD_cons_succ] at hs0 hs1
   simp only [Fml.eval] at hs0 hs1
   have h0 : (clauseInput5 m m c).getD 0 false = (c.l₁.var : ℕ).testBit 0 := by
-    rw [clauseInput5_eq, getD_append_left _ _ false (by simp; omega), getD_bitsOfNat _ (by omega)]
+    rw [clauseInput5_eq, List.getD_append _ _ false _ (by simp; omega), getD_bitsOfNat _ (by omega)]
   have h1 : (clauseInput5 m m c).getD m false = (c.l₂.var : ℕ).testBit 0 := by
     change (clauseInput5 m m c).getD (m + 0) false = _
     rw [← getD_drop_eq, clauseInput5_eq,
-      List.drop_left' (by simp), getD_append_left _ _ false (by simp; omega),
+      List.drop_left' (by simp), List.getD_append _ _ false _ (by simp; omega),
       getD_bitsOfNat _ (by omega)]
   have hp (j : ℕ) : (!(j.testBit 0)) = decide (j % 2 = 0) := by
     rw [Nat.testBit_zero]

@@ -49,16 +49,6 @@ def okBits (B : ℕ) (d : Data) : Bool :=
   | .cons .nil _ => true
   | _ => false
 
-theorem isBit_iff (d : Data) : isBit d = true ↔ ∃ b : Bool, d = ofBool b := by
-  constructor
-  · intro h
-    rcases d with _ | ⟨_ | ⟨a, b⟩, _ | ⟨c, e⟩⟩
-    · exact ⟨false, rfl⟩
-    · exact ⟨true, rfl⟩
-    all_goals simp [isBit] at h
-  · rintro ⟨b, rfl⟩
-    exact isBit_ofBool b
-
 theorem okBits_encode (B : ℕ) (x : BitStr) : okBits B (encode x) = decide (x.length ≤ B) := by
   unfold okBits
   rw [ofNat_eq_list_replicate, bitWalk_encode, List.length_replicate]
@@ -83,7 +73,7 @@ theorem okBits_iff (B : ℕ) (d : Data) :
         simp only [okBits, ofNat, bitWalk] at hok
         by_cases hb : isBit h = true
         · rw [if_pos hb] at hok
-          obtain ⟨b, rfl⟩ := (isBit_iff h).mp hb
+          obtain ⟨b, rfl⟩ := (Data.isBit_iff h).mp hb
           obtain ⟨x, rfl, hx⟩ := ih B (by unfold okBits; exact hok)
           exact ⟨b :: x, rfl, by simp; omega⟩
         · rw [if_neg hb] at hok

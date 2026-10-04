@@ -335,7 +335,7 @@ theorem abs_sum_bornProb_le {C : Type*} [Fintype C] {M : BipartiteModel 𝒞 �
       rw [M.stateSqNorm_eq_bornProb_one, hT.star_eq, hT.idem]
     rw [Finset.sum_congr rfl fun c (_ : c ∈ univ) => hc c, ← M.bornProb_sum_left,
       hT.sum_eq_one, M.bornProb_one_one hM]
-  have h2 := sum_mul_le_sqrt (fun c => M.snorm (M.πA (T c))) (fun c => M.snorm (M.πB (D c)))
+  have h2 := Real.sum_mul_le_sqrt_mul_sqrt Finset.univ (fun c => M.snorm (M.πA (T c))) (fun c => M.snorm (M.πB (D c)))
   rw [h3, Real.sqrt_one, one_mul] at h2
   exact h1.trans h2
 
