@@ -683,6 +683,7 @@ public import MIPRE.Background.Repetition.TracialApprox
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
+public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Background.Tailored.Repetition.Stage
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
