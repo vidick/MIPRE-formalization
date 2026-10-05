@@ -1418,6 +1418,7 @@ public import MIPRE.Tailored.Compression
 public import MIPRE.Tailored.Data.Bridge
 public import MIPRE.Tailored.Data.Convert
 public import MIPRE.Tailored.Data.Presents
+public import MIPRE.Tailored.Detyping
 public import MIPRE.Tailored.Fourier
 public import MIPRE.Tailored.Game
 public import MIPRE.Tailored.Halting.Cost
