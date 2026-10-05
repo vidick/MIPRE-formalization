@@ -231,6 +231,7 @@ public import MIPRE.Foundations.CommutingDilation
 public import MIPRE.Tailored.Game
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
+public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Tailored.Halting.Main
 public import MIPRE.Tailored.Class
 
@@ -3645,6 +3646,28 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.TailoredGame.HasPerfectZPC.exists_pcc,
   MIPRE.Tailored.TailoredGame.HasPerfectZPC.syncValue_eq_one,
   MIPRE.Tailored.TailoredGame.HasPerfectZPC.valStar_eq_one
+
+-- blueprint `lem:tailored-product-accepts`
+#guard_sorry_free MIPRE.Tailored.TailoredGame.repeat_accepts_iff,
+  MIPRE.Tailored.TailoredGame.satisfies_padCons_iff
+
+-- blueprint `lem:tensor-power-zpc`
+#guard_sorry_free MIPRE.Tailored.slot, MIPRE.Tailored.isSignedPerm_slot,
+  MIPRE.Tailored.isDiag_slot, MIPRE.Tailored.commute_slot_slot,
+  MIPRE.Tailored.prod_slot_finRange, MIPRE.Tailored.PermStrategy.repeat,
+  MIPRE.Tailored.PermStrategy.proj_repeat,
+  MIPRE.Tailored.PermStrategy.proj_mul_eq_zero_of_value_eq_one,
+  MIPRE.Tailored.PermStrategy.value_repeat_eq_one, MIPRE.Tailored.PermStrategy.comap,
+  MIPRE.Tailored.PermStrategy.value_comap_eq_one,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.repeat_doubled
+
+-- blueprint `thm:tailored-rep-from-spec`
+#guard_sorry_free MIPRE.Tailored.TailoredVerifier.RepSpec.accepts_iff,
+  MIPRE.Tailored.TailoredVerifier.RepSpec.accepts_of_accepts,
+  MIPRE.Tailored.TailoredVerifier.RepSpec.hasPerfectZPC,
+  MIPRE.Tailored.TailoredVerifier.RepSpec.valStar_le_repeat,
+  MIPRE.Tailored.TailoredVerifier.RepSpec.valStar_le, MIPRE.quantumValue_le_of_coarse,
+  MIPRE.Tailored.PermStrategy.exists_accepts
 
 -- blueprint `prop:magic-square-zpc`
 #guard_sorry_free MIPRE.Tailored.MagicSquare.game, MIPRE.Tailored.MagicSquare.obs,

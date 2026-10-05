@@ -22,7 +22,10 @@ Magic Square (Proposition~\ref{prop:magic-square-zpc}). Phase~1, second part: a 
 verifier is a normal form verifier, the canonical decider written as a program, with the same
 games, values and completeness (Lemmas~\ref{lem:canonical-decider} and~\ref{lem:of-tnfv}).
 Phase~1, third part: the halting protocol at a fixed level is proved for a search program
-meeting its specification (Theorem~\ref{thm:tailored-halting-level}). The
+meeting its specification (Theorem~\ref{thm:tailored-halting-level}).
+Phase~2, first part: the $k$-fold tailored product, the tensor powers of permutation
+strategies, and completeness and soundness of repeated tailored verifiers for programs meeting
+their specification (Theorem~\ref{thm:tailored-rep-from-spec}). The
 other results below carry no proof marks; they are the targets of the rest of Phase~1 and of
 Phases~2--5.
 
@@ -961,16 +964,150 @@ the degree-$9$ PCP whose linear part is affine in the linear answers, and the se
 test, which is this project's (\texttt{MIPRE.LIDT.CL.clGame}, with its soundness). Phase~4.
 \end{proof}
 
+\begin{definition}[The $k$-fold tailored product; II:11377, direct form]
+\label{def:tailored-product}
+\uses{def:tailored-game}
+\lean{MIPRE.Tailored.TailoredGame.repeat, MIPRE.Tailored.TailoredGame.varEquiv,
+  MIPRE.Tailored.TailoredGame.coord, MIPRE.Tailored.TailoredGame.coordR,
+  MIPRE.Tailored.TailoredGame.padCons}
+\leanok
+The $k$-fold product of a tailored game $\game$ asks $k$-tuples of questions with the product
+distribution $\prod_i \mu(x_i, y_i)$. The variables at $\bar{x}$ are those of its coordinates,
+the readable ones first, as a tailored answer must have them: the readable variables of $x_1,
+\ldots, x_k$ in this order, then their linear variables, so that $\ell^R(\bar{x}) = \sum_i
+\ell^R(x_i)$ and $\ell^L(\bar{x}) = \sum_i \ell^L(x_i)$. The constraints at $(\bar{x},
+\bar{y})$ are those of every coordinate, each written over all the variables with zero
+coefficients outside its coordinate. A constraint is cut into its five blocks of coefficients
+--- readable and linear at $x_i$, readable and linear at $y_i$, affine --- by prefixes and
+suffixes, each put at its coordinate's place among the variables of its kind; the blocks
+partition the constraint whatever its length, so a constraint of the wrong length pads to a
+vector of the wrong length, which the canonical decider rejects, as it rejects the constraint
+in its coordinate. No length is tested, so a program computes the padding as defined.
+\end{definition}
+
+\begin{lemma}[The canonical decider of the product]
+\label{lem:tailored-product-accepts}
+\uses{def:tailored-product}
+\lean{MIPRE.Tailored.TailoredGame.repeat_accepts_iff,
+  MIPRE.Tailored.TailoredGame.satisfies_padCons_iff}
+\leanok
+The canonical decider of the product accepts a pair of answers at $(\bar{x}, \bar{y})$ exactly
+when they have the right lengths and the canonical decider of $\game$ accepts, at every
+coordinate $i$, the coordinate's answers read off them.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A coordinate's answer is two blocks of the tuple's answer, its readable bits after the
+readable bits of the coordinates before it and its linear bits likewise. Cut the tuple's
+answers into the thirteen blocks the padding is made of: a constraint of the right length
+pairs with the whole answers block by block, the zero blocks contributing nothing and the
+others pairing as the constraint does with the coordinate's answers; one of the wrong length
+pads to a vector of the wrong length, and both sides reject. The readable answers of a coordinate are its block of the
+readable answers of the tuple, so the constraints of the coordinate are evaluated at the
+right readable answers.
+\end{proof}
+
+\begin{lemma}[Tensor powers of permutation strategies; II:3043]
+\label{lem:tensor-power-zpc}
+\uses{def:tailored-product,lem:tailored-product-accepts,lem:signed-perm,lem:fourier-pvm,
+  lem:perm-strategy-perfect,lem:tensor-power-pcc}
+\lean{MIPRE.Tailored.slot, MIPRE.Tailored.isSignedPerm_slot, MIPRE.Tailored.isDiag_slot,
+  MIPRE.Tailored.commute_slot_slot, MIPRE.Tailored.prod_slot_finRange,
+  MIPRE.Tailored.PermStrategy.repeat, MIPRE.Tailored.PermStrategy.proj_repeat,
+  MIPRE.Tailored.PermStrategy.proj_mul_eq_zero_of_value_eq_one,
+  MIPRE.Tailored.PermStrategy.value_repeat_eq_one, MIPRE.Tailored.PermStrategy.comap,
+  MIPRE.Tailored.PermStrategy.value_comap_eq_one,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.repeat_doubled}
+\leanok
+If a tailored game $\game$ has a perfect Z-aligned permutation strategy commuting along edges,
+so does its $k$-fold product, and so does the doubled product when the doubled game has one.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The observable of the variable $(i, v)$ of $\bar{x}$ is $1 \otimes \ldots \otimes U(x_i, v)
+\otimes \ldots \otimes 1$, on the $k$-th tensor power of the space. A slot of a signed
+permutation is a signed permutation, of a diagonal matrix a diagonal matrix, and slots in two
+different factors commute, so the observables are involutive signed permutations, commuting at
+each question, diagonal at the readable variables, and commuting along the edges, which are
+edges in every coordinate. The factors of the Fourier transform at $\bar{x}$ commute; regrouped
+by coordinate they give the tensor product of the coordinates' measurements. In a perfect
+strategy a rejected pair of answers on an edge has $P^x_a P^y_b = 0$: its probability is zero,
+and $P^x_a P^y_b$, two commuting projections, is its own $X^* X$. A rejected pair of the product
+is rejected in some coordinate (Lemma~\ref{lem:tailored-product-accepts}), and a tensor product
+with a zero factor is zero, so the power is perfect (Lemma~\ref{lem:perm-strategy-perfect}).
+For the doubled product, the power of the strategy for the doubled game is read at $(t,
+\bar{x})$ on the questions $(t, x_1), \ldots, (t, x_k)$, a map of the questions that keeps
+the lengths, the edges and the constraints.
+\end{proof}
+
+\begin{definition}[Repeated tailored verifiers and the specification of their programs]
+\label{def:tailored-rep-spec}
+\uses{def:tailored-verifier,def:tailored-product,lem:cl-famsum,lem:smn}
+\lean{MIPRE.Tailored.TailoredVerifier.repTV, MIPRE.Tailored.TailoredVerifier.qEquiv,
+  MIPRE.Tailored.TailoredVerifier.RepSpec}
+\leanok
+The repeated verifier of $\verifier$ at $(\lambda, \tau)$ has the repeated sampler of
+Theorem~\ref{thm:parallel-repetition}, $k(n) = 2^{\tau(\abs{\lambda} + \abs{n})}$ independent
+copies of $\verifier$'s, and two programs $\cal{L}$ and $\cal{P}$. Call a question of the
+$n$-th game \emph{good} when $\verifier$'s answer-length calculator halts at each of its
+coordinates. The programs \emph{meet the specification} at $n$ when $\cal{L}$ outputs at a
+good question the sums of the coordinates' lengths and halts at no other question, and
+$\cal{P}$, at good questions and readable answers of the right lengths, halts exactly when
+$\verifier$'s linear-constraints processor halts on every coordinate, and then outputs the
+constraints of the $k(n)$-fold product of $\verifier_n$.
+\end{definition}
+
+\begin{theorem}[Completeness and soundness of repeated tailored verifiers]
+\label{thm:tailored-rep-from-spec}
+\uses{def:tailored-rep-spec,lem:tensor-power-zpc,lem:tailored-product-accepts,
+  lem:repetition-sound-bound,thm:parallel-repetition}
+\lean{MIPRE.Tailored.TailoredVerifier.RepSpec.accepts_iff,
+  MIPRE.Tailored.TailoredVerifier.RepSpec.accepts_of_accepts,
+  MIPRE.Tailored.TailoredVerifier.RepSpec.hasPerfectZPC,
+  MIPRE.Tailored.TailoredVerifier.RepSpec.valStar_le_repeat,
+  MIPRE.Tailored.TailoredVerifier.RepSpec.valStar_le, MIPRE.quantumValue_le_of_coarse,
+  MIPRE.Tailored.PermStrategy.exists_accepts}
+\leanok
+Let the programs of the repeated verifier meet the specification at $n$. If $\verifier_n$ has
+a perfect ZPC strategy, so does the repeated verifier's $n$-th game. If the lengths of
+$\verifier$ at $n$ are at most $B$ and $\valstar(\verifier_n) \leq 1 - \eps$, then
+\begin{equation*}
+  \valstar\bigl(\verifier^{\mathrm{rep}}_n\bigr) \;\leq\; \exp\Bigl( - \frac{c\, \eps^{13}\,
+  k(n)}{2(B + 1)} \Bigr)\;,
+\end{equation*}
+with $c$ the constant of Lemma~\ref{lem:repetition-sound-bound}.
+\end{theorem}
+
+\begin{proof}
+\leanok
+At good questions the repeated verifier's game has the lengths and the constraints of the
+product, up to the blocks of the questions; at any other question it accepts nothing, and
+neither does the product, a coordinate of whose constraint lists then rejects. For
+completeness, the doubled product has a perfect ZPC strategy (Lemma~\ref{lem:tensor-power-zpc});
+a perfect strategy is accepted somewhere on every edge, so the questions on an edge are good,
+and the strategy pulled back along the blocks of the questions, with identity observables at
+the questions that carry no edge, is perfect for the repeated verifier. For soundness, the
+repeated verifier's game accepts, read through the coordinates of its answers, only what the
+direct repetition of $\verifier_n$'s bipartite game accepts, so its value is at most that
+game's: a strategy merged at each question along the map from answers to their coordinates is
+a strategy of the repetition of at least the same value. The answers of $\verifier_n$ have
+length at most $2B$, and Lemma~\ref{lem:repetition-sound-bound} at length $2B$ gives the bound,
+the factor $2$ absorbed into the constant.
+\end{proof}
+
 \begin{theorem}[Parallel repetition of tailored verifiers; II:11103, direct form]
 \label{thm:tailored-rep}
-\uses{def:tailored-stages,thm:direct-repetition-q}
+\uses{def:tailored-stages,thm:tailored-rep-from-spec}
 The contract \texttt{TailoredRepetition} is inhabited, at every level.
 \end{theorem}
 
 \begin{proof}
-The $k$-fold tailored product (II:11377), its constraints padded with zeros to the whole answer;
-ZPC completeness through Kronecker products of signed permutations (II:3043); soundness from
-Theorem~\ref{thm:direct-repetition-q}. Phase~2.
+The $k$-fold tailored product (Definition~\ref{def:tailored-product}), completeness and
+soundness from Theorem~\ref{thm:tailored-rep-from-spec}, once the repeated answer-length
+calculator and linear-constraints processor are written as programs meeting the specification
+of Definition~\ref{def:tailored-rep-spec}, with their running times. Phase~2, second part.
 \end{proof}
 
 \begin{theorem}[Tailored compression; II:5643, value form]
