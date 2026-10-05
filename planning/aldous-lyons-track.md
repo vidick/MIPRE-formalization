@@ -727,6 +727,24 @@ bits padded; `dec` strips the padding and re-encodes with `encodeAnswer`.
   `wX c` or `wZ c` (linear data processing, II:2938); any bit of a `Z`-basis outcome is a `±1`
   diagonal; block-diagonal and controlled sums of signed permutations are signed permutations,
   diagonal when the blocks are.
+- **P3b₀ — the transports and the base cases (done, 0.5k lines).** `Tailored/Intro/Transport.lean`
+  proves the two directions once, for any game `H` presented by a tailored game `G` on the same
+  questions: `valStar_le_of_dec` (post-processing along `dec`), and `hasPerfectZPC_of_sync`, a
+  perfect PCC strategy of `H` charging only encodable answers, with signed-permutation bit
+  observables along `enc` diagonal at the readable bits, being a perfect permutation strategy
+  of `G` (`permOfSync`). `Encoded.lean` and `Closure.lean` gain the transports the honest strategy
+  goes through (merging along a map, zero-extension, relabelling, an ancilla, control),
+  `Input.lean` the input's answer bits (a copied bit is `U(x, j)`, a padding bit `±1`), and
+  `Binary.lean` the probe and Magic Square measurements (`½(1 ± O)` read out, `X`, `Z`, the grid).
+  What the reading of `seven`'s parsing (2026-10-05) adds to P3b: the questions whose graph view
+  does not decode — almost all the weight under the graph sampler — are accepted after length
+  checks (`selectedEdge = none`), so they get length `0` and no constraints; the auxiliary
+  payload of a question is never read; the Pauli answers have fixed lengths by type (`k`,
+  `2k`, `(m+1)k`, `2^m k = Q`, `1`, `2`, `3`); in an auxiliary answer each field is
+  self-delimiting (`doubleBits` and a `10` terminator) and the input's answer is the last field,
+  of length at most `R = (2^n)^λ`; the same-type check is raw equality, so the re-encoding must
+  be injective on formatted answers — `encodeAnswer` is not injective on malformed Pauli answers
+  when `k = 3`, so every round-trip lemma carries `fmtOk`/`fits`.
 - **P3b — the tailored presentation as a game (2–3k).** The output's question set and decoding
   (reusing `decodeQuestion`), the padded answer layout per type (readable fields first), `lenIntro`
   as a function of the question, `encPad` from parsed answers to `Fin (len x) → Bool` and `dec`

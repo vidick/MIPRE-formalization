@@ -31,9 +31,7 @@ push-forward of the strategy along `enc` (`fourierProj_encObs`), which is why th
 over.
 -/
 
-namespace MIPRE.Tailored
-
-open Finset
+namespace MIPRE.SyncStrategy
 
 /-! ## Perfect PCC strategies have no rejected outcomes -/
 
@@ -42,7 +40,7 @@ section Sync
 variable {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A] {G : SynchronousGame X A}
 
 /-- The measurement at a question of a synchronous strategy is a projective measurement. -/
-theorem _root_.MIPRE.SyncStrategy.isPVMIn (S : SyncStrategy G) (x : X) : IsPVMIn (S.P.M x) where
+theorem isPVMIn (S : SyncStrategy G) (x : X) : IsPVMIn (S.P.M x) where
   star_eq a := S.P.selfAdjoint x a
   idem a := S.P.projective x a
   sum_eq_one := S.P.normalized x
@@ -50,7 +48,7 @@ theorem _root_.MIPRE.SyncStrategy.isPVMIn (S : SyncStrategy G) (x : X) : IsPVMIn
 
 /-- **A perfect PCC strategy has no rejected outcome**: at a question pair of positive weight,
 the projections of a rejected answer pair multiply to zero. -/
-theorem _root_.MIPRE.SyncStrategy.mul_eq_zero_of_value_eq_one (S : SyncStrategy G) (hS : S.IsPCC)
+theorem mul_eq_zero_of_value_eq_one (S : SyncStrategy G) (hS : S.IsPCC)
     (h : S.value = 1) {x y : X} (hxy : 0 < G.μ x y) {a b : A} (hD : G.D x y a b = false) :
     S.P.M x a * S.P.M y b = 0 := by
   have hc := hS x y hxy a b
@@ -61,6 +59,12 @@ theorem _root_.MIPRE.SyncStrategy.mul_eq_zero_of_value_eq_one (S : SyncStrategy 
       ← mul_assoc, S.P.projective, mul_assoc, S.P.projective]
 
 end Sync
+
+end MIPRE.SyncStrategy
+
+namespace MIPRE.Tailored
+
+open Finset
 
 /-! ## The two transports -/
 
