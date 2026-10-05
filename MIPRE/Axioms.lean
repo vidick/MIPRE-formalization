@@ -233,6 +233,7 @@ public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
 public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Tailored.Halting.Main
+public import MIPRE.Tailored.Class
 
 @[expose] public section
 
@@ -3702,5 +3703,61 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Halting.halting_tailored_valStar, MIPRE.Tailored.Halting.hasPerfectZPC_of_halts,
   MIPRE.Tailored.Halting.valStar_le_of_not_halts, MIPRE.Tailored.Halting.A_step,
   MIPRE.Tailored.Halting.B_step
+
+-- blueprint `lem:tailored-bridge`
+#guard_sorry_free HaltingGameValue.SynchronousGame.toMIPRE,
+  HaltingGameValue.SynchronousGame.toSyncStrategy, HaltingGameValue.SynchronousGame.ofSyncStrategy,
+  HaltingGameValue.SynchronousGame.value_toSyncStrategy,
+  HaltingGameValue.SynchronousGame.strategyValue_ofSyncStrategy,
+  HaltingGameValue.SynchronousGame.gameValue_eq_syncValue,
+  HaltingGameValue.SynchronousGame.gameValue_le_quantumValue,
+  TailoredGameValue.TailoredGameData.syncGame, TailoredGameValue.TailoredGameData.game,
+  TailoredGameValue.TailoredGameData.gameValue_le_quantumValue,
+  TailoredGameValue.PermStrategy.isPVMIn_proj, TailoredGameValue.PermStrategy.toSync,
+  TailoredGameValue.PermStrategy.value_toSync,
+  TailoredGameValue.TailoredGameData.HasPerfectZPC.syncValue_eq_one,
+  TailoredGameValue.TailoredGameData.HasPerfectZPC.gameValue_eq_one,
+  TailoredGameValue.TailoredGameData.HasPerfectZPC.quantumValue_eq_one
+
+-- blueprint `lem:tailored-conversion`
+#guard_sorry_free TailoredGameValue.TailoredGameData.toGameData,
+  TailoredGameValue.TailoredGameData.vecEquiv, TailoredGameValue.TailoredGameData.ansLenL,
+  TailoredGameValue.TailoredGameData.acceptsN, TailoredGameValue.TailoredGameData.accN,
+  TailoredGameValue.TailoredGameData.acceptsN_iff, TailoredGameValue.TailoredGameData.mem_accN,
+  TailoredGameValue.TailoredGameData.quantumValue_toGameData,
+  TailoredGameValue.TailoredGameData.primrec_toGameData
+
+-- blueprint `lem:tailored-presents`
+#guard_sorry_free MIPRE.Tailored.Presents.quantumValue_eq, MIPRE.Tailored.Presents.hasPerfectZPC,
+  MIPRE.Tailored.Presents.accepts_iff, MIPRE.Tailored.Presents.value_padStrategy,
+  MIPRE.quantumValue_congr_support, MIPRE.quantumValue_eq_of_equiv_support,
+  MIPRE.Tailored.TailoredGame.quantumValue_doubled_eq_valStar,
+  MIPRE.Tailored.TailoredGame.doubled_μ_self, MIPRE.Tailored.fourierProj_castLE,
+  MIPRE.Tailored.fourierProj_eq_zero_of_one
+
+-- blueprint `lem:tailored-tabulation`
+#guard_sorry_free MIPRE.Tailored.primrec_tabOfT, MIPRE.Tailored.computable_tabT,
+  MIPRE.Tailored.presents_tabOfT, MIPRE.Tailored.presents_tabT, MIPRE.Tailored.mu_tabOfT,
+  MIPRE.Tailored.dimOf_eq_of, MIPRE.Tailored.margN_eq_of, MIPRE.Tailored.lenIs_lenRun,
+  MIPRE.Tailored.lpIs_lpRun, MIPRE.Tailored.lenOf_eq_lenRun, MIPRE.Tailored.consOf_eq_lpRun
+
+-- blueprint `lem:tailored-search`
+#guard_sorry_free MIPRE.Tailored.Halting.quantumValue_tabT,
+  MIPRE.Tailored.Halting.exists_searchProg, MIPRE.Tailored.Halting.search,
+  MIPRE.Tailored.Halting.search_wellScoped, MIPRE.Tailored.Halting.search_spec
+
+-- blueprint `thm:tailored-halting`
+#guard_sorry_free MIPRE.Tailored.tailored_halting_reduction_of,
+  MIPRE.Tailored.tailored_halting_reduction_quantum_of,
+  MIPRE.Tailored.Halting.halting_tailored_search, MIPRE.Tailored.Halting.lamThreshold,
+  MIPRE.Tailored.Halting.VT, MIPRE.Tailored.Halting.toData_F_code, MIPRE.Tailored.Halting.lpBuild,
+  MIPRE.Tailored.Halting.lamOf, MIPRE.Tailored.Halting.descM, MIPRE.Tailored.Halting.gameOf,
+  MIPRE.Tailored.Halting.presents_gameOf, MIPRE.Tailored.Halting.hasPerfectZPC_gameOf,
+  MIPRE.Tailored.Halting.quantumValue_gameOf, MIPRE.Tailored.Halting.quantumValue_gameOf_le,
+  MIPRE.Tailored.Halting.computable_gameOf
+
+-- blueprint `thm:tmipstar-eq-re`
+#guard_sorry_free MIPRE.Tailored.TMIPStarComputable.mipStar, MIPRE.Tailored.TMIPStarComputable.isRE,
+  MIPRE.Tailored.re_subset_tmipStarComputable_of, MIPRE.Tailored.tmipStarComputable_eq_re_of
 
 end

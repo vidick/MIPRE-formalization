@@ -166,6 +166,20 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    default target, so `lake build` and CI build them; `Palomar.lean` exists only because
    `mk_all --check` wants an aggregator and is not a root, since it could not compile. The
    Challenge is exempt from the `MIPRE.Tactics` bundle and imports what it uses.
+
+   **No extensible tactic inside a Challenge definition** (found 2026-10-05, by the first
+   Palomar preflight). The comparator (`leanprover/comparator`, `Compare.lean`) walks every
+   constant reachable from the compared statements — definitions' values, their auxiliary
+   `_proof_n` lemmas, instances — and requires the Challenge's and the Solution's
+   `ConstantInfo` to be *equal*, proof terms included; only the named targets are compared by
+   statement. The Solution repeats the definitions verbatim, but elaborates them with the
+   whole library imported, so a `simp`, `norm_num` or `positivity` inside a definition can
+   produce a different term there (the MIPStarRE dependency's simp set changed
+   `toGame.μ_sum_one`: "Const does not match between challenge and target
+   `GameData.toGame._proof_3`"). Proof obligations inside Challenge definitions are therefore
+   written with `rw`/`exact` and named Mathlib lemmas only, and the local
+   `scripts/palomar/verify-comparator.sh` (with `--inadvisably-no-sandbox` here) is the test:
+   it reproduces the verifier's verdict, with the exports built in the same two environments.
 5. **Submission files**: `Solution.lean`, `comparator.json`, `formalization.yaml`, the
    `docbuild/` doc-gen4 project of the template, and the pre-submission scripts
    (`validate-formalization.rb`, `verify-comparator.sh`, `check-lean-sources.py`); then the
