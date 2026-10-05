@@ -52,7 +52,7 @@ open scoped BigOperators
 namespace MIPRE.LIDT.Co.Pasting
 
 open MIPStarRE.LDT (Parameters FieldModel uniformDistribution)
-open MIPStarRE.LDT.Pasting (SlicePairQuestion commutativitySwitcherooError
+open MIPStarRE.LDT.Pasting (SlicePairQuestion commutativitySwitcherooError firstSwitcherooError_le_eighth_stage
   commutingWithGCompleteError pairwiseCompletePartCommutationError
   firstSwitcherooError_le_commutingWithGCompleteError)
 open MIPRE.LIDT.Co (SymStrat IdxPolyFamily)
@@ -72,7 +72,7 @@ lemma secondSwitcherooError_le_commutingWithGCompleteError
     (hd_le_q : params.d ≤ params.q) :
     commutativitySwitcherooError zeta zeta
       (commutativitySwitcherooError zeta zeta
-        (Commutativity.comMainError params gamma zeta))
+        (MIPStarRE.LDT.Commutativity.comMainError params gamma zeta))
       ≤ commutingWithGCompleteError params gamma zeta := by
   have hm_nonneg : 0 ≤ (params.m : ℝ) := by positivity
   have hm_ge_one : (1 : ℝ) ≤ (params.m : ℝ) := by
@@ -150,18 +150,18 @@ lemma secondSwitcherooError_le_commutingWithGCompleteError
   have hsqrt_theta1 :
       Real.rpow
         (commutativitySwitcherooError zeta zeta
-          (Commutativity.comMainError params gamma zeta))
+          (MIPStarRE.LDT.Commutativity.comMainError params gamma zeta))
         (1 / (2 : ℝ)) ≤ 6 * (params.m : ℝ) * sixteenthSum := by
     have hsqrt36 : Real.sqrt (36 : ℝ) = 6 := by norm_num
     have hsqrt_theta1' :
         Real.sqrt
           (commutativitySwitcherooError zeta zeta
-            (Commutativity.comMainError params gamma zeta))
+            (MIPStarRE.LDT.Commutativity.comMainError params gamma zeta))
           ≤ 6 * (params.m : ℝ) * sixteenthSum := by
       calc
         Real.sqrt
             (commutativitySwitcherooError zeta zeta
-              (Commutativity.comMainError params gamma zeta))
+              (MIPStarRE.LDT.Commutativity.comMainError params gamma zeta))
           ≤ Real.sqrt (36 * (params.m : ℝ) * eighthSum) := by
               have htheta1_bound :=
                 firstSwitcherooError_le_eighth_stage params gamma zeta
@@ -214,17 +214,17 @@ lemma secondSwitcherooError_le_commutingWithGCompleteError
   have hchi_term :
       4 * Real.rpow
         (commutativitySwitcherooError zeta zeta
-          (Commutativity.comMainError params gamma zeta))
+          (MIPStarRE.LDT.Commutativity.comMainError params gamma zeta))
         (1 / (2 : ℝ)) ≤ 24 * (params.m : ℝ) * sixteenthSum := by
     nlinarith [hsqrt_theta1]
   calc
     commutativitySwitcherooError zeta zeta
       (commutativitySwitcherooError zeta zeta
-        (Commutativity.comMainError params gamma zeta))
+        (MIPStarRE.LDT.Commutativity.comMainError params gamma zeta))
       = 12 * Real.rpow zeta (1 / (2 : ℝ)) +
           4 * Real.rpow
             (commutativitySwitcherooError zeta zeta
-              (Commutativity.comMainError params gamma zeta))
+              (MIPStarRE.LDT.Commutativity.comMainError params gamma zeta))
             (1 / (2 : ℝ)) := by
               simp [commutativitySwitcherooError]
               ring

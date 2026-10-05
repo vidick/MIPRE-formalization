@@ -38,7 +38,8 @@ open scoped BigOperators
 
 namespace MIPRE.LIDT.Co.Commutativity
 
-open MIPStarRE.LDT (Parameters FieldModel uniformDistribution avgOver_uniform_equiv_snd)
+open MIPStarRE.LDT (Parameters FieldModel Point Fq truncatePoint appendPoint uniformDistribution
+  avgOver_uniform_equiv_snd)
 open MIPStarRE.LDT.Commutativity (EvaluatedSliceQuestion FullSliceQuestion
   fullSliceQuestionOfEvaluatedSlice)
 
@@ -54,10 +55,10 @@ def evaluatedSliceQuestionEquiv (params : Parameters) [FieldModel params.q] :
       fullSliceQuestionOfEvaluatedSlice params q)
   invFun := fun r =>
     ((appendPoint params r.1.1 r.2.1), (appendPoint params r.1.2 r.2.2))
-  left_inv := fun q => Prod.ext ((CommutativityPoints.pointNextEquiv params).left_inv q.1)
-    ((CommutativityPoints.pointNextEquiv params).left_inv q.2)
+  left_inv := fun q => Prod.ext ((MIPStarRE.LDT.CommutativityPoints.pointNextEquiv params).left_inv q.1)
+    ((MIPStarRE.LDT.CommutativityPoints.pointNextEquiv params).left_inv q.2)
   right_inv := fun ⟨⟨u, v⟩, x, y⟩ =>
-    let e := CommutativityPoints.pointNextEquiv params
+    let e := MIPStarRE.LDT.CommutativityPoints.pointNextEquiv params
     congrArg
       (fun p : (Point params × Fq params) × (Point params × Fq params) =>
         ((p.1.1, p.2.1), (p.1.2, p.2.2)))

@@ -88,21 +88,21 @@ common summation structure, leaving the two applications to supply only their
 step-specific summands and pointwise operator Cauchy--Schwarz estimates. -/
 theorem addInU_weighted_cauchy_schwarz
     (params : Parameters) [FieldModel params.q]
-    (t x y : Point params × Point params → Polynomial params → ℝ)
+    (t x y : Point params × Point params → MIPStarRE.LDT.Polynomial params → ℝ)
     (ht : ∀ uv h, |t uv h| ≤ Real.sqrt (x uv h) * Real.sqrt (y uv h))
     (hx : ∀ uv h, 0 ≤ x uv h)
     (hy : ∀ uv h, 0 ≤ y uv h) :
     |avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
-      ∑ h : Polynomial params, t uv h)| ≤
+      ∑ h : MIPStarRE.LDT.Polynomial params, t uv h)| ≤
       Real.sqrt
         (avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
-          ∑ h : Polynomial params, x uv h)) *
+          ∑ h : MIPStarRE.LDT.Polynomial params, x uv h)) *
       Real.sqrt
         (avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
-          ∑ h : Polynomial params, y uv h)) := by
+          ∑ h : MIPStarRE.LDT.Polynomial params, y uv h)) := by
   exact
     MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz
-      (Question := Point params × Point params) (Outcome := Polynomial params)
+      (Question := Point params × Point params) (Outcome := MIPStarRE.LDT.Polynomial params)
       (uniformDistribution (Point params × Point params))
       (t := t) (x := x) (y := y) ht hx hy
 
