@@ -12,6 +12,9 @@ search program, `tailored_halting_reduction_of` and the computable class
 (`MIPRE/Tailored/Data/*`, `MIPRE/Tailored/Halting/{Tabulate,Search,Reduction}.lean`,
 `MIPRE/Tailored/Class.lean`). So `TailoredHaltingReduction` and `TMIP* = RE` (computable
 class) are proved from a `TailoredGapCompression`. P1e, the polynomial-time class, is next.
+Phase 2 runs in parallel (#280): its first slice, P2a, the tailored product with its
+completeness and soundness for programs meeting a specification, is done (§5 "Phase 2
+slices"); P2b, the programs themselves, is next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
