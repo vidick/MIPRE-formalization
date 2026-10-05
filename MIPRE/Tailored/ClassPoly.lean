@@ -44,7 +44,8 @@ deferred because no statement needs it.
 has a perfect ZPC strategy on the members of `L`, and its game has value at most `1/2` off them.
 The completeness clause is read on the doubled game, as `TailoredVerifier.HasPerfectZPC` reads
 the paper's for tailored normal form verifiers and `TailoredGapCompression.completeness`
-transports it.
+transports it. `Tailored/ClassPolyTab.lean` puts the class inside the computable one, hence in
+`RE`, and `Tailored/ClassVerifier.lean` proves `TMIPStar = IsRE` from a tailored gap compression.
 -/
 
 namespace MIPRE.Tailored

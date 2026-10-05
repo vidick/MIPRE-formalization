@@ -245,6 +245,7 @@ public import MIPRE.Tailored.Intro.Source
 public import MIPRE.Tailored.Intro.Presentation
 public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Tailored.CanonicalCost
+public import MIPRE.Tailored.ClassVerifier
 
 @[expose] public section
 
@@ -504,7 +505,8 @@ tell you the guard is missing.
   MIPRE.Halting.decProg,
   MIPRE.Halting.sampProg_runs,
   MIPRE.Halting.decProg_accepts,
-  MIPRE.Halting.decProg_runs
+  MIPRE.Halting.decProg_runs,
+  MIPRE.GapCompression.samplerFamily
 
 -- blueprint `lem:lambda-bound`
 #guard_sorry_free MIPRE.Halting.four_mul_succ_lt_two_pow,
@@ -3853,5 +3855,31 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.canonProgT_halts, MIPRE.Tailored.canonPoly, MIPRE.Tailored.canonBound_le,
   MIPRE.Tailored.dom_canonBound, MIPRE.Tailored.canonProgT_timeBound,
   MIPRE.Tailored.esize_canonProgT
+-- blueprint `lem:class-sampler`
+#guard_sorry_free MIPRE.Halting.SamplerFamily, MIPRE.Halting.SamplerFamily.sampProg,
+  MIPRE.Halting.SamplerFamily.sampProg_runs, MIPRE.Halting.SamplerFamily.classSampler,
+  MIPRE.Halting.SamplerFamily.classSampler_runs, MIPRE.Halting.SamplerFamily.Samples,
+  MIPRE.Halting.SamplerFamily.samples_of_runs, MIPRE.Halting.SamplerFamily.questions_eq,
+  MIPRE.Halting.SamplerFamily.qEmb, MIPRE.Halting.SamplerFamily.seedCount_eq,
+  MIPRE.Halting.SamplerFamily.game_μ_qEmb, MIPRE.Halting.SamplerFamily.game_support
+
+-- blueprint `lem:tmipstar-poly-sub`
+#guard_sorry_free MIPRE.Tailored.TMIPStar.toComputable, MIPRE.Tailored.TMIPStar.isRE,
+  MIPRE.Tailored.TPolyVerifier.tabP, MIPRE.Tailored.TPolyVerifier.computable_tabP,
+  MIPRE.Tailored.TPolyVerifier.presents_tabP
+
+-- blueprint `lem:tailored-extend`
+#guard_sorry_free MIPRE.Tailored.TailoredGame.Extends,
+  MIPRE.Tailored.TailoredGame.Extends.valStar_eq, MIPRE.Tailored.TailoredGame.Extends.hasPerfectZPC,
+  MIPRE.Tailored.TailoredGame.Extends.doubled, MIPRE.Tailored.TailoredGame.Extends.strategy,
+  MIPRE.Tailored.TailoredGame.Extends.value_strategy
+
+-- blueprint `thm:tmipstar-poly-eq-re`
+#guard_sorry_free MIPRE.Tailored.re_subset_tmipStar_of, MIPRE.Tailored.tmipStar_eq_re_of,
+  MIPRE.Tailored.TailoredGapCompression.samplerFamily, MIPRE.Tailored.seqUniv_runs,
+  MIPRE.Tailored.seqUniv_runs_rev, MIPRE.Tailored.Halting.classTV,
+  MIPRE.Tailored.Halting.classTV_efficient, MIPRE.Tailored.Halting.lenIs_iff,
+  MIPRE.Tailored.Halting.lpIs_iff, MIPRE.Tailored.Halting.tgame_extends,
+  MIPRE.Tailored.Halting.classTV_values
 
 end

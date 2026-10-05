@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Foundations.Halting.Instantiation
+public import MIPRE.Foundations.Halting.Paper.ClassSampler
 public import MIPRE.Tailored.Compression
 public import MIPRE.Tailored.Data.Presents
 
@@ -365,21 +366,13 @@ theorem margAt_eq_of (S : CL.Sampler ℓ) {n T k : ℕ} (hb : S.TimeBoundAt n T 
     S.queryUnder_marginal hb hℓ w z hz]
   simp [SizedEncoding.decode_encode]
 
-/-- At level `0` the questions are empty: the CL function of level `0` is the zero map, which is
-exactly on the empty set only. -/
-theorem dim_eq_zero_of_level_zero (S : CL.Sampler 0) (n : ℕ) : S.dim n = 0 := by
-  have h := S.cl_exactlyOn n .alice
-  rw [CL.CLFun.eq_zero (S.cl n .alice), CL.CLFun.exactlyOn_zero, Finset.univ_eq_empty_iff]
-    at h
-  simpa using h
-
 /-- **The normalized marginal is the sampler's**, at every level. -/
 theorem margN_eq_of (S : CL.Sampler ℓ) {n T k : ℕ} (hb : S.TimeBoundAt n T k) (w : Player)
     (z : BitStr) (hz : z.length = S.dim n) :
     margN ℓ (encode S.prog) T k n (S.dim n) w z =
       CL.toBits ((S.cl n w).eval (CL.ofBits (S.dim n) z)) := by
   rcases Nat.eq_zero_or_pos ℓ with rfl | hℓ
-  · have h0 := dim_eq_zero_of_level_zero S n
+  · have h0 := CL.Sampler.dim_eq_zero_of_level_zero S n
     have hl : (margN 0 (encode S.prog) T k n (S.dim n) w z).length = 0 := by
       unfold margN
       split_ifs with h

@@ -1,17 +1,21 @@
 # The Aldous–Lyons track: `TMIP* = RE` (Bowen–Chapman–Vidick, paper II): estimate and plan
 
-**Status: Phase 0 done (#273; tracking #272); Phase 1 in progress (#279).** The statement and
+**Status: Phase 0 done (#273; tracking #272); Phases 1 and 2 done (#279, #280); Phase 3 in
+progress (#281).** The statement and
 the interface are in (`MIPRE/TailoredGameValue.lean`, `MIPRE/Tailored/*`), the two checks that
 Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapter is
-`blueprint/src/content/09_tailored.tex`. Four of Phase 1's five slices are done (§5 "Phase 1
+`blueprint/src/content/09_tailored.tex`. All five of Phase 1's slices are done (§5 "Phase 1
 slices"): P1a, the toolbox of permutation strategies
 (`MIPRE/Tailored/{SignedPerm,Fourier,ZPC,MagicSquare}.lean`); P1b, a tailored verifier as a
 normal form verifier with the same games (`MIPRE/Tailored/{Canonical,OfTNFV}.lean`); P1c, the
-halting protocol at a fixed level (`MIPRE/Tailored/Halting/*`); and P1d, the tabulation, the
+halting protocol at a fixed level (`MIPRE/Tailored/Halting/*`); P1d, the tabulation, the
 search program, `tailored_halting_reduction_of` and the computable class
 (`MIPRE/Tailored/Data/*`, `MIPRE/Tailored/Halting/{Tabulate,Search,Reduction}.lean`,
-`MIPRE/Tailored/Class.lean`). So `TailoredHaltingReduction` and `TMIP* = RE` (computable
-class) are proved from a `TailoredGapCompression`. P1e, the polynomial-time class, is next.
+`MIPRE/Tailored/Class.lean`); and P1e, the paper's polynomial-time class
+(`MIPRE/Tailored/{ClassPoly,ClassPolyTab,Extend,ClassVerifier}.lean`,
+`MIPRE/Foundations/Halting/Paper/ClassSampler.lean`). So `TailoredHaltingReduction` and
+`TMIP* = RE`, for the computable class and for the paper's polynomial-time class, are proved
+from a `TailoredGapCompression`, the one hypothesis.
 Phase 2 (#280) is done: P2a, the tailored product with its completeness and soundness for
 programs meeting a specification, and P2b, the programs themselves with their running times, so
 `TailoredRepetition` is inhabited (`MIPRE.Tailored.tailoredRepetition`, §5 "Phase 2 slices").
@@ -535,7 +539,8 @@ polynomial-time class theorem; its files `Build.lean`, `Size.lean`, `Cost.lean` 
 `ClassVerifier.lean` are hard-wired to the shape of `F` and `body`, so the tailored halting
 protocol is a parallel set of files, not an edit of these.
 
-**Phase 1 slices.** Five, in this order; P1a–c landed together (#286).
+**Phase 1 slices.** Five, in this order; P1a–c landed together (#286), then P1d (#288) and
+P1e.
 
 - **P1a — permutation strategies (done, 1.4k lines).** `SignedPerm Ω`, the group
   `Sym(Ω) ⋉ F₂^Ω`, with an injective matrix homomorphism into the unitaries: the sign flip,
@@ -621,11 +626,36 @@ protocol is a parallel set of files, not an edit of these.
     from `thm:tmip-re` to `def:tailored-halting-reduction`. `thm:tailored-halting` uses the
     proposition, and `thm:tmip-re` is not proved yet; citing it from a proved node would mark the
     proved node as resting on an unproved one.
-- **P1e — the polynomial-time class (next).** The second layer of §2.2: `TMIPStar`, with a
-  polynomial-time tailored verifier (the paper's clause (1), sampling and evaluation in
-  `poly(|z|)`), its tabulation into the computable class, and the class verifier from
-  `V^{M,λ}` at the level `C`. Together they give `TMIPStar = IsRE` from a compression, as
-  `Halting/Paper/{ClassVerifier,ClassMain}.lean` and `ClassMIPStarTab.lean` do for `MIPStar`.
+- **P1e — the polynomial-time class (done, 1.9k lines, of which 0.5k replace the `MIP*` class
+  verifier's own sampler).** The second layer of §2.2, as
+  `Halting/Paper/{ClassVerifier,ClassMain}.lean` and `ClassMIPStarTab.lean` do it for `MIPStar`.
+  - *The class* (`Tailored/ClassPoly.lean`). `TPolyVerifier`: a sampler, an answer-length
+    calculator, a linear-constraints processor and one polynomial. Its sampler and bound form a
+    `PolyVerifier` (`toPoly`), so the question distribution is `MIP*`'s. `TMIPStar`: efficient
+    on every input, a perfect ZPC strategy of the doubled game on the members, `val* ≤ 1/2` off
+    them. The canonical decider's own cost is not part of the clause; for tailored normal form
+    verifiers it is P3d₀'s `lem:canonical-decider-cost`.
+  - *The inclusion* (`ClassPolyTab.lean`). The doubled game is tabulated as in P1d, with
+    `MIP*`'s weights (`ClassMIPStarTab.lean`), so `TMIPStar ⊆ TMIPStarComputable ⊆ RE`. The
+    sampler's clause of `PolyVerifier.Efficient` got a name, `SamplerRuns`, so that the lemmas
+    about the distribution take only it.
+  - *The shared sampler* (`Foundations/Halting/Paper/ClassSampler.lean`). `MIP*`'s class
+    sampler was hard-wired to a `GapCompression`. It is now stated for any polynomial-time
+    family of samplers (`SamplerFamily`), with the seed-counting lemmas, and `MIP*`'s class
+    verifier uses it at level `7` (`GapCompression.samplerFamily`). At level `0` the marginal
+    queries say nothing and the questions are empty, so there the class sampler outputs the empty
+    pair (`classSampler`).
+  - *Extensions* (`Tailored/Extend.lean`). A tailored game with another's weights, lengths and
+    constraints on the image of an embedding of questions, and no weight off it, has the other's
+    value and inherits its perfect ZPC strategies, with identities off the image; the doubled
+    games extend each other too.
+  - *The class verifier* (`Tailored/ClassVerifier.lean`). On `z`, the calculator and the
+    processor compute the programs of `V^{R z, λ(z)}`'s and run them on the level `C` through
+    the universal machine, which halts exactly when they do (`seqUniv_runs`,
+    `seqUniv_runs_rev`). Their costs are the compression's `len_time` and P1c's
+    `exists_lp_cost_poly`, polynomial in the input at the fixed level. The game extends
+    `V^{R z, λ(z)}`'s at `C`, so `re_subset_tmipStar_of` and `tmipStar_eq_re_of` follow from
+    `halting_tailored_search`.
 
 **Phase 2 — repetition (2.5–3.5k; 1–2 PRs).** `lem:sum-zpc` (II:3086), moved from Phase 1, as
 the case `k = 2` of what follows. The `k`-fold tailored product (constraints

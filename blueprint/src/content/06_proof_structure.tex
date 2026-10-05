@@ -7339,6 +7339,40 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 `1.6.3' states it that way too; the formalization should follow the paper.
 \end{remark}
 
+\begin{lemma}[The class verifiers' sampler]
+\label{lem:class-sampler}
+\uses{def:sampler,def:mipstar,lem:lambda}
+\lean{MIPRE.Halting.SamplerFamily, MIPRE.Halting.SamplerFamily.sampProg,
+  MIPRE.Halting.SamplerFamily.sampProg_runs, MIPRE.Halting.SamplerFamily.classSampler,
+  MIPRE.Halting.SamplerFamily.classSampler_runs, MIPRE.Halting.SamplerFamily.Samples,
+  MIPRE.Halting.SamplerFamily.samples_of_runs, MIPRE.Halting.SamplerFamily.questions_eq,
+  MIPRE.Halting.SamplerFamily.qEmb, MIPRE.Halting.SamplerFamily.seedCount_eq,
+  MIPRE.Halting.SamplerFamily.game_μ_qEmb, MIPRE.Halting.SamplerFamily.game_support}
+\leanok
+Let $\lambda \mapsto \sampler^\lambda$ be samplers of a level $\ell$ whose programs are computed
+from $\lambda$ in polynomial time and which run within, and have dimensions at most, a polynomial
+in $n + \lambda$ at index $n$. Let $R : z \mapsto \machine_z$ be computable in polynomial
+time, $\lambda(z) = \Lambda_0 + 4\abs{\machine_z}$, and $n_0$ an index. There is a program
+which, on $(z, r)$ with $r$ at least as long as the dimension $s$ of $\sampler^{\lambda(z)}$ at
+$n_0$, halts within a polynomial in $\abs{z} + \abs{r}$ with the two marginals of
+$\sampler^{\lambda(z)}$ at $n_0$ at the first $s$ bits of $r$. For a polynomial-time verifier
+with this sampler and a polynomial above these bounds, the distribution of its game on $z$ is,
+on the questions of $\sampler^{\lambda(z)}$ embedded as bit strings, the distribution of
+$\sampler^{\lambda(z)}$ at $n_0$, and it has no weight elsewhere.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The program computes $\machine_z$, $\lambda(z)$ and the program of $\sampler^{\lambda(z)}$, asks
+it its dimension $s$ through the universal machine, converts $s$ to unary, takes the first $s$
+bits of the seed and asks the two marginals there; each stage runs within a polynomial in the
+total input length. At level $0$ the marginal queries are not specified, but the questions are
+empty, the CL function of level $0$ being exactly on the empty set only, and there the program
+outputs the empty pair. Of the $2^B$ seeds, those producing a question pair are the extensions of
+the points of $\F_2^s$ producing it, each in $2^{B - s}$ ways, so the uniform seed pushes forward
+to the distribution of $\sampler^{\lambda(z)}$.
+\end{proof}
+
 \effortHard
 
 \begin{theorem}[Halting reduction]
@@ -7346,7 +7380,7 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
 \ledgernode{1.6, 1.6.6}
 \uses{thm:compression,lem:compressible-criterion,lem:value-lower-approx,lem:kleene,
   def:game-description,lem:sync-le-valstar,lem:dhalt-values,lem:lambda,def:mipstar,
-  def:value-model}
+  def:value-model,lem:class-sampler}
 \lean{MIPRE.Halting.halting_reduction, MIPRE.Halting.halting_reduction_of,
   MIPRE.Halting.halting_reduction_lower, MIPRE.Halting.halting_reduction_lower_strings,
   MIPRE.Halting.halting_reduction_lower_of,
@@ -7357,7 +7391,8 @@ revision of this chapter did state item 2 as the bound, and because the ledger n
   MIPRE.Halting.valStar_le_of_not_halts,
   MIPRE.Halting.classV, MIPRE.Halting.classV_efficient, MIPRE.Halting.classV_value,
   MIPRE.Halting.classV_values, MIPRE.Halting.sampProg, MIPRE.Halting.decProg,
-  MIPRE.Halting.sampProg_runs, MIPRE.Halting.decProg_accepts, MIPRE.Halting.decProg_runs}
+  MIPRE.Halting.sampProg_runs, MIPRE.Halting.decProg_accepts, MIPRE.Halting.decProg_runs,
+  MIPRE.GapCompression.samplerFamily}
 \leanok
 Assume an ambient \texttt{MIPRE.GapCompression}. There is a computable map
 $\machine \mapsto \game_{\machine}$ from Turing machines
@@ -7453,7 +7488,8 @@ Definition~\ref{def:mipstar}.
 \paragraph{The class verifier.} That program is \texttt{MIPRE.Halting.classV}
 (\texttt{Halting/Paper/ClassVerifier.lean}, \texttt{ClassMain.lean}), a
 \texttt{PolyVerifier} for a polynomial-time map $R : z \mapsto \machine_z$. Its sampler
-\texttt{sampProg}, on $(z, r)$, computes $\machine_z$, $\lambda(z) = \Lambda_0 +
+\texttt{sampProg} is that of Lemma~\ref{lem:class-sampler} for the compressed samplers at the
+level $C$: on $(z, r)$ it computes $\machine_z$, $\lambda(z) = \Lambda_0 +
 4\abs{\machine_z}$ and the compressed sampler's program $\mathtt{ComputeSampler}(\lambda(z))$,
 asks it its dimension $s(C)$ through the universal machine, and returns its two marginals at
 the first $s(C)$ bits of the seed (\texttt{sampProg\_runs}); so the uniform seed of length

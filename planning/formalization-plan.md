@@ -1016,7 +1016,8 @@ the paper's `V^halt M λ` as an efficient Kleene fixed point (`Halting.dec`, `Ha
 `Q(n + |M| + λ)(|d| + 1)^k` (`dec_cost_spec`); `halting_paper` is `thm:halting` at level `C`.
 The third is in as well: the class verifier `Halting.classV` (`Halting/Paper/ClassVerifier.lean`,
 `ClassMain.lean`) plays `V^halt (R z) λ(z)` at level `C` on input `z` with a polynomial-time
-sampler and decider, is efficient on every input, and its game has that verifier's value; hence
+sampler (since the Aldous–Lyons track's P1e, the one of `Halting/Paper/ClassSampler.lean`) and
+decider, is efficient on every input, and its game has that verifier's value; hence
 `re_subset_mipstar` and `mipstar_eq_re` (`MIPRE/MainTheorem.lean`): `thm:mipstar-eq-re`
 now holds for the paper's class. `def:mipstar`'s sampler clause was repaired on the way (time in
 the total input length, as the decider's).
@@ -1096,7 +1097,7 @@ density and an amplification by the twisted Pauli algebra (C6a and C6b T2–T5,
 about 3.0k lines) and a port of the vendored proof to dyadic pairs (M0–M14, 71.7k lines, against
 the 70–120k estimated), which closes Phase 6.
 
-**The Aldous–Lyons track, `TMIP* = RE` (#272; planned 2026-10-05, Phase 0 done in #273, Phase 1 in progress, #279).** The main theorem
+**The Aldous–Lyons track, `TMIP* = RE` (#272; planned 2026-10-05, Phase 0 done in #273, Phase 1 done, #279).** The main theorem
 of Bowen–Chapman–Vidick's *The Aldous–Lyons Conjecture II* (arXiv:2501.00173): the halting
 problem reduced to *tailored* games, with a perfect Z-aligned permutation strategy commuting
 along edges as completeness and value at most `1/2` as soundness; with paper I
@@ -1123,8 +1124,13 @@ linear-constraints processor as the Kleene fixed point and `lem:lambda` for thre
 search program meeting its specification. Its fourth tabulated a tailored verifier as a
 `TailoredGameData`. That supplies the search program, and with it
 `tailored_halting_reduction_of : TailoredGapCompression ℓ → TailoredHaltingReduction` and the
-computable class: `TMIP* ⊆ RE` unconditionally, `TMIP* = RE` from a compression. The
-polynomial-time class, through a class verifier as for `MIP*`, is the last slice.
+computable class: `TMIP* ⊆ RE` unconditionally, `TMIP* = RE` from a compression. Its fifth
+proved the paper's polynomial-time class: on input `z` a polynomial-time tailored verifier plays
+`V^{R z, λ(z)}` at the level `C` (`Halting.classTV`, `Tailored/ClassVerifier.lean`), with the
+sampler of `MIP*`'s class verifier, now stated for any polynomial-time family of samplers
+(`Halting.SamplerFamily`, `Halting/Paper/ClassSampler.lean`); so `TMIP* = RE` holds for the
+paper's class too (`tmipStar_eq_re_of`). Phase 1 is done, with the compression theorem
+(Phases 2–5) as its one hypothesis.
 
 ## Working rules for this track
 

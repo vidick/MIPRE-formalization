@@ -22,13 +22,18 @@ Magic Square (Proposition~\ref{prop:magic-square-zpc}). Phase~1, second part: a 
 verifier is a normal form verifier, the canonical decider written as a program, with the same
 games, values and completeness (Lemmas~\ref{lem:canonical-decider} and~\ref{lem:of-tnfv}).
 Phase~1, third part: the halting protocol at a fixed level is proved for a search program
-meeting its specification (Theorem~\ref{thm:tailored-halting-level}).
+meeting its specification (Theorem~\ref{thm:tailored-halting-level}). Phase~1, fourth part: the
+tabulation, the search program and the halting reduction (Theorem~\ref{thm:tailored-halting}),
+and $\mathrm{TMIP}^* = \RE$ for the computable class (Theorem~\ref{thm:tmipstar-eq-re}).
+Phase~1, last part: $\mathrm{TMIP}^* = \RE$ for the paper's polynomial-time class
+(Theorem~\ref{thm:tmipstar-poly-eq-re}). So Phase~1 is proved, with a tailored gap compression
+(Definition~\ref{def:tailored-compression}) as its one hypothesis.
 Phase~2: the $k$-fold tailored product, the tensor powers of permutation strategies,
 completeness and soundness of repeated tailored verifiers for programs meeting their
 specification (Theorem~\ref{thm:tailored-rep-from-spec}), and the programs themselves with their
 running times, so that parallel repetition of tailored verifiers is proved
 (Theorem~\ref{thm:tailored-rep}). The other results below carry no proof marks; they are the
-targets of the rest of Phase~1 and of Phases~3--5.
+targets of Phases~3--5.
 
 The formalization departs from the paper's text in the places Remark~\ref{rem:tailored-route}
 lists, all of them choices this project made for $\MIPstar = \RE$ already: soundness is proved
@@ -919,6 +924,132 @@ Definition~\ref{def:mipstar-computable}, which is contained in $\RE$
 strategies; the route through the quantum value needs no new semidecider. Conversely, an r.e.
 language many-one reduces to the halting problem, which reduces to tailored games by
 Theorem~\ref{thm:tailored-halting}.
+\end{proof}
+
+\subsection{The polynomial-time class}
+
+\begin{definition}[The class $\mathrm{TMIP}^*$; II:787, II:1505]
+\label{def:tmipstar-poly}
+\uses{def:mipstar,def:tailored-game,def:zpc-strategy,def:tailored-verifier}
+\lean{MIPRE.Tailored.TMIPStar, MIPRE.Tailored.TPolyVerifier,
+  MIPRE.Tailored.TPolyVerifier.toPoly, MIPRE.Tailored.TPolyVerifier.tgame,
+  MIPRE.Tailored.TPolyVerifier.Efficient}
+\leanok
+A language $L \subseteq \{0,1\}^*$ is in $\mathrm{TMIP}^*$ if there are three machines, a
+sampler, an answer-length calculator and a linear-constraints processor, and a polynomial $P$,
+such that for every string $z$, writing $B = P(\abs{z})$:
+\begin{enumerate}
+\item \emph{Efficiency.} The sampler is as in Definition~\ref{def:mipstar}: on $z$ and a uniform
+  seed $r \in \{0,1\}^B$ it halts within time $P(\abs{z} + \abs{r})$ with a pair of strings of
+  length at most $B$; write $\mu_z$ for their distribution. On $(z, x, \kappa)$ the calculator,
+  and on $(z, x, y, a^R, b^R)$ the processor, halt within time $P$ of the total input length.
+  The tailored game $\game_z$ has the strings of length at most $B$ as its questions, the
+  distribution $\mu_z$, the lengths the calculator outputs and the constraints the processor
+  outputs, read as for a tailored normal form verifier (Definition~\ref{def:tailored-verifier}).
+\item \emph{Completeness.} If $z \in L$, the doubled game of $\game_z$ has a perfect ZPC
+  strategy.
+\item \emph{Soundness.} If $z \notin L$, then $\valstar(\game_z) \leq \frac12$.
+\end{enumerate}
+\end{definition}
+
+The paper's clause~(1) of Theorem~\ref{thm:tmip-re} asks that sampling a question pair and
+evaluating the decision predicate take time polynomial in the input. The decision predicate is
+the canonical decider (Definition~\ref{def:canonical-decider}) on what the calculator and the
+processor output, so the efficiency clause bounds those two programs, as
+Definition~\ref{def:mipstar} bounds the decider; the canonical decider's own cost, a
+polynomial-time check on their outputs, is not tracked, no statement needing it. The
+completeness clause is read on the doubled game, as for tailored normal form verifiers
+(\texttt{TailoredVerifier.HasPerfectZPC}), and the threshold is $\leq \frac12$, as everywhere
+in this project (Remark~\ref{rem:tailored-route}). In Lean the verifier is a
+\texttt{TPolyVerifier}, whose sampler and bound form a \texttt{PolyVerifier}
+(\texttt{toPoly}), so that the distribution of $\game_z$ is that of
+Definition~\ref{def:mipstar}'s game.
+
+\begin{lemma}[The class is contained in the computable one]
+\label{lem:tmipstar-poly-sub}
+\uses{def:tmipstar-poly,def:tmipstar,thm:tmipstar-eq-re,lem:tailored-presents,
+  lem:tailored-tabulation,lem:mipstar-poly-sub}
+\lean{MIPRE.Tailored.TMIPStar.toComputable, MIPRE.Tailored.TMIPStar.isRE,
+  MIPRE.Tailored.TPolyVerifier.tabP, MIPRE.Tailored.TPolyVerifier.computable_tabP,
+  MIPRE.Tailored.TPolyVerifier.presents_tabP}
+\leanok
+Every language in $\mathrm{TMIP}^*$ is in the computable class of Definition~\ref{def:tmipstar};
+in particular it is recursively enumerable.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:tailored-presents,thm:tmipstar-eq-re}
+\leanok
+On the input $z$, tabulate the doubled game of $\game_z$: its vertices are the doubled strings of
+length at most $B$, its weights those of the tabulation of Definition~\ref{def:mipstar}'s game
+(Lemma~\ref{lem:mipstar-poly-sub}), and its lengths and constraints what the calculator and the
+processor output within the time bound $P$, as in Lemma~\ref{lem:tailored-tabulation}. The table
+is a computable function of $z$, and on an efficient input it presents the doubled game of
+$\game_z$, which has no weight on its loops; so it has a perfect ZPC strategy when the doubled
+game does, and the doubled game's quantum value, which is $\game_z$'s
+(Lemma~\ref{lem:tailored-presents}). So $L$ is in the computable class, and in $\RE$ by
+Theorem~\ref{thm:tmipstar-eq-re}.
+\end{proof}
+
+\begin{lemma}[Extending a tailored game along its questions]
+\label{lem:tailored-extend}
+\uses{def:tailored-game,def:zpc-strategy}
+\lean{MIPRE.Tailored.TailoredGame.Extends, MIPRE.Tailored.TailoredGame.Extends.valStar_eq,
+  MIPRE.Tailored.TailoredGame.Extends.hasPerfectZPC,
+  MIPRE.Tailored.TailoredGame.Extends.doubled, MIPRE.Tailored.TailoredGame.Extends.strategy,
+  MIPRE.Tailored.TailoredGame.Extends.value_strategy}
+\leanok
+Let $\game'$ and $\game$ be tailored games on question sets $X'$ and $X$, and $e : X \to X'$
+injective, such that $\game'$ has the weights, the lengths and the constraints of $\game$ on the
+image of $e$, and no weight off it. Then $\valstar(\game') = \valstar(\game)$, a perfect ZPC
+strategy of $\game$ gives one of $\game'$, and the doubled game of $\game'$ extends that of
+$\game$ in the same way, along $\mathrm{id} \times e$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Restricting $\game'$ to the image of $e$ does not change its value, its distribution being
+supported there. The answers of length at most the largest length of $\game$ then sit inside
+those of $\game'$, and the canonical decider rejects the longer ones, so the value is $\game$'s.
+For a ZPC strategy of $\game$, keep its observables on the image of $e$ and take identities
+elsewhere. Identities are signed permutations, involutions and diagonal, and commute with
+everything; an edge of positive weight has both ends in the image. So the new strategy is a ZPC
+strategy, and its value is that of the old one, term by term.
+\end{proof}
+
+\begin{theorem}[$\mathrm{TMIP}^* = \RE$ for the polynomial-time class; II:787, II:1505]
+\label{thm:tmipstar-poly-eq-re}
+\uses{def:tmipstar-poly,def:re,lem:tmipstar-poly-sub,lem:tailored-extend,lem:class-sampler,
+  thm:tailored-halting,thm:halting-undecidable}
+\lean{MIPRE.Tailored.re_subset_tmipStar_of, MIPRE.Tailored.tmipStar_eq_re_of,
+  MIPRE.Tailored.TailoredGapCompression.samplerFamily, MIPRE.Tailored.seqUniv_runs,
+  MIPRE.Tailored.seqUniv_runs_rev, MIPRE.Tailored.Halting.classTV,
+  MIPRE.Tailored.Halting.classTV_efficient, MIPRE.Tailored.Halting.lenIs_iff,
+  MIPRE.Tailored.Halting.lpIs_iff, MIPRE.Tailored.Halting.tgame_extends,
+  MIPRE.Tailored.Halting.classTV_values}
+\leanok
+Given a tailored gap compression, $\mathrm{TMIP}^* = \RE$ for the class of
+Definition~\ref{def:tmipstar-poly}.
+\end{theorem}
+
+\begin{proof}
+\uses{lem:tmipstar-poly-sub,lem:tailored-extend,lem:class-sampler,thm:tailored-halting}
+\leanok
+$\mathrm{TMIP}^* \subseteq \RE$ is Lemma~\ref{lem:tmipstar-poly-sub}. Conversely, an r.e.\
+language many-one reduces to halting on the empty input by a polynomial-time map
+$z \mapsto \machine_z$, as in Theorem~\ref{thm:mipstar-eq-re}. The class verifier on $z$ plays the
+game of the tailored halting verifier $\verifier^{\machine_z, \lambda(z)}$ at the fixed level
+$C$, with $\lambda(z) = \Lambda_0 + 4\abs{\machine_z}$. Its sampler is that of
+Lemma~\ref{lem:class-sampler} for the compressed samplers. Its calculator and its processor
+compute, in polynomial time, the programs of the compressed calculator at $\lambda(z)$ and of the
+processor of $\verifier^{\machine_z, \lambda(z)}$, and run them on $C$ and the rest of the input
+through the universal machine, which halts exactly when the simulated program does, with its
+output. They run within polynomials in the total input length: the compressed calculator within
+$\poly(C, \lambda)$ times a power of the size of its input, and the processor within
+$Q(C + \abs{\machine} + \lambda)$ times one. So the class verifier's game on $z$ extends that of
+$\verifier^{\machine_z, \lambda(z)}$ at $C$ along the embedding of its questions as bit strings,
+and Lemma~\ref{lem:tailored-extend} transfers both clauses of
+Theorem~\ref{thm:tailored-halting} at the level $C$.
 \end{proof}
 
 \begin{definition}[The three stage contracts]
