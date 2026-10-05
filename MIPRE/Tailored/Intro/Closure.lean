@@ -198,7 +198,57 @@ theorem isDiag_controlled (f : Ω → K) (U : K → Matrix Ω' Ω' ℂ) (hU : �
   rw [controlled_eq_blockDiag]
   exact isDiag_blockDiag _ fun i => hU (f i)
 
+/-- **The bit observables of a controlled measurement are controlled bit observables**: if the
+measurement is `readout f z ⊗ Q z a` at the outcome `(z, a)`, the observable of a bit is the
+controlled sum of the bit observables of the `Q z`. -/
+theorem encObs_controlled [Fintype Ω'] {Λ : Type*} [Fintype Λ] {k : ℕ}
+    (f : Ω → K) (Q : K → Λ → Matrix Ω' Ω' ℂ) (enc : K × Λ → Fin k → Bool) (i : Fin k) :
+    encObs (fun za : K × Λ => Introspection.readout f za.1 ⊗ₖ Q za.1 za.2) enc i =
+      ∑ z, Introspection.readout f z ⊗ₖ encObs (Q z) (fun a => enc (z, a)) i := by
+  rw [encObs, pvmObs, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun z _ => ?_
+  ext ⟨u, u'⟩ ⟨v, v'⟩
+  simp [encObs, pvmObs, Matrix.sum_apply, Finset.mul_sum, mul_left_comm]
+
 end Blocks
+
+/-! ## Relabellings and ancillas -/
+
+section Relabel
+
+variable {Ω Ω' : Type*} [Fintype Ω] [DecidableEq Ω] [Fintype Ω'] [DecidableEq Ω']
+variable {Λ : Type*} [Fintype Λ] {k : ℕ}
+
+/-- Bit observables commute with a relabelling of the space. -/
+theorem encObs_submatrix (P : Λ → Matrix Ω Ω ℂ) (e : Ω' → Ω) (enc : Λ → Fin k → Bool)
+    (i : Fin k) :
+    encObs (fun a => (P a).submatrix e e) enc i = (encObs P enc i).submatrix e e := by
+  ext u v
+  simp [encObs, pvmObs, Matrix.sum_apply]
+
+/-- Bit observables commute with adding an ancilla on which the measurement is the identity. -/
+theorem encObs_kronecker_one (P : Λ → Matrix Ω Ω ℂ) (enc : Λ → Fin k → Bool) (i : Fin k) :
+    encObs (fun a => P a ⊗ₖ (1 : Matrix Ω' Ω' ℂ)) enc i = encObs P enc i ⊗ₖ 1 := by
+  ext u v
+  simp [encObs, pvmObs, Matrix.sum_apply, Finset.sum_mul, mul_assoc]
+
+theorem IsSignedPerm.kronecker_one {M : Matrix Ω Ω ℂ} (hM : IsSignedPerm M) :
+    IsSignedPerm (M ⊗ₖ (1 : Matrix Ω' Ω' ℂ)) :=
+  hM.kronecker IsSignedPerm.one
+
+theorem IsSignedPerm.submatrix_equiv {M : Matrix Ω Ω ℂ} (hM : IsSignedPerm M) (e : Ω' ≃ Ω) :
+    IsSignedPerm (M.submatrix e e) := by
+  simpa [Matrix.reindex_apply] using hM.reindex e.symm
+
+theorem isDiag_submatrix_equiv {M : Matrix Ω Ω ℂ} (hM : M.IsDiag) (e : Ω' ≃ Ω) :
+    (M.submatrix e e).IsDiag :=
+  hM.submatrix e.injective
+
+theorem isDiag_kronecker_one {M : Matrix Ω Ω ℂ} (hM : M.IsDiag) :
+    (M ⊗ₖ (1 : Matrix Ω' Ω' ℂ)).IsDiag :=
+  hM.kronecker isDiag_one
+
+end Relabel
 
 end MIPRE.Tailored
 

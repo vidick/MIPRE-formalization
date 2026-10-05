@@ -236,6 +236,9 @@ public import MIPRE.Background.Tailored.Repetition.Stage
 public import MIPRE.Tailored.Halting.Main
 public import MIPRE.Tailored.Class
 public import MIPRE.Tailored.Intro.Closure
+public import MIPRE.Tailored.Intro.Transport
+public import MIPRE.Tailored.Intro.Input
+public import MIPRE.Tailored.Intro.Binary
 
 @[expose] public section
 
@@ -3777,7 +3780,8 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:encoded-pvm-obs`
 #guard_sorry_free MIPRE.Tailored.encObs, MIPRE.Tailored.encObs_mul_self,
   MIPRE.Tailored.commute_encObs, MIPRE.Tailored.star_encObs, MIPRE.Tailored.fourierFactor_encObs,
-  MIPRE.Tailored.fourierProj_encObs, MIPRE.Tailored.commute_encObs_encObs
+  MIPRE.Tailored.fourierProj_encObs, MIPRE.Tailored.commute_encObs_encObs,
+  MIPRE.Tailored.encObs_merge, MIPRE.Tailored.encObs_extend
 
 -- blueprint `lem:weyl-signed-perm`
 #guard_sorry_free MIPRE.Tailored.sgn_eq_bitSign, MIPRE.Tailored.wX_eq_signedPermMatrix,
@@ -3790,6 +3794,27 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:controlled-signed-perm`
 #guard_sorry_free MIPRE.Tailored.blockDiag, MIPRE.Tailored.isSignedPerm_blockDiag,
   MIPRE.Tailored.isDiag_blockDiag, MIPRE.Tailored.controlled_eq_blockDiag,
-  MIPRE.Tailored.isSignedPerm_controlled, MIPRE.Tailored.isDiag_controlled
+  MIPRE.Tailored.isSignedPerm_controlled, MIPRE.Tailored.isDiag_controlled,
+  MIPRE.Tailored.encObs_controlled, MIPRE.Tailored.encObs_submatrix,
+  MIPRE.Tailored.encObs_kronecker_one, MIPRE.Tailored.IsSignedPerm.kronecker_one,
+  MIPRE.Tailored.IsSignedPerm.submatrix_equiv, MIPRE.Tailored.isDiag_submatrix_equiv,
+  MIPRE.Tailored.isDiag_kronecker_one
+
+-- blueprint `lem:binary-signed-perm`
+#guard_sorry_free MIPRE.Tailored.univ_zmod_two, MIPRE.Tailored.observableSign_eq_bitSign,
+  MIPRE.Tailored.encObs_observableToProjector,
+  MIPRE.Tailored.encObs_observableToProjector_const, MIPRE.Tailored.pauliX_eq,
+  MIPRE.Tailored.pauliZ_eq, MIPRE.Tailored.isSignedPerm_pauliX,
+  MIPRE.Tailored.isSignedPerm_pauliZ, MIPRE.Tailored.isDiag_pauliZ,
+  MIPRE.Tailored.isSignedPerm_grid
+
+-- blueprint `lem:input-answer-bits`
+#guard_sorry_free MIPRE.Tailored.PermStrategy.encObs_ansProj,
+  MIPRE.Tailored.PermStrategy.encObs_ansProj_bit, MIPRE.Tailored.PermStrategy.encObs_ansProj_const
+
+-- blueprint `lem:presentation-transport`
+#guard_sorry_free MIPRE.SyncStrategy.isPVMIn, MIPRE.SyncStrategy.mul_eq_zero_of_value_eq_one,
+  MIPRE.Tailored.valStar_le_of_dec, MIPRE.Tailored.permOfSync, MIPRE.Tailored.permOfSync_proj,
+  MIPRE.Tailored.value_permOfSync, MIPRE.Tailored.hasPerfectZPC_of_sync
 
 end

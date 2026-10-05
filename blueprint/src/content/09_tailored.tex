@@ -1196,7 +1196,8 @@ signed permutation for each computational-basis state of a control register.
 \uses{def:fourier-forms}
 \lean{MIPRE.Tailored.encObs, MIPRE.Tailored.encObs_mul_self, MIPRE.Tailored.commute_encObs,
   MIPRE.Tailored.star_encObs, MIPRE.Tailored.fourierFactor_encObs,
-  MIPRE.Tailored.fourierProj_encObs, MIPRE.Tailored.commute_encObs_encObs}
+  MIPRE.Tailored.fourierProj_encObs, MIPRE.Tailored.commute_encObs_encObs,
+  MIPRE.Tailored.encObs_merge, MIPRE.Tailored.encObs_extend}
 \leanok
 Let $(P_\lambda)_{\lambda \in \Lambda}$ be a projective measurement and $\mathrm{enc}$ a map from
 $\Lambda$ to $\F_2^k$. The observables $U_i = \sum_\lambda (-1)^{\mathrm{enc}(\lambda)_i}
@@ -1204,6 +1205,9 @@ P_\lambda$ are commuting self-adjoint involutions, and their Fourier transform i
 of $P$ along $\mathrm{enc}$: $\prod_i \frac12(1 + (-1)^{a_i} U_i) = \sum_{\mathrm{enc}(\lambda) =
 a} P_\lambda$. If every element of $P$ commutes with every element of a second projective
 measurement $Q$, the bit observables of $P$ commute with those of $Q$, whatever the encodings.
+Merging the outcomes of $P$ along a map $f$ and then encoding by $\mathrm{enc}$ gives the bit
+observables of $P$ along $\mathrm{enc} \circ f$, and so does extending the outcome set of $P$
+by zero along an injection $f$.
 \end{lemma}
 
 \begin{proof}
@@ -1213,7 +1217,9 @@ the $U_i$ are commuting involutions, self-adjoint as their weights are real. Sin
 P_\lambda = \Id$, the factor $\frac12(1 + (-1)^{b} U_i)$ is $\sum_\lambda \frac12(1 +
 (-1)^{b + \mathrm{enc}(\lambda)_i}) P_\lambda$, the coarse-graining of $P$ onto
 $\{\mathrm{enc}(\lambda)_i = b\}$; by multiplicativity the product over $i$ is the
-coarse-graining onto the intersection of these sets, by induction on $k$.
+coarse-graining onto the intersection of these sets, by induction on $k$. The last two claims
+regroup the sum $\sum_\lambda$ by the fibres of $f$, resp.\ drop the outcomes outside the
+image of $f$, which carry zero.
 \end{proof}
 
 \begin{lemma}[Weyl measurements are read out by signed permutations; II:2938]
@@ -1247,15 +1253,23 @@ so any $\pm 1$ combination of them is a $\pm 1$ diagonal.
 
 \begin{lemma}[Controlled signed permutations]
 \label{lem:controlled-signed-perm}
-\uses{lem:signed-perm}
+\uses{lem:signed-perm,lem:encoded-pvm-obs}
 \lean{MIPRE.Tailored.blockDiag, MIPRE.Tailored.isSignedPerm_blockDiag,
   MIPRE.Tailored.isDiag_blockDiag, MIPRE.Tailored.controlled_eq_blockDiag,
-  MIPRE.Tailored.isSignedPerm_controlled, MIPRE.Tailored.isDiag_controlled}
+  MIPRE.Tailored.isSignedPerm_controlled, MIPRE.Tailored.isDiag_controlled,
+  MIPRE.Tailored.encObs_controlled, MIPRE.Tailored.encObs_submatrix,
+  MIPRE.Tailored.encObs_kronecker_one, MIPRE.Tailored.IsSignedPerm.kronecker_one,
+  MIPRE.Tailored.IsSignedPerm.submatrix_equiv, MIPRE.Tailored.isDiag_submatrix_equiv,
+  MIPRE.Tailored.isDiag_kronecker_one}
 \leanok
 A block-diagonal matrix whose blocks are signed permutation matrices is one; so is a
 controlled sum $\sum_z F_z \otimes U_z$, where $F_z$ is the computational-basis projector onto
 the fibre of $z$ under a map $f$ and each $U_z$ is a signed permutation matrix. When the
-blocks, or the $U_z$, are diagonal, so is the result.
+blocks, or the $U_z$, are diagonal, so is the result. The bit observables of a controlled
+measurement $F_z \otimes Q^z_a$ are the controlled sums of the bit observables of the $Q^z$;
+those of a measurement relabelled by a bijection of the space, or tensored with the identity on
+an ancilla, are relabelled, or tensored, likewise; and both operations keep signed
+permutations and diagonal matrices.
 \end{lemma}
 
 \begin{proof}
@@ -1263,7 +1277,84 @@ blocks, or the $U_z$, are diagonal, so is the result.
 The controlled sum applies $U_{f(i)}$ on the second factor of the basis state $(i, a)$, so it is
 the block-diagonal matrix with blocks $U_{f(i)}$. The block-diagonal matrix with blocks the
 matrices of $(\sigma_i, s_i)$ is the matrix of the signed permutation $(i, a) \mapsto (i,
-\sigma_i(a))$ with signs $s_i(a)$.
+\sigma_i(a))$ with signs $s_i(a)$. The other claims are linearity of the Kronecker product and
+of relabelling, entry by entry.
+\end{proof}
+
+\begin{lemma}[Binary measurements, the qubit Paulis and the Magic Square grid]
+\label{lem:binary-signed-perm}
+\uses{lem:signed-perm,lem:encoded-pvm-obs,lem:observable-projector}
+\lean{MIPRE.Tailored.univ_zmod_two, MIPRE.Tailored.observableSign_eq_bitSign,
+  MIPRE.Tailored.encObs_observableToProjector,
+  MIPRE.Tailored.encObs_observableToProjector_const, MIPRE.Tailored.pauliX_eq,
+  MIPRE.Tailored.pauliZ_eq, MIPRE.Tailored.isSignedPerm_pauliX,
+  MIPRE.Tailored.isSignedPerm_pauliZ, MIPRE.Tailored.isDiag_pauliZ,
+  MIPRE.Tailored.isSignedPerm_grid}
+\leanok
+For an observable $O$, an answer bit reading the outcome of the measurement
+$\frac12(1 \pm O)$, flipped by a constant $c$, has observable $(-1)^c O$, and one ignoring it
+has observable $\pm \Id$. The qubit Paulis $X$ and $Z$ are signed permutation matrices, $Z$
+diagonal; hence so are the nine observables of the Magic Square grid of the Pauli basis test's
+honest strategy, $A \otimes \Id, \Id \otimes X, \ldots, AB \otimes ZX$, when $A$ and $B$ are.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The observable is $\sum_b (-1)^{\mathrm{enc}(b)} \frac12(1 + (-1)^b O)$, a two-term sum. $X$ is
+the matrix of the transposition, $Z$ the diagonal of the signs $(1, -1)$, and the grid is
+built from them, $A$ and $B$ by Kronecker products and products.
+\end{proof}
+
+\begin{lemma}[The input strategy's answer bits]
+\label{lem:input-answer-bits}
+\uses{lem:encoded-pvm-obs,lem:fourier-pvm,def:normal-verifier,def:signed-perm,
+  def:tailored-game,def:zpc-strategy,lem:perm-strategy-perfect,lem:signed-perm}
+\lean{MIPRE.Tailored.PermStrategy.encObs_ansProj, MIPRE.Tailored.PermStrategy.encObs_ansProj_bit,
+  MIPRE.Tailored.PermStrategy.encObs_ansProj_const}
+\leanok
+Read a permutation strategy as the synchronous strategy measuring answer strings, as in
+Lemma~\ref{lem:zpc-pcc}. An answer bit that copies the $j$-th bit of the answers at $x$ has observable
+$U(x, j)$, and a constant answer bit has observable $\pm \Id$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The synchronous strategy charges only the strings of length $\mathrm{len}(x)$, with the Fourier
+transform of the observables at $x$; on them the bit observable is $\sum_v (-1)^{v_j} P^x_v =
+U(x, j)$ (Lemma~\ref{lem:fourier-pvm}), resp.\ $\pm \sum_v P^x_v = \pm \Id$.
+\end{proof}
+
+\begin{lemma}[Presenting a game as a tailored game]
+\label{lem:presentation-transport}
+\uses{def:zpc-strategy,lem:perm-strategy-perfect,lem:encoded-pvm-obs,def:pcc,def:sync-value,
+  lem:perfect-rejects-nothing,lem:transports-model}
+\lean{MIPRE.SyncStrategy.isPVMIn, MIPRE.SyncStrategy.mul_eq_zero_of_value_eq_one,
+  MIPRE.Tailored.valStar_le_of_dec, MIPRE.Tailored.permOfSync, MIPRE.Tailored.permOfSync_proj,
+  MIPRE.Tailored.value_permOfSync, MIPRE.Tailored.hasPerfectZPC_of_sync}
+\leanok
+Let $\game$ be a tailored game and $\game'$ a game with the same questions and
+question distribution. If a map $\mathrm{dec}$ of answers sends every pair that $\game$
+accepts to one that $\game'$ accepts, then $\mathrm{val}^*(\game) \le
+\mathrm{val}^*(\game')$. Conversely, let $\mathrm{enc}$ send the answers of $\game'$
+at $x$ to $\F_2^{\mathrm{len}(x)}$, sending every accepted pair of answers in a set
+$\mathrm{ok}$ to a pair $\game$ accepts, and let $S$ be a perfect PCC strategy of the
+doubled game of $\game'$ that charges only answers in $\mathrm{ok}$, whose bit
+observables along $\mathrm{enc}$ are signed permutations, diagonal at the readable bits. Then
+these bit observables are a perfect Z-aligned permutation strategy of the doubled tailored
+game commuting along edges.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The first claim is post-processing of the answers. For the second, the bit observables are
+commuting involutions commuting along edges (Lemma~\ref{lem:encoded-pvm-obs}, from PCC), and
+their measurement at $x$ is the push-forward of $S$ along $\mathrm{enc}$. A perfect PCC
+strategy has $M^x_a M^y_b = 0$ for every rejected pair at an edge: the product is a
+projection, as the two commute, of trace zero. So a pair $(a, b)$ that $\game$ rejects
+has $P^x_a P^y_b = \sum M^x_{a'} M^y_{b'}$ over the $a', b'$ encoding to it, each term zero —
+$a'$ or $b'$ outside $\mathrm{ok}$ carries zero, and otherwise $(a', b')$ is rejected by
+$\game'$, or its encoding would be accepted — and the strategy is perfect by
+Lemma~\ref{lem:perm-strategy-perfect}.
 \end{proof}
 
 \begin{theorem}[Tailored compression; II:5643, value form]

@@ -105,6 +105,38 @@ theorem fourierProj_encObs (a : Fin k → Bool) :
 
 end
 
+/-! ## Transports of the measurement
+
+The strategies of the introspection pipeline are carried from one game to the next by merging
+answers along a map and by extending the answer set by zero; the bit observables follow. -/
+
+omit [StarRing R] in
+/-- **Merging answers along `f` and then encoding is encoding the composite.** -/
+theorem encObs_merge {Λ' : Type*} [Fintype Λ'] [DecidableEq Λ'] (P : Λ → R) (f : Λ → Λ')
+    (enc : Λ' → Fin k → Bool) (i : Fin k) :
+    encObs (fun b => ∑ a ∈ univ.filter fun a => f a = b, P a) enc i =
+      encObs P (fun a => enc (f a)) i := by
+  rw [encObs, encObs, pvmObs, pvmObs]
+  simp_rw [Finset.smul_sum]
+  rw [← Finset.sum_fiberwise (s := univ) (g := f) (f := fun a => bitSign (enc (f a) i) • P a)]
+  refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun a ha => ?_
+  rw [(Finset.mem_filter.1 ha).2]
+
+omit [StarRing R] in
+/-- **Extending the answers by zero along an injection and then encoding is encoding the
+composite.** -/
+theorem encObs_extend {Λ' : Type*} [Fintype Λ'] (P : Λ → R) {ι : Λ → Λ'}
+    (hι : Function.Injective ι) (enc : Λ' → Fin k → Bool) (i : Fin k) :
+    encObs (Function.extend ι P 0) enc i = encObs P (fun a => enc (ι a)) i := by
+  classical
+  rw [encObs, encObs, pvmObs, pvmObs,
+    ← Finset.sum_subset (Finset.subset_univ (univ.map ⟨ι, hι⟩)) fun b _ hb => ?_,
+    Finset.sum_map]
+  · refine Finset.sum_congr rfl fun a _ => ?_
+    simp [hι.extend_apply]
+  · rw [Function.extend_apply' _ _ _ fun ⟨a, ha⟩ => hb (by simpa using ⟨a, ha⟩), Pi.zero_apply,
+      smul_zero]
+
 omit [StarRing R] in
 /-- **Bit observables of commuting measurements commute.** -/
 theorem commute_encObs_encObs {Λ' : Type*} [Fintype Λ'] {k' : ℕ} {P : Λ → R} {Q : Λ' → R}

@@ -1427,8 +1427,11 @@ public import MIPRE.Tailored.Halting.Main
 public import MIPRE.Tailored.Halting.Reduction
 public import MIPRE.Tailored.Halting.Search
 public import MIPRE.Tailored.Halting.Tabulate
+public import MIPRE.Tailored.Intro.Binary
 public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Encoded
+public import MIPRE.Tailored.Intro.Input
+public import MIPRE.Tailored.Intro.Transport
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
 public import MIPRE.Tailored.Repeat.Calls
