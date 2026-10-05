@@ -745,10 +745,21 @@ bits padded; `dec` strips the padding and re-encodes with `encodeAnswer`.
   of length at most `R = (2^n)^λ`; the same-type check is raw equality, so the re-encoding must
   be injective on formatted answers — `encodeAnswer` is not injective on malformed Pauli answers
   when `k = 3`, so every round-trip lemma carries `fmtOk`/`fits`.
-- **P3b — the tailored presentation as a game (2–3k).** The output's question set and decoding
-  (reusing `decodeQuestion`), the padded answer layout per type (readable fields first), `lenIntro`
-  as a function of the question, `encPad` from parsed answers to `Fin (len x) → Bool` and `dec`
-  back, and the acceptance specification the processor must meet: (⇒) the tailored game accepts
+- **P3b — the tailored presentation as a game (2–3k).** Structure, settled 2026-10-05: `seven`'s
+  output verifier is `CL.Detyping.DeciderProgram.verifier` over a typed sampler and a typed
+  decider, so the presentation is typed tailored data on the labels (`Tailored/Detyping.lean`,
+  `TypedData`: lengths by label, constraints on typed questions), detyped generically
+  (`TypedData.detype`: a question's lengths are those of the label its graph view decodes to,
+  zero when none; a pair's constraints are the typed ones on an edge, none off the edges), with
+  soundness and completeness reduced to the edges once (`detype_accepts_dec`,
+  `detype_accepts_enc`), then relabelled along `vectorEquiv` to the output verifier's questions
+  (`PermStrategy.comap` of Phase 2). The typed layout per label, readable fields first: Pauli `Z`,
+  its `Q` bits readable; the other Pauli labels, their fixed lengths linear; Introspect and
+  Sample, `y` (or `z`) and the input's readable answer bits padded to `R` readable, its linear
+  bits padded to `R` linear; Read, `y` and the padded readable bits readable, `yp` and the padded
+  linear bits linear; Hide, `y` readable, `yp` and `x` linear. The input's split of its answer is
+  `V.lenOf` at the input question, a function of the readable `y` (or `z`). Then `encPad` from
+  parsed answers to bits and `dec` back, and the acceptance specification the processor must meet: (⇒) the tailored game accepts
   `(a, b)` only if `seven`'s decider accepts `(dec a, dec b)`; (⇐) it accepts
   `(encPad a', encPad b')` whenever `seven`'s decider accepts `(encode a', encode b')`. Stated as a
   structure `IntroSpec` on a candidate `(L, LP)`, so that P3c and P3d can be written against it
