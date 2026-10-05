@@ -153,28 +153,53 @@ noncomputable def toGame (g : GameData) :
     if g.totalWeight = 0 then (if x = 0 ∧ y = 0 then 1 else 0)
     else (g.questionWeight x.val y.val : ℝ) / (g.totalWeight : ℝ)
   μ_nonneg x y := by
-    split_ifs
-    · norm_num
-    · norm_num
-    · positivity
+    -- Term-shaped proofs only (`rw`/`exact` with named lemmas, no `simp`, `norm_num` or
+    -- `positivity`): Palomar's comparator requires the auxiliary proofs of this definition to be
+    -- identical in the Challenge's Mathlib-only environment and in the Solution's, and
+    -- extensible tactics elaborate differently once the library's simp set is in scope.
+    by_cases h : g.totalWeight = 0
+    · rw [ite_eq_left h]
+      by_cases hxy : x = 0 ∧ y = 0
+      · rw [ite_eq_left hxy]
+        exact zero_le_one
+      · rw [ite_eq_right hxy]
+    · rw [ite_eq_right h]
+      exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
   μ_sum_one := by
     by_cases h : g.totalWeight = 0
-    · simp only [if_pos h]
+    · have hrw : ∀ x y : Fin (g.nX + 1),
+          (if g.totalWeight = 0 then (if x = 0 ∧ y = 0 then (1 : ℝ) else 0)
+            else (g.questionWeight x.val y.val : ℝ) / (g.totalWeight : ℝ)) =
+          if x = 0 ∧ y = 0 then 1 else 0 := fun x y => ite_eq_left h
+      rw [Finset.sum_congr rfl (fun x _ => Finset.sum_congr rfl (fun y _ => hrw x y))]
       rw [Finset.sum_eq_single (0 : Fin (g.nX + 1))]
-      · simp
+      · rw [Finset.sum_eq_single (0 : Fin (g.nX + 1))]
+        · exact ite_eq_left ⟨rfl, rfl⟩
+        · intro b _ hb
+          exact ite_eq_right (fun hc => hb hc.2)
+        · intro hmem
+          exact absurd (Finset.mem_univ _) hmem
       · intro b _ hb
-        simp [hb]
+        exact Finset.sum_eq_zero (fun y _ => ite_eq_right (fun hc => hb hc.1))
       · intro hmem
         exact absurd (Finset.mem_univ _) hmem
-    · simp only [if_neg h]
-      have hT : (g.totalWeight : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr h
+    · have hT : (g.totalWeight : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr h
+      have hrw : ∀ x y : Fin (g.nX + 1),
+          (if g.totalWeight = 0 then (if x = 0 ∧ y = 0 then (1 : ℝ) else 0)
+            else (g.questionWeight x.val y.val : ℝ) / (g.totalWeight : ℝ)) =
+          (g.questionWeight x.val y.val : ℝ) / (g.totalWeight : ℝ) := fun x y => ite_eq_right h
+      rw [Finset.sum_congr rfl (fun x _ => Finset.sum_congr rfl (fun y _ => hrw x y))]
+      have hin : ∀ x : Fin (g.nX + 1),
+          (∑ y : Fin (g.nX + 1), (g.questionWeight x.val y.val : ℝ) / (g.totalWeight : ℝ)) =
+            (∑ y : Fin (g.nX + 1), (g.questionWeight x.val y.val : ℝ)) / (g.totalWeight : ℝ) :=
+        fun x => (Finset.sum_div _ _ _).symm
       have hsum : ∑ x : Fin (g.nX + 1), ∑ y : Fin (g.nX + 1),
           (g.questionWeight x.val y.val : ℝ) = (g.totalWeight : ℝ) := by
-        unfold totalWeight
-        push_cast
-        rfl
-      simp_rw [← Finset.sum_div]
-      rw [hsum, div_self hT]
+        change _ = ((∑ x : Fin (g.nX + 1), ∑ y : Fin (g.nX + 1),
+          g.questionWeight x.val y.val : ℕ) : ℝ)
+        rw [Nat.cast_sum]
+        exact Finset.sum_congr rfl (fun x _ => (Nat.cast_sum _ _).symm)
+      rw [Finset.sum_congr rfl (fun x _ => hin x), ← Finset.sum_div, hsum, div_self hT]
   D x y a b := if x = y ∧ a ≠ b then false else decide ((x.val, y.val, a.val, b.val) ∈ g.acc)
 
 end GameData
