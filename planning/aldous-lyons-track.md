@@ -623,7 +623,10 @@ identification with `(V.game n B).repeat k`, soundness from
   `MIPRE/Background/Tailored/Repetition/Soundness.lean`. `TailoredGame.repeat`: the variables
   of `x⃗` are the coordinates' readable variables in order, then their linear ones
   (`varEquiv`), and each coordinate's constraints are padded with zeros over all the variables
-  (`padCons`, a malformed constraint becoming `{J}`); `repeat_accepts_iff` is the acceptance law.
+  (`padCons`: the constraint cut by `take`/`drop` into its five blocks and each put at its
+  place, with no length test, so a malformed constraint pads to a vector of the wrong length and
+  the program can compute the definition literally); `repeat_accepts_iff` is the acceptance law,
+  through `satisfies_pad_blocks` on thirteen blocks.
   `PermStrategy.repeat`, the tensor power through slot embeddings `1 ⊗ ⋯ ⊗ M ⊗ ⋯ ⊗ 1` (algebra
   maps preserving signed permutations and diagonality, on `ℂ^{m^k}` after reindexing), whose
   measurement is the tensor product of the coordinates' (`proj_repeat`, the commuting Fourier

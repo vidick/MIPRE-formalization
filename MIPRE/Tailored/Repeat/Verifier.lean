@@ -366,7 +366,7 @@ theorem accepts_iff {x y : Fin (K lam tau n * V.sampler.dim n) → 𝔽₂} {a b
         (hacc.2.2 _ (by rw [hWcons, hrej]; exact List.mem_singleton_self _))
     · push Not at hall
       obtain ⟨i, hi⟩ := hall
-      obtain ⟨-, -, hcoord⟩ := (G.repeat_accepts_iff _ _ a b).1 hacc
+      obtain ⟨hla, hlb, hcoord⟩ := (G.repeat_accepts_iff _ _ a b).1 hacc
       have hci := hcoord i
       have hbase : V.consOf n (toBits (qc V lam tau n x i)) (toBits (qc V lam tau n y i))
           (G.coordR (qEquiv V lam tau n x) (a.take (G.lenRSum (qEquiv V lam tau n x))) i)
@@ -385,7 +385,7 @@ theorem accepts_iff {x y : Fin (K lam tau n * V.sampler.dim n) → 𝔽₂} {a b
           V.lenOf n (toBits (qc V lam tau n y i)) false +
           V.lenOf n (toBits (qc V lam tau n y i)) true) (by
           change _ ∈ V.consOf n _ _ _ _
-          rw [← G.coordR_take, ← G.coordR_take, hbase]
+          rw [← G.coordR_take _ hla, ← G.coordR_take _ hlb, hbase]
           exact List.mem_singleton_self _) hci
 
 /-- **The repeated verifier accepts only what the product accepts.** -/

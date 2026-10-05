@@ -977,8 +977,12 @@ the readable ones first, as a tailored answer must have them: the readable varia
 \ldots, x_k$ in this order, then their linear variables, so that $\ell^R(\bar{x}) = \sum_i
 \ell^R(x_i)$ and $\ell^L(\bar{x}) = \sum_i \ell^L(x_i)$. The constraints at $(\bar{x},
 \bar{y})$ are those of every coordinate, each written over all the variables with zero
-coefficients outside its coordinate; a constraint of the wrong length becomes the rejecting
-constraint $\{J\}$, as the canonical decider rejects it in its coordinate.
+coefficients outside its coordinate. A constraint is cut into its five blocks of coefficients
+--- readable and linear at $x_i$, readable and linear at $y_i$, affine --- by prefixes and
+suffixes, each put at its coordinate's place among the variables of its kind; the blocks
+partition the constraint whatever its length, so a constraint of the wrong length pads to a
+vector of the wrong length, which the canonical decider rejects, as it rejects the constraint
+in its coordinate. No length is tested, so a program computes the padding as defined.
 \end{definition}
 
 \begin{lemma}[The canonical decider of the product]
@@ -995,10 +999,12 @@ coordinate $i$, the coordinate's answers read off them.
 \begin{proof}
 \uses{lem:perm-strategy-perfect}
 \leanok
-A constraint padded with zeros pairs with the whole answers as the constraint pairs with the
-coordinate's answers: the two sums of products of coefficients and answer bits have the same
-terms, through the bijection between the variables of the coordinate $i$ and the variables of
-the tuple that belong to it. The readable answers of a coordinate are its block of the
+A coordinate's answer is two blocks of the tuple's answer, its readable bits after the
+readable bits of the coordinates before it and its linear bits likewise. Cut the tuple's
+answers into the thirteen blocks the padding is made of: a constraint of the right length
+pairs with the whole answers block by block, the zero blocks contributing nothing and the
+others pairing as the constraint does with the coordinate's answers; one of the wrong length
+pads to a vector of the wrong length, and both sides reject. The readable answers of a coordinate are its block of the
 readable answers of the tuple, so the constraints of the coordinate are evaluated at the
 right readable answers.
 \end{proof}

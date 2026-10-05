@@ -99,43 +99,121 @@ def coord (x : Fin k → X) (a : Cost.BitStr) (i : Fin k) : Cost.BitStr :=
 @[simp] theorem length_coord (x : Fin k → X) (a : Cost.BitStr) (i : Fin k) :
     (G.coord x a i).length = G.len (x i) := by simp [coord]
 
+/-- The readable variables of the coordinates before `i`. -/
+def preR (x : Fin k → X) (i : Fin k) : ℕ := ∑ j ∈ univ.filter (· < i), G.lenR (x j)
+
+/-- The linear variables of the coordinates before `i`. -/
+def preL (x : Fin k → X) (i : Fin k) : ℕ := ∑ j ∈ univ.filter (· < i), G.lenL (x j)
+
+/-- The readable variables of the coordinates after `i`. -/
+def sufR (x : Fin k → X) (i : Fin k) : ℕ := G.lenRSum x - (G.preR x i + G.lenR (x i))
+
+/-- The linear variables of the coordinates after `i`. -/
+def sufL (x : Fin k → X) (i : Fin k) : ℕ := G.lenLSum x - (G.preL x i + G.lenL (x i))
+
+/-- A sum over the coordinates before `i`, written over `Fin i`. -/
+theorem sum_castLE_eq_sum_filter (f : Fin k → ℕ) (i : Fin k) :
+    ∑ j : Fin i, f (Fin.castLE i.isLt.le j) = ∑ j ∈ univ.filter (· < i), f j := by
+  refine Finset.sum_bij (fun j _ => Fin.castLE i.isLt.le j) (fun j _ => ?_) (fun j _ j' _ h => ?_)
+    (fun g hg => ?_) (fun _ _ => rfl)
+  · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    exact Fin.lt_def.2 j.isLt
+  · exact Fin.castLE_injective _ h
+  · simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hg
+    exact ⟨⟨g.val, hg⟩, Finset.mem_univ _, rfl⟩
+
+/-- The position of a readable variable of the coordinate `i` among the readable variables. -/
+theorem val_finSigmaFinEquiv_R (x : Fin k → X) (i : Fin k) (v : Fin (G.lenR (x i))) :
+    ((finSigmaFinEquiv (n := fun j => G.lenR (x j)) ⟨i, v⟩ : Fin (G.lenRSum x)) : ℕ) =
+      G.preR x i + v := by
+  rw [finSigmaFinEquiv_apply, preR, ← sum_castLE_eq_sum_filter]
+
+/-- The position of a linear variable of the coordinate `i` among the linear variables. -/
+theorem val_finSigmaFinEquiv_L (x : Fin k → X) (i : Fin k) (w : Fin (G.lenL (x i))) :
+    ((finSigmaFinEquiv (n := fun j => G.lenL (x j)) ⟨i, w⟩ : Fin (G.lenLSum x)) : ℕ) =
+      G.preL x i + w := by
+  rw [finSigmaFinEquiv_apply, preL, ← sum_castLE_eq_sum_filter]
+
+theorem preR_add_le (x : Fin k → X) (i : Fin k) : G.preR x i + G.lenR (x i) ≤ G.lenRSum x := by
+  rw [lenRSum, ← Finset.sum_filter_add_sum_filter_not univ (· < i), preR]
+  refine Nat.add_le_add_left (Finset.single_le_sum (f := fun j => G.lenR (x j))
+    (fun _ _ => Nat.zero_le _) ?_) _
+  simp
+
+theorem preL_add_le (x : Fin k → X) (i : Fin k) : G.preL x i + G.lenL (x i) ≤ G.lenLSum x := by
+  rw [lenLSum, ← Finset.sum_filter_add_sum_filter_not univ (· < i), preL]
+  refine Nat.add_le_add_left (Finset.single_le_sum (f := fun j => G.lenL (x j))
+    (fun _ _ => Nat.zero_le _) ?_) _
+  simp
+
+/-- **A coordinate of an answer is two blocks of it**: its readable answers, at the coordinate's
+place among the readable variables, then its linear answers, at its place among the linear
+ones. -/
+theorem coord_eq (x : Fin k → X) {a : Cost.BitStr} (ha : a.length = G.lenRSum x + G.lenLSum x)
+    (i : Fin k) :
+    G.coord x a i = (a.drop (G.preR x i)).take (G.lenR (x i)) ++
+      (a.drop (G.lenRSum x + G.preL x i)).take (G.lenL (x i)) := by
+  have hR := G.preR_add_le x i
+  have hL := G.preL_add_le x i
+  apply List.ext_getElem
+  · simp only [length_coord, len, List.length_append, List.length_take, List.length_drop]; omega
+  intro v h1 h2
+  simp only [coord, List.getElem_ofFn]
+  have hlen1 : ((a.drop (G.preR x i)).take (G.lenR (x i))).length = G.lenR (x i) := by
+    simp; omega
+  rcases Nat.lt_or_ge v (G.lenR (x i)) with hv | hv
+  · have key : (((G.varEquiv x).symm ⟨i, ⟨v, by simpa using h1⟩⟩ : Fin _) : ℕ) =
+        G.preR x i + v := by
+      have hfin : (⟨v, by simpa using h1⟩ : Fin (G.len (x i))) =
+          Fin.castAdd (G.lenL (x i)) ⟨v, hv⟩ := rfl
+      rw [hfin, varEquiv_symm_castAdd, Fin.val_castAdd, val_finSigmaFinEquiv_R]
+    rw [key, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem (by omega), Option.getD_some,
+      List.getElem_append_left (by omega), List.getElem_take, List.getElem_drop]
+  · have hw : v - G.lenR (x i) < G.lenL (x i) := by simp [len] at h1; omega
+    have key : (((G.varEquiv x).symm ⟨i, ⟨v, by simpa using h1⟩⟩ : Fin _) : ℕ) =
+        G.lenRSum x + (G.preL x i + (v - G.lenR (x i))) := by
+      have hfin : (⟨v, by simpa using h1⟩ : Fin (G.len (x i))) =
+          Fin.natAdd (G.lenR (x i)) ⟨v - G.lenR (x i), hw⟩ := by ext; simp; omega
+      rw [hfin, varEquiv_symm_natAdd, Fin.val_natAdd, val_finSigmaFinEquiv_L]
+    rw [key, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem (by omega), Option.getD_some,
+      List.getElem_append_right (by omega)]
+    simp only [List.getElem_take, List.getElem_drop, hlen1]
+    congr 1
+    omega
+
 /-- The readable answer to the coordinate `i` read off the readable part `a^R` of an answer:
-its `i`-th block, of length `lenR xᵢ`. -/
+its block of `lenR xᵢ` bits after the readable variables of the coordinates before it. -/
 def coordR (x : Fin k → X) (aR : Cost.BitStr) (i : Fin k) : Cost.BitStr :=
-  List.ofFn fun v : Fin (G.lenR (x i)) =>
-    aR.getD (finSigmaFinEquiv (n := fun j => G.lenR (x j)) ⟨i, v⟩) false
+  (aR.drop (G.preR x i)).take (G.lenR (x i))
 
 /-- The readable part of a coordinate of an answer is the coordinate of its readable part. -/
-theorem coordR_take (x : Fin k → X) (a : Cost.BitStr) (i : Fin k) :
+theorem coordR_take (x : Fin k → X) {a : Cost.BitStr} (ha : a.length = G.lenRSum x + G.lenLSum x)
+    (i : Fin k) :
     G.coordR x (a.take (G.lenRSum x)) i = (G.coord x a i).take (G.lenR (x i)) := by
-  apply List.ext_getElem
-  · simp [coordR, coord, len]
-  intro v h1 h2
-  simp only [coordR, List.getElem_ofFn, coord, List.getElem_take]
-  have hv : v < G.lenR (x i) := by simpa [coordR] using h1
-  have hlt : (finSigmaFinEquiv (n := fun j => G.lenR (x j)) ⟨i, ⟨v, hv⟩⟩).val < G.lenRSum x :=
-    (finSigmaFinEquiv (n := fun j => G.lenR (x j)) ⟨i, ⟨v, hv⟩⟩).isLt
-  have hcast : (G.varEquiv x).symm ⟨i, ⟨v, by unfold len; omega⟩⟩ =
-      Fin.castAdd (G.lenLSum x) (finSigmaFinEquiv (n := fun j => G.lenR (x j)) ⟨i, ⟨v, hv⟩⟩) :=
-    G.varEquiv_symm_castAdd x i ⟨v, hv⟩
-  rw [hcast, Fin.val_castAdd, List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD,
-    List.getElem?_take_of_lt hlt]
+  have hR := G.preR_add_le x i
+  rw [coord_eq G x ha, List.take_append_of_le_length (by simp; omega), List.take_take, coordR,
+    List.drop_take, List.take_take]
+  congr 1
+  omega
 
 /-! ## Padding a constraint of a coordinate -/
 
+/-- `n` zero bits. -/
+abbrev zeros (n : ℕ) : Cost.BitStr := List.replicate n false
+
 /-- **A constraint of the coordinate `i`, written over all the variables** (II:11380): its
-coefficient at a variable of `x⃗` is its coefficient at that variable of `xᵢ` when the variable
-belongs to the coordinate `i`, and `0` otherwise; likewise for `y⃗`; the affine coefficient is
-kept. A constraint of the wrong length becomes the rejecting constraint. -/
+blocks of coefficients — readable at `xᵢ`, linear at `xᵢ`, readable at `yᵢ`, linear at `yᵢ`,
+affine — each put at its coordinate's place among the variables of its kind, and zeros
+everywhere else. The blocks are cut with `take` and `drop`, so that they partition the
+constraint whatever its length: a constraint of the wrong length gives a padded vector of the
+wrong length, which the canonical decider rejects, as it rejects the constraint in its
+coordinate. -/
 def padCons (x y : Fin k → X) (i : Fin k) (c : Cost.BitStr) : Cost.BitStr :=
-  if c.length = G.len (x i) + G.len (y i) + 1 then
-    List.ofFn (fun g : Fin (G.lenRSum x + G.lenLSum x) =>
-        if ((G.varEquiv x) g).1 = i then c.getD ((G.varEquiv x) g).2.val false else false) ++
-      List.ofFn (fun g : Fin (G.lenRSum y + G.lenLSum y) =>
-        if ((G.varEquiv y) g).1 = i then
-          c.getD (G.len (x i) + ((G.varEquiv y) g).2.val) false else false) ++
-      [c.getD (G.len (x i) + G.len (y i)) false]
-  else rejectConstraint (G.lenRSum x + G.lenLSum x + (G.lenRSum y + G.lenLSum y))
+  zeros (G.preR x i) ++ c.take (G.lenR (x i)) ++ zeros (G.sufR x i) ++
+    zeros (G.preL x i) ++ (c.drop (G.lenR (x i))).take (G.lenL (x i)) ++ zeros (G.sufL x i) ++
+    zeros (G.preR y i) ++ (c.drop (G.len (x i))).take (G.lenR (y i)) ++ zeros (G.sufR y i) ++
+    zeros (G.preL y i) ++ (c.drop (G.len (x i) + G.lenR (y i))).take (G.lenL (y i)) ++
+    zeros (G.sufL y i) ++ c.drop (G.len (x i) + G.len (y i))
 
 /-! ## The product game -/
 
@@ -175,87 +253,133 @@ theorem repeat_len (x : Fin k → X) : (G.repeat k).len x = G.lenRSum x + G.lenL
 
 /-! ## Linear constraints after padding -/
 
-/-- `⟨α, a⟩` is the parity of the number of common ones. -/
-theorem dotBit_eq_decide_odd {n : ℕ} (α a : Fin n → Bool) :
-    dotBit α a = decide (Odd (univ.filter fun j => (α j && a j) = true).card) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [dotBit_succ, ih, Fin.card_filter_univ_succ]
-    by_cases h : (α 0 && a 0) = true
-    · simp only [h, ite_true, Nat.odd_add_one, decide_not, Bool.true_xor]
-    · simp only [h, Bool.false_eq_true, ite_false, Bool.false_xor]
+/-- The number of coincident ones of two concatenations, the first blocks of equal lengths, is
+the sum over the blocks. -/
+theorem count_zipWith_append {p₁ p₂ v₁ v₂ : Cost.BitStr} (h : p₁.length = v₁.length) :
+    (List.zipWith (· && ·) (p₁ ++ p₂) (v₁ ++ v₂)).count true =
+      (List.zipWith (· && ·) p₁ v₁).count true + (List.zipWith (· && ·) p₂ v₂).count true := by
+  rw [List.zipWith_append h, List.count_append]
 
-/-- **A coefficient vector supported on the coordinate `i`** pairs with an answer as its
-restriction to the coordinate pairs with the coordinate of the answer. -/
-theorem dotBit_varEquiv (x : Fin k → X) (i : Fin k) (f : ℕ → Bool)
-    (a : Fin (G.lenRSum x + G.lenLSum x) → Bool) :
-    dotBit (fun g => if ((G.varEquiv x) g).1 = i then f ((G.varEquiv x) g).2.val else false) a =
-      dotBit (fun v : Fin (G.len (x i)) => f v.val) (fun v => a ((G.varEquiv x).symm ⟨i, v⟩)) := by
-  rw [dotBit_eq_decide_odd, dotBit_eq_decide_odd]
-  congr 2
-  symm
-  refine Finset.card_bij (fun v _ => (G.varEquiv x).symm ⟨i, v⟩) ?_ ?_ ?_
-  · intro v hv
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
-    rw [Equiv.apply_symm_apply]
-    simpa using hv
-  · intro v _ w _ h
-    have := congrArg (G.varEquiv x) h
-    simp only [Equiv.apply_symm_apply, Sigma.mk.injEq, heq_eq_eq, true_and] at this
-    exact this
-  · intro g hg
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hg
-    obtain ⟨⟨j, v⟩, rfl⟩ := (G.varEquiv x).symm.surjective g
-    rw [Equiv.apply_symm_apply] at hg
-    by_cases hj : j = i
-    · subst hj
-      refine ⟨v, ?_, rfl⟩
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      simpa using hg
-    · simp [hj] at hg
+@[simp] theorem count_zipWith_zeros (n : ℕ) (m : Cost.BitStr) :
+    (List.zipWith (· && ·) (zeros n) m).count true = 0 := by
+  rw [List.count_eq_zero]
+  intro hmem
+  obtain ⟨j, hj, he⟩ := List.mem_iff_getElem.1 hmem
+  simp [List.getElem_zipWith] at he
 
-/-- A bit string of length `p + q + 1`, cut into its first `p` bits, its next `q` bits and its
-last bit. -/
-theorem eq_ofFn_append_ofFn_append (c : Cost.BitStr) {p q : ℕ} (h : c.length = p + q + 1) :
-    c = List.ofFn (fun v : Fin p => c.getD v false) ++
-      List.ofFn (fun w : Fin q => c.getD (p + w) false) ++ [c.getD (p + q) false] := by
-  apply List.ext_getElem
-  · simp [h]; omega
-  intro j h1 h2
-  simp only [List.getD_eq_getElem?_getD]
-  rcases Nat.lt_or_ge j p with hj | hj
-  · rw [List.getElem_append_left (by simp; omega), List.getElem_append_left (by simp; omega)]
-    simp [List.getElem?_eq_getElem h1]
-  rcases Nat.lt_or_ge j (p + q) with hj' | hj'
-  · rw [List.getElem_append_left (by simp; omega), List.getElem_append_right (by simp; omega)]
-    simp only [List.length_ofFn, List.getElem_ofFn]
-    rw [show p + (j - p) = j by omega, List.getElem?_eq_getElem h1]
-    rfl
-  · rw [List.getElem_append_right (by simp; omega)]
-    have hjq : j = p + q := by
-      have : j < p + q + 1 := by omega
+/-- A list is the concatenation of six consecutive blocks of it. -/
+theorem eq_flatten_six (a : Cost.BitStr) (p₁ p₂ p₃ p₄ p₅ : ℕ) :
+    a = [a.take p₁, (a.drop p₁).take p₂, (a.drop (p₁ + p₂)).take p₃,
+      (a.drop (p₁ + p₂ + p₃)).take p₄, (a.drop (p₁ + p₂ + p₃ + p₄)).take p₅,
+      a.drop (p₁ + p₂ + p₃ + p₄ + p₅)].flatten := by
+  simp only [List.flatten_cons, List.flatten_nil, List.append_nil]
+  rw [← List.drop_drop (i := p₅) (j := p₁ + p₂ + p₃ + p₄), List.take_append_drop,
+    ← List.drop_drop (i := p₄) (j := p₁ + p₂ + p₃), List.take_append_drop,
+    ← List.drop_drop (i := p₃) (j := p₁ + p₂), List.take_append_drop,
+    ← List.drop_drop (i := p₂) (j := p₁), List.take_append_drop, List.take_append_drop]
+
+/-- A list is the concatenation of five consecutive blocks of it. -/
+theorem eq_flatten_five (c : Cost.BitStr) (p₁ p₂ p₃ p₄ : ℕ) :
+    c = [c.take p₁, (c.drop p₁).take p₂, (c.drop (p₁ + p₂)).take p₃,
+      (c.drop (p₁ + p₂ + p₃)).take p₄, c.drop (p₁ + p₂ + p₃ + p₄)].flatten := by
+  simp only [List.flatten_cons, List.flatten_nil, List.append_nil]
+  rw [← List.drop_drop (i := p₄) (j := p₁ + p₂ + p₃), List.take_append_drop,
+    ← List.drop_drop (i := p₃) (j := p₁ + p₂), List.take_append_drop,
+    ← List.drop_drop (i := p₂) (j := p₁), List.take_append_drop, List.take_append_drop]
+
+/-- The padding lemma on blocks: a constraint cut into the blocks of two answers, with zeros
+against every other block, is satisfied exactly when the constraint is satisfied by the blocks
+it was cut against. -/
+theorem satisfies_pad_blocks (c a₁ a₂ a₃ a₄ a₅ a₆ b₁ b₂ b₃ b₄ b₅ b₆ : Cost.BitStr)
+    {n₁ n₂ n₃ n₄ n₅ n₆ m₁ m₂ m₃ m₄ m₅ m₆ : ℕ}
+    (h₁ : a₁.length = n₁) (h₂ : a₂.length = n₂) (h₃ : a₃.length = n₃) (h₄ : a₄.length = n₄)
+    (h₅ : a₅.length = n₅) (h₆ : a₆.length = n₆) (g₁ : b₁.length = m₁) (g₂ : b₂.length = m₂)
+    (g₃ : b₃.length = m₃) (g₄ : b₄.length = m₄) (g₅ : b₅.length = m₅) (g₆ : b₆.length = m₆) :
+    Satisfies (zeros n₁ ++ c.take n₂ ++ zeros n₃ ++ zeros n₄ ++ (c.drop n₂).take n₅ ++
+        zeros n₆ ++ zeros m₁ ++ (c.drop (n₂ + n₅)).take m₂ ++ zeros m₃ ++ zeros m₄ ++
+        (c.drop (n₂ + n₅ + m₂)).take m₅ ++ zeros m₆ ++ c.drop (n₂ + n₅ + m₂ + m₅))
+      (a₁ ++ a₂ ++ a₃ ++ a₄ ++ a₅ ++ a₆ ++ (b₁ ++ b₂ ++ b₃ ++ b₄ ++ b₅ ++ b₆) ++ [true]) ↔
+      Satisfies c (a₂ ++ a₅ ++ (b₂ ++ b₅) ++ [true]) := by
+  subst h₁ h₂ h₃ h₄ h₅ h₆ g₁ g₂ g₃ g₄ g₅ g₆
+  by_cases hc : c.length = a₂.length + a₅.length + b₂.length + b₅.length + 1
+  · have hc5 := eq_flatten_five c a₂.length a₅.length b₂.length b₅.length
+    generalize hc₁ : c.take a₂.length = c₁ at hc5 ⊢
+    generalize hc₂ : (c.drop a₂.length).take a₅.length = c₂ at hc5 ⊢
+    generalize hc₃ : (c.drop (a₂.length + a₅.length)).take b₂.length = c₃ at hc5 ⊢
+    generalize hc₄ : (c.drop (a₂.length + a₅.length + b₂.length)).take b₅.length = c₄
+      at hc5 ⊢
+    generalize hc₀ : c.drop (a₂.length + a₅.length + b₂.length + b₅.length) = c₅ at hc5 ⊢
+    have l₁ : c₁.length = a₂.length := by rw [← hc₁]; simp; omega
+    have l₂ : c₂.length = a₅.length := by rw [← hc₂]; simp; omega
+    have l₃ : c₃.length = b₂.length := by rw [← hc₃]; simp; omega
+    have l₄ : c₄.length = b₅.length := by rw [← hc₄]; simp; omega
+    have l₅ : c₅.length = [true].length := by rw [← hc₀]; simp; omega
+    simp only [List.flatten_cons, List.flatten_nil, List.append_nil] at hc5
+    rw [hc5]
+    unfold Satisfies
+    simp only [List.append_assoc]
+    rw [count_zipWith_append (by simp), count_zipWith_append l₁, count_zipWith_append (by simp),
+      count_zipWith_append (by simp), count_zipWith_append l₂, count_zipWith_append (by simp),
+      count_zipWith_append (by simp), count_zipWith_append l₃, count_zipWith_append (by simp),
+      count_zipWith_append (by simp), count_zipWith_append l₄, count_zipWith_append (by simp),
+      count_zipWith_append l₁, count_zipWith_append l₂, count_zipWith_append l₃,
+      count_zipWith_append l₄]
+    simp only [count_zipWith_zeros, zero_add, List.length_append, List.length_replicate, l₁, l₂,
+      l₃, l₄, l₅]
+  · refine iff_of_false (fun h => hc ?_) (fun h => hc ?_)
+    · have hl := h.1
+      simp only [List.length_append, List.length_take, List.length_drop, List.length_replicate,
+        List.length_cons, List.length_nil] at hl
       omega
-    subst hjq
-    simp [List.getElem?_eq_getElem h1]
+    · have hl := h.1
+      simp only [List.length_append, List.length_cons, List.length_nil] at hl
+      omega
 
 /-- **The padded constraint is satisfied by the whole answers exactly when the constraint is
 satisfied by the coordinate's answers.** -/
-theorem satisfies_padCons_iff (x y : Fin k → X) (i : Fin k) (c : Cost.BitStr)
-    (a : Fin (G.lenRSum x + G.lenLSum x) → Bool) (b : Fin (G.lenRSum y + G.lenLSum y) → Bool) :
-    Satisfies (G.padCons x y i c) (List.ofFn a ++ List.ofFn b ++ [true]) ↔
-      Satisfies c (List.ofFn (fun v => a ((G.varEquiv x).symm ⟨i, v⟩)) ++
-        List.ofFn (fun w => b ((G.varEquiv y).symm ⟨i, w⟩)) ++ [true]) := by
-  unfold padCons
-  split_ifs with hc
-  · conv_rhs => rw [eq_ofFn_append_ofFn_append c hc]
-    rw [satisfies_ofFn_iff, satisfies_ofFn_iff,
-      G.dotBit_varEquiv x i (fun n => c.getD n false) a,
-      G.dotBit_varEquiv y i (fun n => c.getD (G.len (x i) + n) false) b]
-  · refine iff_of_false ?_ ?_
-    · exact not_satisfies_rejectConstraint _ _
-    · rintro ⟨hlen, -⟩
-      exact hc (by simp [len] at hlen ⊢; omega)
+theorem satisfies_padCons_iff (x y : Fin k → X) (i : Fin k) (c : Cost.BitStr) {a b : Cost.BitStr}
+    (ha : a.length = G.lenRSum x + G.lenLSum x) (hb : b.length = G.lenRSum y + G.lenLSum y) :
+    Satisfies (G.padCons x y i c) (a ++ b ++ [true]) ↔
+      Satisfies c (G.coord x a i ++ G.coord y b i ++ [true]) := by
+  have hRx := G.preR_add_le x i
+  have hLx := G.preL_add_le x i
+  have hRy := G.preR_add_le y i
+  have hLy := G.preL_add_le y i
+  have hsx : G.preR x i + G.lenR (x i) + G.sufR x i = G.lenRSum x := by unfold sufR; omega
+  have hsy : G.preR y i + G.lenR (y i) + G.sufR y i = G.lenRSum y := by unfold sufR; omega
+  have htx : G.preL x i + G.lenL (x i) + G.sufL x i = G.lenLSum x := by unfold sufL; omega
+  have hty : G.preL y i + G.lenL (y i) + G.sufL y i = G.lenLSum y := by unfold sufL; omega
+  have hcx := G.coord_eq x ha i
+  have hcy := G.coord_eq y hb i
+  rw [← hsx] at hcx
+  rw [← hsy] at hcy
+  have ha6 := eq_flatten_six a (G.preR x i) (G.lenR (x i)) (G.sufR x i) (G.preL x i)
+    (G.lenL (x i))
+  have hb6 := eq_flatten_six b (G.preR y i) (G.lenR (y i)) (G.sufR y i) (G.preL y i)
+    (G.lenL (y i))
+  simp only [List.flatten_cons, List.flatten_nil, List.append_nil] at ha6 hb6
+  have key := satisfies_pad_blocks c (a.take (G.preR x i))
+    ((a.drop (G.preR x i)).take (G.lenR (x i)))
+    ((a.drop (G.preR x i + G.lenR (x i))).take (G.sufR x i))
+    ((a.drop (G.preR x i + G.lenR (x i) + G.sufR x i)).take (G.preL x i))
+    ((a.drop (G.preR x i + G.lenR (x i) + G.sufR x i + G.preL x i)).take (G.lenL (x i)))
+    (a.drop (G.preR x i + G.lenR (x i) + G.sufR x i + G.preL x i + G.lenL (x i)))
+    (b.take (G.preR y i))
+    ((b.drop (G.preR y i)).take (G.lenR (y i)))
+    ((b.drop (G.preR y i + G.lenR (y i))).take (G.sufR y i))
+    ((b.drop (G.preR y i + G.lenR (y i) + G.sufR y i)).take (G.preL y i))
+    ((b.drop (G.preR y i + G.lenR (y i) + G.sufR y i + G.preL y i)).take (G.lenL (y i)))
+    (b.drop (G.preR y i + G.lenR (y i) + G.sufR y i + G.preL y i + G.lenL (y i)))
+    (n₁ := G.preR x i) (n₂ := G.lenR (x i)) (n₃ := G.sufR x i) (n₄ := G.preL x i)
+    (n₅ := G.lenL (x i)) (n₆ := G.sufL x i)
+    (m₁ := G.preR y i) (m₂ := G.lenR (y i)) (m₃ := G.sufR y i) (m₄ := G.preL y i)
+    (m₅ := G.lenL (y i)) (m₆ := G.sufL y i)
+    (by simp; omega) (by simp; omega) (by simp; omega) (by simp; omega) (by simp; omega)
+    (by simp; omega) (by simp; omega) (by simp; omega) (by simp; omega) (by simp; omega)
+    (by simp; omega) (by simp; omega)
+  rw [hcx, hcy]
+  conv_lhs => arg 2; rw [ha6, hb6]
+  simpa only [List.append_assoc, padCons, len, ← Nat.add_assoc] using key
 
 /-- **The acceptance law of the product**: the canonical decider accepts a pair of answers to
 `(x⃗, y⃗)` exactly when they have the right lengths and every coordinate is accepted. -/
@@ -265,36 +389,17 @@ theorem repeat_accepts_iff (x y : Fin k → X) (a b : Cost.BitStr) :
         ∀ i, G.Accepts (x i) (y i) (G.coord x a i) (G.coord y b i) := by
   unfold Accepts
   refine and_congr_right fun ha => and_congr_right fun hb => ?_
-  set av : Fin (G.lenRSum x + G.lenLSum x) → Bool := fun g => a.getD g false
-  set bv : Fin (G.lenRSum y + G.lenLSum y) → Bool := fun g => b.getD g false
-  have hav : List.ofFn av = a := by
-    apply List.ext_getElem (by rw [List.length_ofFn]; exact ha.symm)
-    intro j h1 h2
-    simp [av, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h2]
-  have hbv : List.ofFn bv = b := by
-    apply List.ext_getElem (by rw [List.length_ofFn]; exact hb.symm)
-    intro j h1 h2
-    simp [bv, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h2]
-  have hcoordx : ∀ i, G.coord x a i = List.ofFn (fun v => av ((G.varEquiv x).symm ⟨i, v⟩)) :=
-    fun _ => rfl
-  have hcoordy : ∀ i, G.coord y b i = List.ofFn (fun w => bv ((G.varEquiv y).symm ⟨i, w⟩)) :=
-    fun _ => rfl
   simp only [TailoredGame.repeat, List.mem_flatMap, List.mem_finRange, List.mem_map, true_and,
     forall_exists_index, and_imp]
   constructor
   · intro h i
     refine ⟨length_coord _ _ _ _, length_coord _ _ _ _, fun c hc => ?_⟩
-    have h' := h _ i c (by rw [coordR_take, coordR_take]; exact hc) rfl
-    rw [← hav, ← hbv, satisfies_padCons_iff] at h'
-    rw [hcoordx, hcoordy]
-    exact h'
+    have h' := h _ i c (by rw [coordR_take G x ha, coordR_take G y hb]; exact hc) rfl
+    exact (G.satisfies_padCons_iff x y i c ha hb).1 h'
   · intro h c' i c hc hc'
     subst hc'
-    rw [coordR_take, coordR_take] at hc
-    have := (h i).2.2 c hc
-    rw [hcoordx, hcoordy] at this
-    rw [← hav, ← hbv, satisfies_padCons_iff]
-    exact this
+    rw [coordR_take G x ha, coordR_take G y hb] at hc
+    exact (G.satisfies_padCons_iff x y i c ha hb).2 ((h i).2.2 c hc)
 
 end TailoredGame
 
