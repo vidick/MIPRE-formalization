@@ -745,6 +745,13 @@ bits padded; `dec` strips the padding and re-encodes with `encodeAnswer`.
   of length at most `R = (2^n)^λ`; the same-type check is raw equality, so the re-encoding must
   be injective on formatted answers — `encodeAnswer` is not injective on malformed Pauli answers
   when `k = 3`, so every round-trip lemma carries `fmtOk`/`fits`.
+- **P3b₁ — tailored detyping and the layout (done, 0.5k lines).** `Tailored/Detyping.lean` and
+  `Tailored/Intro/Layout.lean` below, generic in the labels, the register length `Q`, the
+  original cutoff `R` and the input's split. One finding for P3d: a λ-bounded tailored input
+  bounds its readable and its linear answer lengths by `(2^n)^λ` *separately*, so its answers
+  reach `2·(2^n)^λ`, beyond `seven`'s original cutoff `R = (2^n)^λ` at the same λ; the input
+  enters `seven` at a larger λ' (λ + 1 suffices for `n ≥ 1`), which the canonical decider's cost
+  needs anyway, and the contract's `δ(ε, n)` at λ is then `seven`'s at λ'.
 - **P3b — the tailored presentation as a game (2–3k).** Structure, settled 2026-10-05: `seven`'s
   output verifier is `CL.Detyping.DeciderProgram.verifier` over a typed sampler and a typed
   decider, so the presentation is typed tailored data on the labels (`Tailored/Detyping.lean`,

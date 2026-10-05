@@ -239,6 +239,8 @@ public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Transport
 public import MIPRE.Tailored.Intro.Input
 public import MIPRE.Tailored.Intro.Binary
+public import MIPRE.Tailored.Detyping
+public import MIPRE.Tailored.Intro.Layout
 
 @[expose] public section
 
@@ -3816,5 +3818,22 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.SyncStrategy.isPVMIn, MIPRE.SyncStrategy.mul_eq_zero_of_value_eq_one,
   MIPRE.Tailored.valStar_le_of_dec, MIPRE.Tailored.permOfSync, MIPRE.Tailored.permOfSync_proj,
   MIPRE.Tailored.value_permOfSync, MIPRE.Tailored.hasPerfectZPC_of_sync
+
+-- blueprint `lem:tailored-detyping`
+#guard_sorry_free MIPRE.Tailored.accepts_eq_edgeOf, MIPRE.Tailored.TypedData.typeOf_of_edgeOf,
+  MIPRE.Tailored.TypedData.detype_len_of_edgeOf,
+  MIPRE.Tailored.TypedData.detype_accepts_iff_of_edgeOf,
+  MIPRE.Tailored.TypedData.detype_accepts_of_edgeOf_none,
+  MIPRE.Tailored.TypedData.decD_of_edgeOf, MIPRE.Tailored.TypedData.encD_of_edgeOf,
+  MIPRE.Tailored.TypedData.detype_accepts_dec, MIPRE.Tailored.TypedData.detype_accepts_enc
+
+-- blueprint `lem:intro-layout`
+#guard_sorry_free MIPRE.Tailored.Intro.length_pad, MIPRE.Tailored.Intro.take_pad,
+  MIPRE.Tailored.Intro.take_take_pad, MIPRE.Tailored.Intro.unpad_pad,
+  MIPRE.Tailored.Intro.enc_pair, MIPRE.Tailored.Intro.dec_enc_pair,
+  MIPRE.Tailored.Intro.dec_enc_read, MIPRE.Tailored.Intro.dec_enc_hide,
+  MIPRE.Tailored.Intro.dec_enc_pauli, MIPRE.Tailored.Intro.length_enc_pair,
+  MIPRE.Tailored.Intro.length_enc_read, MIPRE.Tailored.Intro.length_enc_hide,
+  MIPRE.Tailored.Intro.length_enc_pauli
 
 end

@@ -1357,6 +1357,93 @@ $\game'$, or its encoding would be accepted — and the strategy is perfect by
 Lemma~\ref{lem:perm-strategy-perfect}.
 \end{proof}
 
+\begin{definition}[Detyping a tailored game]
+\label{def:tailored-detyping}
+\uses{def:tailored-game}
+\lean{MIPRE.Tailored.typeOf, MIPRE.Tailored.edgeOf, MIPRE.Tailored.TypedData,
+  MIPRE.Tailored.TypedData.Accepts, MIPRE.Tailored.TypedData.detype,
+  MIPRE.Tailored.TypedData.decD, MIPRE.Tailored.TypedData.encD}
+\leanok
+\emph{Typed tailored data} on a finite set of types $T$ fixes, for each type, the numbers of
+readable and of linear answer bits, and, for each pair of typed questions, a list of controlled
+linear constraints. Its \emph{detyping} is the tailored game on the detyped questions (a graph
+view followed by a content register, Lemma~\ref{lem:detype-graph}) in which a question has the
+lengths of the type its graph view decodes to, for either player, and none when it decodes to
+none; and a pair of questions has the typed constraints when the two views are Alice's and
+Bob's views of an edge, and no constraint otherwise. Answers are decoded and encoded through the
+type of their question.
+\end{definition}
+
+\begin{lemma}[Detyping tailored games]
+\label{lem:tailored-detyping}
+\uses{def:tailored-detyping,lem:detype-game-completeness}
+\lean{MIPRE.Tailored.accepts_eq_edgeOf, MIPRE.Tailored.TypedData.typeOf_of_edgeOf,
+  MIPRE.Tailored.TypedData.detype_len_of_edgeOf,
+  MIPRE.Tailored.TypedData.detype_accepts_iff_of_edgeOf,
+  MIPRE.Tailored.TypedData.detype_accepts_of_edgeOf_none,
+  MIPRE.Tailored.TypedData.decD_of_edgeOf, MIPRE.Tailored.TypedData.encD_of_edgeOf,
+  MIPRE.Tailored.TypedData.detype_accepts_dec, MIPRE.Tailored.TypedData.detype_accepts_enc}
+\leanok
+On the views of an edge the detyped tailored game accepts exactly what the typed data accepts,
+and off the edges it accepts every pair of the right lengths. Consequently, for a detyped game
+whose predicate calls a typed predicate $D$ on the edges and accepts off them: if, on every
+edge, a pair the typed data accepts decodes to one $D$ accepts, then every pair the detyped
+tailored game accepts decodes to one the detyped predicate accepts; and if, on every edge, a
+pair of encodable answers $D$ accepts encodes to one the typed data accepts, with the typed
+lengths, then every accepted pair of encodable detyped answers encodes to one the detyped
+tailored game accepts.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A view of an edge decodes to the edge's type, so the lengths and constraints are the typed ones
+there; off the edges there is no constraint. The two reductions follow case by case on whether
+the pair of questions is the pair of views of an edge.
+\end{proof}
+
+\begin{definition}[The padded answer layout of question reduction]
+\label{def:intro-layout}
+\uses{def:intro-verifier}
+\lean{MIPRE.Tailored.Intro.pad, MIPRE.Tailored.Intro.lenR, MIPRE.Tailored.Intro.lenL,
+  MIPRE.Tailored.Intro.enc, MIPRE.Tailored.Intro.unpad, MIPRE.Tailored.Intro.dec,
+  MIPRE.Tailored.Intro.Fits}
+\leanok
+The introspection verifier's answers are byte strings: a Pauli answer, or a tuple of
+self-delimiting fields whose last field may be the input's answer, of variable length at most
+$R$. The tailored question reduction re-encodes them with fixed lengths per label, readable
+bits first: a Pauli answer is kept, readable when it is a $Z$-basis answer and linear otherwise;
+an Introspect or Sample answer $(y, \alpha)$ becomes $y$, the input's readable answer bits padded
+with zeros to $R$, and its linear answer bits padded to $R$, the first two readable; a Read
+answer $(y, y', \alpha)$ becomes $y$ and the padded readable bits (readable), then $y'$ and the
+padded linear bits (linear); a Hide answer $(y, y', x)$ becomes $y$ (readable), $y'$ and $x$
+(linear). The input's split of its answer into readable and linear bits is that at the question
+read off the readable register $y$ (a parameter here). Decoding strips the padding and
+re-forms the tuple.
+\end{definition}
+
+\begin{lemma}[The layout's round trip and lengths]
+\label{lem:intro-layout}
+\uses{def:intro-layout}
+\lean{MIPRE.Tailored.Intro.length_pad, MIPRE.Tailored.Intro.take_pad,
+  MIPRE.Tailored.Intro.take_take_pad, MIPRE.Tailored.Intro.unpad_pad,
+  MIPRE.Tailored.Intro.enc_pair, MIPRE.Tailored.Intro.dec_enc_pair,
+  MIPRE.Tailored.Intro.dec_enc_read, MIPRE.Tailored.Intro.dec_enc_hide,
+  MIPRE.Tailored.Intro.dec_enc_pauli, MIPRE.Tailored.Intro.length_enc_pair,
+  MIPRE.Tailored.Intro.length_enc_read, MIPRE.Tailored.Intro.length_enc_hide,
+  MIPRE.Tailored.Intro.length_enc_pauli}
+\leanok
+On a well-formed answer whose registers have length $Q$ and whose input answer has the input's
+readable and linear lengths, both at most $R$, decoding the re-encoding gives the answer back,
+and the re-encoding has the label's lengths.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The fields of a well-formed tuple are recovered by the parser (\texttt{pairParts},
+\texttt{tripleParts}); the re-encoding lays them out at fixed offsets, so cutting at those offsets
+recovers them, and the first $s$ bits of a block padded from $s \le R$ bits are the block.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}
