@@ -49,11 +49,6 @@ an explicit `open MIPStarRE.LDT.Pasting (…)` list.
 
 ## Not ported
 
-- `overAllOutcomesError_add_fromHToGError_le_ldPastingNu`: classical, imported.
-- `ldPasting_theta_inv_le`: classical, imported.
-- `ldPasting_chernoff_exponent_eq`: classical, imported.
-- `ldPasting_chernoff_size`: classical, imported.
-
 ## References
 
 In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
@@ -66,11 +61,138 @@ namespace MIPRE.LIDT.Co.Pasting
 open MIPStarRE.LDT (Parameters FieldModel Point AxisParallelTestSample uniformDistribution)
 open MIPStarRE.LDT.MainInductionStep (ldPastingInInductionNu ldPastingInInductionError)
 open MIPStarRE.LDT.Pasting (overAllOutcomesError fromHToGError ldPastingCompletenessLowerBound
-  fallbackInterpolatedPolynomial overAllOutcomesError_add_fromHToGError_le_ldPastingNu
-  ldPasting_theta_inv_le ldPasting_chernoff_exponent_eq ldPasting_chernoff_size
+  fallbackInterpolatedPolynomial
   one_le_ldPastingError_of_one_le_nu one_le_ldPastingError_of_k_eq_zero)
 open MIPRE.LIDT.Co (SymStrat Measurement SubMeas IdxProjMeas IdxPolyFamily
   polynomialEvaluationFamily axisParallelPointAnswerFamily axisParallelLineAnswerFamily)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Arithmetic helper for `cor:ld-pasting-N-completeness`: absorb the
+`overAllOutcomes` and `fromHToG` scalar losses into
+`ldPastingInInductionNu`.
+
+The proof uses that the corrected `fromHToGError` tail sum is a sub-sum of the
+full `overAllOutcomesError` sum and the slack `46 + 46 ≤ 100`. -/
+lemma overAllOutcomesError_add_fromHToGError_le_ldPastingNu
+    (params : Parameters)
+    [FieldModel params.q]
+    (eps delta gamma zeta : ℝ) (k : ℕ)
+    (hk_pos : 1 ≤ k)
+    (heps_nonneg : 0 ≤ eps)
+    (hdelta_nonneg : 0 ≤ delta)
+    (hgamma_nonneg : 0 ≤ gamma)
+    (hzeta_nonneg : 0 ≤ zeta) :
+    overAllOutcomesError params eps delta gamma zeta k +
+        fromHToGError params gamma zeta k ≤
+      MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
+  let kE : ℝ := (k : ℝ)
+  let mE : ℝ := (params.m : ℝ)
+  let ratio : ℝ := (params.d : ℝ) / (params.q : ℝ)
+  let epsTerm : ℝ := Real.rpow eps (1 / (32 : ℝ))
+  let deltaTerm : ℝ := Real.rpow delta (1 / (32 : ℝ))
+  let gammaTerm : ℝ := Real.rpow gamma (1 / (32 : ℝ))
+  let zetaTerm : ℝ := Real.rpow zeta (1 / (32 : ℝ))
+  let dqTerm : ℝ := Real.rpow ratio (1 / (32 : ℝ))
+  let fullSum : ℝ := epsTerm + deltaTerm + gammaTerm + zetaTerm + dqTerm
+  let tailSum : ℝ := gammaTerm + zetaTerm + dqTerm
+  have hkE_one : (1 : ℝ) ≤ kE := by
+    dsimp [kE]
+    exact_mod_cast hk_pos
+  have hkE_nonneg : 0 ≤ kE := by positivity
+  have hmE_nonneg : 0 ≤ mE := by positivity
+  have hratio_nonneg : 0 ≤ ratio := by
+    dsimp [ratio]
+    positivity
+  have hepsTerm_nonneg : 0 ≤ epsTerm := by
+    dsimp [epsTerm]
+    exact Real.rpow_nonneg heps_nonneg _
+  have hdeltaTerm_nonneg : 0 ≤ deltaTerm := by
+    dsimp [deltaTerm]
+    exact Real.rpow_nonneg hdelta_nonneg _
+  have hgammaTerm_nonneg : 0 ≤ gammaTerm := by
+    dsimp [gammaTerm]
+    exact Real.rpow_nonneg hgamma_nonneg _
+  have hzetaTerm_nonneg : 0 ≤ zetaTerm := by
+    dsimp [zetaTerm]
+    exact Real.rpow_nonneg hzeta_nonneg _
+  have hdqTerm_nonneg : 0 ≤ dqTerm := by
+    dsimp [dqTerm]
+    exact Real.rpow_nonneg hratio_nonneg _
+  have htail_le_full : tailSum ≤ fullSum := by
+    dsimp [tailSum, fullSum]
+    linarith
+  have hfull_nonneg : 0 ≤ fullSum := by
+    dsimp [fullSum]
+    linarith
+  calc
+    overAllOutcomesError params eps delta gamma zeta k +
+        fromHToGError params gamma zeta k
+      = 46 * (kE ^ (2 : ℕ)) * mE * fullSum +
+          46 * (kE ^ (2 : ℕ)) * mE * tailSum := by
+          simp [overAllOutcomesError, fromHToGError, kE, mE, fullSum, tailSum,
+            epsTerm, deltaTerm, gammaTerm, zetaTerm, dqTerm, ratio]
+    _ ≤ 46 * (kE ^ (2 : ℕ)) * mE * fullSum +
+          46 * (kE ^ (2 : ℕ)) * mE * fullSum := by
+          gcongr
+    _ ≤ 100 * (kE ^ (2 : ℕ)) * mE * fullSum := by
+          have hterm_nonneg : 0 ≤ (kE ^ (2 : ℕ)) * mE * fullSum := by
+            positivity
+          nlinarith
+    _ = MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
+          simp [MainInductionStep.ldPastingInInductionNu, kE, mE, fullSum,
+            epsTerm, deltaTerm, gammaTerm, zetaTerm, dqTerm, ratio]
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Paper arithmetic: for `θ = 1/(200m)`,
+`1/(1-θ) ≤ 1 + 1/(100m)`. -/
+lemma ldPasting_theta_inv_le (params : Parameters) :
+    (1 / (1 - 1 / (200 * (params.m : ℝ))) : ℝ) ≤
+      1 + 1 / (100 * (params.m : ℝ)) := by
+  have hm_pos : (0 : ℝ) < (params.m : ℝ) := by exact_mod_cast params.hm
+  have hm_ge_one : (1 : ℝ) ≤ (params.m : ℝ) := by
+    exact_mod_cast (Nat.succ_le_of_lt params.hm)
+  have hden200_pos : 0 < 200 * (params.m : ℝ) := by positivity
+  have hden100_pos : 0 < 100 * (params.m : ℝ) := by positivity
+  have hdenMinus_pos : 0 < 200 * (params.m : ℝ) - 1 := by nlinarith
+  have hdenMinus_ge : 100 * (params.m : ℝ) ≤ 200 * (params.m : ℝ) - 1 := by
+    nlinarith
+  calc
+    (1 / (1 - 1 / (200 * (params.m : ℝ))) : ℝ)
+        = (200 * (params.m : ℝ)) / (200 * (params.m : ℝ) - 1) := by
+            field_simp [hden200_pos.ne', hdenMinus_pos.ne']
+    _ = 1 + 1 / (200 * (params.m : ℝ) - 1) := by
+            field_simp [hdenMinus_pos.ne']
+            nlinarith
+    _ ≤ 1 + 1 / (100 * (params.m : ℝ)) := by
+            gcongr
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Paper arithmetic: the matrix-Chernoff exponential at `θ = 1/(200m)` is the
+stated `exp(-k/(80000m²))` term. -/
+lemma ldPasting_chernoff_exponent_eq (params : Parameters) (k : ℕ) :
+    -(((1 / (200 * (params.m : ℝ))) ^ (2 : ℕ)) * (k : ℝ)) / 2 =
+      -((k : ℝ) / (80000 * ((params.m : ℝ) ^ (2 : ℕ)))) := by
+  have hm_pos : (0 : ℝ) < (params.m : ℝ) := by exact_mod_cast params.hm
+  have hden_pos : (0 : ℝ) < 200 * (params.m : ℝ) := by positivity
+  have hden2_pos : (0 : ℝ) < 80000 * ((params.m : ℝ) ^ (2 : ℕ)) := by positivity
+  field_simp [hden_pos.ne', hden2_pos.ne']
+  ring
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+The public size assumption `k ≥ 400md` implies the matrix-Chernoff size
+condition `k ≥ 2d/θ` at `θ = 1/(200m)`. -/
+lemma ldPasting_chernoff_size (params : Parameters) (k : ℕ)
+    (hk : 400 * params.m * params.d ≤ k) :
+    (2 * (params.d : ℝ)) / (1 / (200 * (params.m : ℝ))) ≤ (k : ℝ) := by
+  have hm_pos : (0 : ℝ) < (params.m : ℝ) := by exact_mod_cast params.hm
+  have hden_pos : (0 : ℝ) < 200 * (params.m : ℝ) := by positivity
+  have hkE : (400 * params.m * params.d : ℝ) ≤ (k : ℝ) := by exact_mod_cast hk
+  field_simp [hden_pos.ne']
+  nlinarith
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

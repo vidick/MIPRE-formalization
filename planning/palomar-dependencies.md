@@ -19,7 +19,7 @@ and records it under `related_formalizations` with `relationship: builds-on`, na
 Palomar identifier in the note. Its own `formalization.yaml` lists this repository as an
 *independent* formalization of the Pauli basis test (`MIPRE/Background/QLD`). Whether QPBT is
 registered, and under which identifier, is read off the registry
-(`https://data.palomar-registry.org/recent.json`, unreachable from a cloud session) and goes
+(`https://data.palomar-registry.org/repositories/dengnifer/mipstarre-qpbt.json`; the `data.` host is refused by the cloud proxy even with `palomar-registry.org` allowed, so it is read from outside a session) and goes
 into the note of our `related_formalizations` entry for it.
 
 ## What "depends on" means in Palomar
@@ -66,11 +66,19 @@ What it took, and what to know:
 
 - **Mathlib pins differ**: upstream is on `v4.35.0-rc2` (`065356127b1d`), this repository on
   `v4.35.0-rc3` (`c55e6e786f49`, 142 commits later). Lake builds the dependency against the
-  root's Mathlib. `lake build MIPStarRE` was run on 2026-10-05 to find out whether that
-  compiles; the result is recorded in the PR. A fix the dependency needs cannot be applied here
-  (there is no vendored copy to patch): it goes upstream, or the pins are aligned (the
-  maintainers chose rc2 "so that the two developments can eventually share a Lake build", and
-  `v4.35.0` final is the natural common point).
+  root's Mathlib; on 2026-10-05 all 337 modules of `5fc363b` compiled that way with no error
+  or warning. A fix the dependency needs cannot be applied here (there is no vendored copy to
+  patch): it goes upstream, or the pins are aligned (the maintainers chose rc2 "so that the
+  two developments can eventually share a Lake build", and `v4.35.0` final is the natural
+  common point).
+- **`5fc363b` is not `507e8122`**: the Lean-module port made 45 helpers `private` and
+  `Parameters.next` `@[reducible]`. A `private` name inside an `open NS (names…)` list makes
+  Lean reject the whole list, so 33 helpers that `LIDT/Co/` named this way (and their private
+  dependencies) are now copied into the port, public, with upstream's proofs and a docstring
+  saying so (`scripts/port-pairing.py` lists them as `new`); the one exception is
+  `hypercubeSpectralGap_operator_posSemidef`, derived from the public Loewner-order form instead
+  of copying its dozen Fourier lemmas. The reducible `next` changed what `simp` sees in one
+  `Co` proof (`three_le_k_sq_mul_next_m_of_nonneg`), repaired in place.
 - `scripts/port-pairing.py` and `scripts/port-classify.py` pair the port against
   `.lake/packages/MIPStarRE/MIPStarRE/LDT` now, so they need the dependency checked out
   (`lake build` does it). `scripts/vendor-lidt.py` is retired, kept for the record of its fixes.

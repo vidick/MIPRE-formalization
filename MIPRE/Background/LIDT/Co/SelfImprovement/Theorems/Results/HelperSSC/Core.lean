@@ -49,7 +49,6 @@ own import, the vendored `AddInUStep34AndTransfer/Transfer`, is already imported
 ## Not ported
 
 - `helperOffDiagonalVarianceSwapSelection`: classical, imported.
-- `helperOffDiagonalVarianceSwapSelection_pairs_sum`: classical, imported.
 
 ## References
 
@@ -68,9 +67,38 @@ open MIPStarRE.LDT (Parameters FieldModel Point avgOver uniformDistribution avgO
 open MIPStarRE.LDT.GlobalVariance (localVarianceOfPointsError)
 open MIPStarRE.LDT.SelfImprovement (AddInUSelection addInUSelectionPairs
   selfConsistencyAddInUSelection selfImprovementVarianceError addInUError
-  helperOffDiagonalVarianceSwapSelection helperOffDiagonalVarianceSwapSelection_pairs_sum)
+  helperOffDiagonalVarianceSwapSelection)
 open MIPRE.LIDT.Co.GlobalVariance (pointConditionedOutcomeOperatorAtPolynomial
   localVarianceDeviationAtPolynomial globalVarianceDeviation_sum_le_of_localVarianceDeviation_sum_le)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof. -/
+theorem helperOffDiagonalVarianceSwapSelection_pairs_sum
+    (params : Parameters) [FieldModel params.q]
+    (u : Point params)
+    (F : Polynomial params → Polynomial params → ℝ) :
+    ∑ hh ∈ addInUSelectionPairs params
+        (helperOffDiagonalVarianceSwapSelection params) u,
+        F hh.1 hh.2 =
+      ∑ h : Polynomial params,
+        ∑ h' ∈ (Finset.univ : Finset (Polynomial params)).erase h,
+          (if h u = h' u then (1 : ℝ) else 0) * F h' h := by
+  classical
+  unfold addInUSelectionPairs helperOffDiagonalVarianceSwapSelection
+  rw [Finset.sum_filter, Fintype.sum_prod_type, Finset.sum_comm]
+  refine Finset.sum_congr rfl ?_
+  intro h _
+  rw [← Finset.filter_ne' Finset.univ h, Finset.sum_filter]
+  refine Finset.sum_congr rfl ?_
+  intro h' _
+  by_cases hne : h' ≠ h
+  · by_cases heq : h u = h' u
+    · rw [ite_eq_left ⟨hne, heq⟩, ite_eq_left hne, ite_eq_left heq, one_mul]
+    · rw [ite_eq_left hne, ite_eq_right heq]
+      simp only [Set.mem_ofPred_eq, heq, and_false, ite_false]
+      ring
+  · have hheq : h' = h := not_not.mp hne
+    subst h'
+    simp only [Set.mem_ofPred_eq, ne_eq, not_true_eq_false, false_and, ite_false]
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

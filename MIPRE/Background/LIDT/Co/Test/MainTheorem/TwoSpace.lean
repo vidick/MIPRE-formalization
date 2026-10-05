@@ -87,7 +87,7 @@ namespace MIPRE.LIDT.Co.TwoSpace
 open MIPStarRE.LDT (Distribution avgOver avgOver_mono avgOver_add avgOver_zero avgOver_const_mul
   avgOver_congr avgOver_const_of_isProbability uniformDistribution
   uniformDistribution_isProbability)
-open MIPStarRE.LDT.Preliminaries (avgOver_abs_le_sqrt_of_pointwise_nonneg)
+open MIPRE.LIDT.Co.Preliminaries (avgOver_abs_le_sqrt_of_pointwise_nonneg)
 
 variable {𝒞 𝒜 ℬ : Type*} [Ring 𝒞] [StarRing 𝒞] [Algebra ℂ 𝒞] [Ring 𝒜] [StarRing 𝒜]
   [Algebra ℂ 𝒜] [Ring ℬ] [StarRing ℬ] [Algebra ℂ ℬ] (M : MIPRE.BipartiteModel 𝒞 𝒜 ℬ)

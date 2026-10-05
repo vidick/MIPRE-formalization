@@ -63,7 +63,7 @@ In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
 - `blueprint/src/chapter/ch05_expansion.tex`
 -/
 
-open scoped BigOperators InnerProductSpace
+open scoped BigOperators InnerProductSpace MatrixOrder ComplexOrder
 
 namespace MIPRE.LIDT.Co.ExpansionHypercubeGraph
 
@@ -71,8 +71,66 @@ open MIPStarRE.LDT (Parameters Point)
 open MIPStarRE.LDT.ExpansionHypercubeGraph (hypercubeVertexCount hypercubeSpectralGap
   rerandomizeCoordWeight rerandomizeCoordWeight_rowSum rerandomizeCoordWeight_colSum
   avgOver_rerandomizeCoord_eq_weight_sum orthogonalModeProjectorMatrix
-  orthogonalModeProjector_re_sum hypercubeSpectralGap_operator_posSemidef laplacian
-  matrixLaplacianOperator)
+  constantModeProjectorMatrix sum_sum_mul_left laplacian matrixLaplacianOperator)
+
+/-- Upstream proves this from its Fourier diagonalization, through a dozen `private` lemmas; the
+port derives it from the public Loewner-order form `hypercubeSpectralGap_operator`, which is
+the same statement by `Matrix.le_iff`. -/
+theorem hypercubeSpectralGap_operator_posSemidef (params : Parameters) :
+    (MIPStarRE.LDT.ExpansionHypercubeGraph.matrixLaplacianOperator params -
+      ((MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeSpectralGap params : ℂ) •
+        MIPStarRE.LDT.ExpansionHypercubeGraph.orthogonalModeProjectorMatrix params)).PosSemidef :=
+  Matrix.le_iff.mp (MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeSpectralGap_operator params)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof. -/
+lemma orthogonalModeProjector_re_sum (params : Parameters)
+    (z : Point params → Point params → ℂ) :
+    Complex.re (∑ u, ∑ v, orthogonalModeProjectorMatrix params u v * z u v) =
+      ∑ u, Complex.re (z u u) -
+        (hypercubeVertexCount params : ℝ)⁻¹ * ∑ u, ∑ v, Complex.re (z u v) := by
+  have hdiag :
+      ∑ u, ∑ v, Complex.re (((if u = v then (1 : ℂ) else 0) * z u v)) =
+        ∑ u, Complex.re (z u u) := by
+    refine Finset.sum_congr rfl ?_
+    intro u hu
+    calc
+      ∑ v, Complex.re (((if u = v then (1 : ℂ) else 0) * z u v))
+        = ∑ v, if u = v then Complex.re (z u v) else 0 := by
+            refine Finset.sum_congr rfl ?_
+            intro v hv
+            by_cases huv : u = v <;> simp [huv]
+        _ = Complex.re (z u u) := by
+              rw [Finset.sum_ite_eq]
+              simp
+  have hconst :
+      ∑ u, ∑ v, Complex.re (((hypercubeVertexCount params : ℂ)⁻¹ * z u v)) =
+        (hypercubeVertexCount params : ℝ)⁻¹ * ∑ u, ∑ v, Complex.re (z u v) := by
+    calc
+      ∑ u, ∑ v, Complex.re (((hypercubeVertexCount params : ℂ)⁻¹ * z u v))
+        = ∑ u, ∑ v, (hypercubeVertexCount params : ℝ)⁻¹ * Complex.re (z u v) := by
+            simp [Complex.mul_re]
+      _ = (hypercubeVertexCount params : ℝ)⁻¹ * ∑ u, ∑ v, Complex.re (z u v) := by
+            exact sum_sum_mul_left (c := (hypercubeVertexCount params : ℝ)⁻¹)
+              (f := fun u v => Complex.re (z u v))
+  calc
+    Complex.re (∑ u, ∑ v, orthogonalModeProjectorMatrix params u v * z u v)
+      = ∑ u, ∑ v, Complex.re (orthogonalModeProjectorMatrix params u v * z u v) := by
+          simp
+    _ = ∑ u, ∑ v,
+          (Complex.re (((if u = v then (1 : ℂ) else 0) * z u v)) -
+            Complex.re (((hypercubeVertexCount params : ℂ)⁻¹ * z u v))) := by
+          refine Finset.sum_congr rfl ?_
+          intro u hu
+          refine Finset.sum_congr rfl ?_
+          intro v hv
+          simp [orthogonalModeProjectorMatrix, constantModeProjectorMatrix, Matrix.one_apply,
+            sub_mul]
+    _ = ∑ u, ∑ v, Complex.re (((if u = v then (1 : ℂ) else 0) * z u v)) -
+          ∑ u, ∑ v, Complex.re (((hypercubeVertexCount params : ℂ)⁻¹ * z u v)) := by
+          simp_rw [Finset.sum_sub_distrib]
+    _ = ∑ u, Complex.re (z u u) -
+          (hypercubeVertexCount params : ℝ)⁻¹ * ∑ u, ∑ v, Complex.re (z u v) := by
+          rw [hdiag, hconst]
 
 variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 

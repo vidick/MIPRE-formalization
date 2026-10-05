@@ -56,7 +56,6 @@ The vendored module is imported for its two classical declarations; the classica
 ## Not ported
 
 - `pointConsistencyAddInUSelection`: classical, imported.
-- `pointConsistencyAddInUSelection_pairs_sum`: classical, imported.
 
 ## References
 
@@ -73,11 +72,29 @@ open MIPStarRE.LDT (Parameters FieldModel Point Fq avgOver uniformDistribution a
   avgOver_uniform_const)
 open MIPStarRE.LDT.SelfImprovement (addInUSelectionPairs selfImprovementVarianceError
   addInUError selfImprovementHelperError pointConsistencyAddInUSelection
-  pointConsistencyAddInUSelection_pairs_sum
   two_sqrt_two_delta_add_two_sqrt_selfImprovementVarianceError_le_addInUError
   helper_point_consistency_error_le_selfImprovementHelperError)
 open MIPRE.LIDT.Co.GlobalVariance (pointConditionedOutcomeOperatorAtPolynomial
   globalVarianceDeviationAtPolynomial)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof. -/
+theorem pointConsistencyAddInUSelection_pairs_sum
+    (params : Parameters) [FieldModel params.q]
+    (u : Point params)
+    (F : Fq params → Polynomial params → ℝ) :
+    ∑ ah ∈ addInUSelectionPairs params (pointConsistencyAddInUSelection params) u,
+        F ah.1 ah.2 =
+      ∑ h : Polynomial params,
+        ∑ a ∈ (Finset.univ : Finset (Fq params)).erase (h u), F a h := by
+  classical
+  apply Finset.sum_finset_product_right'
+    (r := addInUSelectionPairs params (pointConsistencyAddInUSelection params) u)
+    (s := (Finset.univ : Finset (Polynomial params)))
+    (t := fun h => (Finset.univ : Finset (Fq params)).erase (h u))
+  intro p
+  rcases p with ⟨a, h⟩
+  unfold addInUSelectionPairs pointConsistencyAddInUSelection
+  simp [Finset.mem_erase, ne_comm]
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

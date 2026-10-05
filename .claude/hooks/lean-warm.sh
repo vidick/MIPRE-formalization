@@ -87,6 +87,10 @@ if [ "$built" -eq 0 ] && [ -n "$PREBUILT_URL" ]; then
      && [ -d "$tmp/.lake/build" ]; then
     rm -rf "$WARM/.lake/build"
     mv "$tmp/.lake/build" "$WARM/.lake/build"
+    if [ -d "$tmp/.lake/packages/MIPStarRE/.lake/build" ] && [ -d "$WARM/.lake/packages/MIPStarRE" ]; then
+      rm -rf "$WARM/.lake/packages/MIPStarRE/.lake/build"
+      mv "$tmp/.lake/packages/MIPStarRE/.lake/build" "$WARM/.lake/packages/MIPStarRE/.lake/build"
+    fi
     built=$(find "$WARM/.lake/build/lib" -name '*.olean' 2>/dev/null | wc -l)
   fi
   [ -n "$tmp" ] && rm -rf "$tmp"

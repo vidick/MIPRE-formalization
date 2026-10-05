@@ -41,7 +41,6 @@ ported `Preliminaries` already imports.
 - `k_ne_zero_of_mainInductionError_lt_one`: classical, imported.
 - `one_le_k_of_mainInductionError_lt_one`: classical, imported.
 - `mainInductionNu_lt_one_of_mainInductionError_lt_one`: classical, imported.
-- `le_one_of_mainInductionError_lt_one_of_scaled_bound`: classical, imported.
 - `mainInductionNu_scaled_component_le`: classical, imported.
 - `mainInductionSuccessorBound_pred`: classical, imported.
 
@@ -56,7 +55,46 @@ namespace MIPRE.LIDT.Co.MainInductionStep
 
 open MIPStarRE.LDT (Parameters FieldModel)
 open MIPStarRE.LDT.MainInductionStep (mainInductionError mainInductionNu
-  one_le_k_of_mainInductionError_lt_one le_one_of_mainInductionError_lt_one_of_scaled_bound)
+  one_le_k_of_mainInductionError_lt_one mainInductionNu_lt_one_of_mainInductionError_lt_one
+  le_one_of_rpow_le_one)
+
+/-- Upstream keeps this helper and the next `private` since its Lean-module port
+(`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copies, with upstream's proofs. -/
+private theorem k_ne_zero_of_mainInductionError_lt_one (params : Parameters) (k : ℕ)
+    (eps delta gamma : ℝ) (hsmall : mainInductionError params k eps delta gamma < 1) : k ≠ 0 := by
+  intro hk0
+  subst hk0
+  have hm_sq_ge_one : (1 : ℝ) ≤ ((params.m : ℝ) ^ (2 : ℕ)) := by
+    have hm_one : (1 : ℝ) ≤ (params.m : ℝ) := by exact_mod_cast params.hm
+    nlinarith
+  have hmain_ge_one : (1 : ℝ) ≤ mainInductionError params 0 eps delta gamma := by
+    calc
+      (1 : ℝ) ≤ ((params.m : ℝ) ^ (2 : ℕ)) * (0 + 1) := by nlinarith
+      _ = mainInductionError params 0 eps delta gamma := by simp [mainInductionError, mainInductionNu]
+  linarith
+
+theorem le_one_of_mainInductionError_lt_one_of_scaled_bound (params : Parameters) {k : ℕ}
+    {eps delta gamma x : ℝ} (hsmall : mainInductionError params.next k eps delta gamma < 1)
+    (hscaled_le : 1000 * ((k : ℝ) ^ (2 : ℕ)) * ((params.next.m : ℝ) ^ (2 : ℕ)) *
+        Real.rpow x (1 / (1024 : ℝ)) ≤ mainInductionNu params.next k eps delta gamma) :
+    x ≤ 1 := by
+  have hk0 := k_ne_zero_of_mainInductionError_lt_one params.next k eps delta gamma hsmall
+  have hcoef_ge_one : (1 : ℝ) ≤ 1000 * ((k : ℝ) ^ (2 : ℕ)) * ((params.next.m : ℝ) ^ (2 : ℕ)) := by
+    have hk_one : (1 : ℝ) ≤ (k : ℝ) := by
+      have hk_nat_one : 1 ≤ k := Nat.succ_le_of_lt (Nat.pos_of_ne_zero hk0)
+      exact_mod_cast hk_nat_one
+    have hm_one : (1 : ℝ) ≤ (params.next.m : ℝ) := by exact_mod_cast params.next.hm
+    have hk_sq_ge_one : (1 : ℝ) ≤ ((k : ℝ) ^ (2 : ℕ)) := by nlinarith [hk_one]
+    have hm_sq_ge_one : (1 : ℝ) ≤ ((params.next.m : ℝ) ^ (2 : ℕ)) := by nlinarith [hm_one]
+    nlinarith
+  have hnu_lt := mainInductionNu_lt_one_of_mainInductionError_lt_one params.next k eps delta gamma hsmall
+  have hroot_lt : Real.rpow x (1 / (1024 : ℝ)) < 1 := by
+    by_contra hroot
+    have hroot_ge : 1 ≤ Real.rpow x (1 / (1024 : ℝ)) := le_of_not_gt hroot
+    have : 1 ≤ 1000 * ((k : ℝ) ^ (2 : ℕ)) * ((params.next.m : ℝ) ^ (2 : ℕ)) *
+        Real.rpow x (1 / (1024 : ℝ)) := by nlinarith [hcoef_ge_one]
+    linarith
+  exact le_one_of_rpow_le_one (by positivity) hroot_lt.le
 open MIPRE.LIDT.Co (SymStrat AnswerSymStrat eps_nonneg_of_isGood delta_nonneg_of_isGood
   gamma_nonneg_of_isGood answer_eps_nonneg_of_isGood answer_delta_nonneg_of_isGood
   answer_gamma_nonneg_of_isGood)
@@ -115,17 +153,22 @@ private theorem three_le_k_sq_mul_next_m_of_nonneg
           (Real.rpow_nonneg heps _) (Real.rpow_nonneg hdelta _)) (Real.rpow_nonneg hgamma _))
           (Real.rpow_nonneg (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)) _))
       have hexp := Real.add_one_le_exp (-((1 : ℕ) : ℝ) / (80000 * (2 : ℝ) ^ (2 : ℕ)))
+      -- `Parameters.next` is reducible upstream, so `params.next.m` unfolds to `params.m + 1`
+      -- under `simp`; rewrite with that form of the hypothesis.
+      have hm2'' : params.m + 1 = 2 := hm2'
       have heq : mainInductionError params.next 1 eps delta gamma =
           (2 : ℝ) ^ (2 : ℕ) * (mainInductionNu params.next 1 eps delta gamma +
             Real.exp (-((1 : ℕ) : ℝ) / (80000 * (2 : ℝ) ^ (2 : ℕ)))) := by
-        simp only [mainInductionError, hm2', Nat.cast_ofNat, neg_div]
+        simp only [mainInductionError, hm2'', Nat.cast_ofNat, neg_div]
       norm_num at hexp heq
       linarith
     · have : (3 : ℝ) ≤ params.next.m := by exact_mod_cast hm3
       simpa using this
   · have hk : (2 : ℝ) ≤ k := by exact_mod_cast hk2
     have := mul_le_mul (pow_le_pow_left₀ (by norm_num) hk 2) hm2 (by norm_num) (by positivity)
-    norm_num at this
+    have h8 : (8 : ℝ) ≤ ((k : ℝ) ^ (2 : ℕ)) * (params.next.m : ℝ) := by
+      calc (8 : ℝ) = (2 : ℝ) ^ (2 : ℕ) * 2 := by norm_num
+        _ ≤ _ := this
     linarith
 
 /-- Under `mainInductionError < 1`, the axis-parallel error of a good strategy satisfies

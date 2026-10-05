@@ -37,9 +37,6 @@ downstream code should use the scalar API of the full-slice transport theorems.
 
 ## Not ported
 
-- `postprocess_collision_coeff_sum`: classical, imported.
-- `diagonal_pair_sum`: classical, imported.
-
 ## References
 
 In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
@@ -54,8 +51,69 @@ namespace MIPRE.LIDT.Co.Commutativity
 open MIPStarRE.LDT (Parameters FieldModel Point Fq avgOver avgOver_congr avgOver_add avgOver_sum
   avgOver_mul_const avgOver_nonneg avgOver_uniform_const avgOver_uniform_le_const
   uniformDistribution)
-open MIPStarRE.LDT.Commutativity (FullSliceQuestion postprocess_collision_coeff_sum
-  diagonal_pair_sum)
+open MIPStarRE.LDT.Commutativity (FullSliceQuestion )
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Sum over the postprocessed outcome label of two matching indicators. -/
+lemma postprocess_collision_coeff_sum
+    {α κ : Type*} [Fintype κ] [DecidableEq κ]
+    (f : α → κ) (a₁ a₂ : α) :
+    (∑ k : κ,
+        if f a₁ = k then if f a₂ = k then (1 : ℝ) else 0 else 0) =
+      (if f a₁ = f a₂ then (1 : ℝ) else 0) := by
+  classical
+  by_cases h : f a₁ = f a₂
+  · calc
+      (∑ k : κ,
+          if f a₁ = k then if f a₂ = k then (1 : ℝ) else 0 else 0)
+        = ∑ k : κ, if f a₁ = k then (1 : ℝ) else 0 := by
+            refine Finset.sum_congr rfl ?_
+            intro k _
+            by_cases hk : f a₁ = k
+            · have hk₂ : f a₂ = k := h.symm.trans hk
+              simp [hk, hk₂]
+            · simp [hk]
+      _ = (1 : ℝ) := by
+            rw [Fintype.sum_ite_eq]
+      _ = if f a₁ = f a₂ then (1 : ℝ) else 0 := by simp [h]
+  · have hzero :
+        ∀ k : κ,
+          (if f a₁ = k then if f a₂ = k then (1 : ℝ) else 0 else 0) = 0 := by
+      intro k
+      by_cases h₁ : f a₁ = k
+      · by_cases h₂ : f a₂ = k
+        · exact (h (h₁.trans h₂.symm)).elim
+        · simp [h₁, h₂]
+      · simp [h₁]
+    calc
+      (∑ k : κ,
+          if f a₁ = k then if f a₂ = k then (1 : ℝ) else 0 else 0) = 0 := by
+            exact Finset.sum_eq_zero (fun k _ => hzero k)
+      _ = if f a₁ = f a₂ then (1 : ℝ) else 0 := by simp [h]
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Summing a pair-indexed expression against the diagonal indicator leaves the
+ordinary diagonal sum. -/
+lemma diagonal_pair_sum
+    {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β]
+    (T : α × α → β → ℝ) :
+    (∑ aa : α × α, ∑ b : β,
+        (if aa.1 = aa.2 then (1 : ℝ) else 0) * T aa b) =
+      ∑ a : α, ∑ b : β, T (a, a) b := by
+  rw [Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl ?_
+  intro a₁ _
+  calc
+    (∑ a₂ : α, ∑ b : β,
+        (if a₁ = a₂ then (1 : ℝ) else 0) * T (a₁, a₂) b)
+      = ∑ a₂ : α, if a₁ = a₂ then (∑ b : β, T (a₁, a₂) b) else 0 := by
+          refine Finset.sum_congr rfl ?_
+          intro a₂ _
+          by_cases h : a₁ = a₂ <;> simp [h]
+    _ = ∑ b : β, T (a₁, a₁) b := by
+          rw [Fintype.sum_ite_eq]
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

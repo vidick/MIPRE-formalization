@@ -49,7 +49,6 @@ the variances and the local-to-global transfer become one-line consequences, and
 ## Not ported
 
 - `globalVarianceOfPoints_bound_of_local`: classical, imported.
-- `generalizeB_right_event_implies_left_event`: classical, imported.
 - `weightedPolynomialState_ev_leftTensor`: the weighted state `(1 ⊗ √G_g) ρ (1 ⊗ √G_g)ᴴ` is not
   ported (a vector state has no density, and the weighted vector is not normalized); the
   point-conditioned variances are those of the weighted family on the strategy's state, so no
@@ -70,8 +69,29 @@ open MIPStarRE.LDT (Parameters FieldModel Point Distribution AxisLinePolynomial 
   avgOver_nonneg avgOver_congr_on_support)
 open MIPStarRE.LDT.ExpansionHypercubeGraph (rerandomizeCoord independentPointPair)
 open MIPStarRE.LDT.GlobalVariance (AxisParallelLineQuestion pointOnLine
-  axisParallelLineQuestionParameter axisParallelLineQuestionDistribution
-  generalizeB_right_event_implies_left_event)
+  axisParallelLineQuestionParameter axisParallelLineQuestionDistribution)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof. -/
+lemma generalizeB_right_event_implies_left_event
+    (params : Parameters)
+    [FieldModel params.q]
+    (g : MIPStarRE.LDT.Polynomial params)
+    (qu : AxisParallelLineQuestion params)
+    (hline : pointOnLine (params := params) qu)
+    (f : AxisLinePolynomial params)
+    (hf : f.poly = (MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine params g qu.1).poly) :
+    f (axisParallelLineQuestionParameter qu) = g qu.2 := by
+  rcases hline with ⟨t, ht⟩
+  have hparam : axisParallelLineQuestionParameter qu = t := by
+    cases qu with
+    | mk ℓ u =>
+        dsimp at ht ⊢
+        subst ht
+        simp
+  have hf_eq : f = MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine params g qu.1 :=
+    AxisLinePolynomial.ext hf
+  rw [hf_eq, hparam]
+  simp [ht]
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

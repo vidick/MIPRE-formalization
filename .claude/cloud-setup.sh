@@ -212,6 +212,11 @@ if [ -n "$PREBUILT_URL" ] && [ "$(left)" -gt 30 ]; then
        | tar --zstd -x -C "$tmp" 2>/dev/null && [ -d "$tmp/.lake/build" ]; then
     rm -rf "$WARM/.lake/build"
     mv "$tmp/.lake/build" "$WARM/.lake/build"
+    # The compiled MIPStarRE dependency travels in the same bundle (since 2026-10).
+    if [ -d "$tmp/.lake/packages/MIPStarRE/.lake/build" ] && [ -d "$WARM/.lake/packages/MIPStarRE" ]; then
+      rm -rf "$WARM/.lake/packages/MIPStarRE/.lake/build"
+      mv "$tmp/.lake/packages/MIPStarRE/.lake/build" "$WARM/.lake/packages/MIPStarRE/.lake/build"
+    fi
     PREBUILT="$PREBUILT_URL"
     log "bundle in place: $(tr '\n' ' ' < "$WARM/.lake/build/BUNDLE-INFO" 2>/dev/null)"
   else

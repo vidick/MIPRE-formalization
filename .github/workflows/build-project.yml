@@ -83,10 +83,14 @@ jobs:
       # and dependency pins. Keyed on the two hashes alone, the cache is written
       # once and never again, so it falls further behind `main` with every merge
       # until the next toolchain or Mathlib bump.
+      # The second path is the compiled MIPStarRE dependency (`lakefile.toml`), 337
+      # modules that `lake build` would otherwise compile on every run.
       - name: Cache build artifacts
         uses: actions/cache@v6
         with:
-          path: .lake/build
+          path: |
+            .lake/build
+            .lake/packages/MIPStarRE/.lake/build
           key: LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
@@ -126,7 +130,7 @@ jobs:
           oleans: $(find .lake/build/lib -name '*.olean' | wc -l)
           built-at: $(date -u +%FT%TZ)
           EOF
-          tar --use-compress-program 'zstd -T0 -3' -cf mipre-build.tar.zst .lake/build
+          tar --use-compress-program 'zstd -T0 -3' -cf mipre-build.tar.zst .lake/build .lake/packages/MIPStarRE/.lake/build
           size=$(stat -c%s mipre-build.tar.zst)
           echo "bundle: $(numfmt --to=iec "$size"), $(grep '^oleans:' .lake/build/BUNDLE-INFO)"
           # A release asset has to stay under 2 GiB. Warn rather than fail: the
@@ -137,7 +141,7 @@ jobs:
           fi
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" \
             --prerelease --title "Prebuilt MIPRE modules (rolling)" \
-            --notes "Compiled .lake/build for the modules of this repository, republished on every push to main. Consumed by .claude/cloud-setup.sh and .claude/hooks/lean-warm.sh; see docs/lean-cloud.md. The tag is a fixed anchor, not a version: only the attached asset moves." \
+            --notes "Compiled .lake/build for the modules of this repository and of the MIPStarRE dependency, republished on every push to main. Consumed by .claude/cloud-setup.sh and .claude/hooks/lean-warm.sh; see docs/lean-cloud.md. The tag is a fixed anchor, not a version: only the attached asset moves." \
             || true
           gh release upload "$TAG" mipre-build.tar.zst --clobber
 

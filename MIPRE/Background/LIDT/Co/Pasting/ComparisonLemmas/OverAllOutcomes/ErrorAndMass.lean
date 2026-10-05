@@ -34,7 +34,6 @@ vendored file and names them through an explicit `open MIPStarRE.LDT.Pasting (�
 
 ## Not ported
 
-- `oneThirtySecondErrorSum_nonneg`: classical, imported.
 - `dnoteq_term_le_overAllOutcomesError`: classical, imported.
 - `hBConsistencyError_add_mdq_add_dnoteq_le_overAllOutcomesError`: classical, imported.
 - `tupleInterpolatedVerticalLine_eq_of_no_supported_mismatch`: classical, imported.
@@ -56,9 +55,35 @@ open MIPStarRE.LDT.Pasting (GHatTupleOutcome InterpolationEligible gHatTupleHamm
   gHatTupleSupport IsGloballyConsistent distinctTupleDistribution
   distinctTupleDistribution_weight_sum_eq_one_of_le
   avgOver_distinct_bounded_le_avgOver_uniform_add_tv_of_any_k
-  avgOver_distinct_bounded_le_avgOver_uniform_add_tv ldDnoteq overAllOutcomesError
-  oneThirtySecondErrorSum_nonneg)
+  avgOver_distinct_bounded_le_avgOver_uniform_add_tv ldDnoteq overAllOutcomesError)
 open MIPRE.LIDT.Co (SymStrat SubMeas IdxSubMeas IdxPolyFamily)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+The common nonnegative error-sum with exponent `1/32` used by the
+Section 12 displayed error terms. -/
+lemma oneThirtySecondErrorSum_nonneg
+    (params : Parameters) [FieldModel params.q]
+    (eps delta gamma zeta : ℝ)
+    (heps_nonneg : 0 ≤ eps)
+    (hdelta_nonneg : 0 ≤ delta)
+    (hgamma_nonneg : 0 ≤ gamma)
+    (hzeta_nonneg : 0 ≤ zeta) :
+    0 ≤ Real.rpow eps (1 / (32 : ℝ)) +
+      Real.rpow delta (1 / (32 : ℝ)) +
+      Real.rpow gamma (1 / (32 : ℝ)) +
+      Real.rpow zeta (1 / (32 : ℝ)) +
+      Real.rpow (((params.d : ℝ) / (params.q : ℝ))) (1 / (32 : ℝ)) := by
+  have hratio_nonneg : 0 ≤ ((params.d : ℝ) / (params.q : ℝ)) := by
+    positivity
+  exact add_nonneg
+    (add_nonneg
+      (add_nonneg
+        (add_nonneg (Real.rpow_nonneg heps_nonneg _)
+          (Real.rpow_nonneg hdelta_nonneg _))
+        (Real.rpow_nonneg hgamma_nonneg _))
+      (Real.rpow_nonneg hzeta_nonneg _))
+    (Real.rpow_nonneg hratio_nonneg _)
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

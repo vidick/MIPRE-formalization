@@ -27,8 +27,6 @@ vendored file, which this file imports alongside its mirrored import.
 
 ## Not ported
 
-- `evaluatedSliceQuestionEquiv`: classical, imported.
-
 ## References
 
 In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
@@ -42,7 +40,32 @@ namespace MIPRE.LIDT.Co.Commutativity
 
 open MIPStarRE.LDT (Parameters FieldModel uniformDistribution avgOver_uniform_equiv_snd)
 open MIPStarRE.LDT.Commutativity (EvaluatedSliceQuestion FullSliceQuestion
-  fullSliceQuestionOfEvaluatedSlice evaluatedSliceQuestionEquiv)
+  fullSliceQuestionOfEvaluatedSlice)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Reindex an evaluated-slice question into its truncated points and
+underlying full-slice question. -/
+def evaluatedSliceQuestionEquiv (params : Parameters) [FieldModel params.q] :
+    EvaluatedSliceQuestion params ≃
+      (Point params × Point params) × FullSliceQuestion params where
+  toFun := fun q =>
+    ((truncatePoint params q.1, truncatePoint params q.2),
+      fullSliceQuestionOfEvaluatedSlice params q)
+  invFun := fun r =>
+    ((appendPoint params r.1.1 r.2.1), (appendPoint params r.1.2 r.2.2))
+  left_inv := fun q => Prod.ext ((CommutativityPoints.pointNextEquiv params).left_inv q.1)
+    ((CommutativityPoints.pointNextEquiv params).left_inv q.2)
+  right_inv := fun ⟨⟨u, v⟩, x, y⟩ =>
+    let e := CommutativityPoints.pointNextEquiv params
+    congrArg
+      (fun p : (Point params × Fq params) × (Point params × Fq params) =>
+        ((p.1.1, p.2.1), (p.1.2, p.2.2)))
+      (Prod.ext
+        (x := (e.toFun (e.invFun (u, x)), e.toFun (e.invFun (v, y))))
+        (y := ((u, x), (v, y)))
+        (e.right_inv (u, x))
+        (e.right_inv (v, y)))
 
 variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 

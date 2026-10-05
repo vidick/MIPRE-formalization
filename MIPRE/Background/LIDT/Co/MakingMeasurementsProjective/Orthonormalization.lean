@@ -122,7 +122,7 @@ namespace MIPRE.LIDT.Co.MakingMeasurementsProjective
 open MIPStarRE.LDT (avgOver uniformDistribution)
 open MIPStarRE.LDT.MakingMeasurementsProjective (orthonormalizationError
   orthonormalizationMainLemmaError orthonormalizationCompletionRouteError
-  consistencyToAlmostProjectiveError totalMass_sub_two_defect_le_diagA)
+  consistencyToAlmostProjectiveError)
 open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
   (orthonormalizationMainLemmaError_le_orthonormalizationError
   orthonormalizationMainLemmaError_two_mul_le_orthonormalizationError completionRouteError_bound)
