@@ -103,14 +103,6 @@ theorem _root_.MIPRE.IsPVMIn.prod_of_commute {Λ Λ' : Type*} [Fintype Λ] [Fint
       rw [hQ.orthogonal h2, mul_zero]
     · rw [hP.orthogonal h1, zero_mul]
 
-/-- A projective measurement reindexed along a bijection of its outcomes. -/
-theorem _root_.MIPRE.IsPVMIn.comp_equiv {Λ Λ' : Type*} [Fintype Λ] [Fintype Λ'] {P : Λ → R}
-    (hP : IsPVMIn P) (e : Λ' ≃ Λ) : IsPVMIn (P ∘ e) where
-  star_eq a := hP.star_eq (e a)
-  idem a := hP.idem (e a)
-  sum_eq_one := by rw [← hP.sum_eq_one]; exact e.sum_comp P
-  orthogonal h := hP.orthogonal fun h' => h (e.injective h')
-
 end Ring
 
 section Algebra
@@ -256,10 +248,19 @@ theorem isPVMIn_fourierProj {U : Fin k → R} (hinv : ∀ i, U i * U i = 1)
     have hQ := ih (fun i => hinv i.succ) (fun i => hsa i.succ) fun i j => hcomm i.succ j.succ
     have hPQ := hP.prod_of_commute hQ fun b a =>
       Commute.fourierProj_right (fun i => ((hcomm i.succ 0).fourierFactor_right b).symm) a
-    have := hPQ.comp_equiv (Fin.consEquiv fun _ => Bool).symm
-    convert this using 1
+    -- reindex along `F₂^{k+1} ≃ F₂ × F₂^k`
+    let e := (Fin.consEquiv fun _ : Fin (k + 1) => Bool).symm
+    have hre : IsPVMIn fun a : Fin (k + 1) → Bool =>
+        fourierFactor (U 0) (e a).1 * fourierProj (fun i => U i.succ) (e a).2 :=
+      { star_eq := fun a => hPQ.star_eq (e a)
+        idem := fun a => hPQ.idem (e a)
+        sum_eq_one := by
+          rw [← hPQ.sum_eq_one]
+          exact e.sum_comp fun p => fourierFactor (U 0) p.1 * fourierProj (fun i => U i.succ) p.2
+        orthogonal := fun h => hPQ.orthogonal fun h' => h (e.injective h') }
+    convert hre using 1
     funext a
-    simp only [Function.comp_apply, fourierProj_succ]
+    rw [fourierProj_succ]
     rfl
 
 /-- **The inverse Fourier transform, in observable form**: `U i = ∑_a (-1)^{a_i} P_a`
