@@ -1094,6 +1094,20 @@ density and an amplification by the twisted Pauli algebra (C6a and C6b T2–T5,
 about 3.0k lines) and a port of the vendored proof to dyadic pairs (M0–M14, 71.7k lines, against
 the 70–120k estimated), which closes Phase 6.
 
+**The Aldous–Lyons track, `TMIP* = RE` (planned 2026-10-05, not started).** The main theorem
+of Bowen–Chapman–Vidick's *The Aldous–Lyons Conjecture II* (arXiv:2501.00173): the halting
+problem reduced to *tailored* games, with a perfect Z-aligned permutation strategy commuting
+along edges as completeness and value at most `1/2` as soundness; with paper I
+(arXiv:2408.00110) it refutes the Aldous–Lyons conjecture.
+[aldous-lyons-track.md](aldous-lyons-track.md) has the estimate and the phases. In short:
+the architecture here transfers — value form, the bipartite value, the direct repetition
+theorem, the paper route of the halting layer, so neither anchoring nor the almost-synchronous
+theorem is needed — and the soundness components (`thm:qld`, the low-individual-degree test,
+oracularization, the cost model) are reused, while the three transformations are rebuilt in
+tailored form with new completeness proofs; about 50–80k lines of new Lean on the recommended
+route, in which the tailored question reduction is a re-presentation of this repository's
+introspection verifier, and 80–135k if the paper's own Pauli basis game has to be built.
+
 ## Working rules for this track
 
 - Every new Lean declaration that discharges a ledger node should say so, and the blueprint
