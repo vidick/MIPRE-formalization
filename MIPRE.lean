@@ -1418,6 +1418,7 @@ public import MIPRE.Tailored.Compression
 public import MIPRE.Tailored.Data.Bridge
 public import MIPRE.Tailored.Data.Convert
 public import MIPRE.Tailored.Data.Presents
+public import MIPRE.Tailored.Detyping
 public import MIPRE.Tailored.Fourier
 public import MIPRE.Tailored.Game
 public import MIPRE.Tailored.Halting.Cost
@@ -1431,6 +1432,7 @@ public import MIPRE.Tailored.Intro.Binary
 public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Encoded
 public import MIPRE.Tailored.Intro.Input
+public import MIPRE.Tailored.Intro.Layout
 public import MIPRE.Tailored.Intro.Transport
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
