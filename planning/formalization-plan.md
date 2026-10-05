@@ -1120,7 +1120,11 @@ verifier, `TailoredVerifier.ofTNFV`, the canonical decider written as a program,
 games, values and completeness; the canonical decider's cost is deferred, nothing planned
 consuming it. Its third proved the halting protocol at a fixed level, `V^{M,λ}` with the
 linear-constraints processor as the Kleene fixed point and `lem:lambda` for three programs, for a
-search program meeting its specification, which the tabulation of the last slice supplies.
+search program meeting its specification. Its fourth tabulated a tailored verifier as a
+`TailoredGameData`. That supplies the search program, and with it
+`tailored_halting_reduction_of : TailoredGapCompression ℓ → TailoredHaltingReduction` and the
+computable class: `TMIP* ⊆ RE` unconditionally, `TMIP* = RE` from a compression. The
+polynomial-time class, through a class verifier as for `MIP*`, is the last slice.
 
 ## Working rules for this track
 
