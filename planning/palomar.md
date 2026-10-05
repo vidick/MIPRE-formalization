@@ -191,6 +191,8 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    about two hours, or run it where the blueprint workflow's doc-gen cache is. Open before
    submitting: the
    `LiehrTsirelson/Upstream` tree carries no license and is not in the Solution's closure,
-   so either its terms are settled or it leaves the submitted snapshot; the metadata's
-   review status is "self-assessed"; and `formalization.yaml` names the models used, which
-   the schema requires.
+   so either its terms are settled or it leaves the submitted snapshot (removed 2026-10-05,
+   with its bridge, by the maintainer's decision; `rem:liehr-statements` records what the
+   check showed and the commit that holds it); the metadata's review status is
+   "self-assessed"; and `formalization.yaml` names the models used, which the schema
+   requires.

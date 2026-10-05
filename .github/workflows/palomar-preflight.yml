@@ -1,0 +1,38 @@
+# Palomar's own mechanical verification, run here as a predictive preflight before a
+# submission (planning/palomar.md, phase 5). It is the verifier's reusable workflow,
+# pinned to one PalomarSubmission commit, in `full` mode under the checked-in
+# `palomar-standard-v1` profile: a fresh `.lake`, the Challenge compiled separately
+# against Palomar's frozen Mathlib, `lake comparator`, kernel and NanoDa replay. It has
+# no Palomar state or credentials and is not a submission; submit only after its report
+# says `status: pass`. Budget: 19,800 s of execution on a GitHub-hosted runner, so it
+# runs on demand only.
+#
+# `pipeline_commit` must equal the `uses` SHA below; bump both together.
+name: Palomar preflight
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: "Full 40-character commit to verify (default: the dispatched ref's head)"
+        required: false
+        default: ""
+      request_id:
+        description: Lowercase identifier for the report artifact
+        required: false
+        default: preflight001
+
+permissions:
+  contents: read
+
+jobs:
+  palomar-preflight:
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@d4e41c1d5b0d114c4859e6e5831dc6d3ad1d0d44
+    with:
+      repository: ${{ github.repository }}
+      commit: ${{ inputs.commit != '' && inputs.commit || github.sha }}
+      pipeline_commit: d4e41c1d5b0d114c4859e6e5831dc6d3ad1d0d44
+      request_id: ${{ inputs.request_id }}
+      mode: full
+      execution_profile: palomar-standard-v1
+      options: '{"comparator_config_path":"comparator.json","authorization_relationship":"I am a responsible author or maintainer"}'

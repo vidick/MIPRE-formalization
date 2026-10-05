@@ -50,7 +50,6 @@ VENDORED = (
     "MIPRE/Background/Repetition/TenProofs/",
     "MIPRE/Background/Repetition/CommutingRepetition/",
     "MIPRE/Background/Orthonormalization/Orthogonalization/",
-    "MIPRE/Background/LiehrTsirelson/Upstream/",
 )
 GUARD_FILES = ["MIPRE/Axioms.lean"] + [
     f"MIPRE/Background/{d}/Axioms.lean"
