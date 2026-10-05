@@ -241,6 +241,9 @@ public import MIPRE.Tailored.Intro.Input
 public import MIPRE.Tailored.Intro.Binary
 public import MIPRE.Tailored.Detyping
 public import MIPRE.Tailored.Intro.Layout
+public import MIPRE.Tailored.Intro.Source
+public import MIPRE.Tailored.Intro.Presentation
+public import MIPRE.Background.Tailored.Intro.Pauli
 
 @[expose] public section
 
@@ -3834,6 +3837,12 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.dec_enc_read, MIPRE.Tailored.Intro.dec_enc_hide,
   MIPRE.Tailored.Intro.dec_enc_pauli, MIPRE.Tailored.Intro.length_enc_pair,
   MIPRE.Tailored.Intro.length_enc_read, MIPRE.Tailored.Intro.length_enc_hide,
-  MIPRE.Tailored.Intro.length_enc_pauli
+  MIPRE.Tailored.Intro.length_enc_pauli, MIPRE.Tailored.Intro.dec_enc_of_ok,
+  MIPRE.Tailored.Intro.length_enc_of_ok, MIPRE.Tailored.Intro.decB_enc_of_ok
+
+-- blueprint `lem:presentation`
+#guard_sorry_free MIPRE.Tailored.vecOf, MIPRE.Tailored.ofFn_vecOf, MIPRE.Tailored.presented,
+  MIPRE.Tailored.okD, MIPRE.Tailored.encV, MIPRE.Tailored.length_encD_of_okD,
+  MIPRE.Tailored.valStar_presented_le, MIPRE.Tailored.hasPerfectZPC_presented
 
 end

@@ -1406,7 +1406,7 @@ the pair of questions is the pair of views of an edge.
 \uses{def:intro-verifier}
 \lean{MIPRE.Tailored.Intro.pad, MIPRE.Tailored.Intro.lenR, MIPRE.Tailored.Intro.lenL,
   MIPRE.Tailored.Intro.enc, MIPRE.Tailored.Intro.unpad, MIPRE.Tailored.Intro.dec,
-  MIPRE.Tailored.Intro.Fits}
+  MIPRE.Tailored.Intro.Fits, MIPRE.Tailored.Intro.OkLayout, MIPRE.Tailored.Intro.decB}
 \leanok
 The introspection verifier's answers are byte strings: a Pauli answer, or a tuple of
 self-delimiting fields whose last field may be the input's answer, of variable length at most
@@ -1430,7 +1430,8 @@ re-forms the tuple.
   MIPRE.Tailored.Intro.dec_enc_read, MIPRE.Tailored.Intro.dec_enc_hide,
   MIPRE.Tailored.Intro.dec_enc_pauli, MIPRE.Tailored.Intro.length_enc_pair,
   MIPRE.Tailored.Intro.length_enc_read, MIPRE.Tailored.Intro.length_enc_hide,
-  MIPRE.Tailored.Intro.length_enc_pauli}
+  MIPRE.Tailored.Intro.length_enc_pauli, MIPRE.Tailored.Intro.dec_enc_of_ok,
+  MIPRE.Tailored.Intro.length_enc_of_ok, MIPRE.Tailored.Intro.decB_enc_of_ok}
 \leanok
 On a well-formed answer whose registers have length $Q$ and whose input answer has the input's
 readable and linear lengths, both at most $R$, decoding the re-encoding gives the answer back,
@@ -1442,6 +1443,48 @@ and the re-encoding has the label's lengths.
 The fields of a well-formed tuple are recovered by the parser (\texttt{pairParts},
 \texttt{tripleParts}); the re-encoding lays them out at fixed offsets, so cutting at those offsets
 recovers them, and the first $s$ bits of a block padded from $s \le R$ bits are the block.
+\end{proof}
+
+\begin{definition}[The input's question at an auxiliary answer, and the Pauli labels]
+\label{def:intro-source}
+\uses{def:tailored-verifier,def:lcs-instance,def:magic-square,def:qld-game,lem:cl-closure,
+  lem:detype-queries}
+\lean{MIPRE.Tailored.Intro.srcQuestion, MIPRE.Tailored.Intro.srcSplitR,
+  MIPRE.Tailored.Intro.srcSplitL, MIPRE.Tailored.Intro.pauliLen, MIPRE.Tailored.Intro.pauliRead}
+\leanok
+The introspection verifier runs the input's decider at index $2^n$ on the first
+$\dim$ bits of the registers $y$ of its two Introspect answers, and the honest strategy measures
+the input's strategy at the same question; a Read answer is compared with an Introspect answer at
+the same register, and a Sample answer at the seed $z$ with one at the register $L_w(z)$. So the
+input question at an auxiliary answer is the first $\dim$ bits of $y$, or of $L_w(z)$ at a
+Sample answer, and the layout splits the input's answer there by the lengths the input's
+answer-length calculator outputs. A Pauli label has $\mathrm{count} \cdot \mathrm{width}$
+answer bits, readable at the $Z$-basis Pauli label only.
+\end{definition}
+
+\begin{lemma}[Presenting a detyped game by a detyped tailored game]
+\label{lem:presentation}
+\uses{lem:presentation-transport,lem:tailored-detyping}
+\lean{MIPRE.Tailored.vecOf, MIPRE.Tailored.ofFn_vecOf, MIPRE.Tailored.presented,
+  MIPRE.Tailored.okD, MIPRE.Tailored.encV, MIPRE.Tailored.length_encD_of_okD,
+  MIPRE.Tailored.valStar_presented_le, MIPRE.Tailored.hasPerfectZPC_presented}
+\leanok
+Let $\game'$ be a game on detyped questions whose predicate calls a typed predicate $D$ on the
+views of the edges and accepts off them, and let $\game$ be the detyping of typed tailored data,
+on the question distribution of $\game'$. If, on every edge, a pair the typed data accepts decodes
+to one $D$ accepts, then $\mathrm{val}^*(\game) \le \mathrm{val}^*(\game')$. If, on every edge, a
+pair of encodable answers that $D$ accepts encodes, with the typed lengths, to one the typed data
+accepts, then every perfect PCC strategy of the doubled $\game'$ that charges only encodable
+answers, and whose bit observables along the encoding are signed permutations diagonal at the
+readable bits, gives a perfect Z-aligned permutation strategy of the doubled $\game$ commuting
+along edges.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Lemma~\ref{lem:presentation-transport}, its acceptance obligations reduced to the edges by
+Lemma~\ref{lem:tailored-detyping}; the encoded lists have the question's length, so they are the
+vectors the permutation strategy reads.
 \end{proof}
 
 \begin{theorem}[Tailored compression; II:5643, value form]
