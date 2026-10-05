@@ -1,0 +1,373 @@
+\section{The Aldous--Lyons track: $\mathrm{TMIP}^* = \RE$}
+\label{ch:tailored}
+
+This chapter is the plan and the progress of a second target: the main theorem of Bowen, Chapman
+and Vidick's \emph{The Aldous--Lyons Conjecture II: Undecidability}~\cite{BCV25}, a computable
+reduction from the halting problem to \emph{tailored} non-local games that sends halting
+machines to games with a perfect Z-aligned permutation strategy commuting along edges, and
+non-halting machines to games of value at most $\frac12$. With the companion
+paper~\cite{BCLV24} it refutes the Aldous--Lyons conjecture. The estimate, the reuse map and
+the phases are in \texttt{planning/aldous-lyons-track.md}. There is no adversarial-verification
+ledger for these papers: the paper, at its arXiv version, is the authority on the mathematics,
+and line numbers II:$n$ below refer to its LaTeX source.
+
+\emph{Status.} Phase~0: the definitions and the statement are formalized
+(\texttt{MIPRE/TailoredGameValue.lean} and \texttt{MIPRE/Tailored/}), and one lemma is proved,
+that the definitions are not vacuous (Lemma~\ref{lem:tailored-trivial-zpc}). The other results
+below carry no proof marks; they are the targets of Phases~1--5.
+
+The formalization departs from the paper's text in the places Remark~\ref{rem:tailored-route}
+lists, all of them choices this project made for $\MIPstar = \RE$ already: soundness is proved
+in value form, against all finite-dimensional strategies, with direct parallel repetition, so
+that neither the anchored repetition theorem of~\cite{BVY17} nor the almost-synchronous
+rounding of~\cite{Vid22} is needed.
+
+\subsection{Tailored games and permutation strategies}
+
+\begin{definition}[Tailored game; II:1243]
+\label{def:tailored-game}
+\uses{def:game,def:q-value,def:normal-verifier}
+\lean{MIPRE.Tailored.TailoredGame, MIPRE.Tailored.TailoredGame.len,
+  MIPRE.Tailored.TailoredGame.maxLen, MIPRE.Tailored.TailoredGame.Accepts,
+  MIPRE.Tailored.TailoredGame.toGame, MIPRE.Tailored.TailoredGame.valStar,
+  MIPRE.Tailored.TailoredGame.doubled, MIPRE.Tailored.Satisfies,
+  MIPRE.Tailored.rejectConstraint}
+\leanok
+A \emph{tailored game} on a finite question set $X$ is a distribution $\mu$ on $X \times X$
+together with, at each question $x$, a set $S_x = S_x^R \cup S_x^L$, a disjoint union, of $\ell^R(x)$
+\emph{readable} and $\ell^L(x)$ \emph{linear} formal variables, and, for each pair of questions
+$(x, y)$ and each assignment $\gamma^R$ of the readable variables at $x$ and $y$, a finite list
+$L_{xy}(\gamma^R)$ of vectors over the disjoint union $S_x \cup S_y \cup \{J\}$, the \emph{controlled linear
+constraints}. The answer at $x$ is an assignment $a \in \F_2^{S_x}$, readable bits first. The
+\emph{canonical decider} (II:1757--1787) accepts $(a, b)$ at $(x, y)$ when every
+$c \in L_{xy}(a^R, b^R)$ satisfies $\langle c, (a, b, 1)\rangle = 0$ over $\F_2$, the
+coordinate $J$ being set to $1$; the empty list accepts every answer pair, and the list
+$\{J\}$ rejects every one. The tailored game defines a game (Definition~\ref{def:game}) with
+answers the bit strings of bounded length, those of the wrong length losing, and its quantum
+value $\valstar$. Its \emph{doubled} game asks $(\mathsf{false}, x)$ and $(\mathsf{true}, y)$
+with the weight of $(x, y)$ and no weight elsewhere; it is again a tailored game.
+\end{definition}
+
+\begin{definition}[Z-aligned permutation strategies commuting along edges; II:1043--1057,
+II:1279--1283]
+\label{def:zpc-strategy}
+\uses{def:tailored-game}
+\lean{MIPRE.Tailored.signedPermMatrix, MIPRE.Tailored.IsSignedPerm,
+  MIPRE.Tailored.PermStrategy, MIPRE.Tailored.PermStrategy.proj,
+  MIPRE.Tailored.PermStrategy.value, MIPRE.Tailored.TailoredGame.HasPerfectZPC}
+\leanok
+A \emph{signed permutation matrix} on $\C^m$ is a matrix $e_j \mapsto (-1)^{s(j)} e_{\sigma(j)}$
+for a permutation $\sigma$ of $\{1, \dots, m\}$ and signs $s$: the action of a signed
+permutation of $\{\pm\} \times \{1, \dots, m\}$ on the anti-symmetric functions, in their
+standard basis. A \emph{permutation strategy} for a tailored game assigns to each variable $X$
+at each question $x$ an observable $U(x, X)$ on $\C^m$ that is a signed permutation matrix and
+an involution, the observables at a question commuting with each other; its measurement at $x$
+is the Fourier transform
+\[
+  P^x_a \;=\; \prod_{X \in S_x} \tfrac12\bigl(\Id + (-1)^{a_X}\, U(x, X)\bigr),
+  \qquad a \in \F_2^{S_x},
+\]
+and its value is $\sum_{x, y} \mu(x, y) \sum_{a, b} \mathrm{tr}(P^x_a P^y_b)/m$ over the
+accepted $(a, b)$. It is \emph{Z-aligned} when the observables of readable variables are
+diagonal, and \emph{commutes along edges} when $U(x, X)$ and $U(y, Y)$ commute whenever
+$\mu(x, y) > 0$. A ZPC strategy is a Z-aligned permutation strategy commuting along edges, and
+it is \emph{perfect} when its value is $1$.
+\end{definition}
+
+\begin{remark}[Two conventions]
+\label{rem:tailored-conventions}
+The paper's loops $xx$ read a single answer, over $S_x$; here, as for the paper's tailored
+normal form verifiers, whose canonical decider always receives two answers, a loop reads the
+pair $(a, a)$ against constraints over two copies of $S_x$ --- a one-copy constraint $(c, c_J)$
+is the two-copy constraint $(c, 0, c_J)$, and a two-copy constraint $(c_1, c_2, c_J)$ acts as
+$(c_1 + c_2, c_J)$. And the completeness clauses of the pipeline are read on the doubled game,
+as Definition~\ref{def:pcc} is read for the existing pipeline: the doubled game is bipartite,
+so no hypothesis on the verifier is needed to make it synchronous. A ZPC strategy for a game
+gives one for its doubled game, the same observables at both tags.
+\end{remark}
+
+\begin{lemma}[The trivial strategy; II:1148]
+\label{lem:tailored-trivial-zpc}
+\uses{def:zpc-strategy}
+\lean{MIPRE.Tailored.PermStrategy.trivial, MIPRE.Tailored.PermStrategy.trivial_proj,
+  MIPRE.Tailored.hasPerfectZPC_of_accepts_zero}
+\leanok
+A tailored game that accepts the all-zero answers at every question pair of positive weight
+has a perfect ZPC strategy: in dimension $1$, every observable the identity.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Every observable is the identity, which is a signed permutation matrix, diagonal and an
+involution, and commutes with everything. Each factor $\frac12(\Id + (-1)^{a_X}\Id)$ is $\Id$
+at $a_X = 0$ and $0$ at $a_X = 1$, so $P^x_a$ is $1$ at $a = 0$ and $0$ elsewhere, and the
+value is $\sum_{x, y} \mu(x, y) = 1$. This is the case of the halting protocol in which the
+machine has halted (II:1978), and it shows that the definitions are not vacuous.
+\end{proof}
+
+\begin{lemma}[ZPC strategies are PCC strategies]
+\label{lem:zpc-pcc}
+\uses{def:zpc-strategy,def:pcc,def:sync-value}
+The measurements $P^x$ of a permutation strategy form a synchronous strategy
+(Definition~\ref{def:sync-strategy}) of the same value, commuting on the support of $\mu$
+when the permutation strategy commutes along edges. In particular a tailored game with a
+perfect ZPC strategy has synchronous value $1$, and quantum value $1$.
+\end{lemma}
+
+\begin{proof}
+The observables at $x$ are commuting involutions, so the factors
+$\frac12(\Id \pm U(x, X))$ are commuting projections, $P^x_a$ is a projection, and the
+$P^x_a$ sum to $\Id$ by expanding the product. Commutation of the observables gives
+commutation of the measurements, and the two values are the same sum. Phase~1.
+\end{proof}
+
+\subsection{Tailored normal form verifiers}
+
+\begin{definition}[Tailored normal form verifier; II:1758]
+\label{def:tailored-verifier}
+\uses{def:tailored-game,def:zpc-strategy,def:sampler,def:decider}
+\lean{MIPRE.Tailored.TailoredVerifier, MIPRE.Tailored.LenIs, MIPRE.Tailored.LenBound,
+  MIPRE.Tailored.LenTotal, MIPRE.Tailored.LpIs, MIPRE.Tailored.TailoredVerifier.progs,
+  MIPRE.Tailored.TailoredVerifier.size, MIPRE.Tailored.TailoredVerifier.Questions,
+  MIPRE.Tailored.TailoredVerifier.lenOf, MIPRE.Tailored.TailoredVerifier.LenDefined,
+  MIPRE.Tailored.TailoredVerifier.consOf, MIPRE.Tailored.TailoredVerifier.tgame,
+  MIPRE.Tailored.TailoredVerifier.valStar, MIPRE.Tailored.TailoredVerifier.HasPerfectZPC}
+\leanok
+A \emph{tailored normal form verifier} $\verifier = (\cal{S}, \cal{L}, \cal{P})$
+is a conditionally linear sampler $\cal{S}$ (Definition~\ref{def:sampler}), an
+\emph{answer-length calculator} $\cal{L}$, which on $(n, x, \kappa)$ outputs the number of
+readable ($\kappa = R$) or linear ($\kappa = L$) variables at the question $x$, and a
+\emph{linear-constraints processor} $\cal{P}$, which on $(n, x, y, a^R, b^R)$ outputs the
+list $L_{xy}(a^R, b^R)$; the paper's fourth machine, the canonical decider, is the same for
+every verifier and is left implicit. The \emph{$n$-th game} $\verifier_n$ is the tailored game
+on the sampler's questions that the programs compute, a question or pair at which a program
+does not halt rejecting every answer. $\verifier$ \emph{has a perfect ZPC strategy at $n$} when
+the doubled game of $\verifier_n$ has one (Remark~\ref{rem:tailored-conventions}).
+\end{definition}
+
+\begin{definition}[$\lambda$-bounded tailored verifiers, and budgets; II:1800]
+\label{def:tailored-bounded}
+\uses{def:tailored-verifier}
+\lean{MIPRE.Tailored.TailoredVerifier.IsBounded, MIPRE.Tailored.TailoredVerifier.Within}
+\leanok
+$\verifier$ is \emph{$\lambda$-bounded} when, for every $n \geq 2$, the sampler's dimension and
+the running times of the three programs are at most $n^\lambda$ --- the running times read as
+in Definition~\ref{def:lambda-bounded}, at degree $\lambda$ in the size of the input --- the
+lengths $\cal{L}$ outputs are at most $n^\lambda$, and $\abs{\verifier} \leq \lambda$. The
+paper's answer-length calculator outputs in unary, so that its running time bounds the
+lengths; here the lengths are numbers and the bound is a clause of its own. A verifier is
+\emph{within a budget} at index $n$ when the same quantities are bounded by the budget's.
+\end{definition}
+
+\subsection{The target}
+
+\begin{definition}[Tailored game descriptions, standalone; II:1243, II:1279]
+\label{def:tailored-game-data}
+\uses{def:game-description}
+\lean{TailoredGameValue.TailoredGameData, TailoredGameValue.TailoredGameData.equivTuple,
+  TailoredGameValue.TailoredGameData.lenRAt, TailoredGameValue.TailoredGameData.lenLAt,
+  TailoredGameValue.TailoredGameData.lenAt, TailoredGameValue.TailoredGameData.ansLen,
+  TailoredGameValue.TailoredGameData.bit, TailoredGameValue.TailoredGameData.WellFormatted,
+  TailoredGameValue.TailoredGameData.readable, TailoredGameValue.TailoredGameData.full,
+  TailoredGameValue.TailoredGameData.Satisfies, TailoredGameValue.TailoredGameData.Accepts,
+  TailoredGameValue.TailoredGameData.weights, TailoredGameValue.TailoredGameData.toGame,
+  TailoredGameValue.signedPermMatrix, TailoredGameValue.PermStrategy,
+  TailoredGameValue.PermStrategy.proj, TailoredGameValue.PermStrategy.value,
+  TailoredGameValue.TailoredGameData.HasPerfectZPC}
+\leanok
+A \emph{tailored game description} lists the number of vertices, the readable and linear
+lengths at each vertex, the question weights, and the controlled linear constraints as
+entries $(x, y, \gamma^R, c)$, read as $c \in L_{xy}(\gamma^R)$. It denotes a synchronous game
+in the sense of Definition~\ref{def:game-description}: questions are vertices, answers bit
+vectors of the maximal length that vanish beyond the vertex's length, the weights are
+normalized as there, and acceptance is the canonical decider's, unequal answers at a loop
+losing. ZPC strategies are Definition~\ref{def:zpc-strategy}'s, the generators beyond a
+vertex's length acting as the identity. These definitions are written on top of Mathlib alone,
+in \texttt{MIPRE/TailoredGameValue.lean}, beside the standalone statement of
+Theorem~\ref{thm:main}, whose game value they reuse.
+\end{definition}
+
+\begin{theorem}[$\mathrm{TMIP}^* = \RE$; II:1505, Theorem~7.4 of~\cite{BCLV24}]
+\label{thm:tmip-re}
+\uses{def:tailored-game-data}
+\lean{TailoredGameValue.TailoredHaltingReduction}
+\leanok
+There is a computable map $g$ from Turing machines to tailored game descriptions such that for
+every Turing machine $\machine$:
+\begin{enumerate}
+\item (\textbf{Completeness}) if $\machine$ halts on the empty input, then $g(\machine)$ has a
+  perfect ZPC strategy;
+\item (\textbf{Soundness}) if $\machine$ does not halt on the empty input, then
+  $\synval(g(\machine)) \leq \frac12$.
+\end{enumerate}
+Turing machines, halting and computability are as in Theorem~\ref{thm:main}, and $\synval$ is
+the synchronous value of Definition~\ref{def:sync-value}, in its standalone form
+(Remark~\ref{rem:standalone-restatement}).
+\end{theorem}
+
+\begin{proof}
+\uses{thm:tailored-halting,thm:tailored-compression-target}
+Theorem~\ref{thm:tailored-halting} at the compression of
+Theorem~\ref{thm:tailored-compression-target}, then the tabulation of the halting verifier's
+game at its fixed index as a tailored game description, as Theorem~\ref{thm:main} tabulates a
+normal form verifier. Phases~1 and~5.
+\end{proof}
+
+\begin{remark}[Where the formalization departs from the paper]
+\label{rem:tailored-route}
+\begin{enumerate}
+\item \emph{The soundness bound.} The paper's clause~(3) reads $\valstar(\game_\machine) <
+  \frac12$; its proof (II:2046--2065) shows that $\Ent(\game_\machine, \frac12) = \infty$, that
+  every finite-dimensional strategy has value $< \frac12$, which bounds the supremum by
+  $\frac12$ only. Paper~I uses the theorem with $\leq \frac12$ (\cite{BCLV24}, Theorem~7.4).
+\item \emph{Value form.} The paper states compression and parallel repetition in entanglement
+  form, $\Ent(\verifier'_n, \frac12) \geq \max\{\Ent(\verifier_{2^n}, \frac12),
+  2^{2^{\lambda n} - 1}\}$ (II:1865), proved through the anchored repetition theorem
+  of~\cite{BVY17} read as dimension-preserving (II:11425) and the almost-synchronous rounding
+  of~\cite{Vid22} (II:3227, a proof idea; its quotation of~\cite{Vid22} at II:11350 is commented
+  out of the source). The paper's Remark~II:1876 says that what its proofs establish is the
+  value form, which is what is formalized here, with direct repetition
+  (Theorem~\ref{thm:direct-repetition-q}) and the paper route of Theorem~\ref{thm:halting}, whose
+  search branch replaces the base case $2^{2^{\lambda n} - 1}$. No entanglement bound is
+  tracked.
+\item \emph{All strategies.} Soundness is proved in the quantum value $\valstar$ of tensor-product
+  strategies, which bounds the paper's synchronous value from above
+  (Lemma~\ref{lem:sync-le-valstar}).
+\item \emph{Question reduction.} The paper's question reduction is JNVWY's on its own Pauli basis
+  game over $\F_2$ (II:3742), sound by a semi-stability theorem cited from de la Salle (II:3495);
+  the paper notes that its combinatorial game is JNVWY's and that JNVWY's soundness covers it
+  (II:5228--5233). The plan's Route~A presents this project's introspection verifier
+  (Theorem~\ref{thm:introspection}) as a tailored verifier instead, which Phase~0 checked is
+  possible (Remark~\ref{rem:tailored-route-a}).
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Route A: the two checks]
+\label{rem:tailored-route-a}
+Two properties of this project's introspection verifier make the tailored presentation
+possible, and both hold (\texttt{planning/aldous-lyons-track.md}, section~4.2, with the evidence).
+Every check of the introspective predicate is \emph{controlled-linear}: a predicate on the
+readable fields alone (the introspected question, the sampled seed, the prefixes read and
+hidden, and the $Z$-basis Pauli answers), or $\F_2$-affine equations on the linear fields (the
+duals, the hidden tails, the $X$-basis answers, the Pair and Magic Square answers) with
+coefficients computed from readable data and the questions; the input's answers must first be
+padded to constant lengths, as in the paper (II:6219). And the honest strategy is a
+signed-permutation strategy with diagonal readable observables when the input's is: its
+$X$-type observables are translations, its $Z$-type observables $\pm 1$ characters, its
+nonlinear post-processing acts on $Z$-basis outcomes only, and the input enters as controlled
+direct sums.
+\end{remark}
+
+\subsection{Compression and its three stages}
+
+\begin{definition}[Tailored gap compression, value form; II:1852]
+\label{def:tailored-compression}
+\uses{def:tailored-bounded}
+\lean{MIPRE.Tailored.TailoredGapCompression}
+\leanok
+A \emph{tailored gap compression} at level $\ell$ is a polynomial-time procedure that maps a
+tailored verifier and $\lambda$ to a tailored verifier whose sampler and answer-length
+calculator depend on $\lambda$ only, the calculator halting on every question of the sampler,
+with running times, dimension and lengths at most a polynomial in $n + \lambda$, such that for
+every $\lambda$-bounded input and every $n \geq C_0$: a perfect ZPC strategy for
+$\verifier_{2^n}$ gives one for $\verifier'_n$; and $\valstar(\verifier_{2^n}) \leq \frac12$
+implies $\valstar(\verifier'_n) \leq \frac12$.
+\end{definition}
+
+\begin{theorem}[Halting from tailored compression; II:1887--2066]
+\label{thm:tailored-halting}
+\uses{def:tailored-compression,def:tailored-game-data,lem:zpc-pcc,thm:halting}
+A tailored gap compression gives the conclusion of Theorem~\ref{thm:tmip-re}.
+\end{theorem}
+
+\begin{proof}
+The paper's halting protocol is the paper route of Theorem~\ref{thm:halting}, with the
+linear-constraints processor in the role of the decider: the processor of $\verifier^{\machine,
+\lambda}$ is a fixed point that outputs no constraint once $\machine$ has halted within the
+step budget, rejects (the list $\{J\}$) when the search for $\valstar > \frac12$ at the fixed
+level succeeds, and otherwise runs the compressed processor of its own description. When
+$\machine$ halts, an always-accepting game has the deterministic ZPC strategy ($m = 1$, every
+observable the identity) --- this is where the calculator's totality is spent --- and
+completeness descends through the levels; when it does not, the downward induction of the
+search branch gives $\valstar \leq \frac12$, and Lemma~\ref{lem:sync-le-valstar} the synchronous
+value. Phase~1.
+\end{proof}
+
+\begin{definition}[The three stage contracts]
+\label{def:tailored-stages}
+\uses{def:tailored-bounded,def:introspection-contract,def:answer-reduction-contract,
+  thm:parallel-repetition}
+\lean{MIPRE.Tailored.TailoredIntrospection, MIPRE.Tailored.TailoredAnswerReduction,
+  MIPRE.Tailored.TailoredRepetition, MIPRE.Tailored.TailoredRepetition.arg}
+\leanok
+Question reduction (II:5712), answer reduction (II:6883) and parallel repetition (II:11103) for
+tailored verifiers, each in value form, with the parameters, budgets and soundness losses of
+the corresponding contracts of the existing pipeline
+(Definitions~\ref{def:introspection-contract} and~\ref{def:answer-reduction-contract},
+Theorem~\ref{thm:parallel-repetition}): tailored verifiers in and out, the output's
+answer-length calculator part of the data, completeness read in perfect ZPC strategies, and
+repetition's soundness loss depending on a bound on the input's lengths in place of a parse
+length.
+\end{definition}
+
+\begin{theorem}[Question reduction for tailored verifiers; II:5712]
+\label{thm:tailored-qr}
+\uses{def:tailored-stages,thm:introspection}
+The contract \texttt{TailoredIntrospection} is inhabited, at input level~$7$.
+\end{theorem}
+
+\begin{proof}
+Route~A (Remark~\ref{rem:tailored-route-a}): pad the input to constant lengths (II:6219),
+present the introspection verifier of Theorem~\ref{thm:introspection} as a tailored verifier
+whose constraints accept exactly what the introspective decider accepts, transport its
+soundness through the identification of the games, and prove ZPC completeness of its honest
+strategy. Phase~3.
+\end{proof}
+
+\begin{theorem}[Answer reduction for tailored verifiers; II:6883]
+\label{thm:tailored-ar}
+\uses{def:tailored-stages}
+The contract \texttt{TailoredAnswerReduction} is inhabited, at input level~$5$.
+\end{theorem}
+
+\begin{proof}
+The paper's tailored PCP (II:7736--11074): purification, oracularization, triangulation and
+decoupling of the linear system, the output indicator and its decoupled succinct description,
+the degree-$9$ PCP whose linear part is affine in the linear answers, and the seeded low-degree
+test, which is this project's (\texttt{MIPRE.LIDT.CL.clGame}, with its soundness). Phase~4.
+\end{proof}
+
+\begin{theorem}[Parallel repetition of tailored verifiers; II:11103, direct form]
+\label{thm:tailored-rep}
+\uses{def:tailored-stages,thm:direct-repetition-q}
+The contract \texttt{TailoredRepetition} is inhabited, at every level.
+\end{theorem}
+
+\begin{proof}
+The $k$-fold tailored product (II:11377), its constraints padded with zeros to the whole answer;
+ZPC completeness through Kronecker products of signed permutations (II:3043); soundness from
+Theorem~\ref{thm:direct-repetition-q}. Phase~2.
+\end{proof}
+
+\begin{theorem}[Tailored compression; II:5643, value form]
+\label{thm:tailored-compression-target}
+\uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}
+There is a tailored gap compression at level~$7$.
+\end{theorem}
+
+\begin{proof}
+Question reduction, then answer reduction, then repetition, the parameters chosen and the
+budgets chained as in Theorem~\ref{thm:compression}, with a third program in every accounting
+line. Phase~5.
+\end{proof}
+
+\begin{remark}[The Aldous--Lyons conjecture]
+\label{rem:tailored-al}
+Paper~I~\cite{BCLV24} associates with a tailored game a subgroup test whose sofic value is $1$
+when the game has a perfect ZPC strategy and at most $1 - (C\Lambda^4 2^{6\Lambda})^{-1}$ when the
+synchronous value of the game is at most $\frac12$, $\Lambda$ being the largest answer length
+(Theorem~7.3 there, a finitary argument), and shows that under the Aldous--Lyons conjecture the
+sofic value of a subgroup test is computable to any precision (Main Theorem~I there, a weak-$*$
+compactness argument). With Theorem~\ref{thm:tmip-re} the conjecture is false. This is Phase~6
+of the plan, after the main theorem.
+\end{remark}

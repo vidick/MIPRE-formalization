@@ -41,9 +41,11 @@ copy, written against Mathlib only, which the library is to be bridged to.
   Fourier transforms `P^x_a = ∏_i (1 + (-1)^{a_i} U(x, i)) / 2`, and it is *perfect* when its
   value is `1`. The answer alphabet at `x` is literally `F₂^{len x}` here, as in the paper.
 
-Nothing is proved about these objects yet: Phase 1 of the plan proves that a permutation
-strategy is a synchronous strategy commuting on the support with the same value
-(`ZPC → PCC`), and the transports between this file and `MIPRE.TailoredGameValue`.
+One thing is proved, that the definitions are not vacuous: a game that accepts the all-zero
+answers has a perfect ZPC strategy, the trivial one (`hasPerfectZPC_of_accepts_zero`). Phase 1
+of the plan proves that a permutation strategy is a synchronous strategy commuting on the
+support with the same value (`ZPC → PCC`), and the transports between this file and
+`MIPRE.TailoredGameValue`.
 -/
 
 namespace MIPRE.Tailored
@@ -180,6 +182,93 @@ end PermStrategy
 
 /-- The game has a perfect Z-aligned permutation strategy commuting along edges (II:1279). -/
 def TailoredGame.HasPerfectZPC (G : TailoredGame X) : Prop := ∃ S : PermStrategy G, S.value = 1
+
+/-! ## The trivial strategy -/
+
+/-- `½(1 + 1) = 1`, a factor of the measurement at the answer bit `0` of an observable equal
+to the identity. -/
+theorem half_smul_one_add_one {n : Type*} [Fintype n] [DecidableEq n] :
+    (1 / 2 : ℂ) • ((1 : Matrix n n ℂ) + (1 : ℂ) • 1) = 1 := by
+  rw [one_smul, ← two_smul ℂ (1 : Matrix n n ℂ), smul_smul]
+  norm_num
+
+/-- `½(1 - 1) = 0`, the factor at the answer bit `1`. -/
+theorem half_smul_one_add_neg_one {n : Type*} [Fintype n] [DecidableEq n] :
+    (1 / 2 : ℂ) • ((1 : Matrix n n ℂ) + (-1 : ℂ) • 1) = 0 := by
+  rw [neg_smul, one_smul, add_neg_cancel, smul_zero]
+
+/-- The normalized trace of the identity is `1`. -/
+theorem trace_one_mul_one_div {m : ℕ} (hm : 0 < m) :
+    ((1 : Matrix (Fin m) (Fin m) ℂ) * 1).trace.re / (m : ℝ) = 1 := by
+  rw [mul_one, Matrix.trace_one, Fintype.card_fin]
+  have : (m : ℝ) ≠ 0 := by exact_mod_cast hm.ne'
+  simp [this]
+
+/-- The trivial permutation strategy: one dimension, every observable the identity. -/
+noncomputable def PermStrategy.trivial (G : TailoredGame X) : PermStrategy G where
+  m := 1
+  m_pos := one_pos
+  U _ _ := 1
+  signedPerm _ _ := ⟨Equiv.refl _, fun _ => false, by
+    ext i j; fin_cases i; fin_cases j; simp [signedPermMatrix]⟩
+  invol _ _ := by simp
+  comm _ _ _ := rfl
+  zAligned _ _ _ := Matrix.isDiag_one
+  commEdges _ _ _ _ _ := rfl
+
+/-- The trivial strategy answers `0` to every variable with certainty. -/
+theorem PermStrategy.trivial_proj (G : TailoredGame X) (x : X) (a : Fin (G.len x) → Bool) :
+    (PermStrategy.trivial G).proj x a = if a = (fun _ => false) then 1 else 0 := by
+  unfold PermStrategy.proj
+  split_ifs with ha
+  · subst ha
+    apply List.prod_eq_one
+    intro M hM
+    obtain ⟨i, -, rfl⟩ := List.mem_map.1 hM
+    simp only [Bool.false_eq_true, ite_false]
+    exact half_smul_one_add_one
+  · obtain ⟨i, hi⟩ : ∃ i, a i = true := by
+      by_contra hne
+      push Not at hne
+      exact ha (funext fun i => by simpa using hne i)
+    apply List.prod_eq_zero
+    refine List.mem_map.2 ⟨i, List.mem_finRange i, ?_⟩
+    simp only [hi, ite_true]
+    exact half_smul_one_add_neg_one
+
+/-- **A game that accepts the all-zero answers has a perfect ZPC strategy** (II:1148, the
+deterministic strategies): the trivial strategy. This is the case of the halting protocol in
+which the machine has halted (II:1978, item 1), and it shows the definitions are not vacuous. -/
+theorem hasPerfectZPC_of_accepts_zero (G : TailoredGame X)
+    (h : ∀ x y, 0 < G.μ x y →
+      G.Accepts x y (List.replicate (G.len x) false) (List.replicate (G.len y) false)) :
+    G.HasPerfectZPC := by
+  refine ⟨PermStrategy.trivial G, ?_⟩
+  unfold PermStrategy.value
+  have key : ∀ x y, (∑ a : Fin (G.len x) → Bool, ∑ b : Fin (G.len y) → Bool,
+      G.μ x y * (if G.Accepts x y (List.ofFn a) (List.ofFn b) then 1 else 0) *
+        (((PermStrategy.trivial G).proj x a * (PermStrategy.trivial G).proj y b).trace.re /
+          ((PermStrategy.trivial G).m : ℝ))) = G.μ x y := by
+    intro x y
+    rw [Finset.sum_eq_single (fun _ => false)]
+    · rw [Finset.sum_eq_single (fun _ => false)]
+      · simp only [PermStrategy.trivial_proj, ite_true]
+        rw [trace_one_mul_one_div (PermStrategy.trivial G).m_pos, mul_one]
+        rcases (G.μ_nonneg x y).lt_or_eq with hpos | hzero
+        · have hacc := h x y hpos
+          simp [List.ofFn_const, hacc]
+        · simp [← hzero]
+      · intro b _ hb
+        simp [PermStrategy.trivial_proj, hb]
+      · intro hb; exact absurd (Finset.mem_univ _) hb
+    · intro a _ ha
+      apply Finset.sum_eq_zero
+      intro b _
+      simp [PermStrategy.trivial_proj, ha]
+    · intro ha; exact absurd (Finset.mem_univ _) ha
+  simp only [key]
+  exact G.μ_sum_one
+
 
 end MIPRE.Tailored
 

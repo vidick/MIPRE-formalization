@@ -1096,7 +1096,7 @@ density and an amplification by the twisted Pauli algebra (C6a and C6b T2–T5,
 about 3.0k lines) and a port of the vendored proof to dyadic pairs (M0–M14, 71.7k lines, against
 the 70–120k estimated), which closes Phase 6.
 
-**The Aldous–Lyons track, `TMIP* = RE` (planned 2026-10-05, not started).** The main theorem
+**The Aldous–Lyons track, `TMIP* = RE` (#272; planned 2026-10-05, Phase 0 done in #273).** The main theorem
 of Bowen–Chapman–Vidick's *The Aldous–Lyons Conjecture II* (arXiv:2501.00173): the halting
 problem reduced to *tailored* games, with a perfect Z-aligned permutation strategy commuting
 along edges as completeness and value at most `1/2` as soundness; with paper I
@@ -1109,6 +1109,10 @@ oracularization, the cost model) are reused, while the three transformations are
 tailored form with new completeness proofs; about 50–80k lines of new Lean on the recommended
 route, in which the tailored question reduction is a re-presentation of this repository's
 introspection verifier, and 80–135k if the paper's own Pauli basis game has to be built.
+Phase 0 put the statement (`MIPRE/TailoredGameValue.lean`) and the interface
+(`MIPRE/Tailored/*`) in, definitions only, and checked from the Lean that this route is open:
+the introspective predicate is controlled-linear and its honest strategy a signed-permutation
+strategy.
 
 ## Working rules for this track
 

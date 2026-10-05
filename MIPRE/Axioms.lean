@@ -228,6 +228,7 @@ public import MIPRE.Foundations.WeylEPR
 public import MIPRE.Foundations.Swap
 public import MIPRE.Background.GowersHatami.Basic
 public import MIPRE.Foundations.CommutingDilation
+public import MIPRE.Tailored.Game
 
 @[expose] public section
 
@@ -3605,5 +3606,9 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.gapCompressionCo_sound,
   MIPRE.halting_reduction_commuting,
   MIPRE.core_subset_mipco
+
+-- blueprint `lem:tailored-trivial-zpc`
+#guard_sorry_free MIPRE.Tailored.PermStrategy.trivial,
+  MIPRE.Tailored.PermStrategy.trivial_proj, MIPRE.Tailored.hasPerfectZPC_of_accepts_zero
 
 end
