@@ -1414,6 +1414,10 @@ public import MIPRE.Tailored.Canonical
 public import MIPRE.Tailored.Compression
 public import MIPRE.Tailored.Fourier
 public import MIPRE.Tailored.Game
+public import MIPRE.Tailored.Halting.Cost
+public import MIPRE.Tailored.Halting.Decider
+public import MIPRE.Tailored.Halting.Induction
+public import MIPRE.Tailored.Halting.Main
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
 public import MIPRE.Tailored.SignedPerm

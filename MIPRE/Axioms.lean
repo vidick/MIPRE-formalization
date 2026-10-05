@@ -231,6 +231,7 @@ public import MIPRE.Foundations.CommutingDilation
 public import MIPRE.Tailored.Game
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
+public import MIPRE.Tailored.Halting.Main
 
 @[expose] public section
 
@@ -3657,5 +3658,26 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.Tailored.TailoredVerifier.ofTNFV_accepts_iff,
   MIPRE.Tailored.TailoredVerifier.ofTNFV_game_D, MIPRE.Tailored.TailoredVerifier.valStar_ofTNFV,
   MIPRE.Tailored.TailoredVerifier.hasPerfectPCC_ofTNFV
+
+-- blueprint `lem:tailored-dhalt-values`
+#guard_sorry_free MIPRE.Tailored.Halting.lp_runs_iff,
+  MIPRE.Tailored.Halting.hasPerfectZPC_of_branch1,
+  MIPRE.Tailored.Halting.valStar_eq_zero_of_branch2, MIPRE.Tailored.Halting.hasPerfectZPC_iff_W,
+  MIPRE.Tailored.Halting.valStar_eq_W, MIPRE.Tailored.TailoredVerifier.hasPerfectZPC_congr,
+  MIPRE.Tailored.TailoredVerifier.valStar_congr,
+  MIPRE.Tailored.TailoredVerifier.valStar_eq_zero_of_rejects
+
+-- blueprint `lem:tailored-lambda`
+#guard_sorry_free MIPRE.Tailored.Halting.esize_lpProg, MIPRE.Tailored.Halting.lp_cost,
+  MIPRE.Tailored.Halting.exists_lp_cost_poly, MIPRE.Tailored.Halting.sampler_len_clauses,
+  MIPRE.Tailored.Halting.lp_clause, MIPRE.Tailored.Halting.size_clause,
+  MIPRE.Tailored.Halting.exists_lamBound, MIPRE.Tailored.Halting.Lam0,
+  MIPRE.Tailored.Halting.Lam0_spec
+
+-- blueprint `thm:tailored-halting-level`
+#guard_sorry_free MIPRE.Tailored.Halting.halting_tailored,
+  MIPRE.Tailored.Halting.halting_tailored_valStar, MIPRE.Tailored.Halting.hasPerfectZPC_of_halts,
+  MIPRE.Tailored.Halting.valStar_le_of_not_halts, MIPRE.Tailored.Halting.A_step,
+  MIPRE.Tailored.Halting.B_step
 
 end

@@ -20,7 +20,9 @@ part: the toolbox of permutation strategies is proved --- signed permutations
 strategy to be perfect (Lemma~\ref{lem:perm-strategy-perfect}), Lemma~\ref{lem:zpc-pcc}, and the
 Magic Square (Proposition~\ref{prop:magic-square-zpc}). Phase~1, second part: a tailored
 verifier is a normal form verifier, the canonical decider written as a program, with the same
-games, values and completeness (Lemmas~\ref{lem:canonical-decider} and~\ref{lem:of-tnfv}). The
+games, values and completeness (Lemmas~\ref{lem:canonical-decider} and~\ref{lem:of-tnfv}).
+Phase~1, third part: the halting protocol at a fixed level is proved for a search program
+meeting its specification (Theorem~\ref{thm:tailored-halting-level}). The
 other results below carry no proof marks; they are the targets of the rest of Phase~1 and of
 Phases~2--5.
 
@@ -546,9 +548,132 @@ $\verifier_{2^n}$ gives one for $\verifier'_n$; and $\valstar(\verifier_{2^n}) \
 implies $\valstar(\verifier'_n) \leq \frac12$.
 \end{definition}
 
+\begin{definition}[The tailored halting verifier; II:1900--1925]
+\label{def:tailored-halt-verifier}
+\uses{def:tailored-compression,lem:kleene}
+\lean{MIPRE.Tailored.Halting.Vhalt, MIPRE.Tailored.Halting.lp, MIPRE.Tailored.Halting.lpProg,
+  MIPRE.Tailored.Halting.F, MIPRE.Tailored.Halting.body, MIPRE.Tailored.Halting.prep,
+  MIPRE.Tailored.Halting.comprLp, MIPRE.Tailored.Halting.acceptProg,
+  MIPRE.Tailored.Halting.rejectProg, MIPRE.Tailored.Halting.W, MIPRE.Tailored.Halting.branch1,
+  MIPRE.Tailored.Halting.branch2}
+\leanok
+Let a tailored gap compression be given, with compressed sampler $\cal{S}^\lambda$ and
+answer-length calculator $\cal{L}^\lambda$, a machine $\machine$, a search program $\cal{S}'$ and
+a parameter $\lambda$. The \emph{tailored halting verifier}
+$\verifier^{\machine,\lambda} = (\cal{S}^\lambda, \cal{L}^\lambda, \cal{P}^{\machine,\lambda})$ has
+for linear-constraints processor the efficient Kleene fixed point of the map that sends a
+processor $\cal{P}$ to the program which, on $(n, x, y, a^R, b^R)$:
+\begin{enumerate}
+\item outputs the empty list of constraints if $\machine$ halts on the empty input within
+  $\lceil \log_2 (n+1) \rceil$ steps;
+\item otherwise outputs the list $\{J\}$ if $\cal{S}'$ halts on the description of
+  $(\cal{S}^\lambda, \cal{L}^\lambda, \cal{P})$ within the same budget;
+\item otherwise runs the compressed processor of $(\cal{S}^\lambda, \cal{L}^\lambda, \cal{P})$ on
+  the input.
+\end{enumerate}
+Items 1 and 3 are the paper's map $F$ (II:1900), the empty list accepting and $\{J\}$ rejecting
+every answer pair; item 2 is the search branch of the paper route of Theorem~\ref{thm:halting},
+which supplies the base case that the value form of compression lacks.
+\end{definition}
+
+\begin{lemma}[The values of the tailored halting verifier; II:1978]
+\label{lem:tailored-dhalt-values}
+\uses{def:tailored-halt-verifier,def:zpc-strategy,lem:tailored-trivial-zpc}
+\lean{MIPRE.Tailored.Halting.lp_runs_iff, MIPRE.Tailored.Halting.hasPerfectZPC_of_branch1,
+  MIPRE.Tailored.Halting.valStar_eq_zero_of_branch2, MIPRE.Tailored.Halting.hasPerfectZPC_iff_W,
+  MIPRE.Tailored.Halting.valStar_eq_W, MIPRE.Tailored.TailoredVerifier.hasPerfectZPC_congr,
+  MIPRE.Tailored.TailoredVerifier.valStar_congr,
+  MIPRE.Tailored.TailoredVerifier.valStar_eq_zero_of_rejects}
+\leanok
+At the level $n$: if $\machine$ halts within the budget, $\verifier^{\machine,\lambda}_n$ has a
+perfect ZPC strategy; otherwise, if the search halts within the budget, it has value $0$;
+otherwise it has a perfect ZPC strategy, and value, exactly when the compressed verifier of its
+own programs does at $n$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:tailored-trivial-zpc}
+\leanok
+The processor is the fixed point, so on an input of index $n$ it outputs what the three
+branches say. In the first, every constraint list is empty --- the answer-length calculator
+halts at every question of the sampler, which is where its totality is spent --- so the game
+accepts every answer pair of the right lengths, and the deterministic strategy is perfect
+(Lemma~\ref{lem:tailored-trivial-zpc}). In the second, every constraint list holds $J = 0$, so
+no answer pair is accepted. In the third, the two verifiers have the same sampler and
+answer-length calculator, and their processors output the same constraints at index $n$, so
+their $n$-th games coincide.
+\end{proof}
+
+\begin{lemma}[$\lambda$ for the tailored halting verifier; II:2002]
+\label{lem:tailored-lambda}
+\uses{def:tailored-halt-verifier,def:tailored-bounded,lem:lambda}
+\lean{MIPRE.Tailored.Halting.esize_lpProg, MIPRE.Tailored.Halting.lp_cost,
+  MIPRE.Tailored.Halting.exists_lp_cost_poly, MIPRE.Tailored.Halting.sampler_len_clauses,
+  MIPRE.Tailored.Halting.lp_clause, MIPRE.Tailored.Halting.size_clause,
+  MIPRE.Tailored.Halting.exists_lamBound, MIPRE.Tailored.Halting.Lam0,
+  MIPRE.Tailored.Halting.Lam0_spec}
+\leanok
+There is a threshold $\Lambda_0$, depending on the compression, the universal machines and the
+search program alone, such that $\verifier^{\machine,\lambda}$ is $\lambda$-bounded
+(Definition~\ref{def:tailored-bounded}) for every machine $\machine$ and every
+$\lambda \geq \Lambda_0 + 4\abs{\machine}$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:lambda}
+\leanok
+The processor is a hardcoding of the fixed point's program to its own description, of size
+$2(\abs{\machine} + \abs{\lambda})$ plus a constant. On $(n, d)$ it runs within the fixed point's
+overhead on the hardcoded description, the branch computation, and the universal machine on the
+compressed processor, whose time is the compression's $\mathrm{poly}(n + \lambda)$; together a
+polynomial in $n + \abs{\machine} + \lambda$ times a power of $\abs{d} + 1$. The sampler's and the
+answer-length calculator's clauses are the compression's bounds. Each clause is absorbed into
+$n^\lambda$, at degree $\lambda$, past a threshold on $\lambda$, and the size into $\lambda$ once
+$\lambda \geq \Lambda_0 + 4\abs{\machine}$.
+\end{proof}
+
+\begin{definition}[The search program's specification]
+\label{def:tailored-search-spec}
+\uses{def:tailored-compression}
+\lean{MIPRE.Tailored.Halting.SearchSpec, MIPRE.Tailored.Halting.vof, MIPRE.Tailored.Halting.C}
+\leanok
+Let $C = \max\{C_0, 2\}$. A program $\cal{S}'$ \emph{meets the search specification} when, on the
+description of every $\lambda$-bounded tailored verifier $(\cal{S}^\lambda, \cal{L}^\lambda,
+\cal{P})$, it halts exactly when $\valstar$ of that verifier at the level $C$ exceeds $\frac12$.
+\end{definition}
+
+\begin{theorem}[The tailored halting theorem at a fixed level; II:2021--2066]
+\label{thm:tailored-halting-level}
+\uses{lem:tailored-dhalt-values,lem:tailored-lambda,def:tailored-search-spec,lem:zpc-pcc}
+\lean{MIPRE.Tailored.Halting.halting_tailored, MIPRE.Tailored.Halting.halting_tailored_valStar,
+  MIPRE.Tailored.Halting.hasPerfectZPC_of_halts, MIPRE.Tailored.Halting.valStar_le_of_not_halts,
+  MIPRE.Tailored.Halting.A_step, MIPRE.Tailored.Halting.B_step}
+\leanok
+Let a tailored gap compression be given and $\cal{S}'$ a program meeting the search
+specification. For every machine $\machine$ and every $\lambda \geq \Lambda_0 + 4\abs{\machine}$,
+at the level $C$: if $\machine$ halts on the empty input, $\verifier^{\machine,\lambda}$ has a
+perfect ZPC strategy; if it does not, $\valstar(\verifier^{\machine,\lambda}_C) \leq \frac12$.
+\end{theorem}
+
+\begin{proof}
+\uses{lem:zpc-pcc}
+\leanok
+Along the levels $C, 2^C, 2^{2^C}, \dots$, compression carries a perfect ZPC strategy at $2^n$
+down to $n$, and a value at most $\frac12$, at every level where neither of the first two
+branches fires, the verifier then having the compressed verifier's games
+(Lemma~\ref{lem:tailored-dhalt-values}); the verifier is $\lambda$-bounded by
+Lemma~\ref{lem:tailored-lambda}. If $\machine$ halts, the first branch fires from some level on;
+the search never fires below it, since a firing would put every level below it, the start level
+among them, at value at most $\frac12$, while the search fires only when the start level's value
+exceeds $\frac12$; so completeness descends to $C$. If $\machine$ does not halt and the value at
+$C$ exceeded $\frac12$, the search would fire from some level on, and soundness would descend
+from there to $C$, a contradiction.
+\end{proof}
+
 \begin{theorem}[Halting from tailored compression; II:1887--2066]
 \label{thm:tailored-halting}
-\uses{def:tailored-compression,def:tailored-game-data,lem:zpc-pcc,thm:halting}
+\uses{def:tailored-compression,def:tailored-game-data,lem:zpc-pcc,thm:halting,
+  thm:tailored-halting-level}
 A tailored gap compression gives the conclusion of Theorem~\ref{thm:tmip-re}.
 \end{theorem}
 
@@ -562,7 +687,9 @@ $\machine$ halts, an always-accepting game has the deterministic ZPC strategy ($
 observable the identity) --- this is where the calculator's totality is spent --- and
 completeness descends through the levels; when it does not, the downward induction of the
 search branch gives $\valstar \leq \frac12$, and Lemma~\ref{lem:sync-le-valstar} the synchronous
-value. Phase~1.
+value. All of this is Theorem~\ref{thm:tailored-halting-level}, proved, for a search program
+meeting its specification; what remains is that program, from tabulating a tailored verifier
+at a fixed level, and the tabulation of the game the reduction outputs (Phase~1).
 \end{proof}
 
 \begin{definition}[The three stage contracts]

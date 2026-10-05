@@ -212,6 +212,94 @@ def Within (n : ℕ) (R : Budget) : Prop :=
   V.sampler.TimeBoundAt n R.S R.k ∧ V.sampler.dim n ≤ R.d ∧
     V.len.TimeBoundAt n R.D R.k ∧ V.lp.TimeBoundAt n R.D R.k ∧ LenBound V.len n R.B
 
+/-! ## The outputs are determined, and the game by them -/
+
+/-- The answer-length calculator outputs one length: the model is deterministic. -/
+theorem _root_.MIPRE.Tailored.LenIs.unique {L : Decider} {n : ℕ} {x : BitStr} {κ : Bool}
+    {k k' : ℕ} (h : LenIs L n x κ k) (h' : LenIs L n x κ k') : k = k' := by
+  obtain ⟨t, d, hd, rfl⟩ := h
+  obtain ⟨t', d', hd', rfl⟩ := h'
+  obtain ⟨rfl, -⟩ := Eval.deterministic hd hd'
+  rfl
+
+/-- The linear-constraints processor outputs one list of constraints. -/
+theorem _root_.MIPRE.Tailored.LpIs.unique {P : Decider} {n : ℕ} {x y aR bR : BitStr}
+    {cs cs' : List BitStr} (h : LpIs P n x y aR bR cs) (h' : LpIs P n x y aR bR cs') :
+    cs = cs' := by
+  obtain ⟨t, d, hd, rfl⟩ := h
+  obtain ⟨t', d', hd', rfl⟩ := h'
+  obtain ⟨rfl, -⟩ := Eval.deterministic hd hd'
+  rfl
+
+/-- The constraints at `(x, y)`, when `len` halts at both questions and `lp` outputs `cs`. -/
+theorem consOf_eq_of {n : ℕ} {x y aR bR : BitStr} (hx : V.LenDefined n x)
+    (hy : V.LenDefined n y) {cs : List BitStr} (h : LpIs V.lp n x y aR bR cs) :
+    V.consOf n x y aR bR = cs := by
+  have hex : V.LenDefined n x ∧ V.LenDefined n y ∧ ∃ cs, LpIs V.lp n x y aR bR cs :=
+    ⟨hx, hy, cs, h⟩
+  unfold consOf
+  rw [dite_eq_left hex]
+  exact hex.2.2.choose_spec.unique h
+
+/-- Two verifiers with the same sampler and answer-length calculator, whose processors output
+the same constraints at index `n`, have the same `n`-th game. -/
+theorem tgame_eq_of_lp {S : CL.Sampler ℓ} {L P P' : Decider} {n : ℕ}
+    (hP : ∀ x y aR bR cs, LpIs P n x y aR bR cs ↔ LpIs P' n x y aR bR cs) :
+    (⟨S, L, P⟩ : TailoredVerifier ℓ).tgame n = (⟨S, L, P'⟩ : TailoredVerifier ℓ).tgame n := by
+  have hcons : (⟨S, L, P⟩ : TailoredVerifier ℓ).consOf n =
+      (⟨S, L, P'⟩ : TailoredVerifier ℓ).consOf n := by
+    funext x y aR bR
+    by_cases h : (⟨S, L, P⟩ : TailoredVerifier ℓ).LenDefined n x ∧
+        (⟨S, L, P⟩ : TailoredVerifier ℓ).LenDefined n y ∧ ∃ cs, LpIs P n x y aR bR cs
+    · obtain ⟨hx, hy, cs, hcs⟩ := h
+      rw [consOf_eq_of _ hx hy hcs, consOf_eq_of (V := ⟨S, L, P'⟩) hx hy ((hP _ _ _ _ _).1 hcs)]
+    · have h' : ¬((⟨S, L, P'⟩ : TailoredVerifier ℓ).LenDefined n x ∧
+          (⟨S, L, P'⟩ : TailoredVerifier ℓ).LenDefined n y ∧ ∃ cs, LpIs P' n x y aR bR cs) :=
+        fun ⟨hx, hy, cs, hcs⟩ => h ⟨hx, hy, cs, (hP _ _ _ _ _).2 hcs⟩
+      unfold consOf
+      rw [dite_eq_right h, dite_eq_right h']
+      rfl
+  unfold tgame
+  rw [hcons]
+  rfl
+
+/-- **Completeness transfers** between two verifiers with the same sampler and answer-length
+calculator whose processors output the same constraints at index `n`. -/
+theorem hasPerfectZPC_congr {V W : TailoredVerifier ℓ} {n : ℕ} (hS : V.sampler = W.sampler)
+    (hL : V.len = W.len)
+    (hP : ∀ x y aR bR cs, LpIs V.lp n x y aR bR cs ↔ LpIs W.lp n x y aR bR cs) :
+    V.HasPerfectZPC n ↔ W.HasPerfectZPC n := by
+  obtain ⟨S, L, P⟩ := V
+  obtain ⟨S', L', P'⟩ := W
+  obtain rfl : S = S' := hS
+  obtain rfl : L = L' := hL
+  unfold HasPerfectZPC
+  rw [tgame_eq_of_lp hP]
+
+/-- **The value transfers**, under the same hypotheses. -/
+theorem valStar_congr {V W : TailoredVerifier ℓ} {n : ℕ} (hS : V.sampler = W.sampler)
+    (hL : V.len = W.len)
+    (hP : ∀ x y aR bR cs, LpIs V.lp n x y aR bR cs ↔ LpIs W.lp n x y aR bR cs) :
+    V.valStar n = W.valStar n := by
+  obtain ⟨S, L, P⟩ := V
+  obtain ⟨S', L', P'⟩ := W
+  obtain rfl : S = S' := hS
+  obtain rfl : L = L' := hL
+  unfold valStar
+  rw [tgame_eq_of_lp hP]
+
+/-- **A level at which every constraint list holds a rejecting constraint has value `0`.** -/
+theorem valStar_eq_zero_of_rejects {n : ℕ}
+    (h : ∀ (x y : V.Questions n) (aR bR : BitStr),
+      ∃ d, rejectConstraint d ∈ V.consOf n (CL.toBits x) (CL.toBits y) aR bR) :
+    V.valStar n = 0 := by
+  refine quantumValue_eq_zero_of_reject _ fun x y a b => ?_
+  change decide ((V.tgame n).Accepts x y a.1 b.1) = false
+  rw [decide_eq_false_iff_not]
+  intro hacc
+  obtain ⟨d, hd⟩ := h x y (a.1.take ((V.tgame n).lenR x)) (b.1.take ((V.tgame n).lenR y))
+  exact not_satisfies_rejectConstraint d (a.1 ++ b.1) (hacc.2.2 _ hd)
+
 end TailoredVerifier
 
 end MIPRE.Tailored

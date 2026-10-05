@@ -1118,7 +1118,9 @@ processing, `lem:zpc-pcc`, and the Magic Square's perfect ZPC strategy as the wi
 perfect ZPC strategies are not classical ones. Its second made a tailored verifier a normal form
 verifier, `TailoredVerifier.ofTNFV`, the canonical decider written as a program, with the same
 games, values and completeness; the canonical decider's cost is deferred, nothing planned
-consuming it.
+consuming it. Its third proved the halting protocol at a fixed level, `V^{M,λ}` with the
+linear-constraints processor as the Kleene fixed point and `lem:lambda` for three programs, for a
+search program meeting its specification, which the tabulation of the last slice supplies.
 
 ## Working rules for this track
 

@@ -6,8 +6,9 @@ Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapt
 `blueprint/src/content/09_tailored.tex`. Phase 1's first two slices are done (§5 "Phase 1
 slices"): P1a, the toolbox of permutation strategies
 (`MIPRE/Tailored/{SignedPerm,Fourier,ZPC,MagicSquare}.lean`), and P1b, a tailored verifier as a
-normal form verifier with the same games (`MIPRE/Tailored/{Canonical,OfTNFV}.lean`); P1c–P1d are
-next.
+normal form verifier with the same games (`MIPRE/Tailored/{Canonical,OfTNFV}.lean`); and P1c,
+the halting protocol at a fixed level, for a search program meeting its specification
+(`MIPRE/Tailored/Halting/*`). P1d is next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -545,13 +546,27 @@ protocol is a parallel set of files, not an edit of these.
   stage contracts, the halting protocol of P1c and the class statements of P1d bound the three
   programs `S`, `L`, `LP`, as the paper's II:1800 does. The cost is added if a later phase
   applies a theorem about bounded `MIPRE.Verifier`s to `ofTNFV`.
-- **P1c — the halting protocol.** The parallel `Halting/Paper`-style files for tailored
-  verifiers, from a `TailoredGapCompression`: the linear-constraints processor as the Kleene
-  fixed point (`[]` for accept, `[rejectConstraint _]` for reject), `lem:dhalt-values` as
-  `accepts_iff` with the halted branch from `hasPerfectZPC_of_accepts_zero`, the downward
-  induction with the search branch, `lem:lambda` for three programs.
+- **P1c — the halting protocol (done, 1.2k lines).** `MIPRE/Tailored/Halting/*`, parallel to
+  `Halting/Paper/{Decider,Induction,Size,Cost,Main}.lean`, from a `TailoredGapCompression`. The
+  linear-constraints processor of `V^{M,λ}` is the Kleene fixed point (`lpProg`): `[]` once `M`
+  has halted, `[rejectConstraint 0]` once the search has, otherwise the compressed processor of
+  its own programs through the universal machine. `lem:dhalt-values` is `lp_runs_iff`, and
+  then, by level: a perfect ZPC strategy from `hasPerfectZPC_of_accepts_zero` (where
+  `len_total` is spent), value `0`, or the compressed verifier's games (through the new
+  congruence lemmas `TailoredVerifier.hasPerfectZPC_congr`, `valStar_congr`: same sampler and
+  answer-length calculator, same constraints). The downward induction with the search branch
+  needs no answer bound, a tailored game's answers having the lengths its calculator gives
+  them. `lem:lambda` for three programs (`exists_lamBound`, `Lam0`): the processor is run as it
+  is, so there is no wrapper layer. `halting_tailored`: for `λ ≥ Λ₀ + 4|M|`, at the level
+  `C = max C₀ 2`, a perfect ZPC strategy if `M` halts and value at most `1/2` if not. **The
+  search program is a hypothesis**, `SearchSpec`: on the description of a `λ`-bounded tailored
+  verifier `(S^λ, L^λ, P)` it halts exactly when the value at level `C` exceeds `1/2`. The
+  existing halting layer gets its program from its tabulation (`exists_semL`); here it comes
+  from the tabulation of P1d.
 - **P1d — tabulation, transports, the conditional theorems.** A tailored verifier at a fixed
-  index tabulated as a `TailoredGameData`; ZPC strategies and values transported between
+  index tabulated as a `TailoredGameData`, with budgets read off `λ`, so that it is exact on
+  `λ`-bounded verifiers; from it the search program of P1c (`SearchSpec`), by the lower
+  semicomputability of the value; ZPC strategies and values transported between
   `MIPRE.Tailored` and `TailoredGameValue`;
   `tailored_halting_reduction_of : TailoredGapCompression ℓ → TailoredHaltingReduction`;
   `TMIP* ⊆ RE` by enumerating signed-permutation strategies, on which perfection is decidable

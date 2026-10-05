@@ -67,6 +67,22 @@ instance (c v : BitStr) : Decidable (Satisfies c v) := by
 vector whose last coordinate is `1`, so a constraint list containing it rejects. -/
 def rejectConstraint (d : ℕ) : BitStr := List.replicate d false ++ [true]
 
+/-- A vector whose last coordinate is `1` never satisfies the rejecting constraint `J = 0`. -/
+theorem not_satisfies_rejectConstraint (d : ℕ) (v : BitStr) :
+    ¬Satisfies (rejectConstraint d) (v ++ [true]) := by
+  rintro ⟨hlen, heven⟩
+  simp only [rejectConstraint, List.length_append, List.length_replicate, List.length_singleton]
+    at hlen
+  have hv : (List.replicate d false).length = v.length := by simp; omega
+  rw [rejectConstraint, List.zipWith_append hv, List.count_append] at heven
+  have h0 : (List.zipWith (· && ·) (List.replicate d false) v).count true = 0 := by
+    rw [List.count_eq_zero]
+    intro hmem
+    obtain ⟨i, hi, he⟩ := List.mem_iff_getElem.1 hmem
+    simp [List.getElem_zipWith] at he
+  rw [h0] at heven
+  simp at heven
+
 /-! ## Tailored games -/
 
 /-- A tailored game (II:1243) on the finite question set `X`. -/
