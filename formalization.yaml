@@ -43,18 +43,6 @@ sources:
     location: "https://arxiv.org/abs/2001.04383"
     relationship: "formalizes"
     author_endorsement: "participated"
-  - title: "MIP* = RE, the consolidated proof (companion manuscript of this formalization)"
-    authors:
-      - "Thomas Vidick"
-    type: "other"
-    location: "https://github.com/vidick/MIPRE-proof (private repository)"
-    relationship: "formalizes"
-    note: >-
-      An unpublished manuscript: the rewritten and consolidated proof that the blueprint of
-      this repository paraphrases statement by statement; every constant and every proof of
-      the formalization follows it. It is private at the time of submission; its statements
-      are quoted in the blueprint.
-    author_endorsement: "participated"
   - title: "Quantum soundness of the classical low individual degree test"
     authors:
       - "Zhengfeng Ji"
