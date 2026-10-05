@@ -374,10 +374,10 @@ theorem qIdx_eq_iff' (z : BitStr) (tg : Bool) {x : BitStr} (hx : x ∈ Data.bitS
 
 /-- **The budgeted sample is the question pair**, on an efficient input and a seed of the right
 length. -/
-theorem sampleC_eq {z : BitStr} (h : V.Efficient z) {r : BitStr} (hr : r.length = V.B z) :
+theorem sampleC_eq {z : BitStr} (h : V.SamplerRuns z) {r : BitStr} (hr : r.length = V.B z) :
     sampleC (encode V.sampler) (V.bound.eval (z.length + V.B z)) z r =
       ((V.questions z r).1.1, (V.questions z r).2.1) := by
-  obtain ⟨x, y, t, ht, hrun, hx, hy⟩ := V.questions_eq_of_efficient h hr
+  obtain ⟨x, y, t, ht, hrun, hx, hy⟩ := V.questions_eq_of_samplerRuns h hr
   rw [hr] at ht
   have hrf : Machine.runForD (encode V.sampler) (encode (z, r))
       (V.bound.eval (z.length + V.B z)) = some (encode (x, y)) :=
@@ -396,14 +396,14 @@ theorem accC_eq {z : BitStr} (h : V.Efficient z) (x y a b : BitStr) :
   rw [accC, decide_eq_true_iff, Machine.runForD_eq_some_iff (h.decider_time x y a b)]
   rfl
 
-theorem sampleC_fst_mem {z : BitStr} (h : V.Efficient z) {r : BitStr}
+theorem sampleC_fst_mem {z : BitStr} (h : V.SamplerRuns z) {r : BitStr}
     (hr : r ∈ Data.bitStrsOfLen (V.B z)) :
     (sampleC (encode V.sampler) (V.bound.eval (z.length + V.B z)) z r).1 ∈
       Data.bitStrsLE (V.B z) := by
   rw [V.sampleC_eq h ((Data.mem_bitStrsOfLen _ _).1 hr)]
   exact (Data.mem_bitStrsLE _ _).2 (V.questions z r).1.2
 
-theorem sampleC_snd_mem {z : BitStr} (h : V.Efficient z) {r : BitStr}
+theorem sampleC_snd_mem {z : BitStr} (h : V.SamplerRuns z) {r : BitStr}
     (hr : r ∈ Data.bitStrsOfLen (V.B z)) :
     (sampleC (encode V.sampler) (V.bound.eval (z.length + V.B z)) z r).2 ∈
       Data.bitStrsLE (V.B z) := by
@@ -412,7 +412,7 @@ theorem sampleC_snd_mem {z : BitStr} (h : V.Efficient z) {r : BitStr}
 
 /-- **The `μ` clause, doubled**: the tabulated distribution is `μ_z` on the block
 `(false, ·) × (true, ·)` and zero elsewhere. -/
-theorem mu_clause {z : BitStr} (h : V.Efficient z) (i j : Fin ((V.tab z).nX + 1)) :
+theorem mu_clause {z : BitStr} (h : V.SamplerRuns z) (i j : Fin ((V.tab z).nX + 1)) :
     (V.tab z).game.μ i j = (V.game z).doubled.μ (V.eX z i) (V.eX z j) := by
   classical
   set T := V.B z with hT
@@ -521,7 +521,7 @@ theorem quantumValue_tab {z : BitStr} (h : V.Efficient z) :
     quantumValue (V.tab z).game = quantumValue (V.game z) := by
   rw [← quantumValue_doubled (V.game z)]
   exact quantumValue_eq_of_equiv (V.game z).doubled.toGame (V.tab z).game (V.eX z) (V.eX z)
-    (V.eA z) (V.eA z) (V.mu_clause h) (V.D_clause h)
+    (V.eA z) (V.eA z) (V.mu_clause h.sampler_runs) (V.D_clause h)
 
 end PolyVerifier
 

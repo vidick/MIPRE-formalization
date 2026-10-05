@@ -1416,6 +1416,8 @@ public import MIPRE.Tactics
 public import MIPRE.Tailored.Canonical
 public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.Class
+public import MIPRE.Tailored.ClassPoly
+public import MIPRE.Tailored.ClassPolyTab
 public import MIPRE.Tailored.Compression
 public import MIPRE.Tailored.Data.Bridge
 public import MIPRE.Tailored.Data.Convert
