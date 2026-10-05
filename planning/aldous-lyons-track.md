@@ -802,6 +802,16 @@ bits padded; `dec` strips the padding and re-encodes with `encodeAnswer`.
   canonical decider's cost that P1b deferred; either that cost is supplied (its only consumer
   so far) or the slice checks whether `CompiledSoundness.output_soundness` uses boundedness beyond
   the answer bound `(2^n)^lam`, and restates it without.
+  *Progress (2026-10-05):* the canonical decider's cost, deferred in P1b, is in
+  (`Tailored/CanonicalCost.lean`, `lem:canonical-decider-cost`): with a total parse in front
+  (`canonProgT`, the same acceptance on encodings), it halts on every input `(n, d)` within
+  `c (T + 10^k + |n| + 1)^m (|d| + 1)^{e (k + 1)}` when `L` and `LP` run within `T (|d| + 1)^k`,
+  and its description is `4 |L| + |LP|` plus a constant. What remains for `IsBounded λ'` of the
+  presented verifier is the wrapper of `Verifier.ofSamplerDecider` at a `λ'` linear in `λ`
+  (`wrapCore_cost'` is explicit, but asks for the sampler's bound at every index, which
+  tailored λ-boundedness gives only from `n = 2`), and `ofTNFV` with `canonProgT` in place of
+  `canonProg`. The loss is harmless: `δ(a, b, Cλ, n, ε) ≤ δ(a C^a, b, λ, n, ε)` for `a ≥ 1`, and
+  the contract chooses `a`.
 - **P3e — the two programs and their correctness (5–9k, 2–3 PRs).** `L^intro` by type, the padding
   split computed by running the input's `L` on the readable `y` (Introspect, Read) or `L_w(z)`
   (Sample). `LP^intro` as constraint lists per check family, with `rejectConstraint` wherever a

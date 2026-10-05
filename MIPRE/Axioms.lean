@@ -244,6 +244,7 @@ public import MIPRE.Tailored.Intro.Layout
 public import MIPRE.Tailored.Intro.Source
 public import MIPRE.Tailored.Intro.Presentation
 public import MIPRE.Background.Tailored.Intro.Pauli
+public import MIPRE.Tailored.CanonicalCost
 
 @[expose] public section
 
@@ -3844,5 +3845,13 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.Tailored.vecOf, MIPRE.Tailored.ofFn_vecOf, MIPRE.Tailored.presented,
   MIPRE.Tailored.okD, MIPRE.Tailored.encV, MIPRE.Tailored.length_encD_of_okD,
   MIPRE.Tailored.valStar_presented_le, MIPRE.Tailored.hasPerfectZPC_presented
+
+-- blueprint `lem:canonical-decider-cost`
+#guard_sorry_free MIPRE.Cost.Prog.pushProg_runs_le, MIPRE.Tailored.parseDIn,
+  MIPRE.Tailored.parseDIn_encode, MIPRE.Tailored.canonProgT, MIPRE.Tailored.canonProgT_wellScoped,
+  MIPRE.Tailored.canonProgT_runs_iff, MIPRE.Tailored.step_runs, MIPRE.Tailored.canonBound,
+  MIPRE.Tailored.canonProgT_halts, MIPRE.Tailored.canonPoly, MIPRE.Tailored.canonBound_le,
+  MIPRE.Tailored.dom_canonBound, MIPRE.Tailored.canonProgT_timeBound,
+  MIPRE.Tailored.esize_canonProgT
 
 end

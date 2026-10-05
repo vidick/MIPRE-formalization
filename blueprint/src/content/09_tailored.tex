@@ -1487,6 +1487,33 @@ Lemma~\ref{lem:tailored-detyping}; the encoded lists have the question's length,
 vectors the permutation strategy reads.
 \end{proof}
 
+\begin{lemma}[The running time of the canonical decider]
+\label{lem:canonical-decider-cost}
+\uses{def:canonical-decider}
+\lean{MIPRE.Cost.Prog.pushProg_runs_le, MIPRE.Tailored.parseDIn, MIPRE.Tailored.parseDIn_encode,
+  MIPRE.Tailored.canonProgT, MIPRE.Tailored.canonProgT_wellScoped,
+  MIPRE.Tailored.canonProgT_runs_iff, MIPRE.Tailored.step_runs, MIPRE.Tailored.canonBound,
+  MIPRE.Tailored.canonProgT_halts, MIPRE.Tailored.canonPoly, MIPRE.Tailored.canonBound_le,
+  MIPRE.Tailored.dom_canonBound, MIPRE.Tailored.canonProgT_timeBound,
+  MIPRE.Tailored.esize_canonProgT}
+\leanok
+Put a total parse of the input $(n, x, y, a, b)$ in front of the canonical decider; on encoded
+inputs it is the identity, so the decider accepts what it accepted. There are constants $c, m, e$
+such that, when $L$ and $LP$ halt within $T(|d| + 1)^k$ on every input $(n, d)$, the decider
+halts within $c\,(T + 10^k + |n| + 1)^m (|d| + 1)^{e(k+1)}$ on every input $(n, d)$, malformed
+ones included. Its description is $4|L| + |LP|$ plus a constant.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Every call reads only components of the parsed input: $L$ on $(n, x, \kappa)$ and $(n, y,
+\kappa)$, $LP$ on $(n, x, y, a^R, b^R)$, each of size linear in $|d|$, so each costs at most
+$T\,(20|d| + 20)^k$, and so does its output. The polynomial-time steps between them run on states
+made of the input and these outputs, so their costs are polynomials in $T(20|d|+20)^k$ and the
+parse's cost, a polynomial in $|n| + |d|$. The domination tools of the repeated programs turn
+the sum into the stated shape.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}

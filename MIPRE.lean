@@ -1414,6 +1414,7 @@ public import MIPRE.TM.MultiInput.OneInputEquiv
 public import MIPRE.TM.Universal.Spec
 public import MIPRE.Tactics
 public import MIPRE.Tailored.Canonical
+public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.Class
 public import MIPRE.Tailored.Compression
 public import MIPRE.Tailored.Data.Bridge
