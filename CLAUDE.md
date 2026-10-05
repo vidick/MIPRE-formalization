@@ -141,9 +141,8 @@ Two things to know about reading it:
 ## Things that will bite
 
 - **Vendored trees are read-only**: `MIPRE/Background/Repetition/TenProofs/`,
-  `MIPRE/Background/Repetition/CommutingRepetition/`,
-  `MIPRE/Background/Orthonormalization/Orthogonalization/`
-  and `MIPRE/Background/LiehrTsirelson/Upstream/`. Change them only through
+  `MIPRE/Background/Repetition/CommutingRepetition/` and
+  `MIPRE/Background/Orthonormalization/Orthogonalization/`. Change them only through
   `scripts/vendor-*.py`, which records each fix. Nothing outside
   `MIPRE/Background/` may name their namespaces, nor the `MIPStarRE` namespace of the Lake
   dependency. A fix the dependency needs goes upstream (`LionSR/MIPStarRE`) and then into

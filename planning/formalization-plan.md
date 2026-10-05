@@ -993,7 +993,9 @@ propositions are proved from `MIPRE.separation` in `MIPRE/Background/LiehrTsirel
 sorry-free, through an identification of the two vocabularies: the commuting-operator
 strategies are the same data, and a POVM tensor strategy is a projective one by Naimark
 dilation. [reports/liehr-tsirelson-bridge.md](../reports/liehr-tsirelson-bridge.md) records
-what the comparison showed; `rem:liehr-statements` cites it in the blueprint.
+what the comparison showed; `rem:liehr-statements` cites it in the blueprint. Removed
+2026-10-05 for the Palomar submission (the upstream project carries no licence; the check is
+not one of the formalization's results); the tree and its bridge are at commit `d4cbb2d`.
 
 **The polynomial-time halting reduction and the paper's class (#230), planned 2026-09-28.**
 `MIPStarComputable = IsRE` is proved for the computable class (`def:mipstar`); the paper's

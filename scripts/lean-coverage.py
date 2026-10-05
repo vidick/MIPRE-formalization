@@ -41,7 +41,6 @@ VENDORED = (
     "MIPRE/Background/Repetition/TenProofs/",
     "MIPRE/Background/Repetition/CommutingRepetition/",
     "MIPRE/Background/Orthonormalization/Orthogonalization/",
-    "MIPRE/Background/LiehrTsirelson/Upstream/",
 )
 
 DECL_KINDS = ("theorem", "lemma", "def", "abbrev", "structure", "inductive", "class",

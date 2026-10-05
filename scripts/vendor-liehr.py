@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Vendor the core of `lukasliehr/MIPRE`, an independent Lean statement of Tsirelson's problem.
+"""RETIRED 2026-10-05: the vendored tree and its bridge were removed from the repository (the
+upstream project carries no licence); they are at commit d4cbb2d. Kept for its record.
+
+Vendor the core of `lukasliehr/MIPRE`, an independent Lean statement of Tsirelson's problem.
 
 Usage (from the repository root):
 
