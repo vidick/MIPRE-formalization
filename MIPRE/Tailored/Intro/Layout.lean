@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Foundations.Introspection.AuxiliaryAnswerCoding
+public import MIPRE.Foundations.Verifier
 
 @[expose] public section
 
@@ -248,6 +249,79 @@ theorem length_enc_pauli (p : P) (bs : BitStr) (h : bs.length = plen p) :
 
 theorem dec_enc_pauli (p : P) (bs : BitStr) :
     dec Q R splitR splitL (.inl p : QuestionType P ℓ) (enc Q R splitR (.inl p) bs) = bs := rfl
+
+/-! ## Well-formed answers, uniformly -/
+
+/-- A byte answer is well formed for the layout at a label: a Pauli answer of the label's length,
+or a tuple whose registers have length `Q` and whose input answer fits its two blocks. -/
+def OkLayout : QuestionType P ℓ → BitStr → Prop
+  | .inl p, bs => bs.length = plen p
+  | .inr (.introspect, w), bs =>
+    ∃ y α, bs = pairBits y α ∧ y.length = Q ∧ Fits R splitR splitL (.introspect, w) y α
+  | .inr (.sample, w), bs =>
+    ∃ y α, bs = pairBits y α ∧ y.length = Q ∧ Fits R splitR splitL (.sample, w) y α
+  | .inr (.read, w), bs => ∃ y yp α, bs = tripleBits y yp α ∧ y.length = Q ∧ yp.length = Q ∧
+    Fits R splitR splitL (.read, w) y α
+  | .inr (.hide _, _), bs => ∃ y yp x, bs = tripleBits y yp x ∧ y.length = Q ∧ yp.length = Q ∧
+    x.length = Q
+
+variable {Q R plen pread splitR splitL} in
+/-- **The round trip on well-formed answers.** -/
+theorem dec_enc_of_ok {u : QuestionType P ℓ} {bs : BitStr}
+    (h : OkLayout Q R plen splitR splitL u bs) :
+    dec Q R splitR splitL u (enc Q R splitR u bs) = bs := by
+  rcases u with p | ⟨t, w⟩
+  · rfl
+  · cases t with
+    | introspect =>
+      obtain ⟨y, α, rfl, hy, hf⟩ := h
+      exact dec_enc_pair (Or.inl rfl) hy hf
+    | sample =>
+      obtain ⟨y, α, rfl, hy, hf⟩ := h
+      exact dec_enc_pair (Or.inr rfl) hy hf
+    | read =>
+      obtain ⟨y, yp, α, rfl, hy, hyp, hf⟩ := h
+      exact dec_enc_read hy hyp hf
+    | hide k =>
+      obtain ⟨y, yp, x, rfl, hy, hyp, hx⟩ := h
+      exact dec_enc_hide hy hyp hx
+
+variable {Q R plen splitR splitL} in
+/-- **Well-formed answers re-encode to the label's lengths.** -/
+theorem length_enc_of_ok {u : QuestionType P ℓ} {bs : BitStr}
+    (h : OkLayout Q R plen splitR splitL u bs) :
+    (enc Q R splitR u bs).length = lenR Q R plen pread u + lenL Q R plen pread u := by
+  rcases u with p | ⟨t, w⟩
+  · exact length_enc_pauli Q R plen pread splitR p bs h
+  · cases t with
+    | introspect =>
+      obtain ⟨y, α, rfl, hy, hf⟩ := h
+      exact length_enc_pair plen pread (Or.inl rfl) hy hf
+    | sample =>
+      obtain ⟨y, α, rfl, hy, hf⟩ := h
+      exact length_enc_pair plen pread (Or.inr rfl) hy hf
+    | read =>
+      obtain ⟨y, yp, α, rfl, hy, hyp, hf⟩ := h
+      exact length_enc_read plen pread hy hyp hf
+    | hide k =>
+      obtain ⟨y, yp, x, rfl, hy, hyp, hx⟩ := h
+      exact length_enc_hide plen pread hy hyp hx
+
+/-! ## On bounded answers -/
+
+/-- Decoding into the answers of length at most `B`, `[]` when the decoding is longer. -/
+def decB (B : ℕ) (u : QuestionType P ℓ) (tb : BitStr) : Verifier.Answers B :=
+  if h : (dec Q R splitR splitL u tb).length ≤ B then ⟨_, h⟩ else ⟨[], by simp⟩
+
+variable {Q R plen splitR splitL} in
+theorem decB_enc_of_ok {B : ℕ} {u : QuestionType P ℓ} (a : Verifier.Answers B)
+    (h : OkLayout Q R plen splitR splitL u a.1) :
+    decB Q R splitR splitL B u (enc Q R splitR u a.1) = a := by
+  have e := dec_enc_of_ok h
+  unfold decB
+  have hb : (dec Q R splitR splitL u (enc Q R splitR u a.1)).length ≤ B := by rw [e]; exact a.2
+  simp only [hb, ↓reduceDIte]
+  exact Subtype.ext e
 
 end MIPRE.Tailored.Intro
 
