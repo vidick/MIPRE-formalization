@@ -12,7 +12,7 @@ public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Orthonormali
 public import MIPRE.Background.LIDT.Co.Doubling.Orthonormalization
 public import MIPRE.Background.Orthonormalization.DyadicOrtho
 public import MIPRE.Background.LIDT.Co.Test.StrategyBiProj.Measurements
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
 
 @[expose] public section
 
@@ -122,7 +122,7 @@ namespace MIPRE.LIDT.Co.MakingMeasurementsProjective
 open MIPStarRE.LDT (avgOver uniformDistribution)
 open MIPStarRE.LDT.MakingMeasurementsProjective (orthonormalizationError
   orthonormalizationMainLemmaError orthonormalizationCompletionRouteError
-  consistencyToAlmostProjectiveError totalMass_sub_two_defect_le_diagA)
+  consistencyToAlmostProjectiveError)
 open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
   (orthonormalizationMainLemmaError_le_orthonormalizationError
   orthonormalizationMainLemmaError_two_mul_le_orthonormalizationError completionRouteError_bound)

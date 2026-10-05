@@ -5,8 +5,8 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Game
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DiagonalLine
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.AxisParallelLine
+public import MIPStarRE.LDT.Basic.DiagonalLine
+public import MIPStarRE.LDT.Basic.AxisParallelLine
 public import Mathlib.FieldTheory.Finite.Basic
 public import MIPRE.Tactics
 

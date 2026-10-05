@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.Pasting.Statements
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.Weights
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.Scalar
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.TruncatedSums
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.BernoulliTail
+public import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.BernoulliTail
 
 @[expose] public section
 

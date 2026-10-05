@@ -1,5 +1,11 @@
 # Low individual degree test — port plan (copy-and-integrate from MIPStarRE)
 
+> **2026-10-05.** The vendored copy this plan produced (`MIPRE/Background/LIDT/MIPStarRE/`,
+> decisions D1–D5 below) was replaced by a pinned Lake dependency on `LionSR/MIPStarRE` at
+> `5fc363b`, for the Palomar submission; `planning/palomar-dependencies.md` records why and
+> what it took. The bridge, the adapter and the `Co/` port are unchanged except for their
+> import paths. The rest of this file is the record of the port as it was done.
+
 Status: **plan only, nothing ported yet.** Written 2026-09-08 after inspecting a local
 clone of `LionSR/MIPStarRE` at commit `507e8122` (2026-08-25). The authors (Sirui Lu and
 collaborators) have agreed to the reuse of their code in this repository; the upstream

@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Preliminaries.SwitchSandwichPrep.Core
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct
+public import MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct
 
 @[expose] public section
 

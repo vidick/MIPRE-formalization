@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.Definitions
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.SumBounds
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.SumBounds
 
 @[expose] public section
 

@@ -3,7 +3,8 @@
 
 The commuting-operator port of the low-individual-degree test (`planning/c6b-plan.md`,
 milestones M0-M14, and its section "Port conventions") mirrors the vendored tree
-`MIPRE/Background/LIDT/MIPStarRE/LDT/` file by file under `MIPRE/Background/LIDT/Co/`, with the
+`MIPStarRE/LDT/` of the `MIPStarRE` Lake dependency (`.lake/packages/MIPStarRE`, pinned in
+`lake-manifest.json`) file by file under `MIPRE/Background/LIDT/Co/`, with the
 same relative paths, and keeps the vendored declaration names. This script checks that a ported
 file accounts for every declaration of its vendored counterpart: each one is either ported (a
 declaration of the same name) or listed, with its reason, in the ported file's module docstring
@@ -67,8 +68,10 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PORT_DIR = "MIPRE/Background/LIDT/Co"
-VENDOR_DIR = "MIPRE/Background/LIDT/MIPStarRE/LDT"
-VENDOR_TREE = "MIPRE/Background/LIDT/MIPStarRE"
+# The LIDT development is a Lake dependency (`lakefile.toml`), checked out by `lake build`
+# under `.lake/packages/MIPStarRE`; the port is paired against that checkout.
+VENDOR_DIR = ".lake/packages/MIPStarRE/MIPStarRE/LDT"
+VENDOR_TREE = ".lake/packages/MIPStarRE/MIPStarRE"
 VENDOR_PREFIXES = ("MIPStarRE.LDT.", "MIPStarRE.")
 PORT_PREFIXES = ("MIPRE.LIDT.Co.",)
 # Namespaces of the state, renamed by the port; dropped from names before comparing.

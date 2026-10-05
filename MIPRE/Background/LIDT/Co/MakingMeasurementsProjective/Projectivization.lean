@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Statements
 public import MIPRE.Background.LIDT.Co.Basic.MeasurementLift
 public import MIPRE.Background.LIDT.Co.Preliminaries.BipartiteSelfConsistency.Completion
 public import MIPRE.Background.LIDT.Co.Preliminaries.CauchySchwarz
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
 
 @[expose] public section
 
@@ -50,7 +50,6 @@ The pure real inequality `totalMass_sub_two_defect_le_diagA` and the error funct
 
 ## Not ported
 
-- `totalMass_sub_two_defect_le_diagA`: classical, imported.
 
 ## References
 
@@ -64,8 +63,24 @@ open scoped BigOperators
 namespace MIPRE.LIDT.Co.MakingMeasurementsProjective
 
 open MIPStarRE.LDT (avgOver uniformDistribution)
-open MIPStarRE.LDT.MakingMeasurementsProjective
-  (consistencyToAlmostProjectiveError totalMass_sub_two_defect_le_diagA)
+open MIPStarRE.LDT.MakingMeasurementsProjective (consistencyToAlmostProjectiveError)
+
+/-- Lower bound for the `diagA` sum in terms of the overlap and the bipartite consistency defect,
+obtained from the Cauchy–Schwarz squared bound. Upstream keeps it `private` since its
+Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy. -/
+theorem totalMass_sub_two_defect_le_diagA {diagA diagB totalMass defect overlap : ℝ}
+    (hdiagA_nonneg : 0 ≤ diagA) (hdefect_nonneg : 0 ≤ defect) (hdefect_eq : defect = totalMass - overlap)
+    (hoverlap_sq : overlap ^ 2 ≤ diagA * diagB) (hdiagB_le : diagB ≤ totalMass) :
+    totalMass - 2 * defect ≤ diagA := by
+  by_cases hsmall : totalMass ≤ defect
+  · linarith
+  · have hmass_pos : 0 < totalMass := by
+      have hdefect_lt : defect < totalMass := lt_of_not_ge hsmall
+      linarith
+    have hoverlap_eq : overlap = totalMass - defect := by linarith [hdefect_eq]
+    have hsquare : (totalMass - defect) ^ 2 ≤ diagA * totalMass := by
+      nlinarith [hoverlap_eq, hoverlap_sq, hdiagB_le, hdiagA_nonneg]
+    nlinarith [hsquare, hmass_pos]
 
 /-! ### Orthonormalization helper lemmas -/
 

@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.InductionParameterBounds.Averaging
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.StageDataConstructors
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core
+public import MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core
 
 @[expose] public section
 
@@ -52,7 +52,6 @@ lemmas are terms.
 
 ## Not ported
 
-- `avgOver_uniform_fq_rpow_le_rpow_avg`: classical, imported.
 - `avgOver_uniform_fq_nonneg`: classical, imported.
 
 ## References
@@ -72,10 +71,24 @@ open MIPStarRE.LDT (Parameters FieldModel Point Fq uniformDistribution avgOver a
 open MIPStarRE.LDT.MainInductionStep (mainInductionError mainInductionNu
   selfImprovementInInductionError sliceConditioningLoss
   m_mul_sliceConditioningLoss_rpow_le_next_m_mul_rpow
-  m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow avgOver_uniform_fq_rpow_le_rpow_avg)
+  m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow avgOver_uniform_rpow_one_div_le_rpow_avg)
 open MIPRE.LIDT.Co (SymStrat AnswerSymStrat)
 
 universe uP uK
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof. -/
+lemma avgOver_uniform_fq_rpow_le_rpow_avg
+    (params : Parameters) [FieldModel params.q]
+    (f : Fq params → ℝ)
+    (n : ℕ)
+    (hn : 1 ≤ n)
+    (hf : ∀ a, 0 ≤ f a) :
+    avgOver (uniformDistribution (Fq params))
+        (fun a => Real.rpow (f a) (1 / (n : ℝ))) ≤
+      Real.rpow (avgOver (uniformDistribution (Fq params)) f) (1 / (n : ℝ)) := by
+  simpa using
+    avgOver_uniform_rpow_one_div_le_rpow_avg
+      (α := Fq params) (f := f) (n := n) hn hf
 
 variable {𝔓 : Type uP} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type uK} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

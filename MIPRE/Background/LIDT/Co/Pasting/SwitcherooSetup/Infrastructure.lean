@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Core.CompletePart
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Infrastructure
+public import MIPStarRE.LDT.Pasting.SwitcherooSetup.Infrastructure
 
 @[expose] public section
 

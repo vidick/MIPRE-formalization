@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Variance
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Variance
 
 @[expose] public section
 
@@ -69,8 +69,6 @@ vendored `AddInUStep34AndTransfer/Factored`, which Co `Factored` imports already
 
 ## Not ported
 
-- `le_sqrt_of_le_sqrt_of_le`: classical, imported.
-
 ## References
 
 In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
@@ -86,10 +84,20 @@ open MIPStarRE.LDT (Parameters FieldModel Point Fq avgOver uniformDistribution a
   avgOver_sum avgOver_congr avgOver_uniform_le_const)
 open MIPStarRE.LDT.ExpansionHypercubeGraph (avgOver_independentPointPair_eq_uniform_prod)
 open MIPStarRE.LDT.GlobalVariance (localVarianceOfPointsError globalVarianceOfPointsError)
-open MIPStarRE.LDT.SelfImprovement (selfImprovementVarianceError le_sqrt_of_le_sqrt_of_le)
+open MIPStarRE.LDT.SelfImprovement (selfImprovementVarianceError)
 open MIPRE.LIDT.Co.GlobalVariance (pointConditionedOutcomeOperatorAtPolynomial
   localVarianceDeviationAtPolynomial globalVarianceDeviationAtPolynomial
   weightedPointConditionedOperator_sq globalVarianceDeviation_sum_le_of_localVarianceDeviation_sum_le)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Sqrt-monotonicity transit lemma used by the two GlobalVariance endpoint
+bridges below: a real bounded by `Real.sqrt s` is bounded by `Real.sqrt ζ`
+whenever `s ≤ ζ`. Both `Q₂→Q₃` and `Q₃→Q₄` apply this fact with the same `s`
+(the summed `globalVarianceDeviationAtPolynomial`). -/
+lemma le_sqrt_of_le_sqrt_of_le {a : ℝ} {s ζ : ℝ}
+    (hcs : a ≤ Real.sqrt s) (hsum : s ≤ ζ) : a ≤ Real.sqrt ζ :=
+  le_trans hcs (Real.sqrt_le_sqrt hsum)
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

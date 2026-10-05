@@ -2,7 +2,7 @@
 """Sort the declarations of vendored LDT files into quantum and classical, and measure the port.
 
 The commuting-operator port (`planning/c6b-plan.md`, milestones M0-M14) ports the quantum
-declarations of the vendored tree `MIPRE/Background/LIDT/MIPStarRE/LDT/` to the symmetric model
+declarations of the `MIPStarRE` Lake dependency (`.lake/packages/MIPStarRE/MIPStarRE/LDT/`) to the symmetric model
 and imports the classical ones (sampling, distributions, scalar error constants) unchanged. The
 sizes of the remaining stages in section 3 of the plan are estimated as
 
@@ -59,7 +59,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LIDT = os.path.join(ROOT, "MIPRE", "Background", "LIDT")
-VENDORED = os.path.join(LIDT, "MIPStarRE", "LDT")
+VENDORED = os.path.join(ROOT, ".lake", "packages", "MIPStarRE", "MIPStarRE", "LDT")
 PORTED = os.path.join(LIDT, "Co")
 
 QUANTUM = re.compile(

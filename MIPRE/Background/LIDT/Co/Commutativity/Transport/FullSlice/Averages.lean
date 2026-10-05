@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.Commutativity.EvaluatedSliceCommutation.A
 public import MIPRE.Background.LIDT.Co.Commutativity.Scaffold.Products
 public import MIPRE.Background.LIDT.Co.Commutativity.Transport.Pullback
 public import MIPRE.Background.LIDT.Co.Preliminaries.PolynomialAgreement
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
+public import MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages
 
 @[expose] public section
 

@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Basic.QuantumState
 public import MIPRE.Background.LIDT.Co.Basic.Distribution
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
 
 @[expose] public section
 

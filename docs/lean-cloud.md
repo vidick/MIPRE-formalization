@@ -65,6 +65,8 @@ LeanSearch available.
    leansearch.net
    premise-search.com
    leanpremise.net
+   palomar-registry.org
+   data.palomar-registry.org
    ```
 
    Since Mathlib v4.35 its cache tool downloads from `cache.mathlib.org`; the legacy
@@ -145,9 +147,11 @@ enable lean-lsp-mcp's local Loogle (13 GiB peak).
 
 * Know which regime you are in: `MIPRE/Foundations`, `MIPRE/TM`, `MIPRE/LCS` and
   `MIPRE/Cslib` never import `MIPRE/Background`, so they cost seconds to check
-  whatever the snapshot holds. Only the nine modules that reach the vendored trees
-  (`Repetition/Entangled.lean`, `Repetition/{Commuting,TracialDensity}.lean`, the
-  six `LIDT/Bridge/*.lean`) depend on the bundle having landed.
+  whatever the snapshot holds. Only the three modules that reach the vendored trees
+  (`Repetition/Entangled.lean`, `Repetition/{Commuting,TracialDensity}.lean`) and
+  the importers of the MIPStarRE dependency (`LIDT/Bridge/*.lean`, `LIDT/Co/`)
+  depend on the bundle having landed; the bundle carries the dependency's oleans
+  too, under `.lake/packages/MIPStarRE/.lake/build`.
 * Check a module: `lake build MIPRE.Foundations.Compression` (only its
   dependencies are built).
 * After adding or removing a file, run `lake exe mk_all`; CI fails if `MIPRE.lean`

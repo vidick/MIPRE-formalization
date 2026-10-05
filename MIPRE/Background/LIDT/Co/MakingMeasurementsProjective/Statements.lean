@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Test.Defs
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Defs
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Defs
 
 @[expose] public section
 

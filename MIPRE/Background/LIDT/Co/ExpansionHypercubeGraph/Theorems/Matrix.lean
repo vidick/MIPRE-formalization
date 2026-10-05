@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.ExpansionHypercubeGraph.Theorems.Foundations
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix
 
 @[expose] public section
 
@@ -45,7 +45,6 @@ edge-difference form of the Laplacian) is imported.
   `globalVariance_eq_closedForm`.
 - `rerandomizeCoordWeight_rowSum`: classical, imported.
 - `update_eq_fixed_count`: classical, imported.
-- `hypercubeAdjacencyWeight_eq_rerandomizeCoordWeight`: classical, imported.
 - `rerandomizeCoordWeight_colSum`: classical, imported.
 - `update_swap`: classical, imported.
 - `update_value_eq`: classical, imported.
@@ -67,7 +66,17 @@ namespace MIPRE.LIDT.Co.ExpansionHypercubeGraph
 
 open MIPStarRE.LDT (Parameters Point avgOver avgOver_uniform_eq_pmf_sum)
 open MIPStarRE.LDT.ExpansionHypercubeGraph (hypercubeVertexCount independentPointPair laplacian
-  rerandomizeCoordWeight hypercubeAdjacencyWeight hypercubeAdjacencyWeight_eq_rerandomizeCoordWeight)
+  rerandomizeCoordWeight hypercubeAdjacencyWeight)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at
+`5fc363b`); the port carries its own copy, with upstream's proof. -/
+theorem hypercubeAdjacencyWeight_eq_rerandomizeCoordWeight (params : Parameters) (u v : Point params) :
+    hypercubeAdjacencyWeight params u v = (rerandomizeCoordWeight params u v : ℂ) := by
+  unfold hypercubeAdjacencyWeight rerandomizeCoordWeight
+  simp_rw [div_eq_mul_inv]
+  rw [Nat.cast_mul, Nat.cast_mul]
+  apply Complex.ext <;> simp
+  ring
 
 variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 

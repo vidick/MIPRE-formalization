@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Vendor the MIPStarRE low individual degree test development into this repository.
+"""RETIRED (2026-10-05, planning/palomar-dependencies.md): the MIPStarRE development is a
+pinned Lake dependency now (`lakefile.toml`), not a vendored copy, so this script has nothing
+to produce. It is kept for the record of the fixes it applied to the former copy.
+
+Vendor the MIPStarRE low individual degree test development into this repository.
 
 Usage (from the repository root):
 

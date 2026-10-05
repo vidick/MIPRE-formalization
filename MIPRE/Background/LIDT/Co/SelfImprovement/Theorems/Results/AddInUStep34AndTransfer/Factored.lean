@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.Basic.SubMeasurementFamilies
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Defs.Families
 public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.DataProcessing
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Statements
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.CommonHelpers
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual
@@ -18,7 +18,7 @@ public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUDi
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUStep12.Raw
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUStep12.Selected
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.HelperCompleteness.Bracketed
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
 
 @[expose] public section
 
@@ -59,7 +59,6 @@ prebuilt; no Co file names them (they are replaced by M9's summed form, see Co
 
 - `addInU_le_sqrt_of_factor_bounds_right`: classical, imported.
 - `addInU_le_sqrt_of_factor_bounds_left`: classical, imported.
-- `addInU_weighted_cauchy_schwarz`: classical, imported.
 
 ## References
 
@@ -74,9 +73,38 @@ namespace MIPRE.LIDT.Co.SelfImprovement
 
 open MIPStarRE.LDT (Parameters FieldModel Point avgOver uniformDistribution)
 open MIPStarRE.LDT.SelfImprovement (addInU_le_sqrt_of_factor_bounds_right
-  addInU_le_sqrt_of_factor_bounds_left addInU_weighted_cauchy_schwarz)
+  addInU_le_sqrt_of_factor_bounds_left)
 open MIPRE.LIDT.Co.GlobalVariance (pointConditionedOutcomeOperatorAtPolynomial
   globalVarianceDeviationAtPolynomial)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Weighted Cauchy--Schwarz for the non-selected add-in-`u` Step 3/4
+summands.
+
+The non-selected Step 3 and Step 4 estimates use the same finite inequality
+over independent point pairs and polynomial outcomes.  This helper fixes that
+common summation structure, leaving the two applications to supply only their
+step-specific summands and pointwise operator Cauchy--Schwarz estimates. -/
+theorem addInU_weighted_cauchy_schwarz
+    (params : Parameters) [FieldModel params.q]
+    (t x y : Point params × Point params → MIPStarRE.LDT.Polynomial params → ℝ)
+    (ht : ∀ uv h, |t uv h| ≤ Real.sqrt (x uv h) * Real.sqrt (y uv h))
+    (hx : ∀ uv h, 0 ≤ x uv h)
+    (hy : ∀ uv h, 0 ≤ y uv h) :
+    |avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
+      ∑ h : MIPStarRE.LDT.Polynomial params, t uv h)| ≤
+      Real.sqrt
+        (avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
+          ∑ h : MIPStarRE.LDT.Polynomial params, x uv h)) *
+      Real.sqrt
+        (avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
+          ∑ h : MIPStarRE.LDT.Polynomial params, y uv h)) := by
+  exact
+    MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz
+      (Question := Point params × Point params) (Outcome := MIPStarRE.LDT.Polynomial params)
+      (uniformDistribution (Point params × Point params))
+      (t := t) (x := x) (y := y) ht hx hy
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

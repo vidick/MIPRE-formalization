@@ -7,7 +7,7 @@ MainInductionStep/Theorems/MainTheorems/Base.lean, to the symmetric model of
 Authors: Thomas Vidick
 -/
 module
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomialEmbedding
+public import MIPStarRE.LDT.Basic.LinePolynomialEmbedding
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.SelfImprovementAssembly.Core
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.PastingAssembly.Successor

@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Preliminaries.ConsistencyBridges
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+public import MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
 
 @[expose] public section
 

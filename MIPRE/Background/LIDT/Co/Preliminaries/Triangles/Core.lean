@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Preliminaries.CauchySchwarz
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core
+public import MIPStarRE.LDT.Preliminaries.Triangles.Core
 
 @[expose] public section
 
@@ -54,7 +54,6 @@ measurements being the identity.
 ## Not ported
 
 - `max_zero_add_le`: classical, imported.
-- `avgOver_abs_le_sqrt_of_pointwise_nonneg`: classical, imported.
 
 ## References
 
@@ -67,7 +66,21 @@ open scoped BigOperators
 namespace MIPRE.LIDT.Co.Preliminaries
 
 open MIPStarRE.LDT (Distribution avgOver avgOver_mono avgOver_add avgOver_zero)
-open MIPStarRE.LDT.Preliminaries (avgOver_abs_le_sqrt_of_pointwise_nonneg)
+open MIPStarRE.LDT (avgOver_nonneg)
+open MIPStarRE.LDT.Preliminaries (avgOver_abs_le_sqrt_of_pointwise)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at
+`5fc363b`); the port carries its own copy, with upstream's proof. -/
+theorem avgOver_abs_le_sqrt_of_pointwise_nonneg {Question : Type*} (𝒟 : Distribution Question)
+    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1) (f g : Question → ℝ)
+    (hfg : ∀ q, |f q| ≤ Real.sqrt (g q)) (hg : ∀ q, 0 ≤ g q) :
+    avgOver 𝒟 (fun q => |f q|) ≤ Real.sqrt (avgOver 𝒟 g) := by
+  have havg_nonneg : 0 ≤ avgOver 𝒟 (fun q => |f q|) :=
+    avgOver_nonneg 𝒟 (fun q => |f q|) (fun q => abs_nonneg (f q))
+  have havg_abs : |avgOver 𝒟 (fun q => |f q|)| ≤ Real.sqrt (avgOver 𝒟 g) :=
+    avgOver_abs_le_sqrt_of_pointwise 𝒟 (fun q => |f q|) g
+      (fun q => by simpa [abs_of_nonneg (abs_nonneg (f q))] using hfg q) hg h𝒟
+  simpa [abs_of_nonneg havg_nonneg] using havg_abs
 
 section VecState
 

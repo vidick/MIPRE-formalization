@@ -6,7 +6,7 @@ Distribution.lean, to the symmetric model of `planning/c6b-plan.md`; not a vendo
 Authors: Thomas Vidick
 -/
 module
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
+public import MIPStarRE.LDT.Basic.Distribution
 
 @[expose] public section
 

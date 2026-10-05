@@ -7,7 +7,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Defs.Tuples
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Interpolation
+public import MIPStarRE.LDT.Pasting.Defs.Interpolation
 
 @[expose] public section
 

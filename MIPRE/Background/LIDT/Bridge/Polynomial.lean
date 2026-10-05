@@ -5,8 +5,8 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Bridge.Field
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomials
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial
+public import MIPStarRE.LDT.Basic.LinePolynomials
+public import MIPStarRE.LDT.Basic.LowDegreePolynomial
 
 @[expose] public section
 

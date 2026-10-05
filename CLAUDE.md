@@ -6,21 +6,24 @@ A Lean 4 + Mathlib formalization of MIP* = RE, with a leanblueprint under
 ## The shape of the library decides your feedback loop
 
 The import graph is one-way. `MIPRE/Foundations/`, `MIPRE/TM/`, `MIPRE/LCS/` and
-`MIPRE/Cslib/` — 62 files, 18k lines, the mathematics this project writes itself —
-import Mathlib and each other, and **never** `MIPRE/Background/`. The vendored
-trees under `MIPRE/Background/` (453 files, 253k lines: 92% of the repository) are
-reached by exactly nine modules, all of them in `MIPRE/Background/` too:
-`Repetition/Entangled.lean` (→ `TenProofs`, one module of 71k lines),
-`Repetition/{Commuting,TracialDensity}.lean` (→ `CommutingRepetition`) and the six
-`LIDT/Bridge/*.lean` (→ `MIPStarRE`).
+`MIPRE/Cslib/` — the mathematics this project writes itself — import Mathlib and each
+other, and **never** `MIPRE/Background/`. The vendored trees under `MIPRE/Background/`
+(the 71k-line `TenProofs` module and `CommutingRepetition`) are reached by exactly three
+modules, all of them in `MIPRE/Background/` too: `Repetition/Entangled.lean` and
+`Repetition/{Commuting,TracialDensity}.lean`. The low individual degree test is not vendored
+but a **Lake dependency**, `MIPStarRE` (`lakefile.toml`, pinned in `lake-manifest.json`,
+checked out by `lake build` under `.lake/packages/MIPStarRE`): the six `LIDT/Bridge/*.lean`
+import its main theorem, and the commuting-operator port `LIDT/Co/` imports its definitions.
+`planning/palomar-dependencies.md` records why.
 
 So there are two regimes, and it is worth knowing which one you are in before
 choosing a tool:
 
 * **Foundations, TM, LCS** — seconds per check, always. Nothing there reaches the
   vendored trees.
-* **The nine bridges, or any whole-library build** — seconds if the modules are
-  already built, 30 to 45 minutes if they are not. Cloud sessions get them
+* **The bridges, the `LIDT/Co/` port, or any whole-library build** — seconds if the
+  modules are already built, 30 to 45 minutes if they are not (the `MIPStarRE`
+  dependency's 337 modules are built into its own `.lake/packages/MIPStarRE/.lake`, once). Cloud sessions get them
   prebuilt (`docs/lean-cloud.md`); the `lean-warm:` line at session start says how
   many are in place.
 
@@ -139,10 +142,12 @@ Two things to know about reading it:
 
 - **Vendored trees are read-only**: `MIPRE/Background/Repetition/TenProofs/`,
   `MIPRE/Background/Repetition/CommutingRepetition/`,
-  `MIPRE/Background/LIDT/MIPStarRE/`, `MIPRE/Background/Orthonormalization/Orthogonalization/`
+  `MIPRE/Background/Orthonormalization/Orthogonalization/`
   and `MIPRE/Background/LiehrTsirelson/Upstream/`. Change them only through
   `scripts/vendor-*.py`, which records each fix. Nothing outside
-  `MIPRE/Background/` may name their namespaces.
+  `MIPRE/Background/` may name their namespaces, nor the `MIPStarRE` namespace of the Lake
+  dependency. A fix the dependency needs goes upstream (`LionSR/MIPStarRE`) and then into
+  the pin; it cannot be patched here.
 - **`backward.isDefEq.respectTransparency false`** appears at specific
   declarations and files. Never set it project-wide; it broke other modules.
 - **Blueprint** builds only on `main`, never on a branch. Before merging LaTeX,

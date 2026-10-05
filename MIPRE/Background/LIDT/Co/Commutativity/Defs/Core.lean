@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.Defs
 public import MIPRE.Background.LIDT.Co.Test.StrategyPolynomialFamilies
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Defs.Core
+public import MIPStarRE.LDT.Commutativity.Defs.Core
 
 @[expose] public section
 

@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.SharedHelpers.Core
 public import MIPRE.Background.LIDT.Co.Preliminaries.CompletionTransfer
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.Common
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.Definitions
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.Definitions
 
 @[expose] public section
 

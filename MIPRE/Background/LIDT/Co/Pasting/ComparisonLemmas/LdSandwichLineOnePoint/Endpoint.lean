@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.EndpointEquivs
 public import MIPRE.Background.LIDT.Co.Pasting.Core.LdGbcon
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint
 
 @[expose] public section
 

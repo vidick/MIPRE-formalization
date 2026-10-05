@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.SelfImprovement
+public import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.SelfImprovement
 
 @[expose] public section
 
@@ -44,7 +44,6 @@ comparison, in place of the vendored `simpa` with commutativity lemmas around
 
 ## Not ported
 
-- `le_one_of_selfImprovementInInductionError_le_one_of_scaled_bound`: classical, imported.
 - `selfImprovementInInduction_scaled_component_le`: classical, imported.
 
 ## References
@@ -57,8 +56,24 @@ In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
 namespace MIPRE.LIDT.Co.MainInductionStep
 
 open MIPStarRE.LDT (Parameters FieldModel)
-open MIPStarRE.LDT.MainInductionStep (selfImprovementInInductionError
-  le_one_of_selfImprovementInInductionError_le_one_of_scaled_bound)
+open MIPStarRE.LDT.MainInductionStep (selfImprovementInInductionError le_one_of_rpow_le_one)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at
+`5fc363b`); the port carries its own copy, with upstream's proof. -/
+theorem le_one_of_selfImprovementInInductionError_le_one_of_scaled_bound (params : Parameters)
+    {eps delta gamma x : ℝ} (hzeta_le : selfImprovementInInductionError params.next eps delta gamma ≤ 1)
+    (hscaled_le : 3000 * (params.next.m : ℝ) * Real.rpow x (1 / (32 : ℝ)) ≤
+      selfImprovementInInductionError params.next eps delta gamma) :
+    x ≤ 1 := by
+  have hcoef_ge_one : (1 : ℝ) ≤ 3000 * (params.next.m : ℝ) := by
+    have hm_one : (1 : ℝ) ≤ (params.next.m : ℝ) := by exact_mod_cast params.next.hm
+    nlinarith
+  have hroot_le_one : Real.rpow x (1 / (32 : ℝ)) ≤ 1 := by
+    by_contra hroot
+    have hroot_gt : 1 < Real.rpow x (1 / (32 : ℝ)) := lt_of_not_ge hroot
+    have : 1 < 3000 * (params.next.m : ℝ) * Real.rpow x (1 / (32 : ℝ)) := by nlinarith [hcoef_ge_one]
+    linarith [hscaled_le, hzeta_le]
+  exact le_one_of_rpow_le_one (by positivity) hroot_le_one
 open MIPRE.LIDT.Co (SymStrat eps_nonneg_of_isGood delta_nonneg_of_isGood)
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]

@@ -10,8 +10,8 @@ module
 public import MIPRE.Background.LIDT.Co.Pasting.GHatFacts
 public import MIPRE.Background.LIDT.Co.Pasting.Core.CompletePart
 public import MIPRE.Background.LIDT.Co.Pasting.Sandwich.PastedFamilies
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.Common
+public import MIPStarRE.LDT.Basic.LowDegreePolynomial
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.Common
 
 @[expose] public section
 

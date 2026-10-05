@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Commutativity.Defs.Normalization
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Scaffold.Core
+public import MIPStarRE.LDT.Commutativity.Scaffold.Core
 
 @[expose] public section
 

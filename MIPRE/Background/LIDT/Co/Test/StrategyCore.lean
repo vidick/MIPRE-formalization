@@ -7,7 +7,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Test.Defs
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+public import MIPStarRE.LDT.Test.StrategyCore
 
 @[expose] public section
 

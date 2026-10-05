@@ -6,7 +6,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Bridge.Strategy
 public import MIPRE.Background.LIDT.Bridge.Defect
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.Measurements
+public import MIPStarRE.LDT.Test.StrategyBiProj.Measurements
 
 @[expose] public section
 

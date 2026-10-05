@@ -7,7 +7,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.FromHToG
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds
+public import MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds
 
 @[expose] public section
 

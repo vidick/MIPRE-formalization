@@ -13,8 +13,8 @@ public import MIPRE.Background.LIDT.Co.Preliminaries.PolynomialAgreement
 public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.DataProcessing
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Statements
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.CommonHelpers
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection
 
 @[expose] public section
 

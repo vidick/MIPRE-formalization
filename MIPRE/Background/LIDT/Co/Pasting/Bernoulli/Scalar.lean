@@ -7,7 +7,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.TruncatedSums
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Scalar
+public import MIPStarRE.LDT.Pasting.Bernoulli.Scalar
 
 @[expose] public section
 

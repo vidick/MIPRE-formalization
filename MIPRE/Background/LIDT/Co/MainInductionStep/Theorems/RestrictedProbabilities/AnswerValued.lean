@@ -348,7 +348,6 @@ theorem answerSuccessorRestrictedDiagonalSampleError_eq
     by_cases hkm : k.1 < params.m
     · by_cases hk : k.1 ≤ j.1
       · simp [appendPoint, extendRestrictedDirection, embedCoord, hkm, hk]
-        rfl
       · simp [appendPoint, extendRestrictedDirection, embedCoord, hkm, hk]
         rfl
     · have hnotle : ¬ k.1 ≤ j.1 := fun hk => hkm (lt_of_le_of_lt hk j.2)

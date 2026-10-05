@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.ScalarBounds
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.HAConsistency
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
+public import MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
 
 @[expose] public section
 
@@ -44,8 +44,6 @@ height averaging of the lifted-line estimate decomposes both sides through
 
 ## Not ported
 
-- `degreeZero_submeas_error_le_two_nu`: classical, imported.
-
 ## References
 
 In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
@@ -64,10 +62,110 @@ open MIPStarRE.LDT (Parameters FieldModel Fq Point avgOver avgOver_mono avgOver_
 open MIPStarRE.LDT.CommutativityPoints (avgOver_uniform_pointNext_decompose)
 open MIPStarRE.LDT.MainInductionStep (ldPastingInInductionNu ldPastingInInductionError)
 open MIPStarRE.LDT.Pasting (pastedFallbackOutcome one_le_ldPastingError_of_k_eq_zero
-  degreeZero_submeas_error_le_two_nu)
+  ldPasting_degreeRatio_nonneg hAConsistency_sqrt_bound_of_pos)
 open MIPRE.LIDT.Co (SymStrat SubMeas Measurement IdxMeas IdxProjMeas IdxPolyFamily
   averageIdxSubMeas evaluateAt polynomialEvaluationFamily axisParallelPointAnswerFamily
   axisParallelLineAnswerFamily)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Scalar absorption for the degree-zero submeasurement consistency error. -/
+theorem degreeZero_submeas_error_le_two_nu
+    (params : Parameters) [FieldModel params.q]
+    (eps delta gamma zeta : ℝ) (k : ℕ)
+    (hk_pos : 1 ≤ k)
+    (heps_nonneg : 0 ≤ eps)
+    (hdelta_nonneg : 0 ≤ delta)
+    (hgamma_nonneg : 0 ≤ gamma)
+    (hzeta_nonneg : 0 ≤ zeta) :
+    min zeta 1 +
+        2 * Real.sqrt (8 * (params.m : ℝ) * min eps 1 + 4 * min delta 1) ≤
+      2 * MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
+  let C : ℝ := ((k : ℝ) ^ (2 : ℕ)) * (params.m : ℝ)
+  let epsTerm : ℝ := Real.rpow eps (1 / (32 : ℝ))
+  let deltaTerm : ℝ := Real.rpow delta (1 / (32 : ℝ))
+  let gammaTerm : ℝ := Real.rpow gamma (1 / (32 : ℝ))
+  let zetaTerm : ℝ := Real.rpow zeta (1 / (32 : ℝ))
+  let degreeTerm : ℝ :=
+    Real.rpow (((params.d : ℝ) / (params.q : ℝ))) (1 / (32 : ℝ))
+  let S : ℝ := epsTerm + deltaTerm + gammaTerm + zetaTerm + degreeTerm
+  have hC_one : (1 : ℝ) ≤ C := by
+    have hkE_one : (1 : ℝ) ≤ (k : ℝ) := by exact_mod_cast hk_pos
+    have hmE_one : (1 : ℝ) ≤ (params.m : ℝ) := by
+      exact_mod_cast (Nat.succ_le_of_lt params.hm)
+    dsimp [C]
+    nlinarith [sq_nonneg (k : ℝ)]
+  have hC_nonneg : 0 ≤ C := le_trans zero_le_one hC_one
+  have hepsTerm_nonneg : 0 ≤ epsTerm := by
+    dsimp [epsTerm]
+    exact Real.rpow_nonneg heps_nonneg _
+  have hdeltaTerm_nonneg : 0 ≤ deltaTerm := by
+    dsimp [deltaTerm]
+    exact Real.rpow_nonneg hdelta_nonneg _
+  have hgammaTerm_nonneg : 0 ≤ gammaTerm := by
+    dsimp [gammaTerm]
+    exact Real.rpow_nonneg hgamma_nonneg _
+  have hzetaTerm_nonneg : 0 ≤ zetaTerm := by
+    dsimp [zetaTerm]
+    exact Real.rpow_nonneg hzeta_nonneg _
+  have hdegreeTerm_nonneg : 0 ≤ degreeTerm := by
+    dsimp [degreeTerm]
+    exact Real.rpow_nonneg (ldPasting_degreeRatio_nonneg params) _
+  have hS_nonneg : 0 ≤ S := by
+    dsimp [S]
+    nlinarith
+  have hzeta_min_le_C : min zeta 1 ≤ C * zetaTerm := by
+    have hmin_nonneg : 0 ≤ min zeta 1 := by positivity
+    have hmin_le_one : min zeta 1 ≤ 1 := min_le_right _ _
+    have hzeta_min_le : min zeta 1 ≤ zetaTerm := by
+      calc
+        min zeta 1 ≤ Real.rpow (min zeta 1) (1 / (32 : ℝ)) := by
+            simpa [Real.rpow_one] using
+              (Real.rpow_le_rpow_of_exponent_ge' hmin_nonneg hmin_le_one
+                (show 0 ≤ (1 / (32 : ℝ)) by norm_num)
+                (show 1 / (32 : ℝ) ≤ (1 : ℝ) by norm_num))
+        _ ≤ zetaTerm := by
+            dsimp [zetaTerm]
+            exact Real.rpow_le_rpow hmin_nonneg (min_le_left _ _) (by positivity)
+    calc
+      min zeta 1 ≤ zetaTerm := hzeta_min_le
+      _ = (1 : ℝ) * zetaTerm := by ring
+      _ ≤ C * zetaTerm := by
+          exact mul_le_mul_of_nonneg_right hC_one hzetaTerm_nonneg
+  have hsqrt_le_CS :
+      Real.sqrt (8 * (params.m : ℝ) * min eps 1 + 4 * min delta 1) ≤ 3 * C * S := by
+    calc
+      Real.sqrt (8 * (params.m : ℝ) * min eps 1 + 4 * min delta 1)
+          ≤ 3 * ((k : ℝ) ^ (2 : ℕ)) * (params.m : ℝ) *
+              (Real.rpow eps (1 / (32 : ℝ)) + Real.rpow delta (1 / (32 : ℝ))) :=
+            hAConsistency_sqrt_bound_of_pos params eps delta k hk_pos
+              heps_nonneg hdelta_nonneg
+      _ = 3 * C * (epsTerm + deltaTerm) := by ring
+      _ ≤ 3 * C * S := by
+          have hsum_le : epsTerm + deltaTerm ≤ S := by
+            dsimp [S]
+            nlinarith
+          exact mul_le_mul_of_nonneg_left hsum_le (by positivity)
+  calc
+    min zeta 1 +
+        2 * Real.sqrt (8 * (params.m : ℝ) * min eps 1 + 4 * min delta 1)
+      ≤ C * zetaTerm + 2 * (3 * C * S) := by
+          exact add_le_add hzeta_min_le_C
+            (mul_le_mul_of_nonneg_left hsqrt_le_CS (by norm_num))
+    _ ≤ 7 * C * S := by
+          have hzeta_le_S : zetaTerm ≤ S := by
+            dsimp [S]
+            nlinarith
+          have hCzeta_le_CS : C * zetaTerm ≤ C * S := by
+            exact mul_le_mul_of_nonneg_left hzeta_le_S hC_nonneg
+          nlinarith
+    _ ≤ 200 * C * S := by
+          have hCS_nonneg : 0 ≤ C * S := mul_nonneg hC_nonneg hS_nonneg
+          nlinarith
+    _ = 2 * MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
+          simp [MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu, C, S, epsTerm, deltaTerm,
+            gammaTerm, zetaTerm, degreeTerm]
+          ring
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

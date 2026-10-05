@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.Final
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.Final
 
 @[expose] public section
 
@@ -36,8 +36,6 @@ through an explicit `open MIPStarRE.LDT.Pasting (…)` list.
 
 ## Not ported
 
-- `lineConsistentIndicator_probability_le_mdq`: classical, imported.
-
 ## References
 
 In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
@@ -50,14 +48,115 @@ open scoped BigOperators
 namespace MIPRE.LIDT.Co.Pasting
 
 open MIPStarRE.LDT (Parameters FieldModel Point PointTuple AxisParallelTestSample Distribution
+  AxisLinePolynomial avgOver_zero avgOver_mono
   avgOver avgOver_congr avgOver_sum avgOver_mul_const avgOver_comm avgOver_mono_on_support
   avgOver_const uniformDistribution)
 open MIPStarRE.LDT.Pasting (GHatTupleOutcome IsGloballyConsistent InterpolationEligible
+  nonglobal_gives_slice_mismatch_against_interpolant interpolateCompletedSlices
+  tupleInterpolatedVerticalLine_eq_of_no_supported_mismatch
   distinctTupleDistribution distinctTupleDistribution_weight_sum_le_one hBConsistencyError
   overAllOutcomesError dnoteq_term_le_overAllOutcomesError
-  hBConsistencyError_add_mdq_add_dnoteq_le_overAllOutcomesError
-  lineConsistentIndicator_probability_le_mdq)
+  hBConsistencyError_add_mdq_add_dnoteq_le_overAllOutcomesError restrictToVerticalLine_eval_eq_restrictAtHeight_eval tupleInterpolatedVerticalLine)
 open MIPRE.LIDT.Co (SymModel SymStrat SubMeas IdxProjMeas IdxPolyFamily)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+For a fixed distinct tuple and interpolation-eligible nonglobal outcome, the
+probability (over the vertical-line base point `u`) of the line-consistency
+indicator is bounded by the paper's `md/q` Schwartz--Zippel term.
+
+This formalizes `ld-pasting.tex` lines 1256--1265: nonglobality gives a supported
+slice where `gᵢ` differs from the interpolant `h*`; line consistency forces
+agreement at the sampled `u`, and `MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_le_mdq`
+bounds that agreement probability. -/
+lemma lineConsistentIndicator_probability_le_mdq
+    (params : Parameters) [FieldModel params.q]
+    {k : ℕ}
+    (xs : PointTuple params k)
+    (hxs : Function.Injective xs)
+    (gs : GHatTupleOutcome params k)
+    (hEligible : InterpolationEligible params gs) :
+    avgOver (uniformDistribution (Point params)) (fun u =>
+        if (¬ IsGloballyConsistent params xs gs) ∧
+            ∃ f : AxisLinePolynomial params.next,
+              ¬ (∃ i : Fin k, ∃ hiSome : (gs i).isSome = true,
+                ((gs i).get hiSome) u ≠ f (xs i)) then
+          (1 : ℝ)
+        else 0) ≤
+      ((params.m * params.d : ℕ) : ℝ) / (params.q : ℝ) := by
+  classical
+  let δ : ℝ := ((params.m * params.d : ℕ) : ℝ) / (params.q : ℝ)
+  have hδ_nonneg : 0 ≤ δ := by
+    dsimp [δ]
+    positivity
+  by_cases hGlobal : IsGloballyConsistent params xs gs
+  · calc
+      avgOver (uniformDistribution (Point params)) (fun u =>
+          if (¬ IsGloballyConsistent params xs gs) ∧
+              ∃ f : AxisLinePolynomial params.next,
+                ¬ (∃ i : Fin k, ∃ hiSome : (gs i).isSome = true,
+                  ((gs i).get hiSome) u ≠ f (xs i)) then
+            (1 : ℝ)
+          else 0) = 0 := by
+            simp [hGlobal, avgOver_zero]
+      _ ≤ ((params.m * params.d : ℕ) : ℝ) / (params.q : ℝ) := hδ_nonneg
+  · rcases nonglobal_gives_slice_mismatch_against_interpolant params xs gs hGlobal with
+      ⟨i, hiSome, hsliceNe⟩
+    let hStarSlice : MIPStarRE.LDT.Polynomial params :=
+      MIPStarRE.LDT.Polynomial.restrictAtHeight params (interpolateCompletedSlices params k xs gs) (xs i)
+    have hneq : (gs i).get hiSome ≠ hStarSlice := by
+      intro hEq
+      exact hsliceNe (by simpa [hStarSlice] using hEq.symm)
+    have hpoint : ∀ u : Point params,
+        (if (¬ IsGloballyConsistent params xs gs) ∧
+            ∃ f : AxisLinePolynomial params.next,
+              ¬ (∃ j : Fin k, ∃ hjSome : (gs j).isSome = true,
+                ((gs j).get hjSome) u ≠ f (xs j)) then
+          (1 : ℝ)
+        else 0) ≤
+          if ((gs i).get hiSome) u = hStarSlice u then (1 : ℝ) else 0 := by
+      intro u
+      by_cases hCons : (¬ IsGloballyConsistent params xs gs) ∧
+          ∃ f : AxisLinePolynomial params.next,
+            ¬ (∃ j : Fin k, ∃ hjSome : (gs j).isSome = true,
+              ((gs j).get hjSome) u ≠ f (xs j))
+      · rcases hCons.2 with ⟨f, hNoMismatch⟩
+        have hLine := tupleInterpolatedVerticalLine_eq_of_no_supported_mismatch
+          params u xs hxs gs hEligible f hNoMismatch
+        have htupleEval :
+            tupleInterpolatedVerticalLine params u xs gs (xs i) = hStarSlice u := by
+          dsimp [hStarSlice]
+          simpa [tupleInterpolatedVerticalLine] using
+            restrictToVerticalLine_eval_eq_restrictAtHeight_eval
+              params (interpolateCompletedSlices params k xs gs) u (xs i)
+        have hsliceEq : ((gs i).get hiSome) u = hStarSlice u := by
+          have hnotNe : ¬ ((gs i).get hiSome) u ≠ f (xs i) := by
+            intro hne
+            exact hNoMismatch ⟨i, hiSome, hne⟩
+          have hgf : ((gs i).get hiSome) u = f (xs i) := by
+            by_contra hne
+            exact hnotNe hne
+          exact hgf.trans
+            ((congrArg (fun line : AxisLinePolynomial params.next => line (xs i))
+              hLine.symm).trans htupleEval)
+        rw [ite_eq_left hCons, ite_eq_left hsliceEq]
+      · rw [ite_eq_right hCons]
+        by_cases hEq : ((gs i).get hiSome) u = hStarSlice u <;> simp [hEq]
+    calc
+      avgOver (uniformDistribution (Point params)) (fun u =>
+          if (¬ IsGloballyConsistent params xs gs) ∧
+              ∃ f : AxisLinePolynomial params.next,
+                ¬ (∃ j : Fin k, ∃ hjSome : (gs j).isSome = true,
+                  ((gs j).get hjSome) u ≠ f (xs j)) then
+            (1 : ℝ)
+          else 0)
+        ≤ avgOver (uniformDistribution (Point params)) (fun u =>
+            if ((gs i).get hiSome) u = hStarSlice u then (1 : ℝ) else 0) := by
+            exact avgOver_mono _ _ _ hpoint
+      _ ≤ δ := by
+            simpa [δ, hStarSlice] using
+              MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_le_mdq
+                params ((gs i).get hiSome) hStarSlice hneq
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]

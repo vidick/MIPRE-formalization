@@ -24,6 +24,17 @@ name = "«doc-gen4»"
 git = "https://github.com/leanprover/doc-gen4"
 rev = "v4.35.0-rc3"
 
+# The low individual degree test (`planning/lidt-port.md`, `planning/palomar-dependencies.md`):
+# Sirui Lu, Ruixuan Deng and Zhengfeng Ji's formalization, the substantive development behind
+# Palomar entry PALOMAR-2026-08-18-000001, as a pinned Git dependency. Only
+# `MIPRE/Background/LIDT/Bridge/` and the commuting-operator port under
+# `MIPRE/Background/LIDT/Co/` import it; its main theorem `MIPStarRE.LDT.Test.mainFormal` is
+# the only result the bridge consumes.
+[[require]]
+name = "MIPStarRE"
+git = "https://github.com/LionSR/MIPStarRE"
+rev = "5fc363bc8b77b1a6bbdaaeea634f1b0f3ff0ad79"
+
 [[lean_lib]]
 name = "MIPRE"
 

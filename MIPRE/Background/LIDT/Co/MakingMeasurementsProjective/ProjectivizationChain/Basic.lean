@@ -13,7 +13,7 @@ public import MIPRE.Background.LIDT.Co.Preliminaries.CompletionTransfer
 public import MIPRE.Background.LIDT.Co.Preliminaries.DistanceBounds
 public import MIPRE.Background.LIDT.Co.Preliminaries.Triangles.SimEq
 public import MIPRE.Background.LIDT.Co.Preliminaries.BipartiteSelfConsistency.Core
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic
+public import MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic
 
 @[expose] public section
 

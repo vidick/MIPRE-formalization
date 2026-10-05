@@ -7,7 +7,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Defs.Tuples
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+public import MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
 
 @[expose] public section
 
@@ -31,10 +31,6 @@ vendored file and names them through an explicit `open MIPStarRE.LDT.Pasting (�
 
 ## Not ported
 
-- `gHatTypeWeight_le`: classical, imported.
-- `gHatTypeWeight_prepend_true`: classical, imported.
-- `gHatTypeWeight_prepend_false`: classical, imported.
-
 ## References
 
 In `LionSR/MIPStarRE` at commit 507e8122, not in this repository:
@@ -45,8 +41,27 @@ open scoped BigOperators
 
 namespace MIPRE.LIDT.Co.Pasting
 
-open MIPStarRE.LDT.Pasting (GHatType gHatTypeWeight prependTypeBit gHatTypeWeight_le
-  gHatTypeWeight_prepend_true gHatTypeWeight_prepend_false)
+open MIPStarRE.LDT.Pasting (GHatType gHatTypeWeight prependTypeBit)
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof. -/
+lemma gHatTypeWeight_prepend_true {k : ℕ} (τ : GHatType k) :
+    gHatTypeWeight (prependTypeBit true τ) = gHatTypeWeight τ + 1 := by
+  unfold gHatTypeWeight
+  rw [Fin.card_filter_univ_succ]
+  simp [prependTypeBit, Fin.cons_zero, Fin.cons_succ, add_comm]
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof. -/
+lemma gHatTypeWeight_prepend_false {k : ℕ} (τ : GHatType k) :
+    gHatTypeWeight (prependTypeBit false τ) = gHatTypeWeight τ := by
+  unfold gHatTypeWeight
+  rw [Fin.card_filter_univ_succ]
+  simp [prependTypeBit, Fin.cons_zero, Fin.cons_succ]
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at
+`5fc363b`); the port carries its own copy, with upstream's proof. -/
+theorem gHatTypeWeight_le {k : ℕ} (τ : GHatType k) : gHatTypeWeight τ ≤ k := by
+  unfold gHatTypeWeight
+  simpa using (Finset.card_filter_le (s := (Finset.univ : Finset (Fin k))) (p := fun i : Fin k => τ i))
 
 /-! ### Bernoulli recurrence weights -/
 

@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Theorems.CollisionExpansion
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
+public import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
 
 @[expose] public section
 

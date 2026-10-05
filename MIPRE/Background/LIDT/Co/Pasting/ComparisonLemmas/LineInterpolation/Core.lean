@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.Common
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.Core
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.Core
 
 @[expose] public section
 

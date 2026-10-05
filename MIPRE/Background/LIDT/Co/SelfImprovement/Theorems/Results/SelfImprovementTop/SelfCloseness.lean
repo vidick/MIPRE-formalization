@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.Basic.SubMeasurementFamilies
 public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.ProjectivizationChain.Basic
 public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.DataProcessing
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Statements
 
 @[expose] public section

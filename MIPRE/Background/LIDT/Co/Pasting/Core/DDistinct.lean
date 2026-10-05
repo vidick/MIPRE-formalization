@@ -7,7 +7,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Statements
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.DDistinct
+public import MIPStarRE.LDT.Pasting.Core.DDistinct
 
 @[expose] public section
 

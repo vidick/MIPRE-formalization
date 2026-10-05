@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.SharedHelpers.Core
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine
+public import MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine
 
 @[expose] public section
 

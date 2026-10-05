@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Statements
 public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Projectivization
 public import MIPRE.Background.LIDT.Co.Doubling.Orthonormalization
 public import MIPRE.Background.Orthonormalization.FinitePairOrtho
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.LocalityPreservingRepair
+public import MIPStarRE.LDT.MakingMeasurementsProjective.LocalityPreservingRepair
 
 @[expose] public section
 

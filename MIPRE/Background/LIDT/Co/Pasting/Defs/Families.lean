@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Defs.Interpolation
 public import MIPRE.Background.LIDT.Co.Test.StrategyPolynomialFamilies
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Families
+public import MIPStarRE.LDT.Pasting.Defs.Families
 
 @[expose] public section
 

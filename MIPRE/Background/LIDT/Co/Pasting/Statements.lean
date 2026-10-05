@@ -9,7 +9,7 @@ module
 public import MIPRE.Background.LIDT.Co.Commutativity.Scaffold.Core
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Defs
 public import MIPRE.Background.LIDT.Co.Pasting.Sandwich.PastedFamilies
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Statements
+public import MIPStarRE.LDT.Pasting.Statements
 
 @[expose] public section
 

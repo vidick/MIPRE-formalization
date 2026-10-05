@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.FromHToG.MoveLemmas.TailStage
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1
+public import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1
 
 @[expose] public section
 

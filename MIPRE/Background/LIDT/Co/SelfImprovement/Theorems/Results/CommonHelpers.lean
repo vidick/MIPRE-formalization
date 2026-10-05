@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.Basic.SubMeasurementFamilies
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Defs.Families
 public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.DataProcessing
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Statements
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
 
 @[expose] public section
 

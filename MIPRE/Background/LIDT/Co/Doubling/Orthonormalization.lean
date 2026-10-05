@@ -8,7 +8,7 @@ public import MIPRE.Background.LIDT.Co.Doubling.FinitePair
 public import MIPRE.Background.LIDT.Co.Basic.OperatorExpectations
 public import MIPRE.Background.LIDT.Co.Test.Defs
 public import MIPRE.Background.Orthonormalization.FinitePairOrtho
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Defs
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Defs
 public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Statements
 public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Orthonormalization.RestrictSome
 

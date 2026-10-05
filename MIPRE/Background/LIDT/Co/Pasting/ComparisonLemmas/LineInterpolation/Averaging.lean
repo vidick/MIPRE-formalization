@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Basic.DistributionAvg
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.Common
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.Averaging
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.Averaging
 
 @[expose] public section
 

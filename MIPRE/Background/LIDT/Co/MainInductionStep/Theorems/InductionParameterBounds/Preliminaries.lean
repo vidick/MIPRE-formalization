@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Statements
 public import MIPRE.Background.LIDT.Co.Test.StrategyFailures
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+public import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
 
 @[expose] public section
 

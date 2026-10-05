@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.FromHToG.Core.AveragesA
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.FromHToG.Core.StageMass
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Split
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Move
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.FactBundles
+public import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.FactBundles
 
 @[expose] public section
 

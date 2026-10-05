@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Basic.TensorPlacement
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+public import MIPStarRE.LDT.Preliminaries.PolynomialAgreement
 
 @[expose] public section
 

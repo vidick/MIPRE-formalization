@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.Defs
 public import MIPRE.Background.LIDT.Co.Preliminaries.ComparisonCore
 public import MIPRE.Background.LIDT.Co.Test.StrategyFailures
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
+public import MIPStarRE.LDT.CommutativityPoints.Approximation
 
 @[expose] public section
 
@@ -35,15 +35,10 @@ declarations through an explicit `open MIPStarRE.LDT.CommutativityPoints (…)` 
 
 ## Not ported
 
-- `lastRestrictionIndex`: classical, imported.
 - `pointNextEquiv`: classical, imported.
 - `avgOver_uniform_pointNext_decompose`: classical, imported.
 - `avgOver_uniform_pointNext_height`: classical, imported.
 - `pointPairOutcomeSwapEquiv`: classical, imported.
-- `lastRestrictionIndex_val_succ`: classical, imported.
-- `lastRestrictedDirectionEquiv`: classical, imported.
-- `lastRestrictedSampleEquivDiagonalLine`: classical, imported.
-- `rebasedLastRestrictedQuestionEquiv`: classical, imported.
 
 ## References
 
@@ -58,15 +53,142 @@ open scoped BigOperators
 
 namespace MIPRE.LIDT.Co.CommutativityPoints
 
-open MIPStarRE.LDT (Parameters FieldModel Fq DiagonalLine DiagonalLineAnswer zeroCoord addCoord
+open MIPStarRE.LDT (Parameters FieldModel Fq Point DiagonalLine DiagonalLineAnswer zeroCoord addCoord
   subCoord mulCoord addPoint smulPoint addCoord_subCoord_left addCoord_subCoord_right avgOver
   avgOver_congr avgOver_uniform_fst uniformDistribution RestrictedDiagonalSample
   extendRestrictedDirection)
 open MIPStarRE.LDT.CommutativityPoints (PointDiagonalLineQuestion
   sampledPointFromDiagonalQuestion pointWithDiagonalLineDistribution
-  restrictedDiagonalLinesConsistencyError pointDiagonalLineApproxError lastRestrictionIndex
-  lastRestrictedDirectionEquiv lastRestrictedSampleEquivDiagonalLine
-  rebasedLastRestrictedQuestionEquiv)
+  restrictedDiagonalLinesConsistencyError pointDiagonalLineApproxError)
+
+/-- The final restriction index, corresponding to the paper's `m`-restricted diagonal-lines test.
+Upstream keeps it `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the
+port carries its own copy. -/
+def lastRestrictionIndex (params : Parameters) : Fin params.m :=
+  ⟨params.m - 1, Nat.sub_lt params.hm Nat.zero_lt_one⟩
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof. -/
+lemma lastRestrictionIndex_val_succ
+    (params : Parameters) :
+    (lastRestrictionIndex params).val + 1 = params.m := by
+  have hm := params.hm
+  dsimp [lastRestrictionIndex]
+  omega
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+At the final restriction index, a restricted diagonal direction records all
+`m` coordinates, so it is equivalent to an unrestricted point of `Point params`. -/
+noncomputable def lastRestrictedDirectionEquiv
+    (params : Parameters)
+    [FieldModel params.q] :
+    (Fin ((lastRestrictionIndex params).val + 1) → Fq params) ≃ Point params where
+  toFun := extendRestrictedDirection (lastRestrictionIndex params)
+  invFun := fun direction i =>
+    direction ⟨i.val, by
+      have h := lastRestrictionIndex_val_succ params
+      omega⟩
+  left_inv := fun free => by
+    funext i
+    have hlt : i.val < params.m := by
+      have h := lastRestrictionIndex_val_succ params
+      omega
+    have hle : (⟨i.val, hlt⟩ : Fin params.m).val ≤ (lastRestrictionIndex params).val := by
+      dsimp [lastRestrictionIndex]
+      omega
+    have hidx :
+        (⟨i.val, Nat.lt_succ_of_le hle⟩ : Fin ((lastRestrictionIndex params).val + 1)) = i := by
+      ext
+      rfl
+    rw [← hidx]
+    simp [extendRestrictedDirection, hle]
+  right_inv := fun direction => by
+    funext k
+    have hk : k.val ≤ (lastRestrictionIndex params).val := by
+      dsimp [lastRestrictionIndex]
+      omega
+    have hidx :
+        (⟨k.val, by
+            have h := lastRestrictionIndex_val_succ params
+            omega⟩ : Fin params.m) = k := by
+      ext
+      rfl
+    rw [← hidx]
+    simp [extendRestrictedDirection, hk]
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+At the final restriction index, a restricted diagonal sample is exactly a
+full diagonal line: the sample point becomes the base point and the restricted
+direction determines all line coefficients. -/
+noncomputable def lastRestrictedSampleEquivDiagonalLine
+    (params : Parameters)
+    [FieldModel params.q] :
+    RestrictedDiagonalSample params (lastRestrictionIndex params) ≃ DiagonalLine params where
+  toFun := fun s =>
+    { base := s.1
+      direction := lastRestrictedDirectionEquiv params s.2 }
+  invFun := fun ℓ =>
+    (ℓ.base, (lastRestrictedDirectionEquiv params).symm ℓ.direction)
+  left_inv := fun ⟨base, free⟩ => by
+    refine Prod.ext rfl ?_
+    funext i
+    have hlt : i.val < params.m := by
+      have h := lastRestrictionIndex_val_succ params
+      omega
+    have hle : (⟨i.val, hlt⟩ : Fin params.m).val ≤ (lastRestrictionIndex params).val := by
+      dsimp [lastRestrictionIndex]
+      omega
+    have hidx :
+        (⟨i.val, Nat.lt_succ_of_le hle⟩ : Fin ((lastRestrictionIndex params).val + 1)) = i := by
+      ext
+      rfl
+    rw [← hidx]
+    simp [lastRestrictedDirectionEquiv, extendRestrictedDirection, hle]
+  right_inv := fun ⟨base, direction⟩ => by
+    change
+      ({ base := base,
+         direction := extendRestrictedDirection (lastRestrictionIndex params)
+           (fun i => direction ⟨i.val, by
+             have h := lastRestrictionIndex_val_succ params
+             omega⟩) } : DiagonalLine params) =
+      ({ base := base, direction := direction } : DiagonalLine params)
+    congr
+    funext k
+    have hk : k.val ≤ (lastRestrictionIndex params).val := by
+      dsimp [lastRestrictionIndex]
+      omega
+    have hidx :
+        (⟨k.val, by
+            have h := lastRestrictionIndex_val_succ params
+            omega⟩ : Fin params.m) = k := by
+      ext
+      rfl
+    rw [← hidx]
+    simp [extendRestrictedDirection, hk]
+
+/-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
+
+Rebase the last restricted diagonal sample so that its distinguished base
+point appears at the queried parameter. This identifies the corrected diagonal
+test sample space with the shared point-with-diagonal-line questions used in
+the commutativity-at-points argument. -/
+noncomputable def rebasedLastRestrictedQuestionEquiv
+    (params : Parameters)
+    [FieldModel params.q] :
+    (RestrictedDiagonalSample params (lastRestrictionIndex params) × Fq params) ≃
+      PointDiagonalLineQuestion params where
+  toFun := fun st =>
+    let ℓ := lastRestrictedSampleEquivDiagonalLine params st.1
+    (DiagonalLine.rebaseAt ℓ (subCoord zeroCoord st.2), st.2)
+  invFun := fun q =>
+    let ℓ := DiagonalLine.rebaseAt q.1 q.2
+    ((lastRestrictedSampleEquivDiagonalLine params).symm ℓ, q.2)
+  left_inv := fun ⟨s, t⟩ => by
+    simp [DiagonalLine.rebaseAt_rebase, addCoord_subCoord_left]
+  right_inv := fun ⟨ℓ, t⟩ => by
+    simp [DiagonalLine.rebaseAt_rebase, addCoord_subCoord_right]
+
 
 /-- Build an operator family from its outcomes, taking the total to be their sum. -/
 noncomputable def opFamilyOfOutcome {R : Type*} [AddCommMonoid R]

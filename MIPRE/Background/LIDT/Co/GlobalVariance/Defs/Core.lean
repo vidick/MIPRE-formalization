@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.ExpansionHypercubeGraph.Defs.Core
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Core
+public import MIPStarRE.LDT.GlobalVariance.Defs.Core
 
 @[expose] public section
 

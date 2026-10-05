@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.SharedHelpers.Core
 public import MIPRE.Background.LIDT.Co.Pasting.SwitcherooCompletion.SecondTerm
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.CompletePart
+public import MIPStarRE.LDT.Pasting.SwitcherooCompletion.CompletePart
 
 @[expose] public section
 

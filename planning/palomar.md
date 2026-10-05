@@ -56,7 +56,9 @@ Mechanical rules that bind us:
 
 Licensing of the vendored trees, which the Solution's closure includes: ten-proofs and
 commuting-repetition are Apache-2.0; `LIDT/MIPStarRE` (322 modules in the closure) rests on the
-authors' written consent of September 2026, to be recorded in `sources`; the Liehr Tsirelson
+authors' written consent of September 2026, to be recorded in `sources` (since 2026-10-05 it is
+a Lake dependency rather than a copy, recorded under `related_formalizations`; see
+`planning/palomar-dependencies.md`); the Liehr Tsirelson
 upstream carries no licence and is not in the main theorem's closure, so it stays out of the
 submitted snapshot or its terms are settled first.
 
