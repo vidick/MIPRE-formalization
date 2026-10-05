@@ -1,6 +1,9 @@
 # The Aldous–Lyons track: `TMIP* = RE` (Bowen–Chapman–Vidick, paper II): estimate and plan
 
-**Status: nothing formalized; this is the estimate and the plan, for the maintainer to read.**
+**Status: Phase 0 done (#273; tracking #272).** The statement and the interface are in
+(`MIPRE/TailoredGameValue.lean`, `MIPRE/Tailored/*`, definitions only), the two checks that
+Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapter's skeleton is
+`blueprint/src/content/09_tailored.tex`. Nothing is proved; Phase 1 is next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -194,7 +197,7 @@ the totals and the calibration.
 
 | Paper | Live lines | Content | Repository counterpart | Verdict | New Lean |
 |---|---|---|---|---|---|
-| §2.1–2.5 (946–1512) | ≈560 | measurements, three forms of an `F₂^S`-PVM, signed permutations, games, tailored games, ZPC, Magic Square | `Games.lean` (sync strategies, `IsPCC`, `syncValue`, `entRequirement`), `Measurement/PVM` (`pvmObs`), `Weyl.lean` (`wX`/`wZ` are a shift and a `±1` diagonal: signed permutations in all but name), `Linearity.lean` (Fourier transform of an `F₂^n` representation), `LCS/*` (observable↔projector dictionary, solution group, Magic Square strategy) | **new** notions on existing vocabulary | 3–5k |
+| §2.1–2.5 (946–1512) | ≈560 | measurements, three forms of an `F₂^S`-PVM, signed permutations, games, tailored games, ZPC, Magic Square | `Games.lean` (sync strategies, `IsPCC`, `syncValue`, `entRequirement`), `Measurement/PVM` (`pvmObs`), `Weyl.lean` (`wX`/`wZ` are a shift and a `±1` diagonal: signed permutations in all but name), `Linearity.lean` (Fourier transform of an `F₂^n` representation), `LCS/*` (observable↔projector dictionary, solution group; its Magic Square strategy uses `Y` and is not a signed-permutation strategy), `HonestMagicSquare` (one that is) | **new** notions on existing vocabulary | 3–5k |
 | §2.6 (1514–1832) | ≈320 | encodings, TNFV, canonical decider, λ-bounded, `Ent` | `Verifier ℓ` (sampler + decider), `IsBounded`, `Cost/*` (programs, `PolyTimeFun`, s-m-n), `Halting/Wrapper*.lean` (a decider program with cost, 1.1k) | **new**: the four-machine verifier with `Verifier.ofTNFV`; the canonical decider as a costed program | 2–3k |
 | §2.7 (1833–2072) | ≈240 | halting protocol `F`, `V^{M,λ}`, `lem:dhalt-values`, `lem:lambda` (sketch), proof of the main theorem | `Halting/Paper/*` (3,177 lines): `kleeneFix`, `Vhalt`, `accepts_iff`, `Induction.lean`, `Cost.lean` (`lem:lambda` in the fine form), `ClassVerifier/ClassMain` | **adapt**, nearly verbatim; LP in the role of the decider; "reject" is the constraint list `{J}` | 2–4k incl. class |
 | §3.1–3.3 (2079–2886) | ≈800 | normalized `p`-norms, partial isometries, near bijections, corners, distances and inconsistency, data processing | `Distances`, `Closeness`, `CrossConsistency`, `Disagreement`, `POVMMix`, `Pasting` (bipartite, state form); `Dilation.lean` (Naimark, isometry form); vendored `Orthonormalization` | **mostly not needed** on the bipartite route; the repository's calculus is used instead; near bijections only arise on Route B | 0.5–1k |
@@ -287,8 +290,8 @@ completeness: the repository's honest strategy is a signed-permutation strategy 
 introspected questions and the `Z`-basis outcomes diagonal — `wX` is a permutation matrix,
 `wZ` a `±1` diagonal, the low-degree answers are linear data processing of `Z`/`X` outcomes
 (`cor:linear_data_processed_PVM_is_ZPC_and_left_multiplication`, II:2938), and commutation
-along edges is the existing `HasPerfectPCC` completeness. Two facts must hold for this and
-Phase 0 checks them before anything is built:
+along edges is the existing `HasPerfectPCC` completeness. Two facts must hold for this, and
+Phase 0 checked them before anything was built (the verdict follows the list):
 
 - every check of the repository's introspective typed predicate is `F₂`-linear in the
   unreadable answers once the readable ones are fixed, where "readable" is the introspected
@@ -305,6 +308,60 @@ Phase 0 checks them before anything is built:
 If both hold, question reduction costs 13–22k lines (§6.2) and §3.7–3.8 of the paper are not
 formalized at all; the blueprint says that the Pauli basis test is JNVWY's and cites the
 paper's remark II:5228 for the equivalence of the combinatorial games.
+
+**Phase 0 verdict (2026-10-05): both hold, so Route A stands.** Read from the Lean, not the
+paper, by two readers whose reports cite file and line for every claim:
+
+- *Controlled-linear: yes.* The compiled introspective decider
+  (`DecisionCompiler.decider` → `untypedKernel` → `DecisionKernel.program`) is proved equal,
+  branch by branch, to the typed predicate (`TypedPredicate.check`, with the hiding comparisons
+  in quotient form, `TypedQuotientPredicate.lean`), and every check of it is either a predicate
+  on readable fields and the questions alone, or `F₂`-affine equations on the linear fields
+  whose coefficients are computed from readable fields and the questions. The nonlinear maps —
+  the sampler's `CLFun.eval`, `outputPrefix`, `prefixRegister`, `factorOfPrefix`,
+  `stageLinear`, the Pauli test's `γ`, `lineParam`, `χ`, `rep` — are applied only to readable
+  fields or to questions; the maps applied to linear fields are `proj`, `registerDual`,
+  `stageDual`, `dualReadout`, `project`, evaluation of `ldEnc`, `LinePoly.eval`, `x ↦ tr(x·r)`
+  and the identity. The readable fields: the question field `y` of Introspect, Read and Hide
+  answers, the seed `z` of Sample answers, and the `Z`-basis Pauli answers; the linear ones: the
+  duals `yp` (Read, Hide), the tail `x` (Hide), the `X`-basis answers. Every rule of the Pauli
+  basis test (`QLD.accepts`) is a system of `F₂`-affine equations over all answer bits with
+  coefficients from the questions, so it is controlled-linear under any split.
+- *Signed permutations: yes, given that the input strategy is one.* `wX a` is the permutation
+  matrix of the translation by `a` (`Weyl.lean:159`), `wZ b` a `±1` diagonal (`:163`); the
+  `X`-basis projectors are Fourier averages of translations, never a field Fourier matrix; the
+  only nonlinear post-processing (`CLFun.eval`, `truncate`) acts on `Z`-basis outcomes, which
+  keeps them diagonal; the input enters as controlled direct sums `Σ_z |z⟩⟨z| ⊗ U^{x(z)}`
+  (`HonestCore.lean:126`); and the Magic Square extension `HonestMagicSquare` uses `I, X, Z`
+  and `ZX = [[0,1],[-1,0]]` on the added qubit, all signed permutations. Commutation along
+  edges is already proved (`auxStrategy_isPCC`, `Complete.strategy_isPCC`). The repository
+  states none of this: Phase 3 supplies the closure lemmas (Kronecker products, products of
+  commuting elements, `submatrix e e`, linear data processing `Σ_e sgn(φ e) proj w e = w(c_φ)`,
+  diagonality under any function, controlled direct sums, constants).
+
+Three refinements the readers found, which Phase 3 must respect:
+
+1. **The input's answers must be padded to constant lengths first**, as the paper does
+   (`Padding`, II:6219–6294): the introspective decider reads the input's answer `a` as a
+   variable-length, self-delimiting string (`|a| ≤ R`), while a tailored question has a fixed
+   answer length. The padded `a` has a readable and a linear part whose split is keyed to the
+   introspected question (`y` for Introspect and Read, `L_w(z)` for Sample), which sits in
+   readable answer fields, so the linear-constraints processor computes it by running the
+   input's answer-length calculator on readable data.
+2. **The Magic Square and Pair answers must be unreadable**: six of the nine Magic Square cells
+   (`A⊗1, 1⊗X, A⊗X, B⊗X, A⊗Z, (AB)⊗(ZX)`) are not diagonal. The readable set is a subset of the
+   `Z`-type outputs.
+3. **The repository's other Magic Square strategy is not a ZPC strategy.** The Mermin–Peres
+   grid of `LCS/MagicSquare/Strategy.lean` uses `Pauli.Y = [[0,-i],[i,0]]`, not a signed
+   permutation; the non-vacuity witness of Phase 1 is built from `HonestMagicSquare`'s grid or
+   the paper's 8-point strategy (II:1351), not from it.
+
+And for Phase 4: the seeded low-degree game `LIDT.CL.clGame` is `F_q`-linear in the answers given
+the questions (its only non-answer data are `χ(s)`, the line direction, the base point delivered
+in the question and `lineParam`), so it is tailored as it stands; the repository's answer
+reduction is linear in its steps 1–4 and nonlinear only in step 5, the PCP identity
+`A₅ = φ(z)·∏_{i<5}(A_i − z_{5m+i})` (`PcpAlgebra.TypedAccepts`), which is exactly what the
+paper's tailored PCP replaces.
 
 **Route B.** Formalize the paper's game: `Sym_±` and `WH_k` over `F₂` (`Weyl.lean` at
 `ZMod 2`), an explicit code family (a Reed–Solomon ∘ Hadamard concatenation is the cheap
@@ -421,8 +478,9 @@ the Fourier transform between them (on `pvmObs`, `Linearity.lean` and `LCS/Strat
 `IsZAligned`, ZPC, `ZPC → IsPCC`, the data-processing corollaries of II:§3.4; tailored
 games, `TailoredGameData` and `toGame`, the canonical decider as a costed program,
 `TailoredVerifier`, `ofTNFV`, λ-boundedness, the `n`-th game; binary products and sums with
-`lem:sum-zpc`; the Magic Square as a ZPC strategy (from `LCS/MagicSquare/Strategy.lean`,
-the paper's II:1351) as the non-vacuity witness. Then the halting protocol from
+`lem:sum-zpc`; the Magic Square as a ZPC strategy (the paper's 8-point strategy, II:1351, or
+`HonestMagicSquare`'s grid — not the Mermin–Peres grid of `LCS/MagicSquare/Strategy.lean`,
+which uses `Y`) as the non-vacuity witness. Then the halting protocol from
 `TailoredGapCompression`: `Halting/Paper/*` with the linear-constraints processor as the
 fixed point, `{J}` for "reject" and the empty list for "accept", `lem:dhalt-values` as
 `accepts_iff`, the downward induction with Lin's branch, `lem:lambda` for three machines, the
@@ -430,6 +488,20 @@ class verifier; `TMIP* ⊆ RE` by enumeration of signed-permutation strategies;
 `tailored_halting_reduction_of : TailoredGapCompression → TailoredHaltingReduction` and the
 class theorems conditional on it. Deliverable: the whole logical skeleton, with the
 compression theorem as the one hypothesis.
+
+A correction to §3's reading of the halting layer, found in Phase 0: the headline
+`HaltingGameValue.halting_reduces_to_gameValue` is proved through the *criterion* route
+(`Halting/CompressorProgram.lean`, `Halting/Reduction.lean`'s obligations, the tabulation
+`tab`), and `Halting/Paper/*` proves only the polynomial-time class theorems
+(`re_subset_mipstar`, `mipstar_eq_re`, through `ClassMain.lean`). Either route reaches
+`TailoredHaltingReduction` only through a tabulation of tailored verifiers — a
+`TailoredGameData` from a tailored verifier at a fixed index: the weights by enumerating the
+sampler's seeds, the lengths by running the answer-length calculator on every question, the
+constraint table by running the linear-constraints processor on every readable assignment —
+which is new work in Phase 1. The paper route stays the choice, as it also gives the
+polynomial-time class theorem; its files `Build.lean`, `Size.lean`, `Cost.lean` and
+`ClassVerifier.lean` are hard-wired to the shape of `F` and `body`, so the tailored halting
+protocol is a parallel set of files, not an edit of these.
 
 **Phase 2 — repetition (2.5–3.5k; 1–2 PRs).** The `k`-fold tailored product (constraints
 zero-padded to the global length and concatenated, II:11377), ZPC completeness on
