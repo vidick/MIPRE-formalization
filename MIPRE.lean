@@ -1434,6 +1434,7 @@ public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Encoded
 public import MIPRE.Tailored.Intro.Input
 public import MIPRE.Tailored.Intro.Layout
+public import MIPRE.Tailored.Intro.Source
 public import MIPRE.Tailored.Intro.Transport
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV

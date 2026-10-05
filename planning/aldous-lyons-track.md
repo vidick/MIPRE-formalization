@@ -752,6 +752,20 @@ bits padded; `dec` strips the padding and re-encodes with `encodeAnswer`.
   reach `2·(2^n)^λ`, beyond `seven`'s original cutoff `R = (2^n)^λ` at the same λ; the input
   enters `seven` at a larger λ' (λ + 1 suffices for `n ≥ 1`), which the canonical decider's cost
   needs anyway, and the contract's `δ(ε, n)` at λ is then `seven`'s at λ'.
+- **P3b₂ — the instance (in progress).** Read from the Lean (2026-10-05): `seven`'s output is
+  compared with the `reference` verifier (`AmbientVerifierTransport.lean:38`), a
+  `CL.Detyping.DeciderProgram.verifier` with graph `TypeGraph.Adj QLD.adj (.pauli .X) (.pauli .Z)`
+  on `QuestionType QLD.Ty 7`, typed sampler `typedSampler 7 (PauliSampler.sampler …)`, typed
+  decider `typedDecider c U (clamp (source, λ))` and the constant cutoff
+  `answerBound (registerBits) (originalBound)`; `output_val_eq_reference` and
+  `hasPerfectPCC_reference` carry value and completeness across, and `verifier_game_D` is the
+  game identity on pushed questions. The source decider is called only on the edge
+  `(introspect false, introspect true)`, at index `2^n`, on `toBits (pull (firstEmbedding hs) y)`
+  of the two registers; Read and Sample are tied to it by `reading` (`y = z`, equal answers)
+  and `sampling` (`y = L_w(z)`, equal answers); and the honest strategy measures the input's at
+  the same question (the numbering of `CanonicalGame` cancels). `Tailored/Intro/Source.lean`:
+  `srcQuestion`, `srcSplitR`, `srcSplitL`; `Background/Tailored/Intro/Pauli.lean`: the Pauli
+  labels' lengths `count · width` and readability (`.pauli .Z` only).
 - **P3b — the tailored presentation as a game (2–3k).** Structure, settled 2026-10-05: `seven`'s
   output verifier is `CL.Detyping.DeciderProgram.verifier` over a typed sampler and a typed
   decider, so the presentation is typed tailored data on the labels (`Tailored/Detyping.lean`,
