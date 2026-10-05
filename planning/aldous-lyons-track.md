@@ -15,6 +15,8 @@ class) are proved from a `TailoredGapCompression`. P1e, the polynomial-time clas
 Phase 2 (#280) is done: P2a, the tailored product with its completeness and soundness for
 programs meeting a specification, and P2b, the programs themselves with their running times, so
 `TailoredRepetition` is inhabited (`MIPRE.Tailored.tailoredRepetition`, §5 "Phase 2 slices").
+Phase 3 (#281) is in progress on Route A, planned in seven slices (§5 "Phase 3 slices"); P3a,
+the closure toolbox for the honest strategy, is done (`MIPRE/Tailored/Intro/*`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -324,9 +326,17 @@ paper's remark II:5228 for the equivalence of the combinatorial games.
 paper, by two readers whose reports cite file and line for every claim:
 
 - *Controlled-linear: yes.* The compiled introspective decider
-  (`DecisionCompiler.decider` → `untypedKernel` → `DecisionKernel.program`) is proved equal,
-  branch by branch, to the typed predicate (`TypedPredicate.check`, with the hiding comparisons
-  in quotient form, `TypedQuotientPredicate.lean`), and every check of it is either a predicate
+  (`DecisionCompiler.decider` → `untypedKernel` → `DecisionKernel.program`) is tied to the typed
+  predicate in quotient form (`AuxiliaryQuotient.check`, `TypedQuotientPredicate.lean:104`; the
+  legacy `TypedPredicate.check` follows from it after `decodeAnswer`, `check_sound`) in two
+  directions, not by an equality: `program_sound` (`DecisionKernelSoundness.lean:31`, kernel
+  acceptance gives the quotient check on the decoded answers) and `program_complete`
+  (`DecisionKernelComplete.lean:195`, the converse under `PrefixGuard.holds` on both answers,
+  `sourceOutput`, `PauliFormatted` and the question lengths). The kernel's extra checks — the
+  canonical and length checks, the prefix guard (`GuardedAuxiliaryProgram.lean:28`), and the
+  router's unconditional acceptance off the edges (`DecisionCompilerRoute.lean:47`) — read only
+  readable fields and lengths, so `LP^intro` reproduces them, emitting `rejectConstraint` where
+  they fail. Every check of it is either a predicate
   on readable fields and the questions alone, or `F₂`-affine equations on the linear fields
   whose coefficients are computed from readable fields and the questions. The nonlinear maps —
   the sampler's `CLFun.eval`, `outputPrefix`, `prefixRegister`, `factorOfPrefix`,
@@ -345,12 +355,13 @@ paper, by two readers whose reports cite file and line for every claim:
   keeps them diagonal; the input enters as controlled direct sums `Σ_z |z⟩⟨z| ⊗ U^{x(z)}`
   (`HonestCore.lean:126`); and the Magic Square extension `HonestMagicSquare` uses `I, X, Z`
   and `ZX = [[0,1],[-1,0]]` on the added qubit, all signed permutations. Commutation along
-  edges is already proved (`auxStrategy_isPCC`, `Complete.strategy_isPCC`). The repository
+  edges is already proved (`auxStrategy_isPCC`, `HonestCompleteGame.lean:95`, and the
+  `strategy_isPCC` of `SourceReindex`, `SourcePadding` and `HonestMagicSquareGame`). The repository
   states none of this: Phase 3 supplies the closure lemmas (Kronecker products, products of
   commuting elements, `submatrix e e`, linear data processing `Σ_e sgn(φ e) proj w e = w(c_φ)`,
   diagonality under any function, controlled direct sums, constants).
 
-Three refinements the readers found, which Phase 3 must respect:
+Four refinements the readers found, which Phase 3 must respect:
 
 1. **The input's answers must be padded to constant lengths first**, as the paper does
    (`Padding`, II:6219–6294): the introspective decider reads the input's answer `a` as a
@@ -366,6 +377,14 @@ Three refinements the readers found, which Phase 3 must respect:
    grid of `LCS/MagicSquare/Strategy.lean` uses `Pauli.Y = [[0,-i],[i,0]]`, not a signed
    permutation; the non-vacuity witness of Phase 1 is built from `HonestMagicSquare`'s grid or
    the paper's 8-point strategy (II:1351), not from it.
+4. **Only the Pauli test is over `F_q`.** The introspection registers are already over `F₂`
+   (`ι = Fin Q`, `F = CL.𝔽₂` in `DecisionKernelInput.lean`); the Pauli answers are over
+   `shoupBinField` and reach the hiding checks through `project` (the self-dual coordinates,
+   `registerVector`). So the `F_q → F₂` matrices are needed for `QLD.accepts` and `project`
+   only, and a dual equality `stageDual (k+1) y u = stageDual (k+1) y v` becomes one row per
+   generator of `ker (stageLinear P k y)` (`registerDual_eq_iff_dot`,
+   `AuxiliaryDualKernel.lean:74`), the generators computed by the existing
+   `kernelGeneratorsProg` (`LowDegree/BinaryKernel.lean:96`).
 
 And for Phase 4: the seeded low-degree game `LIDT.CL.clGame` is `F_q`-linear in the answers given
 the questions (its only non-answer data are `χ(s)`, the line direction, the base point delivered
@@ -676,6 +695,77 @@ description bounds in the shape of `Introspection.budget`; ZPC completeness of t
 strategy; soundness transported from `Introspection.seven`; padding (II:6223) and the
 tailored detyping bookkeeping on `CL/Detyping*`. `TailoredIntrospection` inhabited. On
 Route B this phase is 45–75k and starts with II:§3.7–3.8.
+
+**Phase 3 slices.** Seven slices, eight or nine pull requests. The design comes from three readings of the Lean
+(2026-10-05, recorded in §4.2 and below); the paper's §4 was not reread for them (arXiv was not
+reachable from the session), so every slice that formalizes a paper statement checks it first.
+
+What the readings settled. The completeness of `seven` (`CanonicalComplete.output_hasPerfectPCC`)
+builds its strategy explicitly, as a chain of named constructions on the input's strategy `R`:
+`SourcePadding.strategy` (questions pulled back along `firstEmbedding`), `SourceReindex.strategy`,
+`BinaryComplete.strategy` (`op` on `Space = (Seed × Fin R.d) × Fin 2`, conjugated by the
+permutation `Fintype.equivFin`), the relabellings `pccToExplicit` and `originalPCC`,
+`mergeAnswersByQuestion` along `encodeAnswer`, then `Detyping.complete` (a constant answer on the
+questions that do not decode), a relabelling by `vectorEquiv` and a zero-extension of the answers.
+At a question that decodes, the final measurement is therefore *the sum over the parsed answers
+whose encoding is the string* of `registerOp e (op …)`, and every base operator is one of: an
+eigenbasis measurement of `wX`/`wZ` coarse-grained along a label (`synOf`, `fibSum`, `proj`), a
+computational-basis readout, a controlled sum `readout f z ⊗ R.M(…)` of the input's measurements,
+a Magic Square `grid` observable on the ancilla, or a product of these. The input's answers are
+variable-length strings in `seven`'s game (`Answers ((2^n)^lam)`, no padding anywhere on the
+chain), so the tailored output game, whose answer lengths are fixed per question, is not `seven`'s
+game itself but a padded presentation of it: an answer is the readable fields, then the input's
+readable answer bits padded to the maximum, then the linear fields, then the input's linear answer
+bits padded; `dec` strips the padding and re-encodes with `encodeAnswer`.
+
+- **P3a — the closure toolbox (done, 0.3k lines).** `Tailored/Intro/Encoded.lean`: the bit
+  observables `encObs P enc i = ∑_λ (-1)^{enc(λ)_i} P_λ` of an encoded measurement are commuting
+  self-adjoint involutions whose Fourier transform is the push-forward of `P` along `enc`
+  (`fourierProj_encObs`), commuting with those of any measurement commuting with `P`.
+  `Tailored/Intro/Closure.lean`: `wX` is a permutation matrix and `wZ` a `±1` diagonal; the trace
+  form is nondegenerate, so an `F₂`-linear bit of an `X`- or `Z`-basis outcome has observable
+  `wX c` or `wZ c` (linear data processing, II:2938); any bit of a `Z`-basis outcome is a `±1`
+  diagonal; block-diagonal and controlled sums of signed permutations are signed permutations,
+  diagonal when the blocks are.
+- **P3b — the tailored presentation as a game (2–3k).** The output's question set and decoding
+  (reusing `decodeQuestion`), the padded answer layout per type (readable fields first), `lenIntro`
+  as a function of the question, `encPad` from parsed answers to `Fin (len x) → Bool` and `dec`
+  back, and the acceptance specification the processor must meet: (⇒) the tailored game accepts
+  `(a, b)` only if `seven`'s decider accepts `(dec a, dec b)`; (⇐) it accepts
+  `(encPad a', encPad b')` whenever `seven`'s decider accepts `(encode a', encode b')`. Stated as a
+  structure `IntroSpec` on a candidate `(L, LP)`, so that P3c and P3d can be written against it
+  before P3e exists.
+- **P3c — ZPC completeness from the specification (3–5k).** The chain above restated as
+  definitions (its constructions are named; only the existentials wrapping them need unfolding),
+  so that the honest measurement at each question is an explicit formula. The permutation
+  strategy is `U x i = encObs (honest x) encPad i`: involutions, commutation at a question and
+  along edges (from `auxStrategy`-style `IsPCC` through `commute_encObs_encObs`) are P3a; the
+  signed-permutation and `Z`-alignment clauses go type by type through P3a's closure lemmas,
+  with the input entering as `S.U` through `pvmObs_fourierProj_bit` and its readable bits
+  diagonal; the conjugation by `equivFin` is `IsSignedPerm.reindex`. Perfection: a rejected
+  encoded pair has a rejected decoded pair (⇐ of P3b), whose honest projections multiply to
+  zero by PCC and value `1`; non-encoded answers carry zero projections.
+- **P3d — soundness from the specification (1–2k).** A strategy for the tailored game,
+  coarse-grained along `dec`, is a strategy for `seven`'s game at least as good (⇒ of P3b,
+  `mergeAnswersByQuestion`), then `seven.soundness` and `valStar_ofTNFV`. **Dependency:**
+  `seven.soundness` takes `Verifier.IsBounded lam` of the input, here `V.ofTNFV U`, which is the
+  canonical decider's cost that P1b deferred; either that cost is supplied (its only consumer
+  so far) or the slice checks whether `CompiledSoundness.output_soundness` uses boundedness beyond
+  the answer bound `(2^n)^lam`, and restates it without.
+- **P3e — the two programs and their correctness (5–9k, 2–3 PRs).** `L^intro` by type, the padding
+  split computed by running the input's `L` on the readable `y` (Introspect, Read) or `L_w(z)`
+  (Sample). `LP^intro` as constraint lists per check family, with `rejectConstraint` wherever a
+  readable-only check fails (formats, lengths, the prefix guard, `sourceOutput`, the router's
+  off-edge acceptance becoming the empty list): (i) the Pauli basis test `QLD.accepts`, rules
+  2a–7, bit by bit through the self-dual coordinates of `shoupBinField` (`BinaryLinear`,
+  `shoupMulProg_encoding`); (ii) the sampling, reading and hiding checks, a dual equality becoming
+  one row per generator of `ker (stageLinear P k y)` (`kernelGeneratorsProg`); (iii) the source
+  check `D`, the input's own `LP` run on the decoded readable answers and its constraints
+  re-indexed into the padded layout, plus the padding-is-zero rows. Correctness is `IntroSpec`.
+- **P3f — costs and description bounds (2–3k).** `within` in the shape of
+  `Introspection.budget`, `lp_size ≤ C λ^C`, `len_total`; the sampler's clauses are `seven`'s.
+- **P3g — `TailoredIntrospection` inhabited (0.3k).** Assembly, blueprint `thm:tailored-qr`,
+  `Closes #281`.
 
 **Phase 4 — answer reduction (25–40k; 8–12 PRs).** In the order of the paper's §5.2–5.6:
 purification and the tailored oracularization with its ZPC completeness and the reuse of

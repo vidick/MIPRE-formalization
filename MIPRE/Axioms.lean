@@ -235,6 +235,7 @@ public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Background.Tailored.Repetition.Stage
 public import MIPRE.Tailored.Halting.Main
 public import MIPRE.Tailored.Class
+public import MIPRE.Tailored.Intro.Closure
 
 @[expose] public section
 
@@ -3772,5 +3773,23 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `thm:tmipstar-eq-re`
 #guard_sorry_free MIPRE.Tailored.TMIPStarComputable.mipStar, MIPRE.Tailored.TMIPStarComputable.isRE,
   MIPRE.Tailored.re_subset_tmipStarComputable_of, MIPRE.Tailored.tmipStarComputable_eq_re_of
+
+-- blueprint `lem:encoded-pvm-obs`
+#guard_sorry_free MIPRE.Tailored.encObs, MIPRE.Tailored.encObs_mul_self,
+  MIPRE.Tailored.commute_encObs, MIPRE.Tailored.star_encObs, MIPRE.Tailored.fourierFactor_encObs,
+  MIPRE.Tailored.fourierProj_encObs, MIPRE.Tailored.commute_encObs_encObs
+
+-- blueprint `lem:weyl-signed-perm`
+#guard_sorry_free MIPRE.Tailored.sgn_eq_bitSign, MIPRE.Tailored.wX_eq_signedPermMatrix,
+  MIPRE.Tailored.isSignedPerm_wX, MIPRE.Tailored.wZ_eq_diagonal_bitSign,
+  MIPRE.Tailored.isSignedPerm_wZ, MIPRE.Tailored.isDiag_wZ, MIPRE.Tailored.trDotDual,
+  MIPRE.Tailored.exists_trDotL_eq, MIPRE.Tailored.encObs_proj_trDot,
+  MIPRE.Tailored.exists_encObs_proj_linear, MIPRE.Tailored.isSignedPerm_encObs_xProj,
+  MIPRE.Tailored.isSignedPerm_encObs_zProj
+
+-- blueprint `lem:controlled-signed-perm`
+#guard_sorry_free MIPRE.Tailored.blockDiag, MIPRE.Tailored.isSignedPerm_blockDiag,
+  MIPRE.Tailored.isDiag_blockDiag, MIPRE.Tailored.controlled_eq_blockDiag,
+  MIPRE.Tailored.isSignedPerm_controlled, MIPRE.Tailored.isDiag_controlled
 
 end
