@@ -3,12 +3,15 @@
 **Status: Phase 0 done (#273; tracking #272); Phase 1 in progress (#279).** The statement and
 the interface are in (`MIPRE/TailoredGameValue.lean`, `MIPRE/Tailored/*`), the two checks that
 Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapter is
-`blueprint/src/content/09_tailored.tex`. Phase 1's first two slices are done (§5 "Phase 1
+`blueprint/src/content/09_tailored.tex`. Four of Phase 1's five slices are done (§5 "Phase 1
 slices"): P1a, the toolbox of permutation strategies
-(`MIPRE/Tailored/{SignedPerm,Fourier,ZPC,MagicSquare}.lean`), and P1b, a tailored verifier as a
-normal form verifier with the same games (`MIPRE/Tailored/{Canonical,OfTNFV}.lean`); and P1c,
-the halting protocol at a fixed level, for a search program meeting its specification
-(`MIPRE/Tailored/Halting/*`). P1d is next.
+(`MIPRE/Tailored/{SignedPerm,Fourier,ZPC,MagicSquare}.lean`); P1b, a tailored verifier as a
+normal form verifier with the same games (`MIPRE/Tailored/{Canonical,OfTNFV}.lean`); P1c, the
+halting protocol at a fixed level (`MIPRE/Tailored/Halting/*`); and P1d, the tabulation, the
+search program, `tailored_halting_reduction_of` and the computable class
+(`MIPRE/Tailored/Data/*`, `MIPRE/Tailored/Halting/{Tabulate,Search,Reduction}.lean`,
+`MIPRE/Tailored/Class.lean`). So `TailoredHaltingReduction` and `TMIP* = RE` (computable
+class) are proved from a `TailoredGapCompression`. P1e, the polynomial-time class, is next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -491,7 +494,7 @@ which uses `Y`) as the non-vacuity witness. Then the halting protocol from
 `TailoredGapCompression`: `Halting/Paper/*` with the linear-constraints processor as the
 fixed point, `{J}` for "reject" and the empty list for "accept", `lem:dhalt-values` as
 `accepts_iff`, the downward induction with Lin's branch, `lem:lambda` for three machines, the
-class verifier; `TMIP* ⊆ RE` by enumeration of signed-permutation strategies;
+class verifier; `TMIP* ⊆ RE` (done through the quantum value, not by enumeration; see P1d);
 `tailored_halting_reduction_of : TailoredGapCompression → TailoredHaltingReduction` and the
 class theorems conditional on it. Deliverable: the whole logical skeleton, with the
 compression theorem as the one hypothesis.
@@ -510,7 +513,7 @@ polynomial-time class theorem; its files `Build.lean`, `Size.lean`, `Cost.lean` 
 `ClassVerifier.lean` are hard-wired to the shape of `F` and `body`, so the tailored halting
 protocol is a parallel set of files, not an edit of these.
 
-**Phase 1 slices.** Four pull requests, in this order.
+**Phase 1 slices.** Five, in this order; P1a–c landed together (#286).
 
 - **P1a — permutation strategies (done, 1.4k lines).** `SignedPerm Ω`, the group
   `Sym(Ω) ⋉ F₂^Ω`, with an injective matrix homomorphism into the unitaries: the sign flip,
@@ -563,14 +566,44 @@ protocol is a parallel set of files, not an edit of these.
   verifier `(S^λ, L^λ, P)` it halts exactly when the value at level `C` exceeds `1/2`. The
   existing halting layer gets its program from its tabulation (`exists_semL`); here it comes
   from the tabulation of P1d.
-- **P1d — tabulation, transports, the conditional theorems.** A tailored verifier at a fixed
-  index tabulated as a `TailoredGameData`, with budgets read off `λ`, so that it is exact on
-  `λ`-bounded verifiers; from it the search program of P1c (`SearchSpec`), by the lower
-  semicomputability of the value; ZPC strategies and values transported between
-  `MIPRE.Tailored` and `TailoredGameValue`;
-  `tailored_halting_reduction_of : TailoredGapCompression ℓ → TailoredHaltingReduction`;
-  `TMIP* ⊆ RE` by enumerating signed-permutation strategies, on which perfection is decidable
-  through `SignedPerm (Fin m)`; the class statements.
+- **P1d — tabulation, transports, the conditional theorems (done, 2.2k lines).**
+  - *The bridge* (`Tailored/Data/Bridge.lean`). A `TailoredGameData`'s synchronous game is one
+    of the foundations, with `gameValue = syncValue ≤ val*`; a ZPC strategy of a description is
+    a synchronous strategy of the same value, so a perfect one gives value `1`.
+  - *The conversion* (`Data/Convert.lean`). A description is a `GameData` whose answers are the
+    numbers below `2^Λ`, read bitwise; the map is primitive recursive and keeps the quantum
+    value.
+  - *Presentations* (`Data/Presents.lean`). A description presenting a tailored game with no
+    weight on its loops (a doubled game) has its quantum value: the two read answers
+    differently (vectors padded with zeros, strings of exact length) and the description also
+    rejects unequal answers at a loop, neither of which matters off the support. A perfect ZPC
+    strategy of the game, padded with identities, is one of the description.
+  - *The tabulation* (`Halting/Tabulate.lean`). The doubled questions are the vertices; the
+    weights are those of `Halting.tabOf`; the lengths and constraints come from running the
+    calculator and the processor under the budget `n^λ (|d|+1)^λ`. It is primitive recursive,
+    and it presents the doubled game of a `λ`-bounded verifier at every `n ≥ 2`. The marginals
+    are queried at the sampler's own level and normalized to the dimension. The normalization
+    matters only at level `0`, where the questions are empty and `runs_marginal` says nothing.
+  - *The search program* (`Halting/Search.lean`), from the lower semicomputability of the
+    value, so `halting_tailored` holds with no hypothesis beyond the compression.
+  - *The reduction* (`Halting/Reduction.lean`). `tailored_halting_reduction_of`, with soundness
+    even in the quantum value (`tailored_halting_reduction_quantum_of`). The processor's
+    description is built in polynomial time from the three shapes of `Halting/Paper/Build.lean`,
+    which are generic in the body.
+  - *The computable class* (`Tailored/Class.lean`). `TMIPStarComputable`; `TMIP* ⊆ MIP* ⊆ RE`
+    unconditionally; `TMIP* = RE` from a compression.
+  - **`TMIP* ⊆ RE` changed route.** It does not enumerate signed-permutation strategies. The
+    class's soundness clause is in `val*`, so membership is `val* > 1/2`, which is r.e. by
+    `lem:value-lower-approx`; no new semidecider is needed.
+  - **The statement got a definition node.** In the blueprint `TailoredHaltingReduction` moved
+    from `thm:tmip-re` to `def:tailored-halting-reduction`. `thm:tailored-halting` uses the
+    proposition, and `thm:tmip-re` is not proved yet; citing it from a proved node would mark the
+    proved node as resting on an unproved one.
+- **P1e — the polynomial-time class (next).** The second layer of §2.2: `TMIPStar`, with a
+  polynomial-time tailored verifier (the paper's clause (1), sampling and evaluation in
+  `poly(|z|)`), its tabulation into the computable class, and the class verifier from
+  `V^{M,λ}` at the level `C`. Together they give `TMIPStar = IsRE` from a compression, as
+  `Halting/Paper/{ClassVerifier,ClassMain}.lean` and `ClassMIPStarTab.lean` do for `MIPStar`.
 
 **Phase 2 — repetition (2.5–3.5k; 1–2 PRs).** `lem:sum-zpc` (II:3086), moved from Phase 1, as
 the case `k = 2` of what follows. The `k`-fold tailored product (constraints

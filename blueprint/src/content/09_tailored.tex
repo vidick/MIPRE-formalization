@@ -461,13 +461,24 @@ in \texttt{MIPRE/TailoredGameValue.lean}, beside the standalone statement of
 Theorem~\ref{thm:main}, whose game value they reuse.
 \end{definition}
 
-\begin{theorem}[$\mathrm{TMIP}^* = \RE$; II:1505, Theorem~7.4 of~\cite{BCLV24}]
-\label{thm:tmip-re}
+\begin{definition}[The tailored halting reduction, as a proposition]
+\label{def:tailored-halting-reduction}
 \uses{def:tailored-game-data}
 \lean{TailoredGameValue.TailoredHaltingReduction}
 \leanok
-There is a computable map $g$ from Turing machines to tailored game descriptions such that for
-every Turing machine $\machine$:
+The proposition that the halting problem reduces to tailored games: the statement of
+Theorem~\ref{thm:tmip-re}, written in \texttt{MIPRE/TailoredGameValue.lean} on top of Mathlib
+alone. It is a definition, so that the conditional theorem proving it from a compression
+(Theorem~\ref{thm:tailored-halting}) can name it while Theorem~\ref{thm:tmip-re} awaits that
+compression.
+\end{definition}
+
+\begin{theorem}[$\mathrm{TMIP}^* = \RE$; II:1505, Theorem~7.4 of~\cite{BCLV24}]
+\label{thm:tmip-re}
+\uses{def:tailored-halting-reduction}
+The proposition of Definition~\ref{def:tailored-halting-reduction} holds: there is a computable
+map $g$ from Turing machines to tailored game descriptions such that for every Turing machine
+$\machine$:
 \begin{enumerate}
 \item (\textbf{Completeness}) if $\machine$ halts on the empty input, then $g(\machine)$ has a
   perfect ZPC strategy;
@@ -482,9 +493,8 @@ the synchronous value of Definition~\ref{def:sync-value}, in its standalone form
 \begin{proof}
 \uses{thm:tailored-halting,thm:tailored-compression-target}
 Theorem~\ref{thm:tailored-halting} at the compression of
-Theorem~\ref{thm:tailored-compression-target}, then the tabulation of the halting verifier's
-game at its fixed index as a tailored game description, as Theorem~\ref{thm:main} tabulates a
-normal form verifier. Phases~1 and~5.
+Theorem~\ref{thm:tailored-compression-target}. The first is proved, the tabulation of the halting
+verifier's game at its fixed index included; the second is Phases~2 to~5.
 \end{proof}
 
 \begin{remark}[Where the formalization departs from the paper]
@@ -670,26 +680,241 @@ $C$ exceeded $\frac12$, the search would fire from some level on, and soundness 
 from there to $C$, a contradiction.
 \end{proof}
 
+\subsection{Tabulation, the search program and the reduction}
+
+\begin{lemma}[Tailored game descriptions as games of the foundations]
+\label{lem:tailored-bridge}
+\uses{def:tailored-game-data,def:sync-value,lem:sync-le-valstar,lem:fourier-pvm}
+\lean{HaltingGameValue.SynchronousGame.toMIPRE, HaltingGameValue.SynchronousGame.toSyncStrategy,
+  HaltingGameValue.SynchronousGame.ofSyncStrategy,
+  HaltingGameValue.SynchronousGame.value_toSyncStrategy,
+  HaltingGameValue.SynchronousGame.strategyValue_ofSyncStrategy,
+  HaltingGameValue.SynchronousGame.gameValue_eq_syncValue,
+  HaltingGameValue.SynchronousGame.gameValue_le_quantumValue,
+  TailoredGameValue.TailoredGameData.syncGame, TailoredGameValue.TailoredGameData.game,
+  TailoredGameValue.TailoredGameData.gameValue_le_quantumValue,
+  TailoredGameValue.PermStrategy.isPVMIn_proj, TailoredGameValue.PermStrategy.toSync,
+  TailoredGameValue.PermStrategy.value_toSync,
+  TailoredGameValue.TailoredGameData.HasPerfectZPC.syncValue_eq_one,
+  TailoredGameValue.TailoredGameData.HasPerfectZPC.gameValue_eq_one,
+  TailoredGameValue.TailoredGameData.HasPerfectZPC.quantumValue_eq_one}
+\leanok
+The synchronous game of a tailored game description is a synchronous game of the foundations,
+with the same synchronous value, which is at most its quantum value. A ZPC strategy of a
+description is a synchronous strategy with the same value, its measurements being the Fourier
+transforms of its observables. So a perfect ZPC strategy gives synchronous and quantum value
+$1$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:sync-le-valstar,lem:fourier-pvm,def:signed-perm,lem:signed-perm}
+\leanok
+The two notions of a synchronous strategy are the same data, and so are their values. The
+Fourier transform of commuting self-adjoint involutions is a projective measurement
+(Lemma~\ref{lem:fourier-pvm}), and the observables of a ZPC strategy are involutive signed
+permutation matrices, which are self-adjoint.
+\end{proof}
+
+\begin{lemma}[A tailored game description as a game description]
+\label{lem:tailored-conversion}
+\uses{lem:tailored-bridge,def:game-description}
+\lean{TailoredGameValue.TailoredGameData.toGameData, TailoredGameValue.TailoredGameData.vecEquiv,
+  TailoredGameValue.TailoredGameData.ansLenL, TailoredGameValue.TailoredGameData.acceptsN,
+  TailoredGameValue.TailoredGameData.accN, TailoredGameValue.TailoredGameData.acceptsN_iff,
+  TailoredGameValue.TailoredGameData.mem_accN,
+  TailoredGameValue.TailoredGameData.quantumValue_toGameData,
+  TailoredGameValue.TailoredGameData.primrec_toGameData}
+\leanok
+There is a primitive recursive map from tailored game descriptions to game descriptions
+(Definition~\ref{def:game-description}) that keeps the quantum value: the answers are the
+numbers below $2^\Lambda$, read as bit vectors of length $\Lambda$, and the acceptance table
+lists the tuples the canonical decider accepts.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:tailored-bridge}
+\leanok
+The two games have the same questions and the same distribution, and their answer sets are in
+bijection along the binary expansion, under which the two predicates agree; the quantum value is
+invariant under such relabelings.
+\end{proof}
+
+\begin{definition}[Presentations]
+\label{def:tailored-presents}
+\uses{def:tailored-game-data,def:tailored-game,def:zpc-strategy}
+\lean{MIPRE.Tailored.Presents, MIPRE.Tailored.Presents.toStr, MIPRE.Tailored.Presents.toVec,
+  MIPRE.Tailored.Presents.midGame, MIPRE.Tailored.Presents.padVec,
+  MIPRE.Tailored.Presents.padStrategy}
+\leanok
+A tailored game description \emph{presents} a tailored game along a bijection of its vertices
+with the game's questions when the weights, the numbers of readable and linear variables at each
+vertex, and the constraints at every pair of vertices and every readable part of the right
+length are the game's.
+\end{definition}
+
+\begin{lemma}[A presentation of a game without weight on its loops]
+\label{lem:tailored-presents}
+\uses{def:tailored-presents,lem:tailored-bridge,lem:fourier-pvm}
+\lean{MIPRE.Tailored.Presents.quantumValue_eq, MIPRE.Tailored.Presents.hasPerfectZPC,
+  MIPRE.Tailored.Presents.accepts_iff, MIPRE.Tailored.Presents.value_padStrategy,
+  MIPRE.quantumValue_congr_support, MIPRE.quantumValue_eq_of_equiv_support,
+  MIPRE.Tailored.TailoredGame.quantumValue_doubled_eq_valStar,
+  MIPRE.Tailored.TailoredGame.doubled_μ_self, MIPRE.Tailored.fourierProj_castLE,
+  MIPRE.Tailored.fourierProj_eq_zero_of_one}
+\leanok
+Let a tailored game description present a tailored game with no weight on its loops, such as a
+doubled game. Then the description has the game's quantum value, and a perfect ZPC strategy of
+the game, its observables padded with identities beyond a question's variables, is one of the
+description. A tailored game and its doubled game have the same quantum value.
+\end{lemma}
+
+\begin{proof}
+\uses{def:tailored-presents,lem:fourier-pvm,lem:model-proj-strategy-values,lem:transports-model}
+\leanok
+The two read answers differently: the description reads bit vectors of the largest length that
+vanish beyond a vertex's variables, the game bit strings of exactly that length; and the
+description also rejects unequal answers at a loop. On well-formatted answers the two
+predicates agree up to the loop condition, and the quantum value sees a predicate only where the
+distribution has weight. Answers pass from vectors to strings by keeping a vertex's
+coordinates and back by padding with zeros, question by question, and decoding answers question
+by question can only raise a value; so the two values bound each other. For the strategies: an
+observable equal to the identity leaves the Fourier transform unchanged at an answer whose bit
+there is $0$ and annihilates it at the others, so the padded strategy's measurements are the
+strategy's on padded answers and vanish elsewhere, and it has the strategy's value.
+\end{proof}
+
+\begin{definition}[The tabulation of a tailored verifier]
+\label{def:tailored-tabulation}
+\uses{def:tailored-verifier,def:tailored-game-data,def:tailored-bounded,def:tailored-compression}
+\lean{MIPRE.Tailored.tabOfT, MIPRE.Tailored.margAt, MIPRE.Tailored.margN, MIPRE.Tailored.lenRun,
+  MIPRE.Tailored.lpRun, MIPRE.Tailored.zOf, MIPRE.Tailored.lenList, MIPRE.Tailored.consAt,
+  MIPRE.Tailored.consT, MIPRE.Tailored.vtxEquiv, MIPRE.Tailored.tabT}
+\leanok
+The \emph{tabulation} of a tailored verifier at index $n$, under the budget
+$T \cdot (\abs{d} + 1)^k$, is the tailored game description whose vertices are the doubled
+questions $\{0, 1\} \times \F_2^{s(n)}$, whose weights count the points of $\F_2^{s(n)}$ landing
+on each pair of tagged marginals, and whose lengths and constraints are what the answer-length
+calculator and the linear-constraints processor output, each program run under the budget. On a
+description string, the verifier is $(\cal{S}^\lambda, \cal{L}^\lambda, \cal{P})$ for the string's
+parameter $\lambda$ and processor $\cal{P}$, and the budget is $n^\lambda \cdot
+(\abs{d}+1)^\lambda$.
+\end{definition}
+
+\begin{lemma}[The tabulation is computable, and correct on bounded verifiers]
+\label{lem:tailored-tabulation}
+\uses{def:tailored-tabulation,def:tailored-presents,def:tailored-compression}
+\lean{MIPRE.Tailored.primrec_tabOfT, MIPRE.Tailored.computable_tabT,
+  MIPRE.Tailored.presents_tabOfT, MIPRE.Tailored.presents_tabT, MIPRE.Tailored.mu_tabOfT,
+  MIPRE.Tailored.dimOf_eq_of, MIPRE.Tailored.margN_eq_of, MIPRE.Tailored.lenIs_lenRun,
+  MIPRE.Tailored.lpIs_lpRun, MIPRE.Tailored.lenOf_eq_lenRun, MIPRE.Tailored.consOf_eq_lpRun}
+\leanok
+The tabulation is primitive recursive in its parameters, and the tabulation of a description
+string is computable in the string and the index. For a tailored verifier whose three programs
+run within the budget at index $n$, the tabulation presents its doubled $n$-th game; in
+particular the tabulation of the description of a $\lambda$-bounded verifier does, at every
+$n \geq 2$.
+\end{lemma}
+
+\begin{proof}
+\uses{def:tailored-presents}
+\leanok
+Under its time bound each budgeted run returns the program's output. The weights are counted as
+in the tabulation of a normal form verifier (Definition~\ref{def:game-description}), the
+marginals at the sampler's level being normalized to the dimension, which only matters at level
+$0$, where the questions are empty. A vertex's question is read off its binary expansion, the tag
+being the lowest bit.
+\end{proof}
+
+\begin{lemma}[The search program]
+\label{lem:tailored-search}
+\uses{lem:tailored-tabulation,lem:tailored-presents,lem:tailored-conversion,
+  def:tailored-search-spec,lem:value-lower-approx}
+\lean{MIPRE.Tailored.Halting.quantumValue_tabT, MIPRE.Tailored.Halting.exists_searchProg,
+  MIPRE.Tailored.Halting.search, MIPRE.Tailored.Halting.search_wellScoped,
+  MIPRE.Tailored.Halting.search_spec}
+\leanok
+There is a program meeting the search specification (Definition~\ref{def:tailored-search-spec}).
+\end{lemma}
+
+\begin{proof}
+\uses{lem:value-lower-approx}
+\leanok
+On a string, semidecide $\valstar > \frac12$ for the game description of its tabulation at the
+level $C$. On the description of a $\lambda$-bounded verifier that tabulation presents the
+doubled game at $C \geq 2$ (Lemma~\ref{lem:tailored-tabulation}), so it has the doubled game's
+quantum value, which is the verifier's value (Lemma~\ref{lem:tailored-presents}), and the
+conversion keeps it (Lemma~\ref{lem:tailored-conversion}).
+\end{proof}
+
 \begin{theorem}[Halting from tailored compression; II:1887--2066]
 \label{thm:tailored-halting}
-\uses{def:tailored-compression,def:tailored-game-data,lem:zpc-pcc,thm:halting,
-  thm:tailored-halting-level}
-A tailored gap compression gives the conclusion of Theorem~\ref{thm:tmip-re}.
+\uses{def:tailored-compression,def:tailored-halting-reduction,thm:tailored-halting-level,
+  lem:tailored-search,lem:tailored-tabulation,lem:tailored-presents,lem:tailored-bridge}
+\lean{MIPRE.Tailored.tailored_halting_reduction_of,
+  MIPRE.Tailored.tailored_halting_reduction_quantum_of,
+  MIPRE.Tailored.Halting.halting_tailored_search, MIPRE.Tailored.Halting.lamThreshold,
+  MIPRE.Tailored.Halting.VT, MIPRE.Tailored.Halting.toData_F_code,
+  MIPRE.Tailored.Halting.lpBuild, MIPRE.Tailored.Halting.lamOf, MIPRE.Tailored.Halting.descM,
+  MIPRE.Tailored.Halting.gameOf, MIPRE.Tailored.Halting.presents_gameOf,
+  MIPRE.Tailored.Halting.hasPerfectZPC_gameOf, MIPRE.Tailored.Halting.quantumValue_gameOf,
+  MIPRE.Tailored.Halting.quantumValue_gameOf_le, MIPRE.Tailored.Halting.computable_gameOf}
+\leanok
+A tailored gap compression gives the proposition of
+Definition~\ref{def:tailored-halting-reduction}, the statement of Theorem~\ref{thm:tmip-re},
+with the soundness clause even in the quantum value $\valstar$, which bounds the synchronous
+value.
 \end{theorem}
 
 \begin{proof}
-The paper's halting protocol is the paper route of Theorem~\ref{thm:halting}, with the
-linear-constraints processor in the role of the decider: the processor of $\verifier^{\machine,
-\lambda}$ is a fixed point that outputs no constraint once $\machine$ has halted within the
-step budget, rejects (the list $\{J\}$) when the search for $\valstar > \frac12$ at the fixed
-level succeeds, and otherwise runs the compressed processor of its own description. When
-$\machine$ halts, an always-accepting game has the deterministic ZPC strategy ($m = 1$, every
-observable the identity) --- this is where the calculator's totality is spent --- and
-completeness descends through the levels; when it does not, the downward induction of the
-search branch gives $\valstar \leq \frac12$, and Lemma~\ref{lem:sync-le-valstar} the synchronous
-value. All of this is Theorem~\ref{thm:tailored-halting-level}, proved, for a search program
-meeting its specification; what remains is that program, from tabulating a tailored verifier
-at a fixed level, and the tabulation of the game the reduction outputs (Phase~1).
+\uses{thm:tailored-halting-level,lem:tailored-search}
+\leanok
+The reduction sends $\machine$ to the tabulation, at the level $C$, of the tailored halting
+verifier $\verifier^{\machine,\lambda}$ with the search program of
+Lemma~\ref{lem:tailored-search} and $\lambda = \Lambda_0 + 4\abs{\machine}$. That verifier is
+$\lambda$-bounded (Lemma~\ref{lem:tailored-lambda}), so its tabulation presents the doubled game
+at $C$ (Lemma~\ref{lem:tailored-tabulation}). If $\machine$ halts, the verifier has a perfect ZPC
+strategy at $C$ (Theorem~\ref{thm:tailored-halting-level}), which, padded, is one of the
+tabulation; if not, its value at $C$ is at most $\frac12$, and that is the tabulation's quantum
+value (Lemma~\ref{lem:tailored-presents}), which bounds the synchronous value
+(Lemma~\ref{lem:tailored-bridge}). The map is computable: the processor's description is a fixed
+tree around the encodings of $\machine$ and $\lambda$, built as the decider's is for
+Theorem~\ref{thm:halting}, and the tabulation is computable.
+\end{proof}
+
+\begin{definition}[The computable class $\mathrm{TMIP}^*$; II:787]
+\label{def:tmipstar}
+\uses{def:tailored-game-data,lem:tailored-bridge,def:q-value}
+\lean{MIPRE.Tailored.TMIPStarComputable}
+\leanok
+A language $L \subseteq \{0,1\}^*$ is in the computable class $\mathrm{TMIP}^*$ if there is a
+computable map $g$ from bit strings to tailored game descriptions such that for every string
+$z$: if $z \in L$, then $g(z)$ has a perfect ZPC strategy; if $z \notin L$, then
+$\valstar(g(z)) \leq \frac12$. As for Definition~\ref{def:mipstar-computable}, there is no
+polynomial-time bound on $g$.
+\end{definition}
+
+\begin{theorem}[$\mathrm{TMIP}^* = \RE$, as classes; II:787, II:1838, II:6997]
+\label{thm:tmipstar-eq-re}
+\uses{def:tmipstar,def:re,lem:tailored-conversion,def:mipstar-computable,lem:mipstar-sub-re,
+  thm:tailored-halting}
+\lean{MIPRE.Tailored.TMIPStarComputable.mipStar, MIPRE.Tailored.TMIPStarComputable.isRE,
+  MIPRE.Tailored.re_subset_tmipStarComputable_of, MIPRE.Tailored.tmipStarComputable_eq_re_of}
+\leanok
+$\mathrm{TMIP}^* \subseteq \mathrm{MIP}^* \subseteq \RE$. Given a tailored gap compression,
+$\mathrm{TMIP}^* = \RE$.
+\end{theorem}
+
+\begin{proof}
+\uses{lem:mipstar-sub-re,thm:tailored-halting,thm:halting-undecidable}
+\leanok
+A perfect ZPC strategy gives quantum value $1$ (Lemma~\ref{lem:tailored-bridge}), and the
+conversion to a game description keeps the quantum value (Lemma~\ref{lem:tailored-conversion});
+so a language in $\mathrm{TMIP}^*$ is in the computable class of
+Definition~\ref{def:mipstar-computable}, which is contained in $\RE$
+(Lemma~\ref{lem:mipstar-sub-re}). The plan had this inclusion by enumerating signed-permutation
+strategies; the route through the quantum value needs no new semidecider. Conversely, an r.e.
+language many-one reduces to the halting problem, which reduces to tailored games by
+Theorem~\ref{thm:tailored-halting}.
 \end{proof}
 
 \begin{definition}[The three stage contracts]
