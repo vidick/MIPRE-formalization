@@ -6,6 +6,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Tailored.Canonical
 public import MIPRE.Foundations.CL.DetypingProgParse
+public import MIPRE.Tailored.Repeat.DomTools
 
 @[expose] public section
 
@@ -18,7 +19,21 @@ input `(n, d)`, malformed ones included, while the steps of `canonProg` are poly
 functions, whose bounds hold on encodings only. This file puts a total parse in front
 (`parseDIn`, the identity on encodings, `canonProgT L LP`) and bounds the running time.
 
-* `pushProg_runs_le`: running a step and pushing its output costs the two runs and the sizes.
+* `pushProg_runs_le`, `step_runs`: a step of the decider, timed — the call's input built from the
+  state, the input program run within its bound, the output pushed;
+* `parseDIn`, `canonProgT`, `canonProgT_runs_iff`: the parse reads `(n, x, y, a, b)` off any
+  data, and is the identity on encodings, so the decider accepts what `canonProg` accepts;
+* `canonProgT_halts`: on every input `(n, d)` the decider halts within the explicit
+  `canonBound`, when `L` and `LP` halt within `T (|d'| + 1)^k` on every `(n, d')` — every call's
+  argument is a component of the parsed input, of size linear in `|d|`;
+* `canonProgT_timeBound`: hence within `c (T + 10^k + |n| + 1)^m (|d| + 1)^{e (k + 1)}` for
+  constants `c, m, e` independent of everything (`dom_canonBound`, with the domination tools of
+  the repeated programs);
+* `esize_canonProgT`: its description is `4 |L| + |LP|` plus a constant.
+
+What remains for `MIPRE.Verifier.IsBounded` of the normal form verifier a tailored verifier
+denotes, at a `λ'` linear in `λ`, is the wrapper of `Verifier.ofSamplerDecider` (the question-length
+check and the universal machine), whose explicit cost is `wrapCore_cost'`.
 -/
 
 namespace MIPRE.Cost.Prog
@@ -255,6 +270,81 @@ theorem canonProgT_halts {L P : Prog} (hL : L.WellScoped 1) (hP : P.WellScoped 1
   unfold canonBound
   rw [hY, hA]
   dsimp only
+  omega
+
+/-! ## The bound, dominated -/
+
+open Polynomial in
+/-- One polynomial bounding every stage, evaluated at the largest state size. -/
+noncomputable def canonPoly : Polynomial ℕ :=
+  2 * (canonIn₁.timeBound + canonIn₂.timeBound + canonIn₃.timeBound + canonIn₄.timeBound +
+    canonIn₅.timeBound) + canonFinal.timeBound + 15 * X + 46
+
+theorem canonBound_le (T k S Z : ℕ) :
+    canonBound T k S Z ≤ canonPoly.eval (5 * (T * Z ^ k) + parseDIn.timeBound.eval S + 5) := by
+  generalize hY : T * Z ^ k = Y
+  generalize hA : parseDIn.timeBound.eval S = A0
+  have key : ∀ (P : Polynomial ℕ) {u : ℕ}, u ≤ 5 * Y + A0 + 5 →
+      P.eval u ≤ P.eval (5 * Y + A0 + 5) := fun P {_} h => polynomial_eval_mono P h
+  have m1 := key canonIn₁.timeBound (u := A0) (by omega)
+  have m2 := key canonIn₂.timeBound (u := Y + A0 + 1) (by omega)
+  have m3 := key canonIn₃.timeBound (u := Y + (Y + A0 + 1) + 1) (by omega)
+  have m4 := key canonIn₄.timeBound (u := Y + (Y + (Y + A0 + 1) + 1) + 1) (by omega)
+  have m5 := key canonIn₅.timeBound (u := Y + (Y + (Y + (Y + A0 + 1) + 1) + 1) + 1) (by omega)
+  have mf := key canonFinal.timeBound
+    (u := Y + (Y + (Y + (Y + (Y + A0 + 1) + 1) + 1) + 1) + 1) (by omega)
+  unfold canonBound canonPoly
+  rw [hY, hA]
+  simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_X, Polynomial.eval_ofNat]
+  omega
+
+/-- **The canonical decider's bound is dominated**: `c (W + 1)^m X^{e (K + 1)}`, for `W` above
+the call constant `T`, `10^K` and the index's size, `X` the input's size plus one. -/
+theorem dom_canonBound : ∃ c m e, ∀ (W X K T S Z : ℕ), 1 ≤ X → 10 ^ K ≤ W → T ≤ W →
+    S ≤ W + X → Z ≤ 20 * X → Repeat.Dom W X K c m e (canonBound T K S Z) := by
+  obtain ⟨c0, m0, e0, h0⟩ := Repeat.dom_poly parseDIn.timeBound 2 1 1
+  obtain ⟨c, m, e, hQ⟩ := Repeat.dom_poly canonPoly (5 * (1 * 1) + c0 + 5)
+    (max (max (0 + (1 + 2)) m0) 0) (max (max (0 + (0 + 1)) e0) 0)
+  refine ⟨c, m, e, fun W X K T S Z hX hW hT hS hZ => ?_⟩
+  have dS : Repeat.Dom W X K (1 + 1 + 0) 1 1 S := Repeat.Dom.ofLin hX (by omega)
+  have dA0 := h0 W X K hX dS
+  have dY : Repeat.Dom W X K (1 * 1) (1 + 2) (0 + 1) (T * Z ^ K) :=
+    (Repeat.Dom.ofLeW hT).mul (Repeat.dom_powK hX hW (a := 20) (j := 2) (by norm_num) hZ)
+  have dA := (((Repeat.Dom.const 5).mul dY).add hX dA0).add hX (Repeat.Dom.const 5)
+  exact (hQ W X K hX dA).of_le (canonBound_le T K S Z)
+
+/-- **The running time of the canonical decider.** There are constants `c, m, e` such that, when
+`L` and `LP` halt within `T (|d| + 1)^k` on every input `(n, d)`, the canonical decider (with
+its total parse) halts within `c (T + 10^k + |n| + 1)^m (|d| + 1)^{e (k + 1)}` on every input
+`(n, d)`, malformed ones included. -/
+theorem canonProgT_timeBound : ∃ c m e, ∀ {L P : Prog}, L.WellScoped 1 → P.WellScoped 1 →
+    ∀ {n T k : ℕ}, (∀ d : Data, HaltsWithin L (.cons (encode n) d) (T * (d.size + 1) ^ k)) →
+      (∀ d : Data, HaltsWithin P (.cons (encode n) d) (T * (d.size + 1) ^ k)) →
+      ∀ d : Data, HaltsWithin (canonProgT L P) (.cons (encode n) d)
+        (c * (T + 10 ^ k + esize n + 1) ^ m * (d.size + 1) ^ (e * (k + 1))) := by
+  obtain ⟨c, m, e, h⟩ := dom_canonBound
+  refine ⟨c, m, e, fun {L P} hL hP {n T k} hLt hPt d => ?_⟩
+  obtain ⟨r, t, ht, hrun⟩ := canonProgT_halts hL hP hLt hPt d
+  refine ⟨r, t, ht.trans ?_, hrun⟩
+  have e0 : (Data.cons (encode n) d).size = esize n + d.size + 1 := rfl
+  have hS : (Data.cons (encode n) d).size ≤ (T + 10 ^ k + esize n) + (d.size + 1) := by
+    rw [e0]; generalize 10 ^ k = P; omega
+  have hX : 1 ≤ d.size + 1 := by omega
+  have hW : 10 ^ k ≤ T + 10 ^ k + esize n :=
+    (Nat.le_add_left _ T).trans (Nat.le_add_right _ _)
+  have hT : T ≤ T + 10 ^ k + esize n := (Nat.le_add_right T _).trans (Nat.le_add_right _ _)
+  have hZ : 20 * d.size + 20 ≤ 20 * (d.size + 1) := by omega
+  exact h (T + 10 ^ k + esize n) (d.size + 1) k T _ _ hX hW hT hS hZ
+
+/-! ## The description size -/
+
+/-- **The canonical decider's description is linear in those of `L` and `LP`**: `L` appears four
+times and `LP` once, the rest is fixed. -/
+theorem esize_canonProgT (L P : Prog) :
+    esize (canonProgT L P) + 5 * esize Prog.nil =
+      esize (canonProgT Prog.nil Prog.nil) + 4 * esize L + esize P := by
+  simp only [canonProgT, canonProg, canonTail₁, canonTail₂, canonTail₃, canonTail₄, seqProg,
+    Prog.pushProg, Prog.esize_eq_size_toData, Prog.toData, Data.size_cons]
   omega
 
 end MIPRE.Tailored
