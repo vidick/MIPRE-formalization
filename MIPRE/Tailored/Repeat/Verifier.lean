@@ -8,6 +8,7 @@ public import MIPRE.Tailored.Repeat.Strategy
 public import MIPRE.Tailored.Verifier
 public import MIPRE.Foundations.Repeat.RepSampler
 public import MIPRE.Foundations.GameTransport
+public import MIPRE.Foundations.GameAdapt
 public import MIPRE.Tactics
 
 @[expose] public section
@@ -38,7 +39,8 @@ The results:
   `𝒱^rep_n`, the tensor power of `MIPRE.Tailored.Repeat.Strategy` pulled back along the blocks
   of the questions — the questions on an edge have all their lengths, because a perfect strategy
   is accepted somewhere on every edge (`PermStrategy.exists_accepts`);
-* `quantumValue_le_of_coarse`: a game whose accepted answers, read through a map of the answers
+* `quantumValue_le_of_coarse`, on `ProjectiveMeasurement.mergeAt` of
+  `MIPRE.Foundations.GameAdapt` at the identity map of questions: a game whose accepted answers, read through a map of the answers
   that may depend on the question, are accepted by a second game on equivalent questions, has
   at most its value. Soundness (`MIPRE.Background.Tailored.Repetition`) applies it to the
   repeated verifier's game and the direct repetition of `𝒱_n`.
@@ -50,35 +52,6 @@ open Finset
 
 /-! ## Coarse-graining along a map of the answers that depends on the question -/
 
-namespace ProjectiveMeasurement
-
-variable {X A A' : Type*} [Fintype A] [Fintype A'] [DecidableEq A'] {n : Type*} [Fintype n]
-  [DecidableEq n]
-
-/-- Merge the outcomes of a projective measurement along a map `r x` of the answers that
-depends on the question: the outcome `a'` at `x` is the sum of the outcomes `a` with
-`r x a = a'`. -/
-def mergeAt (P : ProjectiveMeasurement X A (Matrix n n ℂ)) (r : X → A → A') :
-    ProjectiveMeasurement X A' (Matrix n n ℂ) where
-  M x a' := ∑ a ∈ Finset.univ.filter (fun a => r x a = a'), P.M x a
-  selfAdjoint x a' := by
-    rw [star_sum]
-    exact Finset.sum_congr rfl fun a _ => P.selfAdjoint x a
-  projective x a' := by
-    rw [Finset.sum_mul_sum]
-    refine Finset.sum_congr rfl fun a ha => ?_
-    rw [Finset.sum_eq_single a (fun b _ hb => P.mul_eq_zero_of_ne x (Ne.symm hb))
-      (fun h => absurd ha h)]
-    exact P.projective x a
-  normalized x := by
-    rw [Finset.sum_fiberwise]
-    exact P.normalized x
-
-theorem mergeAt_M (P : ProjectiveMeasurement X A (Matrix n n ℂ)) (r : X → A → A')
-    (x : X) (a' : A') :
-    (P.mergeAt r).M x a' = ∑ a ∈ Finset.univ.filter (fun a => r x a = a'), P.M x a := rfl
-
-end ProjectiveMeasurement
 
 section Coarse
 
@@ -91,32 +64,32 @@ accepted tuple of the first game is accepted after merging. -/
 theorem TensorProductStrategy.value_le_mergeAt {G : Game X X A A} (S : TensorProductStrategy G)
     (H : Game X X A' A') (r : X → A → A') (hμ : ∀ x y, H.μ x y = G.μ x y)
     (hD : ∀ x y a b, G.D x y a b = true → H.D x y (r x a) (r y b) = true) :
-    S.value ≤ (⟨S.dA, S.dB, S.ψ, S.ψ_unit, ProjectiveMeasurement.mergeAt S.PA r,
-      ProjectiveMeasurement.mergeAt S.PB r⟩ : TensorProductStrategy H).value := by
+    S.value ≤ (⟨S.dA, S.dB, S.ψ, S.ψ_unit, S.PA.mergeAt id r,
+      S.PB.mergeAt id r⟩ : TensorProductStrategy H).value := by
   unfold TensorProductStrategy.value
   refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
   set w : A → A → ℝ :=
     fun a b => (star S.ψ ⬝ᵥ ((S.PA.M x a ⊗ₖ S.PB.M y b) *ᵥ S.ψ)).re with hw
   have hw0 : ∀ a b, 0 ≤ w a b := fun a b => S.re_dotProduct_nonneg x y a b
-  have hbil : ∀ a' b', (star S.ψ ⬝ᵥ (((ProjectiveMeasurement.mergeAt S.PA r).M x a' ⊗ₖ
-      (ProjectiveMeasurement.mergeAt S.PB r).M y b') *ᵥ S.ψ)).re =
+  have hbil : ∀ a' b', (star S.ψ ⬝ᵥ (((S.PA.mergeAt id r).M x a' ⊗ₖ
+      (S.PB.mergeAt id r).M y b') *ᵥ S.ψ)).re =
         ∑ a ∈ Finset.univ.filter (fun a => r x a = a'),
           ∑ b ∈ Finset.univ.filter (fun b => r y b = b'), w a b := by
     intro a' b'
-    have hsplit : (ProjectiveMeasurement.mergeAt S.PA r).M x a' ⊗ₖ
-        (ProjectiveMeasurement.mergeAt S.PB r).M y b' =
+    have hsplit : (S.PA.mergeAt id r).M x a' ⊗ₖ
+        (S.PB.mergeAt id r).M y b' =
           ∑ a ∈ Finset.univ.filter (fun a => r x a = a'),
             ∑ b ∈ Finset.univ.filter (fun b => r y b = b'), S.PA.M x a ⊗ₖ S.PB.M y b := by
       ext p q
-      simp only [ProjectiveMeasurement.mergeAt_M, Matrix.sum_apply, kroneckerMap_apply,
+      simp only [ProjectiveMeasurement.mergeAt_M, id, Matrix.sum_apply, kroneckerMap_apply,
         Finset.sum_mul_sum]
     rw [hsplit, Matrix.sum_mulVec, dotProduct_sum, Complex.re_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [Matrix.sum_mulVec, dotProduct_sum, Complex.re_sum]
   show ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) * w a b ≤
     ∑ a', ∑ b', H.μ x y * (if H.D x y a' b' then 1 else 0) *
-      (star S.ψ ⬝ᵥ (((ProjectiveMeasurement.mergeAt S.PA r).M x a' ⊗ₖ
-        (ProjectiveMeasurement.mergeAt S.PB r).M y b') *ᵥ S.ψ)).re
+      (star S.ψ ⬝ᵥ (((S.PA.mergeAt id r).M x a' ⊗ₖ
+        (S.PB.mergeAt id r).M y b') *ᵥ S.ψ)).re
   simp_rw [hbil]
   calc ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) * w a b
       ≤ ∑ a, ∑ b, H.μ x y * (if H.D x y (r x a) (r y b) then 1 else 0) * w a b := by
@@ -166,7 +139,7 @@ theorem quantumValue_le_of_coarse (G : Game X X A A) (H : Game Y Y A' A') (e : X
       D := fun x y => H.D (e x) (e y) }
   refine Real.iSup_le (fun S => ?_) (quantumValue_nonneg _)
   let S₀ : TensorProductStrategy H₀ := ⟨S.dA, S.dB, S.ψ, S.ψ_unit,
-    ProjectiveMeasurement.mergeAt S.PA r, ProjectiveMeasurement.mergeAt S.PB r⟩
+    S.PA.mergeAt id r, S.PB.mergeAt id r⟩
   have h₁ : S.value ≤ S₀.value :=
     S.value_le_mergeAt H₀ r (fun x y => (hμ x y).symm) hD
   have h₂ : (S₀.relabel H e.symm e.symm (Equiv.refl _) (Equiv.refl _)).value = S₀.value :=

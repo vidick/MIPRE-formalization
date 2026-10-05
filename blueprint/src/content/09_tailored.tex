@@ -768,6 +768,7 @@ coordinate $i$, the coordinate's answers read off them.
 \end{lemma}
 
 \begin{proof}
+\uses{lem:perm-strategy-perfect}
 \leanok
 A constraint padded with zeros pairs with the whole answers as the constraint pairs with the
 coordinate's answers: the two sums of products of coefficients and answer bits have the same
@@ -780,7 +781,7 @@ right readable answers.
 \begin{lemma}[Tensor powers of permutation strategies; II:3043]
 \label{lem:tensor-power-zpc}
 \uses{def:tailored-product,lem:tailored-product-accepts,lem:signed-perm,lem:fourier-pvm,
-  lem:perm-strategy-perfect}
+  lem:perm-strategy-perfect,lem:tensor-power-pcc}
 \lean{MIPRE.Tailored.slot, MIPRE.Tailored.isSignedPerm_slot, MIPRE.Tailored.isDiag_slot,
   MIPRE.Tailored.commute_slot_slot, MIPRE.Tailored.prod_slot_finRange,
   MIPRE.Tailored.PermStrategy.repeat, MIPRE.Tailored.PermStrategy.proj_repeat,
@@ -813,7 +814,7 @@ the lengths, the edges and the constraints.
 
 \begin{definition}[Repeated tailored verifiers and the specification of their programs]
 \label{def:tailored-rep-spec}
-\uses{def:tailored-verifier,def:tailored-product}
+\uses{def:tailored-verifier,def:tailored-product,lem:cl-famsum,lem:smn}
 \lean{MIPRE.Tailored.TailoredVerifier.repTV, MIPRE.Tailored.TailoredVerifier.qEquiv,
   MIPRE.Tailored.TailoredVerifier.RepSpec}
 \leanok
@@ -831,7 +832,7 @@ constraints of the $k(n)$-fold product of $\verifier_n$.
 \begin{theorem}[Completeness and soundness of repeated tailored verifiers]
 \label{thm:tailored-rep-from-spec}
 \uses{def:tailored-rep-spec,lem:tensor-power-zpc,lem:tailored-product-accepts,
-  lem:repetition-sound-bound,lem:zpc-pcc}
+  lem:repetition-sound-bound,thm:parallel-repetition}
 \lean{MIPRE.Tailored.TailoredVerifier.RepSpec.accepts_iff,
   MIPRE.Tailored.TailoredVerifier.RepSpec.accepts_of_accepts,
   MIPRE.Tailored.TailoredVerifier.RepSpec.hasPerfectZPC,
