@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Commutativity.Transport.FullSlice.Averages
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Core
+public import MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Core
 
 @[expose] public section
 

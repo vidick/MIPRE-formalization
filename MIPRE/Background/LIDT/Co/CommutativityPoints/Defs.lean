@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Test.StrategyCore
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Defs
+public import MIPStarRE.LDT.CommutativityPoints.Defs
 
 @[expose] public section
 

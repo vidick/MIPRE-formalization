@@ -5,8 +5,8 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Bridge.Polynomial
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore
+public import MIPStarRE.LDT.Basic.SubMeasurementFamilies
+public import MIPStarRE.LDT.Test.StrategyCore
 
 @[expose] public section
 

@@ -12,7 +12,7 @@ public import MIPRE.Background.LIDT.Soundness
 /-!
 # Axiom audit for the low individual degree test
 
-The soundness theorem, proved through the vendored MIPStarRE development, must not
+The soundness theorem, proved through the MIPStarRE development (a Lake dependency), must not
 depend on anything beyond the three standard axioms; this file fails to build otherwise.
 
 The seeded-CL adapter of `MIPRE/Background/LIDT/Adapter/` is this project's own mathematics

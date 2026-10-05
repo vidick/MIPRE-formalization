@@ -34,7 +34,9 @@ place of the vendored `simp` unfolding of both postprocessings.
 
 ## Not ported
 
-Every declaration of the vendored file has a counterpart here.
+- `axisParallelBaseLineEvent_some`: a private simplification step that upstream's Lean-module
+  port (commit `5fc363b`, its audit of 2026-10-03) added to the vendored proof; the port's
+  proof goes through `generalizeBLeftOutcome_base` instead.
 
 ## New here
 

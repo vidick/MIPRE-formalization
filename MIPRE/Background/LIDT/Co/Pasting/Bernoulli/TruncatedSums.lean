@@ -7,7 +7,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Defs.Tuples
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+public import MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
 
 @[expose] public section
 

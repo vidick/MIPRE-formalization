@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.Final
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.Final
 
 @[expose] public section
 

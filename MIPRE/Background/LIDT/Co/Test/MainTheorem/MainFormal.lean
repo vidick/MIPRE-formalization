@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Test.MainTheorem.SourceRoleRegister.Final
 public import MIPRE.Background.LIDT.Co.Doubling.Strategy
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars
+public import MIPStarRE.LDT.Test.MainTheorem.SourceScalars
 
 @[expose] public section
 

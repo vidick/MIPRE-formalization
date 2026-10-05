@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Commutativity.Transport.EvaluationSpecialization
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.Pullback
+public import MIPStarRE.LDT.Commutativity.Transport.Pullback
 
 @[expose] public section
 

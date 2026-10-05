@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Defs.Operators
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Defs.Families
+public import MIPStarRE.LDT.GlobalVariance.Defs.Families
 
 @[expose] public section
 

@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Statements
 public import MIPRE.Background.LIDT.Co.Basic.MeasurementLift
 public import MIPRE.Background.LIDT.Co.Preliminaries.BipartiteSelfConsistency.Completion
 public import MIPRE.Background.LIDT.Co.Preliminaries.CauchySchwarz
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
 
 @[expose] public section
 

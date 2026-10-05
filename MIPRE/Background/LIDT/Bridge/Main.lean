@@ -6,7 +6,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Bridge.Value
 public import MIPRE.Background.LIDT.Bridge.Consistency
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.MainFormal
+public import MIPStarRE.LDT.Test.MainTheorem.MainFormal
 
 @[expose] public section
 

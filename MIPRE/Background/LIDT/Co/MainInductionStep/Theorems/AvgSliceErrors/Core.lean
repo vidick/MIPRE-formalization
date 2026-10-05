@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.InductionParameterBounds.Averaging
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.StageDataConstructors
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core
+public import MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core
 
 @[expose] public section
 

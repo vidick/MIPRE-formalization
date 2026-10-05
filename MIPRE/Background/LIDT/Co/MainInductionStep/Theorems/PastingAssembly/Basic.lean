@@ -13,7 +13,7 @@ public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.AvgSliceErrors
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.Approximation
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.AnswerTheorems
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.DegreeZero
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.Basic
+public import MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.Basic
 
 @[expose] public section
 

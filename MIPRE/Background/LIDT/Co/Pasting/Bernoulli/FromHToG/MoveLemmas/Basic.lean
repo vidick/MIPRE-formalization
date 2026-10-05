@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Basic.QuantumState
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.FromHToG.Core.FactBundles
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.MoveLemmas.Basic
+public import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.MoveLemmas.Basic
 
 @[expose] public section
 

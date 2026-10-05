@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.CommutativityPoints.Approximation
 public import MIPRE.Background.LIDT.Co.Pasting.Sandwich.GHatSandwich
 public import MIPRE.Background.LIDT.Co.Preliminaries.Defs
 public import MIPRE.Background.LIDT.Co.Test.StrategyCore
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
+public import MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies
 
 @[expose] public section
 

@@ -12,7 +12,7 @@ public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Orthonormali
 public import MIPRE.Background.LIDT.Co.Doubling.Orthonormalization
 public import MIPRE.Background.Orthonormalization.DyadicOrtho
 public import MIPRE.Background.LIDT.Co.Test.StrategyBiProj.Measurements
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
 
 @[expose] public section
 

@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Statements
 public import MIPRE.Background.LIDT.Co.Test.StrategyFailures
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.Approximation
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base
+public import MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base
 
 @[expose] public section
 

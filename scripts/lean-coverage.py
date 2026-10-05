@@ -40,7 +40,6 @@ SNAPSHOT = ROOT / "planning" / "lean-coverage.json"
 VENDORED = (
     "MIPRE/Background/Repetition/TenProofs/",
     "MIPRE/Background/Repetition/CommutingRepetition/",
-    "MIPRE/Background/LIDT/MIPStarRE/",
     "MIPRE/Background/Orthonormalization/Orthogonalization/",
     "MIPRE/Background/LiehrTsirelson/Upstream/",
 )

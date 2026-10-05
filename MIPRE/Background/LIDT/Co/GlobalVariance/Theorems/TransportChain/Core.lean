@@ -9,7 +9,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Theorems.SelfConsistencyTransport.Point
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core
+public import MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core
 
 @[expose] public section
 

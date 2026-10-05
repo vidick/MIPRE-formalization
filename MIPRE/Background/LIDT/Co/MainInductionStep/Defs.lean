@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Test.StrategyCore
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Defs
+public import MIPStarRE.LDT.MainInductionStep.Defs
 
 @[expose] public section
 

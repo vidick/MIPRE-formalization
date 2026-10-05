@@ -11,7 +11,7 @@ public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.LineInterpolatio
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.LineInterpolation.Averaging
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Core
 public import MIPRE.Background.LIDT.Co.Pasting.Core.DDistinct
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.HBError
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.HBError
 
 @[expose] public section
 

@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.Defs
 public import MIPRE.Background.LIDT.Co.Preliminaries.ComparisonCore
 public import MIPRE.Background.LIDT.Co.Test.StrategyFailures
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation
+public import MIPStarRE.LDT.CommutativityPoints.Approximation
 
 @[expose] public section
 

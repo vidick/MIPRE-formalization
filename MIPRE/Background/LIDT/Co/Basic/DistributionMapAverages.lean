@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Basic.DistributionAvg
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionMapAverages
+public import MIPStarRE.LDT.Basic.DistributionMapAverages
 
 @[expose] public section
 

@@ -17,7 +17,7 @@ public import MIPRE.Background.LIDT.Co.Pasting.CommutingWithG.Incomplete
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.CommuteGHalfSandwich
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.HAConsistency
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.OverAllOutcomes.Final
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final
+public import MIPStarRE.LDT.Pasting.Bernoulli.Final
 
 @[expose] public section
 

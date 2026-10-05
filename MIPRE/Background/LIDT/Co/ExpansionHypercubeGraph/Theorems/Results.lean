@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.ExpansionHypercubeGraph.Theorems.Matrix
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results
 
 @[expose] public section
 

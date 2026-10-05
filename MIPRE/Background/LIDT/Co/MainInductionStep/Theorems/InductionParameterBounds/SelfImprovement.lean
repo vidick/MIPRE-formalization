@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.SelfImprovement
+public import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.SelfImprovement
 
 @[expose] public section
 

@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Theorems.PastingAssembly.AnswerFields
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.ErrorBounds
+public import MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.ErrorBounds
 
 @[expose] public section
 

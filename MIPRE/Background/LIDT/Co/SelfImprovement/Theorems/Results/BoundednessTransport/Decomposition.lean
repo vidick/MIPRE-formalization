@@ -8,11 +8,11 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Basic.QuantumState
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersFiniteAnswers
+public import MIPStarRE.LDT.Basic.ParametersFiniteAnswers
 public import MIPRE.Background.LIDT.Co.Basic.SubMeasurementFamilies
 public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.DataProcessing
 public import MIPRE.Background.LIDT.Co.Preliminaries.Triangles.SimEq
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Statements
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUPointConsistency
 

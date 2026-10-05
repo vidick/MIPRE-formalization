@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Statements
 public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.Extensions
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.CompletePart
+public import MIPStarRE.LDT.Pasting.Core.CompletePart
 
 @[expose] public section
 

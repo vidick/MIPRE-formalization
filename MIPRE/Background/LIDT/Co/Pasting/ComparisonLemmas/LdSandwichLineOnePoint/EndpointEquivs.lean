@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.CommuteGHalfSandwich
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.EndpointEquivs
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.EndpointEquivs
 
 @[expose] public section
 

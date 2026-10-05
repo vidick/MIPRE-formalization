@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Defs.Families
 public import MIPRE.Background.LIDT.Co.MainInductionStep.Defs
 public import MIPRE.Background.LIDT.Co.MakingMeasurementsProjective.Projectivization
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Defs
+public import MIPStarRE.LDT.SelfImprovement.Defs
 
 @[expose] public section
 

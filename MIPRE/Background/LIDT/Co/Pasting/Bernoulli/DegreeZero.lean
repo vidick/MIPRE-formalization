@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Bernoulli.ScalarBounds
 public import MIPRE.Background.LIDT.Co.Pasting.ComparisonLemmas.HAConsistency
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
+public import MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
 
 @[expose] public section
 

@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.LIDT.Co.Pasting.Defs.Families
 public import MIPRE.Background.LIDT.Co.CommutativityPoints.Defs
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.Switcheroo
+public import MIPStarRE.LDT.Pasting.Sandwich.Switcheroo
 
 @[expose] public section
 

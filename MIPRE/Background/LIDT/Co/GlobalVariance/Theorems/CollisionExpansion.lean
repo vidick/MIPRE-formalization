@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Theorems.AlgebraicIdentity
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion
+public import MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion
 
 @[expose] public section
 

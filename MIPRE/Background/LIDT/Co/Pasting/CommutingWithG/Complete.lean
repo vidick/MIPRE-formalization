@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.Commutativity.Main.Results
 public import MIPRE.Background.LIDT.Co.Pasting.SwitcherooCompletion
 public import MIPRE.Background.LIDT.Co.Preliminaries.CompletionTransfer
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Complete
+public import MIPStarRE.LDT.Pasting.CommutingWithG.Complete
 
 @[expose] public section
 

@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Thomas Vidick
 -/
 module
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution
+public import MIPStarRE.LDT.Test.Defs
+public import MIPStarRE.LDT.Basic.Distribution
 
 @[expose] public section
 

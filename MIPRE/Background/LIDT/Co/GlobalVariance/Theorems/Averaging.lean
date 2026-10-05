@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Defs.Families
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging
+public import MIPStarRE.LDT.GlobalVariance.Theorems.Averaging
 
 @[expose] public section
 

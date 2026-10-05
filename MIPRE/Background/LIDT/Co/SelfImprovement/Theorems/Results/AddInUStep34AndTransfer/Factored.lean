@@ -10,7 +10,7 @@ module
 public import MIPRE.Background.LIDT.Co.Basic.SubMeasurementFamilies
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Defs.Families
 public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.DataProcessing
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Statements
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.CommonHelpers
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual
@@ -18,7 +18,7 @@ public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUDi
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUStep12.Raw
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUStep12.Selected
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.HelperCompleteness.Bracketed
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Factored
 
 @[expose] public section
 

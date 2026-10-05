@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Preliminaries.CauchySchwarz
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core
+public import MIPStarRE.LDT.Preliminaries.Triangles.Core
 
 @[expose] public section
 

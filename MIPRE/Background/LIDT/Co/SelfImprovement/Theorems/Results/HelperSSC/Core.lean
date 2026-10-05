@@ -8,7 +8,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperSSC.Core
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperSSC.Core
 
 @[expose] public section
 

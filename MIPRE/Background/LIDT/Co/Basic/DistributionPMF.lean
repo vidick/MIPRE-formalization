@@ -7,7 +7,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.LIDT.Co.Basic.Distribution
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionPMF
+public import MIPStarRE.LDT.Basic.DistributionPMF
 
 @[expose] public section
 

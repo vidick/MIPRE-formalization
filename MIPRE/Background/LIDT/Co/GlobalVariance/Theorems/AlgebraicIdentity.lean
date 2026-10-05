@@ -16,7 +16,7 @@ public import MIPRE.Background.LIDT.Co.Preliminaries.SelfConsistency.Extensions
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Theorems.Averaging
 public import MIPRE.Background.LIDT.Co.GlobalVariance.Theorems.Statements
 public import MIPRE.Background.LIDT.Co.Test.StrategyFailures
-public import MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity
+public import MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity
 
 @[expose] public section
 
