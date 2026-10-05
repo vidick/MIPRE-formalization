@@ -61,7 +61,8 @@ open MIPStarRE.LDT (Parameters FieldModel Fq Point avgOver avgOver_mono avgOver_
   truncatePoint_appendPoint pointHeight_appendPoint)
 open MIPStarRE.LDT.CommutativityPoints (avgOver_uniform_pointNext_decompose)
 open MIPStarRE.LDT.MainInductionStep (ldPastingInInductionNu ldPastingInInductionError)
-open MIPStarRE.LDT.Pasting (pastedFallbackOutcome one_le_ldPastingError_of_k_eq_zero)
+open MIPStarRE.LDT.Pasting (pastedFallbackOutcome one_le_ldPastingError_of_k_eq_zero
+  ldPasting_degreeRatio_nonneg hAConsistency_sqrt_bound_of_pos)
 open MIPRE.LIDT.Co (SymStrat SubMeas Measurement IdxMeas IdxProjMeas IdxPolyFamily
   averageIdxSubMeas evaluateAt polynomialEvaluationFamily axisParallelPointAnswerFamily
   axisParallelLineAnswerFamily)
@@ -79,7 +80,7 @@ theorem degreeZero_submeas_error_le_two_nu
     (hzeta_nonneg : 0 ≤ zeta) :
     min zeta 1 +
         2 * Real.sqrt (8 * (params.m : ℝ) * min eps 1 + 4 * min delta 1) ≤
-      2 * MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
+      2 * MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
   let C : ℝ := ((k : ℝ) ^ (2 : ℕ)) * (params.m : ℝ)
   let epsTerm : ℝ := Real.rpow eps (1 / (32 : ℝ))
   let deltaTerm : ℝ := Real.rpow delta (1 / (32 : ℝ))
@@ -161,8 +162,8 @@ theorem degreeZero_submeas_error_le_two_nu
     _ ≤ 200 * C * S := by
           have hCS_nonneg : 0 ≤ C * S := mul_nonneg hC_nonneg hS_nonneg
           nlinarith
-    _ = 2 * MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
-          simp [MainInductionStep.ldPastingInInductionNu, C, S, epsTerm, deltaTerm,
+    _ = 2 * MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
+          simp [MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu, C, S, epsTerm, deltaTerm,
             gammaTerm, zetaTerm, degreeTerm]
           ring
 

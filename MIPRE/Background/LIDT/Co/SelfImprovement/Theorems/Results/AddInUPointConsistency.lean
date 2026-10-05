@@ -69,11 +69,12 @@ open scoped BigOperators
 namespace MIPRE.LIDT.Co.SelfImprovement
 
 open MIPStarRE.LDT (Parameters FieldModel Point Fq avgOver uniformDistribution avgOver_congr
-  avgOver_uniform_const)
+  avgOver_uniform_const Polynomial)
 open MIPStarRE.LDT.SelfImprovement (addInUSelectionPairs selfImprovementVarianceError
   addInUError selfImprovementHelperError pointConsistencyAddInUSelection
   two_sqrt_two_delta_add_two_sqrt_selfImprovementVarianceError_le_addInUError
   helper_point_consistency_error_le_selfImprovementHelperError)
+
 open MIPRE.LIDT.Co.GlobalVariance (pointConditionedOutcomeOperatorAtPolynomial
   globalVarianceDeviationAtPolynomial)
 
@@ -81,15 +82,15 @@ open MIPRE.LIDT.Co.GlobalVariance (pointConditionedOutcomeOperatorAtPolynomial
 theorem pointConsistencyAddInUSelection_pairs_sum
     (params : Parameters) [FieldModel params.q]
     (u : Point params)
-    (F : Fq params → Polynomial params → ℝ) :
+    (F : Fq params → MIPStarRE.LDT.Polynomial params → ℝ) :
     ∑ ah ∈ addInUSelectionPairs params (pointConsistencyAddInUSelection params) u,
         F ah.1 ah.2 =
-      ∑ h : Polynomial params,
+      ∑ h : MIPStarRE.LDT.Polynomial params,
         ∑ a ∈ (Finset.univ : Finset (Fq params)).erase (h u), F a h := by
   classical
   apply Finset.sum_finset_product_right'
     (r := addInUSelectionPairs params (pointConsistencyAddInUSelection params) u)
-    (s := (Finset.univ : Finset (Polynomial params)))
+    (s := (Finset.univ : Finset (MIPStarRE.LDT.Polynomial params)))
     (t := fun h => (Finset.univ : Finset (Fq params)).erase (h u))
   intro p
   rcases p with ⟨a, h⟩

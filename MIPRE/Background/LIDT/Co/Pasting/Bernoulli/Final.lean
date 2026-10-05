@@ -85,7 +85,7 @@ lemma overAllOutcomesError_add_fromHToGError_le_ldPastingNu
     (hzeta_nonneg : 0 ≤ zeta) :
     overAllOutcomesError params eps delta gamma zeta k +
         fromHToGError params gamma zeta k ≤
-      MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
+      MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
   let kE : ℝ := (k : ℝ)
   let mE : ℝ := (params.m : ℝ)
   let ratio : ℝ := (params.d : ℝ) / (params.q : ℝ)
@@ -139,8 +139,8 @@ lemma overAllOutcomesError_add_fromHToGError_le_ldPastingNu
           have hterm_nonneg : 0 ≤ (kE ^ (2 : ℕ)) * mE * fullSum := by
             positivity
           nlinarith
-    _ = MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
-          simp [MainInductionStep.ldPastingInInductionNu, kE, mE, fullSum,
+    _ = MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by
+          simp [MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu, kE, mE, fullSum,
             epsTerm, deltaTerm, gammaTerm, zetaTerm, dqTerm, ratio]
 
 /-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.

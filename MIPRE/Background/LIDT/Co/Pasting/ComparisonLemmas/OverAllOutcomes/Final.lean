@@ -48,12 +48,15 @@ open scoped BigOperators
 namespace MIPRE.LIDT.Co.Pasting
 
 open MIPStarRE.LDT (Parameters FieldModel Point PointTuple AxisParallelTestSample Distribution
+  AxisLinePolynomial avgOver_zero avgOver_mono
   avgOver avgOver_congr avgOver_sum avgOver_mul_const avgOver_comm avgOver_mono_on_support
   avgOver_const uniformDistribution)
 open MIPStarRE.LDT.Pasting (GHatTupleOutcome IsGloballyConsistent InterpolationEligible
+  nonglobal_gives_slice_mismatch_against_interpolant interpolateCompletedSlices
+  tupleInterpolatedVerticalLine_eq_of_no_supported_mismatch
   distinctTupleDistribution distinctTupleDistribution_weight_sum_le_one hBConsistencyError
   overAllOutcomesError dnoteq_term_le_overAllOutcomesError
-  hBConsistencyError_add_mdq_add_dnoteq_le_overAllOutcomesError)
+  hBConsistencyError_add_mdq_add_dnoteq_le_overAllOutcomesError restrictToVerticalLine_eval_eq_restrictAtHeight_eval tupleInterpolatedVerticalLine)
 open MIPRE.LIDT.Co (SymModel SymStrat SubMeas IdxProjMeas IdxPolyFamily)
 
 /-- Upstream keeps this helper `private` since its Lean-module port (`LionSR/MIPStarRE` at `5fc363b`); the port carries its own copy, with upstream's proof.
@@ -64,7 +67,7 @@ indicator is bounded by the paper's `md/q` Schwartz--Zippel term.
 
 This formalizes `ld-pasting.tex` lines 1256--1265: nonglobality gives a supported
 slice where `gᵢ` differs from the interpolant `h*`; line consistency forces
-agreement at the sampled `u`, and `Preliminaries.polynomialAgreement_avg_le_mdq`
+agreement at the sampled `u`, and `MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_le_mdq`
 bounds that agreement probability. -/
 lemma lineConsistentIndicator_probability_le_mdq
     (params : Parameters) [FieldModel params.q]
@@ -99,8 +102,8 @@ lemma lineConsistentIndicator_probability_le_mdq
       _ ≤ ((params.m * params.d : ℕ) : ℝ) / (params.q : ℝ) := hδ_nonneg
   · rcases nonglobal_gives_slice_mismatch_against_interpolant params xs gs hGlobal with
       ⟨i, hiSome, hsliceNe⟩
-    let hStarSlice : Polynomial params :=
-      Polynomial.restrictAtHeight params (interpolateCompletedSlices params k xs gs) (xs i)
+    let hStarSlice : MIPStarRE.LDT.Polynomial params :=
+      MIPStarRE.LDT.Polynomial.restrictAtHeight params (interpolateCompletedSlices params k xs gs) (xs i)
     have hneq : (gs i).get hiSome ≠ hStarSlice := by
       intro hEq
       exact hsliceNe (by simpa [hStarSlice] using hEq.symm)
@@ -152,7 +155,7 @@ lemma lineConsistentIndicator_probability_le_mdq
             exact avgOver_mono _ _ _ hpoint
       _ ≤ δ := by
             simpa [δ, hStarSlice] using
-              Preliminaries.polynomialAgreement_avg_le_mdq
+              MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_le_mdq
                 params ((gs i).get hiSome) hStarSlice hneq
 
 variable {𝔓 : Type*} [CStarAlgebra 𝔓] [PartialOrder 𝔓] [StarOrderedRing 𝔓]

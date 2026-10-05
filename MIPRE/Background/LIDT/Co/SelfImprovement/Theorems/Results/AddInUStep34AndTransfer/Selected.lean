@@ -102,22 +102,22 @@ theorem addInU_selected_weighted_cauchy_schwarz
     {Outcome : Type*} [Fintype Outcome] [DecidableEq Outcome]
     (params : Parameters) [FieldModel params.q]
     (S : AddInUSelection params Outcome)
-    (t x y : Point params × Point params → Outcome × Polynomial params → ℝ)
+    (t x y : Point params × Point params → Outcome × MIPStarRE.LDT.Polynomial params → ℝ)
     (ht :
       ∀ uv ah, ah ∈ addInUSelectionPairs params S uv.1 →
         |t uv ah| ≤ Real.sqrt (x uv ah) * Real.sqrt (y uv ah))
     (hx : ∀ uv ah, ah ∈ addInUSelectionPairs params S uv.1 → 0 ≤ x uv ah)
     (hy : ∀ uv ah, ah ∈ addInUSelectionPairs params S uv.1 → 0 ≤ y uv ah) :
     |avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
-      ∑ ah : Outcome × Polynomial params,
+      ∑ ah : Outcome × MIPStarRE.LDT.Polynomial params,
         if ah ∈ addInUSelectionPairs params S uv.1 then t uv ah else 0)| ≤
       Real.sqrt
         (avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
-          ∑ ah : Outcome × Polynomial params,
+          ∑ ah : Outcome × MIPStarRE.LDT.Polynomial params,
             if ah ∈ addInUSelectionPairs params S uv.1 then x uv ah else 0)) *
       Real.sqrt
         (avgOver (uniformDistribution (Point params × Point params)) (fun uv =>
-          ∑ ah : Outcome × Polynomial params,
+          ∑ ah : Outcome × MIPStarRE.LDT.Polynomial params,
             if ah ∈ addInUSelectionPairs params S uv.1 then y uv ah else 0)) := by
   classical
   exact

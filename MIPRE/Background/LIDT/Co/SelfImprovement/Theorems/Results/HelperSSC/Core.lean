@@ -63,7 +63,7 @@ namespace MIPRE.LIDT.Co.SelfImprovement
 
 open MIPStarRE.LDT (Parameters FieldModel Point avgOver uniformDistribution avgOver_congr
   avgOver_uniform_le_const avgOver_uniform_fst avgOver_uniform_prod avgOver_comm avgOver_sum
-  avgOver_finset_sum avgOver_mul_const)
+  avgOver_finset_sum avgOver_mul_const Polynomial)
 open MIPStarRE.LDT.GlobalVariance (localVarianceOfPointsError)
 open MIPStarRE.LDT.SelfImprovement (AddInUSelection addInUSelectionPairs
   selfConsistencyAddInUSelection selfImprovementVarianceError addInUError
@@ -75,12 +75,12 @@ open MIPRE.LIDT.Co.GlobalVariance (pointConditionedOutcomeOperatorAtPolynomial
 theorem helperOffDiagonalVarianceSwapSelection_pairs_sum
     (params : Parameters) [FieldModel params.q]
     (u : Point params)
-    (F : Polynomial params → Polynomial params → ℝ) :
+    (F : MIPStarRE.LDT.Polynomial params → MIPStarRE.LDT.Polynomial params → ℝ) :
     ∑ hh ∈ addInUSelectionPairs params
         (helperOffDiagonalVarianceSwapSelection params) u,
         F hh.1 hh.2 =
-      ∑ h : Polynomial params,
-        ∑ h' ∈ (Finset.univ : Finset (Polynomial params)).erase h,
+      ∑ h : MIPStarRE.LDT.Polynomial params,
+        ∑ h' ∈ (Finset.univ : Finset (MIPStarRE.LDT.Polynomial params)).erase h,
           (if h u = h' u then (1 : ℝ) else 0) * F h' h := by
   classical
   unfold addInUSelectionPairs helperOffDiagonalVarianceSwapSelection

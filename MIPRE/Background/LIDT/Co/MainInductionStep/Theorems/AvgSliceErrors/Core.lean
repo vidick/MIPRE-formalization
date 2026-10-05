@@ -71,7 +71,7 @@ open MIPStarRE.LDT (Parameters FieldModel Point Fq uniformDistribution avgOver a
 open MIPStarRE.LDT.MainInductionStep (mainInductionError mainInductionNu
   selfImprovementInInductionError sliceConditioningLoss
   m_mul_sliceConditioningLoss_rpow_le_next_m_mul_rpow
-  m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow)
+  m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow avgOver_uniform_rpow_one_div_le_rpow_avg)
 open MIPRE.LIDT.Co (SymStrat AnswerSymStrat)
 
 universe uP uK
