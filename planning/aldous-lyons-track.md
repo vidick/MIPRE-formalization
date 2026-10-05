@@ -12,9 +12,9 @@ search program, `tailored_halting_reduction_of` and the computable class
 (`MIPRE/Tailored/Data/*`, `MIPRE/Tailored/Halting/{Tabulate,Search,Reduction}.lean`,
 `MIPRE/Tailored/Class.lean`). So `TailoredHaltingReduction` and `TMIP* = RE` (computable
 class) are proved from a `TailoredGapCompression`. P1e, the polynomial-time class, is next.
-Phase 2 runs in parallel (#280): its first slice, P2a, the tailored product with its
-completeness and soundness for programs meeting a specification, is done (§5 "Phase 2
-slices"); P2b, the programs themselves, is next.
+Phase 2 (#280) is done: P2a, the tailored product with its completeness and soundness for
+programs meeting a specification, and P2b, the programs themselves with their running times, so
+`TailoredRepetition` is inhabited (`MIPRE.Tailored.tailoredRepetition`, §5 "Phase 2 slices").
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -644,7 +644,19 @@ identification with `(V.game n B).repeat k`, soundness from
   factor `2` between the two lengths and the answer length absorbed into the constant
   (`c = repConst / 2`). Blueprint `def:tailored-product`, `lem:tailored-product-accepts`,
   `lem:tensor-power-zpc`, `def:tailored-rep-spec`, `thm:tailored-rep-from-spec`.
-- **P2b — the programs.** The repeated answer-length calculator (on `(n, x, κ)`: the dimension
+- **P2b — the programs (done, about 3.3k lines).** `MIPRE/Tailored/Repeat/{Calls,Lists,LenProg,
+  LenCost,DomTools,LpLists,LpProg,LpSpec,LpCost}.lean` and
+  `MIPRE/Background/Tailored/Repetition/Stage.lean`. Each program is a chain of `Calls.seq`
+  stages: `PolyTimeFun`s, the existing `dimProg` and `toUnaryProg` for `k` and `s` in unary
+  (`k = 2^{τ(|λ|+|n|)}` has no fixed-polynomial unary form), and `Calls.mapCall`, the generic loop
+  running a stored program on every query through the universal machine, with its run
+  (`mapCall_runs`) and inversion (`mapCall_inv`). Each core has a run lemma with an explicit
+  stage-by-stage cost and an inversion lemma; `repSpec` gives `RepSpec` at every index;
+  `repLen_timeBound`/`repLp_timeBound` dominate the costs (`DomTools`: `dom_poly` for the
+  polynomial-time stages, `dom_powK` for a size linear in `|d|` to the power `R.k` once
+  `10^{R.k} ≤ W`); `tailoredRepetition` inhabits the contract. Blueprint
+  `def:tailored-rep-programs`, `lem:tailored-rep-programs`, `lem:tailored-rep-programs-time`,
+  `thm:tailored-rep`. The plan as written: the repeated answer-length calculator (on `(n, x, κ)`: the dimension
   query, `k` in unary, the blocks of `x`, the input's calculator on each through the universal
   machine, the sum in unary) and the repeated linear-constraints processor (the four lengths of
   every coordinate, the blocks of `a^R` and `b^R` by the readable lengths, the input's processor

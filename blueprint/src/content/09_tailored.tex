@@ -23,11 +23,12 @@ verifier is a normal form verifier, the canonical decider written as a program, 
 games, values and completeness (Lemmas~\ref{lem:canonical-decider} and~\ref{lem:of-tnfv}).
 Phase~1, third part: the halting protocol at a fixed level is proved for a search program
 meeting its specification (Theorem~\ref{thm:tailored-halting-level}).
-Phase~2, first part: the $k$-fold tailored product, the tensor powers of permutation
-strategies, and completeness and soundness of repeated tailored verifiers for programs meeting
-their specification (Theorem~\ref{thm:tailored-rep-from-spec}). The
-other results below carry no proof marks; they are the targets of the rest of Phase~1 and of
-Phases~2--5.
+Phase~2: the $k$-fold tailored product, the tensor powers of permutation strategies,
+completeness and soundness of repeated tailored verifiers for programs meeting their
+specification (Theorem~\ref{thm:tailored-rep-from-spec}), and the programs themselves with their
+running times, so that parallel repetition of tailored verifiers is proved
+(Theorem~\ref{thm:tailored-rep}). The other results below carry no proof marks; they are the
+targets of the rest of Phase~1 and of Phases~3--5.
 
 The formalization departs from the paper's text in the places Remark~\ref{rem:tailored-route}
 lists, all of them choices this project made for $\MIPstar = \RE$ already: soundness is proved
@@ -1097,17 +1098,84 @@ length at most $2B$, and Lemma~\ref{lem:repetition-sound-bound} at length $2B$ g
 the factor $2$ absorbed into the constant.
 \end{proof}
 
+\begin{definition}[The repeated programs]
+\label{def:tailored-rep-programs}
+\uses{lem:effective-normal-selfdualization,def:tailored-verifier}
+\lean{MIPRE.Tailored.RepProg.repLen, MIPRE.Tailored.RepProg.repLp,
+  MIPRE.Tailored.RepProg.lenCore, MIPRE.Tailored.RepProg.lpCore, MIPRE.Tailored.Calls.mapCall}
+\leanok
+The repeated answer-length calculator, on $(n, x, \kappa)$ with the input sampler and calculator
+stored, asks the sampler for the dimension $s$, computes $k = k(n)$, cuts $x$ into its $k$
+blocks of $s$ bits, runs the input calculator on every block at both kinds, and outputs the
+concatenation of the outputs at the kind $\kappa$. The repeated linear-constraints processor, on
+$(n, x, y, a^R, b^R)$, does the same for both questions, cuts $a^R$ and $b^R$ into the
+coordinates' readable answers by the lengths it obtained, runs the input processor on every
+coordinate, and outputs every coordinate's constraints padded as in
+Definition~\ref{def:tailored-product}. Both are fixed programs with the input programs stored;
+every stage between the calls to the input programs is a polynomial-time function, and the calls
+go through one loop running a stored program on every element of a list through the universal
+machine.
+\end{definition}
+
+\begin{lemma}[The repeated programs meet the specification]
+\label{lem:tailored-rep-programs}
+\uses{def:tailored-rep-programs, def:tailored-rep-spec}
+\lean{MIPRE.Tailored.RepProg.repSpec, MIPRE.Tailored.RepProg.repLen_lenIs,
+  MIPRE.Tailored.RepProg.good_of_repLen, MIPRE.Tailored.RepProg.repLp_lpIs_iff,
+  MIPRE.Tailored.Calls.mapCall_runs, MIPRE.Tailored.Calls.mapCall_inv}
+\leanok
+At every index, the repeated programs meet the specification of
+Definition~\ref{def:tailored-rep-spec}.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The loop of calls halts with the results of the calls when every call halts, and only then. At
+a question all of whose coordinates have their lengths, the calculator's calls all halt and its
+output has the sum of the lengths; conversely a halting run of the calculator ran the input
+calculator at both kinds of every coordinate. For the processor, the lengths read off the
+calculator's outputs are the coordinates', so its cuts of $a^R$ and $b^R$ are the coordinates'
+readable answers, its queries are the coordinates' and its padding is the product's.
+\end{proof}
+
+\begin{lemma}[Running times of the repeated programs]
+\label{lem:tailored-rep-programs-time}
+\uses{def:tailored-rep-programs}
+\lean{MIPRE.Tailored.RepProg.repLen_timeBound, MIPRE.Tailored.RepProg.repLp_timeBound,
+  MIPRE.Tailored.RepProg.repLen_lenBound}
+\leanok
+With the input sampler within $T_S \cdot (|d| + 1)^K$ and the input programs within
+$T_D \cdot (|d| + 1)^K$ at index $n$, the repeated programs halt on every input within
+$c\,(W + 1)^m (|d| + 1)^{e (K + 1)}$, for a bound $W$ on $T_S$, $T_D$, $\lambda$, $\tau$, $n$,
+$k(n)$, $s(n)$, $10^K$ and the descriptions of the input programs, and constants $c, m, e$; and
+the repeated calculator's lengths are at most $k(n)$ times the input's.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:tailored-rep-programs}
+\leanok
+Every stage between the calls is a polynomial-time function of an input of size polynomial in
+$W$ and $|d|$. Every query to an input program is of size linear in $|d|$, so a call costs at
+most the universal machine's overhead at $T_D (c|d|)^K \le W^{j} |d|^K$, using $10^K \le W$, and
+there are at most $4k(n)$ calls.
+\end{proof}
+
 \begin{theorem}[Parallel repetition of tailored verifiers; II:11103, direct form]
 \label{thm:tailored-rep}
-\uses{def:tailored-stages,thm:tailored-rep-from-spec}
+\uses{def:tailored-stages,thm:tailored-rep-from-spec,lem:tailored-rep-programs,
+  lem:tailored-rep-programs-time}
+\lean{MIPRE.Tailored.tailoredRepetition}
+\leanok
 The contract \texttt{TailoredRepetition} is inhabited, at every level.
 \end{theorem}
 
 \begin{proof}
-The $k$-fold tailored product (Definition~\ref{def:tailored-product}), completeness and
-soundness from Theorem~\ref{thm:tailored-rep-from-spec}, once the repeated answer-length
-calculator and linear-constraints processor are written as programs meeting the specification
-of Definition~\ref{def:tailored-rep-spec}, with their running times. Phase~2, second part.
+\leanok
+The repeated sampler, and the repeated programs of Definition~\ref{def:tailored-rep-programs},
+their descriptions computed by the s-m-n map. The complexity clause is
+Lemma~\ref{lem:tailored-rep-programs-time} with the repeated sampler's time bound, and
+completeness and soundness are Theorem~\ref{thm:tailored-rep-from-spec} applied to
+Lemma~\ref{lem:tailored-rep-programs}.
 \end{proof}
 
 \begin{theorem}[Tailored compression; II:5643, value form]

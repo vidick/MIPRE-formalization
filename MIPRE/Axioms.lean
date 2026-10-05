@@ -232,6 +232,7 @@ public import MIPRE.Tailored.Game
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
 public import MIPRE.Background.Tailored.Repetition.Soundness
+public import MIPRE.Background.Tailored.Repetition.Stage
 public import MIPRE.Tailored.Halting.Main
 public import MIPRE.Tailored.Class
 
@@ -3668,6 +3669,18 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.TailoredVerifier.RepSpec.valStar_le_repeat,
   MIPRE.Tailored.TailoredVerifier.RepSpec.valStar_le, MIPRE.quantumValue_le_of_coarse,
   MIPRE.Tailored.PermStrategy.exists_accepts
+
+-- blueprint `lem:tailored-rep-programs`
+#guard_sorry_free MIPRE.Tailored.RepProg.repSpec, MIPRE.Tailored.RepProg.repLen_lenIs,
+  MIPRE.Tailored.RepProg.good_of_repLen, MIPRE.Tailored.RepProg.repLp_lpIs_iff,
+  MIPRE.Tailored.Calls.mapCall_runs, MIPRE.Tailored.Calls.mapCall_inv
+
+-- blueprint `lem:tailored-rep-programs-time`
+#guard_sorry_free MIPRE.Tailored.RepProg.repLen_timeBound, MIPRE.Tailored.RepProg.repLp_timeBound,
+  MIPRE.Tailored.RepProg.repLen_lenBound
+
+-- blueprint `thm:tailored-rep`
+#guard_sorry_free MIPRE.Tailored.tailoredRepetition
 
 -- blueprint `prop:magic-square-zpc`
 #guard_sorry_free MIPRE.Tailored.MagicSquare.game, MIPRE.Tailored.MagicSquare.obs,
