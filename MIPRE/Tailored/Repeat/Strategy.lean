@@ -353,13 +353,10 @@ theorem pos_of_repeat_pos {x y : Fin k → X} (h : 0 < (G.repeat k).μ x y) (i :
 
 end TailoredGame
 
-namespace PermStrategy
-
-variable {G : TailoredGame X} (S : PermStrategy G) (k : ℕ)
-
 /-- **The `k`-th tensor power of a permutation strategy**, for the product game: the observable
 of the variable `(i, v)` of `x⃗` is `S.U xᵢ v` in the `i`-th tensor factor. -/
-noncomputable def «repeat» : PermStrategy (G.repeat k) where
+noncomputable def PermStrategy.repeat {G : TailoredGame X} (S : PermStrategy G) (k : ℕ) :
+    PermStrategy (G.repeat k) where
   m := S.m ^ k
   m_pos := pow_pos S.m_pos k
   U x g := slotE S.m ((G.varEquiv x) g).1 (S.U (x ((G.varEquiv x) g).1) ((G.varEquiv x) g).2)
@@ -380,6 +377,10 @@ noncomputable def «repeat» : PermStrategy (G.repeat k) where
     rw [Equiv.apply_symm_apply, Equiv.apply_symm_apply] at hij ⊢
     subst hij
     exact S.commEdges _ _ (G.pos_of_repeat_pos hxy i) _ _).eq
+
+namespace PermStrategy
+
+variable {G : TailoredGame X} (S : PermStrategy G) (k : ℕ)
 
 /-- The tensor product of the coordinates' measurements, on `ℂ^{m^k}`. -/
 noncomputable def tensorProj (x : Fin k → X)
@@ -421,7 +422,7 @@ theorem proj_repeat (x : Fin k → X) (a : Fin (G.lenRSum x + G.lenLSum x) → B
       F ((G.varEquiv x).symm p) = slotE S.m p.1
         (fourierFactor (S.U (x p.1) p.2) (a ((G.varEquiv x).symm p))) := by
     intro p
-    simp only [hF, «repeat»]
+    simp only [hF, PermStrategy.repeat]
     rw [Equiv.apply_symm_apply, fourierFactor_map]
   have hcomm : List.Pairwise Commute
       ((List.finRange (G.lenRSum x + G.lenLSum x)).map F) := by

@@ -139,10 +139,12 @@ def padCons (x y : Fin k → X) (i : Fin k) (c : Cost.BitStr) : Cost.BitStr :=
 
 /-! ## The product game -/
 
+end TailoredGame
+
 /-- **The `k`-fold tailored product** (II:11377): product distribution, the variables of the
 coordinates (readable first), and every coordinate's constraints padded to all the
 variables. -/
-def «repeat» (k : ℕ) : TailoredGame (Fin k → X) where
+def TailoredGame.repeat (G : TailoredGame X) (k : ℕ) : TailoredGame (Fin k → X) where
   μ x y := ∏ i, G.μ (x i) (y i)
   μ_nonneg x y := Finset.prod_nonneg fun i _ => G.μ_nonneg (x i) (y i)
   μ_sum_one := by
@@ -157,6 +159,10 @@ def «repeat» (k : ℕ) : TailoredGame (Fin k → X) where
   lenL x := G.lenLSum x
   cons x y aR bR := (List.finRange k).flatMap fun i =>
     (G.cons (x i) (y i) (G.coordR x aR i) (G.coordR y bR i)).map (G.padCons x y i)
+
+namespace TailoredGame
+
+variable (G : TailoredGame X) {k : ℕ}
 
 @[simp] theorem repeat_μ (x y : Fin k → X) :
     (G.repeat k).μ x y = ∏ i, G.μ (x i) (y i) := rfl
@@ -273,7 +279,7 @@ theorem repeat_accepts_iff (x y : Fin k → X) (a b : Cost.BitStr) :
     fun _ => rfl
   have hcoordy : ∀ i, G.coord y b i = List.ofFn (fun w => bv ((G.varEquiv y).symm ⟨i, w⟩)) :=
     fun _ => rfl
-  simp only [«repeat», List.mem_flatMap, List.mem_finRange, List.mem_map, true_and,
+  simp only [TailoredGame.repeat, List.mem_flatMap, List.mem_finRange, List.mem_map, true_and,
     forall_exists_index, and_imp]
   constructor
   · intro h i

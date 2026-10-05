@@ -683,6 +683,7 @@ public import MIPRE.Background.Repetition.TracialApprox
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
+public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
@@ -1420,6 +1421,9 @@ public import MIPRE.Tailored.Halting.Induction
 public import MIPRE.Tailored.Halting.Main
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
+public import MIPRE.Tailored.Repeat.Game
+public import MIPRE.Tailored.Repeat.Strategy
+public import MIPRE.Tailored.Repeat.Verifier
 public import MIPRE.Tailored.SignedPerm
 public import MIPRE.Tailored.Stages
 public import MIPRE.Tailored.Verifier

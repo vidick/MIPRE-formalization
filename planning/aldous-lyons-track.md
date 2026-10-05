@@ -580,6 +580,42 @@ processor as a program with its cost (the sampler and the parsing are `Repeat/*`
 identification with `(V.game n B).repeat k`, soundness from
 `quantumValue_repeat_le_soundBound`. `TailoredRepetition` inhabited.
 
+**Phase 2 slices.** Two pull requests.
+
+- **P2a — the product and its two clauses, from a specification of the programs (done,
+  1.5k lines).** `MIPRE/Tailored/Repeat/{Game,Strategy,Verifier}.lean` and
+  `MIPRE/Background/Tailored/Repetition/Soundness.lean`. `TailoredGame.repeat`: the variables
+  of `x⃗` are the coordinates' readable variables in order, then their linear ones
+  (`varEquiv`), and each coordinate's constraints are padded with zeros over all the variables
+  (`padCons`, a malformed constraint becoming `{J}`); `repeat_accepts_iff` is the acceptance law.
+  `PermStrategy.repeat`, the tensor power through slot embeddings `1 ⊗ ⋯ ⊗ M ⊗ ⋯ ⊗ 1` (algebra
+  maps preserving signed permutations and diagonality, on `ℂ^{m^k}` after reindexing), whose
+  measurement is the tensor product of the coordinates' (`proj_repeat`, the commuting Fourier
+  factors regrouped by coordinate); a perfect strategy never produces a rejected pair on an edge
+  (`proj_mul_eq_zero_of_value_eq_one`), so the power is perfect; `PermStrategy.comap` pulls a
+  strategy back along a map of questions that keeps lengths, edges and acceptance, with identity
+  observables where it does not, which gives the doubled product (`repeat_doubled`) and the
+  repeated verifier. `lem:sum-zpc` is not needed as a separate node: it is `k = 2`. The
+  repeated verifier `repTV` has the existing `Repeat.repSampler` and two programs; `RepSpec`
+  states what they must output (at a question whose coordinates all have their lengths, the
+  sums; nothing elsewhere; the product's constraints exactly when every coordinate's processor
+  halts), and from it `RepSpec.hasPerfectZPC` and `RepSpec.valStar_le`, the latter through
+  `quantumValue_le_of_coarse` (merge the answers at each question along a map that may depend on
+  the question) onto `(V.tgame n).toGame.repeat k` and `quantumValue_repeat_le_soundBound`, the
+  factor `2` between the two lengths and the answer length absorbed into the constant
+  (`c = repConst / 2`). Blueprint `def:tailored-product`, `lem:tailored-product-accepts`,
+  `lem:tensor-power-zpc`, `def:tailored-rep-spec`, `thm:tailored-rep-from-spec`.
+- **P2b — the programs.** The repeated answer-length calculator (on `(n, x, κ)`: the dimension
+  query, `k` in unary, the blocks of `x`, the input's calculator on each through the universal
+  machine, the sum in unary) and the repeated linear-constraints processor (the four lengths of
+  every coordinate, the blocks of `a^R` and `b^R` by the readable lengths, the input's processor
+  on every coordinate, then the padding of each coordinate's constraints), total on malformed
+  inputs, with `RepSpec` at every index and their running times in the shape of
+  `repDecider_timeBound`; then `TailoredRepetition` inhabited (`thm:tailored-rep`). Everything
+  between the calls to the input's programs is pure list manipulation, which the closure
+  library's `PolyTimeFun` combinators (`Cost/Fold.lean`) give with their bounds; the calls go
+  through one generic loop running a stored program on every element of a list.
+
 **Phase 3 — question reduction (13–22k on Route A; 5–8 PRs).** The tailored presentation of
 the repository's introspection verifier: `L^intro` by type; `LP^intro` as the constraint
 lists of each check family (the low-degree, Pauli and Magic Square checks bit by bit through
