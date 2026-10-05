@@ -67,6 +67,22 @@ instance (c v : BitStr) : Decidable (Satisfies c v) := by
 vector whose last coordinate is `1`, so a constraint list containing it rejects. -/
 def rejectConstraint (d : ℕ) : BitStr := List.replicate d false ++ [true]
 
+/-- A vector whose last coordinate is `1` never satisfies the rejecting constraint `J = 0`. -/
+theorem not_satisfies_rejectConstraint (d : ℕ) (v : BitStr) :
+    ¬Satisfies (rejectConstraint d) (v ++ [true]) := by
+  rintro ⟨hlen, heven⟩
+  simp only [rejectConstraint, List.length_append, List.length_replicate, List.length_singleton]
+    at hlen
+  have hv : (List.replicate d false).length = v.length := by simp; omega
+  rw [rejectConstraint, List.zipWith_append hv, List.count_append] at heven
+  have h0 : (List.zipWith (· && ·) (List.replicate d false) v).count true = 0 := by
+    rw [List.count_eq_zero]
+    intro hmem
+    obtain ⟨i, hi, he⟩ := List.mem_iff_getElem.1 hmem
+    simp [List.getElem_zipWith] at he
+  rw [h0] at heven
+  simp at heven
+
 /-! ## Tailored games -/
 
 /-- A tailored game (II:1243) on the finite question set `X`. -/
@@ -131,16 +147,31 @@ end TailoredGame
 
 /-! ## Z-aligned permutation strategies commuting along edges -/
 
+/-- `(-1)^b`, as a complex number. -/
+def bitSign (b : Bool) : ℂ := if b then -1 else 1
+
 /-- The signed permutation matrix `e_j ↦ (-1)^{s j} e_{σ j}` (II:1043–1053): the action of the
-signed permutation `(σ, s)` of `Ω_± = {±} × Fin m` on the anti-symmetric functions, in their
-standard basis. -/
-def signedPermMatrix {m : ℕ} (σ : Equiv.Perm (Fin m)) (s : Fin m → Bool) :
-    Matrix (Fin m) (Fin m) ℂ :=
-  fun i j => if σ j = i then (if s j then -1 else 1) else 0
+signed permutation `(σ, s)` of `Ω_± = {±} × Ω` on the anti-symmetric functions, in their
+standard basis. The combinatorial object and its algebra are `MIPRE.Tailored.SignedPerm`. -/
+def signedPermMatrix {Ω : Type*} [DecidableEq Ω] (σ : Equiv.Perm Ω) (s : Ω → Bool) :
+    Matrix Ω Ω ℂ :=
+  fun i j => if σ j = i then bitSign (s j) else 0
 
 /-- A signed permutation matrix. -/
-def IsSignedPerm {m : ℕ} (M : Matrix (Fin m) (Fin m) ℂ) : Prop :=
+def IsSignedPerm {Ω : Type*} [DecidableEq Ω] (M : Matrix Ω Ω ℂ) : Prop :=
   ∃ σ s, M = signedPermMatrix σ s
+
+/-- The factor `(1 + (-1)^b u) / 2` of a Fourier transform: for an involution `u`, the
+projection onto its `(-1)^b`-eigenspace. -/
+noncomputable def fourierFactor {R : Type*} [Ring R] [Algebra ℂ R] (u : R) (b : Bool) : R :=
+  (1 / 2 : ℂ) • (1 + bitSign b • u)
+
+/-- The Fourier transform of a family of commuting involutions `U` (II:974, II:986): the
+projective measurement `P_a = ∏_i (1 + (-1)^{a_i} U i) / 2`, for `a ∈ F₂^k`, which is the
+projective form of the measurement whose observable form is `U` (`MIPRE.Tailored.Fourier`). -/
+noncomputable def fourierProj {R : Type*} [Ring R] [Algebra ℂ R] {k : ℕ} (U : Fin k → R)
+    (a : Fin k → Bool) : R :=
+  ((List.finRange k).map fun i => fourierFactor (U i) (a i)).prod
 
 variable {X : Type*} [Fintype X]
 
@@ -168,8 +199,7 @@ variable {G : TailoredGame X} (S : PermStrategy G)
 /-- The measurement at `x`, the Fourier transform of the observables (II:974):
 `P^x_a = ∏_i (1 + (-1)^{a_i} U(x, i)) / 2`, for `a ∈ F₂^{len x}`. -/
 noncomputable def proj (x : X) (a : Fin (G.len x) → Bool) : Matrix (Fin S.m) (Fin S.m) ℂ :=
-  ((List.finRange (G.len x)).map fun i =>
-    (1 / 2 : ℂ) • (1 + (if a i then (-1 : ℂ) else 1) • S.U x i)).prod
+  fourierProj (S.U x) a
 
 /-- The value of a permutation strategy (II:1130): the players answer `(x, y)` with
 `(a, b)` with probability `Tr(P^x_a P^y_b) / m`. -/
@@ -210,7 +240,7 @@ noncomputable def PermStrategy.trivial (G : TailoredGame X) : PermStrategy G whe
   m_pos := one_pos
   U _ _ := 1
   signedPerm _ _ := ⟨Equiv.refl _, fun _ => false, by
-    ext i j; fin_cases i; fin_cases j; simp [signedPermMatrix]⟩
+    ext i j; fin_cases i; fin_cases j; simp [signedPermMatrix, bitSign]⟩
   invol _ _ := by simp
   comm _ _ _ := rfl
   zAligned _ _ _ := Matrix.isDiag_one
@@ -219,13 +249,13 @@ noncomputable def PermStrategy.trivial (G : TailoredGame X) : PermStrategy G whe
 /-- The trivial strategy answers `0` to every variable with certainty. -/
 theorem PermStrategy.trivial_proj (G : TailoredGame X) (x : X) (a : Fin (G.len x) → Bool) :
     (PermStrategy.trivial G).proj x a = if a = (fun _ => false) then 1 else 0 := by
-  unfold PermStrategy.proj
+  unfold PermStrategy.proj fourierProj
   split_ifs with ha
   · subst ha
     apply List.prod_eq_one
     intro M hM
     obtain ⟨i, -, rfl⟩ := List.mem_map.1 hM
-    simp only [Bool.false_eq_true, ite_false]
+    simp only [fourierFactor, bitSign, Bool.false_eq_true, ite_false]
     exact half_smul_one_add_one
   · obtain ⟨i, hi⟩ : ∃ i, a i = true := by
       by_contra hne
@@ -233,7 +263,7 @@ theorem PermStrategy.trivial_proj (G : TailoredGame X) (x : X) (a : Fin (G.len x
       exact ha (funext fun i => by simpa using hne i)
     apply List.prod_eq_zero
     refine List.mem_map.2 ⟨i, List.mem_finRange i, ?_⟩
-    simp only [hi, ite_true]
+    simp only [fourierFactor, bitSign, hi, ite_true]
     exact half_smul_one_add_neg_one
 
 /-- **A game that accepts the all-zero answers has a perfect ZPC strategy** (II:1148, the

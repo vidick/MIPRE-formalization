@@ -229,6 +229,9 @@ public import MIPRE.Foundations.Swap
 public import MIPRE.Background.GowersHatami.Basic
 public import MIPRE.Foundations.CommutingDilation
 public import MIPRE.Tailored.Game
+public import MIPRE.Tailored.MagicSquare
+public import MIPRE.Tailored.OfTNFV
+public import MIPRE.Tailored.Halting.Main
 
 @[expose] public section
 
@@ -3610,5 +3613,71 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:tailored-trivial-zpc`
 #guard_sorry_free MIPRE.Tailored.PermStrategy.trivial,
   MIPRE.Tailored.PermStrategy.trivial_proj, MIPRE.Tailored.hasPerfectZPC_of_accepts_zero
+
+-- blueprint `lem:signed-perm`
+#guard_sorry_free MIPRE.Tailored.SignedPerm.toMatrix_mul,
+  MIPRE.Tailored.SignedPerm.toMatrix_injective, MIPRE.Tailored.SignedPerm.toMatrix_inv,
+  MIPRE.Tailored.SignedPerm.toMatrix_negOne, MIPRE.Tailored.SignedPerm.toMatrix_diag,
+  MIPRE.Tailored.SignedPerm.toMatrix_prod, MIPRE.Tailored.SignedPerm.toMatrix_map,
+  MIPRE.Tailored.SignedPerm.toMatrix_mem_unitaryGroup, MIPRE.Tailored.IsSignedPerm.isHermitian,
+  MIPRE.Tailored.IsSignedPerm.isDiag_iff, MIPRE.Tailored.IsSignedPerm.kronecker,
+  MIPRE.Tailored.IsSignedPerm.conjTranspose_eq_transpose
+
+-- blueprint `lem:fourier-pvm`
+#guard_sorry_free MIPRE.Tailored.isPVMIn_fourierFactor, MIPRE.Tailored.isPVMIn_fourierProj,
+  MIPRE.Tailored.mul_fourierProj, MIPRE.Tailored.obsChar_mul_fourierProj,
+  MIPRE.Tailored.pvmObs_fourierProj_bit, MIPRE.Tailored.pvmObs_fourierProj_dotBit,
+  MIPRE.Tailored.isDiag_fourierProj
+
+-- blueprint `lem:data-processing`
+#guard_sorry_free MIPRE.Tailored.pvmObs_coarse_affine, MIPRE.Tailored.isDiag_coarse
+
+-- blueprint `lem:perm-strategy-perfect`
+#guard_sorry_free MIPRE.Tailored.PermStrategy.isPVMIn_proj,
+  MIPRE.Tailored.PermStrategy.commute_proj, MIPRE.Tailored.PermStrategy.value_eq_one_of,
+  MIPRE.Tailored.PermStrategy.dotBit_of_obsChar, MIPRE.Tailored.satisfies_ofFn_iff
+
+-- blueprint `lem:zpc-pcc`
+#guard_sorry_free MIPRE.Tailored.PermStrategy.toSync, MIPRE.Tailored.PermStrategy.isPCC_toSync,
+  MIPRE.Tailored.PermStrategy.value_toSync, MIPRE.Tailored.PermStrategy.double,
+  MIPRE.Tailored.PermStrategy.value_double, MIPRE.Tailored.TailoredGame.HasPerfectZPC.doubled,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.exists_pcc,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.syncValue_eq_one,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.valStar_eq_one
+
+-- blueprint `prop:magic-square-zpc`
+#guard_sorry_free MIPRE.Tailored.MagicSquare.game, MIPRE.Tailored.MagicSquare.obs,
+  MIPRE.Tailored.MagicSquare.strategy, MIPRE.Tailored.MagicSquare.value_strategy,
+  MIPRE.Tailored.MagicSquare.hasPerfectZPC, MIPRE.Tailored.MagicSquare.valStar_eq_one
+
+-- blueprint `lem:canonical-decider`
+#guard_sorry_free MIPRE.Tailored.canonProg_accepts,
+  MIPRE.Tailored.TailoredVerifier.tgame_accepts_iff
+
+-- blueprint `lem:of-tnfv`
+#guard_sorry_free MIPRE.Tailored.TailoredVerifier.ofTNFV_accepts_iff,
+  MIPRE.Tailored.TailoredVerifier.ofTNFV_game_D, MIPRE.Tailored.TailoredVerifier.valStar_ofTNFV,
+  MIPRE.Tailored.TailoredVerifier.hasPerfectPCC_ofTNFV
+
+-- blueprint `lem:tailored-dhalt-values`
+#guard_sorry_free MIPRE.Tailored.Halting.lp_runs_iff,
+  MIPRE.Tailored.Halting.hasPerfectZPC_of_branch1,
+  MIPRE.Tailored.Halting.valStar_eq_zero_of_branch2, MIPRE.Tailored.Halting.hasPerfectZPC_iff_W,
+  MIPRE.Tailored.Halting.valStar_eq_W, MIPRE.Tailored.TailoredVerifier.hasPerfectZPC_congr,
+  MIPRE.Tailored.TailoredVerifier.valStar_congr,
+  MIPRE.Tailored.TailoredVerifier.valStar_eq_zero_of_rejects
+
+-- blueprint `lem:tailored-lambda`
+#guard_sorry_free MIPRE.Tailored.Halting.esize_lpProg, MIPRE.Tailored.Halting.lp_cost,
+  MIPRE.Tailored.Halting.exists_lp_cost_poly, MIPRE.Tailored.Halting.sampler_len_clauses,
+  MIPRE.Tailored.Halting.lp_clause, MIPRE.Tailored.Halting.size_clause,
+  MIPRE.Tailored.Halting.exists_lamBound, MIPRE.Tailored.Halting.Lam0,
+  MIPRE.Tailored.Halting.Lam0_spec
+
+-- blueprint `thm:tailored-halting-level`
+#guard_sorry_free MIPRE.Tailored.Halting.halting_tailored,
+  MIPRE.Tailored.Halting.halting_tailored_valStar, MIPRE.Tailored.Halting.hasPerfectZPC_of_halts,
+  MIPRE.Tailored.Halting.valStar_le_of_not_halts, MIPRE.Tailored.Halting.A_step,
+  MIPRE.Tailored.Halting.B_step
 
 end

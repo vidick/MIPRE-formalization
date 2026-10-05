@@ -13,8 +13,18 @@ and line numbers II:$n$ below refer to its LaTeX source.
 
 \emph{Status.} Phase~0: the definitions and the statement are formalized
 (\texttt{MIPRE/TailoredGameValue.lean} and \texttt{MIPRE/Tailored/}), and one lemma is proved,
-that the definitions are not vacuous (Lemma~\ref{lem:tailored-trivial-zpc}). The other results
-below carry no proof marks; they are the targets of Phases~1--5.
+that the definitions are not vacuous (Lemma~\ref{lem:tailored-trivial-zpc}). Phase~1, first
+part: the toolbox of permutation strategies is proved --- signed permutations
+(Lemma~\ref{lem:signed-perm}), the Fourier transform and data processing
+(Lemmas~\ref{lem:fourier-pvm} and~\ref{lem:data-processing}), the criterion for a permutation
+strategy to be perfect (Lemma~\ref{lem:perm-strategy-perfect}), Lemma~\ref{lem:zpc-pcc}, and the
+Magic Square (Proposition~\ref{prop:magic-square-zpc}). Phase~1, second part: a tailored
+verifier is a normal form verifier, the canonical decider written as a program, with the same
+games, values and completeness (Lemmas~\ref{lem:canonical-decider} and~\ref{lem:of-tnfv}).
+Phase~1, third part: the halting protocol at a fixed level is proved for a search program
+meeting its specification (Theorem~\ref{thm:tailored-halting-level}). The
+other results below carry no proof marks; they are the targets of the rest of Phase~1 and of
+Phases~2--5.
 
 The formalization departs from the paper's text in the places Remark~\ref{rem:tailored-route}
 lists, all of them choices this project made for $\MIPstar = \RE$ already: soundness is proved
@@ -48,12 +58,44 @@ value $\valstar$. Its \emph{doubled} game asks $(\mathsf{false}, x)$ and $(\math
 with the weight of $(x, y)$ and no weight elsewhere; it is again a tailored game.
 \end{definition}
 
+\begin{definition}[The three forms of a measurement with outcomes in $\F_2^k$; II:972--1006]
+\label{def:fourier-forms}
+\lean{MIPRE.Tailored.bitSign, MIPRE.Tailored.fourierFactor, MIPRE.Tailored.fourierProj,
+  MIPRE.Tailored.obsChar, MIPRE.Tailored.dotBit}
+\leanok
+For $k$ commuting involutions $U_1, \dots, U_k$ of a complex $\ast$-algebra --- the
+\emph{observable form} of a measurement with outcomes in $\F_2^k$ --- the \emph{representation
+form} is the homomorphism $\alpha \mapsto U^\alpha = \prod_i U_i^{\alpha_i}$ on $\F_2^k$, and the
+\emph{projective form} is the Fourier transform
+\[
+  P_a \;=\; \prod_{i=1}^{k} \tfrac12\bigl(\Id + (-1)^{a_i}\, U_i\bigr), \qquad a \in \F_2^k.
+\]
+The inner product $\langle \alpha, a\rangle = \sum_i \alpha_i a_i$ is taken over $\F_2$.
+\end{definition}
+
+\begin{definition}[Signed permutations; II:1008--1069]
+\label{def:signed-perm}
+\uses{def:fourier-forms}
+\lean{MIPRE.Tailored.SignedPerm, MIPRE.Tailored.SignedPerm.toMatrix,
+  MIPRE.Tailored.SignedPerm.toMatrixHom, MIPRE.Tailored.SignedPerm.negOne,
+  MIPRE.Tailored.SignedPerm.diag, MIPRE.Tailored.SignedPerm.prod,
+  MIPRE.Tailored.SignedPerm.map, MIPRE.Tailored.signedPermMatrix, MIPRE.Tailored.IsSignedPerm}
+\leanok
+A \emph{signed permutation} of a finite set $\Omega$ is a permutation $\sigma$ of $\Omega$ with a
+sign $(-1)^{s(j)}$ at each point: the permutation $\pm j \mapsto \pm (-1)^{s(j)} \sigma(j)$ of the
+signed set $\Omega_\pm = \{\pm\} \times \Omega$, which commutes with the sign flip. They form a
+group, the semidirect product of $\mathrm{Sym}(\Omega)$ and $\F_2^\Omega$ (II:1057), which
+contains the sign flip $-\Id$, the $\pm 1$ diagonals, and, for two sets, the products
+$g \times h$ acting on $(\Omega \times \Omega')_\pm$ (II:3062). The \emph{matrix} of a signed
+permutation is that of its action on the anti-symmetric functions in the basis $B^-$ (II:1049),
+the \emph{signed permutation matrix} $e_j \mapsto (-1)^{s(j)} e_{\sigma(j)}$.
+\end{definition}
+
 \begin{definition}[Z-aligned permutation strategies commuting along edges; II:1043--1057,
 II:1279--1283]
 \label{def:zpc-strategy}
-\uses{def:tailored-game}
-\lean{MIPRE.Tailored.signedPermMatrix, MIPRE.Tailored.IsSignedPerm,
-  MIPRE.Tailored.PermStrategy, MIPRE.Tailored.PermStrategy.proj,
+\uses{def:tailored-game,def:fourier-forms,def:signed-perm}
+\lean{MIPRE.Tailored.PermStrategy, MIPRE.Tailored.PermStrategy.proj,
   MIPRE.Tailored.PermStrategy.value, MIPRE.Tailored.TailoredGame.HasPerfectZPC}
 \leanok
 A \emph{signed permutation matrix} on $\C^m$ is a matrix $e_j \mapsto (-1)^{s(j)} e_{\sigma(j)}$
@@ -105,20 +147,173 @@ value is $\sum_{x, y} \mu(x, y) = 1$. This is the case of the halting protocol i
 machine has halted (II:1978), and it shows that the definitions are not vacuous.
 \end{proof}
 
-\begin{lemma}[ZPC strategies are PCC strategies]
-\label{lem:zpc-pcc}
-\uses{def:zpc-strategy,def:pcc,def:sync-value}
-The measurements $P^x$ of a permutation strategy form a synchronous strategy
-(Definition~\ref{def:sync-strategy}) of the same value, commuting on the support of $\mu$
-when the permutation strategy commutes along edges. In particular a tailored game with a
-perfect ZPC strategy has synchronous value $1$, and quantum value $1$.
+\begin{lemma}[Signed permutation matrices]
+\label{lem:signed-perm}
+\uses{def:signed-perm}
+\lean{MIPRE.Tailored.SignedPerm.toMatrix_mul, MIPRE.Tailored.SignedPerm.toMatrix_injective,
+  MIPRE.Tailored.SignedPerm.toMatrix_inv, MIPRE.Tailored.SignedPerm.toMatrix_negOne,
+  MIPRE.Tailored.SignedPerm.toMatrix_diag, MIPRE.Tailored.SignedPerm.toMatrix_prod,
+  MIPRE.Tailored.SignedPerm.toMatrix_map, MIPRE.Tailored.SignedPerm.toMatrix_mem_unitaryGroup,
+  MIPRE.Tailored.IsSignedPerm.isHermitian, MIPRE.Tailored.IsSignedPerm.isDiag_iff,
+  MIPRE.Tailored.IsSignedPerm.kronecker, MIPRE.Tailored.IsSignedPerm.conjTranspose_eq_transpose}
+\leanok
+The matrix map is an injective homomorphism from the signed permutations of $\Omega$ to the
+unitary matrices on $\C^\Omega$. It sends the sign flip to $-\Id$, the signs $s$ to the diagonal
+$((-1)^{s(j)})_j$, products of signed sets to Kronecker products, and a relabelling of $\Omega$
+to the reindexed matrix. A signed permutation matrix has real entries; it is self-adjoint when
+it is an involution, and it is diagonal exactly when it is a $\pm 1$ diagonal.
 \end{lemma}
 
 \begin{proof}
-The observables at $x$ are commuting involutions, so the factors
-$\frac12(\Id \pm U(x, X))$ are commuting projections, $P^x_a$ is a projection, and the
-$P^x_a$ sum to $\Id$ by expanding the product. Commutation of the observables gives
-commutation of the measurements, and the two values are the same sum. Phase~1.
+\leanok
+Column $j$ of the matrix of $(\sigma, s)$ has a single nonzero entry, $(-1)^{s(j)}$ in row
+$\sigma(j)$. The product of the matrices of $(\sigma, s)$ and $(\tau, t)$ has, in column $j$, the
+single entry $(-1)^{s(\tau(j)) + t(j)}$ in row $\sigma\tau(j)$, which is the group law; and the
+columns determine $(\sigma, s)$. The adjoint is the matrix of the inverse, so the matrix is
+unitary, and an involution equals its adjoint. A diagonal one has $\sigma = \Id$.
+\end{proof}
+
+\begin{lemma}[The Fourier transform; II:974--1006]
+\label{lem:fourier-pvm}
+\uses{def:fourier-forms}
+\lean{MIPRE.Tailored.isPVMIn_fourierFactor, MIPRE.Tailored.isPVMIn_fourierProj,
+  MIPRE.Tailored.mul_fourierProj, MIPRE.Tailored.obsChar_mul_fourierProj,
+  MIPRE.Tailored.pvmObs_fourierProj_bit, MIPRE.Tailored.pvmObs_fourierProj_dotBit,
+  MIPRE.Tailored.isDiag_fourierProj}
+\leanok
+Let $U_1, \dots, U_k$ be commuting self-adjoint involutions. Then $(P_a)_{a \in \F_2^k}$ is a
+projective measurement. $P_a$ lies in the $(-1)^{\langle \alpha, a\rangle}$-eigenspace of
+$U^\alpha$, so that $U^\alpha = \sum_a (-1)^{\langle \alpha, a\rangle} P_a$, and in particular
+$U_i = \sum_a (-1)^{a_i} P_a$. An element commuting with every $U_i$ commutes with every $P_a$,
+and diagonal observables have diagonal projections.
+\end{lemma}
+
+\begin{proof}
+\leanok
+For one involution, $\frac12(\Id \pm U)$ are complementary projections. If every element of one
+projective measurement commutes with every element of another, their products form a projective
+measurement on the product of the outcome sets; the Fourier transform of $k + 1$ observables is
+the product of that of the first and that of the other $k$, reindexed, which proves the first
+claim by induction on $k$. $U_i$ commutes with the factors of $P_a$ other than the $i$-th, on
+which it acts as $(-1)^{a_i}$; multiplying over the $i$ with $\alpha_i = 1$ gives the eigenvalue
+relation, and summing it over $a$ the inverse transform. A product of diagonal matrices is
+diagonal.
+\end{proof}
+
+\begin{lemma}[Data processing; Claims II:2902 and II:2918]
+\label{lem:data-processing}
+\uses{lem:fourier-pvm}
+\lean{MIPRE.Tailored.pvmObs_coarse_affine, MIPRE.Tailored.isDiag_coarse}
+\leanok
+Coarse-graining the Fourier transform of commuting self-adjoint involutions $U$ along the affine
+map $a \mapsto c + \langle \alpha, a\rangle$ gives the measurement with outcomes in $\F_2$ whose
+observable is $(-1)^c U^\alpha$. Coarse-graining a diagonal measurement along any map gives a
+diagonal measurement.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The observable of the coarse-graining is $\sum_a (-1)^{c + \langle \alpha, a\rangle} P_a =
+(-1)^c U^\alpha$, by Lemma~\ref{lem:fourier-pvm}. Sums of diagonal matrices are diagonal.
+\end{proof}
+
+\begin{lemma}[When a permutation strategy is perfect]
+\label{lem:perm-strategy-perfect}
+\uses{def:zpc-strategy,lem:signed-perm,lem:fourier-pvm}
+\lean{MIPRE.Tailored.PermStrategy.isPVMIn_proj, MIPRE.Tailored.PermStrategy.commute_proj,
+  MIPRE.Tailored.PermStrategy.value_eq_one_of, MIPRE.Tailored.PermStrategy.dotBit_of_obsChar,
+  MIPRE.Tailored.satisfies_ofFn_iff}
+\leanok
+The measurements of a permutation strategy are projective, and those at the two ends of an edge
+commute. The strategy is perfect when $P^x_a P^y_b = 0$ for every answer pair $(a, b)$ that the
+canonical decider rejects at an edge $(x, y)$. The canonical decider's check of a constraint
+$(\alpha, \beta, \gamma)$ on answers $(a, b)$ is $\langle \alpha, a\rangle + \langle \beta,
+b\rangle = \gamma$; and at an edge, if $U^\alpha V^\beta$ acts as $(-1)^\gamma$ on the range of
+$P^x_a P^y_b \neq 0$, where $U$ and $V$ are the observables at $x$ and $y$, then $(a, b)$
+satisfies it (Claim II:2870).
+\end{lemma}
+
+\begin{proof}
+\leanok
+The observables are involutive signed permutation matrices, hence self-adjoint
+(Lemma~\ref{lem:signed-perm}), and Lemma~\ref{lem:fourier-pvm} applies. If the rejected pairs
+have $P^x_a P^y_b = 0$, the accepted pairs carry $\sum_{a, b} \mathrm{tr}(P^x_a P^y_b)/m = 1$ at
+each edge. The parity of the number of common ones of two vectors is their inner product. By the
+eigenvalue relations, $U^\alpha V^\beta P^x_a P^y_b = (-1)^{\langle \alpha, a\rangle + \langle
+\beta, b\rangle} P^x_a P^y_b$, as $V^\beta$ commutes with $P^x_a$ along an edge; comparing with
+$(-1)^\gamma P^x_a P^y_b \neq 0$ gives the constraint.
+\end{proof}
+
+\begin{lemma}[ZPC strategies are PCC strategies]
+\label{lem:zpc-pcc}
+\uses{lem:perm-strategy-perfect,def:pcc,def:sync-value,lem:sync-le-valstar}
+\lean{MIPRE.Tailored.PermStrategy.toSync, MIPRE.Tailored.PermStrategy.isPCC_toSync,
+  MIPRE.Tailored.PermStrategy.value_toSync, MIPRE.Tailored.PermStrategy.double,
+  MIPRE.Tailored.PermStrategy.value_double, MIPRE.Tailored.TailoredGame.HasPerfectZPC.doubled,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.exists_pcc,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.syncValue_eq_one,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.valStar_eq_one}
+\leanok
+Let $G$ be a tailored game. A permutation strategy for its doubled game defines a synchronous
+strategy (Definition~\ref{def:sync-strategy}) for the doubled game of the bipartite game of $G$:
+at $(t, x)$ it measures an answer string of length $\ell(x)$ with $P^{(t, x)}$ of its bits, and
+gives every other string the operator $0$. It has the value of the permutation strategy, and it
+commutes on the support of the question distribution, the permutation strategy commuting along
+edges (Definition~\ref{def:pcc}). A permutation strategy for $G$, played at both tags, is one for
+its doubled game, of the same value. In particular a tailored game with a perfect ZPC strategy
+has a perfect ZPC strategy for its doubled game, and then synchronous value $1$ on the doubled
+game and quantum value $1$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+By Lemma~\ref{lem:perm-strategy-perfect} the measurements are projective and commute along
+edges; the operators on strings of the wrong length are $0$, and summing over the strings of
+length $\ell(x)$ is summing over $\F_2^{\ell(x)}$, so the measurement sums to $\Id$ and the two
+values are the same sum, the bipartite decider agreeing with the canonical one on the edges.
+Doubling a strategy keeps the observables, and the doubled distribution is that of $G$ on the
+pairs $((\mathsf{false}, x), (\mathsf{true}, y))$ and zero elsewhere. The synchronous value
+bounds the quantum value of the doubled game (Lemma~\ref{lem:sync-le-valstar}), which is that of
+$G$.
+\end{proof}
+
+\begin{proposition}[The Magic Square game; Examples II:1300--1370]
+\label{prop:magic-square-zpc}
+\uses{lem:zpc-pcc,lem:signed-perm}
+\lean{MIPRE.Tailored.MagicSquare.game, MIPRE.Tailored.MagicSquare.obs,
+  MIPRE.Tailored.MagicSquare.strategy, MIPRE.Tailored.MagicSquare.value_strategy,
+  MIPRE.Tailored.MagicSquare.hasPerfectZPC, MIPRE.Tailored.MagicSquare.valStar_eq_one}
+\leanok
+Tailor the Mermin--Peres Magic Square, as a linear constraint system game, with all its variables
+linear: the questions are the six constraints --- each row of the $3 \times 3$ grid summing to
+$0$, each column to $1$ --- and the nine cells; an edge joins a constraint to one of its cells,
+with weight $\frac1{18}$, and checks that the constraint holds and that the constraint's value
+at the cell is the cell's. This game has a perfect ZPC strategy on the signed set of eight
+points $(\F_2^2)_\pm$: the grid
+\[
+  \begin{array}{ccc}
+    X \otimes \Id & \Id \otimes X & X \otimes X \\
+    \Id \otimes Z & Z \otimes \Id & Z \otimes Z \\
+    -X \otimes Z & -Z \otimes X & -XZ \otimes XZ
+  \end{array}
+\]
+of signed permutations, $X$ flipping a bit and $Z$ flipping the sign at the bit $1$. Its quantum
+value is therefore $1$, while the linear system has no solution, so that no deterministic
+strategy, and no ZPC strategy for the tailoring with all variables readable, is perfect
+(Remark II:1250).
+\end{proposition}
+
+\begin{proof}
+\leanok
+The observables are involutions commuting along each row and each column, the rows multiply to
+$\Id$ and the columns to $-\Id$; these are identities in the group of signed permutations of
+four points, checked by computation, and the matrix map transports them. All variables being
+linear, Z-alignment is vacuous; an edge joins a constraint to one of its cells, whose observable
+is one of the constraint's, so the strategy commutes along edges. The observable of a
+consistency check is the square of a cell's observable, $\Id$, and that of a row or column check
+is the product of its three observables, $\Id$ or $-\Id$ as the parity requires, so every
+sampled answer pair is accepted by Lemma~\ref{lem:perm-strategy-perfect}. The quantum value is
+$1$ by Lemma~\ref{lem:zpc-pcc}.
 \end{proof}
 
 \subsection{Tailored normal form verifiers}
@@ -127,7 +322,8 @@ commutation of the measurements, and the two values are the same sum. Phase~1.
 \label{def:tailored-verifier}
 \uses{def:tailored-game,def:zpc-strategy,def:sampler,def:decider}
 \lean{MIPRE.Tailored.TailoredVerifier, MIPRE.Tailored.LenIs, MIPRE.Tailored.LenBound,
-  MIPRE.Tailored.LenTotal, MIPRE.Tailored.LpIs, MIPRE.Tailored.TailoredVerifier.progs,
+  MIPRE.Tailored.LenTotal, MIPRE.Tailored.LpIs, MIPRE.Cost.Data.spineList,
+  MIPRE.Cost.Data.bitsListD, MIPRE.Tailored.TailoredVerifier.progs,
   MIPRE.Tailored.TailoredVerifier.size, MIPRE.Tailored.TailoredVerifier.Questions,
   MIPRE.Tailored.TailoredVerifier.lenOf, MIPRE.Tailored.TailoredVerifier.LenDefined,
   MIPRE.Tailored.TailoredVerifier.consOf, MIPRE.Tailored.TailoredVerifier.tgame,
@@ -135,11 +331,13 @@ commutation of the measurements, and the two values are the same sum. Phase~1.
 \leanok
 A \emph{tailored normal form verifier} $\verifier = (\cal{S}, \cal{L}, \cal{P})$
 is a conditionally linear sampler $\cal{S}$ (Definition~\ref{def:sampler}), an
-\emph{answer-length calculator} $\cal{L}$, which on $(n, x, \kappa)$ outputs the number of
-readable ($\kappa = R$) or linear ($\kappa = L$) variables at the question $x$, and a
+\emph{answer-length calculator} $\cal{L}$, which on $(n, x, \kappa)$ outputs, in unary, the
+number of readable ($\kappa = R$) or linear ($\kappa = L$) variables at the question $x$, and a
 \emph{linear-constraints processor} $\cal{P}$, which on $(n, x, y, a^R, b^R)$ outputs the
 list $L_{xy}(a^R, b^R)$; the paper's fourth machine, the canonical decider, is the same for
-every verifier and is left implicit. The \emph{$n$-th game} $\verifier_n$ is the tailored game
+every verifier (Definition~\ref{def:canonical-decider}). The outputs are read totally, so that
+none is malformed: a length as the length of the output's spine, a list of constraints
+elementwise. The \emph{$n$-th game} $\verifier_n$ is the tailored game
 on the sampler's questions that the programs compute, a question or pair at which a program
 does not halt rejecting every answer. $\verifier$ \emph{has a perfect ZPC strategy at $n$} when
 the doubled game of $\verifier_n$ has one (Remark~\ref{rem:tailored-conventions}).
@@ -154,10 +352,86 @@ $\verifier$ is \emph{$\lambda$-bounded} when, for every $n \geq 2$, the sampler'
 the running times of the three programs are at most $n^\lambda$ --- the running times read as
 in Definition~\ref{def:lambda-bounded}, at degree $\lambda$ in the size of the input --- the
 lengths $\cal{L}$ outputs are at most $n^\lambda$, and $\abs{\verifier} \leq \lambda$. The
-paper's answer-length calculator outputs in unary, so that its running time bounds the
-lengths; here the lengths are numbers and the bound is a clause of its own. A verifier is
+answer-length calculator outputs in unary, as in the paper, but its running time is bounded
+relative to the size of its input, which is not bounded by $n^\lambda$; so the running time does
+not bound the lengths by $n^\lambda$, and that bound is a clause of its own. A verifier is
 \emph{within a budget} at index $n$ when the same quantities are bounded by the budget's.
 \end{definition}
+
+\begin{definition}[The canonical decider, as a program; II:1757--1787]
+\label{def:canonical-decider}
+\uses{def:tailored-verifier,lem:effective-binary-linear-algebra,lem:pcp-padding-programs}
+\lean{MIPRE.Tailored.canonProg, MIPRE.Tailored.canonFinal, MIPRE.Tailored.satF,
+  MIPRE.Tailored.allSatF, MIPRE.Cost.Prog.pushProg}
+\leanok
+The \emph{canonical decider} of a tailored verifier with answer-length calculator $\cal{L}$ and
+linear-constraints processor $\cal{P}$ is the program that, on $(n, x, y, a, b)$, runs $\cal{L}$
+on $(n, x, \kappa)$ and on $(n, y, \kappa)$ for both kinds $\kappa$ of variables, then $\cal{P}$ on
+$(n, x, y, a^R, b^R)$, where $a^R$ and $b^R$ are the first $\ell^R(x)$ bits of $a$ and the first
+$\ell^R(y)$ bits of $b$, and accepts when $\abs{a} = \ell^R(x) + \ell^L(x)$,
+$\abs{b} = \ell^R(y) + \ell^L(y)$, and every constraint $c$ that $\cal{P}$ outputs has the length
+of $(a, b, 1)$ and satisfies $\langle c, (a, b, 1)\rangle = 0$ over $\F_2$. It is a sequence of
+steps, each of which runs one of the two programs on an input computed in polynomial time from
+the state and pushes the output onto the state, followed by the check, computed in polynomial
+time.
+\end{definition}
+
+\begin{lemma}[The canonical decider decides the $n$-th game]
+\label{lem:canonical-decider}
+\uses{def:canonical-decider}
+\lean{MIPRE.Tailored.canonProg_accepts, MIPRE.Tailored.TailoredVerifier.tgame_accepts_iff}
+\leanok
+The canonical decider accepts $(n, x, y, a, b)$ exactly when the four runs of $\cal{L}$ and the
+run of $\cal{P}$ halt and the check passes on their outputs. So, at questions $x, y$ of the
+$n$-th game $\verifier_n$, it accepts $(a, b)$ exactly when $\verifier_n$ does.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A run of a sequence of steps is a run of each step, the model being deterministic, and the
+polynomial-time pieces compute what they are meant to. For the second part: when the five runs
+halt, their outputs are the lengths and the constraints that $\verifier_n$ is read from. When one
+of them does not halt, $\verifier_n$ has at that edge the constraint list $\{J\}$, which no answer
+pair satisfies, and the canonical decider does not halt, which is a rejection.
+\end{proof}
+
+\begin{definition}[A tailored verifier as a normal form verifier; II:1757--1787]
+\label{def:of-tnfv}
+\uses{def:canonical-decider,def:normal-verifier}
+\lean{MIPRE.Tailored.TailoredVerifier.ofTNFV}
+\leanok
+A tailored verifier $\verifier$ is the normal form verifier (Definition~\ref{def:normal-verifier})
+with the sampler of $\verifier$ and the decider that checks that both questions have the length
+the sampler gives them and then runs the canonical decider of $\verifier$ through the universal
+machine (\texttt{Verifier.ofSamplerDecider}, Remark~\ref{rem:compression-abstract}).
+\end{definition}
+
+\begin{lemma}[A tailored verifier and its normal form verifier have the same games]
+\label{lem:of-tnfv}
+\uses{def:of-tnfv,lem:canonical-decider,lem:zpc-pcc,def:value-model}
+\lean{MIPRE.Tailored.TailoredVerifier.ofTNFV_accepts_iff,
+  MIPRE.Tailored.TailoredVerifier.ofTNFV_game_D, MIPRE.Tailored.TailoredVerifier.valStar_ofTNFV,
+  MIPRE.Tailored.TailoredVerifier.hasPerfectPCC_ofTNFV}
+\leanok
+At the questions of the $n$-th game, the normal form verifier of $\verifier$ accepts exactly what
+$\verifier_n$ accepts. Let $T$ be at least the answer lengths of $\verifier_n$. Then its game
+$\verifier_{n,T}$ has the quantum value of $\verifier_n$, and if $\verifier$ has a perfect ZPC
+strategy at $n$, the doubled game of $\verifier_{n,T}$ has a PCC strategy of value $1$
+(Definition~\ref{def:pcc}).
+\end{lemma}
+
+\begin{proof}
+\uses{def:value-model}
+\leanok
+The question-length check passes at the questions of index $n$, so acceptance is the canonical
+decider's, which is that of $\verifier_n$ by Lemma~\ref{lem:canonical-decider}. The two games
+have the same distribution and accept the same answer pairs, and every answer pair that
+$\verifier_{n,T}$ accepts has the lengths of $\verifier_n$, so is one of the answer pairs of the
+game of $\verifier_n$: enlarging the answer sets by rejected answers changes no value. A perfect
+ZPC strategy for the doubled game of $\verifier_n$ is a perfect PCC strategy for the doubled
+bipartite game (Lemma~\ref{lem:zpc-pcc}), which, extended by zero to the answers of length at
+most $T$, is one for the doubled game of $\verifier_{n,T}$.
+\end{proof}
 
 \subsection{The target}
 
@@ -274,9 +548,132 @@ $\verifier_{2^n}$ gives one for $\verifier'_n$; and $\valstar(\verifier_{2^n}) \
 implies $\valstar(\verifier'_n) \leq \frac12$.
 \end{definition}
 
+\begin{definition}[The tailored halting verifier; II:1900--1925]
+\label{def:tailored-halt-verifier}
+\uses{def:tailored-compression,lem:kleene}
+\lean{MIPRE.Tailored.Halting.Vhalt, MIPRE.Tailored.Halting.lp, MIPRE.Tailored.Halting.lpProg,
+  MIPRE.Tailored.Halting.F, MIPRE.Tailored.Halting.body, MIPRE.Tailored.Halting.prep,
+  MIPRE.Tailored.Halting.comprLp, MIPRE.Tailored.Halting.acceptProg,
+  MIPRE.Tailored.Halting.rejectProg, MIPRE.Tailored.Halting.W, MIPRE.Tailored.Halting.branch1,
+  MIPRE.Tailored.Halting.branch2}
+\leanok
+Let a tailored gap compression be given, with compressed sampler $\cal{S}^\lambda$ and
+answer-length calculator $\cal{L}^\lambda$, a machine $\machine$, a search program $\cal{S}'$ and
+a parameter $\lambda$. The \emph{tailored halting verifier}
+$\verifier^{\machine,\lambda} = (\cal{S}^\lambda, \cal{L}^\lambda, \cal{P}^{\machine,\lambda})$ has
+for linear-constraints processor the efficient Kleene fixed point of the map that sends a
+processor $\cal{P}$ to the program which, on $(n, x, y, a^R, b^R)$:
+\begin{enumerate}
+\item outputs the empty list of constraints if $\machine$ halts on the empty input within
+  $\lceil \log_2 (n+1) \rceil$ steps;
+\item otherwise outputs the list $\{J\}$ if $\cal{S}'$ halts on the description of
+  $(\cal{S}^\lambda, \cal{L}^\lambda, \cal{P})$ within the same budget;
+\item otherwise runs the compressed processor of $(\cal{S}^\lambda, \cal{L}^\lambda, \cal{P})$ on
+  the input.
+\end{enumerate}
+Items 1 and 3 are the paper's map $F$ (II:1900), the empty list accepting and $\{J\}$ rejecting
+every answer pair; item 2 is the search branch of the paper route of Theorem~\ref{thm:halting},
+which supplies the base case that the value form of compression lacks.
+\end{definition}
+
+\begin{lemma}[The values of the tailored halting verifier; II:1978]
+\label{lem:tailored-dhalt-values}
+\uses{def:tailored-halt-verifier,def:zpc-strategy,lem:tailored-trivial-zpc}
+\lean{MIPRE.Tailored.Halting.lp_runs_iff, MIPRE.Tailored.Halting.hasPerfectZPC_of_branch1,
+  MIPRE.Tailored.Halting.valStar_eq_zero_of_branch2, MIPRE.Tailored.Halting.hasPerfectZPC_iff_W,
+  MIPRE.Tailored.Halting.valStar_eq_W, MIPRE.Tailored.TailoredVerifier.hasPerfectZPC_congr,
+  MIPRE.Tailored.TailoredVerifier.valStar_congr,
+  MIPRE.Tailored.TailoredVerifier.valStar_eq_zero_of_rejects}
+\leanok
+At the level $n$: if $\machine$ halts within the budget, $\verifier^{\machine,\lambda}_n$ has a
+perfect ZPC strategy; otherwise, if the search halts within the budget, it has value $0$;
+otherwise it has a perfect ZPC strategy, and value, exactly when the compressed verifier of its
+own programs does at $n$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:tailored-trivial-zpc}
+\leanok
+The processor is the fixed point, so on an input of index $n$ it outputs what the three
+branches say. In the first, every constraint list is empty --- the answer-length calculator
+halts at every question of the sampler, which is where its totality is spent --- so the game
+accepts every answer pair of the right lengths, and the deterministic strategy is perfect
+(Lemma~\ref{lem:tailored-trivial-zpc}). In the second, every constraint list holds $J = 0$, so
+no answer pair is accepted. In the third, the two verifiers have the same sampler and
+answer-length calculator, and their processors output the same constraints at index $n$, so
+their $n$-th games coincide.
+\end{proof}
+
+\begin{lemma}[$\lambda$ for the tailored halting verifier; II:2002]
+\label{lem:tailored-lambda}
+\uses{def:tailored-halt-verifier,def:tailored-bounded,lem:lambda}
+\lean{MIPRE.Tailored.Halting.esize_lpProg, MIPRE.Tailored.Halting.lp_cost,
+  MIPRE.Tailored.Halting.exists_lp_cost_poly, MIPRE.Tailored.Halting.sampler_len_clauses,
+  MIPRE.Tailored.Halting.lp_clause, MIPRE.Tailored.Halting.size_clause,
+  MIPRE.Tailored.Halting.exists_lamBound, MIPRE.Tailored.Halting.Lam0,
+  MIPRE.Tailored.Halting.Lam0_spec}
+\leanok
+There is a threshold $\Lambda_0$, depending on the compression, the universal machines and the
+search program alone, such that $\verifier^{\machine,\lambda}$ is $\lambda$-bounded
+(Definition~\ref{def:tailored-bounded}) for every machine $\machine$ and every
+$\lambda \geq \Lambda_0 + 4\abs{\machine}$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:lambda}
+\leanok
+The processor is a hardcoding of the fixed point's program to its own description, of size
+$2(\abs{\machine} + \abs{\lambda})$ plus a constant. On $(n, d)$ it runs within the fixed point's
+overhead on the hardcoded description, the branch computation, and the universal machine on the
+compressed processor, whose time is the compression's $\mathrm{poly}(n + \lambda)$; together a
+polynomial in $n + \abs{\machine} + \lambda$ times a power of $\abs{d} + 1$. The sampler's and the
+answer-length calculator's clauses are the compression's bounds. Each clause is absorbed into
+$n^\lambda$, at degree $\lambda$, past a threshold on $\lambda$, and the size into $\lambda$ once
+$\lambda \geq \Lambda_0 + 4\abs{\machine}$.
+\end{proof}
+
+\begin{definition}[The search program's specification]
+\label{def:tailored-search-spec}
+\uses{def:tailored-compression}
+\lean{MIPRE.Tailored.Halting.SearchSpec, MIPRE.Tailored.Halting.vof, MIPRE.Tailored.Halting.C}
+\leanok
+Let $C = \max\{C_0, 2\}$. A program $\cal{S}'$ \emph{meets the search specification} when, on the
+description of every $\lambda$-bounded tailored verifier $(\cal{S}^\lambda, \cal{L}^\lambda,
+\cal{P})$, it halts exactly when $\valstar$ of that verifier at the level $C$ exceeds $\frac12$.
+\end{definition}
+
+\begin{theorem}[The tailored halting theorem at a fixed level; II:2021--2066]
+\label{thm:tailored-halting-level}
+\uses{lem:tailored-dhalt-values,lem:tailored-lambda,def:tailored-search-spec,lem:zpc-pcc}
+\lean{MIPRE.Tailored.Halting.halting_tailored, MIPRE.Tailored.Halting.halting_tailored_valStar,
+  MIPRE.Tailored.Halting.hasPerfectZPC_of_halts, MIPRE.Tailored.Halting.valStar_le_of_not_halts,
+  MIPRE.Tailored.Halting.A_step, MIPRE.Tailored.Halting.B_step}
+\leanok
+Let a tailored gap compression be given and $\cal{S}'$ a program meeting the search
+specification. For every machine $\machine$ and every $\lambda \geq \Lambda_0 + 4\abs{\machine}$,
+at the level $C$: if $\machine$ halts on the empty input, $\verifier^{\machine,\lambda}$ has a
+perfect ZPC strategy; if it does not, $\valstar(\verifier^{\machine,\lambda}_C) \leq \frac12$.
+\end{theorem}
+
+\begin{proof}
+\uses{lem:zpc-pcc}
+\leanok
+Along the levels $C, 2^C, 2^{2^C}, \dots$, compression carries a perfect ZPC strategy at $2^n$
+down to $n$, and a value at most $\frac12$, at every level where neither of the first two
+branches fires, the verifier then having the compressed verifier's games
+(Lemma~\ref{lem:tailored-dhalt-values}); the verifier is $\lambda$-bounded by
+Lemma~\ref{lem:tailored-lambda}. If $\machine$ halts, the first branch fires from some level on;
+the search never fires below it, since a firing would put every level below it, the start level
+among them, at value at most $\frac12$, while the search fires only when the start level's value
+exceeds $\frac12$; so completeness descends to $C$. If $\machine$ does not halt and the value at
+$C$ exceeded $\frac12$, the search would fire from some level on, and soundness would descend
+from there to $C$, a contradiction.
+\end{proof}
+
 \begin{theorem}[Halting from tailored compression; II:1887--2066]
 \label{thm:tailored-halting}
-\uses{def:tailored-compression,def:tailored-game-data,lem:zpc-pcc,thm:halting}
+\uses{def:tailored-compression,def:tailored-game-data,lem:zpc-pcc,thm:halting,
+  thm:tailored-halting-level}
 A tailored gap compression gives the conclusion of Theorem~\ref{thm:tmip-re}.
 \end{theorem}
 
@@ -290,7 +687,9 @@ $\machine$ halts, an always-accepting game has the deterministic ZPC strategy ($
 observable the identity) --- this is where the calculator's totality is spent --- and
 completeness descends through the levels; when it does not, the downward induction of the
 search branch gives $\valstar \leq \frac12$, and Lemma~\ref{lem:sync-le-valstar} the synchronous
-value. Phase~1.
+value. All of this is Theorem~\ref{thm:tailored-halting-level}, proved, for a search program
+meeting its specification; what remains is that program, from tabulating a tailored verifier
+at a fixed level, and the tabulation of the game the reduction outputs (Phase~1).
 \end{proof}
 
 \begin{definition}[The three stage contracts]
