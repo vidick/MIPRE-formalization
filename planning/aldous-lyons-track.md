@@ -1,9 +1,11 @@
 # The Aldous–Lyons track: `TMIP* = RE` (Bowen–Chapman–Vidick, paper II): estimate and plan
 
-**Status: Phase 0 done (#273; tracking #272).** The statement and the interface are in
-(`MIPRE/TailoredGameValue.lean`, `MIPRE/Tailored/*`, definitions only), the two checks that
-Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapter's skeleton is
-`blueprint/src/content/09_tailored.tex`. Nothing is proved; Phase 1 is next.
+**Status: Phase 0 done (#273; tracking #272); Phase 1 in progress (#279).** The statement and
+the interface are in (`MIPRE/TailoredGameValue.lean`, `MIPRE/Tailored/*`), the two checks that
+Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapter is
+`blueprint/src/content/09_tailored.tex`. Phase 1's first slice, P1a, the toolbox of permutation
+strategies, is proved (`MIPRE/Tailored/{SignedPerm,Fourier,ZPC,MagicSquare}.lean`, §5 "Phase 1
+slices"); P1b–P1d are next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -503,7 +505,43 @@ polynomial-time class theorem; its files `Build.lean`, `Size.lean`, `Cost.lean` 
 `ClassVerifier.lean` are hard-wired to the shape of `F` and `body`, so the tailored halting
 protocol is a parallel set of files, not an edit of these.
 
-**Phase 2 — repetition (2.5–3.5k; 1–2 PRs).** The `k`-fold tailored product (constraints
+**Phase 1 slices.** Four pull requests, in this order.
+
+- **P1a — permutation strategies (done, 1.4k lines).** `SignedPerm Ω`, the group
+  `Sym(Ω) ⋉ F₂^Ω`, with an injective matrix homomorphism into the unitaries: the sign flip,
+  `±1` diagonals, products of signed sets as Kronecker products, relabellings as reindexing;
+  an involutive signed permutation matrix is self-adjoint, a diagonal one a `±1` diagonal. The
+  three forms of an `F₂^k`-measurement in any complex `⋆`-algebra (`MIPRE.IsPVMIn`): the Fourier
+  transform is a projective measurement, by induction on `k` from products of commuting
+  measurements; the eigenvalue relations and the inverse transforms in observable and
+  representation form; commutation and diagonality pass from observables to projections; affine
+  and diagonal data processing (Claims II:2902, II:2918). The perfect-strategy criterion and the
+  constraint lemma (Claim II:2870), with the canonical decider's `Satisfies` read as
+  `⟨α, a⟩ + ⟨β, b⟩ = γ`. `lem:zpc-pcc`, on the doubled games, with doubling of strategies. And
+  the non-vacuity witness: the Magic Square, tailored with every variable linear, has a perfect
+  ZPC strategy, the paper's 8-point one; its group identities are checked by `decide` in
+  `SignedPerm (Fin 4)` and transported by the matrix homomorphism. `lem:sum-zpc` moves to
+  Phase 2: it is the binary case of the completeness of the tailored product, which Phase 2
+  defines directly in its `k`-fold form, as `Game.repeat` is.
+- **P1b — tailored verifiers as verifiers.** The canonical decider as a costed `Decider` built
+  from the answer-length calculator and the linear-constraints processor; `Verifier.ofTNFV`;
+  the identification of `(ofTNFV V).game n T` with `(V.tgame n).toGame` for `T` above the
+  answer lengths, and of the doubled games, so that `valStar` transfers and a perfect ZPC
+  strategy gives `HasPerfectPCC` through `lem:zpc-pcc`.
+- **P1c — the halting protocol.** The parallel `Halting/Paper`-style files for tailored
+  verifiers, from a `TailoredGapCompression`: the linear-constraints processor as the Kleene
+  fixed point (`[]` for accept, `[rejectConstraint _]` for reject), `lem:dhalt-values` as
+  `accepts_iff` with the halted branch from `hasPerfectZPC_of_accepts_zero`, the downward
+  induction with the search branch, `lem:lambda` for three programs.
+- **P1d — tabulation, transports, the conditional theorems.** A tailored verifier at a fixed
+  index tabulated as a `TailoredGameData`; ZPC strategies and values transported between
+  `MIPRE.Tailored` and `TailoredGameValue`;
+  `tailored_halting_reduction_of : TailoredGapCompression ℓ → TailoredHaltingReduction`;
+  `TMIP* ⊆ RE` by enumerating signed-permutation strategies, on which perfection is decidable
+  through `SignedPerm (Fin m)`; the class statements.
+
+**Phase 2 — repetition (2.5–3.5k; 1–2 PRs).** `lem:sum-zpc` (II:3086), moved from Phase 1, as
+the case `k = 2` of what follows. The `k`-fold tailored product (constraints
 zero-padded to the global length and concatenated, II:11377), ZPC completeness on
 `tensorPow`/`isPCC_tensorPow` with the Kronecker closure, the repeated linear-constraints
 processor as a program with its cost (the sampler and the parsing are `Repeat/*`), the

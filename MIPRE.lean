@@ -1411,8 +1411,12 @@ public import MIPRE.TM.MultiInput.OneInputEquiv
 public import MIPRE.TM.Universal.Spec
 public import MIPRE.Tactics
 public import MIPRE.Tailored.Compression
+public import MIPRE.Tailored.Fourier
 public import MIPRE.Tailored.Game
+public import MIPRE.Tailored.MagicSquare
+public import MIPRE.Tailored.SignedPerm
 public import MIPRE.Tailored.Stages
 public import MIPRE.Tailored.Verifier
+public import MIPRE.Tailored.ZPC
 public import MIPRE.TailoredGameValue
 public import MIPRE.Tsirelson

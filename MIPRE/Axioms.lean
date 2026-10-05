@@ -229,6 +229,7 @@ public import MIPRE.Foundations.Swap
 public import MIPRE.Background.GowersHatami.Basic
 public import MIPRE.Foundations.CommutingDilation
 public import MIPRE.Tailored.Game
+public import MIPRE.Tailored.MagicSquare
 
 @[expose] public section
 
@@ -3610,5 +3611,41 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:tailored-trivial-zpc`
 #guard_sorry_free MIPRE.Tailored.PermStrategy.trivial,
   MIPRE.Tailored.PermStrategy.trivial_proj, MIPRE.Tailored.hasPerfectZPC_of_accepts_zero
+
+-- blueprint `lem:signed-perm`
+#guard_sorry_free MIPRE.Tailored.SignedPerm.toMatrix_mul,
+  MIPRE.Tailored.SignedPerm.toMatrix_injective, MIPRE.Tailored.SignedPerm.toMatrix_inv,
+  MIPRE.Tailored.SignedPerm.toMatrix_negOne, MIPRE.Tailored.SignedPerm.toMatrix_diag,
+  MIPRE.Tailored.SignedPerm.toMatrix_prod, MIPRE.Tailored.SignedPerm.toMatrix_map,
+  MIPRE.Tailored.SignedPerm.toMatrix_mem_unitaryGroup, MIPRE.Tailored.IsSignedPerm.isHermitian,
+  MIPRE.Tailored.IsSignedPerm.isDiag_iff, MIPRE.Tailored.IsSignedPerm.kronecker,
+  MIPRE.Tailored.IsSignedPerm.conjTranspose_eq_transpose
+
+-- blueprint `lem:fourier-pvm`
+#guard_sorry_free MIPRE.Tailored.isPVMIn_fourierFactor, MIPRE.Tailored.isPVMIn_fourierProj,
+  MIPRE.Tailored.mul_fourierProj, MIPRE.Tailored.obsChar_mul_fourierProj,
+  MIPRE.Tailored.pvmObs_fourierProj_bit, MIPRE.Tailored.pvmObs_fourierProj_dotBit,
+  MIPRE.Tailored.isDiag_fourierProj
+
+-- blueprint `lem:data-processing`
+#guard_sorry_free MIPRE.Tailored.pvmObs_coarse_affine, MIPRE.Tailored.isDiag_coarse
+
+-- blueprint `lem:perm-strategy-perfect`
+#guard_sorry_free MIPRE.Tailored.PermStrategy.isPVMIn_proj,
+  MIPRE.Tailored.PermStrategy.commute_proj, MIPRE.Tailored.PermStrategy.value_eq_one_of,
+  MIPRE.Tailored.PermStrategy.dotBit_of_obsChar, MIPRE.Tailored.satisfies_ofFn_iff
+
+-- blueprint `lem:zpc-pcc`
+#guard_sorry_free MIPRE.Tailored.PermStrategy.toSync, MIPRE.Tailored.PermStrategy.isPCC_toSync,
+  MIPRE.Tailored.PermStrategy.value_toSync, MIPRE.Tailored.PermStrategy.double,
+  MIPRE.Tailored.PermStrategy.value_double, MIPRE.Tailored.TailoredGame.HasPerfectZPC.doubled,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.exists_pcc,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.syncValue_eq_one,
+  MIPRE.Tailored.TailoredGame.HasPerfectZPC.valStar_eq_one
+
+-- blueprint `prop:magic-square-zpc`
+#guard_sorry_free MIPRE.Tailored.MagicSquare.game, MIPRE.Tailored.MagicSquare.obs,
+  MIPRE.Tailored.MagicSquare.strategy, MIPRE.Tailored.MagicSquare.value_strategy,
+  MIPRE.Tailored.MagicSquare.hasPerfectZPC, MIPRE.Tailored.MagicSquare.valStar_eq_one
 
 end

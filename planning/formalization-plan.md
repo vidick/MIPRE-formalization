@@ -1096,7 +1096,7 @@ density and an amplification by the twisted Pauli algebra (C6a and C6b T2–T5,
 about 3.0k lines) and a port of the vendored proof to dyadic pairs (M0–M14, 71.7k lines, against
 the 70–120k estimated), which closes Phase 6.
 
-**The Aldous–Lyons track, `TMIP* = RE` (#272; planned 2026-10-05, Phase 0 done in #273).** The main theorem
+**The Aldous–Lyons track, `TMIP* = RE` (#272; planned 2026-10-05, Phase 0 done in #273, Phase 1 in progress, #279).** The main theorem
 of Bowen–Chapman–Vidick's *The Aldous–Lyons Conjecture II* (arXiv:2501.00173): the halting
 problem reduced to *tailored* games, with a perfect Z-aligned permutation strategy commuting
 along edges as completeness and value at most `1/2` as soundness; with paper I
@@ -1112,7 +1112,10 @@ introspection verifier, and 80–135k if the paper's own Pauli basis game has to
 Phase 0 put the statement (`MIPRE/TailoredGameValue.lean`) and the interface
 (`MIPRE/Tailored/*`) in, definitions only, and checked from the Lean that this route is open:
 the introspective predicate is controlled-linear and its honest strategy a signed-permutation
-strategy.
+strategy. Phase 1's first slice proved the toolbox of permutation strategies: signed
+permutations as a group with its matrix homomorphism, the Fourier transform and data
+processing, `lem:zpc-pcc`, and the Magic Square's perfect ZPC strategy as the witness that
+perfect ZPC strategies are not classical ones.
 
 ## Working rules for this track
 
