@@ -1178,6 +1178,94 @@ completeness and soundness are Theorem~\ref{thm:tailored-rep-from-spec} applied 
 Lemma~\ref{lem:tailored-rep-programs}.
 \end{proof}
 
+\subsection{Question reduction: the honest strategy as a permutation strategy}
+
+Theorem~\ref{thm:tailored-qr} is proved on Route~A (Remark~\ref{rem:tailored-route-a}): the
+tailored question reduction is a tailored presentation of the introspection verifier of
+Section~\ref{sec:ps-introspection}. Its completeness asks that the honest strategy of that
+verifier, built on a perfect permutation strategy for the input, be a permutation strategy
+itself. The honest strategy is a projective measurement at each question, whose outcomes are
+encoded as answer bits; the lemmas of this subsection supply the observables of those bits and
+show that they are signed permutations, in the three ways the honest strategy builds its
+measurements: eigenbasis measurements of the Weyl operators, read out linearly; the
+computational-basis measurement, read out arbitrarily; and controlled sums, applying one
+signed permutation for each computational-basis state of a control register.
+
+\begin{lemma}[The bit observables of an encoded measurement]
+\label{lem:encoded-pvm-obs}
+\uses{def:fourier-forms}
+\lean{MIPRE.Tailored.encObs, MIPRE.Tailored.encObs_mul_self, MIPRE.Tailored.commute_encObs,
+  MIPRE.Tailored.star_encObs, MIPRE.Tailored.fourierFactor_encObs,
+  MIPRE.Tailored.fourierProj_encObs, MIPRE.Tailored.commute_encObs_encObs}
+\leanok
+Let $(P_\lambda)_{\lambda \in \Lambda}$ be a projective measurement and $\mathrm{enc}$ a map from
+$\Lambda$ to $\F_2^k$. The observables $U_i = \sum_\lambda (-1)^{\mathrm{enc}(\lambda)_i}
+P_\lambda$ are commuting self-adjoint involutions, and their Fourier transform is the push-forward
+of $P$ along $\mathrm{enc}$: $\prod_i \frac12(1 + (-1)^{a_i} U_i) = \sum_{\mathrm{enc}(\lambda) =
+a} P_\lambda$. If every element of $P$ commutes with every element of a second projective
+measurement $Q$, the bit observables of $P$ commute with those of $Q$, whatever the encodings.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The map $\varepsilon \mapsto \sum_\lambda \varepsilon(\lambda) P_\lambda$ is multiplicative, so
+the $U_i$ are commuting involutions, self-adjoint as their weights are real. Since $\sum_\lambda
+P_\lambda = \Id$, the factor $\frac12(1 + (-1)^{b} U_i)$ is $\sum_\lambda \frac12(1 +
+(-1)^{b + \mathrm{enc}(\lambda)_i}) P_\lambda$, the coarse-graining of $P$ onto
+$\{\mathrm{enc}(\lambda)_i = b\}$; by multiplicativity the product over $i$ is the
+coarse-graining onto the intersection of these sets, by induction on $k$.
+\end{proof}
+
+\begin{lemma}[Weyl measurements are read out by signed permutations; II:2938]
+\label{lem:weyl-signed-perm}
+\uses{def:generalized-pauli,lem:signed-perm,lem:encoded-pvm-obs}
+\lean{MIPRE.Tailored.sgn_eq_bitSign, MIPRE.Tailored.wX_eq_signedPermMatrix,
+  MIPRE.Tailored.isSignedPerm_wX, MIPRE.Tailored.wZ_eq_diagonal_bitSign,
+  MIPRE.Tailored.isSignedPerm_wZ, MIPRE.Tailored.isDiag_wZ, MIPRE.Tailored.trDotDual,
+  MIPRE.Tailored.exists_trDotL_eq, MIPRE.Tailored.encObs_proj_trDot,
+  MIPRE.Tailored.exists_encObs_proj_linear, MIPRE.Tailored.isSignedPerm_encObs_xProj,
+  MIPRE.Tailored.isSignedPerm_encObs_zProj}
+\leanok
+$X(a)$ is the permutation matrix of the translation by $a$, and $Z(b)$ the diagonal of the signs
+$(-1)^{\tr(b \cdot e)}$. Every $\F_2$-linear functional on $\F_q^n$ is $e \mapsto \tr(c \cdot e)$
+for some $c$, and the observable of an $\F_2$-linear bit $\varphi$ of the outcome of the
+eigenbasis measurement of $X$ (of $Z$) is $X(c)$ ($Z(c)$) for the $c$ representing $\varphi$. So
+every $\F_2$-linear encoding of the outcome of the $X$-basis measurement has signed-permutation
+bit observables, and every encoding whatsoever of the outcome of the $Z$-basis measurement has
+diagonal $\pm 1$ bit observables.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The first two claims are the definitions. The trace form is nondegenerate (a nonzero $c$ gives a
+nonzero functional, since the trace is onto), so $c \mapsto \tr(c \cdot -)$ is an injective
+linear map between spaces of equal finite dimension over $\F_2$, hence onto. The observable of
+the bit $\tr(c \cdot -)$ is $\sum_e (-1)^{\tr(c \cdot e)} P_e = W(c)$, the expansion of a Weyl
+operator in its eigenbasis projectors. The $Z$-basis projectors are the diagonal matrix units,
+so any $\pm 1$ combination of them is a $\pm 1$ diagonal.
+\end{proof}
+
+\begin{lemma}[Controlled signed permutations]
+\label{lem:controlled-signed-perm}
+\uses{lem:signed-perm}
+\lean{MIPRE.Tailored.blockDiag, MIPRE.Tailored.isSignedPerm_blockDiag,
+  MIPRE.Tailored.isDiag_blockDiag, MIPRE.Tailored.controlled_eq_blockDiag,
+  MIPRE.Tailored.isSignedPerm_controlled, MIPRE.Tailored.isDiag_controlled}
+\leanok
+A block-diagonal matrix whose blocks are signed permutation matrices is one; so is a
+controlled sum $\sum_z F_z \otimes U_z$, where $F_z$ is the computational-basis projector onto
+the fibre of $z$ under a map $f$ and each $U_z$ is a signed permutation matrix. When the
+blocks, or the $U_z$, are diagonal, so is the result.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The controlled sum applies $U_{f(i)}$ on the second factor of the basis state $(i, a)$, so it is
+the block-diagonal matrix with blocks $U_{f(i)}$. The block-diagonal matrix with blocks the
+matrices of $(\sigma_i, s_i)$ is the matrix of the signed permutation $(i, a) \mapsto (i,
+\sigma_i(a))$ with signs $s_i(a)$.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}

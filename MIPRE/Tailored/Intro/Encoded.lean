@@ -23,7 +23,8 @@ signed-permutation one, which depends on `P`:
 * `fourierProj_encObs`: their Fourier transform is the push-forward of `P` along `enc`,
   `P'_a = ∑_{enc(λ) = a} P_λ`; so the permutation strategy built from them measures exactly
   the encoded outcomes of `P`;
-* `Commute.encObs`: they commute with the bit observables of any measurement commuting with `P`.
+* `commute_encObs_encObs`: they commute with the bit observables of any measurement commuting
+  with `P`.
 -/
 
 namespace MIPRE.Tailored
@@ -106,7 +107,7 @@ end
 
 omit [StarRing R] in
 /-- **Bit observables of commuting measurements commute.** -/
-theorem _root_.Commute.encObs {Λ' : Type*} [Fintype Λ'] {k' : ℕ} {P : Λ → R} {Q : Λ' → R}
+theorem commute_encObs_encObs {Λ' : Type*} [Fintype Λ'] {k' : ℕ} {P : Λ → R} {Q : Λ' → R}
     (h : ∀ l l', Commute (P l) (Q l')) (enc : Λ → Fin k → Bool) (enc' : Λ' → Fin k' → Bool)
     (i : Fin k) (j : Fin k') : Commute (encObs P enc i) (encObs Q enc' j) :=
   Commute.sum_left _ _ _ fun l _ => Commute.sum_right _ _ _ fun l' _ =>
