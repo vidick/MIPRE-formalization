@@ -12,15 +12,17 @@ This note records what those entries are, what Palomar means by "depends on", wh
 |---|---|---|---|---|
 | LIDT | `LionSR/LDT-comparator`, a thin wrapper, **PALOMAR-2026-08-18-000001** | wraps `LionSR/MIPStarRE` at `892b939c541e90192a8c77917cbb106678fd43b3` | v4.32.0 | `MIPStarRE.LDT.Test.mainFormal` |
 | LIDT, substantive | `LionSR/MIPStarRE` (Sirui Lu, Ruixuan Deng, Zhengfeng Ji) | `5fc363bc8b77b1a6bbdaaeea634f1b0f3ff0ad79` (2026-10-04): the Lean-module port of `507e8122`, the commit this repository used to vendor; its audit `audits/2026-10-03-lean-module-upgrade.md` says the statement text of `mainFormal` is unchanged | v4.35.0-rc2, Mathlib `065356127b1d` | — |
-| QPBT | `Dengnifer/MIPStarRE-QPBT` (Ruixuan Deng) | `179a37893d2a037cce0587ea932f5da819c7d78c` (2026-10-04) | v4.35.0-rc2, Mathlib `065356127b1d` | `MIPStarRE.QPBT.Palomar.{exists_spcc_value_one, exists_ld_soundness, pauli_soundness, pauli_soundness_qubit}` (Lemma 7.13, Theorems 7.8 and 7.14, Corollary 7.15 of MIP* = RE) |
+| QPBT, **PALOMAR-2026-10-04-000004** | `Dengnifer/MIPStarRE-QPBT` (Ruixuan Deng) | `179a37893d2a037cce0587ea932f5da819c7d78c` (2026-10-04) | v4.35.0-rc2, Mathlib `065356127b1d` | `MIPStarRE.QPBT.Palomar.{exists_spcc_value_one, exists_ld_soundness, pauli_soundness, pauli_soundness_qubit}` (Lemma 7.13, Theorems 7.8 and 7.14, Corollary 7.15 of MIP* = RE) |
 
 QPBT takes `LionSR/MIPStarRE` at `5fc363b` as a **pinned Lake Git dependency**, not a copy,
 and records it under `related_formalizations` with `relationship: builds-on`, naming the
 Palomar identifier in the note. Its own `formalization.yaml` lists this repository as an
-*independent* formalization of the Pauli basis test (`MIPRE/Background/QLD`). Whether QPBT is
-registered, and under which identifier, is read off the registry
-(`https://data.palomar-registry.org/repositories/dengnifer/mipstarre-qpbt.json`; the `data.` host is refused by the cloud proxy even with `palomar-registry.org` allowed, so it is read from outside a session) and goes
-into the note of our `related_formalizations` entry for it.
+*independent* formalization of the Pauli basis test (`MIPRE/Background/QLD`). It is registered
+as PALOMAR-2026-10-04-000004 (version 1, 2026-10-04, trust level high), read off
+`https://data.palomar-registry.org/repositories/dengnifer/mipstarre-qpbt.json` (the `data.`
+host needs its own entry in the cloud environment's allowed list); that identifier is in the
+note of our `related_formalizations` entry for it. Neither `LionSR/MIPStarRE` itself nor this
+repository has a registration.
 
 ## What "depends on" means in Palomar
 
@@ -47,7 +49,7 @@ that the proof uses, and (ii) a `builds-on` entry naming PALOMAR-2026-08-18-0000
 values (the paper, the companion manuscript as `other`, and the LIDT paper as `background`);
 the three reused formalizations moved to `related_formalizations` (`builds-on`: LDT-comparator
 with its identifier, MIPStarRE at the pinned commit, ten-proofs, commuting-repetition);
-QPBT is listed as `independent`, with its identifier to be added once read off the registry.
+QPBT is listed as `independent`, with its identifier PALOMAR-2026-10-04-000004.
 The file passes the template's validator and the verifier's own loader
 (`PalomarSubmission/scripts/submission_contract.py: load_formalization_metadata`, run from a
 clone).

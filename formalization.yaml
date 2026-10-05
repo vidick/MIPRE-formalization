@@ -99,7 +99,8 @@ related_formalizations:
     relationship: "independent"
     note: >-
       The quantum Pauli basis test (Ruixuan Deng; Lemma 7.13, Theorems 7.8 and 7.14 and
-      Corollary 7.15 of MIP* = RE), built on MIPStarRE. MIPRE/Background/QLD of this
+      Corollary 7.15 of MIP* = RE), registered as PALOMAR-2026-10-04-000004 at commit
+      179a37893d2a037cce0587ea932f5da819c7d78c, built on MIPStarRE. MIPRE/Background/QLD of this
       repository is an independent formalization of the same test, in the bipartite-model
       form that its commuting-operator track needs; the compared theorems use that
       formalization and not QPBT.

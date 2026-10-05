@@ -39,6 +39,8 @@
 #   leansearch.net                     | lean-lsp-mcp search tools
 #   premise-search.com                 |
 #   leanpremise.net                   /
+#   palomar-registry.org              \ the Palomar registry: the site, and its JSON data
+#   data.palomar-registry.org         / (planning/palomar-dependencies.md)
 #
 # GitHub needs nothing added: github.com, codeload.github.com,
 # objects.githubusercontent.com and release-assets.githubusercontent.com are all

@@ -65,6 +65,8 @@ LeanSearch available.
    leansearch.net
    premise-search.com
    leanpremise.net
+   palomar-registry.org
+   data.palomar-registry.org
    ```
 
    Since Mathlib v4.35 its cache tool downloads from `cache.mathlib.org`; the legacy
