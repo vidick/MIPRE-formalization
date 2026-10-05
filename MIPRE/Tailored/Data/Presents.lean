@@ -113,6 +113,14 @@ namespace TailoredGame
 
 variable {X : Type*} [Fintype X] (G : TailoredGame X)
 
+/-- The doubled game has no weight on its loops. -/
+theorem doubled_μ_self (p : Bool × X) : G.doubled.μ p p = 0 := by
+  show (if p.1 = false ∧ p.1 = true then G.μ p.2 p.2 else 0) = 0
+  rw [ite_eq_right]
+  rintro ⟨h1, h2⟩
+  rw [h1] at h2
+  exact Bool.false_ne_true h2
+
 theorem doubled_maxLen : G.doubled.maxLen = G.maxLen := by
   apply le_antisymm
   · exact Finset.sup_le fun p _ => G.len_le_maxLen p.2
