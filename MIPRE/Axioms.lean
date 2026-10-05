@@ -230,6 +230,7 @@ public import MIPRE.Background.GowersHatami.Basic
 public import MIPRE.Foundations.CommutingDilation
 public import MIPRE.Tailored.Game
 public import MIPRE.Tailored.MagicSquare
+public import MIPRE.Tailored.OfTNFV
 
 @[expose] public section
 
@@ -3647,5 +3648,14 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.Tailored.MagicSquare.game, MIPRE.Tailored.MagicSquare.obs,
   MIPRE.Tailored.MagicSquare.strategy, MIPRE.Tailored.MagicSquare.value_strategy,
   MIPRE.Tailored.MagicSquare.hasPerfectZPC, MIPRE.Tailored.MagicSquare.valStar_eq_one
+
+-- blueprint `lem:canonical-decider`
+#guard_sorry_free MIPRE.Tailored.canonProg_accepts,
+  MIPRE.Tailored.TailoredVerifier.tgame_accepts_iff
+
+-- blueprint `lem:of-tnfv`
+#guard_sorry_free MIPRE.Tailored.TailoredVerifier.ofTNFV_accepts_iff,
+  MIPRE.Tailored.TailoredVerifier.ofTNFV_game_D, MIPRE.Tailored.TailoredVerifier.valStar_ofTNFV,
+  MIPRE.Tailored.TailoredVerifier.hasPerfectPCC_ofTNFV
 
 end

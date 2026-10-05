@@ -28,9 +28,13 @@ every verifier (`TailoredGame.Accepts`) — so a `TailoredVerifier ℓ` is the o
 
 Both are closed programs whose input starts with the index `n`, so the structure
 `MIPRE.Decider` and its running-time bound `Decider.TimeBoundAt` serve for them; only the
-decider's notion of acceptance does not apply. The paper outputs lengths in unary, so that the
-running time bounds them; here they are numbers, and the bound is a separate clause
-(`LenBound`), in `IsBounded` and in the budgets.
+decider's notion of acceptance does not apply. Their outputs are read *totally*, so that no
+output is malformed and the canonical decider, which has to read them, needs no validity
+check: a length in unary, as the paper writes it (II:1781) — the length of the output's spine,
+`(Cost.Data.spineList d).length` — and a constraint list by `Cost.Data.bitsListD`, which on
+the encoding of a list of bit strings is that list. The length bound is still a separate clause
+(`LenBound`), in `IsBounded` and in the budgets, though the running time bounds a unary
+output.
 
 * `TailoredVerifier.tgame n`: the `n`-th game `𝒱_n`, a `TailoredGame` on the sampler's questions,
   read off the programs: a question at which `len` does not halt, or a pair at which `lp` does
@@ -43,9 +47,66 @@ running time bounds them; here they are numbers, and the bound is a separate cla
   stage contracts, in the relative-cost reading of `MIPRE.Verifier.IsBounded`, with the length
   clause added.
 
-`Verifier.ofTNFV`, the packaging of a tailored verifier as a `MIPRE.Verifier` through the
-canonical decider as a program, is Phase 1 of the plan.
+`TailoredVerifier.ofTNFV` (`MIPRE.Tailored.OfTNFV`) packages a tailored verifier as a
+`MIPRE.Verifier`, the canonical decider written as a program (`MIPRE.Tailored.Canonical`).
 -/
+
+namespace MIPRE.Cost.Data
+
+/-! ## Total readings of data -/
+
+/-- The elements along the right spine: the list a datum encodes, every datum encoding one. -/
+def spineList : Data → List Data
+  | nil => []
+  | cons a d => a :: spineList d
+
+@[simp] theorem spineList_nil : spineList nil = [] := rfl
+
+@[simp] theorem spineList_cons (a d : Data) : spineList (cons a d) = a :: spineList d := rfl
+
+theorem ofList_id_spineList (d : Data) : ofList id (spineList d) = d := by
+  induction d with
+  | nil => rfl
+  | cons a d _ ih => simp [ofList, ih]
+
+theorem spineList_ofList {α : Type*} (f : α → Data) (l : List α) :
+    spineList (ofList f l) = l.map f := by
+  induction l with
+  | nil => rfl
+  | cons a l ih => simp [ofList, ih]
+
+/-- A length written in unary is read back. -/
+theorem length_spineList_ofNat (k : ℕ) : (spineList (ofNat k)).length = k := by
+  induction k with
+  | zero => rfl
+  | succ k ih => simp [ofNat, ih]
+
+/-- A datum read as a bit: `nil` is `false`, a node `true`. -/
+def bitD : Data → Bool
+  | nil => false
+  | cons _ _ => true
+
+@[simp] theorem bitD_ofBool (b : Bool) : bitD (ofBool b) = b := by cases b <;> rfl
+
+/-- A datum read as a bit string: its spine, elementwise. -/
+def bitsD (d : Data) : BitStr := (spineList d).map bitD
+
+/-- A datum read as a list of bit strings. -/
+def bitsListD (d : Data) : List BitStr := (spineList d).map bitsD
+
+theorem bitsD_encode (s : BitStr) : bitsD (encode s) = s := by
+  change (spineList (ofList ofBool s)).map bitD = s
+  rw [spineList_ofList, List.map_map]
+  conv_rhs => rw [← List.map_id s]
+  exact List.map_congr_left fun b _ => bitD_ofBool b
+
+theorem bitsListD_encode (cs : List BitStr) : bitsListD (encode cs) = cs := by
+  change (spineList (ofList encode cs)).map bitsD = cs
+  rw [spineList_ofList, List.map_map]
+  conv_rhs => rw [← List.map_id cs]
+  exact List.map_congr_left fun s _ => bitsD_encode s
+
+end MIPRE.Cost.Data
 
 namespace MIPRE.Tailored
 
@@ -54,9 +115,10 @@ open Cost
 /-! ## The answer-length calculator and the linear-constraints processor -/
 
 /-- The answer-length calculator `L` outputs `k` on `(n, x, κ)`: `ℓ^κ(x) = k` at the question
-`x` of the `n`-th game, readable for `κ = false`, linear for `κ = true`. -/
+`x` of the `n`-th game, readable for `κ = false`, linear for `κ = true` — read in unary, as the
+length of the spine of `L`'s output (II:1781). -/
 def LenIs (L : Decider) (n : ℕ) (x : BitStr) (κ : Bool) (k : ℕ) : Prop :=
-  ∃ t, L.prog.Runs (encode (n, x, κ)) (encode k) t
+  ∃ t d, L.prog.Runs (encode (n, x, κ)) d t ∧ (Data.spineList d).length = k
 
 /-- The lengths `L` outputs at index `n` are at most `B`. -/
 def LenBound (L : Decider) (n B : ℕ) : Prop := ∀ x κ k, LenIs L n x κ k → k ≤ B
@@ -67,9 +129,9 @@ def LenTotal (L : Decider) (n d : ℕ) : Prop :=
   ∀ x : BitStr, x.length = d → ∀ κ, ∃ k, LenIs L n x κ k
 
 /-- The linear-constraints processor `P` outputs the constraint list `cs` on
-`(n, x, y, a^R, b^R)`. -/
+`(n, x, y, a^R, b^R)`, its output read by `Data.bitsListD`. -/
 def LpIs (P : Decider) (n : ℕ) (x y aR bR : BitStr) (cs : List BitStr) : Prop :=
-  ∃ t, P.prog.Runs (encode (n, x, y, aR, bR)) (encode cs) t
+  ∃ t d, P.prog.Runs (encode (n, x, y, aR, bR)) d t ∧ Data.bitsListD d = cs
 
 /-! ## Tailored normal form verifiers -/
 

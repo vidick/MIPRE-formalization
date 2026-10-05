@@ -18,8 +18,11 @@ part: the toolbox of permutation strategies is proved --- signed permutations
 (Lemma~\ref{lem:signed-perm}), the Fourier transform and data processing
 (Lemmas~\ref{lem:fourier-pvm} and~\ref{lem:data-processing}), the criterion for a permutation
 strategy to be perfect (Lemma~\ref{lem:perm-strategy-perfect}), Lemma~\ref{lem:zpc-pcc}, and the
-Magic Square (Proposition~\ref{prop:magic-square-zpc}). The other results below carry no proof
-marks; they are the targets of the rest of Phase~1 and of Phases~2--5.
+Magic Square (Proposition~\ref{prop:magic-square-zpc}). Phase~1, second part: a tailored
+verifier is a normal form verifier, the canonical decider written as a program, with the same
+games, values and completeness (Lemmas~\ref{lem:canonical-decider} and~\ref{lem:of-tnfv}). The
+other results below carry no proof marks; they are the targets of the rest of Phase~1 and of
+Phases~2--5.
 
 The formalization departs from the paper's text in the places Remark~\ref{rem:tailored-route}
 lists, all of them choices this project made for $\MIPstar = \RE$ already: soundness is proved
@@ -317,7 +320,8 @@ $1$ by Lemma~\ref{lem:zpc-pcc}.
 \label{def:tailored-verifier}
 \uses{def:tailored-game,def:zpc-strategy,def:sampler,def:decider}
 \lean{MIPRE.Tailored.TailoredVerifier, MIPRE.Tailored.LenIs, MIPRE.Tailored.LenBound,
-  MIPRE.Tailored.LenTotal, MIPRE.Tailored.LpIs, MIPRE.Tailored.TailoredVerifier.progs,
+  MIPRE.Tailored.LenTotal, MIPRE.Tailored.LpIs, MIPRE.Cost.Data.spineList,
+  MIPRE.Cost.Data.bitsListD, MIPRE.Tailored.TailoredVerifier.progs,
   MIPRE.Tailored.TailoredVerifier.size, MIPRE.Tailored.TailoredVerifier.Questions,
   MIPRE.Tailored.TailoredVerifier.lenOf, MIPRE.Tailored.TailoredVerifier.LenDefined,
   MIPRE.Tailored.TailoredVerifier.consOf, MIPRE.Tailored.TailoredVerifier.tgame,
@@ -325,11 +329,13 @@ $1$ by Lemma~\ref{lem:zpc-pcc}.
 \leanok
 A \emph{tailored normal form verifier} $\verifier = (\cal{S}, \cal{L}, \cal{P})$
 is a conditionally linear sampler $\cal{S}$ (Definition~\ref{def:sampler}), an
-\emph{answer-length calculator} $\cal{L}$, which on $(n, x, \kappa)$ outputs the number of
-readable ($\kappa = R$) or linear ($\kappa = L$) variables at the question $x$, and a
+\emph{answer-length calculator} $\cal{L}$, which on $(n, x, \kappa)$ outputs, in unary, the
+number of readable ($\kappa = R$) or linear ($\kappa = L$) variables at the question $x$, and a
 \emph{linear-constraints processor} $\cal{P}$, which on $(n, x, y, a^R, b^R)$ outputs the
 list $L_{xy}(a^R, b^R)$; the paper's fourth machine, the canonical decider, is the same for
-every verifier and is left implicit. The \emph{$n$-th game} $\verifier_n$ is the tailored game
+every verifier (Definition~\ref{def:canonical-decider}). The outputs are read totally, so that
+none is malformed: a length as the length of the output's spine, a list of constraints
+elementwise. The \emph{$n$-th game} $\verifier_n$ is the tailored game
 on the sampler's questions that the programs compute, a question or pair at which a program
 does not halt rejecting every answer. $\verifier$ \emph{has a perfect ZPC strategy at $n$} when
 the doubled game of $\verifier_n$ has one (Remark~\ref{rem:tailored-conventions}).
@@ -344,10 +350,86 @@ $\verifier$ is \emph{$\lambda$-bounded} when, for every $n \geq 2$, the sampler'
 the running times of the three programs are at most $n^\lambda$ --- the running times read as
 in Definition~\ref{def:lambda-bounded}, at degree $\lambda$ in the size of the input --- the
 lengths $\cal{L}$ outputs are at most $n^\lambda$, and $\abs{\verifier} \leq \lambda$. The
-paper's answer-length calculator outputs in unary, so that its running time bounds the
-lengths; here the lengths are numbers and the bound is a clause of its own. A verifier is
+answer-length calculator outputs in unary, as in the paper, but its running time is bounded
+relative to the size of its input, which is not bounded by $n^\lambda$; so the running time does
+not bound the lengths by $n^\lambda$, and that bound is a clause of its own. A verifier is
 \emph{within a budget} at index $n$ when the same quantities are bounded by the budget's.
 \end{definition}
+
+\begin{definition}[The canonical decider, as a program; II:1757--1787]
+\label{def:canonical-decider}
+\uses{def:tailored-verifier,lem:effective-binary-linear-algebra,lem:pcp-padding-programs}
+\lean{MIPRE.Tailored.canonProg, MIPRE.Tailored.canonFinal, MIPRE.Tailored.satF,
+  MIPRE.Tailored.allSatF, MIPRE.Cost.Prog.pushProg}
+\leanok
+The \emph{canonical decider} of a tailored verifier with answer-length calculator $\cal{L}$ and
+linear-constraints processor $\cal{P}$ is the program that, on $(n, x, y, a, b)$, runs $\cal{L}$
+on $(n, x, \kappa)$ and on $(n, y, \kappa)$ for both kinds $\kappa$ of variables, then $\cal{P}$ on
+$(n, x, y, a^R, b^R)$, where $a^R$ and $b^R$ are the first $\ell^R(x)$ bits of $a$ and the first
+$\ell^R(y)$ bits of $b$, and accepts when $\abs{a} = \ell^R(x) + \ell^L(x)$,
+$\abs{b} = \ell^R(y) + \ell^L(y)$, and every constraint $c$ that $\cal{P}$ outputs has the length
+of $(a, b, 1)$ and satisfies $\langle c, (a, b, 1)\rangle = 0$ over $\F_2$. It is a sequence of
+steps, each of which runs one of the two programs on an input computed in polynomial time from
+the state and pushes the output onto the state, followed by the check, computed in polynomial
+time.
+\end{definition}
+
+\begin{lemma}[The canonical decider decides the $n$-th game]
+\label{lem:canonical-decider}
+\uses{def:canonical-decider}
+\lean{MIPRE.Tailored.canonProg_accepts, MIPRE.Tailored.TailoredVerifier.tgame_accepts_iff}
+\leanok
+The canonical decider accepts $(n, x, y, a, b)$ exactly when the four runs of $\cal{L}$ and the
+run of $\cal{P}$ halt and the check passes on their outputs. So, at questions $x, y$ of the
+$n$-th game $\verifier_n$, it accepts $(a, b)$ exactly when $\verifier_n$ does.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A run of a sequence of steps is a run of each step, the model being deterministic, and the
+polynomial-time pieces compute what they are meant to. For the second part: when the five runs
+halt, their outputs are the lengths and the constraints that $\verifier_n$ is read from. When one
+of them does not halt, $\verifier_n$ has at that edge the constraint list $\{J\}$, which no answer
+pair satisfies, and the canonical decider does not halt, which is a rejection.
+\end{proof}
+
+\begin{definition}[A tailored verifier as a normal form verifier; II:1757--1787]
+\label{def:of-tnfv}
+\uses{def:canonical-decider,def:normal-verifier}
+\lean{MIPRE.Tailored.TailoredVerifier.ofTNFV}
+\leanok
+A tailored verifier $\verifier$ is the normal form verifier (Definition~\ref{def:normal-verifier})
+with the sampler of $\verifier$ and the decider that checks that both questions have the length
+the sampler gives them and then runs the canonical decider of $\verifier$ through the universal
+machine (\texttt{Verifier.ofSamplerDecider}, Remark~\ref{rem:compression-abstract}).
+\end{definition}
+
+\begin{lemma}[A tailored verifier and its normal form verifier have the same games]
+\label{lem:of-tnfv}
+\uses{def:of-tnfv,lem:canonical-decider,lem:zpc-pcc,def:value-model}
+\lean{MIPRE.Tailored.TailoredVerifier.ofTNFV_accepts_iff,
+  MIPRE.Tailored.TailoredVerifier.ofTNFV_game_D, MIPRE.Tailored.TailoredVerifier.valStar_ofTNFV,
+  MIPRE.Tailored.TailoredVerifier.hasPerfectPCC_ofTNFV}
+\leanok
+At the questions of the $n$-th game, the normal form verifier of $\verifier$ accepts exactly what
+$\verifier_n$ accepts. Let $T$ be at least the answer lengths of $\verifier_n$. Then its game
+$\verifier_{n,T}$ has the quantum value of $\verifier_n$, and if $\verifier$ has a perfect ZPC
+strategy at $n$, the doubled game of $\verifier_{n,T}$ has a PCC strategy of value $1$
+(Definition~\ref{def:pcc}).
+\end{lemma}
+
+\begin{proof}
+\uses{def:value-model}
+\leanok
+The question-length check passes at the questions of index $n$, so acceptance is the canonical
+decider's, which is that of $\verifier_n$ by Lemma~\ref{lem:canonical-decider}. The two games
+have the same distribution and accept the same answer pairs, and every answer pair that
+$\verifier_{n,T}$ accepts has the lengths of $\verifier_n$, so is one of the answer pairs of the
+game of $\verifier_n$: enlarging the answer sets by rejected answers changes no value. A perfect
+ZPC strategy for the doubled game of $\verifier_n$ is a perfect PCC strategy for the doubled
+bipartite game (Lemma~\ref{lem:zpc-pcc}), which, extended by zero to the answers of length at
+most $T$, is one for the doubled game of $\verifier_{n,T}$.
+\end{proof}
 
 \subsection{The target}
 

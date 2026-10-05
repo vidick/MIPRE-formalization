@@ -3,9 +3,11 @@
 **Status: Phase 0 done (#273; tracking #272); Phase 1 in progress (#279).** The statement and
 the interface are in (`MIPRE/TailoredGameValue.lean`, `MIPRE/Tailored/*`), the two checks that
 Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapter is
-`blueprint/src/content/09_tailored.tex`. Phase 1's first slice, P1a, the toolbox of permutation
-strategies, is proved (`MIPRE/Tailored/{SignedPerm,Fourier,ZPC,MagicSquare}.lean`, §5 "Phase 1
-slices"); P1b–P1d are next.
+`blueprint/src/content/09_tailored.tex`. Phase 1's first two slices are done (§5 "Phase 1
+slices"): P1a, the toolbox of permutation strategies
+(`MIPRE/Tailored/{SignedPerm,Fourier,ZPC,MagicSquare}.lean`), and P1b, a tailored verifier as a
+normal form verifier with the same games (`MIPRE/Tailored/{Canonical,OfTNFV}.lean`); P1c–P1d are
+next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -423,7 +425,9 @@ and the linear-constraints processor; the canonical decider is one fixed costed 
 packages it as a `Verifier ℓ` so that `Verifier.game n T`, `valStar`, `IsBounded`,
 `freeze`, the tabulation and the whole halting layer are inherited; the answer alphabet
 stays `Answers T` with the canonical decider rejecting wrong lengths, which is the
-repository's established reading of per-vertex alphabets. The paper's answer-length bound
+repository's established reading of per-vertex alphabets. (As built in P1b, §5: the program,
+`canonProg`, and its acceptance law are in, its cost is deferred, nothing planned consuming it;
+and the halting layer is not inherited but paralleled, P1c.) The paper's answer-length bound
 `Λ(n) = TIME(L; n)` (unary output) becomes an explicit parse-length parameter, as
 `Repetition.parseBound`. λ-boundedness keeps the repository's relative-cost reading
 (`n^λ (|d|+1)^λ`, `n ≥ 2`), which `defn:h-level_NFV` (II:5626) needs anyway (its "all `n`"
@@ -523,11 +527,24 @@ protocol is a parallel set of files, not an edit of these.
   `SignedPerm (Fin 4)` and transported by the matrix homomorphism. `lem:sum-zpc` moves to
   Phase 2: it is the binary case of the completeness of the tailored product, which Phase 2
   defines directly in its `k`-fold form, as `Game.repeat` is.
-- **P1b — tailored verifiers as verifiers.** The canonical decider as a costed `Decider` built
-  from the answer-length calculator and the linear-constraints processor; `Verifier.ofTNFV`;
-  the identification of `(ofTNFV V).game n T` with `(V.tgame n).toGame` for `T` above the
-  answer lengths, and of the doubled games, so that `valStar` transfers and a perfect ZPC
-  strategy gives `HasPerfectPCC` through `lem:zpc-pcc`.
+- **P1b — tailored verifiers as verifiers (done, 0.7k lines; its cost deferred).** The outputs
+  of the answer-length calculator and of the linear-constraints processor are read totally — a
+  length as the length of the output's spine, in unary as the paper writes it (II:1781), a
+  constraint list elementwise — so that the canonical decider never meets a malformed output.
+  The canonical decider is a program, `canonProg L LP`: four runs of `L`, one of `LP` and a
+  polynomial-time check, as steps that push their outputs onto a state. `canonProg_accepts` is
+  its acceptance law and `tgame_accepts_iff` says that it decides the `n`-th game.
+  `TailoredVerifier.ofTNFV` is `Verifier.ofSamplerDecider` at it. Identifying
+  `(V.ofTNFV U).game n T` with `(V.tgame n).toGame` for `T` above the answer lengths
+  (`ValueModel.extendAnswers`) gives `valStar_ofTNFV`, and the doubled games, with
+  `lem:zpc-pcc` and zero extension, `hasPerfectPCC_ofTNFV`. **Deferred: the canonical decider's
+  cost.** Its one consumer would be `Verifier.IsBounded (V.ofTNFV U)`, through
+  `Verifier.ofSamplerDecider_isBounded`, which wants `canonProg L LP` to have polynomial cost on
+  every input, malformed ones included, so with a total parsing of the input in front of it. No
+  planned statement uses that: the track's λ-boundedness (`TailoredVerifier.IsBounded`), the
+  stage contracts, the halting protocol of P1c and the class statements of P1d bound the three
+  programs `S`, `L`, `LP`, as the paper's II:1800 does. The cost is added if a later phase
+  applies a theorem about bounded `MIPRE.Verifier`s to `ofTNFV`.
 - **P1c — the halting protocol.** The parallel `Halting/Paper`-style files for tailored
   verifiers, from a `TailoredGapCompression`: the linear-constraints processor as the Kleene
   fixed point (`[]` for accept, `[rejectConstraint _]` for reject), `lem:dhalt-values` as

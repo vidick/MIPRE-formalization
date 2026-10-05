@@ -1115,7 +1115,10 @@ the introspective predicate is controlled-linear and its honest strategy a signe
 strategy. Phase 1's first slice proved the toolbox of permutation strategies: signed
 permutations as a group with its matrix homomorphism, the Fourier transform and data
 processing, `lem:zpc-pcc`, and the Magic Square's perfect ZPC strategy as the witness that
-perfect ZPC strategies are not classical ones.
+perfect ZPC strategies are not classical ones. Its second made a tailored verifier a normal form
+verifier, `TailoredVerifier.ofTNFV`, the canonical decider written as a program, with the same
+games, values and completeness; the canonical decider's cost is deferred, nothing planned
+consuming it.
 
 ## Working rules for this track
 
