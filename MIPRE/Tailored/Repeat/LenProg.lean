@@ -366,9 +366,9 @@ theorem lenOut_lenQueries (n : ℕ) (bl : List BitStr) (κ : Bool) (f : Data →
   unfold lenOut lenQueries
   rw [List.map_append]
   cases κ
-  · rw [if_neg (by decide), List.take_append_of_le_length (by simp), List.take_of_length_le (by simp)]
+  · rw [ite_eq_right (by decide), List.take_append_of_le_length (by simp), List.take_of_length_le (by simp)]
     simp [List.map_map, Function.comp_def]
-  · rw [if_pos rfl, List.drop_append_of_le_length (by simp), List.drop_of_length_le (by simp)]
+  · rw [ite_eq_left rfl, List.drop_append_of_le_length (by simp), List.drop_of_length_le (by simp)]
     simp [List.map_map, Function.comp_def]
 
 /-- The length of a list concatenated over the coordinates. -/
@@ -423,7 +423,7 @@ theorem repLen_lenIs (n : ℕ) (x : Fin (K lam tau n * V.sampler.dim n) → 𝔽
         (.cons (encode V.len.prog) (encode (n, toBits (qc V lam tau n x i), b))) r t := ⟨_, _, hu⟩
     obtain ⟨t'', h''⟩ := selfUniversal.halts_of _ _ _ _ hex.choose_spec.choose_spec
     refine ⟨t'', ?_⟩
-    simpa only [f, dif_pos hex] using h''
+    simpa only [f, dite_eq_left hex] using h''
   have hmem : ∀ q ∈ qs, ∃ t, selfUniversal.univ.Runs (.cons (encode V.len.prog) q) (f q) t := by
     intro q hq
     rw [hqs, lenQs_toBits, lenQueries, List.mem_append, List.mem_map, List.mem_map] at hq
@@ -446,7 +446,7 @@ theorem repLen_lenIs (n : ℕ) (x : Fin (K lam tau n * V.sampler.dim n) → 𝔽
   rw [rawList_eq_spineList]
   obtain ⟨t, h⟩ := hf i κ
   exact LenIs.unique ⟨t, _, h, rfl⟩ (Classical.choose_spec (hx i κ) |> fun h' => by
-    unfold lenOf; rw [dif_pos (hx i κ)]; exact h')
+    unfold lenOf; rw [dite_eq_left (hx i κ)]; exact h')
 
 /-- **`RepSpec.good_of_len`**: the calculator halts only at questions all of whose coordinates
 have their lengths. -/
@@ -470,6 +470,55 @@ theorem good_of_repLen (n : ℕ) (x : Fin (K lam tau n * V.sampler.dim n) → �
   exact ⟨_, t₃, r', h₃, rfl⟩
 
 end Spec
+
+/-- **The lengths of the repeated calculator** are at most `k(n)` times the input's. -/
+theorem repLen_lenBound {ℓ : ℕ} (S : CL.Sampler ℓ) (L : Decider) (lam tau n B : ℕ)
+    (hB : LenBound L n B) :
+    LenBound (repLen S L lam tau) n (Repetition.reps lam tau n * B) := by
+  rintro x κ m ⟨t, r, hr, rfl⟩
+  obtain ⟨t', -, hc⟩ := hardcode_time_rev (lenCore_wellScoped selfUniversal.closed) hr
+  obtain ⟨td, hd⟩ : ∃ td, selfUniversal.univ.Runs
+      (.cons (encode S.prog) (encode (n, CL.Sampler.Query.dimension))) (encode (S.dim n)) td := by
+    obtain ⟨t, h⟩ := S.runs_dimension n
+    obtain ⟨t', -, h'⟩ := selfUniversal.time_le _ _ _ _ h
+    exact ⟨t', h'⟩
+  obtain ⟨rs, hrs, rfl⟩ := lenCore_inv selfUniversal.closed S.prog L.prog lam tau n
+    (encode (x, κ)) (S.dim n) hd (r := r) (t := t') hc
+  have hlen : rs.length = 2 * Repetition.reps lam tau n := by
+    rw [← hrs.length_eq]; simp [lenQs, lenQueries]; omega
+  -- every result is a length of `L`
+  have hres : ∀ r ∈ rs, (spineList r).length ≤ B := by
+    intro r hr
+    obtain ⟨-, hall⟩ := List.forall₂_iff_get.1 hrs
+    obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem hr
+    obtain ⟨t₁, hu⟩ := hall i (by rw [hrs.length_eq]; exact hi) hi
+    obtain ⟨t₂, h₂⟩ := selfUniversal.halts_of _ _ _ _ hu
+    have hq := List.getElem_mem (l := lenQs n (encode (x, κ)) (S.dim n) (Repetition.reps lam tau n))
+      (by rw [hrs.length_eq]; exact hi)
+    unfold lenQs lenQueries at hq
+    rw [List.mem_append, List.mem_map, List.mem_map] at hq
+    rcases hq with ⟨xi, -, hq⟩ | ⟨xi, -, hq⟩ <;>
+    · simp only [List.get_eq_getElem] at h₂
+      exact hB _ _ _ ⟨t₂, _, (by rw [hq]; exact h₂), rfl⟩
+  rw [encode_list_data, list, spineList_ofList, List.map_id, lenOut, List.length_flatten,
+    List.map_map]
+  have hsel : ∀ l ⊆ rs, ((l.map ((List.length) ∘ Detyping.Program.rawList)).sum ≤ l.length * B) := by
+    intro l hl
+    induction l with
+    | nil => simp
+    | cons a l ih =>
+      simp only [List.map_cons, List.sum_cons, List.length_cons, Function.comp_apply]
+      have ha := hres a (hl (by simp))
+      rw [rawList_eq_spineList]
+      have := ih (fun b hb => hl (by simp [hb]))
+      nlinarith
+  split_ifs
+  · refine (hsel _ (List.drop_subset _ _)).trans ?_
+    rw [List.length_drop, hlen]
+    exact Nat.mul_le_mul_right _ (by omega)
+  · refine (hsel _ (List.take_subset _ _)).trans ?_
+    rw [List.length_take]
+    exact Nat.mul_le_mul_right _ (min_le_left _ _)
 
 end MIPRE.Tailored.RepProg
 

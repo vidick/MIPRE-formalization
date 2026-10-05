@@ -103,7 +103,7 @@ theorem lens_lensOf (n : ℕ) (b : Bool) :
     have hL : LenIs V.len n xi b (spineList r).length := ⟨t', r, h', rfl⟩
     have hdef := hb xi (by simp)
     have hlen : V.lenOf n xi b = (spineList r).length := by
-      unfold lenOf; rw [dif_pos hdef]; exact hdef.choose_spec.unique hL
+      unfold lenOf; rw [dite_eq_left hdef]; exact hdef.choose_spec.unique hL
     simp only [lensOf, List.map_cons, List.map_map] at ih ⊢
     rw [← ih, hlen]
     simp [Function.comp_def, length_unary, rawList_eq_spineList]
@@ -297,7 +297,7 @@ noncomputable def chooseRun (c q : Data) : Data :=
 theorem chooseRun_spec {c q : Data} (h : ∃ r t, selfUniversal.univ.Runs (.cons c q) r t) :
     ∃ t, selfUniversal.univ.Runs (.cons c q) (chooseRun c q) t := by
   unfold chooseRun
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem forall₂_map_self {α β : Type*} {R : α → β → Prop} (f : α → β) :

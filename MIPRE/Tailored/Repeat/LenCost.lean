@@ -269,7 +269,7 @@ theorem repLen_timeBound : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (L : 
       if h : ∃ r, RunsLe selfUniversal.univ (.cons (encode L.prog) q) r T then h.choose else .nil
     have hf : ∀ q ∈ (lenQs n d (S.dim n) (Repetition.reps lam tau n)), RunsLe selfUniversal.univ (.cons (encode L.prog) q) (f q) T := by
       intro q hq
-      simp only [f, dif_pos (hcalls q hq)]
+      simp only [f, dite_eq_left (hcalls q hq)]
       exact (hcalls q hq).choose_spec
     have hlen : (lenQs n d (S.dim n) (Repetition.reps lam tau n)).length ≤ 2 * W := by
       rw [length_lenQs]; have := hW.reps_le; omega

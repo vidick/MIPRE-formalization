@@ -333,7 +333,7 @@ theorem repLp_timeBound : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (L P :
           (selfUniversal.bound.eval (esize L.prog + (esize n + 4 * d.size + 6) +
             R.D * (4 * d.size + 6) ^ R.k)) := by
       intro q hq
-      simp only [f₁, dif_pos (hcalls₁ q hq)]
+      simp only [f₁, dite_eq_left (hcalls₁ q hq)]
       exact (hcalls₁ q hq).choose_spec
     have hcalls₂ := lp_p_calls_le P n R hP (lpSt S.prog L.prog P.prog lam tau n d (S.dim n)) rfl
       ((lpLenQs (lpSt S.prog L.prog P.prog lam tau n d (S.dim n))).map f₁)
@@ -346,7 +346,7 @@ theorem repLp_timeBound : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (L P :
           (selfUniversal.bound.eval (esize P.prog + (esize n + 16 * d.size + 12) +
             R.D * (16 * d.size + 12) ^ R.k)) := by
       intro q hq
-      simp only [f₂, dif_pos (hcalls₂ q hq)]
+      simp only [f₂, dite_eq_left (hcalls₂ q hq)]
       exact (hcalls₂ q hq).choose_spec
     -- the sizes of the loops
     have hk := hW.reps_le
