@@ -1873,7 +1873,9 @@ a fixed answer.
 
 \begin{lemma}[Soundness of the tailored presentation of the introspection verifier]
 \label{lem:intro-presentation-sound}
-\uses{lem:intro-typed-cons,lem:presentation,lem:intro-layout}
+\uses{lem:intro-typed-cons,lem:presentation,def:typed-sampler-interface,lem:intro-ambient-kernel,
+  lem:intro-canonical-sampler,lem:intro-executable-sampler,lem:intro-quotient-kernel,
+  lem:intro-type-presentation}
 \lean{MIPRE.Tailored.Intro.Sound.tdata, MIPRE.Tailored.Intro.Sound.decT,
   MIPRE.Tailored.Intro.Sound.lenR_le_len, MIPRE.Tailored.Intro.Sound.guards_of_readOK,
   MIPRE.Tailored.Intro.Sound.pauliFormatted_parsedT, MIPRE.Tailored.Intro.Sound.tdata_sound,
@@ -1896,7 +1898,9 @@ by the kernel program on the re-encoded answers, which is the typed predicate.
 
 \begin{lemma}[Completeness of the tailored presentation of the introspection verifier]
 \label{lem:intro-presentation-complete}
-\uses{lem:intro-presentation-sound,lem:presentation-typed}
+\uses{lem:intro-presentation-sound,lem:presentation-typed,def:intro-layout,lem:intro-layout,
+  def:typed-sampler-interface,lem:intro-ambient-kernel,lem:intro-canonical-sampler,
+  lem:intro-executable-sampler,lem:intro-quotient-kernel,lem:intro-type-presentation}
 \lean{MIPRE.Tailored.Intro.Complete.parsedT_enc, MIPRE.Tailored.Intro.Complete.length_encL,
   MIPRE.Tailored.Intro.Complete.encT, MIPRE.Tailored.Intro.Complete.okT,
   MIPRE.Tailored.Intro.Complete.tdata_complete,
