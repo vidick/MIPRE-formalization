@@ -16,7 +16,11 @@ self-contained, and \texttt{MIPRE/Tailored/Sofic/}): subgroup tests and their so
 Aldous--Lyons conjecture, and the associated test of a tailored game. Proved: the associated
 test is computable from the game (Lemma~\ref{lem:assoc-test-primrec}), and Main Theorem~II with a
 halting reduction makes the sofic value not approximable
-(Theorem~\ref{thm:sofic-not-approximable}). Main Theorem~II and Main Theorem~I are in progress.
+(Theorem~\ref{thm:sofic-not-approximable}); and the perturbation half of Main Theorem~II's
+soundness (Proposition~\ref{prop:assoc-perturb}); Main Theorem~II itself
+(Theorem~\ref{thm:main-theorem-ii}); and so the sofic value is not approximable from a halting
+reduction to tailored games (Corollary~\ref{cor:sofic-not-approximable-ar}). Main Theorem~I is in
+progress.
 
 \subsection{Subgroup tests and the conjecture}
 
@@ -109,24 +113,262 @@ values as an iterate, deduplication as a fold, and the enumeration of the fixed 
 range.
 \end{proof}
 
+\begin{lemma}[Hamming distance of permutations]
+\label{lem:perm-hamming}
+\lean{MIPRE.Tailored.Sofic.diffCard, MIPRE.Tailored.Sofic.dH, MIPRE.Tailored.Sofic.diffCard_triangle,
+  MIPRE.Tailored.Sofic.diffCard_mul, MIPRE.Tailored.Sofic.diffCard_inv,
+  MIPRE.Tailored.Sofic.card_commutator_moves, MIPRE.Tailored.Sofic.dH_triangle,
+  MIPRE.Tailored.Sofic.dH_mul, MIPRE.Tailored.Sofic.dH_inv}
+\leanok
+The normalized Hamming distance of two permutations of a finite set, the fraction of points
+where they differ, satisfies the triangle inequality, is subadditive on products, and is
+invariant under inversion.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Counting points.
+\end{proof}
+
+\begin{lemma}[Stability of involutions, fixed-point-free involutions and commuting families;
+I:2561--2649]
+\label{lem:perm-stability}
+\uses{lem:perm-hamming}
+\lean{MIPRE.Tailored.Sofic.invFix, MIPRE.Tailored.Sofic.invFix_invol,
+  MIPRE.Tailored.Sofic.diffCard_invFix, MIPRE.Tailored.Sofic.fpfFix,
+  MIPRE.Tailored.Sofic.fpfFix_invol, MIPRE.Tailored.Sofic.fpfFix_free,
+  MIPRE.Tailored.Sofic.diffCard_fpfFix, MIPRE.Tailored.Sofic.ordProd,
+  MIPRE.Tailored.Sofic.commFix, MIPRE.Tailored.Sofic.commFix_invol,
+  MIPRE.Tailored.Sofic.commFix_comm, MIPRE.Tailored.Sofic.commFix_J,
+  MIPRE.Tailored.Sofic.commFix_readable, MIPRE.Tailored.Sofic.diffCard_commFix}
+\leanok
+A permutation $\pi$ is within $d(\pi^2, 1)$ of an involution; an involution of an even set almost
+without fixed points is close to one without, given a fixed-point-free involution commuting with
+it; and a family of involutions at a vertex, together with $J$, can be made into commuting
+involutions commuting with $J$, the readable ones acting as the identity or as $J$, by changing
+them on at most $2^{\ell + 1}$ times the points at which some relation fails.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The first two as in the paper. The third replaces Claim~I:2600 and Glebsky--Rivera
+(Claim~I:2631): restrict the variables to the set of points from which every ordered product of
+them reaches only points where all relations hold, invariant under the variables and $J$, and
+let them act as the identity elsewhere.
+\end{proof}
+
+\begin{lemma}[Robustness of the value; Claim~I:1480]
+\label{lem:test-robust}
+\uses{def:subgroup-test,lem:perm-hamming}
+\lean{MIPRE.Tailored.Sofic.wordCount, MIPRE.Tailored.Sofic.sig, MIPRE.Tailored.Sofic.withPerms,
+  MIPRE.Tailored.Sofic.diffCard_wordPerm, MIPRE.Tailored.Sofic.abs_passProb_sub_le,
+  MIPRE.Tailored.Sofic.abs_value_sub_le}
+\leanok
+For two actions of the generators on the same finite set,
+$|\mathrm{val}(T, \sigma) - \mathrm{val}(T, \sigma')| \leq \sum_k S_T(k)\, d(\sigma_k,
+\sigma'_k)$, where the significance $S_T(k)$ is the expected number of occurrences of the
+generator $k$ in the words of a challenge.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A word moves a point differently under the two actions only if one of its letters does at an
+intermediate point; letters and their inverses cost the same.
+\end{proof}
+
+\begin{lemma}[Significance of the associated test; Proposition~I:2283]
+\label{lem:assoc-significance}
+\uses{def:assoc-test,lem:test-robust}
+\lean{MIPRE.Tailored.Sofic.sigBound, MIPRE.Tailored.Sofic.sig_le, MIPRE.Tailored.Sofic.mdeg,
+  MIPRE.Tailored.Sofic.sum_mdeg, MIPRE.Tailored.Sofic.sig_genX_le}
+\leanok
+In the associated test every generator has significance at most a bound $S(\Lambda)$ of order
+$\Lambda 4^{\Lambda}$, and the variables at a vertex $x$ at most $S(\Lambda)$ times the weight of
+the question pairs containing $x$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The words of the challenge at $(x, y)$ use only $J$ and the variables at $x$ and $y$; their
+number and lengths are bounded, the constraint words by deduplication.
+\end{proof}
+
+\begin{proposition}[Perturbing to pass Checks~1--3; Proposition~I:2267]
+\label{prop:assoc-perturb}
+\uses{lem:perm-stability,lem:test-robust,lem:assoc-significance}
+\lean{MIPRE.Tailored.Sofic.double, MIPRE.Tailored.Sofic.value_double, MIPRE.Tailored.Sofic.dblSwap,
+  MIPRE.Tailored.Sofic.qw, MIPRE.Tailored.Sofic.qwTot, MIPRE.Tailored.Sofic.qwTot_pos,
+  MIPRE.Tailored.Sofic.value_eq, MIPRE.Tailored.Sofic.sig_eq,
+  MIPRE.Tailored.Sofic.fixed_of_passes, MIPRE.Tailored.Sofic.read_of_passes,
+  MIPRE.Tailored.Sofic.npass, MIPRE.Tailored.Sofic.SwapData, MIPRE.Tailored.Sofic.J₂,
+  MIPRE.Tailored.Sofic.Xfix, MIPRE.Tailored.Sofic.perturbed,
+  MIPRE.Tailored.Sofic.checks_perturbed, MIPRE.Tailored.Sofic.card_bad_le,
+  MIPRE.Tailored.Sofic.lose, MIPRE.Tailored.Sofic.loseAt, MIPRE.Tailored.Sofic.weighted_dist_le,
+  MIPRE.Tailored.Sofic.value_perturbed_ge, MIPRE.Tailored.Sofic.numeric_bound,
+  MIPRE.Tailored.Sofic.Cp, MIPRE.Tailored.Sofic.exists_checks_of_value}
+\leanok
+If an action has value at least $1 - \varepsilon$ against the associated test of a tailored game
+with answer length $\Lambda$, then an action passing Checks~1--3 everywhere has value at least
+$1 - 300\,(\Lambda + 1)^4\, 2^{4(\Lambda + 1)}\, \varepsilon$.
+\end{proposition}
+
+\begin{proof}
+\leanok
+Double the action first, so that the set is even and carries a fixed-point-free involution
+commuting with every generator. Make $J$ a fixed-point-free involution, then repair the variables
+vertex by vertex (Lemma~\ref{lem:perm-stability}), bounding the points changed at a vertex by its
+losing probability, and conclude by robustness and significance.
+\end{proof}
+
+\begin{definition}[Z-aligned signed-permutation strategies without commutation along edges]
+\label{def:zstrat}
+\uses{def:tailored-game-data,def:sync-strategy,def:sync-value,def:signed-perm,lem:signed-perm,def:fourier-forms,lem:fourier-pvm,lem:tailored-bridge}
+\lean{MIPRE.Tailored.Sofic.ZStrat, MIPRE.Tailored.Sofic.ZStrat.proj,
+  MIPRE.Tailored.Sofic.ZStrat.value, MIPRE.Tailored.Sofic.ZStrat.toSync,
+  MIPRE.Tailored.Sofic.ZStrat.value_toSync, MIPRE.Tailored.Sofic.ZStrat.value_le_gameValue,
+  MIPRE.Tailored.Sofic.ZStrat.rej, MIPRE.Tailored.Sofic.ZStrat.value_eq_sum_rej,
+  TailoredGameValue.PermStrategy.toZStrat, TailoredGameValue.PermStrategy.value_toZStrat}
+\leanok
+A permutation strategy for a tailored game (signed permutation observables, involutions
+commuting at each vertex, diagonal at the readable variables, the identity beyond each vertex's
+length) need not commute along edges; its Fourier-transform measurements still form a
+synchronous strategy, with the same value, so its value is at most the game's synchronous value.
+\end{definition}
+
+\begin{lemma}[The trace identity]
+\label{lem:trace-identity}
+\uses{def:zstrat,def:signed-perm,lem:signed-perm,def:fourier-forms,lem:fourier-pvm}
+\lean{MIPRE.Tailored.Sofic.ZStrat.rsgn, MIPRE.Tailored.Sofic.ZStrat.sum_trace_proj_mul_mul_proj,
+  MIPRE.Tailored.Sofic.consBit, MIPRE.Tailored.Sofic.satisfies_iff_consBit,
+  MIPRE.Tailored.Sofic.ZStrat.consMat, MIPRE.Tailored.Sofic.ZStrat.proj_mul_consMat_mul_proj}
+\leanok
+For such a strategy, the sum over the answer pairs whose readable parts lie in a set $R$ of
+$\mathrm{Tr}(P_a\, X\, Q_b)$ is the sum of the diagonal entries $X_{jj}$ over the basis points $j$
+whose readable signs lie in $R$. For a constraint $c$ with matrix $M_c = (-1)^{c_J} U^{\alpha}
+V^{\beta}$, the probability that the readable parts are $r$ and $c$ is violated is
+$\frac1m \sum_{j \in R_r} \frac{1 - (M_c)_{jj}}{2}$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A basis point lies in the support of $P_a$ only if its readable signs are those of $a$, and the
+projections sum to the identity; the observable of a constraint is $(-1)^{\langle c, (a, b, 1)
+\rangle}$ on the range of $P_a \otimes Q_b$.
+\end{proof}
+
+\begin{lemma}[Passing a challenge under Checks~1--3]
+\label{lem:assoc-passes}
+\uses{def:assoc-test}
+\lean{MIPRE.Tailored.Sofic.passes_iff, MIPRE.Tailored.Sofic.value_eq_sum,
+  MIPRE.Tailored.Sofic.length_consWords_le'}
+\leanok
+For an action passing Checks~1--3 everywhere, a point passes the challenge at $(x, y)$ exactly
+when the constraint words of the entries whose readable part is the point's readable value fix
+it; and there are at most $2^{\ell(x) + \ell(y) + 1} + 1$ constraint words.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The fixed literals and the readable literals of the point's own clause hold, and those of every
+other clause fail since $J$ moves every point.
+\end{proof}
+
+\begin{lemma}[The quotient by $J$]
+\label{lem:j-quotient}
+\uses{def:zstrat,lem:signed-perm,lem:trace-identity,def:assoc-test,def:subgroup-test}
+\lean{MIPRE.Tailored.Sofic.Reps, MIPRE.Tailored.Sofic.rep, MIPRE.Tailored.Sofic.ind,
+  MIPRE.Tailored.Sofic.ind_mul, MIPRE.Tailored.Sofic.ind_J, MIPRE.Tailored.Sofic.ind_fix_iff,
+  MIPRE.Tailored.Sofic.indF, MIPRE.Tailored.Sofic.quotStrat, MIPRE.Tailored.Sofic.wordSP,
+  MIPRE.Tailored.Sofic.ZStrat.toMatrix_wordSP_consWord}
+\leanok
+Let an action pass Checks~1--3 everywhere. Choosing one point of each $J$-orbit, every
+permutation commuting with $J$ induces a signed permutation of the representatives,
+multiplicatively, sending $J$ to $-1$, with sign $+$ at $r$ exactly when it fixes $r$. The
+variables induce a Z-aligned signed-permutation strategy, in which the matrix of a constraint is
+the signed permutation induced by its word.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A permutation commuting with $J$ permutes the $J$-orbits; the readable variables act as the
+identity or as $J$, hence diagonally.
+\end{proof}
+
+\begin{proposition}[Game value of an action passing Checks~1--3; Proposition~I:2279]
+\label{prop:checks-game-value}
+\uses{lem:trace-identity,lem:j-quotient,lem:assoc-passes,def:assoc-test,def:subgroup-test,lem:fourier-pvm}
+\lean{MIPRE.Tailored.Sofic.Cq, MIPRE.Tailored.Sofic.ZStrat.rej_le_sum_viol,
+  MIPRE.Tailored.Sofic.rej_quotStrat_le, MIPRE.Tailored.Sofic.gameValue_ge_of_checks}
+\leanok
+An action passing Checks~1--3 everywhere with value $1 - \varepsilon$ against the associated test
+gives the game a synchronous value at least $1 - 2 \cdot 2^{2(\Lambda + 1)} \varepsilon$.
+\end{proposition}
+
+\begin{proof}
+\leanok
+By the trace identity, the game's rejection mass at $(x, y)$ is at most the sum over the distinct
+constraint words of the fraction of representatives they do not fix, hence at most the number of
+constraint words, twice, times the test's failure probability at $(x, y)$; there are at most
+$2^{2(\Lambda + 1)}$ of them. This replaces the paper's Fourier bases and orbit decompositions.
+\end{proof}
+
+\begin{lemma}[Completeness: lifting a perfect strategy; Theorem~I:2126 (1)]
+\label{lem:assoc-completeness}
+\uses{lem:trace-identity,lem:assoc-passes,def:tailored-game-data,lem:j-quotient,def:signed-perm,lem:signed-perm,def:fourier-forms,lem:fourier-pvm}
+\lean{MIPRE.Tailored.Sofic.liftHom, MIPRE.Tailored.Sofic.ZStrat.toAction,
+  MIPRE.Tailored.Sofic.ZStrat.checks_toAction, MIPRE.Tailored.Sofic.ZStrat.consMat_apply_self_eq_one,
+  MIPRE.Tailored.Sofic.exists_value_one_of_hasPerfectZPC}
+\leanok
+A perfect ZPC strategy of a tailored game lifts to an action of value $1$ against the associated
+test: on twice the points, $J$ swapping the copies and each variable acting by its signed
+permutation.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Checks~1--3 hold at every point. By the trace identity at value $1$, every constraint word of a
+pair of positive weight fixes the points of its readable value, so every point passes every
+challenge of positive weight. Commutation along edges is not used.
+\end{proof}
+
 \begin{theorem}[Main Theorem~II; Theorem~I:2126]
 \label{thm:main-theorem-ii}
-\uses{def:assoc-test}
+\uses{def:assoc-test,prop:assoc-perturb,prop:checks-game-value,lem:assoc-completeness,
+  thm:sofic-not-approximable}
+\lean{MIPRE.Tailored.Sofic.value_le_one, MIPRE.Tailored.Sofic.valSof_le_one,
+  MIPRE.Tailored.Sofic.valSof_eq_one_of_hasPerfectZPC, MIPRE.Tailored.Sofic.CII,
+  MIPRE.Tailored.Sofic.gameValue_ge_of_valSof, MIPRE.Tailored.Sofic.gapK,
+  MIPRE.Tailored.Sofic.primrec_gapK, MIPRE.Tailored.Sofic.mainTheoremII}
+\leanok
 Let $G$ be a tailored game with answer length $\Lambda$. If $G$ has a perfect ZPC strategy, its
 associated test has sofic value $1$. If its associated test has sofic value at least
-$1 - \varepsilon$, then $G$ has synchronous value at least $1 - C(\Lambda+1)^4 2^{6(\Lambda+1)}
-\varepsilon$, for a universal constant $C$.
+$1 - \varepsilon$, then $G$ has synchronous value at least $1 - 600 (\Lambda+1)^4 2^{6(\Lambda+1)}
+\varepsilon$. So the clauses of Theorem~\ref{thm:sofic-not-approximable} hold with the primitive
+recursive gap $K(\Lambda) = 600 (\Lambda+1)^4 2^{6(\Lambda+1)}$.
 \end{theorem}
 
 \begin{proof}
-Completeness: lift the signed permutations of the strategy to an action on twice as many
-points, $J$ swapping the two copies. Soundness: perturb a near-optimal action until it passes
-Checks~1--3 everywhere (Proposition~I:2267, with the stability of involutions, of fixed-point-free
-involutions, of commuting involutions and of actions of $\F_2^k$, and the robustness of the value,
-Claim~I:1480); then the action is a Z-aligned signed-permutation strategy on the orbits of $J$,
-whose losing probability in the game is, by a trace identity in place of the paper's Fourier
-analysis (\texttt{planning/aldous-lyons-track.md}, ``Phase 6 slices''), at most $2^{2\Lambda+2}$
-times its losing probability in the test. In progress.
+\leanok
+Completeness is Lemma~\ref{lem:assoc-completeness}, no action having value above $1$. Soundness:
+for every $\delta > 0$ an action has value at least $1 - \varepsilon - \delta$; perturb it to pass
+Checks~1--3 (Proposition~\ref{prop:assoc-perturb}) and apply
+Proposition~\ref{prop:checks-game-value}; then let $\delta \to 0$.
+\end{proof}
+
+\begin{corollary}[The sofic value is not approximable, from tailored answer reduction]
+\label{cor:sofic-not-approximable-ar}
+\uses{thm:main-theorem-ii,thm:sofic-not-approximable,cor:tmip-re-from-ar}
+\lean{MIPRE.Tailored.Sofic.not_sofValueApproximable,
+  MIPRE.Tailored.not_sofValueApproximable_of_answerReduction}
+\leanok
+A halting reduction to tailored games makes the sofic value of subgroup tests not approximable;
+in particular a tailored answer reduction at input level~$5$ does.
+\end{corollary}
+
+\begin{proof}
+\leanok
+Theorem~\ref{thm:sofic-not-approximable} with Theorem~\ref{thm:main-theorem-ii}, and
+Corollary~\ref{cor:tmip-re-from-ar} for the halting reduction.
 \end{proof}
 
 \subsection{The sofic value is not approximable}
