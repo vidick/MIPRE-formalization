@@ -2228,3 +2228,53 @@ triangulated equation is below $N + \Delta$, so the three copies of a solution s
 triangulated system and hence the equations. Lemma~\ref{lem:ar-purification} translates
 between the equations and the decider.
 \end{proof}
+
+\subsection{Answer reduction: succinct descriptions through three windows}
+
+The output indicator of paper~II (Definition~defn:decider-read, II:8381) reads, besides the
+input verifier and its parameters, three strings: the two readable answers and the encoding $O$
+of the decoupled system of Lemma~\ref{lem:ar-extend}. Its succinct description, the formula the
+PCP checks, must hold each of the three in a block of variables of its own: the isolated player
+of the PCP holds the second readable answer, and cannot hold a block containing $O$, which
+depends on both. Lemma~\ref{lem:decoupled-5sat} has two answer blocks; the description here has
+three \emph{windows} on the tableau of Theorem~\ref{thm:succinct-sat}
+(prop:explicit-padded-succinct-deciders, II:8676, whose proof the paper sketches, II:8757). The
+indicator reads $a = a^R O$ and $b = b^R$; it checks the lengths of its inputs, so the windows,
+which cover them exactly, describe it completely.
+
+\begin{lemma}[Decoupled 6SAT through three windows; prop:explicit-padded-succinct-deciders]
+\label{lem:ar-window-describer}
+\uses{def:multiinput-tm}
+\lean{MIPRE.SAT.Circuit.formula6, MIPRE.SAT.Circuit.DescribesWindows, MIPRE.SAT.WindowDescriber,
+  MIPRE.SAT.windowDescriber}
+\leanok
+There is a polynomial-time algorithm that, on window lengths $\ell_a, \ell_b, \ell_c$ in unary
+and the inputs $(\decider, n, T, Q, \sigma, x, y)$ of Theorem~\ref{thm:succinct-sat}, outputs a
+circuit with inputs of lengths $\ell_a$, $\ell_b$, $\ell_c$, three of length
+$r_0 = O(\log T + \log \sigma)$, with $2^{r_0} \geq 4T$, and six single bits, describing a
+decoupled 6SAT formula on blocks of $2^{\ell_a}$, $2^{\ell_b}$, $2^{\ell_c}$ and three times
+$2^{r_0}$ variables. On valid inputs with $\ell_a, \ell_b, \ell_c \le r_0$ the circuit has at
+most $s_0 = \poly(\log n, \log T, Q, \sigma)$ gates, and if moreover $2^{\ell_a} + 2^{\ell_c}
+\le 2T$ and $2^{\ell_b} \le 2T$, then three tables $A, B, C$ complete to a satisfying assignment
+exactly when the decider accepts, within cost $T$, strings $a, b$ of length at most $T$ such that
+$A$ and $C$ are the consecutive windows of lengths $2^{\ell_a}$ and $2^{\ell_c}$ at the start of
+the tape encoding of $a$, and $B$ is the first $2^{\ell_b}$ bits of that of $b$. The parameters
+$r_0, s_0$ are computable in time polynomial in the bit lengths of $n, T, Q, \sigma$.
+\end{lemma}
+
+\begin{proof}
+\uses{def:succinct-3sat}
+\leanok
+As for Lemma~\ref{lem:decoupled-5sat}. The circuit accepts $(i_1, \dots, i_6, o_1, \dots, o_6)$
+when the circuit of Theorem~\ref{thm:succinct-sat} accepts the last three indices and signs, or
+when one of five link conditions holds: $i_4 = i_1 \land o_1 \neq o_4$; \;
+$i_4 = i_2 + 2T \land o_2 \neq o_4$; \; $i_4 = i_3 + 2^{\ell_a} \land o_3 \neq o_4$; \;
+$i_4 = i_5 \land o_4 \neq o_5$; \; $i_5 = i_6 \land o_5 \neq o_6$. For fixed indices the signs of
+the blocks a condition does not constrain range over all values, so the last two conditions say
+$w_1 = w_2 = w_3$ and the first three that the windows are read off the common assignment at the
+offsets $0$, $2T$ and $2^{\ell_a}$. The windows lie inside the two input regions of the tableau,
+so no padding condition is needed, and item~1 of Theorem~\ref{thm:succinct-sat} relates a
+satisfying assignment to acceptance. The offset of the third window is a power of two, which the
+algorithm computes from $\ell_a$ without binary addition; the link conditions cost $O(r_0)$
+gates.
+\end{proof}
