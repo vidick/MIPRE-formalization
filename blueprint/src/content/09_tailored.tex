@@ -3052,19 +3052,23 @@ field elements are additive. Lemma~\ref{lem:ar-controlled-bits} concludes.
 
 \begin{definition}[The honest strategy of the answer-reduced game]
 \label{def:ar-honest-strategy}
-\uses{def:ar-honest-answers,lem:oracular-completeness,lem:zpc-pcc,lem:detype-game-soundness}
+\uses{def:ar-honest-answers,lem:oracular-completeness,lem:zpc-pcc,lem:detype-game-soundness,
+  def:ar-typed-game}
 \lean{MIPRE.Tailored.AnsRed.Typed.arGraph, MIPRE.Tailored.AnsRed.Typed.arDt,
   MIPRE.Tailored.AnsRed.Typed.ArSampler, MIPRE.Tailored.AnsRed.Typed.arGame,
   MIPRE.Tailored.AnsRed.Typed.auxGame, MIPRE.Tailored.AnsRed.Typed.pullStrat,
   MIPRE.Tailored.AnsRed.Typed.inSync, MIPRE.Tailored.AnsRed.Typed.orStrat,
-  MIPRE.Tailored.AnsRed.Typed.arStrat}
+  MIPRE.Tailored.AnsRed.Typed.arStrat, MIPRE.Tailored.AnsRed.Typed.arCl,
+  MIPRE.Tailored.AnsRed.Typed.arSampler_arCl}
 \leanok
 An answer-reduced sampler is a family of CL functions on the typed questions whose questions carry
 the oracularized input question of the seed's input part, in the type's role, and the question of
-the seeded low-degree test of the seed's low-degree part. The answer-reduced typed game samples a
-pair of types and a seed and accepts by the typed data. Its honest strategy is the oracularization
-of the input's synchronous strategy, pulled back to the typed questions along their roles and
-oracularized parts and pushed forward along the honest answers.
+the seeded low-degree test of the seed's low-degree part. One is the direct sum of the
+oracularized input sampler and the seeded test's presentation, downsized along the Shoup basis.
+The answer-reduced typed game samples a pair of types and a seed and accepts by the typed data.
+Its honest strategy is the oracularization of the input's synchronous strategy, pulled back to
+the typed questions along their roles and oracularized parts and pushed forward along the honest
+answers.
 \end{definition}
 
 \begin{theorem}[ZPC completeness of the answer-reduced game]
