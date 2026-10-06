@@ -1479,6 +1479,7 @@ public import MIPRE.TM.MultiInput.Deterministic
 public import MIPRE.TM.MultiInput.OneInputEquiv
 public import MIPRE.TM.Universal.Spec
 public import MIPRE.Tactics
+public import MIPRE.Tailored.AnsRed.ArHonestHyp
 public import MIPRE.Tailored.AnsRed.ArParams
 public import MIPRE.Tailored.AnsRed.HonestPair
 public import MIPRE.Tailored.AnsRed.Indicator
