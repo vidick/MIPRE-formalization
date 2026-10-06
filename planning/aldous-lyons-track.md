@@ -1,7 +1,7 @@
 # The Aldous–Lyons track: `TMIP* = RE` (Bowen–Chapman–Vidick, paper II): estimate and plan
 
-**Status: Phase 0 done (#273; tracking #272); Phases 1 and 2 done (#279, #280); Phase 3 in
-progress (#281).** The statement and
+**Status: Phase 0 done (#273; tracking #272); Phases 1, 2 and 3 done (#279, #280,
+#281).** The statement and
 the interface are in (`MIPRE/TailoredGameValue.lean`, `MIPRE/Tailored/*`), the two checks that
 Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapter is
 `blueprint/src/content/09_tailored.tex`. All five of Phase 1's slices are done (§5 "Phase 1
@@ -19,15 +19,10 @@ from a `TailoredGapCompression`, the one hypothesis.
 Phase 2 (#280) is done: P2a, the tailored product with its completeness and soundness for
 programs meeting a specification, and P2b, the programs themselves with their running times, so
 `TailoredRepetition` is inhabited (`MIPRE.Tailored.tailoredRepetition`, §5 "Phase 2 slices").
-Phase 3 (#281) is in progress on Route A, planned in seven slices (§5 "Phase 3 slices"). Done:
-P3a (closure toolbox), P3b (presentation transports, detyping, layout), the canonical decider's
-cost and `ofTNFVT_isBounded` (the input enters `seven` at `λ' = Cλ`), the constraints with
-both edge obligations (P3e semantics: `Background/Tailored/Intro/{Typed,Sound,Complete}.lean`;
-`valStar_tpresented_le`, `hasPerfectZPC_tpresented`), and the output verifier from a
-specification of its programs with the value chain through `seven` (P3d,
-`Background/Tailored/Intro/Output.lean`, `soundness_contract`). Left: the honest strategy's
-three typed facts (P3c), the two programs with their costs (P3f), and the assembly (P3g); see
-"Phase 3 status (2026-10-06)" in §5.
+Phase 3 (#281) is done on Route A: `TailoredIntrospection 7` is inhabited
+(`Background/Tailored/Intro/Inhabit.lean`, `tailoredIntrospection`, blueprint `thm:tailored-qr`),
+the tailored presentation of `seven` at `Mλ` with `M = 2^{C₀+1}`; see "Phase 3 status
+(2026-10-06)" in §5 for how the pieces fit.
 Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices"); P4a, the linear
 systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`), and so are P4g, the describer through
 three windows (`MIPRE.SAT.windowDescriber`), and P4f, the output indicator
@@ -868,34 +863,29 @@ bits padded; `dec` strips the padding and re-encodes with `encodeAnswer`.
 - **P3g — `TailoredIntrospection` inhabited (0.3k).** Assembly, blueprint `thm:tailored-qr`,
   `Closes #281`.
 
-**Phase 3 status (2026-10-06).** The semantic half is in: at seven's canonical parameters the
-typed tailored data `Sound.tdata` (constraints `Typed.consL`, read by `Typed.consL_iff` as the
-readable guards plus the kernel's `AuxiliaryQuotient.check`), soundness on the edges through
-`program_complete` and completeness through `program_sound`, and the two presentation-level
-statements `valStar_tpresented_le` and `hasPerfectZPC_tpresented` (the latter from a *typed*
-honest strategy, `PresentationTyped`). What remains, in order:
+**Phase 3 status (2026-10-06): done.** `Inhabit.tailoredIntrospection : TailoredIntrospection 7`.
+A `λ`-bounded input's normal form verifier is `C₀λ`-bounded (`ofTNFVT_isBounded`), so the
+output at `λ` is `Output.outTV` at `Mλ`, `M = 2^{C₀+1}` (a power of two, so that `λ ↦ Mλ` is
+`Scale.mulPow2F`): `seven`'s sampler, `LenIntro.lenIntro` and `LpIntro.lpIntro` at `Mλ`. The
+pieces, bottom up:
 
-1. *P3c.* Three facts about the typed honest strategy `HonestChain.raw` (agent branch
-   `p3-honest`): it charges only `Complete.okT` answers, and its bit observables along
-   `Complete.encT` are signed permutations, diagonal at the `Typed.lenR` readable bits.
-2. *P3d.* An `IntroSpec` on the output's two programs at index `n`, in the shape of Phase 2's
-   `RepSpec`: `len` outputs the detyped lengths at `vectorEquiv x`, `lp` the detyped
-   constraints. From it, the output's game extends the presented one along `vectorEquiv`
-   (`TailoredGame.Extends`), so `valStar` and perfect ZPC strategies transfer; then the chain
-   `valStar_tpresented_le`, `quantumValue_eq_of_equiv_support` (the reference game is the
-   detyped one along `vectorEquiv`: `verifier_game_mu`, `verifier_game_D`),
-   `output_val_eq_reference`, `sevenOutput_soundness` at `λ' = Cλ` (`ofTNFVT_isBounded`), and
-   `valStar_ofTNFVT`; the loss `δ(a, b, Cλ, n, ε) ≤ δ(a C^a, b, λ, n, ε)`.
-3. *P3f.* The programs, as compositions of `PolyTimeFun`s around calls to the input's programs
-   (`Calls.mapCall`, as in Phase 2), the input's descriptions clamped by `λ`
-   (`SourceDescriptionCompiler.clamp`, as `seven` does) so that `lp_size ≤ C(λ+1)^C`. The
-   budget's coefficient is `2^{(λn+1)^C}`, so brute force over the `Q`-bit registers is
-   allowed. Pieces: graph-view decoding (`DeciderProgram.selectedEdge`), the Pauli constraints
-   (`PauliCons`, `PauliHide`: explicit linear maps), the auxiliary constraints (windows, the CL
-   function's evaluation, prefix registers and stage matrices as in the kernel's
-   `SourcePadding.Program`, kernel generators by elimination), and the input's `lp` on the source
-   questions, re-indexed.
-4. *P3g.* `TailoredIntrospection 7` inhabited, `thm:tailored-qr`, `Closes #281`.
+1. *Semantics.* The typed tailored data `Sound.tdata` (constraints `Typed.consL`: the readable
+   lengths, then the readable guards and the kernel's `AuxiliaryQuotient.check`), soundness on
+   the edges through `program_complete`, completeness through `program_sound`
+   (`valStar_tpresented_le`, `hasPerfectZPC_tpresented`).
+2. *The output from a specification* (`Output.IntroSpec`): its game extends the presented one;
+   `soundness_contract` (through `sevenOutput_soundness` at `Mλ` and `valStar_ofTNFVT`, the loss
+   `δ(a, b, Mλ, n, ε) ≤ δ(aM^a, b, λ, n, ε)`).
+3. *The honest strategy* (`HonestChain`, `HonestZPC`): its three typed facts, and
+   `completeness_contract` from a perfect ZPC strategy of the input at `2^n`.
+4. *The programs.* `lenIntro` (`LenIntro.lean`) and `lpIntro` (`LpIntro*.lean`): graph-view
+   decoding, the Pauli constraints (`PauliConsProg`, by unit vectors), the Pauli hiding
+   constraints (`PauliHideProg`), the auxiliary lists (`AuxProg`, `FormProg`), the CL data
+   (`CLData`), kernel generators by elimination (`KerGensProg`) and the input's programs under a
+   clock on clamped descriptions (`InputRuns`); `introSpec_lenIntro_lpIntro`, the costs within
+   `2^{(λn+1)^C}` and `|LP| ≤ C(λ+1)^C`.
+5. *Assembly* (`Scale`, `Inhabit`): budgets at `Mλ` are budgets at `λ` with the exponent times
+   `M`; at `n = 0` both programs output nothing and the trivial strategy is perfect.
 
 **Phase 4 — answer reduction (25–40k; 8–12 PRs).** In the order of the paper's §5.2–5.6:
 purification and the tailored oracularization with its ZPC completeness and the reuse of

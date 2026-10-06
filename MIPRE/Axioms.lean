@@ -262,6 +262,8 @@ public import MIPRE.Tailored.Intro.CLData
 public import MIPRE.Background.Tailored.Intro.PauliHideProg
 public import MIPRE.Background.Tailored.Intro.PauliConsProg
 public import MIPRE.Background.Tailored.Intro.LenIntro
+public import MIPRE.Background.Tailored.Intro.CompleteContract
+public import MIPRE.Background.Tailored.Intro.Inhabit
 public import MIPRE.Tailored.Intro.AuxProg
 
 @[expose] public section
@@ -4031,6 +4033,34 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.Output.lenOf_le_of_isBounded,
   MIPRE.Tailored.Intro.Output.maxLen_le_of_isBounded,
   MIPRE.Tailored.Intro.Output.soundness_contract
+
+-- blueprint `lem:intro-honest-zpc`
+#guard_sorry_free MIPRE.Tailored.Intro.HonestChain.honest_zpc,
+  MIPRE.Tailored.Intro.HonestChain.honest_zpc_ofTNFVT,
+  MIPRE.Tailored.Intro.Output.completeness_contract
+
+-- blueprint `lem:intro-lp-program`
+#guard_sorry_free MIPRE.Tailored.Intro.LpIntro.lpIntroC, MIPRE.Tailored.Intro.LpIntro.lpIntroProgC,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroProgC_eq, MIPRE.Tailored.Intro.LpIntro.lpIntroC_lpIs,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroC_lpIs_zero,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroC_cons_eq, MIPRE.Tailored.Intro.LpIntro.lpIntroC_size,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroC_size_le, MIPRE.Tailored.Intro.LpIntro.lpIntroC_budget,
+  MIPRE.Tailored.Intro.LpIntro.lpIntro, MIPRE.Tailored.Intro.LpIntro.lpIntroProg,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroProg_eq, MIPRE.Tailored.Intro.LpIntro.lpIntro_lpIs_zero,
+  MIPRE.Tailored.Intro.LpIntro.lpIntro_cons_eq,
+  MIPRE.Tailored.Intro.LpIntro.introSpec_lenIntro_lpIntro,
+  MIPRE.Tailored.Intro.LpIntro.lpIntro_budget, MIPRE.Tailored.Intro.LpIntro.lpIntro_size_le
+
+-- blueprint `lem:intro-rescale`
+#guard_sorry_free MIPRE.Tailored.Intro.Scale.doubleF, MIPRE.Tailored.Intro.Scale.doubleF_apply,
+  MIPRE.Tailored.Intro.Scale.mulPow2F, MIPRE.Tailored.Intro.Scale.mulPow2F_apply,
+  MIPRE.Tailored.Intro.Scale.ansBound_scale, MIPRE.Tailored.Intro.Scale.LenBound.mono,
+  MIPRE.Tailored.Intro.Scale.lenIntro_within, MIPRE.Tailored.Intro.Scale.hasPerfectZPC_of_zero,
+  MIPRE.Tailored.TailoredVerifier.IsBounded.mono
+
+-- blueprint `thm:tailored-qr`
+#guard_sorry_free MIPRE.Tailored.Intro.Inhabit.tailoredIntrospection,
+  MIPRE.Tailored.Intro.Inhabit.exists_tailoredIntrospection
 
 -- blueprint `lem:intro-input-runs`
 #guard_sorry_free MIPRE.Tailored.TailoredVerifier.IsBounded.two_le,
