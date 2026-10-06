@@ -19,8 +19,14 @@ from a `TailoredGapCompression`, the one hypothesis.
 Phase 2 (#280) is done: P2a, the tailored product with its completeness and soundness for
 programs meeting a specification, and P2b, the programs themselves with their running times, so
 `TailoredRepetition` is inhabited (`MIPRE.Tailored.tailoredRepetition`, §5 "Phase 2 slices").
-Phase 3 (#281) is in progress on Route A, planned in seven slices (§5 "Phase 3 slices"); P3a,
-the closure toolbox for the honest strategy, is done (`MIPRE/Tailored/Intro/*`).
+Phase 3 (#281) is in progress on Route A, planned in seven slices (§5 "Phase 3 slices"). Done:
+P3a (closure toolbox), P3b (presentation transports, detyping, layout), the canonical decider's
+cost and `ofTNFVT_isBounded` (the input enters `seven` at `λ' = Cλ`), and the constraints with
+both edge obligations (P3e semantics: `Background/Tailored/Intro/{Typed,Sound,Complete}.lean`;
+`valStar_tpresented_le`, `hasPerfectZPC_tpresented`). Left: the honest strategy's three typed
+facts (P3c), the output verifier and its program specification with the value chain through
+`seven` (P3d), the two programs with their costs (P3f), and the assembly (P3g); see "Phase 3
+status (2026-10-06)" in §5.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -856,6 +862,35 @@ bits padded; `dec` strips the padding and re-encodes with `encodeAnswer`.
   `Introspection.budget`, `lp_size ≤ C λ^C`, `len_total`; the sampler's clauses are `seven`'s.
 - **P3g — `TailoredIntrospection` inhabited (0.3k).** Assembly, blueprint `thm:tailored-qr`,
   `Closes #281`.
+
+**Phase 3 status (2026-10-06).** The semantic half is in: at seven's canonical parameters the
+typed tailored data `Sound.tdata` (constraints `Typed.consL`, read by `Typed.consL_iff` as the
+readable guards plus the kernel's `AuxiliaryQuotient.check`), soundness on the edges through
+`program_complete` and completeness through `program_sound`, and the two presentation-level
+statements `valStar_tpresented_le` and `hasPerfectZPC_tpresented` (the latter from a *typed*
+honest strategy, `PresentationTyped`). What remains, in order:
+
+1. *P3c.* Three facts about the typed honest strategy `HonestChain.raw` (agent branch
+   `p3-honest`): it charges only `Complete.okT` answers, and its bit observables along
+   `Complete.encT` are signed permutations, diagonal at the `Typed.lenR` readable bits.
+2. *P3d.* An `IntroSpec` on the output's two programs at index `n`, in the shape of Phase 2's
+   `RepSpec`: `len` outputs the detyped lengths at `vectorEquiv x`, `lp` the detyped
+   constraints. From it, the output's game extends the presented one along `vectorEquiv`
+   (`TailoredGame.Extends`), so `valStar` and perfect ZPC strategies transfer; then the chain
+   `valStar_tpresented_le`, `quantumValue_eq_of_equiv_support` (the reference game is the
+   detyped one along `vectorEquiv`: `verifier_game_mu`, `verifier_game_D`),
+   `output_val_eq_reference`, `sevenOutput_soundness` at `λ' = Cλ` (`ofTNFVT_isBounded`), and
+   `valStar_ofTNFVT`; the loss `δ(a, b, Cλ, n, ε) ≤ δ(a C^a, b, λ, n, ε)`.
+3. *P3f.* The programs, as compositions of `PolyTimeFun`s around calls to the input's programs
+   (`Calls.mapCall`, as in Phase 2), the input's descriptions clamped by `λ`
+   (`SourceDescriptionCompiler.clamp`, as `seven` does) so that `lp_size ≤ C(λ+1)^C`. The
+   budget's coefficient is `2^{(λn+1)^C}`, so brute force over the `Q`-bit registers is
+   allowed. Pieces: graph-view decoding (`DeciderProgram.selectedEdge`), the Pauli constraints
+   (`PauliCons`, `PauliHide`: explicit linear maps), the auxiliary constraints (windows, the CL
+   function's evaluation, prefix registers and stage matrices as in the kernel's
+   `SourcePadding.Program`, kernel generators by elimination), and the input's `lp` on the source
+   questions, re-indexed.
+4. *P3g.* `TailoredIntrospection 7` inhabited, `thm:tailored-qr`, `Closes #281`.
 
 **Phase 4 — answer reduction (25–40k; 8–12 PRs).** In the order of the paper's §5.2–5.6:
 purification and the tailored oracularization with its ZPC completeness and the reuse of
