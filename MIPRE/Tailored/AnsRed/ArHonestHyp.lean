@@ -6,7 +6,7 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Tailored.AnsRed.ArParams
 public import MIPRE.Tailored.AnsRed.HonestPair
-public import MIPRE.Tailored.AnsRed.IndicatorCost
+public import MIPRE.Tailored.AnsRed.IndicatorConst
 public import MIPRE.Foundations.SAT.GatePaddingExact
 public import MIPRE.Foundations.Pipeline.AnswerReduction
 public import MIPRE.Foundations.Pipeline.PowDomRun
@@ -237,6 +237,15 @@ def LstarTime (E : ℕ) : Prop :=
 def LstarSize (c₀ : ℕ) : Prop :=
   ∀ (p : Unary × Unary) (L P : Prog),
     esize (lstarProg (const p) L P) ≤ c₀ + 4 * esize L + esize P + 2 * esize p
+
+/-- **`L*`'s running time at constant parameters**, at a universal constant
+(`lstar_const_acceptsWithin_pow`). -/
+theorem exists_lstarTime : ∃ E : ℕ, 1 ≤ E ∧ LstarTime E := lstar_const_acceptsWithin_pow
+
+/-- **The size of `L*`'s program at constant parameters** (`esize_lstarProg_const`). -/
+theorem lstarSize_lstarProgSize₀ : LstarSize lstarProgSize₀ := fun p L P => by
+  rw [esize_lstarProg_const]
+  omega
 
 theorem acceptsWithin_mono {D : Decider} {m : ℕ} {x y a b : BitStr} {T T' : ℕ}
     (h : D.AcceptsWithin m x y a b T) (hT : T ≤ T') : D.AcceptsWithin m x y a b T' :=
