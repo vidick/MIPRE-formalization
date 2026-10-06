@@ -36,8 +36,8 @@ theorem getD_pad (R : ℕ) (l : BitStr) (j : ℕ) : (pad R l).getD j false = l.g
 theorem getD_take (l : BitStr) (s j : ℕ) :
     (l.take s).getD j false = if j < s then l.getD j false else false := by
   split_ifs with h
-  · simp [List.getD_eq_getElem?_getD, List.getElem?_take, h]
-  · simp [List.getD_eq_getElem?_getD, List.getElem?_take, h]
+  · simp [List.getD_eq_getElem?_getD, h]
+  · simp [List.getD_eq_getElem?_getD, h]
 
 theorem getD_drop (l : BitStr) (s j : ℕ) : (l.drop s).getD j false = l.getD (s + j) false := by
   simp [List.getD_eq_getElem?_getD]
@@ -62,7 +62,7 @@ theorem getD_enc_pair {t : AuxType ℓ × Bool} (ht : t.1 = .introspect ∨ t.1 
       else if i - Q < R then (if i - Q < splitR t y then α.getD (i - Q) false else false)
       else α.getD (splitR t y + (i - Q - R)) false := by
   rw [enc_pair ht hy, List.append_assoc, getD_append_of_length _ hy]
-  split_ifs with h1 h2 h3 h3
+  split_ifs with h1 h2 h3
   · rfl
   · rw [getD_append_of_length _ (length_pad_take hs), if_pos h2, getD_pad, getD_take, if_pos h3]
   · rw [getD_append_of_length _ (length_pad_take hs), if_pos h2, getD_pad, getD_take, if_neg h3]
@@ -79,7 +79,7 @@ theorem getD_enc_read {w : Bool} {y yp α : BitStr} (hy : y.length = Q) (hyp : y
       else α.getD (splitR (.read, w) y + (i - Q - R - Q)) false := by
   simp only [enc, tripleParts_tripleBits Q y yp α hy hyp]
   rw [List.append_assoc, getD_append_of_length _ hy]
-  split_ifs with h1 h2 h3 h4 h4
+  split_ifs with h1 h2 h3 h4
   · rfl
   · rw [getD_append_of_length _ (length_pad_take hs), if_pos h2, getD_pad, getD_take, if_pos h3]
   · rw [getD_append_of_length _ (length_pad_take hs), if_pos h2, getD_pad, getD_take, if_neg h3]

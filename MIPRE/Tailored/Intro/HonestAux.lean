@@ -213,7 +213,7 @@ theorem isXBit_hideRegister (k : ℕ) {ℓ : ℕ} (P : CL.CLFun (ZMod 2) ι ℓ)
           joinHide S) = fun zb => xor (decide (φ (coordinateInsert S zb.1.2) = 1))
             (decide (φ zb.2.2.1 + χ zb.2.2.2 = 1)) := by
         funext zb
-        simp only [Function.comp_apply, joinHide, map_add, add_assoc, decide_add_eq_one,
+        simp only [Function.comp_apply, joinHide, map_add, decide_add_eq_one,
           Bool.xor_assoc]
         all_goals rfl
       rw [e]

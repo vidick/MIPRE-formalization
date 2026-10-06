@@ -68,7 +68,8 @@ theorem source_value (hv : RW.value = 1) : (source W RW).value = 1 := by
 def padded (hs : W.sampler.dim (2 ^ n) ≤ registerBits c lam n) :
     SyncStrategy (Honest.sourceGame (AuxiliaryDecision.padded W hs)
       (VerifierSource.paddedPredicate W hs ((2 ^ n) ^ lam))).doubled :=
-  (SourcePadding.strategy (AuxiliaryProgram.firstEmbedding hs) (SourcePadding.Program.sourceFamily W n)
+  (SourcePadding.strategy (AuxiliaryProgram.firstEmbedding hs)
+    (SourcePadding.Program.sourceFamily W n)
     (VerifierSource.predicate W n ((2 ^ n) ^ lam)) (source W RW)).copy _
 
 theorem padded_game_eq (hs : W.sampler.dim (2 ^ n) ≤ registerBits c lam n) :
@@ -78,7 +79,8 @@ theorem padded_game_eq (hs : W.sampler.dim (2 ^ n) ≤ registerBits c lam n) :
         (SourcePadding.Program.sourceFamily W n))
       (SourcePadding.decider (AuxiliaryProgram.firstEmbedding hs)
         (VerifierSource.predicate W n ((2 ^ n) ^ lam))) :=
-  SourcePadding.sourceGame_depthFamily (AuxiliaryProgram.firstEmbedding hs) (SourcePadding.Program.sourceFamily W n)
+  SourcePadding.sourceGame_depthFamily (AuxiliaryProgram.firstEmbedding hs)
+    (SourcePadding.Program.sourceFamily W n)
     (VerifierSource.predicate W n ((2 ^ n) ^ lam)) (by decide)
     (fun w => (W.sampler.cl_exactlyOn _ _).supportedOn)
 
@@ -262,7 +264,8 @@ theorem one_le_c (hc : 2 ≤ c) : 1 ≤ c := by omega
 
 /-- **The honest strategy of the typed game**: the honest strategy of the guarded game, its
 answers encoded as bit strings (`CanonicalComplete.encodeAnswer`). -/
-def raw : SyncStrategy (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog) lam n).doubled :=
+def raw :
+    SyncStrategy (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog) lam n).doubled :=
   (canonical W RW (one_le_c hc) he (dim_le W c hc hW hn)).mergeAnswersByQuestion
     (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog) lam n).doubled
     fun _ a => CanonicalComplete.encodeAnswer c hc lam n a

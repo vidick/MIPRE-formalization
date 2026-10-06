@@ -127,7 +127,8 @@ theorem isZBit_canonical_pauliZ (hc : 2 ≤ c) (R : ℕ) (splitR : AuxType 7 × 
       (fbit hc R splitR (.inl (.pauli .Z)) i) := by
   apply isZBit_canonical
   unfold IsZBit
-  change IsSignedPerm (bitObs (Honest.parsedPauliOp _) _) ∧ (bitObs (Honest.parsedPauliOp _) _).IsDiag
+  change IsSignedPerm (bitObs (Honest.parsedPauliOp _) _) ∧
+    (bitObs (Honest.parsedPauliOp _) _).IsDiag
   rw [parsedPauliOp_eq_extend, bitObs_extend _ pauli_injective]
   exact ((isZBit_answerOp_pauliZ (fieldBits_pos c lam n) (divides c hc1 lam n) i).kronecker_one
     (Ω' := Fin (reindexed W RW hs).d)).submatrix_equiv _
@@ -273,7 +274,8 @@ theorem srcSplitR_sample (w : Bool) (y : Fin (registerBits c lam n) → 𝔽₂)
         ((AuxiliaryDecision.padded W hs w).eval y))) false := by
   simp [srcSplitR, srcQuestion]
 
-theorem reindexed_M (w : Bool) (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
+theorem reindexed_M (w : Bool)
+    (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
     (reindexed W RW hs).P.M (w, y) =
       RW.P.M (w, pull (AuxiliaryProgram.firstEmbedding hs)
         ((reindexEquiv (numbering c lam n)).symm y)) := rfl
@@ -302,14 +304,16 @@ theorem bits_introspect (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) 
       (srcSplitR_eq W hs V _ (by simp) _) (lenOf_le W RW V hlen _ _) i
   refine ⟨isXBit_canonical_aux W RW _ he hs w' _ z _ ?_,
     fun hi => isZBit_canonical_aux W RW _ he hs w' _ z _ ?_⟩
-  · change IsXBit (Honest.parsedCoreOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+  · change IsXBit (Honest.parsedCoreOp
+      (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
       (family W hs) (decider W hs) (reindexed W RW hs) (false, w)) _
     refine isXBit_parsedCoreOp (family W hs) (decider W hs) (reindexed W RW hs) (false, w) _
       fun y => ?_
     rw [show Honest.originalQuestion (family W hs) (false, w) y = y from rfl, reindexed_M,
       fbit_pair hc]
     exact (key y).1
-  · change IsZBit (Honest.parsedCoreOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+  · change IsZBit (Honest.parsedCoreOp
+      (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
       (family W hs) (decider W hs) (reindexed W RW hs) (false, w)) _
     refine isZBit_parsedCoreOp (family W hs) (decider W hs) (reindexed W RW hs) (false, w) _
       fun y => ?_
@@ -346,14 +350,16 @@ theorem bits_sample (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → 
           (family_eval_symm W hs w y).symm)) (lenOf_le W RW V hlen _ _) i
   refine ⟨isXBit_canonical_aux W RW _ he hs w' _ z _ ?_,
     fun hi => isZBit_canonical_aux W RW _ he hs w' _ z _ ?_⟩
-  · change IsXBit (Honest.parsedCoreOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+  · change IsXBit (Honest.parsedCoreOp
+      (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
       (family W hs) (decider W hs) (reindexed W RW hs) (true, w)) _
     refine isXBit_parsedCoreOp (family W hs) (decider W hs) (reindexed W RW hs) (true, w) _
       fun y => ?_
     rw [show Honest.originalQuestion (family W hs) (true, w) y = (family W hs w).eval y from rfl,
       reindexed_M, fbit_pair hc]
     exact (key y).1
-  · change IsZBit (Honest.parsedCoreOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+  · change IsZBit (Honest.parsedCoreOp
+      (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
       (family W hs) (decider W hs) (reindexed W RW hs) (true, w)) _
     refine isZBit_parsedCoreOp (family W hs) (decider W hs) (reindexed W RW hs) (true, w) _
       fun y => ?_
@@ -372,7 +378,8 @@ theorem encodeAnswer_read (y yp : BinaryComplete.Seed (registerPower c lam n) (f
       tripleBits (toBits ((reindexEquiv (numbering c lam n)).symm y))
         (toBits ((reindexEquiv (numbering c lam n)).symm yp)) α.1 := rfl
 
-theorem encodeAnswer_hide (y yp x : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
+theorem encodeAnswer_hide
+    (y yp x : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
     (CanonicalComplete.encodeAnswer c hc lam n
       ((AuxiliaryQuotient.answerEquiv (numbering c lam n)).symm (.hide y yp x))).1 =
       tripleBits (toBits ((reindexEquiv (numbering c lam n)).symm y))
@@ -405,7 +412,8 @@ theorem bits_read (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → �
       i - registerBits c lam n - (2 ^ n) ^ lam < registerBits c lam n
   · obtain ⟨h1, h2, h3⟩ := hyp
     refine ⟨isXBit_canonical_aux W RW _ he hs w' _ z _ ?_, fun hi => absurd hi (by omega)⟩
-    change IsXBit (Honest.parsedReadOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+    change IsXBit (Honest.parsedReadOp
+        (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
       (family W hs) (decider W hs) (reindexed W RW hs) w (family_supported W hs w)) _
     refine isXBit_parsedReadOp_dual (family W hs) (decider W hs) (reindexed W RW hs) w
       (family_supported W hs w) _ (LinearMap.proj (R := ZMod 2) (φ := fun _ => ZMod 2)
@@ -440,7 +448,8 @@ theorem bits_read (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → �
         (length_toBits_symm _) (srcSplitR_eq W hs V _ (by simp) _) (lenOf_le W RW V hlen _ _) i hyp
     refine ⟨isXBit_canonical_aux W RW _ he hs w' _ z _ ?_,
       fun hi => isZBit_canonical_aux W RW _ he hs w' _ z _ ?_⟩
-    · change IsXBit (Honest.parsedReadOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+    · change IsXBit (Honest.parsedReadOp
+        (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
         (family W hs) (decider W hs) (reindexed W RW hs) w (family_supported W hs w)) _
       refine isXBit_parsedReadOp_fst (family W hs) (decider W hs) (reindexed W RW hs) w
         (family_supported W hs w) _ (fun yα => (enc (registerBits c lam n) ((2 ^ n) ^ lam)
@@ -453,7 +462,8 @@ theorem bits_read (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → �
         exact hF y yp α
       · rw [reindexed_M]
         exact (key y).1
-    · change IsZBit (Honest.parsedReadOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+    · change IsZBit (Honest.parsedReadOp
+        (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
         (family W hs) (decider W hs) (reindexed W RW hs) w (family_supported W hs w)) _
       refine isZBit_parsedReadOp_fst (family W hs) (decider W hs) (reindexed W RW hs) w
         (family_supported W hs w) _ (fun yα => (enc (registerBits c lam n) ((2 ^ n) ^ lam)
@@ -479,7 +489,8 @@ theorem bits_hide (w' : Bool) (k : Fin 7) (w : Bool)
       IsZBit ((canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.hide k, w), z)))
         (fbit hc ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inr (.hide k, w)) i) := fun hi => by
     refine isZBit_canonical_aux W RW _ he hs w' _ z _ ?_
-    change IsZBit (Honest.parsedHideOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+    change IsZBit (Honest.parsedHideOp
+        (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
       (family W hs) (decider W hs) (reindexed W RW hs) w k.val (family_supported W hs w)) _
     refine isZBit_parsedHideOp_fst (family W hs) (decider W hs) (reindexed W RW hs) w k.val
       (family_supported W hs w) _
@@ -492,7 +503,8 @@ theorem bits_hide (w' : Bool) (k : Fin 7) (w : Bool)
   by_cases h1 : i < registerBits c lam n
   · exact (hZb h1).isXBit
   refine isXBit_canonical_aux W RW _ he hs w' _ z _ ?_
-  change IsXBit (Honest.parsedHideOp (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
+  change IsXBit (Honest.parsedHideOp
+      (PA := QLD.Answer (field c lam n).carrier (registerPower c lam n) 1)
     (family W hs) (decider W hs) (reindexed W RW hs) w k.val (family_supported W hs w)) _
   by_cases h2 : i - registerBits c lam n < registerBits c lam n
   · refine isXBit_parsedHideOp_lin (family W hs) (decider W hs) (reindexed W RW hs) w k.val

@@ -27,7 +27,8 @@ diagonal one at the readable `(Pauli, Z)` question (`isXBit_answerOp`, `isZBit_a
   observable is a Weyl operator (`exists_encObs_proj_linear`); every bit of a `Z`-basis outcome
   is a `±1` diagonal;
 * the probe answers read `½(1 ± W(c))` of a Weyl operator, and the Magic Square answers the
-  cells of `Introspection.HonestMagicSquare.grid` of two Weyl operators, which are signed permutations
+  cells of `Introspection.HonestMagicSquare.grid` of two Weyl operators, which are signed
+  permutations
   (`isSignedPerm_grid`); in the inactive branches the answer is constant.
 -/
 
@@ -66,8 +67,7 @@ theorem getD_xorBits (l l' : Cost.BitStr) (h : l.length = l'.length) (i : ℕ) :
   by_cases hi : i < l.length
   · simp [List.getD_eq_getElem?_getD, hi, h ▸ hi]
   · have hi' : ¬i < l'.length := h ▸ hi
-    simp [List.getD_eq_getElem?_getD, hi, hi', List.getElem?_eq_none (by omega : l.length ≤ i),
-      List.getElem?_eq_none (by omega : l'.length ≤ i)]
+    simp [List.getD_eq_getElem?_getD, hi, hi']
 
 section Shoup
 
@@ -353,7 +353,8 @@ theorem isXBit_answerOp (hm : m ∣ Fintype.card (SAT.shoupBinField k hk).carrie
       have hA : IsSignedPerm A := isSignedPerm_basis _ _
       have hB : IsSignedPerm B := isSignedPerm_basis _ _
       set V := fun j : Fin 3 =>
-        Introspection.HonestMagicSquare.variableOp A B (Introspection.HonestMagicSquare.cellIndex c j)
+        Introspection.HonestMagicSquare.variableOp A B
+          (Introspection.HonestMagicSquare.cellIndex c j)
       have hV : ∀ j, ∑ b, V j b = 1 := fun j => sum_observableToProjector _
       have hVX : ∀ j g, IsXBit (V j) g := fun j g =>
         isXBit_observableToProjector (isSignedPerm_grid hA hB _) g
@@ -369,7 +370,8 @@ theorem isXBit_answerOp (hm : m ∣ Fintype.card (SAT.shoupBinField k hk).carrie
       unfold IsXBit
       rw [hJ, hG, bitObs_comp_equiv]
       have hG' : G ∘ Introspection.HonestMagicSquare.tripleEquiv.symm =
-          fun p => (List.ofFn fun j : Fin 3 => [LowDegree.BinaryLinear.bit (![p.1.1, p.1.2, p.2] j)]).flatten.getD i false := by
+          fun p => (List.ofFn fun j : Fin 3 =>
+            [LowDegree.BinaryLinear.bit (![p.1.1, p.1.2, p.2] j)]).flatten.getD i false := by
         funext p
         rfl
       rw [hG']

@@ -46,6 +46,8 @@ open MIPRE.Introspection.DecisionCompiler MIPRE.Introspection.SourceCompiler
 open MIPRE.Introspection.PauliSamplerParameters MIPRE.Introspection.AnswerParser
 open scoped Kronecker
 
+set_option linter.unusedSectionVars false
+
 attribute [local instance] power_neZero
 
 variable {c : ℕ} (W : Verifier 7) {lam n : ℕ}
@@ -66,7 +68,7 @@ abbrev lenRI (c lam n : ℕ) : DecisionKernel.Label → ℕ :=
 theorem pauliRead_eq_true {T : QLD.Ty} (h : pauliRead T = true) : T = .pauli .Z := by
   cases T <;> simp_all [pauliRead]
   rename_i W
-  cases W <;> simp_all [pauliRead]
+  cases W <;> simp_all
 
 include hlen hX hZ in
 /-- **Every bit of the honest measurement at a typed question is a signed permutation, and the
@@ -211,7 +213,7 @@ theorem canonical_pauli_shape (w' : Bool) (T : QLD.Ty)
     (ha : (canonical W RW hc1 he hs).P.M (w', (.inl T, z)) a ≠ 0) :
     ∃ x, a = .pauli x := by
   by_contra hn
-  push_neg at hn
+  push Not at hn
   apply ha
   rw [canonical_M]
   generalize hq : ExplicitGame.questionEquiv (permutation c lam n) (basis c he lam n)
@@ -338,7 +340,8 @@ theorem support_introspect (w' w : Bool) (z : Fin (PauliSampler.dimension c lam 
     (a : CanonicalComplete.Answer c lam n)
     (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.introspect, w), z)) a ≠ 0) :
     OkI W hs V (.inr (.introspect, w)) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
-      readOKI W hs V (.inr (.introspect, w)) (enc (P := QLD.Ty) (registerBits c lam n) ((2 ^ n) ^ lam)
+      readOKI W hs V (.inr (.introspect, w)) (enc (P := QLD.Ty) (registerBits c lam n)
+        ((2 ^ n) ^ lam)
         (srcSplitR V W hs) (.inr (.introspect, w))
         (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
   have h1 := canonical_aux_ne_zero W RW he hs (one_le_c hc) w' (.introspect, w) z a ha
@@ -650,7 +653,8 @@ theorem inputSync_bit (p : Bool × V.Questions (2 ^ n)) (j : ℕ) :
   unfold IsXBit IsZBit
   rw [e]
   by_cases hj : j < (V.tgame (2 ^ n)).doubled.len p
-  · rw [SV.encObs_ansProj_bit p hle _ 0 ⟨j, hj⟩ fun v => by simp [ofVec, List.getD_eq_getElem?_getD, hj]]
+  · rw [SV.encObs_ansProj_bit p hle _ 0 ⟨j, hj⟩ fun v => by
+      simp [ofVec, List.getD_eq_getElem?_getD, hj]]
     exact ⟨SV.signedPerm p _, fun h => ⟨SV.signedPerm p _, SV.zAligned p _ h⟩⟩
   · rw [SV.encObs_ansProj_const p hle _ 0 false fun v =>
       List.getD_eq_default _ _ (by simp [ofVec]; omega)]
