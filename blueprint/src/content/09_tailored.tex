@@ -1978,7 +1978,7 @@ $C \geq 1$ and $\lambda n \geq 1$.
 
 \begin{lemma}[The input's programs, run on a clamped description]
 \label{lem:intro-input-runs}
-\uses{def:tailored-verifier,def:tailored-bounded}
+\uses{def:tailored-verifier,def:tailored-bounded,lem:detype-total-clock,lem:intro-ambient-runtime}
 \lean{MIPRE.Tailored.TailoredVerifier.IsBounded.two_le, MIPRE.Tailored.Intro.InputRuns.clamp,
   MIPRE.Tailored.Intro.InputRuns.clamp_bounded, MIPRE.Tailored.Intro.InputRuns.clamp_size,
   MIPRE.Tailored.Intro.InputRuns.runLen, MIPRE.Tailored.Intro.InputRuns.runLp,
@@ -2005,7 +2005,12 @@ halts at every question, so the constraints are what the processor outputs.
 
 \begin{lemma}[The sampler's data, from the introspection kernel's queries]
 \label{lem:intro-cl-data}
-\uses{lem:intro-aux-cons}
+\uses{def:cl-function,def:decider,def:lambda-bounded,def:ld-encoding,def:normal-verifier,
+  def:sampler,lem:cl-closure,lem:cl-structure,lem:detype-queries,lem:detype-total-clock,
+  lem:effective-binary-field-arithmetic,lem:effective-binary-linear-algebra,
+  lem:intro-adaptive-prefix,lem:intro-binary-source-padding,lem:intro-dynamic-source-compiler,
+  lem:intro-guarded-hiding-maps,lem:intro-parsed-predicate,lem:intro-read-rigidity,
+  lem:intro-subtest-estimates,lem:pcp-padding-programs}
 \lean{MIPRE.Tailored.Intro.CLData.context, MIPRE.Tailored.Intro.CLData.eval,
   MIPRE.Tailored.Intro.CLData.eval_correct, MIPRE.Tailored.Intro.CLData.sourceEval,
   MIPRE.Tailored.Intro.CLData.sourceEval_correct, MIPRE.Tailored.Intro.CLData.scan,
@@ -2054,7 +2059,7 @@ of the self-dual coordinate map, or a unit vector.
 
 \begin{lemma}[The introspection answer-length calculator]
 \label{lem:intro-len-program}
-\uses{lem:intro-typed-cons,def:intro-layout}
+\uses{lem:intro-typed-cons,def:tailored-detyping,lem:introspection-supply}
 \lean{MIPRE.Tailored.Intro.LenIntro.introLenR, MIPRE.Tailored.Intro.LenIntro.introLenL,
   MIPRE.Tailored.Intro.LenIntro.introLen, MIPRE.Tailored.Intro.LenIntro.lin_coef,
   MIPRE.Tailored.Intro.LenIntro.lenIntroC, MIPRE.Tailored.Intro.LenIntro.lenIntroC_lenIs,
