@@ -683,6 +683,7 @@ public import MIPRE.Background.Repetition.TracialApprox
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
+public import MIPRE.Background.Tailored.Intro.Budget
 public import MIPRE.Background.Tailored.Intro.Complete
 public import MIPRE.Background.Tailored.Intro.Output
 public import MIPRE.Background.Tailored.Intro.Pauli
