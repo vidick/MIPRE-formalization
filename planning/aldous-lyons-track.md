@@ -23,6 +23,11 @@ Phase 3 (#281) is done on Route A: `TailoredIntrospection 7` is inhabited
 (`Background/Tailored/Intro/Inhabit.lean`, `tailoredIntrospection`, blueprint `thm:tailored-qr`),
 the tailored presentation of `seven` at `Mλ` with `M = 2^{C₀+1}`; see "Phase 3 status
 (2026-10-06)" in §5 for how the pieces fit.
+Phase 5 (#283) is done up to answer reduction: `TailoredGapCompression.ofTailoredPipeline`
+(`MIPRE/Tailored/Compose.lean`) composes the three stage contracts, and
+`tailored_halting_reduction_of_answerReduction` / `tmipStarComputable_eq_re_of_answerReduction`
+(`MIPRE/Background/Tailored/Main.lean`) prove paper II's main theorem from a
+`TailoredAnswerReduction 5` alone; it becomes unconditional when Phase 4 inhabits that contract.
 Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices"); P4a, the linear
 systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`), and so are P4g, the describer through
 three windows (`MIPRE.SAT.windowDescriber`), and P4f, the output indicator
@@ -1002,6 +1007,13 @@ What the reading settled.
 
 Order: P4a; then P4f and P4g, because the describer is the one step the paper only sketches
 (II:8757) and the PCP's input blocks rest on it; then P4b–P4e, P4h, P4i.
+
+**Phase 5 status (2026-10-06).** The composition is in (`Compose.lean`, about 600 lines): `σ(λ)`
+dominates the three introspective programs (`size_le_sigma`), `μ`, `P` and `C₀` as in the
+existing pipeline, and `β` now bounds the answer-reduced *lengths*, `B(λ, n) ≤ (λn + 1)^β`, which
+`τ` is chosen against, repetition reading its input's lengths from the calculator rather than a
+parse length. Completeness chains with no answer bound to adjust. What remains is the one-line
+instantiation with Phase 4's inhabitant, and `thm:tailored-compression-target`'s `\leanok`.
 
 **Phase 5 — assembly (1.5–2.5k; 1–2 PRs).** `TailoredGapCompression.ofTailoredPipeline`:
 levels, parameters `K(n)`, the thresholds collected into `C₀`, the accounting with a third
