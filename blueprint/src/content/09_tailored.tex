@@ -3463,9 +3463,8 @@ $(\lambda n + 1)^\mu$ and its programs read them in unary, which no polynomial-t
 the binary index can write: a closed program computes them and the programs run it as a stage
 (Definition~\ref{def:ar-routine}), as in the MIP* answer reduction. Every check of the game is a
 list of field equations in the answer bits, whose constraints are computed from a program of the
-equations' values (Lemma~\ref{lem:ar-field-cons}). The proof check's linear equations, the
-assembly of the linear-constraints processor and the running times of the programs are still to
-be formalized.
+equations' values (Lemma~\ref{lem:ar-field-cons}). The output verifier meets the presented game
+(Theorem~\ref{thm:ar-output}); the running times of its programs are still to be formalized.
 
 \begin{definition}[A tailored verifier meeting a tailored game]
 \label{def:tailored-meets}
@@ -3763,4 +3762,129 @@ The circuit evaluator computes the circuit's polynomial on the Shoup bits of the
 (Lemma~\ref{lem:pcp-circuit-evaluator}). Each readable check compares two field expressions in
 the point's coordinates and the readable values at the slots' positions, and these are computed
 with the combinators of Lemma~\ref{lem:ar-field-cons}.
+\end{proof}
+
+\begin{lemma}[The proof check's equations, as programs]
+\label{lem:ar-proof-eqs}
+\uses{lem:ar-proof-guard,lem:ar-field-cons,def:ar-tailored-game,lem:intro-aux-progs}
+\lean{MIPRE.Tailored.AnsRed.Typed.zAt, MIPRE.Tailored.AnsRed.Typed.zAt_eq,
+  MIPRE.Tailored.AnsRed.Typed.asgLin, MIPRE.Tailored.AnsRed.Typed.sysLin,
+  MIPRE.Tailored.AnsRed.Typed.proofEqs_eq, MIPRE.Tailored.AnsRed.Typed.asgEqF,
+  MIPRE.Tailored.AnsRed.Typed.asgEqF_eq, MIPRE.Tailored.AnsRed.Typed.sysEqF,
+  MIPRE.Tailored.AnsRed.Typed.sysEqF_eq, MIPRE.Tailored.AnsRed.Typed.proofEqsF,
+  MIPRE.Tailored.AnsRed.Typed.proofEqsF_eq, MIPRE.Tailored.AnsRed.Typed.proofConsF,
+  MIPRE.Tailored.AnsRed.Typed.proofConsF_eq}
+\leanok
+A program computes, from the parameters, the offset and length of the answer bits, the
+coordinates of a point $p$, the oracle's readable answer and the gates of a well-formed circuit
+with the PCP's numbers of inputs and gates, the constraints of the proof check of the oracle's
+point answer: the readable checks of Lemma~\ref{lem:ar-proof-guard} as a guard, then the system
+check and the five linear assignment checks at $p$, as field equations in the answer bits.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The value of each equation at the answer bits is a field expression in the point's coordinates,
+the readable value of $g_O$ and the linear values at the slots' positions, which the combinators
+of Lemma~\ref{lem:ar-field-cons} compute; the positions of the linear slots follow the readable
+ones. Lemma~\ref{lem:ar-field-cons} turns the values into the constraints.
+\end{proof}
+
+\begin{lemma}[The constraints at two detyped questions, as a program]
+\label{lem:ar-lp-final}
+\uses{lem:ar-proof-eqs,lem:ar-slot-cons,lem:ar-ld-cons,lem:ar-len,def:ar-meets,
+  def:ar-routine}
+\lean{MIPRE.Tailored.AnsRed.Typed.edgeF, MIPRE.Tailored.AnsRed.Typed.lenOkF,
+  MIPRE.Tailored.AnsRed.Typed.LpFin, MIPRE.Tailored.AnsRed.Typed.finBranchF,
+  MIPRE.Tailored.AnsRed.Typed.lpFinal, MIPRE.Tailored.AnsRed.Typed.edgeOf_eq_selectedEdge,
+  MIPRE.Tailored.AnsRed.Typed.LdFamily.sel_chi, MIPRE.Tailored.AnsRed.Typed.ArRoutine.circQ,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.prfInF, MIPRE.Tailored.AnsRed.Typed.ArRoutine.proof_lX,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.proof_lY,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpFinal_eq}
+\leanok
+A program decodes, by a finite table, the edge on which the graph views of two detyped
+questions lie, checks that the readable answers have their questions' readable lengths, and on
+the edge's pair of types concatenates the low-degree checks at one role, the consistency checks
+at one low-degree type, the indifference checks of both answers, and the proof checks of the
+oracle point answers, the last given as its input. When the proof checks given are those of the
+two questions at the circuits of their seeds, it outputs the presented answer-reduced game's
+constraints at the two questions.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Off an edge both are empty. On an edge, the typed questions are the vector parts of the two
+questions, and their types are the ones the views decode to, so the readable lengths are the
+calculator's (Lemma~\ref{lem:ar-len}). The low-degree bits of a question are the last bits of
+its vector part, and the selector of the family is the introspection stage's selector program,
+so each check's program computes the check (Lemmas~\ref{lem:ar-ld-cons}, \ref{lem:ar-slot-cons}
+and~\ref{lem:ar-proof-eqs}).
+\end{proof}
+
+\begin{definition}[The linear-constraints processor of the answer-reduced verifier]
+\label{def:ar-lp}
+\uses{lem:ar-lp-final,def:ar-routine}
+\lean{MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpCore, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpD,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpPF, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpPF_eq}
+\leanok
+On $(n, x, y, a^R, b^R)$, with the input verifier's programs and $(\lambda, \mu, \sigma)$ stored,
+the processor runs, as stages that keep their input: the routine's parameter program on
+$((\lambda, \mu, \sigma), n)$; the input sampler, through the universal machine, on the marginal
+queries of both players at the seeds of $x$ and $y$; the routine's circuit function at each
+seed, and then the proof check of each question with that circuit's gates, both on encodings
+assembled from what the earlier stages output; and finally the program of
+Lemma~\ref{lem:ar-lp-final}. No stage decodes a program from data. Its program is computed from
+the input programs and $(\lambda, \mu, \sigma)$ in polynomial time.
+\end{definition}
+
+\begin{lemma}[The processor computes the presented constraints]
+\label{lem:ar-lp}
+\uses{def:ar-lp,lem:ar-lp-final}
+\lean{MIPRE.Tailored.AnsRed.Typed.ArRoutine.argMgL_eq,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.marg_runs,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpCore_runs,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpD_lpIs}
+\leanok
+At every index and every pair of detyped questions and readable answers, the processor halts
+with the presented answer-reduced game's constraints.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Each stage halts with the expected output: the parameter program by the routine, the input
+sampler on its marginal queries, and the circuit function and the proof check, polynomial-time
+functions, on the encodings of their inputs. Then Lemma~\ref{lem:ar-lp-final}.
+\end{proof}
+
+\begin{definition}[The output verifier of the answer reduction]
+\label{def:ar-output}
+\uses{def:ar-sampler,lem:ar-len,def:ar-lp}
+\lean{MIPRE.Tailored.AnsRed.Typed.ArRoutine.output}
+\leanok
+For a parameter routine, an input tailored verifier and $(\lambda, \mu, \sigma)$, the
+\emph{output verifier} has the answer-reduced sampler, the answer-length calculator of
+Lemma~\ref{lem:ar-len} and the linear-constraints processor of Definition~\ref{def:ar-lp}.
+\end{definition}
+
+\begin{theorem}[Completeness and soundness of the output verifier]
+\label{thm:ar-output}
+\uses{def:ar-output,thm:ar-meets,lem:ar-sampler-dist,lem:ar-len,lem:ar-lp}
+\lean{MIPRE.Tailored.AnsRed.Typed.ArRoutine.arMeets_output,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.hasPerfectZPC_output,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.valStar_sound_output}
+\leanok
+At every index the output verifier meets the presented answer-reduced game. So, under the
+hypotheses of Definition~\ref{def:ar-honest-answers} on the routine's circuits and an answer
+bound at least the types' lengths: if $d \geq 17$ and the input's $n$-th game has a perfect ZPC
+strategy, so has the output's; and if $d \geq 1$, $q \geq 2 (M + 1) d$,
+$q \geq 2 m (5 + 6 (d + 1))$ and the output's $n$-th game has $\valstar > 1 - \eps$, then
+$\valstar(\verifier_n) \geq 1 - 24 \sqrt{e(16^9 \eps)}$.
+\end{theorem}
+
+\begin{proof}
+\leanok
+The sampler's distribution is the presented game's weights (Lemma~\ref{lem:ar-sampler-dist}),
+the calculator outputs its lengths (Lemma~\ref{lem:ar-len}) and the processor its constraints
+(Lemma~\ref{lem:ar-lp}). Theorem~\ref{thm:ar-meets} concludes, the answer-reduced family being an
+answer-reduced sampler.
 \end{proof}

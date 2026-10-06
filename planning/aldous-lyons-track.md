@@ -38,10 +38,10 @@ game, is done: the functional viewpoint's completeness (`PcpHonest.lean`), the P
 (`Background/Tailored/AnswerReduction/Typed.lean`). P4d, its ZPC completeness, is done
 (`Background/Tailored/AnswerReduction/Complete.lean`, `hasPerfectZPC_ar`), and so is P4e, its
 soundness (`Background/Tailored/AnswerReduction/Sound*.lean`, `valStar_ar_sound`). P4h, the
-programs that compute the game, is in progress: the specification (`ArMeets`), the sampler, the
-parameter routine, the length calculator and most of the constraint programs are done; the proof
-check's linear equations, the processor's assembly and the running times remain. P4i, the
-parameters, can proceed against the parameter routine's interface (`ArRoutine`).
+programs that compute the game, is in progress: the output verifier (`ArRoutine.output`) meets
+the presented game and is complete and sound in the contract's form (`hasPerfectZPC_output`,
+`valStar_sound_output`); the running times of its programs remain. P4i, the parameters, can
+proceed against the parameter routine's interface (`ArRoutine`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -1069,8 +1069,8 @@ What the reading settled.
   (`Foundations/SAT/Decoupled6.lean`) for any decider, inhabited by `MIPRE.SAT.windowDescriber`
   (`TM/CookLevin/{Link6,Decoupled6,Decoupled6Prog}.lean`, blueprint
   `lem:ar-window-describer`).
-- **P4h — `PartialAnsRed` (in progress, 3.3k lines so far, blueprint `def:tailored-meets` to
-  `lem:ar-proof-guard`).** The sampler (O3's typed oracle sampler `prodDirect` beside a one-copy
+- **P4h — `PartialAnsRed` (in progress, 4.7k lines so far, blueprint `def:tailored-meets` to
+  `thm:ar-output`).** The sampler (O3's typed oracle sampler `prodDirect` beside a one-copy
   seeded sampler downsized along the Shoup basis, then detyped), the calculator by type, the
   processor running the four checks (two calls to the input sampler, one to the describer, `T_C`
   at `p`), their running times and `len_total`; the game they compute is P4c's
@@ -1094,12 +1094,20 @@ What the reading settled.
     (`ArLpField.lean`, `fieldConsF_eq`), field arithmetic on Shoup bits (`ArLpArith.lean`), the
     low-degree checks (`ArLpLd.lean`, `ldConsF_eq`), the consistency and indifference checks
     (`ArLpSlots.lean`, `consConsF_eq`, `indConsF_eq`), the circuit polynomial and the proof
-    check's readable guard (`ArLpProof.lean`, `circValF_eq`, `guardF_eq`).
+    check's readable guard (`ArLpProof.lean`, `circValF_eq`, `guardF_eq`), and its linear
+    equations (`ArLpProofEqs.lean`, `proofConsF_eq`);
+  - the processor's last stage (`ArLpCons.lean`, `lpFinal_eq`): the edge by a finite table, the
+    length guard, the four checks at the edge's pair of types;
+  - the processor (`ArLp.lean`): the parameter stage, four calls to the input sampler, then the
+    circuit function and the proof check of each question as stages on encodings, then the last
+    stage (`lpCore_runs`, `lpD_lpIs`). No program can be decoded from data, so the circuit
+    function, which reads the input's programs, runs on the encoding of its input assembled from
+    the context, and so does the proof check, which reads the circuit's gates;
+  - the output verifier (`ArRoutine.output`): it meets the presented game (`arMeets_output`), so
+    it is complete and sound (`hasPerfectZPC_output`, `valStar_sound_output`) under the honest
+    PCPs' hypotheses.
 
-  Remaining: the proof check's six linear equations; the dispatch by type, with the length guard
-  and the edge decoding; the staged `lpCore` (the parameter stage, four calls to the input
-  sampler, then a polynomial-time function), `LpIs` and `ArMeets` for the output; the running
-  times, `within` and `len_total`.
+  Remaining: the running times of the three programs, `within` and `len_total`.
 - **P4i — parameters and the contract (1.5–2.5k).** `Λ, Q, Δ, T, D, FE` from `(λ, μ, σ)` and `n`
   (II:10846–11074), the error chain to `AnswerReduction.delta`, the thresholds;
   `TailoredAnswerReduction` inhabited, `Closes #282`. Concretely: `prm` of `lstar` as a stage; an

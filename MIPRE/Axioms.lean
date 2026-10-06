@@ -262,7 +262,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.HonestBits
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
 public import MIPRE.Background.Tailored.AnswerReduction.Sound
 public import MIPRE.Background.Tailored.AnswerReduction.ArLen
-public import MIPRE.Background.Tailored.AnswerReduction.ArLpProof
+public import MIPRE.Background.Tailored.AnswerReduction.ArLp
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -4184,6 +4184,33 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.AnsRed.Typed.PrfIn, MIPRE.Tailored.AnsRed.Typed.formF,
   MIPRE.Tailored.AnsRed.Typed.formF_eq, MIPRE.Tailored.AnsRed.Typed.guardF,
   MIPRE.Tailored.AnsRed.Typed.guardF_eq
+
+-- blueprint `lem:ar-proof-eqs`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.zAt, MIPRE.Tailored.AnsRed.Typed.zAt_eq,
+  MIPRE.Tailored.AnsRed.Typed.asgLin, MIPRE.Tailored.AnsRed.Typed.sysLin,
+  MIPRE.Tailored.AnsRed.Typed.proofEqs_eq, MIPRE.Tailored.AnsRed.Typed.asgEqF,
+  MIPRE.Tailored.AnsRed.Typed.asgEqF_eq, MIPRE.Tailored.AnsRed.Typed.sysEqF,
+  MIPRE.Tailored.AnsRed.Typed.sysEqF_eq, MIPRE.Tailored.AnsRed.Typed.proofEqsF,
+  MIPRE.Tailored.AnsRed.Typed.proofEqsF_eq, MIPRE.Tailored.AnsRed.Typed.proofConsF,
+  MIPRE.Tailored.AnsRed.Typed.proofConsF_eq
+
+-- blueprint `lem:ar-lp-final`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.edgeF, MIPRE.Tailored.AnsRed.Typed.lenOkF,
+  MIPRE.Tailored.AnsRed.Typed.LpFin, MIPRE.Tailored.AnsRed.Typed.finBranchF,
+  MIPRE.Tailored.AnsRed.Typed.lpFinal, MIPRE.Tailored.AnsRed.Typed.edgeOf_eq_selectedEdge,
+  MIPRE.Tailored.AnsRed.Typed.LdFamily.sel_chi, MIPRE.Tailored.AnsRed.Typed.ArRoutine.circQ,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.prfInF, MIPRE.Tailored.AnsRed.Typed.ArRoutine.proof_lX,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.proof_lY, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpFinal_eq
+
+-- blueprint `lem:ar-lp`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.ArRoutine.argMgL_eq,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.marg_runs,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpCore_runs, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpD_lpIs
+
+-- blueprint `thm:ar-output`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.ArRoutine.arMeets_output,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.hasPerfectZPC_output,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.valStar_sound_output
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
