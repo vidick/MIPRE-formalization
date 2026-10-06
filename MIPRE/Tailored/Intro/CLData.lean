@@ -32,9 +32,13 @@ theorem for a `λ`-bounded `V`, `1 ≤ n` and `hs : V.sampler.dim (2^n) ≤ Q`:
 * `matrix k`: the matrix of `CLChecks.stageLinear (L w) k y` (`k < 7`, under the guard at `k`)
   as `matrixBits (LinearMap.toMatrix' _)`, rows `vectorBits (M i)`, the input format of
   `kernelGeneratorsProg` (`kernelGenerators`);
+* `guard k` and `inSource`: the prefix guard `decide (∃ x, ((L w).truncate k).eval x =
+  (L w).outputPrefix k y)` (`k ≤ 7`) and `decide (SourceCompiler.InSource dim y)`, exactly.
 
-The sampler program is specified only at attained prefixes, so the data at a stage `k` are
-correct under the prefix guard at `k`, which is itself computed exactly.
+The sampler program is specified only at attained prefixes (`CL.Sampler.runs_factor`,
+`runs_linear`), so the data of stage `k` are correct only under the prefix guard at `k`, which is
+itself computed exactly; at a register that fails it the processor emits `rejectConstraint`
+without reading them.
 -/
 
 noncomputable section
@@ -326,6 +330,47 @@ theorem kernelGenerators_correct (U : ClockedUniversalMachine) {lam n Q : ℕ} (
           (CLChecks.stageLinear (AuxiliaryDecision.padded V hs w) k y).toLinearMap)) := by
   rw [kernelGenerators, comp_apply, pair_apply, comp_apply, snd_apply, length_apply,
     CL.length_toBits, matrix_correct U V hV hn hs w hk y hg]
+
+/-! ## The prefix guard and source membership -/
+
+/-- The prefix guard at level `k`: the success flag of the kernel's scan. -/
+def guard (U : ClockedUniversalMachine) (k : ℕ) : PolyTimeFun Input Bool :=
+  fst.comp (scan U k)
+
+theorem guard_iff (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k ≤ 7) (y : Fin Q → CL.𝔽₂) :
+    guard U k (context V lam n Q w, CL.toBits y) = true ↔ Guard V hs w k y := by
+  have hq := AuxiliarySourceScan.queriesCorrectBelow U V hV hn hs w 0 0 k hk
+  constructor
+  · intro h
+    obtain ⟨x, -, hx⟩ := AuxiliaryScan.program_sound (factorFromContext U) (matrixFromContext U)
+      _ (AuxiliaryDecision.padded_supported V hs w) y k hq h
+    exact ⟨x, hx⟩
+  · exact AuxiliaryScan.program_complete (factorFromContext U) (matrixFromContext U) _
+      (AuxiliaryDecision.padded_supported V hs w) y k hq
+
+/-- **The prefix guard** at level `k ≤ 7`, exactly (`PrefixGuard.holds` at Hide `k`). -/
+theorem guard_correct (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k ≤ 7) (y : Fin Q → CL.𝔽₂) :
+    guard U k (context V lam n Q w, CL.toBits y) =
+      decide (∃ x, ((AuxiliaryDecision.padded V hs w).truncate k).eval x =
+        (AuxiliaryDecision.padded V hs w).outputPrefix k y) := by
+  rw [Bool.eq_iff_iff, decide_eq_true_iff]
+  exact guard_iff U V hV hn hs w hk y
+
+/-- Source membership of the register: its bits beyond the source dimension are zero. -/
+def inSource (U : ClockedUniversalMachine) : PolyTimeFun Input Bool :=
+  SourceCompiler.sourceCheck.comp (snd.pair ((dimension U).comp fst))
+
+/-- **Source membership** `SourceCompiler.InSource (V.sampler.dim (2^n)) y`, exactly. -/
+theorem inSource_correct (U : ClockedUniversalMachine) {lam n : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (Q : ℕ) (w : Bool) (y : BitStr) :
+    inSource U (context V lam n Q w, y) =
+      decide (SourceCompiler.InSource (V.sampler.dim (2 ^ n)) y) := by
+  rw [Bool.eq_iff_iff, decide_eq_true_iff, inSource, comp_apply, pair_apply, snd_apply,
+    comp_apply, fst_apply, context_dimension U V hV hn Q w, SourceCompiler.sourceCheck_iff]
 
 end MIPRE.Tailored.Intro.CLData
 
