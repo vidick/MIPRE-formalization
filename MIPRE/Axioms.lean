@@ -249,6 +249,7 @@ public import MIPRE.Tailored.ClassVerifier
 public import MIPRE.Tailored.AnsRed.Linear
 public import MIPRE.TM.CookLevin.Decoupled6Prog
 public import MIPRE.Tailored.AnsRed.IndicatorCost
+public import MIPRE.Tailored.AnsRed.PcpSound
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -3929,6 +3930,20 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.Tailored.AnsRed.lstarFinal_apply, MIPRE.Tailored.AnsRed.lstarProg_accepts,
   MIPRE.Tailored.AnsRed.lstar_accepts_iff, MIPRE.Tailored.AnsRed.lstarProg_halts,
   MIPRE.Tailored.AnsRed.lstar_acceptsWithin
+
+-- blueprint `lem:ar-pcp-schwartz-zippel`
+#guard_sorry_free MIPRE.Tailored.AnsRed.chkPolys, MIPRE.Tailored.AnsRed.passes_iff,
+  MIPRE.Tailored.AnsRed.degreeOf_chkPolys_le, MIPRE.Tailored.AnsRed.chkPolys_eq_zero,
+  MIPRE.Tailored.AnsRed.identities_of_chkPolys_eq_zero,
+  MIPRE.Tailored.AnsRed.identities_of_dense
+
+-- blueprint `lem:ar-pcp-sound`
+#guard_sorry_free MIPRE.Tailored.AnsRed.isAssignment_of_assignCheck,
+  MIPRE.Tailored.AnsRed.tableSat_of_identities, MIPRE.Tailored.AnsRed.formula6Sat_of_identities
+
+-- blueprint `thm:ar-pcp-accepts`
+#guard_sorry_free MIPRE.Tailored.AnsRed.accepts_of_identities,
+  MIPRE.Tailored.AnsRed.accepts_of_dense
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,

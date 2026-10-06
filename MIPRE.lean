@@ -1448,6 +1448,8 @@ public import MIPRE.Tailored.AnsRed.Indicator
 public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.AnsRed.IndicatorProg
 public import MIPRE.Tailored.AnsRed.Linear
+public import MIPRE.Tailored.AnsRed.Pcp
+public import MIPRE.Tailored.AnsRed.PcpSound
 public import MIPRE.Tailored.Canonical
 public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.Class
