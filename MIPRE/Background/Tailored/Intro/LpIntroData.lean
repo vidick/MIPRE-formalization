@@ -28,7 +28,8 @@ register `y` of `Q` bits, the data the readable condition `Typed.G` reads:
   run of the input's answer-length calculator (`InputRuns`);
 * `GP t`: the readable condition `Typed.G` itself, as a Boolean.
 
-Each has its correctness theorem at `envOf c λ n (clamp (T.progs, λ))`, for a `λ`-bounded tailored
+Each has its correctness theorem at `envOf c λ n (clamp (T.progs, λ))`, for a `λ`-bounded
+tailored
 input `T`, a `λ`-bounded normal form verifier `V` with `T`'s sampler program, and `1 ≤ n`.
 -/
 
@@ -114,7 +115,8 @@ def lenReadU : PolyTimeFun Data Unary :=
 theorem length_lenReadU (d : Data) : (lenReadU d).length = lenRead d := by
   simp [lenReadU, lenRead]
 
-theorem isEmpty_drop (u v : Unary) : (u.drop v.length).isEmpty = decide (u.length ≤ v.length) := by
+theorem isEmpty_drop (u v : Unary) :
+    (u.drop v.length).isEmpty = decide (u.length ≤ v.length) := by
   rw [Bool.eq_iff_iff, List.isEmpty_iff, List.drop_eq_nil_iff, decide_eq_true_iff]
 
 /-- The input's split at an auxiliary label, in unary: readable (`κ = false`) or linear. -/
@@ -186,7 +188,8 @@ theorem srcQP_envT (t : AuxType 7 × Bool) (y : BitStr)
     conv_lhs => rw [← ey]
     exact CLData.sourceEval_correct U V hV hn hs w _
   | _ =>
-    simp only [srcQP, reduceCtorEq, ↓reduceIte, comp_apply, pair_apply, snd_apply, cIn_envT T V hT hsamp,
+    simp only [srcQP, reduceCtorEq, ↓reduceIte, comp_apply, pair_apply, snd_apply,
+      cIn_envT T V hT hsamp,
       CLData.widths_context U V hV hn hs w y, sourceWidth, fst_apply, take_apply, length_unary,
       srcQuestion]
     rw [← AuxiliaryProgram.ofBits_take_first hs, ey,
@@ -266,7 +269,8 @@ include hT hV hn hsamp in
 /-- **The readable condition** `Typed.G` at a register of `Q` bits. -/
 theorem GP_envT (t : AuxType 7 × Bool) (y : BitStr)
     (hy : y.length = QQ c lam n) :
-    GP U t (envT c lam n T, y) = true ↔ Typed.G (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) T V hs t y := by
+    GP U t (envT c lam n T, y) = true ↔
+      Typed.G (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) T V hs t y := by
   rw [GP, andOf_apply, andOf_apply, Bool.and_eq_true, Bool.and_eq_true,
     fitsP_envT U T V hT hV hn hsamp hs t y hy, prefP_envT U T V hT hV hn hsamp hs t y hy,
     srcP_envT U T V hT hV hn hsamp t y]

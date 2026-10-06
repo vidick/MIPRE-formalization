@@ -157,7 +157,8 @@ def auxLenU (t : AuxType 7 × Bool) : PolyTimeFun DIn Unary :=
 
 /-- **The constraints at a pair of auxiliary labels**: `auxPair`. -/
 def auxPairP (t u : AuxType 7 × Bool) : PolyTimeFun DIn (List BitStr) :=
-  auxPairF.comp (((andOf (atReg (GP U t) ya) (atReg (GP U u) yb)).pair (const (decide (t = u)))).pair
+  auxPairF.comp (((andOf (atReg (GP U t) ya) (atReg (GP U u) yb)).pair
+      (const (decide (t = u)))).pair
     (((auxLenU t).pair (auxLenU u)).pair ((sameP U t).pair ((dirP U t u).pair
       ((dirP U u t).comp swapD)))))
 
@@ -183,7 +184,8 @@ include hT hV hn hsamp in
 theorem srcEqB_envT (t u : AuxType 7 × Bool) (aR bR : BitStr) (ha : QQ c lam n ≤ aR.length)
     (hb : QQ c lam n ≤ bR.length) :
     srcEqB U t u (envT c lam n T, aR, bR) =
-      decide (srcSplitR T V hs t (win aR 0 (QQ c lam n)) = srcSplitR T V hs u (win bR 0 (QQ c lam n)) ∧
+      decide (srcSplitR T V hs t (win aR 0 (QQ c lam n)) =
+          srcSplitR T V hs u (win bR 0 (QQ c lam n)) ∧
         srcSplitL T V hs t (win aR 0 (QQ c lam n)) = srcSplitL T V hs u (win bR 0 (QQ c lam n)) ∧
         win aR (QQ c lam n) (srcSplitR T V hs t (win aR 0 (QQ c lam n))) =
           win bR (QQ c lam n) (srcSplitR T V hs u (win bR 0 (QQ c lam n)))) := by
@@ -318,8 +320,10 @@ theorem hideNextP_spec (w : Bool) (k : ℕ) (hk : k + 1 < 7) (aR bR : BitStr)
     intro i hi hg
     conv_lhs => rw [← toBits_ofBits hyb]
     exact CLData.register_correct U V hV hn hs w hi _ hg
-  have hfac : CLData.factor U (k + 1) (CLData.context V lam n (QQ c lam n) w, win bR 0 (QQ c lam n)) =
-      maskOf ((LL V hs w).factorOfPrefix (k + 1) (CL.ofBits (QQ c lam n) (win bR 0 (QQ c lam n)))) := by
+  have hfac : CLData.factor U (k + 1)
+      (CLData.context V lam n (QQ c lam n) w, win bR 0 (QQ c lam n)) =
+      maskOf ((LL V hs w).factorOfPrefix (k + 1)
+        (CL.ofBits (QQ c lam n) (win bR 0 (QQ c lam n)))) := by
     conv_lhs => rw [← toBits_ofBits hyb]
     exact CLData.factor_correct U V hV hn hs w hk _ hgb
   have hgen : CLData.kernelGenerators U (k + 1)
@@ -420,7 +424,8 @@ theorem dirP_spec (t u : AuxType 7 × Bool) (aR bR : BitStr) (ha : QQ c lam n �
       simp only [dirP, dirAux]
       split_ifs with h
       · obtain ⟨rfl, hk⟩ := h
-        have hgb : CLData.Guard V hs w (k.val + 1) (CL.ofBits (QQ c lam n) (win bR 0 (QQ c lam n))) := by
+        have hgb : CLData.Guard V hs w (k.val + 1)
+            (CL.ofBits (QQ c lam n) (win bR 0 (QQ c lam n))) := by
           have := hGb.2.1; rw [hk]; exact this
         exact hideNextP_spec U T V hT hV hn hsamp hs w k.val (by omega) aR bR ha hb hGa.2.1 hgb
       · rfl
@@ -448,7 +453,8 @@ theorem auxPairP_spec (t u : AuxType 7 × Bool) (aR bR : BitStr)
   simp only [auxPairP, comp_apply, pair_apply, andOf_apply, atReg_apply, regOf_apply, dA_apply,
     dB_apply, envT_Q, length_unary, const_apply, auxPairF_apply, auxLenU_envT, swapD_apply]
   rw [auxPair]
-  by_cases hg : Typed.G (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) T V hs t (win aR 0 (QQ c lam n)) ∧
+  by_cases hg :
+      Typed.G (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) T V hs t (win aR 0 (QQ c lam n)) ∧
       Typed.G (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) T V hs u (win bR 0 (QQ c lam n))
   · have hb1 : (GP U t (envT c lam n T, win aR 0 (QQ c lam n)) &&
         GP U u (envT c lam n T, win bR 0 (QQ c lam n))) = true := by

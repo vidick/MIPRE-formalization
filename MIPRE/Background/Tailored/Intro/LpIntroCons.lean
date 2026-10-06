@@ -67,7 +67,8 @@ theorem length_lenU_false (c lam n : ℕ) (T : TailoredVerifier 7) (t : Label) :
   rw [length_lenU]; rfl
 
 theorem length_totLenU (c lam n : ℕ) (T : TailoredVerifier 7) (t : Label) :
-    (totLenU t (envT c lam n T)).length = Typed.len (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) t := by
+    (totLenU t (envT c lam n T)).length =
+      Typed.len (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) t := by
   rw [totLenU, catF_apply, List.length_append, length_lenU, length_lenU]
   simp only [Bool.false_eq_true, ↓reduceIte]
   have := Typed.lenR_le_len (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) t
@@ -190,7 +191,8 @@ theorem pauliHideP_spec (w : Bool) (aR bR : BitStr) :
   simp only [pauliHideP, comp_apply, pair_apply, ePar_apply, dE_apply, kAt_apply,
     ctxP_envT T V hT hsamp, zerosOf_apply, envT_par, eQ_apply, envT_Q, length_unary, hf, hg]
 
-theorem pauliLenR_Z (k m : ℕ) : PauliCons.pauliLenR k m (.pauli .Z) = pauliLen m k (.pauli .Z) := by
+theorem pauliLenR_Z (k m : ℕ) :
+    PauliCons.pauliLenR k m (.pauli .Z) = pauliLen m k (.pauli .Z) := by
   simp [PauliCons.pauliLenR, pauliRead]
 
 include hT hV hn hsamp in
@@ -251,7 +253,8 @@ theorem rawP_spec (u v : Label) (aR bR xs ys : BitStr)
     (hb : bR.length = Typed.lenR (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) v) :
     rawP U u v ((envT c lam n T, aR, bR), xs, ys) =
       Typed.consRaw (kk c lam n) (PauliSamplerParameters.fieldBits_pos c lam n)
-        (PauliSamplerParameters.fieldBits_odd he lam n) (jj c lam n) (CanonicalGame.divides c hc lam n)
+        (PauliSamplerParameters.fieldBits_odd he lam n) (jj c lam n)
+        (CanonicalGame.divides c hc lam n)
         ((2 ^ n) ^ lam) T V hs (regKerGens (QQ c lam n)) u v (xs.drop gd) (ys.drop gd) aR bR := by
   rcases u with p | t <;> rcases v with q | u
   · have h := PauliConsProg.pauliConsProg_eq (k := kk c lam n)
