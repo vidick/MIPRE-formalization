@@ -14,10 +14,13 @@ public import MIPRE.Background.Tailored.AnswerReduction.ArLen
 
 Slice P4h of `planning/aldous-lyons-track.md`: the last stage of the answer-reduced verifier's
 linear-constraints processor. From the parameters, the two questions' bits, the readable answers
-and the input sampler's questions at the two seeds, it decodes the edge the two graph views sit
+and the constraints of the two questions' proof checks, it decodes the edge the two graph views sit
 on by a finite table (`edgeF`), checks the readable lengths (`lenOkF`), and on the edge's pair of
-types runs the four checks' programs (`consBranchF`), as the typed data does
-(`Typed.cons`).
+types runs the four checks' programs (`finBranchF`), as the typed data does (`Typed.cons`):
+`lpFinal_eq`. The proof checks need the circuits of the two seeds, which the routine's circuit
+function computes from the input verifier's programs; the processor runs it, and the proof check,
+as earlier stages on encodings (`ArRoutine.prfInF`, `proof_lX`, `proof_lY`), so that no program
+has to be decoded from data.
 -/
 
 noncomputable section
@@ -128,20 +131,6 @@ def prfInF (o : PolyTimeFun LpIn Unary) (q aR qa qb : PolyTimeFun LpIn BitStr) :
     PolyTimeFun LpIn PrfIn :=
   lP.pair (o.pair (nF.pair ((ptsF q).pair (aR.pair (gatesF.comp (R.circQ qa qb))))))
 
-/-- **The checks at a pair of types**: the low-degree checks at one role, the consistency checks
-at one low-degree type, the indifference checks of each answer, and the proof check of each
-oracle point answer. -/
-def consBranchF (u v : Role × LIDT.CL.Ty) : PolyTimeFun LpIn (List BitStr) :=
-  let ld := if u.1 = v.1 then ldConsF.comp (ldInF u v) else const []
-  let cc := if u.2 = v.2 then consConsF.comp (ccInF u v) else const []
-  let i₁ := indConsF.comp (indInF (const (unary 0)) u lX)
-  let i₂ := indConsF.comp (indInF nAF v lY)
-  let p₁ := if u = (.oracle, .point) then
-    proofConsF.comp (R.prfInF (const (unary 0)) lX lA lAx lBx) else const []
-  let p₂ := if v = (.oracle, .point) then proofConsF.comp (R.prfInF nAF lY lB lAy lBy)
-    else const []
-  ap₂ append (ap₂ append (ap₂ append (ap₂ append (ap₂ append ld cc) i₁) i₂) p₁) p₂
-
 end ArRoutine
 
 /-! ## The edge and the lengths -/
@@ -165,11 +154,36 @@ def lenOkF : PolyTimeFun LpIn Bool :=
   andF.comp ((ap₂ ArrayProg.eqNat (DeciderProgram.lengthNat.comp lA) (uNat.comp (lenRq lX))).pair
     (ap₂ ArrayProg.eqNat (DeciderProgram.lengthNat.comp lB) (uNat.comp (lenRq lY))))
 
+/-! ## The last stage -/
+
+/-- **The input of the processor's last stage**: the parameters, the two questions' bits and
+readable answers, and the constraints of the two questions' proof checks, which earlier stages
+compute. -/
+abbrev LpFin : Type :=
+  ArParams × (BitStr × BitStr × BitStr × BitStr) × (List BitStr × List BitStr)
+
+/-- The typed view of the last stage's input, without input sampler questions or programs. -/
+def embF : PolyTimeFun LpFin LpIn :=
+  fst.pair ((fst.comp snd).pair ((const (([], [], [], []) : BitStr × BitStr × BitStr × BitStr)).pair
+    (const ((default : Prog × Prog × Prog), ((0, 0, 0) : ℕ × ℕ × ℕ), (0 : ℕ)))))
+
+/-- **The checks at a pair of types**: the low-degree checks at one role, the consistency checks
+at one low-degree type, the indifference checks of each answer, and the proof check of each
+oracle point answer, read off the input. -/
+def finBranchF (u v : Role × LIDT.CL.Ty) : PolyTimeFun LpFin (List BitStr) :=
+  let ld := if u.1 = v.1 then (ldConsF.comp (ldInF u v)).comp embF else const []
+  let cc := if u.2 = v.2 then (consConsF.comp (ccInF u v)).comp embF else const []
+  let i₁ := (indConsF.comp (indInF (const (unary 0)) u lX)).comp embF
+  let i₂ := (indConsF.comp (indInF nAF v lY)).comp embF
+  let p₁ := if u = (.oracle, .point) then fst.comp (snd.comp snd) else const []
+  let p₂ := if v = (.oracle, .point) then snd.comp (snd.comp snd) else const []
+  ap₂ append (ap₂ append (ap₂ append (ap₂ append (ap₂ append ld cc) i₁) i₂) p₁) p₂
+
 /-- **The processor's last stage**: on the edge of the two questions, if the readable answers
 have their lengths, the checks at the edge's pair of types; nothing otherwise. -/
-def ArRoutine.lpPost (R : ArRoutine) : PolyTimeFun LpIn (List BitStr) :=
-  ite lenOkF (choose edgeF (fun e => match e with
-    | some (u, v) => R.consBranchF u v
+def lpFinal : PolyTimeFun LpFin (List BitStr) :=
+  ite (lenOkF.comp embF) (choose (edgeF.comp embF) (fun e => match e with
+    | some (u, v) => finBranchF u v
     | none => const []) (const [])) (const [])
 
 /-! ## Correctness of the pieces -/
@@ -427,29 +441,31 @@ theorem proof_lY (qx qy : Coord (Role × LIDT.CL.Ty) (Fin (V.sampler.dim n +
     (R.circ_wf _) (R.circ_wires lam mu sigma n V _) (R.circ_inputs' lam mu sigma n V _)
     (R.circ_size' lam mu sigma n V _) rfl rfl
 
-theorem lpPost_eq (qx qy : Coord (Role × LIDT.CL.Ty) (Fin (V.sampler.dim n +
+/-- **The processor's last stage outputs the presented game's constraints**, at every pair of
+detyped questions, given the constraints of the two questions' proof checks. -/
+theorem lpFinal_eq (qx qy : Coord (Role × LIDT.CL.Ty) (Fin (V.sampler.dim n +
       D ((R.fam lam mu sigma).j n) * (R.fam lam mu sigma).t n)) → 𝔽₂) (aR bR : BitStr)
     {ℓ' : ℕ} (P : Bool → Role × LIDT.CL.Ty → CLFun (ZMod 2) (Fin (V.sampler.dim n +
       D ((R.fam lam mu sigma).j n) * (R.fam lam mu sigma).t n)) ℓ') (B : ℕ) :
-    R.lpPost (R.qIn lam mu sigma n V qx qy aR bR) =
+    lpFinal (R.params lam mu sigma n, (toBits (DeciderProgram.vectorEquiv _ qx),
+        toBits (DeciderProgram.vectorEquiv _ qy), aR, bR),
+        (proofConsF (R.prfInF (const (unary 0)) lX lA lAx lBx (R.qIn lam mu sigma n V qx qy aR bR)),
+          proofConsF (R.prfInF nAF lY lB lAy lBy (R.qIn lam mu sigma n V qx qy aR bR)))) =
       (arPresented (R.d lam mu sigma n) ((R.fam lam mu sigma).dvd n) ((R.fam lam mu sigma).sel n)
         (R.L lam mu sigma n) (R.hLM lam mu sigma n) V n (R.circ lam mu sigma n V)
         (R.circ_wires lam mu sigma n V) P B).cons qx qy aR bR := by
+  set w₀ : BitStr × BitStr × BitStr × BitStr := ([], [], [], [])
+  set c₀ : (Prog × Prog × Prog) × (ℕ × ℕ × ℕ) × ℕ := (default, (0, 0, 0), 0)
+  have hemb : embF (R.params lam mu sigma n, (toBits (DeciderProgram.vectorEquiv _ qx),
+      toBits (DeciderProgram.vectorEquiv _ qy), aR, bR),
+      (proofConsF (R.prfInF (const (unary 0)) lX lA lAx lBx (R.qIn lam mu sigma n V qx qy aR bR)),
+        proofConsF (R.prfInF nAF lY lB lAy lBy (R.qIn lam mu sigma n V qx qy aR bR)))) =
+      lpIn (R.params lam mu sigma n) qx qy aR bR w₀ c₀ := rfl
   unfold arPresented presented TypedData.detype
   dsimp only
   rw [edgeOf_eq_selectedEdge]
-  have he := edgeF_lpIn (R.params lam mu sigma n) qx qy aR bR
-    (toBits ((V.sampler.cl n .alice).eval (rolePart ((R.fam lam mu sigma).t n)
-        ((R.fam lam mu sigma).j n) (V.sampler.dim n) (pull Function.Embedding.inr qx))),
-      toBits ((V.sampler.cl n .bob).eval (rolePart ((R.fam lam mu sigma).t n)
-        ((R.fam lam mu sigma).j n) (V.sampler.dim n) (pull Function.Embedding.inr qx))),
-      toBits ((V.sampler.cl n .alice).eval (rolePart ((R.fam lam mu sigma).t n)
-        ((R.fam lam mu sigma).j n) (V.sampler.dim n) (pull Function.Embedding.inr qy))),
-      toBits ((V.sampler.cl n .bob).eval (rolePart ((R.fam lam mu sigma).t n)
-        ((R.fam lam mu sigma).j n) (V.sampler.dim n) (pull Function.Embedding.inr qy))))
-    (V.progs, (lam, mu, sigma), n)
-  simp only [lpPost, PolyTimeFun.ite_apply, choose_apply]
-  rw [he]
+  simp only [lpFinal, PolyTimeFun.ite_apply, choose_apply, comp_apply]
+  rw [hemb, edgeF_lpIn]
   cases hs : DeciderProgram.selectedEdge arGraph (pull Function.Embedding.inl qx)
       (pull Function.Embedding.inl qy) with
   | none => simp
@@ -460,7 +476,7 @@ theorem lpPost_eq (qx qy : Coord (Role × LIDT.CL.Ty) (Fin (V.sampler.dim n +
       rw [edgeOf_eq_selectedEdge, hs]; rfl
     obtain ⟨hu, hv, -, -⟩ := TypedData.typeOf_of_edgeOf arGraph hed
     dsimp only [Option.map_some]
-    have hok : lenOkF (R.qIn lam mu sigma n V qx qy aR bR) =
+    have hok : lenOkF (lpIn (R.params lam mu sigma n) qx qy aR bR w₀ c₀) =
         decide (aR.length = lenR _ _ _ (R.L lam mu sigma n) u ∧
           bR.length = lenR _ _ _ (R.L lam mu sigma n) v) :=
       lenOkF_lpIn _ qx qy aR bR _ _ rfl hu hv
@@ -470,19 +486,23 @@ theorem lpPost_eq (qx qy : Coord (Role × LIDT.CL.Ty) (Fin (V.sampler.dim n +
         (R.d lam mu sigma n) (R.L lam mu sigma n) u ∧ bR.length = lenR ((R.fam lam mu sigma).t n)
         ((R.fam lam mu sigma).j n) (R.d lam mu sigma n) (R.L lam mu sigma n) v
     · rw [ite_eq_left (by simpa using hl), ite_eq_left hl]
-      simp only [consBranchF, ap₂_apply, append_apply]
+      simp only [finBranchF, ap₂_apply, append_apply]
       congr 1; congr 1; congr 1; congr 1; congr 1
       · split_ifs with h
-        · exact (congrArg ldConsF.toFun (ldInF_lpIn rfl qx qy aR bR _ _ hu hv)).trans
+        · rw [comp_apply, hemb]
+          exact (congrArg ldConsF.toFun (ldInF_lpIn rfl qx qy aR bR _ _ hu hv)).trans
             (ldConsF_eq _ (LdFamily.sel_chi _ n) _ _ _ _ _ _ _)
         · rfl
       · split_ifs with h
-        · exact (congrArg consConsF.toFun (ccInF_lpIn rfl qx qy aR bR _ _ hu hv)).trans
+        · rw [comp_apply, hemb]
+          exact (congrArg consConsF.toFun (ccInF_lpIn rfl qx qy aR bR _ _ hu hv)).trans
             (consConsF_eq _ _ _ _ _ _ _ _)
         · rfl
-      · exact (congrArg indConsF.toFun (indInF_lX rfl qx qy aR bR _ _ hu hv)).trans
+      · rw [comp_apply, hemb]
+        exact (congrArg indConsF.toFun (indInF_lX rfl qx qy aR bR _ _ hu hv)).trans
           (indConsF_eq _ (LdFamily.sel_chi _ n) (R.hLM lam mu sigma n) _ _ _ _ _ _ _)
-      · exact (congrArg indConsF.toFun (indInF_lY rfl qx qy aR bR _ _ hu hv)).trans
+      · rw [comp_apply, hemb]
+        exact (congrArg indConsF.toFun (indInF_lY rfl qx qy aR bR _ _ hu hv)).trans
           (indConsF_eq _ (LdFamily.sel_chi _ n) (R.hLM lam mu sigma n) _ _ _ _ _ _ _)
       · split_ifs with h
         · subst h
