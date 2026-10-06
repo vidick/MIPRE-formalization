@@ -251,7 +251,7 @@ theorem lenOf_le (p : Bool × W.Questions (2 ^ n)) (κ : Bool) :
     V.lenOf (2 ^ n) (toBits p.2) κ ≤ (2 ^ n) ^ lam := by
   obtain ⟨α, hα⟩ : ∃ α, RW.P.M p α ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     have h1 := RW.P.normalized p
     simp only [h, Finset.sum_const_zero] at h1
     have : (0 : Matrix (Fin RW.d) (Fin RW.d) ℂ) ⟨0, RW.d_pos⟩ ⟨0, RW.d_pos⟩ =

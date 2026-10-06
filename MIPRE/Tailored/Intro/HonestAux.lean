@@ -99,7 +99,7 @@ end Shapes
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- `decide (a + b = 1)` is the exclusive or of the two bits. -/
-theorem decide_add_eq_one (a b : ZMod 2) :
+theorem decide_add_eq_one_xor (a b : ZMod 2) :
     decide (a + b = 1) = xor (decide (a = 1)) (decide (b = 1)) := by
   revert a b
   decide
@@ -151,7 +151,7 @@ theorem isXBit_readRegister {ℓ : ℕ} (P : CL.CLFun (ZMod 2) ι ℓ) (V : Fins
     have e : ((fun a : ReadLabel (ZMod 2) ι => decide (φ a.2 = 1)) ∘ joinRead S) =
         fun zb => xor (decide (φ (coordinateInsert S zb.1.2) = 1)) (decide (φ zb.2.2 = 1)) := by
       funext zb
-      simp only [Function.comp_apply, joinRead, map_add, decide_add_eq_one]
+      simp only [Function.comp_apply, joinRead, map_add, decide_add_eq_one_xor]
     rw [e]
     have e2 := bitObs_adaptive_xor (synOf wZ (coordinateLinear L))
       (synOf wX (CL.lperp (coordinateLinear L)))
@@ -213,7 +213,7 @@ theorem isXBit_hideRegister (k : ℕ) {ℓ : ℕ} (P : CL.CLFun (ZMod 2) ι ℓ)
           joinHide S) = fun zb => xor (decide (φ (coordinateInsert S zb.1.2) = 1))
             (decide (φ zb.2.2.1 + χ zb.2.2.2 = 1)) := by
         funext zb
-        simp only [Function.comp_apply, joinHide, map_add, decide_add_eq_one,
+        simp only [Function.comp_apply, joinHide, map_add, decide_add_eq_one_xor,
           Bool.xor_assoc]
         all_goals rfl
       rw [e]

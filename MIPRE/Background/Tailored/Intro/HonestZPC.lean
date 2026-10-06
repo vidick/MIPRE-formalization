@@ -6,7 +6,8 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.Tailored.Intro.HonestBits
 public import MIPRE.Background.Tailored.Intro.Pauli
-public import MIPRE.Tailored.OfTNFV
+public import MIPRE.Background.Tailored.Intro.Complete
+public import MIPRE.Tailored.OfTNFVT
 public import MIPRE.Tailored.Intro.Input
 
 @[expose] public section
@@ -24,17 +25,19 @@ signed-permutation answer bits, diagonal at the readable ones (the input of a ta
 verifier):
 
 * `raw_isXBit` (`hperm`): every bit of `enc` at every typed question is a signed permutation;
-* `raw_isZBit` (`hdiag`): the readable ones are diagonal;
-* `raw_support` (`hsupp`): a byte answer with a nonzero projection is well formed for the
-  layout (`OkLayout`), and its register satisfies the readable conditions — the input's answer
-  fits the cutoff, the prefix guard of Read and Hide, and Introspect's register is a source
-  output.
+* `raw_isDiag` (`hdiag`): the readable ones, below `Typed.lenR`, are diagonal;
+* `raw_support` (`hsupp`): a byte answer with a nonzero projection satisfies `Complete.okT`: it
+  is well formed for the layout (`Complete.OkL`), and its register satisfies the readable
+  conditions (`Typed.readOK`) — the input's answer fits the cutoff, the prefix guard of Read
+  and Hide, and Introspect's register is a source output.
 
 The input is any perfect PCC strategy `RW` of the normal form verifier `W` at index `2^n` whose
 answers at a question have the lengths the tailored verifier `V` assigns to it and whose answer
-bits are signed permutations, diagonal below the readable length. `input_ofTNFV` checks this for
-the strategy `lem:zpc-pcc` builds from a permutation strategy of `V` (`PermStrategy.toSync`,
-extended by zero to the answers of `V.ofTNFV U`).
+bits are signed permutations, diagonal below the readable length (`honest_zpc`). `inputSync`
+is such a strategy, built by `lem:zpc-pcc` from a permutation strategy of `V`
+(`PermStrategy.toSync`, extended by zero to the answers of `V.ofTNFV U`), and `inputSyncT` is
+the same strategy on the game of `V.ofTNFVT U`, which is that of `V.ofTNFV U`
+(`honest_zpc_ofTNFVT`).
 -/
 
 noncomputable section
@@ -60,11 +63,6 @@ variable {c : ℕ} (W : Verifier 7) {lam n : ℕ}
   (hZ : ∀ p j, j < V.lenOf (2 ^ n) (toBits p.2) false →
     IsZBit (RW.P.M p) fun a => a.1.getD j false)
 
-/-- The readable lengths of the layout at the instance's parameters. -/
-abbrev lenRI (c lam n : ℕ) : DecisionKernel.Label → ℕ :=
-  lenR (registerBits c lam n) ((2 ^ n) ^ lam)
-    (pauliLen (registerPower c lam n) (fieldBits c lam n)) pauliRead
-
 theorem pauliRead_eq_true {T : QLD.Ty} (h : pauliRead T = true) : T = .pauli .Z := by
   cases T <;> simp_all [pauliRead]
   rename_i W
@@ -77,11 +75,12 @@ theorem canonical_bits (q : Bool × CL.Detyping.Question DecisionKernel.Label
       (Fin (PauliSampler.dimension c lam n))) (i : ℕ) :
     IsXBit ((canonical W RW (one_le_c hc) he hs).P.M q)
       (fbit hc ((2 ^ n) ^ lam) (srcSplitR V W hs) q.2.1 i) ∧
-    (i < lenRI c lam n q.2.1 → IsZBit ((canonical W RW (one_le_c hc) he hs).P.M q)
-      (fbit hc ((2 ^ n) ^ lam) (srcSplitR V W hs) q.2.1 i)) := by
+    (i < Typed.lenR (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) q.2.1 →
+      IsZBit ((canonical W RW (one_le_c hc) he hs).P.M q)
+        (fbit hc ((2 ^ n) ^ lam) (srcSplitR V W hs) q.2.1 i)) := by
   rcases q with ⟨w', p | ⟨t, w⟩, z⟩
   · refine ⟨isXBit_canonical_pauli W RW _ he hs hc _ _ w' p z i, fun hi => ?_⟩
-    simp only [lenRI, lenR] at hi
+    simp only [Typed.lenR, PauliCons.pauliLenR] at hi
     split_ifs at hi with hp
     · rw [pauliRead_eq_true hp]
       exact isZBit_canonical_pauliZ W RW _ he hs hc _ _ w' z i
@@ -98,11 +97,6 @@ section Raw
 
 variable (U : ClockedUniversalMachine) (hW : W.IsBounded lam) (hn : 1 ≤ n)
 
-/-- The padded layout at the instance's parameters, at a typed question. -/
-abbrev encI (q : CL.Detyping.Question DecisionKernel.Label (Fin (PauliSampler.dimension c lam n)))
-    (a : Verifier.Answers (outerBound c lam n)) : BitStr :=
-  enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) q.1 a.1
-
 theorem bitObs_mergeAnswersByQuestion {X A B : Type*} [Fintype X] [Fintype A] [DecidableEq A]
     [Fintype B] [DecidableEq B] {G : SynchronousGame X A} (S : SyncStrategy G)
     (H : SynchronousGame X B) (f : X → A → B) (x : X) (g : B → Bool) :
@@ -116,27 +110,28 @@ strategy.** -/
 theorem raw_isXBit (q : Bool × CL.Detyping.Question DecisionKernel.Label
       (Fin (PauliSampler.dimension c lam n))) (i : ℕ) :
     IsSignedPerm (pvmObs ((raw W RW hc he U hW hn).P.M q) fun a =>
-      bitSign ((encI W (dim_le W c hc hW hn) V q.2 a).getD i false)) := by
+      bitSign ((Complete.encT V W c lam (dim_le W c hc hW hn) q.2 a).getD i false)) := by
   have h := (canonical_bits W RW he (dim_le W c hc hW hn) V hc hlen hX hZ q i).1
   have e := bitObs_mergeAnswersByQuestion
     (canonical W RW (one_le_c hc) he (dim_le W c hc hW hn))
     (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog) lam n).doubled
     (fun _ a => CanonicalComplete.encodeAnswer c hc lam n a) q
-    (fun b => (encI W (dim_le W c hc hW hn) V q.2 b).getD i false)
+    (fun b => (Complete.encT V W c lam (dim_le W c hc hW hn) q.2 b).getD i false)
   exact (congrArg IsSignedPerm e).mpr h
 
 include hlen hX hZ in
 /-- **`hdiag`: the readable bits are diagonal.** -/
 theorem raw_isDiag (q : Bool × CL.Detyping.Question DecisionKernel.Label
-      (Fin (PauliSampler.dimension c lam n))) (i : ℕ) (hi : i < lenRI c lam n q.2.1) :
+      (Fin (PauliSampler.dimension c lam n))) (i : ℕ)
+    (hi : i < Typed.lenR (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) q.2.1) :
     (pvmObs ((raw W RW hc he U hW hn).P.M q) fun a =>
-      bitSign ((encI W (dim_le W c hc hW hn) V q.2 a).getD i false)).IsDiag := by
+      bitSign ((Complete.encT V W c lam (dim_le W c hc hW hn) q.2 a).getD i false)).IsDiag := by
   have h := ((canonical_bits W RW he (dim_le W c hc hW hn) V hc hlen hX hZ q i).2 hi).2
   have e := bitObs_mergeAnswersByQuestion
     (canonical W RW (one_le_c hc) he (dim_le W c hc hW hn))
     (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog) lam n).doubled
     (fun _ a => CanonicalComplete.encodeAnswer c hc lam n a) q
-    (fun b => (encI W (dim_le W c hc hW hn) V q.2 b).getD i false)
+    (fun b => (Complete.encT V W c lam (dim_le W c hc hW hn) q.2 b).getD i false)
   exact (congrArg Matrix.IsDiag e).mpr h
 
 end Raw
@@ -144,31 +139,6 @@ end Raw
 /-! ## The support -/
 
 section Support
-
-/-- The readable condition that the input's answer fits the cutoff, at an auxiliary register
-(the layout's `srcFits`). -/
-def fitsI (t : AuxType 7 × Bool) (y : BitStr) : Prop :=
-  match t.1 with
-  | .hide _ => True
-  | _ => srcSplitR V W hs t y + srcSplitL V W hs t y ≤ (2 ^ n) ^ lam
-
-/-- The prefix condition of the kernel's prefix scan at the register of a Read or Hide answer. -/
-def prefixI : AuxType 7 × Bool → BitStr → Prop
-  | (.hide i, w), y => ∃ x, ((AuxiliaryDecision.padded W hs w).truncate i.val).eval x =
-      (AuxiliaryDecision.padded W hs w).outputPrefix i.val (ofBits (registerBits c lam n) y)
-  | (.read, w), y => ∃ x, ((AuxiliaryDecision.padded W hs w).truncate (7 - 1)).eval x =
-      (AuxiliaryDecision.padded W hs w).outputPrefix (7 - 1) (ofBits (registerBits c lam n) y)
-  | _, _ => True
-
-/-- **The readable conditions at a label**, on the register of an encoded answer (its first
-`Q` bits): at an auxiliary label, the input's answer fits, the prefix condition, and an
-Introspect register is a source output. -/
-def readOKI : DecisionKernel.Label → BitStr → Prop
-  | .inl _, _ => True
-  | .inr t, a => fitsI W hs V t (a.take (registerBits c lam n)) ∧
-      prefixI W hs t (a.take (registerBits c lam n)) ∧
-      (t.1 = .introspect →
-        SourceCompiler.InSource (W.sampler.dim (2 ^ n)) (a.take (registerBits c lam n)))
 
 theorem mergeAnswersByQuestion_ne_zero {X A B : Type*} [Fintype X] [Fintype A] [DecidableEq A]
     [Fintype B] [DecidableEq B] {G : SynchronousGame X A} (S : SyncStrategy G)
@@ -289,12 +259,6 @@ end AuxSupport
 
 section CanonicalSupport
 
-/-- The well-formedness of the layout at the instance's parameters. -/
-abbrev OkI (u : DecisionKernel.Label) (bs : BitStr) : Prop :=
-  OkLayout (registerBits c lam n) ((2 ^ n) ^ lam)
-    (pauliLen (registerPower c lam n) (fieldBits c lam n)) (srcSplitR V W hs)
-    (srcSplitL V W hs) u bs
-
 theorem srcSplitL_eq (t : AuxType 7 × Bool) (ht : t.1 ≠ .sample)
     (y : Fin (registerBits c lam n) → 𝔽₂) :
     srcSplitL V W hs t (toBits y) =
@@ -310,14 +274,16 @@ theorem srcSplitL_sample (w : Bool) (y : Fin (registerBits c lam n) → 𝔽₂)
 
 theorem srcSplitR_symm (t : AuxType 7 × Bool) (ht : t.1 ≠ .sample)
     (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
-    srcSplitR V W hs t (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
+    srcSplitR (Q := Typed.Q (fieldBits c lam n) (selectorBits c lam n)) V W hs t
+      (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
       V.lenOf (2 ^ n) (toBits (pull (AuxiliaryProgram.firstEmbedding hs)
         ((reindexEquiv (numbering c lam n)).symm y))) false :=
   srcSplitR_eq W hs V t ht _
 
 theorem srcSplitL_symm (t : AuxType 7 × Bool) (ht : t.1 ≠ .sample)
     (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
-    srcSplitL V W hs t (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
+    srcSplitL (Q := Typed.Q (fieldBits c lam n) (selectorBits c lam n)) V W hs t
+      (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
       V.lenOf (2 ^ n) (toBits (pull (AuxiliaryProgram.firstEmbedding hs)
         ((reindexEquiv (numbering c lam n)).symm y))) true :=
   srcSplitL_eq W hs V t ht _
@@ -330,17 +296,22 @@ theorem encodeAnswer_pair (y : BinaryComplete.Seed (registerPower c lam n) (fiel
 
 theorem take_enc_pair {t : AuxType 7 × Bool} (ht : t.1 = .introspect ∨ t.1 = .sample)
     {y α : BitStr} (hy : y.length = registerBits c lam n) :
-    (enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) (P := QLD.Ty) (.inr t)
-      (pairBits y α)).take (registerBits c lam n) = y := by
-  rw [enc_pair ht hy, List.append_assoc, List.take_left' hy]
+    win (enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) (P := QLD.Ty) (.inr t)
+      (pairBits y α)) 0 (Typed.Q (fieldBits c lam n) (selectorBits c lam n)) = y := by
+  have hy' : y.length = Typed.Q (fieldBits c lam n) (selectorBits c lam n) := hy
+  rw [enc_pair ht hy, List.append_assoc, win, List.drop_zero, hy'.symm, List.take_left]
 
 include hlen in
 /-- **The support at an Introspect label.** -/
 theorem support_introspect (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂)
     (a : CanonicalComplete.Answer c lam n)
     (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.introspect, w), z)) a ≠ 0) :
-    OkI W hs V (.inr (.introspect, w)) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
-      readOKI W hs V (.inr (.introspect, w)) (enc (P := QLD.Ty) (registerBits c lam n)
+    Complete.OkL (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs
+        (.inr (.introspect, w))
+        (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      Typed.readOK (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs
+        (.inr (.introspect, w))
+        (enc (P := QLD.Ty) (registerBits c lam n)
         ((2 ^ n) ^ lam)
         (srcSplitR V W hs) (.inr (.introspect, w))
         (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
@@ -364,14 +335,16 @@ theorem support_introspect (w' w : Bool) (z : Fin (PauliSampler.dimension c lam 
   dsimp only at hl hR' hL'
   rw [encodeAnswer_pair hc]
   refine ⟨⟨_, α.1, rfl, length_toBits_symm _, ?_, ?_, ?_⟩, ?_⟩
-  · omega
-  · omega
-  · omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
   · have ht := take_enc_pair W hs V (Or.inl rfl) (length_toBits_symm y') (α := α.1)
       (t := (.introspect, w))
     refine ⟨?_, trivial, fun _ => ?_⟩
-    · show srcSplitR V W hs _ _ + srcSplitL V W hs _ _ ≤ _
+    · show Typed.sR (fieldBits c lam n) (selectorBits c lam n) V W hs _ _ +
+          Typed.sL (fieldBits c lam n) (selectorBits c lam n) V W hs _ _ ≤ _
       rw [ht]
+      dsimp only [Typed.sR, Typed.sL]
       omega
     · rw [ht]
       exact AuxiliaryDecision.sourceOutput_of_attained W hs w _
@@ -379,7 +352,8 @@ theorem support_introspect (w' w : Bool) (z : Fin (PauliSampler.dimension c lam 
 
 theorem srcSplitR_sample_symm (w : Bool)
     (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
-    srcSplitR V W hs (.sample, w) (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
+    srcSplitR (Q := Typed.Q (fieldBits c lam n) (selectorBits c lam n)) V W hs (.sample, w)
+      (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
       V.lenOf (2 ^ n) (toBits (pull (AuxiliaryProgram.firstEmbedding hs)
         ((AuxiliaryDecision.padded W hs w).eval ((reindexEquiv (numbering c lam n)).symm y))))
         false :=
@@ -387,7 +361,8 @@ theorem srcSplitR_sample_symm (w : Bool)
 
 theorem srcSplitL_sample_symm (w : Bool)
     (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
-    srcSplitL V W hs (.sample, w) (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
+    srcSplitL (Q := Typed.Q (fieldBits c lam n) (selectorBits c lam n)) V W hs (.sample, w)
+      (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
       V.lenOf (2 ^ n) (toBits (pull (AuxiliaryProgram.firstEmbedding hs)
         ((AuxiliaryDecision.padded W hs w).eval ((reindexEquiv (numbering c lam n)).symm y))))
         true :=
@@ -398,8 +373,12 @@ include hlen in
 theorem support_sample (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂)
     (a : CanonicalComplete.Answer c lam n)
     (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.sample, w), z)) a ≠ 0) :
-    OkI W hs V (.inr (.sample, w)) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
-      readOKI W hs V (.inr (.sample, w)) (enc (P := QLD.Ty) (registerBits c lam n)
+    Complete.OkL (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs
+        (.inr (.sample, w))
+        (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      Typed.readOK (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs
+        (.inr (.sample, w))
+        (enc (P := QLD.Ty) (registerBits c lam n)
         ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inr (.sample, w))
         (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
   have h1 := canonical_aux_ne_zero W RW he hs (one_le_c hc) w' (.sample, w) z a ha
@@ -427,32 +406,39 @@ theorem support_sample (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) �
   dsimp only at hl hR' hL'
   rw [encodeAnswer_pair hc]
   refine ⟨⟨_, α.1, rfl, length_toBits_symm _, ?_, ?_, ?_⟩, ?_⟩
-  · omega
-  · omega
-  · omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
   · have ht := take_enc_pair W hs V (Or.inr rfl) (length_toBits_symm y') (α := α.1)
       (t := (.sample, w))
     refine ⟨?_, trivial, fun h => absurd h (by simp)⟩
-    show srcSplitR V W hs _ _ + srcSplitL V W hs _ _ ≤ _
+    show Typed.sR (fieldBits c lam n) (selectorBits c lam n) V W hs _ _ +
+        Typed.sL (fieldBits c lam n) (selectorBits c lam n) V W hs _ _ ≤ _
     rw [ht]
+    dsimp only [Typed.sR, Typed.sL]
     omega
 
 theorem take_enc_read (w : Bool) {y yp α : BitStr} (hy : y.length = registerBits c lam n)
     (hyp : yp.length = registerBits c lam n) :
-    (enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) (P := QLD.Ty)
-      (.inr (.read, w)) (tripleBits y yp α)).take (registerBits c lam n) = y := by
+    win (enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) (P := QLD.Ty)
+      (.inr (.read, w)) (tripleBits y yp α)) 0
+        (Typed.Q (fieldBits c lam n) (selectorBits c lam n)) = y := by
+  have hy' : y.length = Typed.Q (fieldBits c lam n) (selectorBits c lam n) := hy
   simp only [enc, tripleParts_tripleBits _ y yp α hy hyp]
-  rw [List.append_assoc, List.take_left' hy]
+  rw [List.append_assoc, win, List.drop_zero, hy'.symm, List.take_left]
 
 theorem take_enc_hide (k : Fin 7) (w : Bool) {y yp x : BitStr}
     (hy : y.length = registerBits c lam n) (hyp : yp.length = registerBits c lam n) :
-    (enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) (P := QLD.Ty)
-      (.inr (.hide k, w)) (tripleBits y yp x)).take (registerBits c lam n) = y := by
+    win (enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) (P := QLD.Ty)
+      (.inr (.hide k, w)) (tripleBits y yp x)) 0
+        (Typed.Q (fieldBits c lam n) (selectorBits c lam n)) = y := by
+  have hy' : y.length = Typed.Q (fieldBits c lam n) (selectorBits c lam n) := hy
   simp only [enc, tripleParts_tripleBits _ y yp x hy hyp]
-  rw [List.take_left' hy]
+  rw [win, List.drop_zero, hy'.symm, List.take_left]
 
 theorem ofBits_toBits_symm (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
-    ofBits (registerBits c lam n) (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
+    ofBits (Typed.Q (fieldBits c lam n) (selectorBits c lam n))
+      (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
       (reindexEquiv (numbering c lam n)).symm y :=
   ofBits_toBits _
 
@@ -461,8 +447,11 @@ include hlen in
 theorem support_read (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂)
     (a : CanonicalComplete.Answer c lam n)
     (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.read, w), z)) a ≠ 0) :
-    OkI W hs V (.inr (.read, w)) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
-      readOKI W hs V (.inr (.read, w)) (enc (P := QLD.Ty) (registerBits c lam n)
+    Complete.OkL (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs (.inr (.read, w))
+        (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      Typed.readOK (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs
+        (.inr (.read, w))
+        (enc (P := QLD.Ty) (registerBits c lam n)
         ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inr (.read, w))
         (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
   have hpre := canonical_prefixGuard W RW (one_le_c hc) he hs _ a ha
@@ -487,16 +476,18 @@ theorem support_read (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) →
   dsimp only at hl hR' hL'
   rw [encodeAnswer_read hc]
   refine ⟨⟨_, _, α.1, rfl, length_toBits_symm _, length_toBits_symm _, ?_, ?_, ?_⟩, ?_⟩
-  · omega
-  · omega
-  · omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
+  · dsimp only [Typed.sR, Typed.sL]; omega
   · have ht := take_enc_read W hs V w (length_toBits_symm y') (length_toBits_symm yp')
       (α := α.1)
     refine ⟨?_, ?_, fun h => absurd h (by simp)⟩
-    · show srcSplitR V W hs _ _ + srcSplitL V W hs _ _ ≤ _
+    · show Typed.sR (fieldBits c lam n) (selectorBits c lam n) V W hs _ _ +
+          Typed.sL (fieldBits c lam n) (selectorBits c lam n) V W hs _ _ ≤ _
       rw [ht]
+      dsimp only [Typed.sR, Typed.sL]
       omega
-    · show prefixI W hs (.read, w) _
+    · show Typed.prefixOK (fieldBits c lam n) (selectorBits c lam n) W hs (.read, w) _
       rw [ht]
       show ∃ x, _ = _
       rw [ofBits_toBits_symm]
@@ -506,8 +497,12 @@ theorem support_read (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) →
 theorem support_hide (w' : Bool) (k : Fin 7) (w : Bool)
     (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂) (a : CanonicalComplete.Answer c lam n)
     (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.hide k, w), z)) a ≠ 0) :
-    OkI W hs V (.inr (.hide k, w)) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
-      readOKI W hs V (.inr (.hide k, w)) (enc (P := QLD.Ty) (registerBits c lam n)
+    Complete.OkL (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs
+        (.inr (.hide k, w))
+        (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      Typed.readOK (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs
+        (.inr (.hide k, w))
+        (enc (P := QLD.Ty) (registerBits c lam n)
         ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inr (.hide k, w))
         (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
   have hpre := canonical_prefixGuard W RW (one_le_c hc) he hs _ a ha
@@ -524,7 +519,7 @@ theorem support_hide (w' : Bool) (k : Fin 7) (w : Bool)
   have ht := take_enc_hide W hs V k w (length_toBits_symm y') (length_toBits_symm yp')
     (x := toBits ((reindexEquiv (numbering c lam n)).symm x'))
   refine ⟨trivial, ?_, fun h => absurd h (by simp)⟩
-  show prefixI W hs (.hide k, w) _
+  show Typed.prefixOK (fieldBits c lam n) (selectorBits c lam n) W hs (.hide k, w) _
   rw [ht]
   show ∃ x, _ = _
   rw [ofBits_toBits_symm]
@@ -534,8 +529,10 @@ theorem support_hide (w' : Bool) (k : Fin 7) (w : Bool)
 theorem support_pauli (w' : Bool) (T : QLD.Ty) (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂)
     (a : CanonicalComplete.Answer c lam n)
     (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inl T, z)) a ≠ 0) :
-    OkI W hs V (.inl T) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
-      readOKI W hs V (.inl T) (enc (P := QLD.Ty) (registerBits c lam n)
+    Complete.OkL (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs (.inl T)
+        (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      Typed.readOK (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs (.inl T)
+        (enc (P := QLD.Ty) (registerBits c lam n)
         ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inl T)
         (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
   obtain ⟨x, rfl⟩ := canonical_pauli_shape W RW he hs (one_le_c hc) w' T z a ha
@@ -550,8 +547,10 @@ include hlen in
 theorem canonical_support (q : Bool × CL.Detyping.Question DecisionKernel.Label
       (Fin (PauliSampler.dimension c lam n))) (a : CanonicalComplete.Answer c lam n)
     (ha : (canonical W RW (one_le_c hc) he hs).P.M q a ≠ 0) :
-    OkI W hs V q.2.1 (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
-      readOKI W hs V q.2.1 (enc (P := QLD.Ty) (registerBits c lam n) ((2 ^ n) ^ lam)
+    Complete.OkL (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs q.2.1
+        (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      Typed.readOK (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) V W hs q.2.1
+        (enc (P := QLD.Ty) (registerBits c lam n) ((2 ^ n) ^ lam)
         (srcSplitR V W hs) q.2.1 (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
   rcases q with ⟨w', p | ⟨t, w⟩, z⟩
   · exact support_pauli W RW he hs V hc w' p z a ha
@@ -573,8 +572,7 @@ whose registers satisfy the readable conditions.** -/
 theorem raw_support (q : Bool × CL.Detyping.Question DecisionKernel.Label
       (Fin (PauliSampler.dimension c lam n))) (a : Verifier.Answers (outerBound c lam n))
     (ha : (raw W RW hc he U hW hn).P.M q a ≠ 0) :
-    OkI W (dim_le W c hc hW hn) V q.2.1 a.1 ∧
-      readOKI W (dim_le W c hc hW hn) V q.2.1 (encI W (dim_le W c hc hW hn) V q.2 a) := by
+    Complete.okT V W c lam (dim_le W c hc hW hn) q.2 a := by
   obtain ⟨a', rfl, ha'⟩ := mergeAnswersByQuestion_ne_zero
     (canonical W RW (one_le_c hc) he (dim_le W c hc hW hn))
     (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog) lam n).doubled
@@ -687,13 +685,13 @@ theorem honest_zpc (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : ClockedUniversalM
     ∃ R : SyncStrategy (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog)
         lam n).doubled,
       R.IsPCC ∧ R.value = 1 ∧
-      (∀ q a, ¬(OkI W (dim_le W c hc hW hn) V q.2.1 a.1 ∧
-          readOKI W (dim_le W c hc hW hn) V q.2.1 (encI W (dim_le W c hc hW hn) V q.2 a)) →
-        R.P.M q a = 0) ∧
+      (∀ q a, ¬Complete.okT V W c lam (dim_le W c hc hW hn) q.2 a → R.P.M q a = 0) ∧
       (∀ q (i : ℕ), IsSignedPerm (pvmObs (R.P.M q) fun a =>
-        bitSign ((encI W (dim_le W c hc hW hn) V q.2 a).getD i false))) ∧
-      (∀ q (i : ℕ), i < lenRI c lam n q.2.1 → (pvmObs (R.P.M q) fun a =>
-        bitSign ((encI W (dim_le W c hc hW hn) V q.2 a).getD i false)).IsDiag) :=
+        bitSign ((Complete.encT V W c lam (dim_le W c hc hW hn) q.2 a).getD i false))) ∧
+      (∀ q (i : ℕ),
+        i < Typed.lenR (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) q.2.1 →
+        (pvmObs (R.P.M q) fun a =>
+          bitSign ((Complete.encT V W c lam (dim_le W c hc hW hn) q.2 a).getD i false)).IsDiag) :=
   ⟨raw W RW hc he U hW hn, raw_isPCC W RW hc he U hW hn hRW,
     raw_value W RW hc he U hW hn hRW hv,
     fun q a h => by
@@ -702,30 +700,52 @@ theorem honest_zpc (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : ClockedUniversalM
     fun q i => raw_isXBit W RW he V hc hlen hX hZ U hW hn q i,
     fun q i hi => raw_isDiag W RW he V hc hlen hX hZ U hW hn q i hi⟩
 
-/-- **The instance**: the input `V.ofTNFV U'` of a tailored verifier `V` with a perfect ZPC
-strategy at index `2^n`, through `lem:zpc-pcc`. -/
-theorem honest_zpc_ofTNFV (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
-    (V : TailoredVerifier 7) (U' : UniversalMachine) (lam n : ℕ)
-    (hW : (V.ofTNFV U').IsBounded lam) (hn : 1 ≤ n)
-    (hT : (V.tgame (2 ^ n)).maxLen ≤ (2 ^ n) ^ lam) (hV : V.HasPerfectZPC (2 ^ n)) :
+/-- **The input's strategy on the game of `V.ofTNFVT U0`**, the same game as that of
+`V.ofTNFV U0` (`ofTNFVT_game`). -/
+noncomputable def inputSyncT (V : TailoredVerifier 7) (U0 : UniversalMachine) {n T : ℕ}
+    (hT : (V.tgame (2 ^ n)).maxLen ≤ T) (SV : PermStrategy (V.tgame (2 ^ n)).doubled) :
+    SyncStrategy ((V.ofTNFVT U0).game (2 ^ n) T).doubled :=
+  (inputSync V U0 hT SV).copy _
+
+theorem inputSyncT_isPCC (V : TailoredVerifier 7) (U0 : UniversalMachine) {n T : ℕ}
+    (hT : (V.tgame (2 ^ n)).maxLen ≤ T) (SV : PermStrategy (V.tgame (2 ^ n)).doubled) :
+    (inputSyncT V U0 hT SV).IsPCC :=
+  SyncStrategy.isPCC_copy (inputSync_isPCC V U0 hT SV) _ fun x y => by
+    rw [TailoredVerifier.ofTNFVT_game]; rfl
+
+theorem inputSyncT_value (V : TailoredVerifier 7) (U0 : UniversalMachine) {n T : ℕ}
+    (hT : (V.tgame (2 ^ n)).maxLen ≤ T) (SV : PermStrategy (V.tgame (2 ^ n)).doubled)
+    (h : SV.value = 1) : (inputSyncT V U0 hT SV).value = 1 :=
+  ((inputSync V U0 hT SV).value_copy _ (fun x y => by rw [TailoredVerifier.ofTNFVT_game]; rfl)
+    (fun x y a b => by rw [TailoredVerifier.ofTNFVT_game]; rfl)).trans
+    (inputSync_value V U0 hT SV h)
+
+/-- **ZPC completeness of the tailored question reduction, the instance** (P3c): the input
+`T.ofTNFVT U0` of a tailored verifier `T` with a perfect ZPC strategy at index `2^n` whose
+answers fit the cutoff `(2^n)^lam`. The honest strategy of the reference verifier's typed game
+meets the hypotheses `hsupp`, `hperm`, `hdiag` of `Complete.hasPerfectZPC_tpresented`. -/
+theorem honest_zpc_ofTNFVT (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
+    (T : TailoredVerifier 7) (U0 : UniversalMachine) (lam n : ℕ)
+    (hW : (T.ofTNFVT U0).IsBounded lam) (hn : 1 ≤ n)
+    (hT : (T.tgame (2 ^ n)).maxLen ≤ (2 ^ n) ^ lam) (hV : T.HasPerfectZPC (2 ^ n)) :
     ∃ R : SyncStrategy (rawGame c (one_le_c hc) he U
-        ((V.ofTNFV U').sampler.prog, (V.ofTNFV U').decider.prog) lam n).doubled,
+        ((T.ofTNFVT U0).sampler.prog, (T.ofTNFVT U0).decider.prog) lam n).doubled,
       R.IsPCC ∧ R.value = 1 ∧
-      (∀ q a, ¬(OkI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2.1 a.1 ∧
-          readOKI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2.1
-            (encI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2 a)) →
+      (∀ q a, ¬Complete.okT T (T.ofTNFVT U0) c lam (dim_le (T.ofTNFVT U0) c hc hW hn) q.2 a →
         R.P.M q a = 0) ∧
       (∀ q (i : ℕ), IsSignedPerm (pvmObs (R.P.M q) fun a =>
-        bitSign ((encI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2 a).getD i
-          false))) ∧
-      (∀ q (i : ℕ), i < lenRI c lam n q.2.1 → (pvmObs (R.P.M q) fun a =>
-        bitSign ((encI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2 a).getD i
-          false)).IsDiag) := by
+        bitSign ((Complete.encT T (T.ofTNFVT U0) c lam (dim_le (T.ofTNFVT U0) c hc hW hn) q.2
+          a).getD i false))) ∧
+      (∀ q (i : ℕ),
+        i < Typed.lenR (fieldBits c lam n) (selectorBits c lam n) ((2 ^ n) ^ lam) q.2.1 →
+        (pvmObs (R.P.M q) fun a =>
+          bitSign ((Complete.encT T (T.ofTNFVT U0) c lam (dim_le (T.ofTNFVT U0) c hc hW hn) q.2
+            a).getD i false)).IsDiag) := by
   obtain ⟨SV, hSV⟩ := hV
-  exact honest_zpc c hc he U (V.ofTNFV U') lam n hW hn (inputSync V U' hT SV)
-    (inputSync_isPCC V U' hT SV) (inputSync_value V U' hT SV hSV) V
-    (inputSync_len V U' hT SV) (fun p j => (inputSync_bit V U' hT SV p j).1)
-    (fun p j => (inputSync_bit V U' hT SV p j).2)
+  exact honest_zpc c hc he U (T.ofTNFVT U0) lam n hW hn (inputSyncT T U0 hT SV)
+    (inputSyncT_isPCC T U0 hT SV) (inputSyncT_value T U0 hT SV hSV) T
+    (inputSync_len T U0 hT SV) (fun p j => (inputSync_bit T U0 hT SV p j).1)
+    (fun p j => (inputSync_bit T U0 hT SV p j).2)
 
 end MIPRE.Tailored.Intro.HonestChain
 

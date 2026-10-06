@@ -685,6 +685,7 @@ public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Background.Tailored.Intro.Budget
 public import MIPRE.Background.Tailored.Intro.Complete
+public import MIPRE.Background.Tailored.Intro.CompleteContract
 public import MIPRE.Background.Tailored.Intro.HonestBits
 public import MIPRE.Background.Tailored.Intro.HonestChain
 public import MIPRE.Background.Tailored.Intro.HonestPauli
