@@ -687,6 +687,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.ArFamily
 public import MIPRE.Background.Tailored.AnswerReduction.ArLen
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpField
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpLd
+public import MIPRE.Background.Tailored.AnswerReduction.ArLpSlots
 public import MIPRE.Background.Tailored.AnswerReduction.ArRoutine
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
 public import MIPRE.Background.Tailored.AnswerReduction.Honest
@@ -1477,6 +1478,7 @@ public import MIPRE.Tailored.AnsRed.Pcp
 public import MIPRE.Tailored.AnsRed.PcpComplete
 public import MIPRE.Tailored.AnsRed.PcpHonest
 public import MIPRE.Tailored.AnsRed.PcpSound
+public import MIPRE.Tailored.AnsRed.SlotIndex
 public import MIPRE.Tailored.AnsRed.Slots
 public import MIPRE.Tailored.Canonical
 public import MIPRE.Tailored.CanonicalCost

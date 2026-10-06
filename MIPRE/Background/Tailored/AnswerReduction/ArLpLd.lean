@@ -57,6 +57,9 @@ abbrev mulU : PolyTimeFun (Unary × Unary) Unary := LowDegree.DegreeArithmetic.m
   rw [append_apply]
   exact (List.replicate_add a b ()).symm
 
+theorem unary_append_unary (a b : ℕ) : unary a ++ unary b = unary (a + b) :=
+  (List.replicate_add a b ()).symm
+
 /-! ## Equal codewords -/
 
 /-- The pairs `(c, e)` with `c < k` and `e < n`, in unary, `c` major. -/
