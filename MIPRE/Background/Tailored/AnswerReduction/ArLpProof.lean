@@ -19,6 +19,13 @@ from the parameters, the point, the oracle's readable answer and the seed's circ
 
 * `circValF`: the circuit polynomial at the point, by the circuit evaluator of
   `MIPRE.SAT.Circuit.circuitBits` (`circValF_eq`).
+* `guardF`: the readable checks of the proof check, the formula check and the six assignment
+  checks, on the oracle's decoded readable answer (`guardF_eq`, `PassesR`). Each is a comparison
+  of two field expressions in the point's coordinates and the readable values, written with the
+  combinators of `ArLpArith`; the positions of the readable values are the slots' indices
+  `idxO`, computed from the parameters (`wAt_slot`).
+
+The proof check's linear equations, its constraints when the guard holds, follow.
 -/
 
 noncomputable section

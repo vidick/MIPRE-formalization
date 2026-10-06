@@ -260,6 +260,8 @@ public import MIPRE.Background.Tailored.AnswerReduction.Honest
 public import MIPRE.Background.Tailored.AnswerReduction.HonestBits
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
 public import MIPRE.Background.Tailored.AnswerReduction.Sound
+public import MIPRE.Background.Tailored.AnswerReduction.ArLen
+public import MIPRE.Background.Tailored.AnswerReduction.ArLpProof
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -4098,6 +4100,78 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.Tailored.AnsRed.Typed.roleFamily_liftedCl_eval,
   MIPRE.Tailored.AnsRed.Typed.inCL_toGame, MIPRE.Tailored.AnsRed.Typed.decB,
   MIPRE.Tailored.AnsRed.Typed.valStar_presented_ar_le, MIPRE.Tailored.AnsRed.Typed.valStar_ar_sound
+
+-- blueprint `lem:tailored-meets`
+#guard_sorry_free MIPRE.Tailored.TailoredVerifier.lenOf_eq_of_lenIs,
+  MIPRE.Tailored.TailoredVerifier.MeetsAt.extends_,
+  MIPRE.Tailored.TailoredVerifier.MeetsAt.valStar_eq,
+  MIPRE.Tailored.TailoredVerifier.MeetsAt.hasPerfectZPC
+
+-- blueprint `thm:ar-meets`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.hasPerfectZPC_of_arMeets,
+  MIPRE.Tailored.AnsRed.Typed.valStar_sound_of_arMeets
+
+-- blueprint `lem:ar-ld-direct`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.ldBitsV, MIPRE.Tailored.AnsRed.Typed.toBits_ld,
+  MIPRE.Tailored.AnsRed.Typed.blocks1, MIPRE.Tailored.AnsRed.Typed.blocks1_ldBitsV,
+  MIPRE.Tailored.AnsRed.Typed.ldDesc, MIPRE.Tailored.AnsRed.Typed.ldAnswer,
+  MIPRE.Tailored.AnsRed.Typed.ldAnswer_marginal, MIPRE.Tailored.AnsRed.Typed.ldAnswer_linear,
+  MIPRE.Tailored.AnsRed.Typed.ldAnswer_factor, MIPRE.Tailored.AnsRed.Typed.ldAnswerProg,
+  MIPRE.Tailored.AnsRed.Typed.ldDimProg, MIPRE.Tailored.AnsRed.Typed.LdFamily,
+  MIPRE.Tailored.AnsRed.Typed.LdFamily.ldAnswerProg_apply,
+  MIPRE.Tailored.AnsRed.Typed.LdFamily.ldDimProg_pd,
+  MIPRE.Tailored.AnsRed.Typed.LdFamily.directSampler
+
+-- blueprint `lem:ar-sampler-dist`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.LdRoutine.arSampler_dist,
+  MIPRE.Tailored.AnsRed.Typed.dist_arPresented
+
+-- blueprint `lem:ar-len`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.lenPar, MIPRE.Tailored.AnsRed.Typed.lenOfIdx,
+  MIPRE.Tailored.AnsRed.Typed.lenOfIdx_lenPar, MIPRE.Tailored.AnsRed.Typed.idxAt,
+  MIPRE.Tailored.AnsRed.Typed.lenParF, MIPRE.Tailored.AnsRed.Typed.lenParF_arParams,
+  MIPRE.Tailored.AnsRed.Typed.lenF, MIPRE.Tailored.AnsRed.Typed.length_lenF,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenCore, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenPF, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenPF_eq,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_lenIs,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_lenIs_question,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_presented
+
+-- blueprint `lem:ar-field-cons`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.window, MIPRE.Tailored.AnsRed.Typed.toBits_elt,
+  MIPRE.Tailored.AnsRed.Typed.windowF, MIPRE.Tailored.AnsRed.Typed.windowF_apply,
+  MIPRE.Tailored.AnsRed.Typed.fieldConsF, MIPRE.Tailored.AnsRed.Typed.fieldConsF_eq,
+  MIPRE.Tailored.AnsRed.Typed.eqsConsF, MIPRE.Tailored.AnsRed.Typed.eqsConsF_eq,
+  MIPRE.Tailored.AnsRed.Typed.xorSumF, MIPRE.Tailored.AnsRed.Typed.foldl_xorBits_toBits,
+  MIPRE.Tailored.AnsRed.Typed.fAdd, MIPRE.Tailored.AnsRed.Typed.fAdd_eq,
+  MIPRE.Tailored.AnsRed.Typed.fMul, MIPRE.Tailored.AnsRed.Typed.fMul_eq,
+  MIPRE.Tailored.AnsRed.Typed.fZero, MIPRE.Tailored.AnsRed.Typed.fZero_eq,
+  MIPRE.Tailored.AnsRed.Typed.fOne, MIPRE.Tailored.AnsRed.Typed.fOne_eq,
+  MIPRE.Tailored.AnsRed.Typed.fCert, MIPRE.Tailored.AnsRed.Typed.fCert_eq,
+  MIPRE.Tailored.AnsRed.Typed.fSum, MIPRE.Tailored.AnsRed.Typed.fSum_eq,
+  MIPRE.Tailored.AnsRed.Typed.fEq, MIPRE.Tailored.AnsRed.Typed.fEq_eq
+
+-- blueprint `lem:ar-ld-cons`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.ldEqF, MIPRE.Tailored.AnsRed.Typed.ldEqF_eq,
+  MIPRE.Tailored.AnsRed.Typed.ldLineF, MIPRE.Tailored.AnsRed.Typed.ldLineF_eq,
+  MIPRE.Tailored.AnsRed.Typed.blocks1_ldPart, MIPRE.Tailored.AnsRed.Typed.ldConsF,
+  MIPRE.Tailored.AnsRed.Typed.ldConsF_eq
+
+-- blueprint `lem:ar-slot-cons`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Slot.lo, MIPRE.Tailored.AnsRed.Slot.val_emb,
+  MIPRE.Tailored.AnsRed.Slot.exists_emb_iff, MIPRE.Tailored.AnsRed.slotsOf_alice,
+  MIPRE.Tailored.AnsRed.slotsOf_bob, MIPRE.Tailored.AnsRed.Typed.copyF,
+  MIPRE.Tailored.AnsRed.Typed.copyF_eq, MIPRE.Tailored.AnsRed.Typed.consConsF,
+  MIPRE.Tailored.AnsRed.Typed.consConsF_eq, MIPRE.Tailored.AnsRed.Typed.indF,
+  MIPRE.Tailored.AnsRed.Typed.indF_eq, MIPRE.Tailored.AnsRed.Typed.ivsOf,
+  MIPRE.Tailored.AnsRed.Typed.ivF, MIPRE.Tailored.AnsRed.Typed.ivF_eq,
+  MIPRE.Tailored.AnsRed.Typed.indConsF, MIPRE.Tailored.AnsRed.Typed.indConsF_eq
+
+-- blueprint `lem:ar-proof-guard`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.circValF, MIPRE.Tailored.AnsRed.Typed.circValF_eq,
+  MIPRE.Tailored.AnsRed.Typed.PrfIn, MIPRE.Tailored.AnsRed.Typed.formF,
+  MIPRE.Tailored.AnsRed.Typed.formF_eq, MIPRE.Tailored.AnsRed.Typed.guardF,
+  MIPRE.Tailored.AnsRed.Typed.guardF_eq
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
