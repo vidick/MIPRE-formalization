@@ -29,6 +29,9 @@ theorem for a `λ`-bounded `V`, `1 ≤ n` and `hs : V.sampler.dim (2^n) ≤ Q`:
   kernel's factor query at the scanned prefix, under the guard at `k`) and the prefix register
   `CLChecks.prefixRegister (L w) k y` (`k ≤ 7`, the union of the first `k` of them, under the
   guard at `k - 1`), as length-`Q` masks (`CL.indicatorBits`);
+* `matrix k`: the matrix of `CLChecks.stageLinear (L w) k y` (`k < 7`, under the guard at `k`)
+  as `matrixBits (LinearMap.toMatrix' _)`, rows `vectorBits (M i)`, the input format of
+  `kernelGeneratorsProg` (`kernelGenerators`);
 
 The sampler program is specified only at attained prefixes, so the data at a stage `k` are
 correct under the prefix guard at `k`, which is itself computed exactly.
@@ -287,6 +290,42 @@ theorem register_correct_of_guard (U : ClockedUniversalMachine) {lam n Q : ℕ}
     register U k (context V lam n Q w, CL.toBits y) =
       CL.indicatorBits (CLChecks.prefixRegister (AuxiliaryDecision.padded V hs w) k y) :=
   register_correct U V hV hn hs w hk y (guard_mono V hs w (Nat.sub_le k 1) y hg)
+
+/-! ## The stage linear map, as a matrix -/
+
+/-- The matrix of the stage-`k` linear map, as the rows `vectorBits (M i)` of
+`M = LinearMap.toMatrix' (CLChecks.stageLinear (L w) k y).toLinearMap` (`matrixBits`): the
+kernel's matrix query at the scanned prefix. -/
+def matrix (U : ClockedUniversalMachine) (k : ℕ) : PolyTimeFun Input (List BitStr) :=
+  (matrixFromContext U).comp (stageContext U k)
+
+/-- **The stage matrix**, `k < 7`, under the guard at `k`. -/
+theorem matrix_correct (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k < 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w k y) :
+    matrix U k (context V lam n Q w, CL.toBits y) =
+      LowDegree.BinaryLinear.matrixBits (LinearMap.toMatrix'
+        (CLChecks.stageLinear (AuxiliaryDecision.padded V hs w) k y).toLinearMap) := by
+  rw [matrix, comp_apply, stageContext_of_guard U V hV hn hs w hk.le y hg,
+    CLChecks.stageLinear_toLinearMap,
+    ← AuxiliaryPrefix.mapOfPrefix_outputPrefix (AuxiliaryDecision.padded_supported V hs w)]
+  obtain ⟨x, hx⟩ := hg
+  exact (AuxiliarySourceScan.queriesCorrectAt U V hV hn hs w 0 0 k hk _ ⟨x, hx⟩).2
+
+/-- Generators of the kernel of the stage-`k` linear map (`kernelGeneratorsProg` on the
+register width and the stage matrix). -/
+def kernelGenerators (U : ClockedUniversalMachine) (k : ℕ) : PolyTimeFun Input (List BitStr) :=
+  LowDegree.BinaryLinear.kernelGeneratorsProg.comp ((length.comp snd).pair (matrix U k))
+
+theorem kernelGenerators_correct (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k < 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w k y) :
+    kernelGenerators U k (context V lam n Q w, CL.toBits y) =
+      LowDegree.BinaryLinear.kernelGeneratorsProg (unary Q,
+        LowDegree.BinaryLinear.matrixBits (LinearMap.toMatrix'
+          (CLChecks.stageLinear (AuxiliaryDecision.padded V hs w) k y).toLinearMap)) := by
+  rw [kernelGenerators, comp_apply, pair_apply, comp_apply, snd_apply, length_apply,
+    CL.length_toBits, matrix_correct U V hV hn hs w hk y hg]
 
 end MIPRE.Tailored.Intro.CLData
 
