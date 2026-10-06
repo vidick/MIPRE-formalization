@@ -687,6 +687,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.ArFamily
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
 public import MIPRE.Background.Tailored.AnswerReduction.Honest
 public import MIPRE.Background.Tailored.AnswerReduction.HonestBits
+public import MIPRE.Background.Tailored.AnswerReduction.Meets
 public import MIPRE.Background.Tailored.AnswerReduction.ShiftPoly
 public import MIPRE.Background.Tailored.AnswerReduction.Sound
 public import MIPRE.Background.Tailored.AnswerReduction.SoundCheck
@@ -1485,6 +1486,7 @@ public import MIPRE.Tailored.Data.Convert
 public import MIPRE.Tailored.Data.Presents
 public import MIPRE.Tailored.Detyping
 public import MIPRE.Tailored.Extend
+public import MIPRE.Tailored.ExtendSpec
 public import MIPRE.Tailored.Fourier
 public import MIPRE.Tailored.Game
 public import MIPRE.Tailored.Halting.Cost
