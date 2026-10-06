@@ -1510,6 +1510,7 @@ public import MIPRE.Tailored.Repeat.Strategy
 public import MIPRE.Tailored.Repeat.Verifier
 public import MIPRE.Tailored.SignedPerm
 public import MIPRE.Tailored.Sofic.Assoc
+public import MIPRE.Tailored.Sofic.AssocPrimrec
 public import MIPRE.Tailored.Stages
 public import MIPRE.Tailored.Verifier
 public import MIPRE.Tailored.ZPC
