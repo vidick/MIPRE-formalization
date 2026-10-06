@@ -1516,6 +1516,15 @@ public import MIPRE.Tailored.Repeat.Verifier
 public import MIPRE.Tailored.SignedPerm
 public import MIPRE.Tailored.Sofic.Assoc
 public import MIPRE.Tailored.Sofic.AssocPrimrec
+public import MIPRE.Tailored.Sofic.AssocValue
+public import MIPRE.Tailored.Sofic.Double
+public import MIPRE.Tailored.Sofic.Hamming
+public import MIPRE.Tailored.Sofic.Local
+public import MIPRE.Tailored.Sofic.Perturb
+public import MIPRE.Tailored.Sofic.Robust
+public import MIPRE.Tailored.Sofic.Significance
+public import MIPRE.Tailored.Sofic.Soundness
+public import MIPRE.Tailored.Sofic.Stability
 public import MIPRE.Tailored.Sofic.Undecidable
 public import MIPRE.Tailored.Stages
 public import MIPRE.Tailored.Verifier
