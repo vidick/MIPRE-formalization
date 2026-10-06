@@ -1599,4 +1599,5 @@ public import MIPRE.Tailored.Stages
 public import MIPRE.Tailored.Verifier
 public import MIPRE.Tailored.ZPC
 public import MIPRE.TailoredGameValue
+public import MIPRE.TailoredMIP
 public import MIPRE.Tsirelson

@@ -5,6 +5,7 @@ Authors: Thomas Vidick
 -/
 module
 public import MIPRE.Background.Tailored.AnswerReduction.ArInstance
+public import MIPRE.Background.Tailored.AnswerReduction.ArError
 public import MIPRE.Tailored.Stages
 
 @[expose] public section
@@ -53,17 +54,17 @@ abbrev arOut (V : TailoredVerifier 5) (lam mu sigma : ℕ) : TailoredVerifier 7 
   (arRoutine κ hE).output (ℓ := 4) V lam mu sigma
 
 /-- **The answer reduction's contract**, from the routine, given the field-size conditions and the
-bound of the soundness error by the contract's loss. -/
+bound of the soundness error by the contract's loss, or the loss at least `1`. -/
 def tailoredAnswerReductionOf (hE₁ : 2 * lstarE ≤ κ.E₁) (hc₀ : κ.c₀ = lstarProgSize₀)
     (a b : ℝ) (C : ℕ) (ha : 1 ≤ a) (hb0 : 0 < b) (hb1 : b ≤ 1)
     (hq : ∀ lam mu sigma n, 2 * ((2 ^ Params.pJ κ lam mu sigma n + 1) * Params.pD) ≤
       Fintype.card (Fq (Params.pTw κ lam mu sigma n) (Params.one_le_pTw κ lam mu sigma n hE)))
     (hτ : ∀ lam mu sigma n, 2 * ((Params.pL κ lam mu sigma n).m * chkDeg 5 Params.pD) ≤
       Fintype.card (Fq (Params.pTw κ lam mu sigma n) (Params.one_le_pTw κ lam mu sigma n hE)))
-    (herr : ∀ (lam mu sigma n : ℕ) (ε : ℝ), C ≤ n → 2 ≤ n → 1 ≤ lam → 1 ≤ mu → 1 ≤ sigma →
-      0 < ε → 24 * √(errAR (Params.pTw κ lam mu sigma n) (Params.one_le_pTw κ lam mu sigma n hE)
+    (herr : ∀ (lam mu sigma n : ℕ) (ε : ℝ), C ≤ n → 2 ≤ n → 1 ≤ lam → 1 ≤ sigma → 0 < ε →
+      24 * √(errAR (Params.pTw κ lam mu sigma n) (Params.one_le_pTw κ lam mu sigma n hE)
         (Params.pJ κ lam mu sigma n) Params.pD (Params.pL κ lam mu sigma n) (16 ^ 9 * ε)) ≤
-        AnswerReduction.delta a b lam mu sigma n ε) :
+        AnswerReduction.delta a b lam mu sigma n ε ∨ 1 ≤ AnswerReduction.delta a b lam mu sigma n ε) :
     TailoredAnswerReduction 5 where
   a := a
   b := b
@@ -108,7 +109,28 @@ def tailoredAnswerReductionOf (hE₁ : 2 * lstarE ≤ κ.E₁) (hc₀ : κ.c₀ 
         (fun u => Finset.le_sup (f := fun u => len (Params.pTw κ lam mu sigma n)
           (Params.pJ κ lam mu sigma n) Params.pD (Params.pL κ lam mu sigma n) u)
           (Finset.mem_univ u)) (hq lam mu sigma n) (hτ lam mu sigma n) hε hv
-      exact (sub_le_sub_left (herr lam mu sigma n ε hC hn2 hlam hmu hs hε) 1).trans h
+      rcases herr lam mu sigma n ε hC hn2 hlam hs hε with he | he
+      · exact (sub_le_sub_left he 1).trans h
+      · exact (sub_nonpos.mpr he).trans (quantumValue_nonneg _)
+
+/-! ## The constants -/
+
+/-- **The constants of the answer reduction**: `E₁ = 2E` for the running time of `L*`, `E₂` the
+field width's threshold of the soundness error, `c₀` the size of `L*`'s program. -/
+def arConsts : Params.ArConsts := ⟨2 * lstarE, e2Min, lstarProgSize₀⟩
+
+theorem one_le_arConsts_E₂ : 1 ≤ arConsts.E₂ := by
+  have := seven_le_e2Min; unfold arConsts; dsimp only; omega
+
+/-- **Answer reduction for tailored verifiers** (`thm:tailored-ar`, II:6883): the contract
+`TailoredAnswerReduction 5` is inhabited. -/
+def tailoredAnswerReduction : TailoredAnswerReduction 5 :=
+  tailoredAnswerReductionOf arConsts one_le_arConsts_E₂ le_rfl rfl (errA arConsts : ℝ)
+    (LIDT.clB / 2) (errC arConsts) (by exact_mod_cast one_le_errA arConsts)
+    (by have := LIDT.clB_pos; linarith) (by have := LIDT.clB_lt_one; linarith)
+    (fun lam mu sigma n => (field_hyps arConsts (seven_le_e2Min.trans le_rfl) lam mu sigma n).1)
+    (fun lam mu sigma n => (field_hyps arConsts (seven_le_e2Min.trans le_rfl) lam mu sigma n).2)
+    (fun _ _ _ _ _ hC hn2 hlam hs hε => errAR_le_delta_or arConsts le_rfl hC hn2 hlam hs hε)
 
 end MIPRE.Tailored.AnsRed.Typed
 

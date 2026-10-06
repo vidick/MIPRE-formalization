@@ -30,12 +30,12 @@ The chain, with `j` the selector width, `t` the field width and `m` the PCP's va
      `errAR(16⁹ ε) ≤ 7 (39204 · 16⁹ G ε^{clB} + (Q + 1)^{-2} + 22 G 2^{-clB Q})`,  `G = 2 · 2^j P`,
 
    which is the shape `MIPRE.AnswerReduction.sqrt_le_delta` compares with the loss;
-4. at the parameters, `m ≤ cM (Q σ)^{pM}` (`pL_m_le`), from the window describer's bounds on
+4. at the parameters, `m ≤ errCM (Q σ)^{errPM}` (`pL_m_le`), from the window describer's bounds on
    `r₀` and `s₀`, so `G ≤ (96 m)^{3A + 1} ≤ errCc (Q σ)^{errPp}` (`gN_le_poly`), and the
    threshold of `exists_threshold_clB` gives `C`.
 
 The field-width constant `e2Min` depends only on `simA`, while `a` and `C` depend on `E₁` and
-`c₀` through `cM`. The case `ε ≥ 1` or `μ = 0` is the trivial one: the loss is then at least `1`
+`c₀` through `errCM`. The case `ε ≥ 1` or `μ = 0` is the trivial one: the loss is then at least `1`
 (`one_le_delta_of_trivial'`); `errAR_le_delta_or` packages both.
 -/
 
@@ -299,10 +299,10 @@ theorem s₀_le_wdP (n T Q σ : ℕ) :
 def cW (κ : ArConsts) : ℕ := 43 * κ.E₁ + κ.c₀ + 60
 
 /-- **The constant of the bound on `m`.** -/
-def cM (κ : ArConsts) : ℕ := 49 + 3 * wdC * cW κ + coeffSum wdP * cW κ ^ wdP.natDegree
+def errCM (κ : ArConsts) : ℕ := 49 + 3 * wdC * cW κ + coeffSum wdP * cW κ ^ wdP.natDegree
 
 /-- **The exponent of the bound on `m`.** -/
-def pM : ℕ := 3 * wdP.natDegree + 3
+def errPM : ℕ := 3 * wdP.natDegree + 3
 
 /-- `n < Q` and `μ < Q`. -/
 theorem pQ_facts {lam mu n : ℕ} (hlam : 1 ≤ lam) (hmu : 1 ≤ mu) (hn : 1 ≤ n) :
@@ -323,10 +323,10 @@ theorem pL_m_eq (κ : ArConsts) (lam mu sigma n : ℕ) :
     (pL κ lam mu sigma n).m = (pQ lam mu n + 1) + (pQ lam mu n + 1) + (pOW lam mu n + 1)
       + 3 * pR κ lam mu sigma n + 6 + pS κ lam mu sigma n := rfl
 
-/-- **The PCP's variable count is polynomial**: `m ≤ cM (Q σ)^{pM}`. -/
+/-- **The PCP's variable count is polynomial**: `m ≤ errCM (Q σ)^{errPM}`. -/
 theorem pL_m_le (κ : ArConsts) {lam mu sigma n : ℕ} (hlam : 1 ≤ lam) (hmu : 1 ≤ mu)
     (hs : 1 ≤ sigma) (hn : 1 ≤ n) :
-    (pL κ lam mu sigma n).m ≤ cM κ * (pQ lam mu n * sigma) ^ pM := by
+    (pL κ lam mu sigma n).m ≤ errCM κ * (pQ lam mu n * sigma) ^ errPM := by
   obtain ⟨hnQ, hμQ⟩ := pQ_facts hlam hmu hn
   rw [pL_m_eq]
   set Q := pQ lam mu n with hQ
@@ -383,20 +383,20 @@ theorem pL_m_le (κ : ArConsts) {lam mu sigma n : ℕ} (hlam : 1 ≤ lam) (hmu :
     rw [pow_mul, ← mul_pow]
     exact Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hW _)
   -- assembling
-  set Z := Y ^ pM with hZ
-  have hYZ : Y ≤ Z := Nat.le_self_pow (by unfold pM; omega) _
-  have hY2Z : Y ^ 2 ≤ Z := Nat.pow_le_pow_right hY1 (by unfold pM; omega)
-  have hY3Z : Y ^ 3 ≤ Z := Nat.pow_le_pow_right hY1 (by unfold pM; omega)
-  have hYDZ : Y ^ (3 * wdP.natDegree) ≤ Z := Nat.pow_le_pow_right hY1 (by unfold pM; omega)
+  set Z := Y ^ errPM with hZ
+  have hYZ : Y ≤ Z := Nat.le_self_pow (by unfold errPM; omega) _
+  have hY2Z : Y ^ 2 ≤ Z := Nat.pow_le_pow_right hY1 (by unfold errPM; omega)
+  have hY3Z : Y ^ 3 ≤ Z := Nat.pow_le_pow_right hY1 (by unfold errPM; omega)
+  have hYDZ : Y ^ (3 * wdP.natDegree) ≤ Z := Nat.pow_le_pow_right hY1 (by unfold errPM; omega)
   have hZ1 : 1 ≤ Z := hY1.trans hYZ
   have e1 : wdC * (cW κ * Y ^ 3) ≤ wdC * cW κ * Z := by
     rw [← mul_assoc]; exact Nat.mul_le_mul_left _ hY3Z
   have e2 : coeffSum wdP * (cW κ ^ wdP.natDegree * Y ^ (3 * wdP.natDegree))
       ≤ coeffSum wdP * cW κ ^ wdP.natDegree * Z := by
     rw [← mul_assoc]; exact Nat.mul_le_mul_left _ hYDZ
-  have e3 : cM κ * Z =
+  have e3 : errCM κ * Z =
       49 * Z + 3 * (wdC * cW κ * Z) + coeffSum wdP * cW κ ^ wdP.natDegree * Z := by
-    unfold cM; ring
+    unfold errCM; ring
   rw [e3]
   omega
 
@@ -418,10 +418,10 @@ theorem gN_le {j m : ℕ} (hm1 : 1 ≤ m) (hj : 2 ^ j ≤ 2 * m + 1) :
 /-! ## The constants of the loss -/
 
 /-- The constant `c` of the polynomial bound `G ≤ c Q^p σ^p`. -/
-def errCc (κ : ArConsts) : ℕ := (96 * cM κ) ^ (3 * simAN + 1)
+def errCc (κ : ArConsts) : ℕ := (96 * errCM κ) ^ (3 * simAN + 1)
 
 /-- The exponent `p` of the polynomial bound `G ≤ c Q^p σ^p`. -/
-def errPp : ℕ := pM * (3 * simAN + 1)
+def errPp : ℕ := errPM * (3 * simAN + 1)
 
 /-- **The exponent `a` of the soundness loss.** It depends on `E₁` and `c₀`, not on `E₂`. -/
 def errA (κ : ArConsts) : ℕ := aOf (errCc κ) errPp (16 ^ 9)
@@ -438,9 +438,9 @@ theorem gN_le_poly (κ : ArConsts) {lam mu sigma n : ℕ} (hlam : 1 ≤ lam) (hm
   have hm1 : 1 ≤ (pL κ lam mu sigma n).m := by rw [pL_m_eq]; omega
   have h1 := gN_le hm1 (two_pow_pJ_le κ lam mu sigma n)
   have h2 : (96 * (pL κ lam mu sigma n).m) ^ (3 * simAN + 1)
-      ≤ (96 * (cM κ * (pQ lam mu n * sigma) ^ pM)) ^ (3 * simAN + 1) :=
+      ≤ (96 * (errCM κ * (pQ lam mu n * sigma) ^ errPM)) ^ (3 * simAN + 1) :=
     Nat.pow_le_pow_left (Nat.mul_le_mul_left _ (pL_m_le κ hlam hmu hs hn)) _
-  have h3 : (96 * (cM κ * (pQ lam mu n * sigma) ^ pM)) ^ (3 * simAN + 1)
+  have h3 : (96 * (errCM κ * (pQ lam mu n * sigma) ^ errPM)) ^ (3 * simAN + 1)
       = errCc κ * pQ lam mu n ^ errPp * sigma ^ errPp := by
     rw [errCc, errPp, mul_pow, mul_pow, ← pow_mul, mul_pow]; ring
   have := h1.trans (h2.trans_eq h3)
