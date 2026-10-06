@@ -3451,3 +3451,316 @@ decoded strategy has value at least $1 - e(16^9 \eps)$ (Lemma~\ref{lem:ar-decode
 typed oracularized game's value is at most the oracularization's, and oracularization is sound
 (Theorem~\ref{thm:oracularization-in-model}), the oracularized input's game being the input's.
 \end{proof}
+
+\subsection{The output verifier's programs}
+
+The output tailored verifier of the answer reduction has the answer-reduced sampler and two
+programs which, at index $n$, output at every detyped question the lengths of the presented
+answer-reduced game and at every pair its constraints. Once they do, the output's $n$-th game
+extends the presented one, and both items of prop:completeness\_soundness\_combi\_ans\_red carry
+over to it (Theorem~\ref{thm:ar-meets}). The output's parameters at $n$ grow like a power of
+$(\lambda n + 1)^\mu$ and its programs read them in unary, which no polynomial-time function of
+the binary index can write: a closed program computes them and the programs run it as a stage
+(Definition~\ref{def:ar-routine}), as in the MIP* answer reduction. Every check of the game is a
+list of field equations in the answer bits, whose constraints are computed from a program of the
+equations' values (Lemma~\ref{lem:ar-field-cons}). The proof check's linear equations, the
+assembly of the linear-constraints processor and the running times of the programs are still to
+be formalized.
+
+\begin{definition}[A tailored verifier meeting a tailored game]
+\label{def:tailored-meets}
+\uses{def:tailored-verifier,def:tailored-game}
+\lean{MIPRE.Tailored.TailoredVerifier.MeetsAt}
+\leanok
+A tailored verifier $\verifier$ \emph{meets} a tailored game $G$ on questions $X$ at an index $n$
+along a bijection $e$ from $X$ to the questions of $\verifier$ at $n$ when its sampler's
+distribution at $n$ is $G$'s weights along $e$, its answer-length calculator outputs $G$'s
+readable and linear lengths at every question $e(x)$, and its linear-constraints processor outputs
+$G$'s constraints at every pair $(e(x), e(y))$ and pair of readable answers.
+\end{definition}
+
+\begin{lemma}[A tailored verifier meeting a game extends it]
+\label{lem:tailored-meets}
+\uses{def:tailored-meets,lem:tailored-extend}
+\lean{MIPRE.Tailored.TailoredVerifier.lenOf_eq_of_lenIs,
+  MIPRE.Tailored.TailoredVerifier.MeetsAt.extends_,
+  MIPRE.Tailored.TailoredVerifier.MeetsAt.valStar_eq,
+  MIPRE.Tailored.TailoredVerifier.MeetsAt.hasPerfectZPC}
+\leanok
+If $\verifier$ meets $G$ at $n$ along $e$, then $\verifier$'s $n$-th game extends $G$ along $e$.
+So it has $G$'s $\valstar$, and a perfect ZPC strategy of $G$'s doubled game gives one of
+$\verifier$'s $n$-th game.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The lengths of $\verifier$'s game at a question are what its calculator outputs there, and its
+constraints at a pair are what its processor outputs once the calculator halts at both questions
+at both kinds. Every question of $\verifier$ at $n$ is some $e(x)$, which is the support condition
+of an extension. Lemma~\ref{lem:tailored-extend} concludes.
+\end{proof}
+
+\begin{definition}[The presented answer-reduced game, and meeting it]
+\label{def:ar-meets}
+\uses{def:tailored-meets,def:ar-honest-strategy,def:ar-tailored-game,lem:presentation}
+\lean{MIPRE.Tailored.AnsRed.Typed.arPresented, MIPRE.Tailored.AnsRed.Typed.ArMeets}
+\leanok
+The \emph{presented answer-reduced game} is the game that the typed data of
+Definition~\ref{def:ar-tailored-game} presents on the detyped game of a family of CL functions on
+the typed questions, with answers bounded by $B$. A tailored verifier meets it at $n$ along a
+bijection of the detyped questions with its questions at $n$ in the sense of
+Definition~\ref{def:tailored-meets}.
+\end{definition}
+
+\begin{theorem}[Completeness and soundness of an output verifier meeting the presented game]
+\label{thm:ar-meets}
+\uses{def:ar-meets,lem:tailored-meets,thm:ar-zpc-complete,thm:ar-sound}
+\lean{MIPRE.Tailored.AnsRed.Typed.hasPerfectZPC_of_arMeets,
+  MIPRE.Tailored.AnsRed.Typed.valStar_sound_of_arMeets}
+\leanok
+Let a tailored verifier $\verifier'$ meet at $n$ the answer-reduced game presented on the typed
+game of an answer-reduced sampler, under the hypotheses of Definition~\ref{def:ar-honest-answers},
+with an answer bound at least the types' lengths. If $d \geq 17$ and the input's $n$-th game has a
+perfect ZPC strategy, so has $\verifier'_n$. If $d \geq 1$, $q \geq 2 (M + 1) d$,
+$q \geq 2 m (5 + 6 (d + 1))$ and $\valstar(\verifier'_n) > 1 - \eps$, then
+$\valstar(\verifier_n) \geq 1 - 24 \sqrt{e(16^9 \eps)}$, with $e$ the error of
+Lemma~\ref{lem:ar-decoded-value}.
+\end{theorem}
+
+\begin{proof}
+\leanok
+$\verifier'_n$ extends the presented game (Lemma~\ref{lem:tailored-meets}), so it has the
+presented game's $\valstar$ and its perfect ZPC strategies. Theorems~\ref{thm:ar-zpc-complete}
+and~\ref{thm:ar-sound} conclude.
+\end{proof}
+
+\begin{lemma}[The low-degree half of the answer-reduced sampler, directly answered]
+\label{lem:ar-ld-direct}
+\uses{def:ar-tailored-game,lem:ar-typed-sampler}
+\lean{MIPRE.Tailored.AnsRed.Typed.ldBitsV, MIPRE.Tailored.AnsRed.Typed.toBits_ld,
+  MIPRE.Tailored.AnsRed.Typed.blocks1, MIPRE.Tailored.AnsRed.Typed.blocks1_ldBitsV,
+  MIPRE.Tailored.AnsRed.Typed.ldDesc, MIPRE.Tailored.AnsRed.Typed.ldAnswer,
+  MIPRE.Tailored.AnsRed.Typed.ldAnswer_marginal, MIPRE.Tailored.AnsRed.Typed.ldAnswer_linear,
+  MIPRE.Tailored.AnsRed.Typed.ldAnswer_factor, MIPRE.Tailored.AnsRed.Typed.ldAnswerProg,
+  MIPRE.Tailored.AnsRed.Typed.ldDimProg, MIPRE.Tailored.AnsRed.Typed.LdFamily,
+  MIPRE.Tailored.AnsRed.Typed.LdFamily.ldAnswerProg_apply,
+  MIPRE.Tailored.AnsRed.Typed.LdFamily.ldDimProg_pd,
+  MIPRE.Tailored.AnsRed.Typed.LdFamily.directSampler}
+\leanok
+Represent a vector of the registers $\Fq^{D}$ of the seeded low-degree test, $D = 2M + 1$, by
+its coordinates' Shoup bits, $t$ per coordinate: three runs of $t$-bit blocks, $M$ for the point,
+$M$ for the direction and one for the seed. On such bits, the run functions of the MIP* answer
+reduction's stage program, on one copy of the test at offset $0$ and length $M$, return the bits
+of the answers of the test's presentation to its marginal, linear-map and factor queries. So for
+parameters $t \geq 1$ and $j \leq t$ at every index, computed by a closed program, the
+presentation, downsized along the Shoup basis, is a sampler answered directly by a
+polynomial-time function of the parameters.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A query returns, run by run, the point, the direction and the seed components of the
+presentation's answer, each a linear function of the components of the query; the run functions
+compute these on blocks of Shoup bits, which are coordinates of $\Fq$ written over $\mathbb{F}_2$.
+\end{proof}
+
+\begin{definition}[The answer-reduced sampler]
+\label{def:ar-sampler}
+\uses{lem:ar-ld-direct,def:ar-honest-strategy,lem:oracle-typed-sampler,
+  lem:detype-functional-sampler}
+\lean{MIPRE.Tailored.AnsRed.Typed.LdRoutine, MIPRE.Tailored.AnsRed.Typed.LdRoutine.ldDirect,
+  MIPRE.Tailored.AnsRed.Typed.LdRoutine.arTyped,
+  MIPRE.Tailored.AnsRed.Typed.LdRoutine.arTyped_cl,
+  MIPRE.Tailored.AnsRed.Typed.LdRoutine.arTyped_dim,
+  MIPRE.Tailored.AnsRed.Typed.LdRoutine.arSampler, MIPRE.Tailored.AnsRed.Typed.LdRoutine.qe,
+  MIPRE.Tailored.AnsRed.Typed.LdRoutine.typedPF,
+  MIPRE.Tailored.AnsRed.Typed.LdRoutine.arSamplerProg,
+  MIPRE.Tailored.AnsRed.Typed.LdRoutine.arSamplerProg_eq}
+\leanok
+A \emph{parameter routine of the low-degree half} is a family of parameters $t, j$ at each
+$(\lambda, \mu, \sigma)$ and index, with a polynomial-time map from $(\lambda, \mu, \sigma)$ to a
+closed program computing them at each index. The \emph{answer-reduced typed sampler} at
+$(\lambda, \mu, \sigma)$ puts the oracularized input sampler and the directly answered low-degree
+half of Lemma~\ref{lem:ar-ld-direct} side by side; its CL functions are the answer-reduced family of
+Definition~\ref{def:ar-honest-strategy}. The \emph{answer-reduced sampler} is the typed sampler
+detyped along the complete graph with loops, of level $\max(\ell + 1, 3) + 2$. Its program is
+computed from the input sampler's and $(\lambda, \mu, \sigma)$ in polynomial time.
+\end{definition}
+
+\begin{lemma}[The distribution of the answer-reduced sampler]
+\label{lem:ar-sampler-dist}
+\uses{def:ar-sampler,def:ar-meets,lem:detype-program-strategies,lem:detype-game-soundness}
+\lean{MIPRE.Tailored.AnsRed.Typed.LdRoutine.arSampler_dist,
+  MIPRE.Tailored.AnsRed.Typed.dist_arPresented}
+\leanok
+Along the numbering of the detyped coordinates, the answer-reduced sampler's question distribution
+at $n$ is the detyped game's, and so the presented answer-reduced game's weights.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The numbered detyped sampler's distribution is the detyped CL distribution
+(Lemma~\ref{lem:detype-program-strategies}), which is the detyped game's weights
+(Lemma~\ref{lem:detype-game-soundness}); the presentation keeps the weights.
+\end{proof}
+
+\begin{definition}[The parameter routine of the answer-reduced verifier]
+\label{def:ar-routine}
+\uses{def:ar-sampler,def:ar-pcp}
+\lean{MIPRE.Tailored.AnsRed.Typed.ArParams, MIPRE.Tailored.AnsRed.Typed.arParams,
+  MIPRE.Tailored.AnsRed.Typed.readParams, MIPRE.Tailored.AnsRed.Typed.readParams_encode,
+  MIPRE.Tailored.AnsRed.Typed.ldPdF, MIPRE.Tailored.AnsRed.Typed.ldPdF_arParams,
+  MIPRE.Tailored.AnsRed.Typed.CircIn, MIPRE.Tailored.AnsRed.Typed.ArRoutine,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.params,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.parCore_runs,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.ldCore,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.ldCore_runs,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.toLd, MIPRE.Tailored.AnsRed.Typed.ArRoutine.circ,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.circ_wires}
+\leanok
+The \emph{parameters} of the answer-reduced verifier at an index are, in unary, the field width
+$t$, the selector width $j$, $M = 2^j$, the degree $d$, the four dimensions of the PCP of
+Definition~\ref{def:ar-pcp}, and data for the circuits. A \emph{parameter routine} consists of
+the parameters at each $(\lambda, \mu, \sigma)$ and index, with $m \leq M$; a closed program
+computing them from $((\lambda, \mu, \sigma), n)$; and a polynomial-time \emph{circuit function},
+giving from the input verifier's programs, $(\lambda, \mu, \sigma)$, $n$, the parameters and the
+two questions of a seed a well-formed circuit with the PCP's numbers of inputs and gates. The
+program followed by the projection to $(t, j)$ is a parameter routine of the low-degree half.
+\end{definition}
+
+\begin{lemma}[The answer-length calculator]
+\label{lem:ar-len}
+\uses{def:ar-routine,def:ar-meets,def:tailored-detyping}
+\lean{MIPRE.Tailored.AnsRed.Typed.lenPar, MIPRE.Tailored.AnsRed.Typed.lenOfIdx,
+  MIPRE.Tailored.AnsRed.Typed.lenOfIdx_lenPar, MIPRE.Tailored.AnsRed.Typed.idxAt,
+  MIPRE.Tailored.AnsRed.Typed.lenParF, MIPRE.Tailored.AnsRed.Typed.lenParF_arParams,
+  MIPRE.Tailored.AnsRed.Typed.lenF, MIPRE.Tailored.AnsRed.Typed.length_lenF,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenCore, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenPF, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenPF_eq,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_lenIs,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_lenIs_question,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_presented}
+\leanok
+The answer-length calculator at $(\lambda, \mu, \sigma)$, on $(n, x, \kappa)$, runs the
+routine's parameter program on $((\lambda, \mu, \sigma), n)$ as a stage, then decodes the graph
+view of $x$ with $\kappa$ into the two factors of a length by a finite table and multiplies them
+with $t$ in unary, an undecodable view giving $0$. It halts on every input, at a detyped question
+it outputs the readable and the linear lengths of the presented answer-reduced game, and its
+program is computed from $(\lambda, \mu, \sigma)$ in polynomial time.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The stage outputs the parameters. The presented game's lengths at a detyped question are those
+of the type its graph view decodes to (Definition~\ref{def:tailored-detyping}), products of a
+codeword count of the role, the coefficients of a codeword at the type, and $t$.
+\end{proof}
+
+\begin{lemma}[Field equations as constraints, and field arithmetic, as programs]
+\label{lem:ar-field-cons}
+\uses{def:ar-tailored-game,lem:intro-pauli-cons,lem:effective-binary-field-arithmetic,
+  lem:effective-binary-linear-algebra}
+\lean{MIPRE.Tailored.AnsRed.Typed.window, MIPRE.Tailored.AnsRed.Typed.toBits_elt,
+  MIPRE.Tailored.AnsRed.Typed.windowF, MIPRE.Tailored.AnsRed.Typed.windowF_apply,
+  MIPRE.Tailored.AnsRed.Typed.fieldConsF, MIPRE.Tailored.AnsRed.Typed.fieldConsF_eq,
+  MIPRE.Tailored.AnsRed.Typed.eqsConsF, MIPRE.Tailored.AnsRed.Typed.eqsConsF_eq,
+  MIPRE.Tailored.AnsRed.Typed.xorSumF, MIPRE.Tailored.AnsRed.Typed.foldl_xorBits_toBits,
+  MIPRE.Tailored.AnsRed.Typed.fAdd, MIPRE.Tailored.AnsRed.Typed.fAdd_eq,
+  MIPRE.Tailored.AnsRed.Typed.fMul, MIPRE.Tailored.AnsRed.Typed.fMul_eq,
+  MIPRE.Tailored.AnsRed.Typed.fZero, MIPRE.Tailored.AnsRed.Typed.fZero_eq,
+  MIPRE.Tailored.AnsRed.Typed.fOne, MIPRE.Tailored.AnsRed.Typed.fOne_eq,
+  MIPRE.Tailored.AnsRed.Typed.fCert, MIPRE.Tailored.AnsRed.Typed.fCert_eq,
+  MIPRE.Tailored.AnsRed.Typed.fSum, MIPRE.Tailored.AnsRed.Typed.fSum_eq,
+  MIPRE.Tailored.AnsRed.Typed.fEq, MIPRE.Tailored.AnsRed.Typed.fEq_eq}
+\leanok
+A field equation $E(z) = c$ over $\Fq$, linear in the answer bits $z \in \mathbb{F}_2^N$, gives
+$t$ constraints: for each $s < t$, the $s$-th coordinates of $E$ at the $N$ unit vectors, then
+that of $c$. A program computing the Shoup bits of $E(z)$ at every $z$ of length $N$, and one
+computing those of $c$, therefore give a program computing the constraints, which runs the first
+on the unit vectors and transposes; likewise for an indexed list of equations. A field element
+of the answer bits is a window of $t$ bits. Sums, products, $0$, $1$, $g (1 - g)$, indexed sums
+and comparisons of programs computing field elements in their Shoup bits compute the
+corresponding sums, products, constants and comparisons.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The constraints of a field equation are its coordinates at the unit vectors, the equation being
+linear (Lemma~\ref{lem:intro-pauli-cons}); addition in $\Fq$ is the exclusive or of Shoup bits,
+and multiplication the Shoup multiplication program
+(Lemma~\ref{lem:effective-binary-field-arithmetic}).
+\end{proof}
+
+\begin{lemma}[The low-degree checks, as programs]
+\label{lem:ar-ld-cons}
+\uses{lem:ar-field-cons,lem:ar-ld-direct,def:ar-tailored-game,lem:intro-aux-progs}
+\lean{MIPRE.Tailored.AnsRed.Typed.ldEqF, MIPRE.Tailored.AnsRed.Typed.ldEqF_eq,
+  MIPRE.Tailored.AnsRed.Typed.ldLineF, MIPRE.Tailored.AnsRed.Typed.ldLineF_eq,
+  MIPRE.Tailored.AnsRed.Typed.blocks1_ldPart, MIPRE.Tailored.AnsRed.Typed.ldConsF,
+  MIPRE.Tailored.AnsRed.Typed.ldConsF_eq}
+\leanok
+For a selector computed by the introspection stage's selector program, a program computes the
+constraints of the low-degree checks at two questions of one role from the parameters, the
+types, the two questions' low-degree bits and the layout of the answers: the equations that two
+answers agree codeword by codeword, each the difference of two windows, and the equations that
+the line polynomials at the line parameter are the point values, by Horner's rule.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A question's low-degree vector is read from the last bits of its vector part in runs of blocks,
+the point, the direction and the seed (Lemma~\ref{lem:ar-ld-direct}). The selected direction of
+an axis-parallel line is the seed's block, and the point-on-line guard and the line parameter are
+computed by the introspection stage's programs. Lemma~\ref{lem:ar-field-cons} turns the
+equations' values into the constraints.
+\end{proof}
+
+\begin{lemma}[The consistency and indifference checks, as programs]
+\label{lem:ar-slot-cons}
+\uses{lem:ar-ld-cons,def:ar-slots,def:ar-tailored-game,def:ar-routine}
+\lean{MIPRE.Tailored.AnsRed.Slot.lo, MIPRE.Tailored.AnsRed.Slot.val_emb,
+  MIPRE.Tailored.AnsRed.Slot.exists_emb_iff, MIPRE.Tailored.AnsRed.slotsOf_alice,
+  MIPRE.Tailored.AnsRed.slotsOf_bob, MIPRE.Tailored.AnsRed.Typed.copyF,
+  MIPRE.Tailored.AnsRed.Typed.copyF_eq, MIPRE.Tailored.AnsRed.Typed.consConsF,
+  MIPRE.Tailored.AnsRed.Typed.consConsF_eq, MIPRE.Tailored.AnsRed.Typed.indF,
+  MIPRE.Tailored.AnsRed.Typed.indF_eq, MIPRE.Tailored.AnsRed.Typed.ivsOf,
+  MIPRE.Tailored.AnsRed.Typed.ivF, MIPRE.Tailored.AnsRed.Typed.ivF_eq,
+  MIPRE.Tailored.AnsRed.Typed.indConsF, MIPRE.Tailored.AnsRed.Typed.indConsF_eq}
+\leanok
+Programs compute, from the parameters and the layout of the answers, the constraints of the
+consistency checks, that the isolated player's two codewords are the oracle's codewords in the
+same slots; and those of the indifference checks at an axis-parallel line, that the coefficients
+$1, \ldots, d$ of the codewords whose blocks miss the direction the seed selects vanish.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The positions of an isolated player's slots in the oracle's answer are their indices in the
+oracle's list of slots, computed from the parameters. The blocks of the slots are intervals of
+wires, read off a table computed from the parameters. Lemma~\ref{lem:ar-field-cons} turns the
+equations' values into the constraints.
+\end{proof}
+
+\begin{lemma}[The circuit polynomial and the proof check's readable part, as programs]
+\label{lem:ar-proof-guard}
+\uses{lem:ar-field-cons,lem:pcp-circuit-evaluator,def:ar-slots,def:ar-routine}
+\lean{MIPRE.Tailored.AnsRed.Typed.circValF, MIPRE.Tailored.AnsRed.Typed.circValF_eq,
+  MIPRE.Tailored.AnsRed.Typed.PrfIn, MIPRE.Tailored.AnsRed.Typed.formF,
+  MIPRE.Tailored.AnsRed.Typed.formF_eq, MIPRE.Tailored.AnsRed.Typed.guardF,
+  MIPRE.Tailored.AnsRed.Typed.guardF_eq}
+\leanok
+A program computes, from the coordinates of a point $p \in \Fq^m$ and the gates of a
+well-formed circuit with $n_{\mathrm{in}}$ inputs and $s$ gates, $n_{\mathrm{in}} + s = m$, the
+value at $p$ of the circuit's polynomial. A program computes, from the parameters, the
+coordinates of $p$, the oracle's readable answer and the gates of such a circuit with the PCP's
+numbers of inputs and gates, whether the readable values the answer decodes to pass the formula
+check and the six assignment checks at $p$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The circuit evaluator computes the circuit's polynomial on the Shoup bits of the coordinates
+(Lemma~\ref{lem:pcp-circuit-evaluator}). Each readable check compares two field expressions in
+the point's coordinates and the readable values at the slots' positions, and these are computed
+with the combinators of Lemma~\ref{lem:ar-field-cons}.
+\end{proof}

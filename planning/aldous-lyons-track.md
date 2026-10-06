@@ -38,7 +38,10 @@ game, is done: the functional viewpoint's completeness (`PcpHonest.lean`), the P
 (`Background/Tailored/AnswerReduction/Typed.lean`). P4d, its ZPC completeness, is done
 (`Background/Tailored/AnswerReduction/Complete.lean`, `hasPerfectZPC_ar`), and so is P4e, its
 soundness (`Background/Tailored/AnswerReduction/Sound*.lean`, `valStar_ar_sound`). P4h, the
-programs that compute the game, is next.
+programs that compute the game, is in progress: the specification (`ArMeets`), the sampler, the
+parameter routine, the length calculator and most of the constraint programs are done; the proof
+check's linear equations, the processor's assembly and the running times remain. P4i, the
+parameters, can proceed against the parameter routine's interface (`ArRoutine`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -1066,14 +1069,44 @@ What the reading settled.
   (`Foundations/SAT/Decoupled6.lean`) for any decider, inhabited by `MIPRE.SAT.windowDescriber`
   (`TM/CookLevin/{Link6,Decoupled6,Decoupled6Prog}.lean`, blueprint
   `lem:ar-window-describer`).
-- **P4h — `PartialAnsRed` (4–6k, 2 PRs).** The sampler (O3's typed oracle sampler `prodDirect`
-  a one-copy seeded sampler downsized along the Shoup basis, then detyped), the calculator by
-  type, the processor running the four checks (two calls to the input sampler, one to the
-  describer, `T_C` at `p`), their running times and `len_total`; the game they compute is P4c's
-  (claim:algorithmic_partial_ans_red).
+- **P4h — `PartialAnsRed` (in progress, 3.3k lines so far, blueprint `def:tailored-meets` to
+  `lem:ar-proof-guard`).** The sampler (O3's typed oracle sampler `prodDirect` beside a one-copy
+  seeded sampler downsized along the Shoup basis, then detyped), the calculator by type, the
+  processor running the four checks (two calls to the input sampler, one to the describer, `T_C`
+  at `p`), their running times and `len_total`; the game they compute is P4c's
+  (claim:algorithmic_partial_ans_red). Done:
+  - the specification: `Tailored/ExtendSpec.lean` (`TailoredVerifier.MeetsAt`: a verifier whose
+    sampler has a game's weights and whose programs output its lengths and constraints extends
+    it) and `Background/Tailored/AnswerReduction/Meets.lean` (`ArMeets`; the two clauses of
+    prop:completeness_soundness_combi_ans_red for a verifier meeting the presented game,
+    `hasPerfectZPC_of_arMeets` and `valStar_sound_of_arMeets`);
+  - the sampler (`LdSampler.lean`, `OutSampler.lean`), whose distribution is the presented game's
+    weights (`dist_arPresented`);
+  - the parameter routine (`ArRoutine.lean`), after a finding: the output's parameters at `n`
+    (`t`, `j`, `d`, the PCP's dimensions) grow like a power of `(λn + 1)^μ` and the programs read
+    them in unary, which no polynomial-time function of the binary index can write. So, as the
+    MIP* answer reduction's `parProg`, a closed program `ArRoutine.parCore` computes them from
+    `((λ, μ, σ), n)`, the programs run it as a stage, and its cost is bounded separately. P4f's
+    `lstar prm V` has the same flaw (`prm : PolyTimeFun ℕ (Unary × Unary)`); P4i turns `prm`
+    into a stage as well;
+  - the calculator (`ArLen.lean`, `lenD_presented`);
+  - the processor's pieces: field equations as constraints from a program of their values
+    (`ArLpField.lean`, `fieldConsF_eq`), field arithmetic on Shoup bits (`ArLpArith.lean`), the
+    low-degree checks (`ArLpLd.lean`, `ldConsF_eq`), the consistency and indifference checks
+    (`ArLpSlots.lean`, `consConsF_eq`, `indConsF_eq`), the circuit polynomial and the proof
+    check's readable guard (`ArLpProof.lean`, `circValF_eq`, `guardF_eq`).
+
+  Remaining: the proof check's six linear equations; the dispatch by type, with the length guard
+  and the edge decoding; the staged `lpCore` (the parameter stage, four calls to the input
+  sampler, then a polynomial-time function), `LpIs` and `ArMeets` for the output; the running
+  times, `within` and `len_total`.
 - **P4i — parameters and the contract (1.5–2.5k).** `Λ, Q, Δ, T, D, FE` from `(λ, μ, σ)` and `n`
   (II:10846–11074), the error chain to `AnswerReduction.delta`, the thresholds;
-  `TailoredAnswerReduction` inhabited, `Closes #282`.
+  `TailoredAnswerReduction` inhabited, `Closes #282`. Concretely: `prm` of `lstar` as a stage; an
+  `ArRoutine` (`parCore` and its cost; `circF` the padded `windowDescriber` on `lstar`); the
+  hypotheses `HonestHyp`, `17 ≤ d`, `L.m ≤ 2^j`, `q ≥ 2 (M + 1) d`, `q ≥ 2 m (5 + 6 (d + 1))` and
+  the answer bound; `errAR` bounded by `AnswerReduction.delta`. Everything but the final assembly
+  can proceed in parallel with the rest of P4h, against the `ArRoutine` interface.
 
 Order: P4a; then P4f and P4g, because the describer is the one step the paper only sketches
 (II:8757) and the PCP's input blocks rest on it; then P4b–P4e, P4h, P4i.

@@ -17,14 +17,19 @@ input sampler and the seeded low-degree test's presentation, downsized over `F�
 basis (as in the MIP* answer reduction's `MIPRE.AnswerReduction.cl`). Here are its CL functions,
 one per type `(r, S) ∈ Role × LIDT.CL.Ty`, the same for both players:
 
-* the oracularized half is `roleFamily` of the input sampler's CL functions, lifted one level
-  (the oracle reads the seed itself, an isolated player its own question);
+* the oracularized half is `roleFamily` of the input sampler's CL functions (the oracle reads the
+  seed itself, an isolated player its own question), for an input of level `ℓ + 1`;
 * the low-degree half is the presentation `LIDT.CL.Regs.pres` of the type, downsized and
   numbered (`ldCl`);
-* both padded to `max (ℓ + 2) 5` levels, the oracularized half first (`arCl`).
+* both padded to `max (ℓ + 1) 3` levels, the oracularized half first (`arCl`). Detyping adds two
+  levels (`CL.Detyping.sampler`), so the output sampler has `max (ℓ + 1) 3 + 2` levels, the
+  `max ((ℓ + 1) + 2) 5` of `TailoredAnswerReduction`, as in the MIP* answer reduction's
+  `MIPRE.AnswerReduction.level`.
 
 `arSampler_arCl`: they form an answer-reduced sampler (`ArSampler`), the hypothesis under which
-`hasPerfectZPC_ar` holds.
+`hasPerfectZPC_ar` and `valStar_ar_sound` hold. The oracularized game of the input
+(`inSeeded`) reads the input's CL functions lifted one level (`liftedCl`), which have the same
+values.
 -/
 
 noncomputable section
@@ -55,53 +60,59 @@ theorem ldCl_exactlyOn (S : LIDT.CL.Ty) : (ldCl t ht sel S).ExactlyOn Finset.uni
   have h' := h.reindex finProdFinEquiv
   rwa [Finset.map_univ_equiv] at h'
 
+section Family
+
+variable {k : ℕ} (W : TailoredVerifier (k + 1))
+
 /-- **The CL function of the answer-reduced sampler** at a type: the oracularized input question on
 the first coordinates, the seeded low-degree test's question on the rest. -/
 def arCl (u : Role × LIDT.CL.Ty) :
-    CLFun 𝔽₂ (Fin (V.sampler.dim n + D j * t)) (max (ℓ + 2) 5) :=
-  prodCL (max (ℓ + 2) 5) (roleFamily (liftedCl V n) u.1) (ldCl t ht sel u.2) (by omega)
-    (by omega)
+    CLFun 𝔽₂ (Fin (W.sampler.dim n + D j * t)) (max (k + 1) 3) :=
+  prodCL (max (k + 1) 3) (roleFamily (W.sampler.cl n) u.1) (ldCl t ht sel u.2) (le_max_left _ _)
+    (le_max_right _ _)
 
-theorem arCl_exactlyOn (u : Role × LIDT.CL.Ty) : (arCl sel V n u).ExactlyOn Finset.univ :=
-  ExactlyOn.prodCL _ (exactlyOn_roleFamily (liftedCl_exactlyOn V n) u.1)
+theorem arCl_exactlyOn (u : Role × LIDT.CL.Ty) : (arCl sel n W u).ExactlyOn Finset.univ :=
+  ExactlyOn.prodCL _ (exactlyOn_roleFamily (W.sampler.cl_exactlyOn n) u.1)
     (ldCl_exactlyOn sel u.2) _ _
 
-theorem eval_arCl (u : Role × LIDT.CL.Ty) (s : Fin (V.sampler.dim n + D j * t) → 𝔽₂) :
-    (arCl sel V n u).eval s = Fin.append ((roleFamily (liftedCl V n) u.1).eval (leftPart s))
+theorem eval_arCl (u : Role × LIDT.CL.Ty) (s : Fin (W.sampler.dim n + D j * t) → 𝔽₂) :
+    (arCl sel n W u).eval s = Fin.append ((roleFamily (W.sampler.cl n) u.1).eval (leftPart s))
       ((ldCl t ht sel u.2).eval (rightPart s)) := by
-  rw [← truncate_self (arCl sel V n u), arCl, eval_truncate_prodCL _
-    (exactlyOn_roleFamily (liftedCl_exactlyOn V n) u.1) (ldCl_exactlyOn sel u.2),
+  rw [← truncate_self (arCl sel n W u), arCl, eval_truncate_prodCL _
+    (exactlyOn_roleFamily (W.sampler.cl_exactlyOn n) u.1) (ldCl_exactlyOn sel u.2),
     eval_truncate_of_le _ (by omega), eval_truncate_of_le _ (by omega)]
 
 /-- **The oracularized half of a question** is the oracularized question of the seed's input part,
 in the type's role. -/
-theorem rolePart_arCl (u : Role × LIDT.CL.Ty) (s : Fin (V.sampler.dim n + D j * t) → 𝔽₂) :
-    rolePart t j (V.sampler.dim n) ((arCl sel V n u).eval s) =
-      ((inSeeded V n).oquestion u.1 (leftPart s)).2 := by
+theorem rolePart_arCl (u : Role × LIDT.CL.Ty) (s : Fin (W.sampler.dim n + D j * t) → 𝔽₂) :
+    rolePart t j (W.sampler.dim n) ((arCl sel n W u).eval s) =
+      ((inSeeded W n).oquestion u.1 (leftPart s)).2 := by
   rw [rolePart, eval_arCl, leftPart_append]
   obtain ⟨r, S⟩ := u
   cases r
   · exact eval_ident _ _
-  · exact eval_liftTo _ _ (Nat.le_succ ℓ) _ _
-  · exact eval_liftTo _ _ (Nat.le_succ ℓ) _ _
+  · rfl
+  · rfl
 
 /-- **The low-degree half of a question** is the seeded test's question of the seed's low-degree
 part. -/
-theorem ldPart_arCl (u : Role × LIDT.CL.Ty) (s : Fin (V.sampler.dim n + D j * t) → 𝔽₂) :
-    ldPart t ht j (V.sampler.dim n) ((arCl sel V n u).eval s) =
-      ((regs j).pres sel u.2).eval (ldPart t ht j (V.sampler.dim n) s) := by
+theorem ldPart_arCl (u : Role × LIDT.CL.Ty) (s : Fin (W.sampler.dim n + D j * t) → 𝔽₂) :
+    ldPart t ht j (W.sampler.dim n) ((arCl sel n W u).eval s) =
+      ((regs j).pres sel u.2).eval (ldPart t ht j (W.sampler.dim n) s) := by
   rw [ldPart, eval_arCl, rightPart_append]
   have e : rightPart s = reindexEquiv finProdFinEquiv (downsizeEquiv (shoupPowerBasis t ht)
-      (ldPart t ht j (V.sampler.dim n) s)) := by
+      (ldPart t ht j (W.sampler.dim n) s)) := by
     simp only [ldPart, LinearEquiv.apply_symm_apply]
   rw [e, ldCl, eval_reindex, eval_downsize]
   simp only [LinearEquiv.symm_apply_apply]
 
 /-- **The answer-reduced sampler's CL functions form an answer-reduced sampler.** -/
-theorem arSampler_arCl : ArSampler hM sel V n fun _ u => arCl sel V n u where
-  exactlyOn _ u := arCl_exactlyOn sel V n u
-  role _ u s := rolePart_arCl sel V n u s
-  ld _ u s := ldPart_arCl sel V n u s
+theorem arSampler_arCl : ArSampler hM sel W n fun _ u => arCl sel n W u where
+  exactlyOn _ u := arCl_exactlyOn sel n W u
+  role _ u s := rolePart_arCl sel n W u s
+  ld _ u s := ldPart_arCl sel n W u s
+
+end Family
 
 end MIPRE.Tailored.AnsRed.Typed
 
