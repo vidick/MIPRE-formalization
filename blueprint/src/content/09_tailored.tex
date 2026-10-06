@@ -1921,6 +1921,58 @@ decoded answers, which are the parsed encodings; Lemma~\ref{lem:intro-typed-cons
 the constraints. The rest is Lemma~\ref{lem:presentation-typed}.
 \end{proof}
 
+\begin{lemma}[Kernel generators of a register-local linear map]
+\label{lem:intro-kergens}
+\uses{lem:intro-aux-cons}
+\lean{MIPRE.Tailored.Intro.kernelGens, MIPRE.Tailored.Intro.kernelGens_correct,
+  MIPRE.Tailored.Intro.linRows, MIPRE.Tailored.Intro.regKerGens,
+  MIPRE.Tailored.Intro.kerGens_regKerGens}
+\leanok
+The binary kernel program, run on the rows of the matrix of a register-local linear map, outputs
+vectors in its kernel that span it. So it provides the kernel generators the hiding comparisons
+need.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The program's correctness, read in the sampler's encoding of vectors.
+\end{proof}
+
+\begin{lemma}[The output tailored verifier, from a specification of its programs]
+\label{lem:intro-output}
+\uses{lem:intro-presentation-sound,lem:intro-presentation-complete,lem:of-tnfvt}
+\lean{MIPRE.Tailored.Intro.Output.quantumValue_H,
+  MIPRE.Tailored.Intro.Output.valStar_presented_le_output, MIPRE.Tailored.Intro.Output.outTV,
+  MIPRE.Tailored.Intro.Output.qe, MIPRE.Tailored.Intro.Output.IntroSpec,
+  MIPRE.Tailored.Intro.Output.lenOf_eq_of, MIPRE.Tailored.Intro.Output.extends_presented,
+  MIPRE.Tailored.Intro.Output.valStar_outTV_le, MIPRE.Tailored.Intro.Output.soundness_seven,
+  MIPRE.Tailored.Intro.Output.hasPerfectZPC_outTV,
+  MIPRE.Tailored.Intro.Output.acceptsAsInput_ofTNFVT, MIPRE.Tailored.Intro.Output.delta_mul_le,
+  MIPRE.Tailored.Intro.Output.lenOf_le_of_isBounded,
+  MIPRE.Tailored.Intro.Output.maxLen_le_of_isBounded,
+  MIPRE.Tailored.Intro.Output.soundness_contract}
+\leanok
+Give the output tailored verifier at $\lambda$ the sampler of the introspection verifier and two
+programs which, at index $n$, output at every detyped question the presented game's lengths and
+at every pair its constraints. Then its $n$-th game extends the presented one, so it has the
+presented game's $\val^*$, which is at most the value of the introspection verifier's output on
+the input's normal form verifier; and a perfect strategy of the reference verifier's typed game
+meeting the conditions of Lemma~\ref{lem:intro-presentation-complete} gives it a perfect ZPC
+strategy. For a $\lambda$-bounded tailored input whose normal form verifier is $C\lambda$-bounded,
+$C \geq 2$, with the programs meeting the specification at $C\lambda$: $\val^*$ of the output at
+$n \geq 1$ above $1 - \varepsilon$ gives $\val^*$ of the input at $2^n$ at least
+$1 - \delta(aC^a, b, \lambda, n, \varepsilon)$, with the introspection verifier's $a$ and $b$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The detyped game is the reference verifier's along the numbering of the detyped registers, and
+the reference verifier has the value of the introspection verifier's output. Its soundness at
+$C\lambda$, the identification of the input's normal form verifier's value with the input's, and
+$\delta(a, b, C\lambda, n, \varepsilon) \le \delta(aC^a, b, \lambda, n, \varepsilon)$ for $a \geq 1$,
+$C \geq 1$ and $\lambda n \geq 1$.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}

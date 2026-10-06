@@ -252,6 +252,8 @@ public import MIPRE.Background.Tailored.Intro.PauliConsKernel
 public import MIPRE.Tailored.OfTNFVT
 public import MIPRE.Background.Tailored.Intro.Typed
 public import MIPRE.Background.Tailored.Intro.Complete
+public import MIPRE.Background.Tailored.Intro.Output
+public import MIPRE.Tailored.Intro.KerGensProg
 
 @[expose] public section
 
@@ -3973,5 +3975,22 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.Complete.length_encL, MIPRE.Tailored.Intro.Complete.encT,
   MIPRE.Tailored.Intro.Complete.okT, MIPRE.Tailored.Intro.Complete.tdata_complete,
   MIPRE.Tailored.Intro.Complete.hasPerfectZPC_tpresented
+
+-- blueprint `lem:intro-kergens`
+#guard_sorry_free MIPRE.Tailored.Intro.kernelGens, MIPRE.Tailored.Intro.kernelGens_correct,
+  MIPRE.Tailored.Intro.linRows, MIPRE.Tailored.Intro.regKerGens,
+  MIPRE.Tailored.Intro.kerGens_regKerGens
+
+-- blueprint `lem:intro-output`
+#guard_sorry_free MIPRE.Tailored.Intro.Output.quantumValue_H,
+  MIPRE.Tailored.Intro.Output.valStar_presented_le_output, MIPRE.Tailored.Intro.Output.outTV,
+  MIPRE.Tailored.Intro.Output.qe, MIPRE.Tailored.Intro.Output.IntroSpec,
+  MIPRE.Tailored.Intro.Output.lenOf_eq_of, MIPRE.Tailored.Intro.Output.extends_presented,
+  MIPRE.Tailored.Intro.Output.valStar_outTV_le, MIPRE.Tailored.Intro.Output.soundness_seven,
+  MIPRE.Tailored.Intro.Output.hasPerfectZPC_outTV,
+  MIPRE.Tailored.Intro.Output.acceptsAsInput_ofTNFVT, MIPRE.Tailored.Intro.Output.delta_mul_le,
+  MIPRE.Tailored.Intro.Output.lenOf_le_of_isBounded,
+  MIPRE.Tailored.Intro.Output.maxLen_le_of_isBounded,
+  MIPRE.Tailored.Intro.Output.soundness_contract
 
 end
