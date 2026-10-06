@@ -689,6 +689,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.Honest
 public import MIPRE.Background.Tailored.AnswerReduction.HonestBits
 public import MIPRE.Background.Tailored.AnswerReduction.LdSampler
 public import MIPRE.Background.Tailored.AnswerReduction.Meets
+public import MIPRE.Background.Tailored.AnswerReduction.OutSampler
 public import MIPRE.Background.Tailored.AnswerReduction.ShiftPoly
 public import MIPRE.Background.Tailored.AnswerReduction.Sound
 public import MIPRE.Background.Tailored.AnswerReduction.SoundCheck
