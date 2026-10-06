@@ -264,6 +264,7 @@ public import MIPRE.Background.Tailored.Intro.PauliConsProg
 public import MIPRE.Background.Tailored.Intro.LenIntro
 public import MIPRE.Background.Tailored.Intro.CompleteContract
 public import MIPRE.Background.Tailored.Intro.Inhabit
+public import MIPRE.Background.Tailored.Main
 public import MIPRE.Tailored.Intro.AuxProg
 
 @[expose] public section
@@ -4061,6 +4062,29 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `thm:tailored-qr`
 #guard_sorry_free MIPRE.Tailored.Intro.Inhabit.tailoredIntrospection,
   MIPRE.Tailored.Intro.Inhabit.exists_tailoredIntrospection
+
+-- blueprint `thm:tailored-compression-from-stages`
+#guard_sorry_free MIPRE.Tailored.TailoredVerifier.Within.mono, MIPRE.Tailored.Compose.coefOf,
+  MIPRE.Tailored.Compose.esize_le_coefOf, MIPRE.Tailored.Compose.sigma,
+  MIPRE.Tailored.Compose.size_le_sigma, MIPRE.Tailored.Compose.mu, MIPRE.Tailored.Compose.beta,
+  MIPRE.Tailored.Compose.tau, MIPRE.Tailored.Compose.C₀, MIPRE.Tailored.Compose.C₀_spec,
+  MIPRE.Tailored.Compose.arOutput, MIPRE.Tailored.Compose.sampler,
+  MIPRE.Tailored.Compose.samplerProg_eq, MIPRE.Tailored.Compose.len,
+  MIPRE.Tailored.Compose.lenProg_eq, MIPRE.Tailored.Compose.compress,
+  MIPRE.Tailored.Compose.output, MIPRE.Tailored.Compose.output_sampler,
+  MIPRE.Tailored.Compose.output_len, MIPRE.Tailored.Compose.output_lp,
+  MIPRE.Tailored.Compose.wSize, MIPRE.Tailored.Compose.arOutput_size_le,
+  MIPRE.Tailored.Compose.arBound, MIPRE.Tailored.Compose.timeB, MIPRE.Tailored.Compose.lenB,
+  MIPRE.Tailored.Compose.polyBounded_G, MIPRE.Tailored.Compose.bound,
+  MIPRE.Tailored.Compose.introOutput_within, MIPRE.Tailored.Compose.arOutput_within,
+  MIPRE.Tailored.Compose.output_within, MIPRE.Tailored.Compose.arBound_le_pow',
+  MIPRE.Tailored.Compose.output_hasPerfectZPC, MIPRE.Tailored.Compose.output_valStar_le,
+  MIPRE.Tailored.TailoredGapCompression.ofTailoredPipeline
+
+-- blueprint `cor:tmip-re-from-ar`
+#guard_sorry_free MIPRE.Tailored.TailoredGapCompression.ofAnswerReduction,
+  MIPRE.Tailored.tailored_halting_reduction_of_answerReduction,
+  MIPRE.Tailored.tmipStarComputable_eq_re_of_answerReduction
 
 -- blueprint `lem:intro-input-runs`
 #guard_sorry_free MIPRE.Tailored.TailoredVerifier.IsBounded.two_le,

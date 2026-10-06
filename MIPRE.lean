@@ -708,6 +708,7 @@ public import MIPRE.Background.Tailored.Intro.PauliHideProg
 public import MIPRE.Background.Tailored.Intro.Scale
 public import MIPRE.Background.Tailored.Intro.Sound
 public import MIPRE.Background.Tailored.Intro.Typed
+public import MIPRE.Background.Tailored.Main
 public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Background.Tailored.Repetition.Stage
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
@@ -1453,6 +1454,7 @@ public import MIPRE.Tailored.Class
 public import MIPRE.Tailored.ClassPoly
 public import MIPRE.Tailored.ClassPolyTab
 public import MIPRE.Tailored.ClassVerifier
+public import MIPRE.Tailored.Compose
 public import MIPRE.Tailored.Compression
 public import MIPRE.Tailored.Data.Bridge
 public import MIPRE.Tailored.Data.Convert
