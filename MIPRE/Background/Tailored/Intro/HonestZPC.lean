@@ -372,7 +372,211 @@ theorem support_introspect (w' w : Bool) (z : Fin (PauliSampler.dimension c lam 
       exact AuxiliaryDecision.sourceOutput_of_attained W hs w _
         (canonical_introspect W RW (one_le_c hc) he hs w' w z _ α ha)
 
+theorem srcSplitR_sample_symm (w : Bool)
+    (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
+    srcSplitR V W hs (.sample, w) (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
+      V.lenOf (2 ^ n) (toBits (pull (AuxiliaryProgram.firstEmbedding hs)
+        ((AuxiliaryDecision.padded W hs w).eval ((reindexEquiv (numbering c lam n)).symm y))))
+        false :=
+  srcSplitR_sample W hs V w _
+
+theorem srcSplitL_sample_symm (w : Bool)
+    (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
+    srcSplitL V W hs (.sample, w) (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
+      V.lenOf (2 ^ n) (toBits (pull (AuxiliaryProgram.firstEmbedding hs)
+        ((AuxiliaryDecision.padded W hs w).eval ((reindexEquiv (numbering c lam n)).symm y))))
+        true :=
+  srcSplitL_sample W hs V w _
+
+include hlen in
+/-- **The support at a Sample label.** -/
+theorem support_sample (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂)
+    (a : CanonicalComplete.Answer c lam n)
+    (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.sample, w), z)) a ≠ 0) :
+    OkI W hs V (.inr (.sample, w)) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      readOKI W hs V (.inr (.sample, w)) (enc (P := QLD.Ty) (registerBits c lam n)
+        ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inr (.sample, w))
+        (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
+  have h1 := canonical_aux_ne_zero W RW he hs (one_le_c hc) w' (.sample, w) z a ha
+  obtain ⟨y', α, hb, hM⟩ := parsedCoreOp_support (family W hs) (decider W hs)
+    (reindexed W RW hs) (true, w) _ h1
+  have ha' : a = (AuxiliaryQuotient.answerEquiv (numbering c lam n)).symm (.pair y' α) := by
+    rw [← hb]
+    exact (Equiv.symm_apply_apply _ a).symm
+  subst ha'
+  have hM' : RW.P.M (w, pull (AuxiliaryProgram.firstEmbedding hs)
+      ((reindexEquiv (numbering c lam n)).symm ((family W hs w).eval y'))) α ≠ 0 := hM
+  have hM'' : RW.P.M (w, pull (AuxiliaryProgram.firstEmbedding hs)
+      ((AuxiliaryDecision.padded W hs w).eval ((reindexEquiv (numbering c lam n)).symm y'))) α
+        ≠ 0 := by
+    rw [← family_eval_symm]
+    exact hM'
+  have hl := hlen _ α hM''
+  have hα := α.2
+  have hR := srcSplitR_sample_symm W hs V w y'
+  have hL := srcSplitL_sample_symm W hs V w y'
+  have hR' := lenOf_le W RW V hlen (w, pull (AuxiliaryProgram.firstEmbedding hs)
+    ((AuxiliaryDecision.padded W hs w).eval ((reindexEquiv (numbering c lam n)).symm y'))) false
+  have hL' := lenOf_le W RW V hlen (w, pull (AuxiliaryProgram.firstEmbedding hs)
+    ((AuxiliaryDecision.padded W hs w).eval ((reindexEquiv (numbering c lam n)).symm y'))) true
+  dsimp only at hl hR' hL'
+  rw [encodeAnswer_pair hc]
+  refine ⟨⟨_, α.1, rfl, length_toBits_symm _, ?_, ?_, ?_⟩, ?_⟩
+  · omega
+  · omega
+  · omega
+  · have ht := take_enc_pair W hs V (Or.inr rfl) (length_toBits_symm y') (α := α.1)
+      (t := (.sample, w))
+    refine ⟨?_, trivial, fun h => absurd h (by simp)⟩
+    show srcSplitR V W hs _ _ + srcSplitL V W hs _ _ ≤ _
+    rw [ht]
+    omega
+
+theorem take_enc_read (w : Bool) {y yp α : BitStr} (hy : y.length = registerBits c lam n)
+    (hyp : yp.length = registerBits c lam n) :
+    (enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) (P := QLD.Ty)
+      (.inr (.read, w)) (tripleBits y yp α)).take (registerBits c lam n) = y := by
+  simp only [enc, tripleParts_tripleBits _ y yp α hy hyp]
+  rw [List.append_assoc, List.take_left' hy]
+
+theorem take_enc_hide (k : Fin 7) (w : Bool) {y yp x : BitStr}
+    (hy : y.length = registerBits c lam n) (hyp : yp.length = registerBits c lam n) :
+    (enc (registerBits c lam n) ((2 ^ n) ^ lam) (srcSplitR V W hs) (P := QLD.Ty)
+      (.inr (.hide k, w)) (tripleBits y yp x)).take (registerBits c lam n) = y := by
+  simp only [enc, tripleParts_tripleBits _ y yp x hy hyp]
+  rw [List.take_left' hy]
+
+theorem ofBits_toBits_symm (y : BinaryComplete.Seed (registerPower c lam n) (fieldBits c lam n)) :
+    ofBits (registerBits c lam n) (toBits ((reindexEquiv (numbering c lam n)).symm y)) =
+      (reindexEquiv (numbering c lam n)).symm y :=
+  ofBits_toBits _
+
+include hlen in
+/-- **The support at a Read label.** -/
+theorem support_read (w' w : Bool) (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂)
+    (a : CanonicalComplete.Answer c lam n)
+    (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.read, w), z)) a ≠ 0) :
+    OkI W hs V (.inr (.read, w)) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      readOKI W hs V (.inr (.read, w)) (enc (P := QLD.Ty) (registerBits c lam n)
+        ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inr (.read, w))
+        (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
+  have hpre := canonical_prefixGuard W RW (one_le_c hc) he hs _ a ha
+  have h1 := canonical_aux_ne_zero W RW he hs (one_le_c hc) w' (.read, w) z a ha
+  obtain ⟨y', yp', α, hb, hM⟩ := parsedReadOp_support (family W hs) (decider W hs)
+    (reindexed W RW hs) w (family_supported W hs w) _ h1
+  have ha' : a =
+      (AuxiliaryQuotient.answerEquiv (numbering c lam n)).symm (.read y' yp' α) := by
+    rw [← hb]
+    exact (Equiv.symm_apply_apply _ a).symm
+  subst ha'
+  have hM' : RW.P.M (w, pull (AuxiliaryProgram.firstEmbedding hs)
+      ((reindexEquiv (numbering c lam n)).symm y')) α ≠ 0 := hM
+  have hl := hlen _ α hM'
+  have hα := α.2
+  have hR := srcSplitR_symm W hs V (.read, w) (by simp) y'
+  have hL := srcSplitL_symm W hs V (.read, w) (by simp) y'
+  have hR' := lenOf_le W RW V hlen (w, pull (AuxiliaryProgram.firstEmbedding hs)
+    ((reindexEquiv (numbering c lam n)).symm y')) false
+  have hL' := lenOf_le W RW V hlen (w, pull (AuxiliaryProgram.firstEmbedding hs)
+    ((reindexEquiv (numbering c lam n)).symm y')) true
+  dsimp only at hl hR' hL'
+  rw [encodeAnswer_read hc]
+  refine ⟨⟨_, _, α.1, rfl, length_toBits_symm _, length_toBits_symm _, ?_, ?_, ?_⟩, ?_⟩
+  · omega
+  · omega
+  · omega
+  · have ht := take_enc_read W hs V w (length_toBits_symm y') (length_toBits_symm yp')
+      (α := α.1)
+    refine ⟨?_, ?_, fun h => absurd h (by simp)⟩
+    · show srcSplitR V W hs _ _ + srcSplitL V W hs _ _ ≤ _
+      rw [ht]
+      omega
+    · show prefixI W hs (.read, w) _
+      rw [ht]
+      show ∃ x, _ = _
+      rw [ofBits_toBits_symm]
+      exact hpre
+
+/-- **The support at a Hide label.** -/
+theorem support_hide (w' : Bool) (k : Fin 7) (w : Bool)
+    (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂) (a : CanonicalComplete.Answer c lam n)
+    (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inr (.hide k, w), z)) a ≠ 0) :
+    OkI W hs V (.inr (.hide k, w)) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      readOKI W hs V (.inr (.hide k, w)) (enc (P := QLD.Ty) (registerBits c lam n)
+        ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inr (.hide k, w))
+        (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
+  have hpre := canonical_prefixGuard W RW (one_le_c hc) he hs _ a ha
+  have h1 := canonical_aux_ne_zero W RW he hs (one_le_c hc) w' (.hide k, w) z a ha
+  obtain ⟨y', yp', x', hb⟩ := parsedHideOp_support (family W hs) (decider W hs)
+    (reindexed W RW hs) w k.val (family_supported W hs w) _ h1
+  have ha' : a =
+      (AuxiliaryQuotient.answerEquiv (numbering c lam n)).symm (.hide y' yp' x') := by
+    rw [← hb]
+    exact (Equiv.symm_apply_apply _ a).symm
+  subst ha'
+  rw [encodeAnswer_hide hc]
+  refine ⟨⟨_, _, _, rfl, length_toBits_symm _, length_toBits_symm _, length_toBits_symm _⟩, ?_⟩
+  have ht := take_enc_hide W hs V k w (length_toBits_symm y') (length_toBits_symm yp')
+    (x := toBits ((reindexEquiv (numbering c lam n)).symm x'))
+  refine ⟨trivial, ?_, fun h => absurd h (by simp)⟩
+  show prefixI W hs (.hide k, w) _
+  rw [ht]
+  show ∃ x, _ = _
+  rw [ofBits_toBits_symm]
+  exact hpre
+
+/-- **The support at a Pauli label.** -/
+theorem support_pauli (w' : Bool) (T : QLD.Ty) (z : Fin (PauliSampler.dimension c lam n) → 𝔽₂)
+    (a : CanonicalComplete.Answer c lam n)
+    (ha : (canonical W RW (one_le_c hc) he hs).P.M (w', (.inl T, z)) a ≠ 0) :
+    OkI W hs V (.inl T) (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      readOKI W hs V (.inl T) (enc (P := QLD.Ty) (registerBits c lam n)
+        ((2 ^ n) ^ lam) (srcSplitR V W hs) (.inl T)
+        (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
+  obtain ⟨x, rfl⟩ := canonical_pauli_shape W RW he hs (one_le_c hc) w' T z a ha
+  have hf := canonical_pauli_format W RW (one_le_c hc) he hs w' T z x ha
+  refine ⟨?_, trivial⟩
+  show (QLD.PauliAnswerProgram.answerBits (field c lam n) x).length = _
+  rw [length_answerBits _ _ x hf]
+  cases T <;> rfl
+
+include hlen in
+/-- **The support of the honest strategy of the guarded game.** -/
+theorem canonical_support (q : Bool × CL.Detyping.Question DecisionKernel.Label
+      (Fin (PauliSampler.dimension c lam n))) (a : CanonicalComplete.Answer c lam n)
+    (ha : (canonical W RW (one_le_c hc) he hs).P.M q a ≠ 0) :
+    OkI W hs V q.2.1 (CanonicalComplete.encodeAnswer c hc lam n a).1 ∧
+      readOKI W hs V q.2.1 (enc (P := QLD.Ty) (registerBits c lam n) ((2 ^ n) ^ lam)
+        (srcSplitR V W hs) q.2.1 (CanonicalComplete.encodeAnswer c hc lam n a).1) := by
+  rcases q with ⟨w', p | ⟨t, w⟩, z⟩
+  · exact support_pauli W RW he hs V hc w' p z a ha
+  · cases t with
+    | introspect => exact support_introspect W RW he hs V hc hlen w' w z a ha
+    | sample => exact support_sample W RW he hs V hc hlen w' w z a ha
+    | read => exact support_read W RW he hs V hc hlen w' w z a ha
+    | hide k => exact support_hide W RW he hs V hc w' k w z a ha
+
 end CanonicalSupport
+
+section RawSupport
+
+variable (U : ClockedUniversalMachine) (hW : W.IsBounded lam) (hn : 1 ≤ n)
+
+include hlen in
+/-- **`hsupp`: the honest strategy of the typed game charges only well-formed byte answers
+whose registers satisfy the readable conditions.** -/
+theorem raw_support (q : Bool × CL.Detyping.Question DecisionKernel.Label
+      (Fin (PauliSampler.dimension c lam n))) (a : Verifier.Answers (outerBound c lam n))
+    (ha : (raw W RW hc he U hW hn).P.M q a ≠ 0) :
+    OkI W (dim_le W c hc hW hn) V q.2.1 a.1 ∧
+      readOKI W (dim_le W c hc hW hn) V q.2.1 (encI W (dim_le W c hc hW hn) V q.2 a) := by
+  obtain ⟨a', rfl, ha'⟩ := mergeAnswersByQuestion_ne_zero
+    (canonical W RW (one_le_c hc) he (dim_le W c hc hW hn))
+    (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog) lam n).doubled
+    (fun _ a => CanonicalComplete.encodeAnswer c hc lam n a) q a ha
+  exact canonical_support W RW he (dim_le W c hc hW hn) V hc hlen q a' ha'
+
+end RawSupport
 
 end MIPRE.Tailored.Intro.HonestChain
 
