@@ -690,6 +690,7 @@ public import MIPRE.Background.Tailored.Intro.HonestBits
 public import MIPRE.Background.Tailored.Intro.HonestChain
 public import MIPRE.Background.Tailored.Intro.HonestPauli
 public import MIPRE.Background.Tailored.Intro.HonestZPC
+public import MIPRE.Background.Tailored.Intro.Inhabit
 public import MIPRE.Background.Tailored.Intro.LenIntro
 public import MIPRE.Background.Tailored.Intro.LpIntro
 public import MIPRE.Background.Tailored.Intro.LpIntroAux

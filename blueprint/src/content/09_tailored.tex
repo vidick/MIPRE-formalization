@@ -1072,16 +1072,25 @@ length.
 
 \begin{theorem}[Question reduction for tailored verifiers; II:5712]
 \label{thm:tailored-qr}
-\uses{def:tailored-stages,thm:introspection}
+\uses{def:tailored-stages,lem:intro-lp-program,lem:intro-honest-zpc,lem:intro-output,
+  lem:intro-rescale,lem:of-tnfvt}
+\lean{MIPRE.Tailored.Intro.Inhabit.tailoredIntrospection,
+  MIPRE.Tailored.Intro.Inhabit.exists_tailoredIntrospection}
+\leanok
 The contract \texttt{TailoredIntrospection} is inhabited, at input level~$7$.
 \end{theorem}
 
 \begin{proof}
-Route~A (Remark~\ref{rem:tailored-route-a}): pad the input to constant lengths (II:6219),
-present the introspection verifier of Theorem~\ref{thm:introspection} as a tailored verifier
-whose constraints accept exactly what the introspective decider accepts, transport its
-soundness through the identification of the games, and prove ZPC completeness of its honest
-strategy. Phase~3.
+\leanok
+Route~A (Remark~\ref{rem:tailored-route-a}). A $\lambda$-bounded tailored input has a
+$C_0\lambda$-bounded normal form verifier (Lemma~\ref{lem:of-tnfvt}); with $M = 2^{C_0 + 1}$, the
+output at $\lambda$ is the output tailored verifier of Lemma~\ref{lem:intro-output} at
+$M\lambda$, with the introspection verifier's sampler and the programs
+$\mathrm{L}^{\mathrm{intro}}$ and $\mathrm{LP}^{\mathrm{intro}}$ at $M\lambda$, which meet its
+specification (Lemma~\ref{lem:intro-lp-program}). Soundness is that of
+Lemma~\ref{lem:intro-output}, with $a M^a$ in place of $a$; completeness at $n \geq 1$ is
+Lemma~\ref{lem:intro-honest-zpc}, and at $n = 0$ the output is empty. The budgets at $M\lambda$
+are budgets at $\lambda$ (Lemma~\ref{lem:intro-rescale}).
 \end{proof}
 
 \begin{theorem}[Answer reduction for tailored verifiers; II:6883]
@@ -1990,9 +1999,9 @@ and whose answer bits are signed permutations, diagonal at the readable ones, gi
 strategy of the reference verifier's typed game. That strategy is perfect and PCC, charges only
 answers of the layout whose readable conditions hold, and its bit observables along the layout
 are signed permutations, diagonal at the readable bits. A perfect ZPC strategy of a tailored
-input $\mathcal{V}$ at $2^n$ gives such a strategy of its normal form verifier. Hence, for a
+input $V$ at $2^n$ gives such a strategy of its normal form verifier. Hence, for a
 $\lambda$-bounded tailored input whose normal form verifier is $C\lambda$-bounded, $C \geq 2$,
-with the output's programs meeting the specification at $C\lambda$: if $\mathcal{V}$ has a perfect
+with the output's programs meeting the specification at $C\lambda$: if $V$ has a perfect
 ZPC strategy at $2^n$, the output has one at $n$.
 \end{lemma}
 
@@ -2158,6 +2167,62 @@ the kernel generators and the input's constraints.
 \leanok
 Unit vectors are shifts of one another, a coordinate set selects among them, and every other
 list is a concatenation of placed vectors.
+\end{proof}
+
+\begin{lemma}[The introspection linear-constraints processor]
+\label{lem:intro-lp-program}
+\uses{lem:intro-output,lem:intro-len-program,lem:intro-input-runs,lem:intro-cl-data,
+  lem:intro-pauli-progs,lem:intro-pauli-cons-prog,lem:intro-aux-progs,lem:intro-kergens,
+  lem:intro-typed-cons}
+\lean{MIPRE.Tailored.Intro.LpIntro.lpIntroC, MIPRE.Tailored.Intro.LpIntro.lpIntroProgC,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroProgC_eq, MIPRE.Tailored.Intro.LpIntro.lpIntroC_lpIs,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroC_lpIs_zero,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroC_cons_eq, MIPRE.Tailored.Intro.LpIntro.lpIntroC_size,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroC_size_le, MIPRE.Tailored.Intro.LpIntro.lpIntroC_budget,
+  MIPRE.Tailored.Intro.LpIntro.lpIntro, MIPRE.Tailored.Intro.LpIntro.lpIntroProg,
+  MIPRE.Tailored.Intro.LpIntro.lpIntroProg_eq, MIPRE.Tailored.Intro.LpIntro.lpIntro_lpIs_zero,
+  MIPRE.Tailored.Intro.LpIntro.lpIntro_cons_eq,
+  MIPRE.Tailored.Intro.LpIntro.introSpec_lenIntro_lpIntro,
+  MIPRE.Tailored.Intro.LpIntro.lpIntro_budget, MIPRE.Tailored.Intro.LpIntro.lpIntro_size_le}
+\leanok
+A program $\mathrm{LP}^{\mathrm{intro}}$, computed from the input's three descriptions and
+$\lambda$ in polynomial time, outputs nothing at $\lambda = 0$ or $n = 0$, and otherwise, at a
+pair of detyped questions, decodes the edge they ask, checks the readable lengths of the two
+answers, and outputs the presented game's constraints at that edge: the Pauli constraints,
+the Pauli hiding constraints in either order, and the auxiliary constraints, with the kernel
+generators computed by elimination and the input's programs run on the clamped descriptions
+under a clock. With $\mathrm{L}^{\mathrm{intro}}$ it meets the specification of
+Lemma~\ref{lem:intro-output} for a $\lambda$-bounded input whose normal form verifier is
+$\lambda$-bounded. It runs within $2^{(\lambda n + 1)^C}$ at degree $C$ on every input, and
+$|\mathrm{LP}^{\mathrm{intro}}| \le C(\lambda + 1)^C$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A composition of the programs of the previous lemmas, by cases on the finitely many labels;
+each branch's output is the corresponding constraint family on the edge, and the costs add.
+\end{proof}
+
+\begin{lemma}[Reading the construction at $C\lambda$ as one at $\lambda$]
+\label{lem:intro-rescale}
+\uses{lem:intro-len-program,lem:tailored-trivial-zpc}
+\lean{MIPRE.Tailored.Intro.Scale.doubleF, MIPRE.Tailored.Intro.Scale.doubleF_apply,
+  MIPRE.Tailored.Intro.Scale.mulPow2F, MIPRE.Tailored.Intro.Scale.mulPow2F_apply,
+  MIPRE.Tailored.Intro.Scale.ansBound_scale, MIPRE.Tailored.Intro.Scale.LenBound.mono,
+  MIPRE.Tailored.Intro.Scale.lenIntro_within, MIPRE.Tailored.Intro.Scale.hasPerfectZPC_of_zero,
+  MIPRE.Tailored.TailoredVerifier.IsBounded.mono}
+\leanok
+$\lambda \mapsto 2^k \lambda$ is a polynomial-time function. A budget at $C\lambda$ is a budget at
+$\lambda$ with the exponent multiplied by $C$: $2^{(C\lambda n + 1)^{C'}} \le 2^{(\lambda n +
+1)^{CC'}}$. $\lambda$-boundedness of a tailored verifier is monotone in $\lambda$. A tailored
+verifier whose calculator outputs $0$ and whose processor outputs no constraint at index $n$
+has a perfect ZPC strategy there, the trivial one.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Bernoulli's inequality $C x + 1 \le (x + 1)^C$; for the last, every pair of empty answers is
+accepted.
 \end{proof}
 
 \begin{theorem}[Tailored compression; II:5643, value form]
