@@ -1517,6 +1517,7 @@ public import MIPRE.Tailored.Repeat.LpSpec
 public import MIPRE.Tailored.Repeat.Strategy
 public import MIPRE.Tailored.Repeat.Verifier
 public import MIPRE.Tailored.SignedPerm
+public import MIPRE.Tailored.Sofic.AldousLyons
 public import MIPRE.Tailored.Sofic.Assoc
 public import MIPRE.Tailored.Sofic.AssocPrimrec
 public import MIPRE.Tailored.Sofic.AssocValue
@@ -1525,6 +1526,19 @@ public import MIPRE.Tailored.Sofic.Double
 public import MIPRE.Tailored.Sofic.Hamming
 public import MIPRE.Tailored.Sofic.Local
 public import MIPRE.Tailored.Sofic.MainII
+public import MIPRE.Tailored.Sofic.Measure.Conclusion
+public import MIPRE.Tailored.Sofic.Measure.Converge
+public import MIPRE.Tailored.Sofic.Measure.Ergodic
+public import MIPRE.Tailored.Sofic.Measure.Limit
+public import MIPRE.Tailored.Sofic.Measure.Local
+public import MIPRE.Tailored.Sofic.Measure.Lower
+public import MIPRE.Tailored.Sofic.Measure.LowerPrimrec
+public import MIPRE.Tailored.Sofic.Measure.MainTheorem
+public import MIPRE.Tailored.Sofic.Measure.Omega
+public import MIPRE.Tailored.Sofic.Measure.Stage
+public import MIPRE.Tailored.Sofic.Measure.UpperPrimrec
+public import MIPRE.Tailored.Sofic.Measure.Valid
+public import MIPRE.Tailored.Sofic.Measure.Value
 public import MIPRE.Tailored.Sofic.Passes
 public import MIPRE.Tailored.Sofic.Perturb
 public import MIPRE.Tailored.Sofic.Quotient

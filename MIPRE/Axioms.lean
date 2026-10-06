@@ -4221,6 +4221,62 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.Tailored.Sofic.not_sofValueApproximable,
   MIPRE.Tailored.not_sofValueApproximable_of_answerReduction
 
+-- blueprint `lem:val-on-continuous`
+#guard_sorry_free MIPRE.Tailored.Sofic.Measure.lift_wordFG,
+  MIPRE.Tailored.Sofic.Measure.isClopen_passSet,
+  SubgroupTestValue.SubgroupTestData.continuous_valOn,
+  SubgroupTestValue.SubgroupTestData.valOn_of_eq, SubgroupTestValue.SubgroupTestData.valOn_finDesc,
+  SubgroupTestValue.finDescIRS_subset_IRS
+
+-- blueprint `cor:sof-eq-erg`
+#guard_sorry_free SubgroupTestValue.SubgroupTestData.valSof_le_valErg,
+  SubgroupTestValue.SubgroupTestData.valSof_eq_valErg
+
+-- blueprint `thm:main-theorem-i-lower`
+#guard_sorry_free MIPRE.Tailored.Sofic.Measure.Represents, MIPRE.Tailored.Sofic.Measure.ValidC,
+  MIPRE.Tailored.Sofic.Measure.Represents.value_eq, MIPRE.Tailored.Sofic.Measure.decodeAct,
+  MIPRE.Tailored.Sofic.Measure.codeOf, MIPRE.Tailored.Sofic.Measure.lowerSeq,
+  MIPRE.Tailored.Sofic.Measure.dyadic, MIPRE.Tailored.Sofic.Measure.lowerSeq_le,
+  MIPRE.Tailored.Sofic.Measure.lowerSeq_monotone, MIPRE.Tailored.Sofic.Measure.tendsto_lowerSeq,
+  MIPRE.Tailored.Sofic.Measure.primrec_lowerSeq, MIPRE.Tailored.Sofic.Measure.mainTheoremI_one
+
+-- blueprint `lem:irs-of-good`
+#guard_sorry_free MIPRE.Tailored.Sofic.Measure.valΩ, MIPRE.Tailored.Sofic.Measure.Good,
+  MIPRE.Tailored.Sofic.Measure.wordEval, MIPRE.Tailored.Sofic.Measure.evW,
+  MIPRE.Tailored.Sofic.Measure.conjW, MIPRE.Tailored.Sofic.Measure.toSub,
+  MIPRE.Tailored.Sofic.Measure.irs_of_good, MIPRE.Tailored.Sofic.Measure.valOn_eq_valΩ
+
+-- blueprint `lem:erg-le-upper`
+#guard_sorry_free MIPRE.Tailored.Sofic.Measure.exists_rounding,
+  MIPRE.Tailored.Sofic.Measure.exists_feasible_of_irs,
+  MIPRE.Tailored.Sofic.Measure.valOn_le_upperSeq, MIPRE.Tailored.Sofic.Measure.valErg_le_upperSeq
+
+-- blueprint `lem:upper-converge`
+#guard_sorry_free MIPRE.Tailored.Sofic.Measure.isPiSystem_cylinders,
+  MIPRE.Tailored.Sofic.Measure.eventually_valΩ_le, MIPRE.Tailored.Sofic.Measure.liftStage,
+  MIPRE.Tailored.Sofic.Measure.valΩ_liftStage, MIPRE.Tailored.Sofic.Measure.tendsto_upperSeq
+
+-- blueprint `thm:main-theorem-i-upper`
+#guard_sorry_free MIPRE.Tailored.Sofic.Measure.primrec_upperSeq,
+  MIPRE.Tailored.Sofic.Measure.upperMin, MIPRE.Tailored.Sofic.Measure.primrec_upperMin,
+  MIPRE.Tailored.Sofic.Measure.valErg_le_upperMin, MIPRE.Tailored.Sofic.Measure.antitone_upperMin,
+  MIPRE.Tailored.Sofic.Measure.mainTheoremI_two, MIPRE.Tailored.Sofic.Measure.ErgUpperApprox,
+  MIPRE.Tailored.Sofic.Measure.MainTheoremITwo, MIPRE.Tailored.Sofic.Measure.ergUpperApprox,
+  MIPRE.Tailored.Sofic.Measure.mainTheoremITwo
+
+-- blueprint `cor:al-sof-approximable`
+#guard_sorry_free MIPRE.Tailored.Sofic.Measure.ceilDiv,
+  MIPRE.Tailored.Sofic.Measure.approx_of_bounds,
+  MIPRE.Tailored.Sofic.Measure.sofValueApproximable_of,
+  MIPRE.Tailored.Sofic.Measure.sofValueApproximable_of_aldousLyons
+
+-- blueprint `thm:aldous-lyons-false`
+#guard_sorry_free MIPRE.Tailored.Sofic.Measure.aldous_lyons_false_of_upper,
+  MIPRE.Tailored.Sofic.Measure.aldous_lyons_false_of, MIPRE.Tailored.Sofic.aldous_lyons_false
+
+-- blueprint `cor:aldous-lyons-false-ar`
+#guard_sorry_free MIPRE.Tailored.aldous_lyons_false_of_answerReduction
+
 -- blueprint `lem:intro-input-runs`
 #guard_sorry_free MIPRE.Tailored.TailoredVerifier.IsBounded.two_le,
   MIPRE.Tailored.Intro.InputRuns.clamp, MIPRE.Tailored.Intro.InputRuns.clamp_bounded,
