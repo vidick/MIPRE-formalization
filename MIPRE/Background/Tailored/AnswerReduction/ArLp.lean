@@ -90,19 +90,23 @@ def argMgL (ℓ k : ℕ) (q : ℕ → PolyTimeFun Data Data) (w : Player) : Poly
 
 /-- A circuit stage's argument, after `k` stages: the encoding of the circuit function's input,
 from the input's programs, `(λ, μ, σ)`, the index, the parameters and the input sampler's
-questions `rA` and `rB` stages back. -/
+questions `rA` and `rB` stages back, read as bit strings — so that the argument is an encoding on
+every input, whatever the input sampler output. -/
 def argCircL (k rA rB : ℕ) : PolyTimeFun Data Data :=
   ap₂ treePair (progsL k) (ap₂ treePair (lmsL k) (ap₂ treePair (nL k) (ap₂ treePair
-    (AnswerReduction.res (k - 1)) (ap₂ treePair (AnswerReduction.res rA)
-      (AnswerReduction.res rB)))))
+    (AnswerReduction.res (k - 1)) (ap₂ treePair
+      (Program.encoded.comp (Program.readBits.comp (AnswerReduction.res rA)))
+      (Program.encoded.comp (Program.readBits.comp (AnswerReduction.res rB)))))))
 
 /-- A proof stage's argument, after `k` stages: the encoding of the proof check's input of a
-question at offset `o`, with readable answer `a`, the gates of the circuit `rC` stages back. -/
+question at offset `o`, with readable answer `a` read as a bit string, the gates of the circuit
+`rC` stages back. -/
 def argPrfL (k rC : ℕ) (o : PolyTimeFun LpIn Unary) (q : PolyTimeFun LpIn BitStr)
     (a : ℕ → PolyTimeFun Data Data) : PolyTimeFun Data Data :=
   ap₂ treePair (AnswerReduction.res (k - 1)) (ap₂ treePair (Program.encoded.comp (o.comp (preL k)))
     (ap₂ treePair (Program.encoded.comp (nF.comp (preL k))) (ap₂ treePair
-      (Program.encoded.comp ((ptsF q).comp (preL k))) (ap₂ treePair (a k)
+      (Program.encoded.comp ((ptsF q).comp (preL k))) (ap₂ treePair
+        (Program.encoded.comp (Program.readBits.comp (a k)))
         (treeTail.comp (AnswerReduction.res rC))))))
 
 /-- A list of bit strings from its encoding. -/
@@ -294,7 +298,7 @@ theorem lpCore_runs {ℓ' : ℕ} (P : Bool → Role × LIDT.CL.Ty → CLFun (ZMo
     refine ⟨t, ?_⟩
     convert ht using 1
     · simp [argCircL, progsL, lmsL, nL, hdL, inL, AnswerReduction.res, X5, X4, X3, X2, X1, X0,
-        encode_prod, rAx, rBx, ArRoutine.margD, hprm]
+        encode_prod, rAx, rBx, ArRoutine.margD, hprm, Program.readBits_encode]
     · rfl)
   set X6 := Data.cons (encode Cx) X5
   have r7 := AnswerReduction.stg_runs (argCircL 6 2 1) hc X6 (encode Cy) (by
@@ -304,7 +308,7 @@ theorem lpCore_runs {ℓ' : ℕ} (P : Bool → Role × LIDT.CL.Ty → CLFun (ZMo
     refine ⟨t, ?_⟩
     convert ht using 1
     · simp [argCircL, progsL, lmsL, nL, hdL, inL, AnswerReduction.res, X6, X5, X4, X3, X2, X1, X0,
-        encode_prod, rAy, rBy, ArRoutine.margD, hprm]
+        encode_prod, rAy, rBy, ArRoutine.margD, hprm, Program.readBits_encode]
     · rfl)
   set X7 := Data.cons (encode Cy) X6
   -- stages 8 and 9: the proof checks
@@ -317,7 +321,8 @@ theorem lpCore_runs {ℓ' : ℕ} (P : Bool → Role × LIDT.CL.Ty → CLFun (ZMo
     refine ⟨t, ?_⟩
     convert ht using 1
     simp only [argPrfL, ap₂_apply, treePair_apply, comp_apply, Program.encoded_apply, hpre7]
-    simp [AnswerReduction.res, aL, inL, X7, X6, X5, X4, X3, X2, X1, X0, encode_prod, Cx]
+    simp [AnswerReduction.res, aL, inL, X7, X6, X5, X4, X3, X2, X1, X0, encode_prod, Cx,
+      Program.readBits_encode]
     rfl)
   set X8 := Data.cons (encode (proofConsF (R.prfInF (const (unary 0)) lX lA lAx lBx qI))) X7
   have hpre8 : preL 8 X8 = lpIn prm qx qy aR bR ([], [], [], []) (default, (0, 0, 0), 0) := by
@@ -329,7 +334,8 @@ theorem lpCore_runs {ℓ' : ℕ} (P : Bool → Role × LIDT.CL.Ty → CLFun (ZMo
     refine ⟨t, ?_⟩
     convert ht using 1
     simp only [argPrfL, ap₂_apply, treePair_apply, comp_apply, Program.encoded_apply, hpre8]
-    simp [AnswerReduction.res, bL, inL, X8, X7, X6, X5, X4, X3, X2, X1, X0, encode_prod, Cy]
+    simp [AnswerReduction.res, bL, inL, X8, X7, X6, X5, X4, X3, X2, X1, X0, encode_prod, Cy,
+      Program.readBits_encode]
     rfl)
   set X9 := Data.cons (encode (proofConsF (R.prfInF nAF lY lB lAy lBy qI))) X8
   -- the last stage

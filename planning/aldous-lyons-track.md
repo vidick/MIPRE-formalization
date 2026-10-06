@@ -38,10 +38,11 @@ game, is done: the functional viewpoint's completeness (`PcpHonest.lean`), the P
 (`Background/Tailored/AnswerReduction/Typed.lean`). P4d, its ZPC completeness, is done
 (`Background/Tailored/AnswerReduction/Complete.lean`, `hasPerfectZPC_ar`), and so is P4e, its
 soundness (`Background/Tailored/AnswerReduction/Sound*.lean`, `valStar_ar_sound`). P4h, the
-programs that compute the game, is in progress: the output verifier (`ArRoutine.output`) meets
-the presented game and is complete and sound in the contract's form (`hasPerfectZPC_output`,
-`valStar_sound_output`); the running times of its programs remain. P4i, the parameters, can
-proceed against the parameter routine's interface (`ArRoutine`).
+programs that compute the game, is done: the output verifier (`ArRoutine.output`) meets the
+presented game and is complete and sound in the contract's form (`hasPerfectZPC_output`,
+`valStar_sound_output`), and is within the contract's output budget (`output_within`) once the
+routine's parameter program runs in polynomial time (`ArRoutine.ParTime`). P4i, the parameters
+and the final assembly, proceeds against the parameter routine's interface (`ArRoutine`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -1069,8 +1070,8 @@ What the reading settled.
   (`Foundations/SAT/Decoupled6.lean`) for any decider, inhabited by `MIPRE.SAT.windowDescriber`
   (`TM/CookLevin/{Link6,Decoupled6,Decoupled6Prog}.lean`, blueprint
   `lem:ar-window-describer`).
-- **P4h — `PartialAnsRed` (in progress, 4.7k lines so far, blueprint `def:tailored-meets` to
-  `thm:ar-output`).** The sampler (O3's typed oracle sampler `prodDirect` beside a one-copy
+- **P4h — `PartialAnsRed` (done, 5.3k lines, blueprint `def:tailored-meets` to
+  `thm:ar-output-within`).** The sampler (O3's typed oracle sampler `prodDirect` beside a one-copy
   seeded sampler downsized along the Shoup basis, then detyped), the calculator by type, the
   processor running the four checks (two calls to the input sampler, one to the describer, `T_C`
   at `p`), their running times and `len_total`; the game they compute is P4c's
@@ -1105,16 +1106,25 @@ What the reading settled.
     the context, and so does the proof check, which reads the circuit's gates;
   - the output verifier (`ArRoutine.output`): it meets the presented game (`arMeets_output`), so
     it is complete and sound (`hasPerfectZPC_output`, `valStar_sound_output`) under the honest
-    PCPs' hypotheses.
-
-  Remaining: the running times of the three programs, `within` and `len_total`.
+    PCPs' hypotheses;
+  - its running times (`ArCost.lean`, `ArLpCost.lean`, `ArWithin.lean`): `output_within`, the
+    contract's `within`, and `lenD_total`, its `len_total`. Everything the programs run is a
+    polynomial-time function or the input sampler, except the parameter program, so the one cost
+    hypothesis is `ArRoutine.ParTime`: the parameter program within `(c (W + 1)^m X^e)^{μ + 1}`
+    for every `W ≥ (λn + 1)^μ + σ + λ + n` (`MIPRE.Pipeline.PRuns`), as the MIP* answer
+    reduction's `parProg_time`. A running time is a bound on *every* input, so the circuit and
+    proof stages read the input sampler's questions and the readable answers as bit strings: a
+    polynomial-time function's bound holds on encodings only. The input's calculator and
+    processor are never run, only handed to the circuit function as data.
 - **P4i — parameters and the contract (1.5–2.5k).** `Λ, Q, Δ, T, D, FE` from `(λ, μ, σ)` and `n`
   (II:10846–11074), the error chain to `AnswerReduction.delta`, the thresholds;
   `TailoredAnswerReduction` inhabited, `Closes #282`. Concretely: `prm` of `lstar` as a stage; an
-  `ArRoutine` (`parCore` and its cost; `circF` the padded `windowDescriber` on `lstar`); the
-  hypotheses `HonestHyp`, `17 ≤ d`, `L.m ≤ 2^j`, `q ≥ 2 (M + 1) d`, `q ≥ 2 m (5 + 6 (d + 1))` and
-  the answer bound; `errAR` bounded by `AnswerReduction.delta`. Everything but the final assembly
-  can proceed in parallel with the rest of P4h, against the `ArRoutine` interface.
+  `ArRoutine` (`parCore` and its cost, `ArRoutine.ParTime`; `circF` the padded `windowDescriber`
+  on `lstar`); the hypotheses `HonestHyp`, `17 ≤ d`, `L.m ≤ 2^j`, `q ≥ 2 (M + 1) d`,
+  `q ≥ 2 m (5 + 6 (d + 1))` and the answer bound; `errAR` bounded by `AnswerReduction.delta`.
+  P4h being done, the final assembly takes the output `ArRoutine.output` with its programs
+  (`arSamplerProg`, `lenPF`, `lpPF`), its two clauses (`hasPerfectZPC_output`,
+  `valStar_sound_output`) and its costs (`output_within`, `lenD_total`).
 
 Order: P4a; then P4f and P4g, because the describer is the one step the paper only sketches
 (II:8757) and the PCP's input blocks rest on it; then P4b–P4e, P4h, P4i.
