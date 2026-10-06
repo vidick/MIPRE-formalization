@@ -255,6 +255,12 @@ public import MIPRE.Background.Tailored.Intro.Typed
 public import MIPRE.Background.Tailored.Intro.Complete
 public import MIPRE.Background.Tailored.Intro.Output
 public import MIPRE.Tailored.Intro.KerGensProg
+public import MIPRE.Tailored.Intro.InputRuns
+public import MIPRE.Tailored.Intro.CLData
+public import MIPRE.Background.Tailored.Intro.PauliHideProg
+public import MIPRE.Background.Tailored.Intro.PauliConsProg
+public import MIPRE.Background.Tailored.Intro.LenIntro
+public import MIPRE.Tailored.Intro.AuxProg
 
 @[expose] public section
 
@@ -3967,7 +3973,8 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:intro-typed-cons`
 #guard_sorry_free MIPRE.Tailored.Intro.Typed.prefixOK, MIPRE.Tailored.Intro.Typed.G,
   MIPRE.Tailored.Intro.Typed.pauliDir, MIPRE.Tailored.Intro.Typed.pauliAux,
-  MIPRE.Tailored.Intro.Typed.consL, MIPRE.Tailored.Intro.Typed.lenR,
+  MIPRE.Tailored.Intro.Typed.consRaw, MIPRE.Tailored.Intro.Typed.consL,
+  MIPRE.Tailored.Intro.Typed.lenR_le_len, MIPRE.Tailored.Intro.Typed.lenR,
   MIPRE.Tailored.Intro.Typed.len, MIPRE.Tailored.Intro.Typed.parsedT,
   MIPRE.Tailored.Intro.Typed.readOK, MIPRE.Tailored.Intro.Typed.pauliAux_iff,
   MIPRE.Tailored.Intro.Typed.AcceptsAsInput, MIPRE.Tailored.Intro.Typed.hD_of_acceptsAsInput,
@@ -4005,5 +4012,65 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.Output.lenOf_le_of_isBounded,
   MIPRE.Tailored.Intro.Output.maxLen_le_of_isBounded,
   MIPRE.Tailored.Intro.Output.soundness_contract
+
+-- blueprint `lem:intro-input-runs`
+#guard_sorry_free MIPRE.Tailored.TailoredVerifier.IsBounded.two_le,
+  MIPRE.Tailored.Intro.InputRuns.clamp, MIPRE.Tailored.Intro.InputRuns.clamp_bounded,
+  MIPRE.Tailored.Intro.InputRuns.clamp_size, MIPRE.Tailored.Intro.InputRuns.runLen,
+  MIPRE.Tailored.Intro.InputRuns.runLp, MIPRE.Tailored.Intro.InputRuns.runLen_eq,
+  MIPRE.Tailored.Intro.InputRuns.runLp_eq, MIPRE.Tailored.Intro.InputRuns.lenDefined,
+  MIPRE.Tailored.Intro.InputRuns.lenRun, MIPRE.Tailored.Intro.InputRuns.lpRun,
+  MIPRE.Tailored.Intro.InputRuns.lenRun_clamp, MIPRE.Tailored.Intro.InputRuns.lpRun_clamp,
+  MIPRE.Tailored.Intro.InputRuns.ansBound_mono, MIPRE.Tailored.Intro.InputRuns.len_clock_le,
+  MIPRE.Tailored.Intro.InputRuns.lp_clock_le, MIPRE.Tailored.Intro.InputRuns.lenRun_seven,
+  MIPRE.Tailored.Intro.InputRuns.lpRun_seven
+
+-- blueprint `lem:intro-cl-data`
+#guard_sorry_free MIPRE.Tailored.Intro.CLData.context, MIPRE.Tailored.Intro.CLData.eval,
+  MIPRE.Tailored.Intro.CLData.eval_correct, MIPRE.Tailored.Intro.CLData.sourceEval,
+  MIPRE.Tailored.Intro.CLData.sourceEval_correct, MIPRE.Tailored.Intro.CLData.scan,
+  MIPRE.Tailored.Intro.CLData.outputPrefix, MIPRE.Tailored.Intro.CLData.Guard,
+  MIPRE.Tailored.Intro.CLData.guard_mono, MIPRE.Tailored.Intro.CLData.guard_zero,
+  MIPRE.Tailored.Intro.CLData.outputPrefix_correct, MIPRE.Tailored.Intro.CLData.factor,
+  MIPRE.Tailored.Intro.CLData.factor_correct, MIPRE.Tailored.Intro.CLData.register,
+  MIPRE.Tailored.Intro.CLData.register_correct, MIPRE.Tailored.Intro.CLData.matrix,
+  MIPRE.Tailored.Intro.CLData.matrix_correct, MIPRE.Tailored.Intro.CLData.kernelGenerators,
+  MIPRE.Tailored.Intro.CLData.kernelGenerators_correct, MIPRE.Tailored.Intro.CLData.guard,
+  MIPRE.Tailored.Intro.CLData.guard_correct, MIPRE.Tailored.Intro.CLData.inSource,
+  MIPRE.Tailored.Intro.CLData.inSource_correct
+
+-- blueprint `lem:intro-pauli-progs`
+#guard_sorry_free MIPRE.Tailored.Intro.PauliHideProg.pauliHideProg,
+  MIPRE.Tailored.Intro.PauliHideProg.pauliHideRevProg,
+  MIPRE.Tailored.Intro.PauliHideProg.pauliHideProg_eq,
+  MIPRE.Tailored.Intro.PauliHideProg.pauliHideRevProg_eq,
+  MIPRE.Tailored.Intro.PauliConsProg.zGuardProg, MIPRE.Tailored.Intro.PauliConsProg.zGuardProg_eq
+
+-- blueprint `lem:intro-len-program`
+#guard_sorry_free MIPRE.Tailored.Intro.LenIntro.introLenR, MIPRE.Tailored.Intro.LenIntro.introLenL,
+  MIPRE.Tailored.Intro.LenIntro.introLen, MIPRE.Tailored.Intro.LenIntro.lin_coef,
+  MIPRE.Tailored.Intro.LenIntro.lenIntroC, MIPRE.Tailored.Intro.LenIntro.lenIntroC_lenIs,
+  MIPRE.Tailored.Intro.LenIntro.lenAt_eq, MIPRE.Tailored.Intro.LenIntro.lenIntroC_lenIs_detype,
+  MIPRE.Tailored.Intro.LenIntro.lenIntroC_budget, MIPRE.Tailored.Intro.LenIntro.lenIntroC_lenTotal,
+  MIPRE.Tailored.Intro.LenIntro.lenIntro, MIPRE.Tailored.Intro.LenIntro.lenIntroProg,
+  MIPRE.Tailored.Intro.LenIntro.lenIntroProg_eq, MIPRE.Tailored.Intro.LenIntro.lenIntro_lenIs,
+  MIPRE.Tailored.Intro.LenIntro.lenIntro_lenIs_zero, MIPRE.Tailored.Intro.LenIntro.lenIntro_budget,
+  MIPRE.Tailored.Intro.LenIntro.lenIntro_lenTotal
+
+-- blueprint `lem:intro-aux-progs`
+#guard_sorry_free MIPRE.Tailored.Intro.eqConsF, MIPRE.Tailored.Intro.eqConsF_spec,
+  MIPRE.Tailored.Intro.guardConsF, MIPRE.Tailored.Intro.guardConsF_spec,
+  MIPRE.Tailored.Intro.projEqConsF, MIPRE.Tailored.Intro.projEqConsF_spec,
+  MIPRE.Tailored.Intro.dualConsF, MIPRE.Tailored.Intro.dualConsF_spec,
+  MIPRE.Tailored.Intro.reindexF, MIPRE.Tailored.Intro.reindexF_spec,
+  MIPRE.Tailored.Intro.swapConsF, MIPRE.Tailored.Intro.swapConsF_spec,
+  MIPRE.Tailored.Intro.sampleConsF, MIPRE.Tailored.Intro.sampleConsF_spec,
+  MIPRE.Tailored.Intro.readConsF, MIPRE.Tailored.Intro.readConsF_spec,
+  MIPRE.Tailored.Intro.hideReadConsF, MIPRE.Tailored.Intro.hideReadConsF_spec,
+  MIPRE.Tailored.Intro.hideNextConsF, MIPRE.Tailored.Intro.hideNextConsF_spec,
+  MIPRE.Tailored.Intro.sameConsF, MIPRE.Tailored.Intro.sameConsF_spec,
+  MIPRE.Tailored.Intro.sourceConsF, MIPRE.Tailored.Intro.sourceConsF_spec,
+  MIPRE.Tailored.Intro.auxLenF, MIPRE.Tailored.Intro.auxLenF_spec, MIPRE.Tailored.Intro.auxPairF,
+  MIPRE.Tailored.Intro.auxPairF_spec
 
 end

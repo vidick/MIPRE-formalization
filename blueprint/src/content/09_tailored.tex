@@ -1827,7 +1827,8 @@ every constraint.
 \uses{lem:intro-aux-cons,lem:intro-pauli-hide,lem:intro-pauli-cons,def:intro-source}
 \lean{MIPRE.Tailored.Intro.Typed.prefixOK, MIPRE.Tailored.Intro.Typed.G,
   MIPRE.Tailored.Intro.Typed.pauliDir, MIPRE.Tailored.Intro.Typed.pauliAux,
-  MIPRE.Tailored.Intro.Typed.consL, MIPRE.Tailored.Intro.Typed.lenR,
+  MIPRE.Tailored.Intro.Typed.consRaw, MIPRE.Tailored.Intro.Typed.consL,
+  MIPRE.Tailored.Intro.Typed.lenR_le_len, MIPRE.Tailored.Intro.Typed.lenR,
   MIPRE.Tailored.Intro.Typed.len, MIPRE.Tailored.Intro.Typed.parsedT,
   MIPRE.Tailored.Intro.Typed.readOK, MIPRE.Tailored.Intro.Typed.pauliAux_iff,
   MIPRE.Tailored.Intro.Typed.AcceptsAsInput, MIPRE.Tailored.Intro.Typed.hD_of_acceptsAsInput,
@@ -1973,6 +1974,143 @@ the reference verifier has the value of the introspection verifier's output. Its
 $C\lambda$, the identification of the input's normal form verifier's value with the input's, and
 $\delta(a, b, C\lambda, n, \varepsilon) \le \delta(aC^a, b, \lambda, n, \varepsilon)$ for $a \geq 1$,
 $C \geq 1$ and $\lambda n \geq 1$.
+\end{proof}
+
+\begin{lemma}[The input's programs, run on a clamped description]
+\label{lem:intro-input-runs}
+\uses{def:tailored-verifier,def:tailored-bounded,lem:detype-total-clock,lem:intro-ambient-runtime}
+\lean{MIPRE.Tailored.TailoredVerifier.IsBounded.two_le, MIPRE.Tailored.Intro.InputRuns.clamp,
+  MIPRE.Tailored.Intro.InputRuns.clamp_bounded, MIPRE.Tailored.Intro.InputRuns.clamp_size,
+  MIPRE.Tailored.Intro.InputRuns.runLen, MIPRE.Tailored.Intro.InputRuns.runLp,
+  MIPRE.Tailored.Intro.InputRuns.runLen_eq, MIPRE.Tailored.Intro.InputRuns.runLp_eq,
+  MIPRE.Tailored.Intro.InputRuns.lenDefined, MIPRE.Tailored.Intro.InputRuns.lenRun,
+  MIPRE.Tailored.Intro.InputRuns.lpRun, MIPRE.Tailored.Intro.InputRuns.lenRun_clamp,
+  MIPRE.Tailored.Intro.InputRuns.lpRun_clamp, MIPRE.Tailored.Intro.InputRuns.ansBound_mono,
+  MIPRE.Tailored.Intro.InputRuns.len_clock_le, MIPRE.Tailored.Intro.InputRuns.lp_clock_le,
+  MIPRE.Tailored.Intro.InputRuns.lenRun_seven, MIPRE.Tailored.Intro.InputRuns.lpRun_seven}
+\leanok
+Clamp the descriptions of a tailored verifier's three programs to size $\lambda$: a $\lambda$-bounded
+verifier keeps them, and the clamp has size linear in $\lambda$. Run the answer-length calculator
+and the linear-constraints processor of the clamped description through a clocked universal
+machine. With a clock at least the time bound of $\lambda$-boundedness at index $m \geq 2$ --- at
+$m = 2^n$, the introspection verifier's own clock $2^{(\lambda n + 1)^5}$, for arguments of length
+at most $(2^n)^\lambda$ --- the runs output the input's lengths and its constraints.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A bounded program halts within its bound, so the clocked run is the run; a bounded calculator
+halts at every question, so the constraints are what the processor outputs.
+\end{proof}
+
+\begin{lemma}[The sampler's data, from the introspection kernel's queries]
+\label{lem:intro-cl-data}
+\uses{def:cl-function,def:decider,def:lambda-bounded,def:ld-encoding,def:normal-verifier,
+  def:sampler,lem:cl-closure,lem:cl-structure,lem:detype-queries,lem:detype-total-clock,
+  lem:effective-binary-field-arithmetic,lem:effective-binary-linear-algebra,
+  lem:intro-adaptive-prefix,lem:intro-binary-source-padding,lem:intro-dynamic-source-compiler,
+  lem:intro-guarded-hiding-maps,lem:intro-parsed-predicate,lem:intro-read-rigidity,
+  lem:intro-subtest-estimates,lem:pcp-padding-programs}
+\lean{MIPRE.Tailored.Intro.CLData.context, MIPRE.Tailored.Intro.CLData.eval,
+  MIPRE.Tailored.Intro.CLData.eval_correct, MIPRE.Tailored.Intro.CLData.sourceEval,
+  MIPRE.Tailored.Intro.CLData.sourceEval_correct, MIPRE.Tailored.Intro.CLData.scan,
+  MIPRE.Tailored.Intro.CLData.outputPrefix, MIPRE.Tailored.Intro.CLData.Guard,
+  MIPRE.Tailored.Intro.CLData.guard_mono, MIPRE.Tailored.Intro.CLData.guard_zero,
+  MIPRE.Tailored.Intro.CLData.outputPrefix_correct, MIPRE.Tailored.Intro.CLData.factor,
+  MIPRE.Tailored.Intro.CLData.factor_correct, MIPRE.Tailored.Intro.CLData.register,
+  MIPRE.Tailored.Intro.CLData.register_correct, MIPRE.Tailored.Intro.CLData.matrix,
+  MIPRE.Tailored.Intro.CLData.matrix_correct, MIPRE.Tailored.Intro.CLData.kernelGenerators,
+  MIPRE.Tailored.Intro.CLData.kernelGenerators_correct, MIPRE.Tailored.Intro.CLData.guard,
+  MIPRE.Tailored.Intro.CLData.guard_correct, MIPRE.Tailored.Intro.CLData.inSource,
+  MIPRE.Tailored.Intro.CLData.inSource_correct}
+\leanok
+For a $\lambda$-bounded normal form verifier at index $2^n$ and a register $y$, polynomial-time
+functions of the kernel's context and $y$ compute the evaluation of the padded CL function, the
+prefix condition, and membership in the source's outputs; and, when the prefix condition holds at
+stage $k$, the reported prefix, the prefix register and the stage's factor as masks, and the
+matrix of the stage's linear map, hence generators of its kernel.
+\end{lemma}
+
+\begin{proof}
+\leanok
+These are the kernel's own queries and scans, read out rather than compared; the sampler's
+program is specified at attained prefixes, which the prefix condition provides.
+\end{proof}
+
+\begin{lemma}[The Pauli constraints of the first hiding edge, as programs]
+\label{lem:intro-pauli-progs}
+\uses{lem:intro-pauli-hide}
+\lean{MIPRE.Tailored.Intro.PauliHideProg.pauliHideProg,
+  MIPRE.Tailored.Intro.PauliHideProg.pauliHideRevProg,
+  MIPRE.Tailored.Intro.PauliHideProg.pauliHideProg_eq,
+  MIPRE.Tailored.Intro.PauliHideProg.pauliHideRevProg_eq,
+  MIPRE.Tailored.Intro.PauliConsProg.zGuardProg, MIPRE.Tailored.Intro.PauliConsProg.zGuardProg_eq}
+\leanok
+Polynomial-time functions output the constraints of the first hiding edge in either order, from
+the parameters, the first factor as a mask and the kernel generators; and decide whether the
+$Z$-basis answer projects to a given register.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Every coefficient is an inner product of the generator, restricted to the factor, with a column
+of the self-dual coordinate map, or a unit vector.
+\end{proof}
+
+\begin{lemma}[The introspection answer-length calculator]
+\label{lem:intro-len-program}
+\uses{lem:intro-typed-cons,def:tailored-detyping,lem:introspection-supply}
+\lean{MIPRE.Tailored.Intro.LenIntro.introLenR, MIPRE.Tailored.Intro.LenIntro.introLenL,
+  MIPRE.Tailored.Intro.LenIntro.introLen, MIPRE.Tailored.Intro.LenIntro.lin_coef,
+  MIPRE.Tailored.Intro.LenIntro.lenIntroC, MIPRE.Tailored.Intro.LenIntro.lenIntroC_lenIs,
+  MIPRE.Tailored.Intro.LenIntro.lenAt_eq, MIPRE.Tailored.Intro.LenIntro.lenIntroC_lenIs_detype,
+  MIPRE.Tailored.Intro.LenIntro.lenIntroC_budget,
+  MIPRE.Tailored.Intro.LenIntro.lenIntroC_lenTotal, MIPRE.Tailored.Intro.LenIntro.lenIntro,
+  MIPRE.Tailored.Intro.LenIntro.lenIntroProg, MIPRE.Tailored.Intro.LenIntro.lenIntroProg_eq,
+  MIPRE.Tailored.Intro.LenIntro.lenIntro_lenIs, MIPRE.Tailored.Intro.LenIntro.lenIntro_lenIs_zero,
+  MIPRE.Tailored.Intro.LenIntro.lenIntro_budget, MIPRE.Tailored.Intro.LenIntro.lenIntro_lenTotal}
+\leanok
+A program, depending on $\lambda$ alone, outputs at every question the lengths of the presented
+game at the question's label --- $0$ off the decodable views, and at index $0$ or $\lambda = 0$ ---
+halts everywhere, and runs within $2^{(\lambda n + 1)^C}(|d| + 1)^C$, its outputs at most
+$2^{(\lambda n + 1)^C}$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The lengths are fixed combinations of $k$, $2^j k$, $Q$, $R$ and $1$, read from a table over the
+graph view; $Q$ and $R$ are computed in unary.
+\end{proof}
+
+\begin{lemma}[The constraint lists of the auxiliary checks, as programs]
+\label{lem:intro-aux-progs}
+\uses{lem:intro-aux-cons}
+\lean{MIPRE.Tailored.Intro.eqConsF, MIPRE.Tailored.Intro.eqConsF_spec,
+  MIPRE.Tailored.Intro.guardConsF, MIPRE.Tailored.Intro.guardConsF_spec,
+  MIPRE.Tailored.Intro.projEqConsF, MIPRE.Tailored.Intro.projEqConsF_spec,
+  MIPRE.Tailored.Intro.dualConsF, MIPRE.Tailored.Intro.dualConsF_spec,
+  MIPRE.Tailored.Intro.reindexF, MIPRE.Tailored.Intro.reindexF_spec,
+  MIPRE.Tailored.Intro.swapConsF, MIPRE.Tailored.Intro.swapConsF_spec,
+  MIPRE.Tailored.Intro.sampleConsF, MIPRE.Tailored.Intro.sampleConsF_spec,
+  MIPRE.Tailored.Intro.readConsF, MIPRE.Tailored.Intro.readConsF_spec,
+  MIPRE.Tailored.Intro.hideReadConsF, MIPRE.Tailored.Intro.hideReadConsF_spec,
+  MIPRE.Tailored.Intro.hideNextConsF, MIPRE.Tailored.Intro.hideNextConsF_spec,
+  MIPRE.Tailored.Intro.sameConsF, MIPRE.Tailored.Intro.sameConsF_spec,
+  MIPRE.Tailored.Intro.sourceConsF, MIPRE.Tailored.Intro.sourceConsF_spec,
+  MIPRE.Tailored.Intro.auxLenF, MIPRE.Tailored.Intro.auxLenF_spec, MIPRE.Tailored.Intro.auxPairF,
+  MIPRE.Tailored.Intro.auxPairF_spec}
+\leanok
+Polynomial-time functions build each list of Lemma~\ref{lem:intro-aux-cons} --- window equalities,
+readable guards, equalities on a coordinate set, dual equalities, the input's constraints
+re-indexed, the swapped orientation, and the comparisons of the auxiliary checks --- from the
+lengths and offsets in unary, the readable conditions as Booleans, the coordinate sets as masks,
+the kernel generators and the input's constraints.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Unit vectors are shifts of one another, a coordinate set selects among them, and every other
+list is a concatenation of placed vectors.
 \end{proof}
 
 \begin{theorem}[Tailored compression; II:5643, value form]

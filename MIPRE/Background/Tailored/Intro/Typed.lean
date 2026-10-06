@@ -97,9 +97,9 @@ noncomputable def pauliAux (p : Ty) (t : AuxType 7 × Bool) (aR bR : BitStr) : L
   if G k j R T V hs t (win bR 0 (Q k j)) then pauliDir k hk hodd j R V hs kg p t aR bR
   else [rejectConstraint (pauliLen (2 ^ j) k p + auxLen (Q k j) R t.1)]
 
-/-- **The constraints at an ordered pair of labels**, from the two question payloads `x, y`
-and the two readable answers. -/
-noncomputable def consL : DecisionKernel.Label → DecisionKernel.Label → BitStr → BitStr →
+/-- The constraints at an ordered pair of labels, from the two question payloads `x, y` and the
+two readable answers, before the length check. -/
+noncomputable def consRaw : DecisionKernel.Label → DecisionKernel.Label → BitStr → BitStr →
     BitStr → BitStr → List BitStr
   | .inl p, .inl q, x, y, aR, bR => pauliCons k hk hodd j hm p q x y aR bR
   | .inr t, .inr u, _, _, aR, bR =>
@@ -119,6 +119,20 @@ def lenR : DecisionKernel.Label → ℕ
 def len : DecisionKernel.Label → ℕ
   | .inl p => pauliLen (2 ^ j) k p
   | .inr t => auxLen (Q k j) R t.1
+
+/-- **The constraints at an ordered pair of labels**, from the two question payloads `x, y`
+and the two readable answers: none unless the readable answers have the labels' readable
+lengths (as they always do in the game). -/
+noncomputable def consL (u v : DecisionKernel.Label) (x y aR bR : BitStr) : List BitStr :=
+  if aR.length = lenR k j R u ∧ bR.length = lenR k j R v then
+    consRaw k hk hodd j hm R T V hs kg u v x y aR bR
+  else []
+
+theorem lenR_le_len (t : DecisionKernel.Label) : lenR k j R t ≤ len k j R t := by
+  rcases t with p | ⟨t, w⟩
+  · simp only [lenR, len, PauliCons.pauliLenR]
+    split_ifs <;> omega
+  · cases t <;> simp [lenR, len, auxLenR, auxLen] <;> omega
 
 /-- The kernel's parsed answer read off the bits at a label. -/
 noncomputable def parsedT : (t : DecisionKernel.Label) → BitStr →
@@ -264,10 +278,15 @@ theorem consL_iff (hkg : KerGens (Q k j) kg) (hacc : AcceptsAsInput T V n)
           (DecisionKernel.finiteSourcePredicate (R := R) V hs)
           (DecisionKernel.finitePauliCheck k hk hodd j hm x y) u v
           (parsedT k hk j R T V hs u a) (parsedT k hk j R T V hs v b) = true := by
+  have hla : (a.take (lenR k j R u)).length = lenR k j R u := by
+    rw [List.length_take, ha]; exact min_eq_left (lenR_le_len k j R u)
+  have hlb : (b.take (lenR k j R v)).length = lenR k j R v := by
+    rw [List.length_take, hb]; exact min_eq_left (lenR_le_len k j R v)
+  rw [consL, if_pos ⟨hla, hlb⟩]
   simp only [AuxiliaryQuotient.check, Bool.and_eq_true]
   rcases u with p | t <;> rcases v with q | u <;> simp only [lenR, len] at ha hb ⊢
   · -- two Pauli labels
-    rw [consL, pauliCons_iff k hk hodd j hm p q x y a b ha hb]
+    rw [consRaw, pauliCons_iff k hk hodd j hm p q x y a b ha hb]
     simp only [readOK, parsedT, TypedPredicate.fits, Sum.inl.injEq, true_and, and_true,
       AuxiliaryQuotient.directed, DecisionKernel.finitePauliCheck]
     constructor
@@ -282,16 +301,16 @@ theorem consL_iff (hkg : KerGens (Q k j) kg) (hacc : AcceptsAsInput T V n)
       · rfl
     · exact fun h => h.2
   · -- a Pauli label, then an auxiliary one
-    rw [consL, pauliAux_iff hkg (DecisionKernel.finiteSourcePredicate (R := R) V hs) p u a b ha hb]
+    rw [consRaw, pauliAux_iff hkg (DecisionKernel.finiteSourcePredicate (R := R) V hs) p u a b ha hb]
     simp only [readOK, parsedT, fits_parsed, fits_pauli, reduceCtorEq, ↓reduceIte,
       true_and, directed_inr_inl, and_true]
   · -- an auxiliary label, then a Pauli one
-    rw [consL, forall_swapCon_iff ha hb,
+    rw [consRaw, forall_swapCon_iff ha hb,
       pauliAux_iff hkg (DecisionKernel.finiteSourcePredicate (R := R) V hs) q t b a hb ha]
     simp only [readOK, parsedT, fits_parsed, fits_pauli, reduceCtorEq, ↓reduceIte,
       true_and, directed_inr_inl]
   · -- two auxiliary labels
-    rw [consL, auxPair_iff (Ty.pauli .X) (Ty.pauli .Z) (proj k hk hodd j) (fun _ _ h => h.1) hkg
+    rw [consRaw, auxPair_iff (Ty.pauli .X) (Ty.pauli .Z) (proj k hk hodd j) (fun _ _ h => h.1) hkg
       (hD_of_acceptsAsInput (hs := hs) hacc) (hS_split (T := T)) (fun _ _ => ⟨rfl, rfl⟩) ha hb]
     have ea : parsedT k hk j R T V hs (.inr t) a =
         parsed (Q k j) R (sR k j T V hs) (sL k j T V hs) t a := rfl
