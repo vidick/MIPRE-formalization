@@ -21,12 +21,14 @@ programs meeting a specification, and P2b, the programs themselves with their ru
 `TailoredRepetition` is inhabited (`MIPRE.Tailored.tailoredRepetition`, §5 "Phase 2 slices").
 Phase 3 (#281) is in progress on Route A, planned in seven slices (§5 "Phase 3 slices"). Done:
 P3a (closure toolbox), P3b (presentation transports, detyping, layout), the canonical decider's
-cost and `ofTNFVT_isBounded` (the input enters `seven` at `λ' = Cλ`), and the constraints with
+cost and `ofTNFVT_isBounded` (the input enters `seven` at `λ' = Cλ`), the constraints with
 both edge obligations (P3e semantics: `Background/Tailored/Intro/{Typed,Sound,Complete}.lean`;
-`valStar_tpresented_le`, `hasPerfectZPC_tpresented`). Left: the honest strategy's three typed
-facts (P3c), the output verifier and its program specification with the value chain through
-`seven` (P3d), the two programs with their costs (P3f), and the assembly (P3g); see "Phase 3
-status (2026-10-06)" in §5.
+`valStar_tpresented_le`, `hasPerfectZPC_tpresented`), and the output verifier from a
+specification of its programs with the value chain through `seven` (P3d,
+`Background/Tailored/Intro/Output.lean`, `soundness_contract`). Left: the honest strategy's
+three typed facts (P3c), the two programs with their costs (P3f), and the assembly (P3g); see
+"Phase 3 status (2026-10-06)" in §5.
+Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices").
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -904,6 +906,94 @@ bridge to `clSoundness` with the line conclusions, and its algorithmic form (3�
 `AnsRed` typed game, its ZPC completeness by affine data processing, its soundness in the
 bipartite model (7.5–11.5k); `PartialAnsRed` with times and descriptions (4–6k); the parameter
 chain `Λ, Q, Δ, T, D, FE` and the constants (1.5–2.5k). `TailoredAnswerReduction` inhabited.
+
+**Phase 4 slices.** Nine slices, ten to twelve pull requests, planned 2026-10-06 after reading
+§5 of paper II in full (II:6878–11078) and the repository's `MIP*` answer reduction
+(`planning/answer-reduction.md`, `Background/AnswerReduction/*`, `SAT/{Succinct,Decoupled,Pcp}`,
+`TM/CookLevin/{Link,Decoupled}`).
+
+What the reading settled.
+
+- **The live construction.** §5's comment blocks hold a second PCP (II:9348–9762) and a second
+  oracularized verifier (II:9958–10266), both dead. The live construction is the degree-9 PCP
+  of II:8929–9199 (23 blocks of variables, `♥` polynomials, 13 equations), the game `AnsRed` of
+  II:10285 with its four checks (low degree, consistency, indifference, proof), and
+  `PartialAnsRed` (II:10760).
+- **Three departures from the paper.** (1) `AnsRed`'s type graph is complete on its nine types
+  `{A, O, B} × {Point, ALine, DLine}`, loops included, as the repository's typed games are,
+  rather than the tensor product of two paths (II:10313). Per seed and role the game is then
+  `LIDT.CL.clGame (q, m, 9, k)` itself, with `k = 2` for an isolated player and `♥` for the
+  oracle, and only the constants `1/2, 3/10, 2/5, 1/25, 8/25` of the soundness proof change.
+  (2) Soundness is proved in the bipartite model and decodes, as `SoundDecoded` does, to a
+  strategy for the repository's typed oracularized game of `V.ofTNFV`, closed by
+  `thm:oracularization` (24√ε); the seeded test's soundness enters as `LIDT.Simul.SoundIn M`.
+  The paper's line conclusions (eq:eval_L_is_close_to_line), which only the indifference pruning
+  uses, are derived from the point conclusions and the line–point subtest by univariate
+  Schwartz–Zippel. (3) The input is neither padded nor purified as a verifier (II:8377): the
+  output indicator reads the input's lengths from its calculator, truncates the `2^Λ`-entry
+  tables to them and purifies on the fly, so two transformations, each with its ZPC
+  completeness and value transport, are not needed. The honest strategy pads with zeros, which
+  is linear data processing.
+- **Three input blocks for Cook–Levin.** `L*` is a `Decider` reading `(n, x, y, a, b)` with
+  `a = a^R` and `b = b^R ++ O`, its fixed inputs (the input's programs, `Λ`, `Δ`) hard-wired by
+  s-m-n. The 6-decoupled describer (II:8618, a sketch) is built on `SuccinctCookLevin` as
+  `DecoupledDescriber` is: link rows tie the three raw blocks `a^R, b^R, O` to the tape encoding
+  of the tableau's input region at three offsets (rows 2–7 of `Link.lean`, for three blocks of
+  unequal sizes instead of two equal ones), and two rows make the witness blocks equal. The
+  two-block describer does not serve as it stands: `O` depends on both readable answers, so the
+  isolated player `B`, who must be compared with `b^R`, cannot hold a block containing it.
+- **Where things live.** Linear systems, the PCP, the game and completeness under
+  `MIPRE/Tailored/AnsRed/`, in the fast regime; whatever imports `Background/LIDT` or
+  `Background/AnswerReduction` (the seeded test and its soundness, the CL presentation
+  `CL.Regs.pres` on one copy, the Shoup downsizing) under
+  `MIPRE/Background/Tailored/AnswerReduction/`.
+
+- **P4a — linear systems (0.8–1.2k).** `Tailored/AnsRed/Linear.lean`: purification
+  (eq:purified_equation) and its exactness; `Triangle(A, b, Δ)` (II:7952), the extension of an
+  assignment to the triangulation variables (affine), and the correspondence of solutions for
+  `Δ ≥ R(n + 1)` (rem:prop_triangulated_system); `DeCouple` into five blocks (II:8193) and its
+  indicator on `[ℓ_A] × [ℓ_B] × [ℓ]³ × F₂⁶`; `Extend` (cor:triang_and_decoupling_extend): it maps
+  solutions to solutions and non-solutions to non-solutions, every solution of the decoupled
+  system restricts to one of the original, and it is `F₂`-affine.
+- **P4b — the PCP (3–5k, 2 PRs).** The 23 blocks and the point layout (II:8939); the Tseitin
+  polynomial of a circuit with six input blocks and the decoupled 6-CNF it describes
+  (generalizing `SAT/CircuitArithmetization` and `SAT/PcpAlgebra`); the 13 checks at a point;
+  `Induce_C` (II:9081) with helpers from the zero basis (`LowDegree/ZeroBasis`); completeness,
+  with `Π^R` depending only on the readable data and `Π^L` `F₂`-linear in the linear
+  assignments (`Div` and `Mod` linear, Frobenius `F₂`-linear); soundness by Schwartz–Zippel at
+  `7dm/q` (prop:completeness_and_soundness_of_PCP_for_V_n).
+- **P4c — the game (2–3k).** Typed tailored data on `Role × LIDT.CL.Ty` over the direct sum of
+  the oracle content and the seeded test's content, built from abstract data: the input's game
+  at index `n` and a circuit family `C x y` with its specification (it describes `L*(x, y, ·)`).
+  The four checks are bit-level rows (an `F_q`-linear check is `t` rows under `BinField`,
+  `Tailored/Intro/LinearCheck.lean`); the functional viewpoint
+  (cor:functional_viewpoint_final) combines P4a, P4b and the specification.
+- **P4d — ZPC completeness (1.5–2.5k).** The oracularized strategy (the oracle's observables are
+  the isolated players', which commute along edges), then data processing along `eval_ρ ∘ Ind`
+  and `eval_ρ ∘ PCP_z`, affine in the linear answers with coefficients read from the readable
+  ones (cor:encodings, P3a's closure lemmas); the honest answers pass the four checks.
+- **P4e — soundness (4–6k, 2 PRs).** The detyping restriction; per seed and role the seeded
+  test; extraction by `SoundIn`; the line conclusions; the indifference pruning; consistency and
+  the proof check by Schwartz–Zippel and P4b's soundness; the decoded strategy for the typed
+  oracularized game; `thm:oracularization`; the error.
+- **P4f — the output indicator `L*` (2.5–3.5k).** A decider with hard-wired inputs: the format
+  checks, the input's lengths and processor, purification, triangulation, decoupling, the
+  comparison with `O`; its acceptance law (claim:properties_of_L*) and its running time
+  (eq:time_bound_L*) in the relative-cost reading.
+- **P4g — the decoupled describer of `L*` (1.5–2.5k).** As above, with `M` and `s` polynomial in
+  `log T`, `Q` and `D` and independent of the hard-wired inputs, and the program in polynomial
+  time (prop:explicit-padded-succinct-deciders).
+- **P4h — `PartialAnsRed` (4–6k, 2 PRs).** The sampler (O3's typed oracle sampler `prodDirect`
+  a one-copy seeded sampler downsized along the Shoup basis, then detyped), the calculator by
+  type, the processor running the four checks (two calls to the input sampler, one to the
+  describer, `T_C` at `p`), their running times and `len_total`; the game they compute is P4c's
+  (claim:algorithmic_partial_ans_red).
+- **P4i — parameters and the contract (1.5–2.5k).** `Λ, Q, Δ, T, D, FE` from `(λ, μ, σ)` and `n`
+  (II:10846–11074), the error chain to `AnswerReduction.delta`, the thresholds;
+  `TailoredAnswerReduction` inhabited, `Closes #282`.
+
+Order: P4a; then P4f and P4g, because the describer is the one step the paper only sketches
+(II:8757) and the PCP's input blocks rest on it; then P4b–P4e, P4h, P4i.
 
 **Phase 5 — assembly (1.5–2.5k; 1–2 PRs).** `TailoredGapCompression.ofTailoredPipeline`:
 levels, parameters `K(n)`, the thresholds collected into `C₀`, the accounting with a third
