@@ -2076,6 +2076,37 @@ The lengths are fixed combinations of $k$, $2^j k$, $Q$, $R$ and $1$, read from 
 graph view; $Q$ and $R$ are computed in unary.
 \end{proof}
 
+\begin{lemma}[The constraint lists of the auxiliary checks, as programs]
+\label{lem:intro-aux-progs}
+\uses{lem:intro-aux-cons}
+\lean{MIPRE.Tailored.Intro.eqConsF, MIPRE.Tailored.Intro.eqConsF_spec,
+  MIPRE.Tailored.Intro.guardConsF, MIPRE.Tailored.Intro.guardConsF_spec,
+  MIPRE.Tailored.Intro.projEqConsF, MIPRE.Tailored.Intro.projEqConsF_spec,
+  MIPRE.Tailored.Intro.dualConsF, MIPRE.Tailored.Intro.dualConsF_spec,
+  MIPRE.Tailored.Intro.reindexF, MIPRE.Tailored.Intro.reindexF_spec,
+  MIPRE.Tailored.Intro.swapConsF, MIPRE.Tailored.Intro.swapConsF_spec,
+  MIPRE.Tailored.Intro.sampleConsF, MIPRE.Tailored.Intro.sampleConsF_spec,
+  MIPRE.Tailored.Intro.readConsF, MIPRE.Tailored.Intro.readConsF_spec,
+  MIPRE.Tailored.Intro.hideReadConsF, MIPRE.Tailored.Intro.hideReadConsF_spec,
+  MIPRE.Tailored.Intro.hideNextConsF, MIPRE.Tailored.Intro.hideNextConsF_spec,
+  MIPRE.Tailored.Intro.sameConsF, MIPRE.Tailored.Intro.sameConsF_spec,
+  MIPRE.Tailored.Intro.sourceConsF, MIPRE.Tailored.Intro.sourceConsF_spec,
+  MIPRE.Tailored.Intro.auxLenF, MIPRE.Tailored.Intro.auxLenF_spec, MIPRE.Tailored.Intro.auxPairF,
+  MIPRE.Tailored.Intro.auxPairF_spec}
+\leanok
+Polynomial-time functions build each list of Lemma~\ref{lem:intro-aux-cons} --- window equalities,
+readable guards, equalities on a coordinate set, dual equalities, the input's constraints
+re-indexed, the swapped orientation, and the comparisons of the auxiliary checks --- from the
+lengths and offsets in unary, the readable conditions as Booleans, the coordinate sets as masks,
+the kernel generators and the input's constraints.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Unit vectors are shifts of one another, a coordinate set selects among them, and every other
+list is a concatenation of placed vectors.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}

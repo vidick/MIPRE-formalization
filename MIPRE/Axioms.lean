@@ -259,6 +259,7 @@ public import MIPRE.Tailored.Intro.CLData
 public import MIPRE.Background.Tailored.Intro.PauliHideProg
 public import MIPRE.Background.Tailored.Intro.PauliConsProg
 public import MIPRE.Background.Tailored.Intro.LenIntro
+public import MIPRE.Tailored.Intro.AuxProg
 
 @[expose] public section
 
@@ -4041,5 +4042,21 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.LenIntro.lenIntroProg_eq, MIPRE.Tailored.Intro.LenIntro.lenIntro_lenIs,
   MIPRE.Tailored.Intro.LenIntro.lenIntro_lenIs_zero, MIPRE.Tailored.Intro.LenIntro.lenIntro_budget,
   MIPRE.Tailored.Intro.LenIntro.lenIntro_lenTotal
+
+-- blueprint `lem:intro-aux-progs`
+#guard_sorry_free MIPRE.Tailored.Intro.eqConsF, MIPRE.Tailored.Intro.eqConsF_spec,
+  MIPRE.Tailored.Intro.guardConsF, MIPRE.Tailored.Intro.guardConsF_spec,
+  MIPRE.Tailored.Intro.projEqConsF, MIPRE.Tailored.Intro.projEqConsF_spec,
+  MIPRE.Tailored.Intro.dualConsF, MIPRE.Tailored.Intro.dualConsF_spec,
+  MIPRE.Tailored.Intro.reindexF, MIPRE.Tailored.Intro.reindexF_spec,
+  MIPRE.Tailored.Intro.swapConsF, MIPRE.Tailored.Intro.swapConsF_spec,
+  MIPRE.Tailored.Intro.sampleConsF, MIPRE.Tailored.Intro.sampleConsF_spec,
+  MIPRE.Tailored.Intro.readConsF, MIPRE.Tailored.Intro.readConsF_spec,
+  MIPRE.Tailored.Intro.hideReadConsF, MIPRE.Tailored.Intro.hideReadConsF_spec,
+  MIPRE.Tailored.Intro.hideNextConsF, MIPRE.Tailored.Intro.hideNextConsF_spec,
+  MIPRE.Tailored.Intro.sameConsF, MIPRE.Tailored.Intro.sameConsF_spec,
+  MIPRE.Tailored.Intro.sourceConsF, MIPRE.Tailored.Intro.sourceConsF_spec,
+  MIPRE.Tailored.Intro.auxLenF, MIPRE.Tailored.Intro.auxLenF_spec, MIPRE.Tailored.Intro.auxPairF,
+  MIPRE.Tailored.Intro.auxPairF_spec
 
 end

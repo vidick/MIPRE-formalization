@@ -370,21 +370,22 @@ directed, reverse directed))`, the three lists already computed. -/
 abbrev PairAsmIn := (Bool × Bool) × (Unary × Unary) × (List BitStr × List BitStr × List BitStr)
 
 /-- **The constraints at a pair of auxiliary labels** `auxPair`, from the consistency list and the
-two directed lists: the guard, the consistency list when the labels agree, the directed list, and
-the reverse one swapped. -/
+two directed lists: when the guard holds, the consistency list when the labels agree, the
+directed list, and the reverse one swapped; otherwise the rejecting constraint. -/
 noncomputable def auxPairF : PolyTimeFun PairAsmIn (List BitStr) :=
   let la : PolyTimeFun PairAsmIn Unary := fst.comp (fst.comp snd)
   let lb : PolyTimeFun PairAsmIn Unary := snd.comp (fst.comp snd)
-  catF (guardOf (fst.comp fst) (catF la lb))
+  ite (fst.comp fst)
     (catF (ite (snd.comp fst) (fst.comp (snd.comp snd)) (const []))
       (catF (fst.comp (snd.comp (snd.comp snd)))
         (swapConsF.comp ((snd.comp (snd.comp (snd.comp snd))).pair (la.pair lb)))))
+    (guardOf (const false) (catF la lb))
 
 @[simp] theorem auxPairF_apply (g e : Bool) (la lb : Unary) (same dir rev : List BitStr) :
     auxPairF ((g, e), (la, lb), (same, dir, rev)) =
-      guardCons g (la.length + lb.length) ++ ((if e then same else []) ++
-        (dir ++ rev.map (swapCon la.length lb.length))) := by
-  cases e <;> simp [auxPairF]
+      if g then (if e then same else []) ++ (dir ++ rev.map (swapCon la.length lb.length))
+      else [rejectConstraint (la.length + lb.length)] := by
+  cases g <;> cases e <;> simp [auxPairF, guardCons]
 
 open Classical in
 /-- **The constraints at a pair of auxiliary labels, on the encoded data.** -/
