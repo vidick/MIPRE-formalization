@@ -2678,3 +2678,93 @@ $g_B$, and the string $O$ that $L^*$ compared is the table of $g_O$. The linear 
 system that table holds, and item~2 of Lemma~\ref{lem:ar-indicator-properties} gives the
 acceptance.
 \end{proof}
+
+\subsection{Answer reduction: the completeness of the PCP}
+
+The honest PCP of paper~II is $\mathsf{Induce}_C$ (Definition~defn:inducing\_to\_a\_PCP,
+II:9081): the low-degree encodings of the tables, and helpers obtained by division by the
+polynomials $X_i(1 - X_i)$ (the paper's $\mathrm{Div}$ and $\mathrm{Mod}$). The paper needs the
+helpers of the linear part to depend linearly on the linear tables; here they are the values of
+a linear map, chosen once.
+
+\begin{lemma}[Linear certificates for vanishing on the cube]
+\label{lem:ar-linear-certificates}
+\uses{lem:pcp-zero-basis}
+\lean{MIPRE.LowDegree.cubeVanishing, MIPRE.LowDegree.mem_cubeVanishing, MIPRE.LowDegree.cert,
+  MIPRE.LowDegree.degreeOf_cert_le, MIPRE.LowDegree.cert_sum}
+\leanok
+For every $m$ and $d$ there is a linear map $f \mapsto (c_i(f))_i$ from polynomials in $m$
+variables over a field to $m$-tuples of polynomials of individual degree at most $d$ such that
+$f = \sum_i c_i(f) X_i (1 - X_i)$ whenever $f$ has individual degree at most $d$ and vanishes on
+$\{0, 1\}^m$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The map $c \mapsto \sum_i c_i X_i (1 - X_i)$, restricted to the tuples whose image vanishes on the
+cube, maps onto the polynomials of individual degree at most $d$ vanishing on the cube, by
+Lemma~\ref{lem:pcp-zero-basis}. Compose a linear right inverse of it with a linear projection onto
+that subspace.
+\end{proof}
+
+\begin{definition}[The honest PCP; $\mathsf{Induce}_C$]
+\label{def:ar-induce}
+\uses{def:ar-pcp, lem:ar-linear-certificates}
+\lean{MIPRE.Tailored.AnsRed.encTbl, MIPRE.Tailored.AnsRed.RTables, MIPRE.Tailored.AnsRed.LTables,
+  MIPRE.Tailored.AnsRed.induce}
+\leanok
+The \emph{encoding} of a table $t$ on $\N$ in $k$ variables is the multilinear polynomial whose
+value at the binary digits of $c < 2^k$ is $t(c)$. From Boolean \emph{readable tables} (the cells
+of the two readable answers, the table $O$ and the three witness blocks) and $\F_2$-valued
+\emph{linear tables} (the cells of the two linear answers and the three copies), the \emph{honest
+PCP} of a circuit polynomial $T$ has the encodings of the tables as its assignments, and as
+helpers the linear certificates (Lemma~\ref{lem:ar-linear-certificates}) of the left-hand sides
+of its checks: of the formula polynomial at degree $17$, of the system polynomial at degree $3$,
+and of $g(1 - g)$ for each assignment $g$ at degree $2$.
+\end{definition}
+
+\begin{lemma}[Completeness of the PCP; prop:completeness\_and\_soundness\_of\_PCP\_for\_V\_n]
+\label{lem:ar-pcp-complete}
+\uses{def:ar-induce,def:ar-indicator,lem:ar-window-describer}
+\lean{MIPRE.Tailored.AnsRed.indDeg_induce, MIPRE.Tailored.AnsRed.assignChecks_induce,
+  MIPRE.Tailored.AnsRed.formulaCheck_induce, MIPRE.Tailored.AnsRed.systemCheck_induce,
+  MIPRE.Tailored.AnsRed.identities_induce}
+\leanok
+Over a field of characteristic two, the honest PCP has degree $17$ and its assignment checks hold
+identically. For the circuit polynomial of a well-formed circuit with the PCP's inputs, its
+formula check holds identically when the window tables, $\pi \cdot t(u)$ at the index of parity
+$\pi$ and cell $u$, and the witness tables satisfy the formula that the circuit describes; its
+system check holds identically when the linear tables satisfy the system that the table $O$
+holds.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:pcp-circuit-arithmetization}
+\leanok
+An encoding is $0$ or $1$ on the cube and multilinear, so $g(1 - g)$ vanishes on the cube and has
+individual degree at most $2$. At a Boolean point where the circuit polynomial is one, the
+circuit accepts the clause whose indices and signs the point holds on its input wires
+(Lemma~\ref{lem:pcp-circuit-arithmetization}), a literal of that clause is true, and its factor
+vanishes there; so the formula polynomial vanishes on the cube. At an index where $O$ is one,
+the equation holds in $\F_2$, hence in $\F$. In each case
+Lemma~\ref{lem:ar-linear-certificates} gives the identity.
+\end{proof}
+
+\begin{lemma}[The readable and the linear parts of the honest PCP]
+\label{lem:ar-pcp-parts}
+\uses{def:ar-induce}
+\lean{MIPRE.Tailored.AnsRed.readable_induce, MIPRE.Tailored.AnsRed.linear_induce_add,
+  MIPRE.Tailored.AnsRed.res_encB, MIPRE.Tailored.AnsRed.resZ_encZ}
+\leanok
+The readable part of the honest PCP, the readable assignments and their helpers, depends only
+on the readable tables. Its linear part is $\F_2$-affine in the linear tables: the linear
+assignments and their helpers are additive, and the helpers of the system check affine. The
+tables of the encodings on the cube are the encoded tables.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The encodings are linear, the system polynomial is affine in the linear assignments, and
+$g \mapsto g(1 - g)$ is additive in characteristic two; the certificates are values of a linear
+map.
+\end{proof}

@@ -31,8 +31,8 @@ Phase 5 (#283) is done up to answer reduction: `TailoredGapCompression.ofTailore
 Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices"); P4a, the linear
 systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`), and so are P4g, the describer through
 three windows (`MIPRE.SAT.windowDescriber`), and P4f, the output indicator
-(`MIPRE/Tailored/AnsRed/Indicator*.lean`). P4b, the PCP, is half done: its blocks, checks and
-soundness (`MIPRE/Tailored/AnsRed/{Pcp,PcpSound}.lean`); its completeness is the second PR.
+(`MIPRE/Tailored/AnsRed/Indicator*.lean`), and P4b, the PCP: its blocks, checks and soundness
+(`MIPRE/Tailored/AnsRed/{Pcp,PcpSound}.lean`) and its completeness (`PcpComplete.lean`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -958,7 +958,7 @@ What the reading settled.
   indicator on `[ℓ_A] × [ℓ_B] × [ℓ]³ × F₂⁶`; `Extend` (cor:triang_and_decoupling_extend): it maps
   solutions to solutions and non-solutions to non-solutions, every solution of the decoupled
   system restricts to one of the original, and it is `F₂`-affine.
-- **P4b — the PCP (3–5k, 2 PRs; the first, 1.1k lines, done).** The 23 blocks and the point
+- **P4b — the PCP (done, 2 PRs, 1.9k lines).** The 23 blocks and the point
   layout (II:8939); the Tseitin polynomial of a circuit with six input blocks and the decoupled
   6-CNF it describes (generalizing `SAT/CircuitArithmetization` and `SAT/PcpAlgebra`); the 13
   checks at a point; `Induce_C` (II:9081) with helpers from the zero basis (`LowDegree/ZeroBasis`);
@@ -975,10 +975,19 @@ What the reading settled.
   the linear tables satisfy the system `g_O`'s table holds, and the window tables satisfy the
   formula; through `DescribesWindows` and `L*`'s acceptance law, the game accepts the answers
   read off `g_A, g_La` and `g_B, g_Lb` (`accepts_of_dense`, cor:functional_viewpoint_final,
-  item 2), the form P4e consumes. The second PR: `Induce_C` and completeness, with helpers from a
-  certificate map chosen *linearly* (any linear right inverse of `c ↦ Σ c_i X_i(1 - X_i)` on the
+  item 2), the form P4e consumes. The second PR: `Foundations/LowDegree/ZeroCertificate.lean`,
+  a certificate map chosen *linearly* (a linear right inverse of `c ↦ Σ c_i X_i(1 - X_i)` on the
   polynomials vanishing on the cube, composed with a projection onto them), which serves for the
-  paper's `Div`/`Mod`.
+  paper's `Div`/`Mod`; `Tailored/AnsRed/PcpComplete.lean`, `Induce_C` (`induce`) from Boolean
+  readable tables and `F₂`-valued linear tables (the form `Extend` produces), of degree 17 (crude:
+  the formula polynomial has degree at most 17 counting each factor separately, the paper's 9),
+  whose assignment checks always hold identically, whose formula check does when the window
+  tables satisfy the formula, and whose system check does when the linear tables satisfy `O`'s
+  system (`identities_induce`); its readable part depends only on the readable tables and its
+  linear part is `F₂`-affine in the linear ones (`readable_induce`, `linear_induce_add`). What
+  P4c adds is the functional viewpoint's completeness: the honest tables from accepted answers
+  (the padded readable answers and `O = lsTable`, the witnesses of `DescribesWindows`, and
+  `Extend` of the linear answers).
 - **P4c — the game (2–3k).** Typed tailored data on `Role × LIDT.CL.Ty` over the direct sum of
   the oracle content and the seeded test's content, built from abstract data: the input's game
   at index `n` and a circuit family `C x y` with its specification (it describes `L*(x, y, ·)`).
