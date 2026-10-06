@@ -76,9 +76,10 @@ theorem satisfies_regForms_iff {a b : BitStr} (ha : a.length = la) (hb : b.lengt
 
 /-! ## Equality on a coordinate set -/
 
-/-- The constraints `xᵢ = yᵢ` for `i ∈ S`, the registers at offsets `oa` of `a`, `ob` of `b`. -/
-noncomputable def projEqCons (la lb oa ob : ℕ) (S : Finset (Fin s)) : List BitStr :=
-  S.toList.map fun i => regForm la oa (Pi.single i 1) ++ regForm lb ob (Pi.single i 1) ++ [false]
+/-- The constraints `xᵢ = yᵢ` for `i ∈ S`, the registers at offsets `oa` of `a`, `ob` of `b`,
+in increasing order of `i`. -/
+def projEqCons (la lb oa ob : ℕ) (S : Finset (Fin s)) : List BitStr :=
+  ((List.finRange s).filter (· ∈ S)).map fun i => regForm la oa (Pi.single i 1) ++ regForm lb ob (Pi.single i 1) ++ [false]
 
 theorem sum_single_mul (i : Fin s) (x : Fin s → 𝔽₂) :
     ∑ j, (Pi.single i (1 : 𝔽₂) : _ → _) j * x j = x i := by
@@ -97,8 +98,8 @@ theorem projEqCons_iff {a b : BitStr} (ha : a.length = la) (hb : b.length = lb)
     rw [satisfies_regForms_iff ha hb hoa hob hx hy, sum_single_mul, sum_single_mul]
     generalize x i = u; generalize y i = v
     revert u v; decide
-  simp only [projEqCons, List.mem_map, Finset.mem_toList, forall_exists_index, and_imp,
-    forall_apply_eq_imp_iff₂, key]
+  simp only [projEqCons, List.mem_map, List.mem_filter, List.mem_finRange, true_and,
+    decide_eq_true_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, key]
   constructor
   · intro h
     funext i
