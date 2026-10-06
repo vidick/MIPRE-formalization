@@ -1452,6 +1452,7 @@ public import MIPRE.Tailored.Intro.Binary
 public import MIPRE.Tailored.Intro.CLData
 public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Encoded
+public import MIPRE.Tailored.Intro.FormProg
 public import MIPRE.Tailored.Intro.Forms
 public import MIPRE.Tailored.Intro.Input
 public import MIPRE.Tailored.Intro.InputRuns
