@@ -13,7 +13,7 @@ public import MIPRE.Background.LIDT.FinModel
 # Soundness of the answer-reduced game
 
 Slice P4e of `planning/aldous-lyons-track.md`: the soundness clause of
-prop:completeness_soundness_combi_ans_red (II:10285), at one index of the input. If the
+prop:completeness_soundness_combi_ans_red (II:10487), at one index of the input. If the
 answer-reduced game presented by the typed data `tdata`, on any answer-reduced sampler, has
 `val* > 1 - ε`, then `val*(𝒱_n) ≥ 1 - 24 √(errAR (16⁹ ε))` (`valStar_ar_sound`).
 

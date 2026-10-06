@@ -12,11 +12,11 @@ public import MIPRE.Background.Tailored.AnswerReduction.ShiftPoly
 /-!
 # Soundness of the answer-reduced game: indifference
 
-The paper's second perturbation (II:10664): the oracle's polynomials are, with high probability,
+The paper's second perturbation (II:10644): the oracle's polynomials are, with high probability,
 *block-local* — each codeword's polynomial involves only the variables of its slot's block
 (`Good`), which is what reading them as a PCP (`Pcp.ofPolys`) needs.
 
-The paper derives it from the indifference check (II:10483, check 3) through the low-degree test's
+The paper derives it from the indifference check (II:10465, check 3) through the low-degree test's
 conclusions at *lines*. The seeded test's soundness in the model gives conclusions at points only
 (`LIDT.Simul.SoundIn`), and the argument here uses points only, with two points of one
 axis-parallel line:

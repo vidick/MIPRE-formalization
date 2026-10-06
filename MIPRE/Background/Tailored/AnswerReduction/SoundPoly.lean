@@ -11,7 +11,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.SoundRelations
 /-!
 # Soundness of the answer-reduced game: the polynomials of the roles agree
 
-From evaluations to polynomials, by Schwartz–Zippel (II:10726): an isolated role's polynomial
+From evaluations to polynomials, by Schwartz–Zippel (II:10708): an isolated role's polynomial
 measurement and the oracle's, read in the role's slots, disagree at most as often as their
 evaluations at a uniform point do, plus `M d / q` (`BipartiteModel.dis_le_sum_dis_map_add`, with
 `sum_uniform_evalR_eq_le`), since two distinct tuples of polynomials of individual degree `d` in

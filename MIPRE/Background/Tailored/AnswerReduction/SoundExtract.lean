@@ -12,7 +12,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.SoundSetup
 # Soundness of the answer-reduced game: the polynomial measurements
 
 The soundness of the seeded low-degree test in the model (`LIDT.Simul.SoundIn`), applied to each
-per-role strategy of `SoundSetup` (II:10625, the first perturbation): at each role `r` and
+per-role strategy of `SoundSetup` (II:10623, the first perturbation): at each role `r` and
 oracularized question `y`, projective measurements `GA r y`, `GB r y` of tuples of polynomials of
 individual degree at most `d` in `M = 2^j` variables, one per codeword of the role, whose
 evaluations at a uniform point are consistent with the role's point answers, and which are

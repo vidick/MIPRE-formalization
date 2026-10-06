@@ -18,7 +18,7 @@ low-degree test's registers, both uniform. Every relation is a disagreement
 
 * **From the typed game** (`sum_dis_edge_le`): at one type pair, a check forcing two readings of
   the answers to agree bounds their disagreement by the failure there, `81` times the typed
-  failure after summing. The consistency check (II:10466, check 2) at two point questions, one
+  failure after summing. The consistency check (II:10449, check 2) at two point questions, one
   of an isolated role and one of the oracle, forces the role's point values to be the oracle's
   at the role's slots (`pvR_eq_pvO_of_arDt`).
 * **From the extraction** (`sum_dis_MA_GB_le`, `sum_dis_GA_MB_le`, `sum_dis_GA_GB_le`): the three
@@ -28,7 +28,7 @@ low-degree test's registers, both uniform. Every relation is a disagreement
 They chain across the two players (`BipartiteModel.sum_dis_triangle`): an isolated role's
 polynomials evaluated at the point against the oracle's at the role's slots, both ways
 (`sum_dis_GAr_GBO_le`, `sum_dis_GAO_GBr_le`). This is the paper's comparison of `ℋ^{(A,x)}` with
-`ℋ^{(O,z)}_{[Restrict_1]}` (II:10726), before Schwartz–Zippel.
+`ℋ^{(O,z)}_{[Restrict_1]}` (II:10703), before Schwartz–Zippel.
 -/
 
 noncomputable section

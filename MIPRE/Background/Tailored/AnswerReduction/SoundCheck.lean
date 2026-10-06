@@ -11,7 +11,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.SoundIndiff
 /-!
 # Soundness of the answer-reduced game: the proof check
 
-The proof check (II:10491, check 4) at the oracle's point question, read on the oracle's
+The proof check (II:10468, check 4) at the oracle's point question, read on the oracle's
 polynomials (II:10697): the outcomes of Alice's polynomial measurement at the oracle whose
 evaluations pass the thirteen checks on at most a fraction `m (5 + 6(d + 1)) / q` of the points
 (`Dense` fails) weigh at most twice the extraction's error plus the failure at the type pair

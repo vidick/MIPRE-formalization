@@ -11,7 +11,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.SoundCheck
 /-!
 # Soundness of the answer-reduced game: the decoded strategy
 
-The last step of the soundness of `𝔄𝔫𝔰ℜ𝔢𝔡` (II:10697–10760): a strategy for the typed
+The last step of the soundness of `𝔄𝔫𝔰ℜ𝔢𝔡` (II:10689–10741): a strategy for the typed
 oracularized game of the input (`oGameT`), on the state of the strategy `T` for the answer-reduced
 typed game. An oracle measures its polynomial measurement and answers the pair of answers its
 polynomials in the two roles' slots decode to (`decO`); an isolated role measures its own and

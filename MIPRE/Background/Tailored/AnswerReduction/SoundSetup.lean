@@ -12,7 +12,7 @@ public import MIPRE.Background.AnswerReduction.SoundDecoded
 /-!
 # Soundness of the answer-reduced game: the per-role low-degree games
 
-The first step of the soundness of `𝔄𝔫𝔰ℜ𝔢𝔡` (prop:completeness_soundness_combi_ans_red, II:10285),
+The first step of the soundness of `𝔄𝔫𝔰ℜ𝔢𝔡` (prop:completeness_soundness_combi_ans_red, II:10487),
 for a projective strategy `T` in a bipartite model for the answer-reduced typed game `arGame` on
 the CL functions of an answer-reduced sampler (`ArSampler`).
 
@@ -34,7 +34,7 @@ role's oracularized question and the test's question of type `τ` of the sample 
   the registers of a uniform vector carry a uniform sample (`Regs.sum_sampleOf_retype`, with
   multiplicity `1`, the test's registers being all of `F_q^{D}`).
 
-The paper runs the test inside its first perturbation (II:10625); its type graph has the
+The paper runs the test inside its first perturbation (II:10623); its type graph has the
 low-degree test's own (`ALine – Point – DLine`), here the complete graph with loops, which changes
 the constant only.
 -/

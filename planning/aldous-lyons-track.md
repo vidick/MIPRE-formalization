@@ -36,8 +36,9 @@ three windows (`MIPRE.SAT.windowDescriber`), and P4f, the output indicator
 game, is done: the functional viewpoint's completeness (`PcpHonest.lean`), the PCP's slots
 (`Slots.lean`) and the typed tailored data with its reading
 (`Background/Tailored/AnswerReduction/Typed.lean`). P4d, its ZPC completeness, is done
-(`Background/Tailored/AnswerReduction/Complete.lean`, `hasPerfectZPC_ar`); P4e, its soundness, is
-next.
+(`Background/Tailored/AnswerReduction/Complete.lean`, `hasPerfectZPC_ar`), and so is P4e, its
+soundness (`Background/Tailored/AnswerReduction/Sound*.lean`, `valStar_ar_sound`). P4h, the
+programs that compute the game, is next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -1028,10 +1029,25 @@ What the reading settled.
   for any answer-reduced sampler (`ArSampler`: the questions carry the oracularized question and
   the seeded test's question of one seed), which P4h constructs; the reference predicate is the
   typed data's acceptance (`arDt`), which P4e's soundness reads through `accepts_iff`.
-- **P4e — soundness (4–6k, 2 PRs).** The detyping restriction; per seed and role the seeded
-  test; extraction by `SoundIn`; the line conclusions; the indifference pruning; consistency and
-  the proof check by Schwartz–Zippel and P4b's soundness; the decoded strategy for the typed
-  oracularized game; `thm:oracularization`; the error.
+- **P4e — soundness (done, about 3k lines, one PR).** `valStar_ar_sound`: if the presented
+  answer-reduced game has `val* > 1 - ε`, then `val*(𝒱_n) ≥ 1 - 24 √(errAR (16⁹ ε))`, with `errAR`
+  explicit in the seeded test's error `δ_sim` at each role (`dS`), `M d / q` and the typed
+  failure; P4i bounds it by `AnswerReduction.delta`. Nine modules in
+  `Background/Tailored/AnswerReduction/`: per role and seed the seeded test (`SoundSetup`), the
+  extracted polynomial measurements (`SoundExtract`), the point relations (`SoundRelations`),
+  Schwartz–Zippel agreement of an isolated role's polynomials with the oracle's (`SoundPoly`), the
+  pruning of outcomes that are not block-local (`SoundIndiff`, with `ShiftPoly`), the proof check's
+  density (`SoundCheck`), the decoded strategy (`SoundDecoded`: block-local, densely passing
+  outcomes decode to accepted answers through P4b's `accepts_of_dense`) and the assembly
+  (`Sound`: detyping, `LIDT.Simul.approxSoundIn_tensor`, oracularization's soundness). One
+  departure from the paper: the model's soundness (`LIDT.Simul.SoundIn`) has no line
+  conclusions, so the indifference check is read at two points of one axis-parallel line — the
+  line question a vector carries is the same at every point of its line (`ldq_aline_shiftW`), and
+  a polynomial with a monomial outside its block changes value along most axis steps
+  (`MIPRE.LIDT.card_shift_ne_ge`). It costs the factor `2M` in `errAR` and needs
+  `q ≥ 2 (M + 1) d`, beside the proof check's `q ≥ 2 m (5 + 6(d + 1))`. The decoded strategy
+  plays the typed oracularized game, oracle included, so the bound is for `𝒱_n` itself rather than
+  the paper's double cover.
 - **P4f — the output indicator `L*` (done, 1.7k lines).** A decider with hard-wired inputs: the
   format checks, the input's lengths and processor, purification, triangulation, decoupling, the
   comparison with `O`; its acceptance law (claim:properties_of_L*) and its running time
