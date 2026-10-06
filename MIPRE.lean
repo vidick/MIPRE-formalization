@@ -685,6 +685,7 @@ public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Background.Tailored.Intro.Budget
 public import MIPRE.Background.Tailored.Intro.Complete
+public import MIPRE.Background.Tailored.Intro.LenIntro
 public import MIPRE.Background.Tailored.Intro.Output
 public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Background.Tailored.Intro.PauliCons
