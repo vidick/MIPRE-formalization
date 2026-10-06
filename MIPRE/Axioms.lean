@@ -246,6 +246,7 @@ public import MIPRE.Tailored.Intro.Presentation
 public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.ClassVerifier
+public import MIPRE.Tailored.AnsRed.Linear
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -3885,6 +3886,18 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Halting.classTV_efficient, MIPRE.Tailored.Halting.lenIs_iff,
   MIPRE.Tailored.Halting.lpIs_iff, MIPRE.Tailored.Halting.tgame_extends,
   MIPRE.Tailored.Halting.classTV_values
+
+-- blueprint `lem:ar-purification`
+#guard_sorry_free MIPRE.Tailored.AnsRed.satisfies_iff_pureEqn,
+  MIPRE.Tailored.AnsRed.accepts_iff_pure
+
+-- blueprint `lem:ar-triangle-decouple`
+#guard_sorry_free MIPRE.Tailored.AnsRed.triangle_complete, MIPRE.Tailored.AnsRed.triangle_sound,
+  MIPRE.Tailored.AnsRed.decSat_iff
+
+-- blueprint `lem:ar-extend`
+#guard_sorry_free MIPRE.Tailored.AnsRed.extend_complete, MIPRE.Tailored.AnsRed.decSat_sound,
+  MIPRE.Tailored.AnsRed.decSat_of_accepts, MIPRE.Tailored.AnsRed.accepts_of_decSat
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,

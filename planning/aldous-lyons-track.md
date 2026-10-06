@@ -21,7 +21,8 @@ programs meeting a specification, and P2b, the programs themselves with their ru
 `TailoredRepetition` is inhabited (`MIPRE.Tailored.tailoredRepetition`, §5 "Phase 2 slices").
 Phase 3 (#281) is in progress on Route A, planned in seven slices (§5 "Phase 3 slices"); P3a,
 the closure toolbox for the honest strategy, is done (`MIPRE/Tailored/Intro/*`).
-Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices").
+Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices"); P4a, the linear
+systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -912,7 +913,7 @@ What the reading settled.
   `CL.Regs.pres` on one copy, the Shoup downsizing) under
   `MIPRE/Background/Tailored/AnswerReduction/`.
 
-- **P4a — linear systems (0.8–1.2k).** `Tailored/AnsRed/Linear.lean`: purification
+- **P4a — linear systems (done, 0.7k lines).** `Tailored/AnsRed/Linear.lean`: purification
   (eq:purified_equation) and its exactness; `Triangle(A, b, Δ)` (II:7952), the extension of an
   assignment to the triangulation variables (affine), and the correspondence of solutions for
   `Δ ≥ R(n + 1)` (rem:prop_triangulated_system); `DeCouple` into five blocks (II:8193) and its

@@ -1874,3 +1874,96 @@ sofic value of a subgroup test is computable to any precision (Main Theorem~I th
 compactness argument). With Theorem~\ref{thm:tmip-re} the conjecture is false. This is Phase~6
 of the plan, after the main theorem.
 \end{remark}
+
+\subsection{Answer reduction: linear systems over $\F_2$}
+
+Phase~4 of the plan (\texttt{planning/aldous-lyons-track.md}, ``Phase 4 slices'') proves
+Theorem~\ref{thm:tailored-ar} with paper~II's tailored PCP (II:7736--11074). Before the PCP, the
+output indicator turns the constraints of the input game at a pair of questions into a
+\emph{decoupled triangulated system} (II:7751--8316), which the PCP checks against the linear
+answers. The paper purifies the input verifier first (II:7783); here the indicator purifies on
+the fly, so the input is not transformed.
+
+\begin{definition}[Purified, triangulated and decoupled systems]
+\label{def:ar-linear}
+\uses{def:ld-encoding}
+\lean{MIPRE.Tailored.AnsRed.Eqn, MIPRE.Tailored.AnsRed.pureEqn, MIPRE.Tailored.AnsRed.Tri,
+  MIPRE.Tailored.AnsRed.triangle, MIPRE.Tailored.AnsRed.ext, MIPRE.Tailored.AnsRed.decInd,
+  MIPRE.Tailored.AnsRed.DecSat}
+\leanok
+An equation over $\F_2$ is a list of variables and a right-hand side. The \emph{purified
+equation} of a constraint $c$ of the canonical decider at answers $a^R a^L$, $b^R b^L$
+(eq:purified\_equation, II:7762) is the equation on the linear answers, placed in a table of
+$2L$ entries ($a^L$ from $0$, $b^L$ from $L$), whose right-hand side absorbs the readable
+answers; a constraint of the wrong length becomes $0 = 1$. The \emph{triangulation} of a list
+of equations (II:7952) replaces $X_{x_0} + \dots + X_{x_{k-1}} = b$ by $X_{x_0} = Y_0$,
+$Y_{i-1} + X_{x_i} = Y_i$ and $Y_{k-1} = b$, each row with its own fresh variables, and the
+\emph{extension} of an assignment gives $Y_i$ the partial sum $\sum_{j \le i} X_{x_j}$, a linear
+map. The \emph{decoupled system} (II:8193) on the blocks $S_A = [\ell_A]$, $S_B = [\ell_B]$ and
+three copies $S_1, S_2, S_3$ of $[\ell]$ has the equations $X_A = X^1$, $X_B = X^1(\ell_A + \cdot)$,
+$X^1 = X^2$, $X^2 = X^3$ and each triangulated equation on the three copies; it is given by the
+indicator of the equations $\varepsilon_A X_A(u_A) + \varepsilon_B X_B(u_B) + \sum_i
+\varepsilon_i X^i(u_i) = \varepsilon_0$ it contains (II:8128), a block of sign $0$ taking any
+index.
+\end{definition}
+
+\begin{lemma}[Purification; fact:completeness\_and\_soundness\_purification]
+\label{lem:ar-purification}
+\uses{def:ar-linear}
+\lean{MIPRE.Tailored.AnsRed.satisfies_iff_pureEqn, MIPRE.Tailored.AnsRed.accepts_iff_pure}
+\leanok
+A constraint holds of answers of the right lengths exactly when its purified equation holds of
+the table of their linear parts. So a tailored game accepts $(a^R a^L, b^R b^L)$ at $(x, y)$
+exactly when the purified equations of $L_{xy}(a^R, b^R)$ hold of the table.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:intro-forms}
+\leanok
+The inner product of $c$ with $a^R a^L b^R b^L 1$ splits over the five windows; the readable
+windows and the affine coordinate are known, and in characteristic~$2$ they move to the right.
+\end{proof}
+
+\begin{lemma}[Triangulation and decoupling; rem:prop\_triangulated\_system]
+\label{lem:ar-triangle-decouple}
+\uses{def:ar-linear}
+\lean{MIPRE.Tailored.AnsRed.triangle_complete, MIPRE.Tailored.AnsRed.triangle_sound,
+  MIPRE.Tailored.AnsRed.decSat_iff}
+\leanok
+If the equations have at most $N$ variables, all below $N$, the extension of a solution solves
+the triangulated system; a solution of the triangulated system solves the equations. Five
+assignments solve the decoupled system exactly when the first two agree with the first copy, the
+three copies agree on $[\ell]$, and the triangulated equations hold on the three copies.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The step equations of a row force the partial sums, by induction along the row, and the last
+one is the row. For the decoupled system, each kind of equation is one instance of the
+indicator, and conversely every instance is one of the kinds.
+\end{proof}
+
+\begin{lemma}[The extension; cor:triang\_and\_decoupling\_extend]
+\label{lem:ar-extend}
+\uses{lem:ar-purification,lem:ar-triangle-decouple}
+\lean{MIPRE.Tailored.AnsRed.extend_complete, MIPRE.Tailored.AnsRed.decSat_sound,
+  MIPRE.Tailored.AnsRed.decSat_of_accepts, MIPRE.Tailored.AnsRed.accepts_of_decSat}
+\leanok
+Let $\Delta$ be at least the number of equations times $N = \ell_A + \ell_B$. A solution $f$ gives
+the solution $(f, f(\ell_A + \cdot), \mathrm{ext}\, f, \mathrm{ext}\, f, \mathrm{ext}\, f)$ of the
+decoupled triangulated system on $\ell = N + \Delta$, and the first two blocks of any solution,
+glued, solve the equations. For the canonical decider (claim:properties\_of\_L*, item~2): if the
+game accepts answers of the right lengths, the extension of the table of their linear parts
+solves the decoupled triangulated purified system, the last three blocks linear in the linear
+answers with coefficients depending only on the readable ones; and if five assignments solve that
+system, the game accepts the readable answers completed by the first two blocks, read at the
+linear lengths.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Lemma~\ref{lem:ar-triangle-decouple}: the extension agrees with $f$ below $N$, and every
+triangulated equation is below $N + \Delta$, so the three copies of a solution solve the
+triangulated system and hence the equations. Lemma~\ref{lem:ar-purification} translates
+between the equations and the decider.
+\end{proof}
