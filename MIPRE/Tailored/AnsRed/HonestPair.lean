@@ -349,7 +349,7 @@ structure HonestHyp (prm : PolyTimeFun ℕ (Unary × Unary)) (Cc : V.Questions n
   hTlen : 2 ^ L.ℓ + 2 ^ L.oW ≤ Tt
   lenR : ∀ x, (V.tgame n).lenR x ≤ 2 ^ L.ℓ
   lenL : ∀ x, (V.tgame n).lenL x ≤ 2 ^ L.ℓ
-  cons : ∀ x y aR bR,
+  cons : ∀ x y aR bR, aR.length ≤ (V.tgame n).lenR x → bR.length ≤ (V.tgame n).lenR y →
     ((V.tgame n).cons x y aR bR).length * (2 ^ L.ℓ + 2 ^ L.ℓ) + (2 ^ L.ℓ + 2 ^ L.ℓ) ≤ 2 ^ L.dm
 
 variable {V n} in
@@ -364,7 +364,7 @@ theorem HonestHyp.identities {prm : PolyTimeFun ℕ (Unary × Unary)} {Cc : V.Qu
       ((V.sampler.cl n .alice).eval z) ((V.sampler.cl n .bob).eval z) a b).Identities
       (circOf L V n Cc hm z) :=
   identities_pairPcp V n prm H.hℓ H.hdm (H.wf z) (H.inputs z) (hm z) _ _ (H.desc z) (H.time z _ _)
-    H.hTlen (H.lenR _) (H.lenL _) (H.lenR _) (H.lenL _) (H.cons _ _ _ _) hacc
+    H.hTlen (H.lenR _) (H.lenL _) (H.lenR _) (H.lenL _) (H.cons _ _ _ _ (List.length_take_le _ _) (List.length_take_le _ _)) hacc
 
 end MIPRE.Tailored.AnsRed
 
