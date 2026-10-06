@@ -24,7 +24,8 @@ the output's programs, on `((λ, μ, σ), n)`, and the cost of that stage is bou
   function; `readParams` reads them back.
 * `ArRoutine`: the parameter functions, the closed program `parCore` computing them, and the
   circuit function `circF` giving the circuit of a seed from the input verifier's programs, the
-  parameters and the seed's two questions. The routine is fixed in P4i.
+  parameters and the seed's two questions, well formed with the PCP's `nIn` inputs and `s`
+  gates. The routine is fixed in P4i.
 * `ArRoutine.toLd`: the routine of the low-degree half of the sampler (`LdRoutine`), the
   parameter program projected to the half's parameters.
 * `ArRoutine.circ`: the circuit of each seed of the input verifier.
@@ -46,6 +47,9 @@ abbrev ArParams : Type := Unary × Unary × Unary × Unary × Unary × Unary × 
 /-- The parameters of the typed data, as `ArParams`. -/
 def arParams (t j d : ℕ) (L : PcpDims) (e : Data) : ArParams :=
   (unary t, unary j, unary (2 ^ j), unary d, unary L.ℓ, unary L.dm, unary L.r, unary L.s, e)
+
+theorem unary_ext {u v : Unary} (h : u.length = v.length) : u = v := by
+  rw [← unary_length u, ← unary_length v, h]
 
 /-- The field width. -/
 def pT : PolyTimeFun ArParams Unary := fst
@@ -126,7 +130,7 @@ abbrev CircIn : Type := (Prog × Prog × Prog) × (ℕ × ℕ × ℕ) × ℕ × 
 
 /-- **A parameter routine of the answer-reduced verifier**: the parameters at each `(λ, μ, σ)`
 and index, a closed program computing them from `((λ, μ, σ), n)`, and a polynomial-time circuit
-function, whose circuits have the PCP's `m` wires. -/
+function, whose circuits are well formed with the PCP's `nIn` inputs and `s` gates. -/
 structure ArRoutine where
   /-- The field and selector widths. -/
   fam : ℕ → ℕ → ℕ → LdFamily
@@ -145,12 +149,15 @@ structure ArRoutine where
       (L lam mu sigma n) (extra lam mu sigma n))) τ
   /-- The circuit function. -/
   circF : PolyTimeFun CircIn Circuit
-  circ_m : ∀ (V : Prog × Prog × Prog) lam mu sigma n (x y : BitStr),
+  circ_wf : ∀ inp, (circF inp).WellFormed
+  circ_inputs : ∀ (V : Prog × Prog × Prog) lam mu sigma n (x y : BitStr),
     (circF (V, (lam, mu, sigma), n, arParams ((fam lam mu sigma).t n) ((fam lam mu sigma).j n)
-      (d lam mu sigma n) (L lam mu sigma n) (extra lam mu sigma n), x, y)).inputs +
-      (circF (V, (lam, mu, sigma), n, arParams ((fam lam mu sigma).t n)
-        ((fam lam mu sigma).j n) (d lam mu sigma n) (L lam mu sigma n)
-        (extra lam mu sigma n), x, y)).size = (L lam mu sigma n).m
+      (d lam mu sigma n) (L lam mu sigma n) (extra lam mu sigma n), x, y)).inputs =
+      (L lam mu sigma n).nIn
+  circ_size : ∀ (V : Prog × Prog × Prog) lam mu sigma n (x y : BitStr),
+    (circF (V, (lam, mu, sigma), n, arParams ((fam lam mu sigma).t n) ((fam lam mu sigma).j n)
+      (d lam mu sigma n) (L lam mu sigma n) (extra lam mu sigma n), x, y)).size =
+      (L lam mu sigma n).s
 
 namespace ArRoutine
 
@@ -203,10 +210,19 @@ def circ {ℓ : ℕ} (V : TailoredVerifier ℓ) (z : V.Questions n) : Circuit :=
   R.circF (V.progs, (lam, mu, sigma), n, R.params lam mu sigma n,
     CL.toBits ((V.sampler.cl n .alice).eval z), CL.toBits ((V.sampler.cl n .bob).eval z))
 
+theorem circ_inputs' {ℓ : ℕ} (V : TailoredVerifier ℓ) (z : V.Questions n) :
+    (R.circ lam mu sigma n V z).inputs = (R.L lam mu sigma n).nIn :=
+  R.circ_inputs V.progs lam mu sigma n _ _
+
+theorem circ_size' {ℓ : ℕ} (V : TailoredVerifier ℓ) (z : V.Questions n) :
+    (R.circ lam mu sigma n V z).size = (R.L lam mu sigma n).s :=
+  R.circ_size V.progs lam mu sigma n _ _
+
 theorem circ_wires {ℓ : ℕ} (V : TailoredVerifier ℓ) (z : V.Questions n) :
     (R.circ lam mu sigma n V z).inputs + (R.circ lam mu sigma n V z).size =
-      (R.L lam mu sigma n).m :=
-  R.circ_m V.progs lam mu sigma n _ _
+      (R.L lam mu sigma n).m := by
+  rw [R.circ_inputs', R.circ_size']
+  rfl
 
 end ArRoutine
 

@@ -106,9 +106,6 @@ def lenParF : PolyTimeFun ArParams LenPar :=
   pT.pair (rc.pair (lc.pair ((ap₂ append pD (const (unary 1))).pair
     (ap₂ append (LowDegree.DegreeArithmetic.mulUnaryProg.comp (pM.pair pD)) (const (unary 1))))))
 
-theorem unary_ext {u v : Unary} (h : u.length = v.length) : u = v := by
-  rw [← unary_length u, ← unary_length v, h]
-
 theorem lenParF_arParams (t j d : ℕ) (L : PcpDims) (e : Data) :
     lenParF (arParams t j d L e) = lenPar t j d L := by
   simp only [lenParF, lenPar, pair_apply, ap₂_apply, comp_apply, const_apply, append_apply,

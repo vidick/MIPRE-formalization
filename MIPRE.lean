@@ -685,8 +685,10 @@ public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Background.Tailored.AnswerReduction.ArFamily
 public import MIPRE.Background.Tailored.AnswerReduction.ArLen
+public import MIPRE.Background.Tailored.AnswerReduction.ArLpArith
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpField
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpLd
+public import MIPRE.Background.Tailored.AnswerReduction.ArLpProof
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpSlots
 public import MIPRE.Background.Tailored.AnswerReduction.ArRoutine
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
