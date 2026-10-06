@@ -694,6 +694,7 @@ public import MIPRE.Background.Tailored.Intro.LenIntro
 public import MIPRE.Background.Tailored.Intro.LpIntro
 public import MIPRE.Background.Tailored.Intro.LpIntroAux
 public import MIPRE.Background.Tailored.Intro.LpIntroCons
+public import MIPRE.Background.Tailored.Intro.LpIntroCost
 public import MIPRE.Background.Tailored.Intro.LpIntroData
 public import MIPRE.Background.Tailored.Intro.Output
 public import MIPRE.Background.Tailored.Intro.Pauli
