@@ -28,7 +28,8 @@ specification of its programs with the value chain through `seven` (P3d,
 `Background/Tailored/Intro/Output.lean`, `soundness_contract`). Left: the honest strategy's
 three typed facts (P3c), the two programs with their costs (P3f), and the assembly (P3g); see
 "Phase 3 status (2026-10-06)" in §5.
-Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices").
+Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices"); P4a, the linear
+systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -948,7 +949,7 @@ What the reading settled.
   `CL.Regs.pres` on one copy, the Shoup downsizing) under
   `MIPRE/Background/Tailored/AnswerReduction/`.
 
-- **P4a — linear systems (0.8–1.2k).** `Tailored/AnsRed/Linear.lean`: purification
+- **P4a — linear systems (done, 0.7k lines).** `Tailored/AnsRed/Linear.lean`: purification
   (eq:purified_equation) and its exactness; `Triangle(A, b, Δ)` (II:7952), the extension of an
   assignment to the triangulation variables (affine), and the correspondence of solutions for
   `Δ ≥ R(n + 1)` (rem:prop_triangulated_system); `DeCouple` into five blocks (II:8193) and its
