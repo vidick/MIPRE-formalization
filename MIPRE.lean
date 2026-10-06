@@ -1448,6 +1448,7 @@ public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Encoded
 public import MIPRE.Tailored.Intro.Forms
 public import MIPRE.Tailored.Intro.Input
+public import MIPRE.Tailored.Intro.KerGensProg
 public import MIPRE.Tailored.Intro.Layout
 public import MIPRE.Tailored.Intro.LinearCheck
 public import MIPRE.Tailored.Intro.Presentation
