@@ -32,7 +32,8 @@ Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices"); P4
 systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`), and so are P4g, the describer through
 three windows (`MIPRE.SAT.windowDescriber`), and P4f, the output indicator
 (`MIPRE/Tailored/AnsRed/Indicator*.lean`), and P4b, the PCP: its blocks, checks and soundness
-(`MIPRE/Tailored/AnsRed/{Pcp,PcpSound}.lean`) and its completeness (`PcpComplete.lean`).
+(`MIPRE/Tailored/AnsRed/{Pcp,PcpSound}.lean`) and its completeness (`PcpComplete.lean`). P4c, the
+game, has begun with the functional viewpoint's completeness (`PcpHonest.lean`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -984,15 +985,17 @@ What the reading settled.
   whose assignment checks always hold identically, whose formula check does when the window
   tables satisfy the formula, and whose system check does when the linear tables satisfy `O`'s
   system (`identities_induce`); its readable part depends only on the readable tables and its
-  linear part is `F₂`-affine in the linear ones (`readable_induce`, `linear_induce_add`). What
-  P4c adds is the functional viewpoint's completeness: the honest tables from accepted answers
-  (the padded readable answers and `O = lsTable`, the witnesses of `DescribesWindows`, and
-  `Extend` of the linear answers).
-- **P4c — the game (2–3k).** Typed tailored data on `Role × LIDT.CL.Ty` over the direct sum of
-  the oracle content and the seeded test's content, built from abstract data: the input's game
-  at index `n` and a circuit family `C x y` with its specification (it describes `L*(x, y, ·)`).
-  The four checks are bit-level rows (an `F_q`-linear check is `t` rows under `BinField`,
-  `Tailored/Intro/LinearCheck.lean`); the functional viewpoint
+  linear part is `F₂`-affine in the linear ones (`readable_induce`, `linear_induce_add`).
+- **P4c — the game (2–3k).** Done first: the functional viewpoint's completeness
+  (cor:functional_viewpoint_final, item 1; `Tailored/AnsRed/PcpHonest.lean`): the honest tables
+  of accepted answers — the readable answers padded to `2^ℓ`, `O = lsTable`, witnesses of
+  `DescribesWindows` chosen from the readable data alone (`honestR`), and `Extend` of the linear
+  answers, `F₂`-linear in them (`honestL`, `honestL_xorBits`) — whose honest PCP satisfies the
+  checks identically (`identities_honest`). Then: typed tailored data on `Role × LIDT.CL.Ty`
+  over the direct sum of the oracle content and the seeded test's content, built from abstract
+  data: the input's game at index `n` and a circuit family `C x y` with its specification (it
+  describes `L*(x, y, ·)`). The four checks are bit-level rows (an `F_q`-linear check is `t` rows
+  under `BinField`, `Tailored/Intro/LinearCheck.lean`); the functional viewpoint
   (cor:functional_viewpoint_final) combines P4a, P4b and the specification.
 - **P4d — ZPC completeness (1.5–2.5k).** The oracularized strategy (the oracle's observables are
   the isolated players', which commute along edges), then data processing along `eval_ρ ∘ Ind`

@@ -251,6 +251,7 @@ public import MIPRE.TM.CookLevin.Decoupled6Prog
 public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.AnsRed.PcpSound
 public import MIPRE.Tailored.AnsRed.PcpComplete
+public import MIPRE.Tailored.AnsRed.PcpHonest
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -3958,6 +3959,12 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:ar-pcp-parts`
 #guard_sorry_free MIPRE.Tailored.AnsRed.readable_induce, MIPRE.Tailored.AnsRed.linear_induce_add,
   MIPRE.Tailored.AnsRed.res_encB, MIPRE.Tailored.AnsRed.resZ_encZ
+
+-- blueprint `lem:ar-pcp-honest`
+#guard_sorry_free MIPRE.Tailored.AnsRed.honestA, MIPRE.Tailored.AnsRed.honestB,
+  MIPRE.Tailored.AnsRed.honestW, MIPRE.Tailored.AnsRed.honestR, MIPRE.Tailored.AnsRed.honestL,
+  MIPRE.Tailored.AnsRed.lstar_accepts_honest, MIPRE.Tailored.AnsRed.identities_honest,
+  MIPRE.Tailored.AnsRed.honestL_xorBits
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
