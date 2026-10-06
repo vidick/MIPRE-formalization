@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 public import MIPRE.Foundations.GuardSorryFree
 public import MIPRE.Foundations.TracialCommuting
+public import MIPRE.TailoredMIP
 public import MIPRE.Foundations.Introspection.BasisProg
 public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
 public import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
@@ -4471,6 +4472,111 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Sofic.valSof_eq_one_of_hasPerfectZPC, MIPRE.Tailored.Sofic.CII,
   MIPRE.Tailored.Sofic.gameValue_ge_of_valSof, MIPRE.Tailored.Sofic.gapK,
   MIPRE.Tailored.Sofic.primrec_gapK, MIPRE.Tailored.Sofic.mainTheoremII
+
+-- blueprint `lem:ar-params-basic`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Params.pL_ℓ, MIPRE.Tailored.AnsRed.Params.pL_dm,
+  MIPRE.Tailored.AnsRed.Params.pL_r, MIPRE.Tailored.AnsRed.Params.pL_s,
+  MIPRE.Tailored.AnsRed.Params.pL_oW, MIPRE.Tailored.AnsRed.Params.one_le_pQ,
+  MIPRE.Tailored.AnsRed.Params.pL_m_lt, MIPRE.Tailored.AnsRed.Params.pL_m_le,
+  MIPRE.Tailored.AnsRed.Params.pJ_le_pTw, MIPRE.Tailored.AnsRed.Params.one_le_pTw,
+  MIPRE.Tailored.AnsRed.Params.pQ_le_pK, MIPRE.Tailored.AnsRed.Params.pOW_le_pK
+
+-- blueprint `lem:circuit-pad-exact`
+#guard_sorry_free MIPRE.SAT.Circuit.trivial, MIPRE.SAT.Circuit.wellFormed_trivial,
+  MIPRE.SAT.Circuit.padTo, MIPRE.SAT.Circuit.padTo_inputs, MIPRE.SAT.Circuit.padTo_size,
+  MIPRE.SAT.Circuit.wellFormed_padTo, MIPRE.SAT.Circuit.padTo_of_le,
+  MIPRE.SAT.Circuit.evalBits_padTo, MIPRE.SAT.Circuit.formula6_padTo,
+  MIPRE.SAT.Circuit.describesWindows_padTo, MIPRE.SAT.Circuit.trivialProg,
+  MIPRE.SAT.Circuit.trivialProg_apply, MIPRE.SAT.Circuit.padToProg,
+  MIPRE.SAT.Circuit.padToProg_apply
+
+-- blueprint `lem:lstar-const`
+#guard_sorry_free MIPRE.Tailored.AnsRed.CIn, MIPRE.Tailored.AnsRed.lstarCore,
+  MIPRE.Tailored.AnsRed.lstarCore_apply, MIPRE.Tailored.AnsRed.lstarIdx,
+  MIPRE.Tailored.AnsRed.lstarIdx_apply, MIPRE.Tailored.AnsRed.polynomial_eval_le_add_two_pow,
+  MIPRE.Tailored.AnsRed.lstarFinal_const_timeBound_eq,
+  MIPRE.Tailored.AnsRed.lstarFinal_const_timeBound, MIPRE.Tailored.AnsRed.lstarBound_const_le,
+  MIPRE.Tailored.AnsRed.lstar_const_acceptsWithin_pow, MIPRE.Tailored.AnsRed.consProgF,
+  MIPRE.Tailored.AnsRed.consProgF_apply, MIPRE.Tailored.AnsRed.constProgF,
+  MIPRE.Tailored.AnsRed.constProgF_apply, MIPRE.Tailored.AnsRed.pushProgF,
+  MIPRE.Tailored.AnsRed.pushProgF_apply, MIPRE.Tailored.AnsRed.lstarFinal_const_code,
+  MIPRE.Tailored.AnsRed.lstarFinalCodeF, MIPRE.Tailored.AnsRed.lstarFinalCodeF_apply,
+  MIPRE.Tailored.AnsRed.lstarProgF, MIPRE.Tailored.AnsRed.lstarProgF_apply,
+  MIPRE.Tailored.AnsRed.lstarProgSize₀, MIPRE.Tailored.AnsRed.esize_lstarProg_const,
+  MIPRE.Tailored.AnsRed.esize_lstarProg_const_le, MIPRE.Tailored.AnsRed.size_lstar_const,
+  MIPRE.Tailored.AnsRed.size_lstar_const_le
+
+-- blueprint `lem:ar-honest-hyp`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Params.length_spineList_le,
+  MIPRE.Tailored.AnsRed.Params.length_bitsListD_le, MIPRE.Tailored.AnsRed.Params.lenOf_le,
+  MIPRE.Tailored.AnsRed.Params.consOf_length_le, MIPRE.Tailored.AnsRed.Params.two_mul_le_two_pow,
+  MIPRE.Tailored.AnsRed.Params.pOW_add_le_pK, MIPRE.Tailored.AnsRed.Params.le_pQ,
+  MIPRE.Tailored.AnsRed.Params.pQ_lt_two_pow, MIPRE.Tailored.AnsRed.Params.two_pow_ell_add_le,
+  MIPRE.Tailored.AnsRed.Params.pK_add_two_le_pR, MIPRE.Tailored.AnsRed.Params.arPrm,
+  MIPRE.Tailored.AnsRed.Params.arPrm_apply, MIPRE.Tailored.AnsRed.Params.arDescIn,
+  MIPRE.Tailored.AnsRed.Params.arCirc, MIPRE.Tailored.AnsRed.Params.one_le_pS,
+  MIPRE.Tailored.AnsRed.Params.arCirc_wf, MIPRE.Tailored.AnsRed.Params.arCirc_inputs,
+  MIPRE.Tailored.AnsRed.Params.arCirc_size, MIPRE.Tailored.AnsRed.Params.arCc,
+  MIPRE.Tailored.AnsRed.Params.tableSize_pow, MIPRE.Tailored.AnsRed.Params.esize_bitStr_le_pow,
+  MIPRE.Tailored.AnsRed.Params.cons_le_ar, MIPRE.Tailored.AnsRed.Params.LstarTime,
+  MIPRE.Tailored.AnsRed.Params.LstarSize, MIPRE.Tailored.AnsRed.Params.exists_lstarTime,
+  MIPRE.Tailored.AnsRed.Params.lstarSize_lstarProgSize₀,
+  MIPRE.Tailored.AnsRed.Params.acceptsWithin_mono, MIPRE.Tailored.AnsRed.Params.esize_arPrm_pair,
+  MIPRE.Tailored.AnsRed.Params.honestHyp_ar
+
+-- blueprint `lem:ar-routine-fixed`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.arCircF, MIPRE.Tailored.AnsRed.Typed.unary_add_one,
+  MIPRE.Tailored.AnsRed.Typed.arCircF_apply, MIPRE.Tailored.AnsRed.Typed.arCircF_wf,
+  MIPRE.Tailored.AnsRed.Typed.arCircF_inputs, MIPRE.Tailored.AnsRed.Typed.arCircF_size,
+  MIPRE.Tailored.AnsRed.Typed.ArPar.pushU, MIPRE.Tailored.AnsRed.Typed.ArPar.pushU_closed,
+  MIPRE.Tailored.AnsRed.Typed.ArPar.pushU_runs, MIPRE.Tailored.AnsRed.Typed.ArPar.budStage,
+  MIPRE.Tailored.AnsRed.Typed.ArPar.budStage_closed, MIPRE.Tailored.AnsRed.Typed.ArPar.tailProg,
+  MIPRE.Tailored.AnsRed.Typed.ArPar.tailProg_closed, MIPRE.Tailored.AnsRed.Typed.arParCore,
+  MIPRE.Tailored.AnsRed.Typed.arParCore_closed, MIPRE.Tailored.AnsRed.Typed.arParCore_runs,
+  MIPRE.Tailored.AnsRed.Typed.ArPar.pushU_time, MIPRE.Tailored.AnsRed.Typed.ArPar.vals_pdom,
+  MIPRE.Tailored.AnsRed.Typed.arParCore_time, MIPRE.Tailored.AnsRed.Typed.arFam,
+  MIPRE.Tailored.AnsRed.Typed.arRoutine, MIPRE.Tailored.AnsRed.Typed.arRoutine_params,
+  MIPRE.Tailored.AnsRed.Typed.arRoutine_parTime, MIPRE.Tailored.AnsRed.Typed.arRoutine_circ,
+  MIPRE.Tailored.AnsRed.Typed.lstarE, MIPRE.Tailored.AnsRed.Typed.one_le_lstarE,
+  MIPRE.Tailored.AnsRed.Typed.lstarTime_lstarE, MIPRE.Tailored.AnsRed.Typed.honestHyp_arRoutine
+
+-- blueprint `lem:ar-error`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.length_slotsOf_le,
+  MIPRE.Tailored.AnsRed.Typed.errAR_le_of_dS, MIPRE.Tailored.AnsRed.Typed.pwR,
+  MIPRE.Tailored.AnsRed.Typed.one_le_pwR, MIPRE.Tailored.AnsRed.Typed.dS_le_of,
+  MIPRE.Tailored.AnsRed.Typed.seven_le_e2Min,
+  MIPRE.Tailored.AnsRed.Typed.field_term_le, MIPRE.Tailored.AnsRed.Typed.gN,
+  MIPRE.Tailored.AnsRed.Typed.shape_Q, MIPRE.Tailored.AnsRed.Typed.shape_arith,
+  MIPRE.Tailored.AnsRed.Typed.errAR_le_shape, MIPRE.Tailored.AnsRed.Typed.field_hyps,
+  MIPRE.Tailored.AnsRed.Typed.wdC, MIPRE.Tailored.AnsRed.Typed.wdP,
+  MIPRE.Tailored.AnsRed.Typed.r₀_le_wdC, MIPRE.Tailored.AnsRed.Typed.s₀_le_wdP,
+  MIPRE.Tailored.AnsRed.Typed.cW, MIPRE.Tailored.AnsRed.Typed.errCM,
+  MIPRE.Tailored.AnsRed.Typed.errPM, MIPRE.Tailored.AnsRed.Typed.pQ_facts,
+  MIPRE.Tailored.AnsRed.Typed.pL_m_eq, MIPRE.Tailored.AnsRed.Typed.pL_m_le,
+  MIPRE.Tailored.AnsRed.Typed.two_pow_pJ_le, MIPRE.Tailored.AnsRed.Typed.gN_le,
+  MIPRE.Tailored.AnsRed.Typed.errCc, MIPRE.Tailored.AnsRed.Typed.errPp,
+  MIPRE.Tailored.AnsRed.Typed.errA, MIPRE.Tailored.AnsRed.Typed.one_le_errA,
+  MIPRE.Tailored.AnsRed.Typed.errC, MIPRE.Tailored.AnsRed.Typed.gN_le_poly,
+  MIPRE.Tailored.AnsRed.Typed.errAR_le_delta, MIPRE.Tailored.AnsRed.Typed.one_le_delta_of_trivial',
+  MIPRE.Tailored.AnsRed.Typed.errAR_le_delta_or, MIPRE.Tailored.AnsRed.Typed.exists_errAR_le_delta
+
+-- blueprint `thm:tailored-ar`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.one_le_delta_mu_zero,
+  MIPRE.Tailored.AnsRed.Typed.one_le_size, MIPRE.Tailored.AnsRed.Typed.arOut,
+  MIPRE.Tailored.AnsRed.Typed.tailoredAnswerReductionOf, MIPRE.Tailored.AnsRed.Typed.arConsts,
+  MIPRE.Tailored.AnsRed.Typed.one_le_arConsts_E₂,
+  MIPRE.Tailored.AnsRed.Typed.tailoredAnswerReduction
+
+-- blueprint `thm:tailored-compression-target`
+#guard_sorry_free MIPRE.Tailored.tailoredGapCompression
+
+-- blueprint `thm:tmip-re`
+#guard_sorry_free TailoredGameValue.tailored_halting_reduction,
+  MIPRE.Tailored.tailored_halting_reduction_quantum, MIPRE.Tailored.tmipStarComputable_eq_re,
+  MIPRE.Tailored.tmipStar_eq_re
+
+-- blueprint `cor:aldous-lyons-false-final`
+#guard_sorry_free SubgroupTestValue.not_sofValueApproximable, SubgroupTestValue.aldous_lyons_false
 
 -- blueprint `cor:sofic-not-approximable-ar`
 #guard_sorry_free MIPRE.Tailored.Sofic.not_sofValueApproximable,

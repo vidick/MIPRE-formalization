@@ -22,7 +22,9 @@ soundness (Proposition~\ref{prop:assoc-perturb}); Main Theorem~II itself
 reduction to tailored games (Corollary~\ref{cor:sofic-not-approximable-ar}). Main Theorem~I
 (Theorems~\ref{thm:main-theorem-i-lower} and~\ref{thm:main-theorem-i-upper}) is formalized too, so
 the Aldous--Lyons conjecture is false from a halting reduction to tailored games, and from a
-tailored answer reduction (Corollary~\ref{cor:aldous-lyons-false-ar}).
+tailored answer reduction (Corollary~\ref{cor:aldous-lyons-false-ar}). Paper~II's main theorem is
+proved (Theorem~\ref{thm:tmip-re}), so the conjecture is false
+(Corollary~\ref{cor:aldous-lyons-false-final}).
 
 \subsection{Subgroup tests and the conjecture}
 
@@ -605,4 +607,18 @@ A tailored answer reduction at input level~$5$ refutes the Aldous--Lyons conject
 \leanok
 Theorem~\ref{thm:aldous-lyons-false} with the halting reduction of
 Corollary~\ref{cor:tmip-re-from-ar}.
+\end{proof}
+
+\begin{corollary}[The Aldous--Lyons conjecture is false]
+\label{cor:aldous-lyons-false-final}
+\uses{thm:aldous-lyons-false,thm:sofic-not-approximable,thm:main-theorem-ii,thm:tmip-re}
+\lean{SubgroupTestValue.not_sofValueApproximable, SubgroupTestValue.aldous_lyons_false}
+\leanok
+The sofic value of subgroup tests is not approximable, and the Aldous--Lyons conjecture is false.
+\end{corollary}
+
+\begin{proof}
+\leanok
+Theorems~\ref{thm:sofic-not-approximable} and~\ref{thm:aldous-lyons-false} at the halting
+reduction of Theorem~\ref{thm:tmip-re}.
 \end{proof}
