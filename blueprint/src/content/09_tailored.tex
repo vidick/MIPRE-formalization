@@ -1674,6 +1674,91 @@ The inner product is additive over concatenation, and zero against zeros; the re
 the vectors at the offsets.
 \end{proof}
 
+\begin{lemma}[Comparisons of registers as linear constraints]
+\label{lem:intro-register-cons}
+\uses{lem:intro-forms,def:cl-canonical,lem:cl-canonical,lem:pauli-mixing}
+\lean{MIPRE.Tailored.Intro.dotL_toBits, MIPRE.Tailored.Intro.regForm,
+  MIPRE.Tailored.Intro.dotL_regForm, MIPRE.Tailored.Intro.satisfies_regForms_iff,
+  MIPRE.Tailored.Intro.projEqCons, MIPRE.Tailored.Intro.projEqCons_iff,
+  MIPRE.Tailored.Intro.dualCons, MIPRE.Tailored.Intro.dualCons_iff}
+\leanok
+Let two registers $x, y \in \F_2^s$ sit at known offsets of the two answers. For a coordinate set
+$S$, the constraints $x_i = y_i$, $i \in S$, hold exactly when $x$ and $y$ agree on $S$. For a
+linear map $L$ on the coordinates $S$ and a list of vectors spanning its kernel, the constraints
+$\sum_i z_i (x - y)_i = 0$ on $S$, one for each listed $z$, hold exactly when the dual readouts of
+$L$ at $x$ and at $y$ agree.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The inner product of two windows is the $\F_2$ sum of the products of their entries. The dual
+readouts agree exactly when $x - y$, restricted to $S$, is orthogonal to the kernel of $L$; a
+linear functional vanishing on a spanning list vanishes on the span.
+\end{proof}
+
+\begin{lemma}[The Pauli basis test as linear constraints]
+\label{lem:intro-pauli-cons}
+\uses{def:qld-game,def:tailored-game,def:fourier-forms,def:intro-source,def:intro-verifier,
+  def:self-dual-basis,lem:binary-degree-decomposition,lem:binary-uniform-irreducible,
+  lem:cl-downsize,lem:effective-binary-field-arithmetic,lem:effective-binary-linear-algebra,
+  lem:effective-field-inverse-trace,lem:effective-field-matrices,lem:effective-normal-element,
+  lem:effective-normal-selfdualization,lem:intro-binary-pauli-predicate,lem:pcp-circuit-evaluator,
+  lem:pcp-padding-programs,lem:perm-strategy-perfect,lem:self-dual-basis,thm:pcp-decider}
+\lean{MIPRE.Tailored.Intro.LinCheck, MIPRE.Tailored.Intro.LinCheck.toCon,
+  MIPRE.Tailored.Intro.satisfies_toCon_iff, MIPRE.Tailored.Intro.fldAt,
+  MIPRE.Tailored.Intro.fieldChecks, MIPRE.Tailored.Intro.forall_fieldChecks_iff,
+  MIPRE.Tailored.Intro.PauliCons.pairChecks, MIPRE.Tailored.Intro.PauliCons.pairChecks_iff,
+  MIPRE.Tailored.Intro.PauliCons.pauliCons, MIPRE.Tailored.Intro.PauliCons.pauliCons_iff,
+  MIPRE.Tailored.Intro.PauliCons.length_of_mem_pauliCons,
+  MIPRE.Tailored.Intro.PauliCons.endpointValid_iff,
+  MIPRE.Tailored.Intro.PauliCons.program_pauli_iff_cons}
+\leanok
+At a pair of Pauli questions of the low individual degree test over $\F_{2^k}$, there is a list
+of linear constraints on the two answers' bits, depending on the questions only, that hold
+exactly when the test accepts the two decoded answers. The kernel of the introspection decider
+accepts a pair of Pauli answers exactly when they have the lengths of their labels, these
+constraints hold, and its auxiliary check passes.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Each rule of the test compares field elements and bits that are $\F_2$-linear in the answer bits,
+with coefficients given by the questions: the evaluation of a line's polynomial at a parameter,
+the indicator of a point, the trace. A field equation is its $k$ coordinate equations. Where a
+rule rejects on the questions alone, the list is the rejecting constraint; where it accepts on
+the questions alone, it is empty.
+\end{proof}
+
+\begin{lemma}[A tailored verifier as a bounded normal form verifier]
+\label{lem:of-tnfvt}
+\uses{def:of-tnfv,lem:of-tnfv,lem:canonical-decider-cost,def:tailored-bounded,def:lambda-bounded,
+  lem:lambda}
+\lean{MIPRE.Cost.Prog.wrapHead_cost_at, MIPRE.Cost.Prog.wrapPre_cost_at,
+  MIPRE.Cost.Prog.wrapCore_cost_at, MIPRE.Cost.Prog.esize_wrapCore,
+  MIPRE.Tailored.TailoredVerifier.ofTNFVT,
+  MIPRE.Tailored.TailoredVerifier.ofTNFVT_accepts_iff_ofTNFV,
+  MIPRE.Tailored.TailoredVerifier.ofTNFVT_accepts_iff,
+  MIPRE.Tailored.TailoredVerifier.ofTNFVT_game, MIPRE.Tailored.TailoredVerifier.ofTNFVT_game_D,
+  MIPRE.Tailored.TailoredVerifier.valStar_ofTNFVT,
+  MIPRE.Tailored.TailoredVerifier.hasPerfectPCC_ofTNFVT, MIPRE.Tailored.dom_wrapCoreCost,
+  MIPRE.Tailored.dom_le_pow, MIPRE.Tailored.TailoredVerifier.ofTNFVT_isBounded}
+\leanok
+Wrap the canonical decider with its total parse in front. The resulting normal form verifier has
+the games of that of Lemma~\ref{lem:of-tnfv}, so the same values and perfect PCC strategies, and
+there is a constant $C$, depending on the universal machine alone, such that it is
+$C\lambda$-bounded whenever the tailored verifier is $\lambda$-bounded.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The two deciders accept the same inputs. The wrapper's cost at an index $n$ needs the sampler's
+bound at $n$ only; with the canonical decider's bound of Lemma~\ref{lem:canonical-decider-cost},
+at $T = n^\lambda$ and exponent $\lambda$, every term of the wrapper's cost is dominated by
+$n^{A\lambda}$ for a constant $A$, and the domination tools turn the whole into
+$n^{C\lambda}(|d|+1)^{C\lambda}$. The description is that of the wrapper, plus four times that of
+the length calculator, plus that of the constraint processor, plus a constant.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}

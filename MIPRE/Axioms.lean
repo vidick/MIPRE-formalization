@@ -247,6 +247,9 @@ public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.ClassVerifier
 public import MIPRE.Tailored.Intro.SourceCons
+public import MIPRE.Tailored.Intro.RegCons
+public import MIPRE.Background.Tailored.Intro.PauliConsKernel
+public import MIPRE.Tailored.OfTNFVT
 
 @[expose] public section
 
@@ -3892,5 +3895,32 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.guardCons_iff, MIPRE.Tailored.Intro.place2,
   MIPRE.Tailored.Intro.dotL_place2, MIPRE.Tailored.Intro.inputOf, MIPRE.Tailored.Intro.reindex,
   MIPRE.Tailored.Intro.dotL_split_right, MIPRE.Tailored.Intro.satisfies_reindex_iff
+
+-- blueprint `lem:intro-register-cons`
+#guard_sorry_free MIPRE.Tailored.Intro.dotL_toBits, MIPRE.Tailored.Intro.regForm,
+  MIPRE.Tailored.Intro.dotL_regForm, MIPRE.Tailored.Intro.satisfies_regForms_iff,
+  MIPRE.Tailored.Intro.projEqCons, MIPRE.Tailored.Intro.projEqCons_iff,
+  MIPRE.Tailored.Intro.dualCons, MIPRE.Tailored.Intro.dualCons_iff
+
+-- blueprint `lem:intro-pauli-cons`
+#guard_sorry_free MIPRE.Tailored.Intro.LinCheck, MIPRE.Tailored.Intro.LinCheck.toCon,
+  MIPRE.Tailored.Intro.satisfies_toCon_iff, MIPRE.Tailored.Intro.fldAt,
+  MIPRE.Tailored.Intro.fieldChecks, MIPRE.Tailored.Intro.forall_fieldChecks_iff,
+  MIPRE.Tailored.Intro.PauliCons.pairChecks, MIPRE.Tailored.Intro.PauliCons.pairChecks_iff,
+  MIPRE.Tailored.Intro.PauliCons.pauliCons, MIPRE.Tailored.Intro.PauliCons.pauliCons_iff,
+  MIPRE.Tailored.Intro.PauliCons.length_of_mem_pauliCons,
+  MIPRE.Tailored.Intro.PauliCons.endpointValid_iff,
+  MIPRE.Tailored.Intro.PauliCons.program_pauli_iff_cons
+
+-- blueprint `lem:of-tnfvt`
+#guard_sorry_free MIPRE.Cost.Prog.wrapHead_cost_at, MIPRE.Cost.Prog.wrapPre_cost_at,
+  MIPRE.Cost.Prog.wrapCore_cost_at, MIPRE.Cost.Prog.esize_wrapCore,
+  MIPRE.Tailored.TailoredVerifier.ofTNFVT,
+  MIPRE.Tailored.TailoredVerifier.ofTNFVT_accepts_iff_ofTNFV,
+  MIPRE.Tailored.TailoredVerifier.ofTNFVT_accepts_iff,
+  MIPRE.Tailored.TailoredVerifier.ofTNFVT_game, MIPRE.Tailored.TailoredVerifier.ofTNFVT_game_D,
+  MIPRE.Tailored.TailoredVerifier.valStar_ofTNFVT,
+  MIPRE.Tailored.TailoredVerifier.hasPerfectPCC_ofTNFVT, MIPRE.Tailored.dom_wrapCoreCost,
+  MIPRE.Tailored.dom_le_pow, MIPRE.Tailored.TailoredVerifier.ofTNFVT_isBounded
 
 end
