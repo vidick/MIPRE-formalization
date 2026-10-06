@@ -1483,6 +1483,7 @@ public import MIPRE.Tailored.AnsRed.ArHonestHyp
 public import MIPRE.Tailored.AnsRed.ArParams
 public import MIPRE.Tailored.AnsRed.HonestPair
 public import MIPRE.Tailored.AnsRed.Indicator
+public import MIPRE.Tailored.AnsRed.IndicatorConst
 public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.AnsRed.IndicatorProg
 public import MIPRE.Tailored.AnsRed.Linear
