@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 public import MIPRE.Foundations.GuardSorryFree
+public import MIPRE.Foundations.TracialCommuting
 public import MIPRE.Foundations.Introspection.BasisProg
 public import MIPRE.Foundations.Introspection.AuxiliaryReadProgram
 public import MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect
@@ -631,6 +632,17 @@ tell you the guard is missing.
 
 -- blueprint `lem:sync-le-valstar`
 #guard_sorry_free MIPRE.syncValue_le_quantumValue
+
+-- blueprint `lem:tracial-le-co`
+#guard_sorry_free MIPRE.TracialState.im_star_mul_self, MIPRE.TracialState.map_star,
+  MIPRE.TracialState.toState, MIPRE.TracialCo.form_mulRight_left,
+  MIPRE.TracialCo.form_mulRight_self, MIPRE.TracialCo.bdd_mulRight,
+  MIPRE.TracialCo.lift_mulRight_isPositive, MIPRE.TracialCo.bdd_mulLeft,
+  MIPRE.TracialCo.lift_mulLeft_isPositive,
+  MIPRE.CommutingStrategy.toCommutingOperatorStrategy,
+  MIPRE.CommutingStrategy.correlation_toCommutingOperatorStrategy,
+  MIPRE.CommutingStrategy.value_toCommutingOperatorStrategy,
+  MIPRE.commValue_le_commutingOperatorValue
 
 -- blueprint `lem:universal-tm`
 #guard_sorry_free MIPRE.Cost.exists_clocked_universal,
