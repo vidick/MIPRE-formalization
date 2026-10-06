@@ -1940,7 +1940,9 @@ The program's correctness, read in the sampler's encoding of vectors.
 
 \begin{lemma}[The output tailored verifier, from a specification of its programs]
 \label{lem:intro-output}
-\uses{lem:intro-presentation-sound,lem:intro-presentation-complete,lem:of-tnfvt}
+\uses{lem:intro-presentation-sound,lem:intro-presentation-complete,lem:of-tnfvt,cor:qld-valid,
+  lem:intro-extracted-soundness,lem:introspection-supply,lem:povm-domination,lem:qld-sound-in-tensor,
+  lem:tailored-extend,lem:tailored-presents}
 \lean{MIPRE.Tailored.Intro.Output.quantumValue_H,
   MIPRE.Tailored.Intro.Output.valStar_presented_le_output, MIPRE.Tailored.Intro.Output.outTV,
   MIPRE.Tailored.Intro.Output.qe, MIPRE.Tailored.Intro.Output.IntroSpec,
