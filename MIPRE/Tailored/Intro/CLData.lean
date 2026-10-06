@@ -23,6 +23,8 @@ theorem for a `λ`-bounded `V`, `1 ≤ n` and `hs : V.sampler.dim (2^n) ≤ Q`:
 
 * `eval`: `(L w).eval z` (one marginal query at full depth, padded with zeros), and
   `sourceEval`, its first `dim` bits;
+* `outputPrefix k`: the reported prefix `(L w).outputPrefix k y`, `k ≤ 7`, read off the kernel's
+  attained-prefix scan (`scan`), under the guard at `k - 1` (`Guard`);
 
 The sampler program is specified only at attained prefixes, so the data at a stage `k` are
 correct under the prefix guard at `k`, which is itself computed exactly.
@@ -121,6 +123,80 @@ theorem eval_correct (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier
     widths_context U V hV hn hs w, suffixWidth, fullWidth, sourceWidth]
   rw [hp, toBits_push_first, CL.pull_push]
   simp [context, queryContext, AuxiliarySource.inputPrefix, CL.length_toBits]
+
+/-! ## The prefix scan and the reported prefixes -/
+
+/-- The kernel's attained-prefix scan to depth `k` on the register
+(`AuxiliaryScan.program` over the kernel's padded factor and matrix queries). -/
+def scan (U : ClockedUniversalMachine) (k : ℕ) : PolyTimeFun Input AuxiliaryScan.State :=
+  AuxiliaryScan.program (factorFromContext U) (matrixFromContext U) k
+
+/-- The reported prefix `outputPrefix k y`, the second field of the scan state. -/
+def outputPrefix (U : ClockedUniversalMachine) (k : ℕ) : PolyTimeFun Input BitStr :=
+  fst.comp (snd.comp (scan U k))
+
+/-- The prefix guard at level `k` in its semantic form: the reported `k`-prefix of `y` is
+attained by the first `k` stages. -/
+def Guard {Q : ℕ} (V : Verifier 7) {n : ℕ} (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool) (k : ℕ)
+    (y : Fin Q → CL.𝔽₂) : Prop :=
+  ∃ x, ((AuxiliaryDecision.padded V hs w).truncate k).eval x =
+    (AuxiliaryDecision.padded V hs w).outputPrefix k y
+
+theorem guard_mono {Q n : ℕ} (V : Verifier 7) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {j k : ℕ} (hj : j ≤ k) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w k y) : Guard V hs w j y := by
+  obtain ⟨x, hx⟩ := hg
+  exact ⟨x, AuxiliaryScan.earlier_attained (AuxiliaryDecision.padded_supported V hs w) hj y x hx⟩
+
+theorem guard_zero {Q n : ℕ} (V : Verifier 7) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    (y : Fin Q → CL.𝔽₂) : Guard V hs w 0 y :=
+  ⟨0, by simp⟩
+
+/-- Under the guard at `k`, the scan succeeds with the reported prefix and a seed attaining it. -/
+theorem scan_of_guard (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k ≤ 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w k y) :
+    ∃ x, scan U k (context V lam n Q w, CL.toBits y) =
+      (true, CL.toBits ((AuxiliaryDecision.padded V hs w).outputPrefix k y), CL.toBits x) ∧
+      ((AuxiliaryDecision.padded V hs w).truncate k).eval x =
+        (AuxiliaryDecision.padded V hs w).outputPrefix k y := by
+  have hq := AuxiliarySourceScan.queriesCorrectBelow U V hV hn hs w 0 0 k hk
+  obtain ⟨x, he, hx⟩ := AuxiliaryScan.program_sound (factorFromContext U) (matrixFromContext U)
+    _ (AuxiliaryDecision.padded_supported V hs w) y k hq
+    (AuxiliaryScan.program_complete (factorFromContext U) (matrixFromContext U) _
+      (AuxiliaryDecision.padded_supported V hs w) y k hq hg)
+  exact ⟨x, he, hx⟩
+
+/-- **The reported prefix** `outputPrefix k y`, for `k ≤ 7`, under the guard one level below
+(no hypothesis at `k = 0`). -/
+theorem outputPrefix_correct (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k ≤ 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w (k - 1) y) :
+    outputPrefix U k (context V lam n Q w, CL.toBits y) =
+      CL.toBits ((AuxiliaryDecision.padded V hs w).outputPrefix k y) := by
+  cases k with
+  | zero =>
+    change (AuxiliaryScan.program (factorFromContext U) (matrixFromContext U) 0
+      (context V lam n Q w, CL.toBits y)).2.1 = _
+    rw [AuxiliaryScan.program_zero, AuxiliaryScan.zeros_toBits]
+    simp
+  | succ k =>
+    obtain ⟨x, he, hx⟩ := scan_of_guard U V hV hn hs w (k := k) (by omega) y hg
+    change (AuxiliaryScan.program (factorFromContext U) (matrixFromContext U) (k + 1) (context V lam n Q w, CL.toBits y)).2.1 = _
+    rw [AuxiliaryScan.program_succ]
+    change (AuxiliaryScan.advance _ _ k (_, scan U k (context V lam n Q w, CL.toBits y))).2.1 = _
+    rw [he, AuxiliaryScan.advance_apply]
+    simp only [↓reduceIte]
+    exact congrArg (fun s : AuxiliaryScan.State => s.2.1)
+      (AuxiliaryScan.stage_at_claimed _ _ _ (AuxiliaryDecision.padded_supported V hs w) k y x hx
+        (AuxiliarySourceScan.queriesCorrectAt U V hV hn hs w 0 0 k (by omega)))
+
+/-- The reported prefix under the guard at its own level. -/
+theorem outputPrefix_correct_of_guard (U : ClockedUniversalMachine) {lam n Q : ℕ}
+    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q)
+    (w : Bool) {k : ℕ} (hk : k ≤ 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w k y) :
+    outputPrefix U k (context V lam n Q w, CL.toBits y) =
+      CL.toBits ((AuxiliaryDecision.padded V hs w).outputPrefix k y) :=
+  outputPrefix_correct U V hV hn hs w hk y (guard_mono V hs w (Nat.sub_le k 1) y hg)
 
 end MIPRE.Tailored.Intro.CLData
 
