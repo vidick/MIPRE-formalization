@@ -711,6 +711,7 @@ public import MIPRE.Background.Tailored.Intro.Typed
 public import MIPRE.Background.Tailored.Main
 public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Background.Tailored.Repetition.Stage
+public import MIPRE.Background.Tailored.Sofic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.TapeLemmas
 public import MIPRE.Cslib.Foundations.Data.RelatesInSteps
@@ -1521,6 +1522,7 @@ public import MIPRE.Tailored.Sofic.ConsWord
 public import MIPRE.Tailored.Sofic.Double
 public import MIPRE.Tailored.Sofic.Hamming
 public import MIPRE.Tailored.Sofic.Local
+public import MIPRE.Tailored.Sofic.MainII
 public import MIPRE.Tailored.Sofic.Passes
 public import MIPRE.Tailored.Sofic.Perturb
 public import MIPRE.Tailored.Sofic.Quotient

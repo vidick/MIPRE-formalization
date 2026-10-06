@@ -270,6 +270,7 @@ public import MIPRE.Background.Tailored.Intro.Inhabit
 public import MIPRE.Background.Tailored.Main
 public import MIPRE.Tailored.Sofic.Undecidable
 public import MIPRE.Tailored.Sofic.Soundness
+public import MIPRE.Background.Tailored.Sofic
 public import MIPRE.Tailored.Intro.AuxProg
 
 @[expose] public section
@@ -4170,6 +4171,40 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Sofic.lose, MIPRE.Tailored.Sofic.loseAt, MIPRE.Tailored.Sofic.weighted_dist_le,
   MIPRE.Tailored.Sofic.value_perturbed_ge, MIPRE.Tailored.Sofic.numeric_bound,
   MIPRE.Tailored.Sofic.Cp, MIPRE.Tailored.Sofic.exists_checks_of_value
+
+-- blueprint `lem:trace-identity`
+#guard_sorry_free MIPRE.Tailored.Sofic.ZStrat.rsgn, MIPRE.Tailored.Sofic.ZStrat.sum_trace_proj_mul_mul_proj,
+  MIPRE.Tailored.Sofic.consBit, MIPRE.Tailored.Sofic.satisfies_iff_consBit,
+  MIPRE.Tailored.Sofic.ZStrat.consMat, MIPRE.Tailored.Sofic.ZStrat.proj_mul_consMat_mul_proj
+
+-- blueprint `lem:assoc-passes`
+#guard_sorry_free MIPRE.Tailored.Sofic.passes_iff, MIPRE.Tailored.Sofic.value_eq_sum,
+  MIPRE.Tailored.Sofic.length_consWords_le'
+
+-- blueprint `lem:j-quotient`
+#guard_sorry_free MIPRE.Tailored.Sofic.Reps, MIPRE.Tailored.Sofic.rep, MIPRE.Tailored.Sofic.ind,
+  MIPRE.Tailored.Sofic.ind_mul, MIPRE.Tailored.Sofic.ind_J, MIPRE.Tailored.Sofic.ind_fix_iff,
+  MIPRE.Tailored.Sofic.indF, MIPRE.Tailored.Sofic.quotStrat, MIPRE.Tailored.Sofic.wordSP,
+  MIPRE.Tailored.Sofic.ZStrat.toMatrix_wordSP_consWord
+
+-- blueprint `prop:checks-game-value`
+#guard_sorry_free MIPRE.Tailored.Sofic.Cq, MIPRE.Tailored.Sofic.ZStrat.rej_le_sum_viol,
+  MIPRE.Tailored.Sofic.rej_quotStrat_le, MIPRE.Tailored.Sofic.gameValue_ge_of_checks
+
+-- blueprint `lem:assoc-completeness`
+#guard_sorry_free MIPRE.Tailored.Sofic.liftHom, MIPRE.Tailored.Sofic.ZStrat.toAction,
+  MIPRE.Tailored.Sofic.ZStrat.checks_toAction, MIPRE.Tailored.Sofic.ZStrat.consMat_apply_self_eq_one,
+  MIPRE.Tailored.Sofic.exists_value_one_of_hasPerfectZPC
+
+-- blueprint `thm:main-theorem-ii`
+#guard_sorry_free MIPRE.Tailored.Sofic.value_le_one, MIPRE.Tailored.Sofic.valSof_le_one,
+  MIPRE.Tailored.Sofic.valSof_eq_one_of_hasPerfectZPC, MIPRE.Tailored.Sofic.CII,
+  MIPRE.Tailored.Sofic.gameValue_ge_of_valSof, MIPRE.Tailored.Sofic.gapK,
+  MIPRE.Tailored.Sofic.primrec_gapK, MIPRE.Tailored.Sofic.mainTheoremII
+
+-- blueprint `cor:sofic-not-approximable-ar`
+#guard_sorry_free MIPRE.Tailored.Sofic.not_sofValueApproximable,
+  MIPRE.Tailored.not_sofValueApproximable_of_answerReduction
 
 -- blueprint `lem:intro-input-runs`
 #guard_sorry_free MIPRE.Tailored.TailoredVerifier.IsBounded.two_le,

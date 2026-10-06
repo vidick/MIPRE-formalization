@@ -19,7 +19,7 @@ fixed literals then always hold (`fixedLits_holds`), and the readable literal of
 variable holds for exactly one of its two words (`inStab_readWord_iff`).
 
 Also: the value of the test as a `μ`-weighted average of pass probabilities (`value_eq_sum`), and
-the number of distinct constraint words (`length_consWords_le`).
+the number of distinct constraint words (`length_consWords_le'`).
 -/
 
 namespace MIPRE.Tailored.Sofic
@@ -52,7 +52,7 @@ theorem letterPerm_eq (k : ℕ) (b : Bool) :
 @[simp] theorem wordPerm_genW (k : ℕ) : σ.wordPerm (genW k) = genPerm σ k := by
   simp [genW, letterPerm_eq]
 
-theorem wordPerm_invW (u : Word) : σ.wordPerm (invW u) = (σ.wordPerm u)⁻¹ := by
+theorem wordPerm_invW' (u : Word) : σ.wordPerm (invW u) = (σ.wordPerm u)⁻¹ := by
   induction u with
   | nil => simp [invW]
   | cons l u ih =>
@@ -63,15 +63,15 @@ theorem wordPerm_invW (u : Word) : σ.wordPerm (invW u) = (σ.wordPerm u)⁻¹ :
     simp only [wordPerm_cons, wordPerm_nil, mul_one, letterPerm_eq]
     cases b <;> simp
 
-theorem wordPerm_commW (u v : Word) :
+theorem wordPerm_commW' (u v : Word) :
     σ.wordPerm (commW u v) =
       σ.wordPerm u * σ.wordPerm v * (σ.wordPerm u)⁻¹ * (σ.wordPerm v)⁻¹ := by
-  simp [commW, wordPerm_invW, mul_assoc]
+  simp [commW, wordPerm_invW', mul_assoc]
 
 theorem wordPerm_commW_of_commute {u v : Word}
     (h : σ.wordPerm u * σ.wordPerm v = σ.wordPerm v * σ.wordPerm u) :
     σ.wordPerm (commW u v) = 1 := by
-  rw [wordPerm_commW, h]
+  rw [wordPerm_commW', h]
   group
 
 end WordPerm
@@ -173,7 +173,7 @@ theorem flatMap_pair_getElem {α β : Type*} (l : List α) (f h : α → β) (t 
         List.getElem_cons_succ]
       exact ih t ht' hlt'
 
-theorem length_readWords (x y : ℕ) :
+theorem length_readWords' (x y : ℕ) :
     (readWords g x y).length = 2 * (g.lenRAt x + g.lenRAt y) := by
   rw [readWords, flatMap_pair_length, length_readVars]
 
@@ -203,7 +203,7 @@ theorem inStab_readWord_iff (hσ : Checks g σ) {x y : ℕ} (hx : x < g.nV + 1) 
 
 /-! ## The literals of the words `K` -/
 
-theorem mem_allBits {n : ℕ} {r : List Bool} : r ∈ allBits n ↔ r.length = n := by
+theorem mem_allBits_iff {n : ℕ} {r : List Bool} : r ∈ allBits n ↔ r.length = n := by
   induction n generalizing r with
   | zero => simp [allBits, List.length_eq_zero_iff]
   | succ n ih =>
@@ -268,7 +268,7 @@ theorem passes_iff (hσ : Checks g σ) {x y : ℕ} (hx : x < g.nV + 1) (hy : y <
   · rintro ⟨c, hc, hlits⟩
     simp only [clauses, List.mem_map] at hc
     obtain ⟨r, hr, rfl⟩ := hc
-    have hrlen := mem_allBits.mp hr
+    have hrlen := mem_allBits_iff.mp hr
     -- the readable literals force `r = rdv p`
     have hrv : r = rdv σ x y p := by
       refine List.ext_getElem (by rw [hrlen, length_rdv]) fun t ht _ => ?_
@@ -278,7 +278,7 @@ theorem passes_iff (hσ : Checks g σ) {x y : ℕ} (hx : x < g.nV + 1) (hy : y <
           simp only [clause, List.mem_append, List.mem_map, List.mem_range]
           exact Or.inl (Or.inr ⟨t, ht', rfl⟩))
       have hlt : 2 * t + (if r.getD t false then 1 else 0) < (readWords g x y).length := by
-        rw [length_readWords]; split_ifs <;> omega
+        rw [length_readWords']; split_ifs <;> omega
       rw [Nat.add_assoc, litHolds_read x y p _ hlt, decide_eq_true_iff,
         inStab_readWord_iff hσ hx hy p t ht' _ hlt] at hlit
       rw [← hlit, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem ht, Option.getD_some]
@@ -293,7 +293,7 @@ theorem passes_iff (hσ : Checks g σ) {x y : ℕ} (hx : x < g.nV + 1) (hy : y <
   · intro hcons
     refine ⟨clause g x y (rdv σ x y p), ?_, ?_⟩
     · simp only [clauses, List.mem_map]
-      exact ⟨_, mem_allBits.mpr (length_rdv x y p), rfl⟩
+      exact ⟨_, mem_allBits_iff.mpr (length_rdv x y p), rfl⟩
     intro lit hlit
     simp only [clause, List.mem_append, List.mem_map, List.mem_range, List.mem_filter] at hlit
     rcases hlit with (⟨⟨wb, i⟩, hwi, rfl⟩ | ⟨t, ht, rfl⟩) | ⟨e, ⟨he, hre⟩, rfl⟩
@@ -308,7 +308,7 @@ theorem passes_iff (hσ : Checks g σ) {x y : ℕ} (hx : x < g.nV + 1) (hy : y <
       exact fixedLits_holds hσ hx hy p (hwi' ▸ List.getElem_mem hi)
     · have hlt : 2 * t + (if (rdv σ x y p).getD t false then 1 else 0) <
           (readWords g x y).length := by
-        rw [length_readWords, ← hR]; split_ifs <;> omega
+        rw [length_readWords', ← hR]; split_ifs <;> omega
       rw [Nat.add_assoc, litHolds_read x y p _ hlt, decide_eq_true_iff,
         inStab_readWord_iff hσ hx hy p t ht _ hlt, List.getD_eq_getElem?_getD,
         List.getElem?_eq_getElem (by rw [length_rdv, ← hR]; exact ht), Option.getD_some]
@@ -371,7 +371,7 @@ theorem value_eq_sum (σ : FiniteAction (nGen g)) :
 /-! ## Counting the constraint words -/
 
 /-- **There are at most `2^{ℓ(x) + ℓ(y) + 1} + 1` distinct constraint words** at `(x, y)`. -/
-theorem length_consWords_le (x y : ℕ) :
+theorem length_consWords_le' (x y : ℕ) :
     (consWords g x y).length ≤ 2 ^ (g.lenAt x + g.lenAt y + 1) + 1 := by
   classical
   set n := g.lenAt x + g.lenAt y + 1

@@ -35,13 +35,13 @@ namespace MIPRE.Tailored.Sofic
 
 open TailoredGameValue
 
-theorem lenAt_le_ansLen (g : TailoredGameData) (x : Fin (g.nV + 1)) :
+theorem lenAt_le_ansLen_fin (g : TailoredGameData) (x : Fin (g.nV + 1)) :
     g.lenAt x.val ≤ g.ansLen :=
   Finset.le_sup (f := fun x : Fin (g.nV + 1) => g.lenAt x.val) (Finset.mem_univ x)
 
 theorem lenRAt_le_ansLen (g : TailoredGameData) (x : Fin (g.nV + 1)) :
     g.lenRAt x.val ≤ g.ansLen :=
-  (Nat.le_add_right _ _).trans (lenAt_le_ansLen g x)
+  (Nat.le_add_right _ _).trans (lenAt_le_ansLen_fin g x)
 
 /-! ## Readable signs -/
 
@@ -253,7 +253,7 @@ theorem bitSign_dotBit_coefX (c : List Bool) (a : Fin g.ansLen → Bool) :
   have hF : ∀ i : Fin g.ansLen, bitSign (coefX g x c i && a i) = F i.val := fun i => by
     simp only [F, coefX, TailoredGameData.bit, dite_eq_left i.isLt]
   rw [bitSign_dotBit, Finset.prod_congr rfl fun i _ => hF i, Fin.prod_univ_eq_prod_range F]
-  have hle := lenAt_le_ansLen g x
+  have hle := lenAt_le_ansLen_fin g x
   rw [← Finset.prod_subset (fun i hi => Finset.mem_range.mpr ((Finset.mem_range.mp hi).trans_le hle))
     (fun i _ hi => by simp [F, Finset.mem_range.not.mp hi])]
   refine Finset.prod_congr rfl fun i hi => ?_
@@ -268,7 +268,7 @@ theorem bitSign_dotBit_coefY (c : List Bool) (b : Fin g.ansLen → Bool) :
   have hF : ∀ i : Fin g.ansLen, bitSign (coefY g x y c i && b i) = F i.val := fun i => by
     simp only [F, coefY, TailoredGameData.bit, dite_eq_left i.isLt]
   rw [bitSign_dotBit, Finset.prod_congr rfl fun i _ => hF i, Fin.prod_univ_eq_prod_range F]
-  have hle := lenAt_le_ansLen g y
+  have hle := lenAt_le_ansLen_fin g y
   rw [← Finset.prod_subset (fun i hi => Finset.mem_range.mpr ((Finset.mem_range.mp hi).trans_le hle))
     (fun i _ hi => by simp [F, Finset.mem_range.not.mp hi])]
   refine Finset.prod_congr rfl fun i hi => ?_

@@ -135,14 +135,14 @@ theorem obsChar_coefX (x : Fin (g.nV + 1)) (c : List Bool) :
     obsChar (S.U x) (coefX g x c) =
       (((List.range (g.lenAt x.val)).filter fun i => c.getD i false).map (S.Unat x)).prod := by
   unfold coefX
-  exact S.obsChar_eq_prod x _ (lenAt_le_ansLen g x) (fun i => c.getD i false)
+  exact S.obsChar_eq_prod x _ (lenAt_le_ansLen_fin g x) (fun i => c.getD i false)
 
 theorem obsChar_coefY (x y : Fin (g.nV + 1)) (c : List Bool) :
     obsChar (S.U y) (coefY g x y c) =
       (((List.range (g.lenAt y.val)).filter fun i => c.getD (g.lenAt x.val + i) false).map
         (S.Unat y)).prod := by
   unfold coefY
-  exact S.obsChar_eq_prod y _ (lenAt_le_ansLen g y) (fun i => c.getD (g.lenAt x.val + i) false)
+  exact S.obsChar_eq_prod y _ (lenAt_le_ansLen_fin g y) (fun i => c.getD (g.lenAt x.val + i) false)
 
 /-- **The matrix of a constraint word is the constraint's matrix**, for generators whose signed
 permutations have matrices `-1` (for `J`) and the observables (for the variables). -/

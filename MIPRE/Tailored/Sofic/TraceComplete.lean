@@ -131,7 +131,7 @@ theorem genSP_of_ge (k : ℕ) (hk : nGen g ≤ k) : S.genSP k = 1 := by
 
 theorem toMatrix_genSP_X (z : Fin (g.nV + 1)) (i : ℕ) (hi : i < g.lenAt z.val) :
     (S.genSP (genX g z.val i)).toMatrix = S.Unat z i := by
-  have hΛ : i < g.ansLen := hi.trans_le (lenAt_le_ansLen g z)
+  have hΛ : i < g.ansLen := hi.trans_le (lenAt_le_ansLen_fin g z)
   rw [show i = (⟨i, hΛ⟩ : Fin g.ansLen).val from rfl, genSP_X, toMatrix_spU]
   simp [ZStrat.Unat, hΛ]
 
@@ -191,14 +191,14 @@ theorem checks_toAction : Checks g S.toAction where
   J_comm x i hx hi := by
     rw [genPerm_toAction, genPerm_toAction, ← map_mul, ← map_mul, genSP_J, SignedPerm.negOne_comm]
   X_invol x i hx hi p := by
-    have hΛ : i < g.ansLen := hi.trans_le (lenAt_le_ansLen g ⟨x, hx⟩)
+    have hΛ : i < g.ansLen := hi.trans_le (lenAt_le_ansLen_fin g ⟨x, hx⟩)
     rw [genPerm_toAction, ← Equiv.Perm.mul_apply, ← map_mul,
       show x = (⟨x, hx⟩ : Fin (g.nV + 1)).val from rfl,
       show i = (⟨i, hΛ⟩ : Fin g.ansLen).val from rfl, genSP_X, spU_mul_self, map_one,
       Equiv.Perm.one_apply]
   X_comm x i i' hx hi hi' := by
-    have hΛ : i < g.ansLen := hi.trans_le (lenAt_le_ansLen g ⟨x, hx⟩)
-    have hΛ' : i' < g.ansLen := hi'.trans_le (lenAt_le_ansLen g ⟨x, hx⟩)
+    have hΛ : i < g.ansLen := hi.trans_le (lenAt_le_ansLen_fin g ⟨x, hx⟩)
+    have hΛ' : i' < g.ansLen := hi'.trans_le (lenAt_le_ansLen_fin g ⟨x, hx⟩)
     rw [genPerm_toAction, genPerm_toAction, ← map_mul, ← map_mul,
       show x = (⟨x, hx⟩ : Fin (g.nV + 1)).val from rfl,
       show i = (⟨i, hΛ⟩ : Fin g.ansLen).val from rfl,
@@ -206,7 +206,7 @@ theorem checks_toAction : Checks g S.toAction where
   readable x i hx hi p := by
     obtain ⟨b, j, rfl⟩ := S.exists_pt p
     have hΛ : i < g.ansLen :=
-      (lt_of_lt_of_le hi (Nat.le_add_right _ _)).trans_le (lenAt_le_ansLen g ⟨x, hx⟩)
+      (lt_of_lt_of_le hi (Nat.le_add_right _ _)).trans_le (lenAt_le_ansLen_fin g ⟨x, hx⟩)
     rw [genPerm_toAction, genPerm_toAction, genSP_J,
       show x = (⟨x, hx⟩ : Fin (g.nV + 1)).val from rfl,
       show i = (⟨i, hΛ⟩ : Fin g.ansLen).val from rfl, genSP_X, liftHom_apply, liftHom_apply,
@@ -216,7 +216,7 @@ theorem checks_toAction : Checks g S.toAction where
 theorem rbit_eq (x : Fin (g.nV + 1)) (i : ℕ) (hi : i < g.lenRAt x.val) (j : Fin S.m) :
     S.rbit x i j = (S.genSP (genX g x.val i)).sign j := by
   have hΛ : i < g.ansLen :=
-    (lt_of_lt_of_le hi (Nat.le_add_right _ _)).trans_le (lenAt_le_ansLen g x)
+    (lt_of_lt_of_le hi (Nat.le_add_right _ _)).trans_le (lenAt_le_ansLen_fin g x)
   rw [show i = (⟨i, hΛ⟩ : Fin g.ansLen).val from rfl, genSP_X]
   unfold ZStrat.rbit
   rw [dite_eq_left hΛ, ← toMatrix_spU, toMatrix_apply_self, S.spU_perm x _ hi]
@@ -232,7 +232,7 @@ theorem rdv_toAction (x y : Fin (g.nV + 1)) (b : Bool) (j : Fin S.m) :
     intro z i hi
     have hi' := List.mem_range.mp hi
     have hΛ : i < g.ansLen :=
-      (lt_of_lt_of_le hi' (Nat.le_add_right _ _)).trans_le (lenAt_le_ansLen g z)
+      (lt_of_lt_of_le hi' (Nat.le_add_right _ _)).trans_le (lenAt_le_ansLen_fin g z)
     have hX := S.genSP_X z ⟨i, hΛ⟩
     simp only at hX
     rw [S.rbit_eq z i hi', wordPerm_wX, genPerm_toAction]

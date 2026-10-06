@@ -162,7 +162,7 @@ include hσ
 theorem unat_quotStrat (z : Fin (g.nV + 1)) (i : ℕ) (hi : i < g.lenAt z.val) :
     (quotStrat σ hσ).Unat z i = (indF σ (genPerm σ (genX g z.val i))).toMatrix := by
   unfold ZStrat.Unat
-  rw [dite_eq_left (hi.trans_le (lenAt_le_ansLen g z))]
+  rw [dite_eq_left (hi.trans_le (lenAt_le_ansLen_fin g z))]
   show quotU σ z _ = _
   unfold quotU
   rw [ite_eq_left hi]
@@ -240,7 +240,7 @@ theorem rbit_quotStrat (x : Fin (g.nV + 1)) (i : ℕ) (hi : i < g.lenRAt x.val)
     rw [toMatrix_apply_self, indF_perm_eq_one hσ hc hr, indF_sign_eq hσ hc hr]
     simp
   unfold ZStrat.rbit
-  rw [dite_eq_left (hi'.trans_le (lenAt_le_ansLen g x))]
+  rw [dite_eq_left (hi'.trans_le (lenAt_le_ansLen_fin g x))]
   show decide (quotU σ x _ j j = -1) = _
   simp only [quotU, hi', ite_true]
   rw [key j]
@@ -348,9 +348,9 @@ end Quotient
 
 theorem length_consWords_le_pow (x y : Fin (g.nV + 1)) :
     ((consWords g x y).length : ℝ) ≤ 2 ^ (2 * (g.ansLen + 1)) := by
-  have h := length_consWords_le (g := g) x y
-  have hx := lenAt_le_ansLen g x
-  have hy := lenAt_le_ansLen g y
+  have h := length_consWords_le' (g := g) x y
+  have hx := lenAt_le_ansLen_fin g x
+  have hy := lenAt_le_ansLen_fin g y
   have h2 : 2 ^ (g.lenAt x + g.lenAt y + 1) + 1 ≤ 2 ^ (2 * (g.ansLen + 1)) := by
     have h3 : 2 ^ (g.lenAt x + g.lenAt y + 1) ≤ 2 ^ (2 * g.ansLen + 1) :=
       Nat.pow_le_pow_right (by norm_num) (by omega)

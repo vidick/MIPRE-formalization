@@ -202,9 +202,14 @@ theorem value_eq_sum_rej :
 
 end ZStrat
 
+end MIPRE.Tailored.Sofic
+
+namespace TailoredGameValue.PermStrategy
+
+open MIPRE.Tailored.Sofic
+
 /-- A permutation strategy, forgetting the commutation along edges. -/
-def _root_.TailoredGameValue.PermStrategy.toZStrat {g : TailoredGameData} (S : TailoredGameValue.PermStrategy g) :
-    ZStrat g where
+def toZStrat {g : TailoredGameData} (S : PermStrategy g) : ZStrat g where
   m := S.m
   m_pos := S.m_pos
   U := S.U
@@ -214,9 +219,9 @@ def _root_.TailoredGameValue.PermStrategy.toZStrat {g : TailoredGameData} (S : T
   pad := S.pad
   zAligned := S.zAligned
 
-theorem _root_.TailoredGameValue.PermStrategy.value_toZStrat {g : TailoredGameData}
-    (S : TailoredGameValue.PermStrategy g) : S.toZStrat.value = S.value := rfl
+theorem value_toZStrat {g : TailoredGameData} (S : PermStrategy g) :
+    S.toZStrat.value = S.value := rfl
 
-end MIPRE.Tailored.Sofic
+end TailoredGameValue.PermStrategy
 
 end
