@@ -222,7 +222,7 @@ losing probability, and conclude by robustness and significance.
 
 \begin{definition}[Z-aligned signed-permutation strategies without commutation along edges]
 \label{def:zstrat}
-\uses{def:tailored-game-data}
+\uses{def:tailored-game-data,def:sync-strategy,def:sync-value,def:signed-perm,lem:signed-perm,def:fourier-forms,lem:fourier-pvm,lem:tailored-bridge}
 \lean{MIPRE.Tailored.Sofic.ZStrat, MIPRE.Tailored.Sofic.ZStrat.proj,
   MIPRE.Tailored.Sofic.ZStrat.value, MIPRE.Tailored.Sofic.ZStrat.toSync,
   MIPRE.Tailored.Sofic.ZStrat.value_toSync, MIPRE.Tailored.Sofic.ZStrat.value_le_gameValue,
@@ -237,7 +237,7 @@ synchronous strategy, with the same value, so its value is at most the game's sy
 
 \begin{lemma}[The trace identity]
 \label{lem:trace-identity}
-\uses{def:zstrat}
+\uses{def:zstrat,def:signed-perm,lem:signed-perm,def:fourier-forms,lem:fourier-pvm}
 \lean{MIPRE.Tailored.Sofic.ZStrat.rsgn, MIPRE.Tailored.Sofic.ZStrat.sum_trace_proj_mul_mul_proj,
   MIPRE.Tailored.Sofic.consBit, MIPRE.Tailored.Sofic.satisfies_iff_consBit,
   MIPRE.Tailored.Sofic.ZStrat.consMat, MIPRE.Tailored.Sofic.ZStrat.proj_mul_consMat_mul_proj}
@@ -275,7 +275,7 @@ other clause fail since $J$ moves every point.
 
 \begin{lemma}[The quotient by $J$]
 \label{lem:j-quotient}
-\uses{def:zstrat,lem:assoc-passes,lem:signed-perm}
+\uses{def:zstrat,lem:signed-perm,lem:trace-identity,def:assoc-test,def:subgroup-test}
 \lean{MIPRE.Tailored.Sofic.Reps, MIPRE.Tailored.Sofic.rep, MIPRE.Tailored.Sofic.ind,
   MIPRE.Tailored.Sofic.ind_mul, MIPRE.Tailored.Sofic.ind_J, MIPRE.Tailored.Sofic.ind_fix_iff,
   MIPRE.Tailored.Sofic.indF, MIPRE.Tailored.Sofic.quotStrat, MIPRE.Tailored.Sofic.wordSP,
@@ -296,7 +296,7 @@ identity or as $J$, hence diagonally.
 
 \begin{proposition}[Game value of an action passing Checks~1--3; Proposition~I:2279]
 \label{prop:checks-game-value}
-\uses{lem:trace-identity,lem:j-quotient}
+\uses{lem:trace-identity,lem:j-quotient,lem:assoc-passes,def:assoc-test,def:subgroup-test,lem:fourier-pvm}
 \lean{MIPRE.Tailored.Sofic.Cq, MIPRE.Tailored.Sofic.ZStrat.rej_le_sum_viol,
   MIPRE.Tailored.Sofic.rej_quotStrat_le, MIPRE.Tailored.Sofic.gameValue_ge_of_checks}
 \leanok
@@ -314,7 +314,7 @@ $2^{2(\Lambda + 1)}$ of them. This replaces the paper's Fourier bases and orbit 
 
 \begin{lemma}[Completeness: lifting a perfect strategy; Theorem~I:2126 (1)]
 \label{lem:assoc-completeness}
-\uses{lem:trace-identity,lem:assoc-passes,def:tailored-game-data}
+\uses{lem:trace-identity,lem:assoc-passes,def:tailored-game-data,lem:j-quotient,def:signed-perm,lem:signed-perm,def:fourier-forms,lem:fourier-pvm}
 \lean{MIPRE.Tailored.Sofic.liftHom, MIPRE.Tailored.Sofic.ZStrat.toAction,
   MIPRE.Tailored.Sofic.ZStrat.checks_toAction, MIPRE.Tailored.Sofic.ZStrat.consMat_apply_self_eq_one,
   MIPRE.Tailored.Sofic.exists_value_one_of_hasPerfectZPC}
