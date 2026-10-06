@@ -696,6 +696,8 @@ public import MIPRE.Background.Tailored.AnswerReduction.ArLpLd
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpProof
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpProofEqs
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpSlots
+public import MIPRE.Background.Tailored.AnswerReduction.ArParCore
+public import MIPRE.Background.Tailored.AnswerReduction.ArParCoreCost
 public import MIPRE.Background.Tailored.AnswerReduction.ArRoutine
 public import MIPRE.Background.Tailored.AnswerReduction.ArWithin
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
