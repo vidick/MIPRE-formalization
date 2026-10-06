@@ -115,16 +115,21 @@ noncomputable def questions (z r : BitStr) : Answers (V.B z) × Answers (V.B z) 
       else (emptyAnswer _, emptyAnswer _)
   | none => (emptyAnswer _, emptyAnswer _)
 
-/-- **Efficiency** on the input `z` (`def:mipstar`, item 1). -/
-structure Efficient (z : BitStr) : Prop where
-  /-- The sampler, on every seed of length `B z`, halts within cost `P(|z| + |r|)` with a pair
-  of strings of length at most `B z`. The bound is in the total input length, as the decider's:
-  a program reads its seed only by walking it, so `B z` itself would leave no time to read a
-  seed of length `B z`; with `|r| = B z` polynomial in `|z|` the bound is still `poly(|z|)`. -/
-  sampler_runs : ∀ r : BitStr, r.length = V.B z →
+/-- The sampler, on every seed of length `B z`, halts within cost `P(|z| + |r|)` with a pair
+of strings of length at most `B z`. The bound is in the total input length, as the decider's:
+a program reads its seed only by walking it, so `B z` itself would leave no time to read a seed
+of length `B z`; with `|r| = B z` polynomial in `|z|` the bound is still `poly(|z|)`. This is
+the sampler's clause of `Efficient`, which is all the question distribution needs. -/
+def SamplerRuns (z : BitStr) : Prop :=
+  ∀ r : BitStr, r.length = V.B z →
     ∃ (x y : BitStr) (t : ℕ), t ≤ V.bound.eval (z.length + r.length) ∧
       x.length ≤ V.B z ∧ y.length ≤ V.B z ∧
       V.sampler.Runs (encode (z, r)) (encode (x, y)) t
+
+/-- **Efficiency** on the input `z` (`def:mipstar`, item 1). -/
+structure Efficient (z : BitStr) : Prop where
+  /-- The sampler's clause (`SamplerRuns`). -/
+  sampler_runs : V.SamplerRuns z
   /-- The decider halts within cost `P(|z| + |x| + |y| + |a| + |b|)` on every input. -/
   decider_time : ∀ x y a b : BitStr,
     HaltsWithin V.decider (encode (z, x, y, a, b))
@@ -134,17 +139,26 @@ structure Efficient (z : BitStr) : Prop where
     V.B z < x.length ∨ V.B z < y.length ∨ V.B z < a.length ∨ V.B z < b.length →
       ¬ V.Accepts z x y a b
 
+/-- Under the sampler's clause the sampler's output on a seed of the right length is the
+question pair, with no fallback. -/
+theorem questions_eq_of_samplerRuns {z : BitStr} (h : V.SamplerRuns z) {r : BitStr}
+    (hr : r.length = V.B z) :
+    ∃ (x y : BitStr) (t : ℕ), t ≤ V.bound.eval (z.length + r.length) ∧
+      V.sampler.Runs (encode (z, r)) (encode (x, y)) t ∧
+      (V.questions z r).1.1 = x ∧ (V.questions z r).2.1 = y := by
+  obtain ⟨x, y, t, ht, hx, hy, hrun⟩ := h r hr
+  refine ⟨x, y, t, ht, hrun, ?_⟩
+  have hs : V.sample? z r = some (x, y) := (V.sample?_eq_some_iff z r (x, y)).2 ⟨t, hrun⟩
+  simp only [questions, hs, hx, hy, and_self, dite_true]
+
 /-- On an efficient verifier the sampler's output on a seed of the right length is the
 question pair, with no fallback. -/
 theorem questions_eq_of_efficient {z : BitStr} (h : V.Efficient z) {r : BitStr}
     (hr : r.length = V.B z) :
     ∃ (x y : BitStr) (t : ℕ), t ≤ V.bound.eval (z.length + r.length) ∧
       V.sampler.Runs (encode (z, r)) (encode (x, y)) t ∧
-      (V.questions z r).1.1 = x ∧ (V.questions z r).2.1 = y := by
-  obtain ⟨x, y, t, ht, hx, hy, hrun⟩ := h.sampler_runs r hr
-  refine ⟨x, y, t, ht, hrun, ?_⟩
-  have hs : V.sample? z r = some (x, y) := (V.sample?_eq_some_iff z r (x, y)).2 ⟨t, hrun⟩
-  simp only [questions, hs, hx, hy, and_self, dite_true]
+      (V.questions z r).1.1 = x ∧ (V.questions z r).2.1 = y :=
+  V.questions_eq_of_samplerRuns h.sampler_runs hr
 
 /-! ## The game `G_z` -/
 

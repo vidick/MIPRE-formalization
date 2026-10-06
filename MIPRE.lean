@@ -826,6 +826,7 @@ public import MIPRE.Foundations.Halting.LambdaBound
 public import MIPRE.Foundations.Halting.Lists
 public import MIPRE.Foundations.Halting.Paper.Build
 public import MIPRE.Foundations.Halting.Paper.ClassMain
+public import MIPRE.Foundations.Halting.Paper.ClassSampler
 public import MIPRE.Foundations.Halting.Paper.ClassVerifier
 public import MIPRE.Foundations.Halting.Paper.Cost
 public import MIPRE.Foundations.Halting.Paper.Count
@@ -1416,11 +1417,15 @@ public import MIPRE.Tactics
 public import MIPRE.Tailored.Canonical
 public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.Class
+public import MIPRE.Tailored.ClassPoly
+public import MIPRE.Tailored.ClassPolyTab
+public import MIPRE.Tailored.ClassVerifier
 public import MIPRE.Tailored.Compression
 public import MIPRE.Tailored.Data.Bridge
 public import MIPRE.Tailored.Data.Convert
 public import MIPRE.Tailored.Data.Presents
 public import MIPRE.Tailored.Detyping
+public import MIPRE.Tailored.Extend
 public import MIPRE.Tailored.Fourier
 public import MIPRE.Tailored.Game
 public import MIPRE.Tailored.Halting.Cost
