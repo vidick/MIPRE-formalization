@@ -1378,6 +1378,7 @@ public import MIPRE.ModExp.B1
 public import MIPRE.ModExp.B2
 public import MIPRE.ModExp.B3
 public import MIPRE.ModExp.B4
+public import MIPRE.SubgroupTestValue
 public import MIPRE.TM.Code.Encoding.MachineCode
 public import MIPRE.TM.Code.Encoding.Nat
 public import MIPRE.TM.Code.Encoding.Total
@@ -1508,6 +1509,7 @@ public import MIPRE.Tailored.Repeat.LpSpec
 public import MIPRE.Tailored.Repeat.Strategy
 public import MIPRE.Tailored.Repeat.Verifier
 public import MIPRE.Tailored.SignedPerm
+public import MIPRE.Tailored.Sofic.Assoc
 public import MIPRE.Tailored.Stages
 public import MIPRE.Tailored.Verifier
 public import MIPRE.Tailored.ZPC

@@ -59,6 +59,11 @@ variable (g : TailoredGameData)
 /-- The generator of `J`. -/
 def genJ : ℕ := 0
 
+/-- The question weights of `g`, as a `GameData` (`g.weights`, computably). -/
+def wts : HaltingGameValue.GameData := ⟨g.nV, 0, g.w, []⟩
+
+theorem wts_eq : wts g = g.weights := rfl
+
 /-- The generator `X(x, i)`. -/
 def genX (x i : ℕ) : ℕ := 1 + x * g.ansLen + i
 
@@ -69,27 +74,27 @@ def nGen : ℕ := 1 + (g.nV + 1) * g.ansLen
 def wJ : Word := genW genJ
 
 /-- The word `X(x, i)`. -/
-def wX (x i : ℕ) : Word := genW (g.genX x i)
+def wX (x i : ℕ) : Word := genW ((genX g) x i)
 
 /-- The variables at `x`: `X(x, i)` for `i < ℓ(x)`. -/
-def varsAt (x : ℕ) : List Word := (List.range (g.lenAt x)).map (g.wX x)
+def varsAt (x : ℕ) : List Word := (List.range (g.lenAt x)).map ((wX g) x)
 
 /-! ## The words of a challenge -/
 
 /-- The fixed words, Checks 1 and 2, with the membership each must have. -/
 def fixedLits (x y : ℕ) : List (Word × Bool) :=
-  let V := g.varsAt x ++ g.varsAt y
+  let V := (varsAt g) x ++ (varsAt g) y
   [(wJ, false), (wJ ++ wJ, true)] ++ V.map (fun X => (commW wJ X, true)) ++
     V.map (fun X => (X ++ X, true)) ++
-    (g.varsAt x).flatMap (fun X => (g.varsAt x).map fun X' => (commW X X', true)) ++
-    (g.varsAt y).flatMap (fun Y => (g.varsAt y).map fun Y' => (commW Y Y', true))
+    ((varsAt g) x).flatMap (fun X => ((varsAt g) x).map fun X' => (commW X X', true)) ++
+    ((varsAt g) y).flatMap (fun Y => ((varsAt g) y).map fun Y' => (commW Y Y', true))
 
 /-- The readable variables at `x`, then at `y`. -/
 def readVars (x y : ℕ) : List Word :=
-  (List.range (g.lenRAt x)).map (g.wX x) ++ (List.range (g.lenRAt y)).map (g.wX y)
+  (List.range (g.lenRAt x)).map ((wX g) x) ++ (List.range (g.lenRAt y)).map ((wX g) y)
 
 /-- The readable words: `X` then `J X` for each readable variable. -/
-def readWords (x y : ℕ) : List Word := (g.readVars x y).flatMap fun X => [X, wJ ++ X]
+def readWords (x y : ℕ) : List Word := ((readVars g) x y).flatMap fun X => [X, wJ ++ X]
 
 /-- The entries of `g.cons` at `(x, y)`. -/
 def consAt (x y : ℕ) : List (ℕ × ℕ × List Bool × List Bool) :=
@@ -100,47 +105,70 @@ or `J` when `c` has the wrong length. -/
 def consWord (x y : ℕ) (c : List Bool) : Word :=
   if c.length = g.lenAt x + g.lenAt y + 1 then
     (if c.getD (g.lenAt x + g.lenAt y) false then wJ else []) ++
-      ((List.range (g.lenAt x)).filter (fun i => c.getD i false)).flatMap (g.wX x) ++
-      ((List.range (g.lenAt y)).filter (fun i => c.getD (g.lenAt x + i) false)).flatMap (g.wX y)
+      ((List.range (g.lenAt x)).filter (fun i => c.getD i false)).flatMap ((wX g) x) ++
+      ((List.range (g.lenAt y)).filter (fun i => c.getD (g.lenAt x + i) false)).flatMap ((wX g) y)
   else wJ
 
 /-- The constraint words at `(x, y)`, one per entry. -/
-def consWords (x y : ℕ) : List Word := (g.consAt x y).map fun e => g.consWord x y e.2.2.2
+def consWords (x y : ℕ) : List Word := ((consAt g) x y).map fun e => (consWord g) x y e.2.2.2
 
 /-- The words `K` of the challenge at `(x, y)`. -/
 def words (x y : ℕ) : List Word :=
-  (g.fixedLits x y).map Prod.fst ++ g.readWords x y ++ g.consWords x y
+  ((fixedLits g) x y).map Prod.fst ++ (readWords g) x y ++ (consWords g) x y
 
 /-! ## The clauses -/
 
 /-- The clause of the readable value `r`: the fixed literals, the readable words of `r`, and the
 constraint words of the entries whose readable part is `r`. -/
 def clause (x y : ℕ) (r : List Bool) : List (ℕ × Bool) :=
-  let F := (g.fixedLits x y).length
-  let R := (g.readWords x y).length
-  ((g.fixedLits x y).zipIdx.map fun p => (p.2, p.1.2)) ++
-    ((List.range (g.readVars x y).length).map fun t =>
+  let F := ((fixedLits g) x y).length
+  let R := ((readWords g) x y).length
+  (((fixedLits g) x y).zipIdx.map fun p => (p.2, p.1.2)) ++
+    ((List.range ((readVars g) x y).length).map fun t =>
       (F + 2 * t + (if r.getD t false then 1 else 0), true)) ++
-    (((g.consAt x y).zipIdx.filter fun p => decide (p.1.2.2.1 = r)).map fun p =>
+    ((((consAt g) x y).zipIdx.filter fun p => decide (p.1.2.2.1 = r)).map fun p =>
       (F + R + p.2, true))
 
 /-- The clauses at `(x, y)`, one per readable value. -/
 def clauses (x y : ℕ) : List (List (ℕ × Bool)) :=
-  (allBits (g.lenRAt x + g.lenRAt y)).map (g.clause x y)
+  (allBits (g.lenRAt x + g.lenRAt y)).map ((clause g) x y)
 
 /-! ## The test -/
 
 /-- The challenge at `(x, y)`, with weight `w`. -/
 def challenge (w x y : ℕ) : ℕ × List Word × List (List (ℕ × Bool)) :=
-  (w, g.words x y, g.clauses x y)
+  (w, (words g) x y, (clauses g) x y)
 
 /-- **The synchronous subgroup test associated with a tailored game** (Definition I:2086). -/
 def assocTest : SubgroupTestData where
-  nGen := g.nGen
+  nGen := (nGen g)
   challenges :=
-    if g.weights.totalWeight = 0 then [g.challenge 1 0 0]
+    if (wts g).totalWeight = 0 then [(challenge g) 1 0 0]
     else (List.range (g.nV + 1)).flatMap fun x => (List.range (g.nV + 1)).map fun y =>
-      g.challenge (g.weights.questionWeight x y) x y
+      (challenge g) ((wts g).questionWeight x y) x y
+
+/-! ## Actions passing Checks 1–3 -/
+
+/-- The permutation of the generator `k` under a finite action. -/
+def genPerm {n : ℕ} (σ : FiniteAction n) (k : ℕ) : Equiv.Perm (Fin σ.N) := σ.letterPerm (k, false)
+
+/-- **An action passing Checks 1–3 of the associated test at every point and every question
+pair** (Proposition I:2279, the strategies it applies to): `J` is a fixed-point-free involution
+commuting with every variable `X(x, i)`, `i < ℓ(x)`; these are involutions, commuting at each
+vertex; and each readable variable acts at every point as the identity or as `J` (Z-alignment,
+Definition I:2026). -/
+structure Checks (σ : FiniteAction (nGen g)) : Prop where
+  J_invol : ∀ p, genPerm σ genJ (genPerm σ genJ p) = p
+  J_free : ∀ p, genPerm σ genJ p ≠ p
+  J_comm : ∀ x i, x < g.nV + 1 → i < g.lenAt x →
+    genPerm σ genJ * genPerm σ (genX g x i) = genPerm σ (genX g x i) * genPerm σ genJ
+  X_invol : ∀ x i, x < g.nV + 1 → i < g.lenAt x → ∀ p,
+    genPerm σ (genX g x i) (genPerm σ (genX g x i) p) = p
+  X_comm : ∀ x i i', x < g.nV + 1 → i < g.lenAt x → i' < g.lenAt x →
+    genPerm σ (genX g x i) * genPerm σ (genX g x i') =
+      genPerm σ (genX g x i') * genPerm σ (genX g x i)
+  readable : ∀ x i, x < g.nV + 1 → i < g.lenRAt x → ∀ p,
+    genPerm σ (genX g x i) p = p ∨ genPerm σ (genX g x i) p = genPerm σ genJ p
 
 end MIPRE.Tailored.Sofic
 

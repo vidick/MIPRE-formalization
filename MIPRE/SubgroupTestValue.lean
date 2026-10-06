@@ -9,7 +9,7 @@ public import Mathlib.GroupTheory.FreeGroup.Basic
 public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Topology.Instances.Discrete
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 @[expose] public section
 
@@ -29,7 +29,7 @@ line numbers `I:n` of its LaTeX source). Its definitions, with the paper's:
   action `σ` of the free group, the value of the finitely described IRS `Φ(σ)` (the stabilizer of
   a uniform point) against the test, and the *sofic value*, its supremum over finite actions.
 * `SofValueApproximable`: the sofic value is computable, in the sense that a computable function
-  approximates it to within `1/(k+1)` on every test. Paper I deduces the negation of the
+  approximates it to within `1/(k+1)` on every test, on the grid of step `1/(k+1)`. Paper I deduces the negation of the
   Aldous–Lyons conjecture from its failure (Corollary I:605 with Main Theorem I, I:594).
 * `SubgroupSpace`, `IRS`, `finDescIRS`, `AldousLyons` (I:467–530): the space of subgroups of
   the free group as a closed subspace of `{0,1}^F` with the product topology, the invariant
@@ -137,11 +137,12 @@ noncomputable def valSof : ℝ := ⨆ σ : FiniteAction T.nGen, T.value σ
 end SubgroupTestData
 
 /-- **The sofic value is approximable**: a computable function approximates it to within
-`1/(k+1)` on every test. Paper I shows this follows from the Aldous–Lyons conjecture (Corollary
+`1/(k+1)` on every test, by a point `f T k / (k+1)` of the grid of step `1/(k+1)` (the value
+lies in `[0, 1]`). Paper I shows this follows from the Aldous–Lyons conjecture (Corollary
 I:605), and, with paper II, that it is false (Corollary I:2144). -/
 def SofValueApproximable : Prop :=
-  ∃ f : SubgroupTestData → ℕ → ℚ, Computable₂ f ∧
-    ∀ T k, |T.valSof - (f T k : ℝ)| ≤ 1 / ((k : ℝ) + 1)
+  ∃ f : SubgroupTestData → ℕ → ℕ, Computable₂ f ∧
+    ∀ T k, |T.valSof - (f T k : ℝ) / ((k : ℝ) + 1)| ≤ 1 / ((k : ℝ) + 1)
 
 /-! ## Invariant random subgroups and the conjecture -/
 
