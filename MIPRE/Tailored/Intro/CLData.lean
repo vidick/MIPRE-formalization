@@ -25,6 +25,10 @@ theorem for a `λ`-bounded `V`, `1 ≤ n` and `hs : V.sampler.dim (2^n) ≤ Q`:
   `sourceEval`, its first `dim` bits;
 * `outputPrefix k`: the reported prefix `(L w).outputPrefix k y`, `k ≤ 7`, read off the kernel's
   attained-prefix scan (`scan`), under the guard at `k - 1` (`Guard`);
+* `factor k` and `register k`: the stage register `(L w).factorOfPrefix k y` (`k < 7`, the
+  kernel's factor query at the scanned prefix, under the guard at `k`) and the prefix register
+  `CLChecks.prefixRegister (L w) k y` (`k ≤ 7`, the union of the first `k` of them, under the
+  guard at `k - 1`), as length-`Q` masks (`CL.indicatorBits`);
 
 The sampler program is specified only at attained prefixes, so the data at a stage `k` are
 correct under the prefix guard at `k`, which is itself computed exactly.
@@ -197,6 +201,92 @@ theorem outputPrefix_correct_of_guard (U : ClockedUniversalMachine) {lam n Q : �
     outputPrefix U k (context V lam n Q w, CL.toBits y) =
       CL.toBits ((AuxiliaryDecision.padded V hs w).outputPrefix k y) :=
   outputPrefix_correct U V hV hn hs w hk y (guard_mono V hs w (Nat.sub_le k 1) y hg)
+
+/-! ## The stage register and the prefix register, as masks -/
+
+/-- The context of the stage-`k` source queries: level `k + 1` at the scanned prefix. -/
+def stageContext (U : ClockedUniversalMachine) (k : ℕ) :
+    PolyTimeFun Input AuxiliarySource.Context :=
+  (AuxiliaryScan.nextContext k).comp ((PolyTimeFun.id _).pair (scan U k))
+
+/-- The register read at stage `k`, `(L w).factorOfPrefix k y`, as a length-`Q` mask. -/
+def factor (U : ClockedUniversalMachine) (k : ℕ) : PolyTimeFun Input BitStr :=
+  (factorFromContext U).comp (stageContext U k)
+
+/-- Under the guard at `k`, the stage-`k` queries are made at the attained reported prefix. -/
+theorem stageContext_of_guard (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k ≤ 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w k y) :
+    stageContext U k (context V lam n Q w, CL.toBits y) =
+      AuxiliaryScan.contextAt (context V lam n Q w) (k + 1)
+        (CL.toBits ((AuxiliaryDecision.padded V hs w).outputPrefix k y)) := by
+  obtain ⟨x, he, -⟩ := scan_of_guard U V hV hn hs w hk y hg
+  simp only [stageContext, comp_apply, pair_apply, id_apply, he]
+  rfl
+
+/-- **The stage register** `(L w).factorOfPrefix k y`, `k < 7`, under the guard at `k`. -/
+theorem factor_correct (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k < 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w k y) :
+    factor U k (context V lam n Q w, CL.toBits y) =
+      CL.indicatorBits ((AuxiliaryDecision.padded V hs w).factorOfPrefix k y) := by
+  rw [factor, comp_apply, stageContext_of_guard U V hV hn hs w hk.le y hg,
+    ← CLChecks.factorOfPrefix_outputPrefix (AuxiliaryDecision.padded_supported V hs w)]
+  obtain ⟨x, hx⟩ := hg
+  exact (AuxiliarySourceScan.queriesCorrectAt U V hV hn hs w 0 0 k hk _ ⟨x, hx⟩).1
+
+/-- Pointwise disjunction of two bit strings. -/
+def orBitsProg : PolyTimeFun (BitStr × BitStr) BitStr :=
+  PolyTimeFun.congr ((map (ite fst (const true) snd)).comp zip)
+    (fun p => List.zipWith (· || ·) p.1 p.2) (by
+      intro p
+      change (p.1.zip p.2).map (fun q => if q.1 = true then true else q.2) = _
+      trans (p.1.zip p.2).map (fun q => q.1 || q.2)
+      · congr 1
+        funext q
+        cases q.1 <;> rfl
+      · exact List.map_zip_eq_zipWith)
+
+@[simp] theorem orBitsProg_apply (p : BitStr × BitStr) :
+    orBitsProg p = List.zipWith (· || ·) p.1 p.2 := rfl
+
+theorem indicatorBits_union {Q : ℕ} (A B : Finset (Fin Q)) :
+    CL.indicatorBits (A ∪ B) =
+      List.zipWith (· || ·) (CL.indicatorBits A) (CL.indicatorBits B) := by
+  apply List.ext_getElem <;> simp [CL.indicatorBits]
+
+/-- The prefix register `CLChecks.prefixRegister (L w) k y`, the union of the first `k` stage
+registers, as a length-`Q` mask. -/
+def register (U : ClockedUniversalMachine) : ℕ → PolyTimeFun Input BitStr
+  | 0 => AuxiliaryScan.zeros.comp snd
+  | k + 1 => orBitsProg.comp ((register U k).pair (factor U k))
+
+/-- **The prefix register** `CLChecks.prefixRegister (L w) k y`, `k ≤ 7`, under the guard one
+level below (no hypothesis at `k = 0`). -/
+theorem register_correct (U : ClockedUniversalMachine) {lam n Q : ℕ} (V : Verifier 7)
+    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool)
+    {k : ℕ} (hk : k ≤ 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w (k - 1) y) :
+    register U k (context V lam n Q w, CL.toBits y) =
+      CL.indicatorBits (CLChecks.prefixRegister (AuxiliaryDecision.padded V hs w) k y) := by
+  induction k with
+  | zero =>
+    change AuxiliaryScan.zeros (CL.toBits y) = _
+    rw [AuxiliaryScan.zeros_toBits]
+    simp [CLChecks.prefixRegister, CL.indicatorBits, CL.toBits]
+  | succ k ih =>
+    have hg' : Guard V hs w k y := by simpa using hg
+    rw [register, comp_apply, pair_apply, orBitsProg_apply,
+      ih (by omega) (guard_mono V hs w (Nat.sub_le k 1) y hg'),
+      factor_correct U V hV hn hs w (by omega) y hg', CLChecks.prefixRegister_step,
+      indicatorBits_union]
+
+/-- The prefix register under the guard at its own level. -/
+theorem register_correct_of_guard (U : ClockedUniversalMachine) {lam n Q : ℕ}
+    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n) (hs : V.sampler.dim (2 ^ n) ≤ Q)
+    (w : Bool) {k : ℕ} (hk : k ≤ 7) (y : Fin Q → CL.𝔽₂) (hg : Guard V hs w k y) :
+    register U k (context V lam n Q w, CL.toBits y) =
+      CL.indicatorBits (CLChecks.prefixRegister (AuxiliaryDecision.padded V hs w) k y) :=
+  register_correct U V hV hn hs w hk y (guard_mono V hs w (Nat.sub_le k 1) y hg)
 
 end MIPRE.Tailored.Intro.CLData
 
