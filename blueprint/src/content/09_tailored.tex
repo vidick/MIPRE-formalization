@@ -484,7 +484,7 @@ compression.
 
 \begin{theorem}[$\mathrm{TMIP}^* = \RE$; II:1505, Theorem~7.4 of~\cite{BCLV24}]
 \label{thm:tmip-re}
-\uses{def:tailored-halting-reduction}
+\uses{def:tailored-halting-reduction,cor:tmip-re-from-ar,thm:tmipstar-poly-eq-re}
 \lean{TailoredGameValue.tailored_halting_reduction,
   MIPRE.Tailored.tailored_halting_reduction_quantum, MIPRE.Tailored.tmipStarComputable_eq_re,
   MIPRE.Tailored.tmipStar_eq_re}
@@ -1100,7 +1100,7 @@ are budgets at $\lambda$ (Lemma~\ref{lem:intro-rescale}).
 
 \begin{theorem}[Answer reduction for tailored verifiers; II:6883]
 \label{thm:tailored-ar}
-\uses{def:tailored-stages,lem:ar-routine-fixed,lem:ar-error,thm:ar-output,thm:ar-output-within}
+\uses{def:tailored-stages,lem:ar-routine-fixed,lem:ar-error,thm:ar-output,thm:ar-output-within,lem:ar-params-basic}
 \lean{MIPRE.Tailored.AnsRed.Typed.one_le_delta_mu_zero, MIPRE.Tailored.AnsRed.Typed.one_le_size, MIPRE.Tailored.AnsRed.Typed.arOut, MIPRE.Tailored.AnsRed.Typed.tailoredAnswerReductionOf, MIPRE.Tailored.AnsRed.Typed.arConsts, MIPRE.Tailored.AnsRed.Typed.one_le_arConsts_E₂, MIPRE.Tailored.AnsRed.Typed.tailoredAnswerReduction}
 \leanok
 The contract \texttt{TailoredAnswerReduction} is inhabited, at input level~$5$.
@@ -2296,7 +2296,7 @@ Theorems~\ref{thm:tailored-halting} and~\ref{thm:tmipstar-eq-re}.
 
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
-\uses{thm:tailored-compression-from-stages,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}
+\uses{thm:tailored-compression-from-stages,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep,cor:tmip-re-from-ar}
 \lean{MIPRE.Tailored.tailoredGapCompression}
 \leanok
 There is a tailored gap compression at level~$7$.
@@ -4049,7 +4049,7 @@ $m < 2^{\lceil \log_2 (m + 1) \rceil}$, and the other bounds are linear.
 
 \begin{lemma}[Padding a circuit to an exact gate count]
 \label{lem:circuit-pad-exact}
-\uses{lem:ar-window-describer}
+\uses{lem:ar-window-describer,prop:pcp-padded-describer}
 \lean{MIPRE.SAT.Circuit.trivial, MIPRE.SAT.Circuit.wellFormed_trivial, MIPRE.SAT.Circuit.padTo, MIPRE.SAT.Circuit.padTo_inputs, MIPRE.SAT.Circuit.padTo_size, MIPRE.SAT.Circuit.wellFormed_padTo, MIPRE.SAT.Circuit.padTo_of_le, MIPRE.SAT.Circuit.evalBits_padTo, MIPRE.SAT.Circuit.formula6_padTo, MIPRE.SAT.Circuit.describesWindows_padTo, MIPRE.SAT.Circuit.trivialProg, MIPRE.SAT.Circuit.trivialProg_apply, MIPRE.SAT.Circuit.padToProg, MIPRE.SAT.Circuit.padToProg_apply}
 \leanok
 A well-formed circuit with at most $s$ gates, $s \geq 1$, padded with copies of its output gate
@@ -4085,8 +4085,7 @@ the input size plus $|p|$, and every fixed polynomial is at most $(x + 2)^D$.
 
 \begin{lemma}[The honest PCPs' hypotheses at the parameters]
 \label{lem:ar-honest-hyp}
-\uses{def:ar-params,def:ar-honest-answers,lem:circuit-pad-exact,lem:lstar-const,
-  lem:ar-window-describer}
+\uses{def:ar-params,def:ar-honest-answers,lem:circuit-pad-exact,lem:lstar-const,lem:ar-window-describer,def:tailored-bounded,lem:ar-params-basic}
 \lean{MIPRE.Tailored.AnsRed.Params.length_spineList_le, MIPRE.Tailored.AnsRed.Params.length_bitsListD_le, MIPRE.Tailored.AnsRed.Params.lenOf_le, MIPRE.Tailored.AnsRed.Params.consOf_length_le, MIPRE.Tailored.AnsRed.Params.two_mul_le_two_pow, MIPRE.Tailored.AnsRed.Params.pOW_add_le_pK, MIPRE.Tailored.AnsRed.Params.le_pQ, MIPRE.Tailored.AnsRed.Params.pQ_lt_two_pow, MIPRE.Tailored.AnsRed.Params.two_pow_ell_add_le, MIPRE.Tailored.AnsRed.Params.pK_add_two_le_pR, MIPRE.Tailored.AnsRed.Params.arPrm, MIPRE.Tailored.AnsRed.Params.arPrm_apply, MIPRE.Tailored.AnsRed.Params.arDescIn, MIPRE.Tailored.AnsRed.Params.arCirc, MIPRE.Tailored.AnsRed.Params.one_le_pS, MIPRE.Tailored.AnsRed.Params.arCirc_wf, MIPRE.Tailored.AnsRed.Params.arCirc_inputs, MIPRE.Tailored.AnsRed.Params.arCirc_size, MIPRE.Tailored.AnsRed.Params.arCc, MIPRE.Tailored.AnsRed.Params.tableSize_pow, MIPRE.Tailored.AnsRed.Params.esize_bitStr_le_pow, MIPRE.Tailored.AnsRed.Params.cons_le_ar, MIPRE.Tailored.AnsRed.Params.LstarTime, MIPRE.Tailored.AnsRed.Params.LstarSize, MIPRE.Tailored.AnsRed.Params.exists_lstarTime, MIPRE.Tailored.AnsRed.Params.lstarSize_lstarProgSize₀, MIPRE.Tailored.AnsRed.Params.acceptsWithin_mono, MIPRE.Tailored.AnsRed.Params.esize_arPrm_pair, MIPRE.Tailored.AnsRed.Params.honestHyp_ar}
 \leanok
 Let the circuit of a seed be the window describer's description of the output indicator at the
@@ -4131,7 +4130,7 @@ $\mu + 1$. The circuit function reads $K$ and $\sigma'$ from the parameters' dat
 
 \begin{lemma}[The soundness error and the contract's loss]
 \label{lem:ar-error}
-\uses{def:ar-params,thm:ar-sound,thm:ar-output}
+\uses{def:ar-params,thm:ar-sound,lem:ar-error-assembly,lem:ar-params-basic}
 \lean{MIPRE.Tailored.AnsRed.Typed.length_slotsOf_le, MIPRE.Tailored.AnsRed.Typed.errAR_le_of_dS, MIPRE.Tailored.AnsRed.Typed.pwR, MIPRE.Tailored.AnsRed.Typed.one_le_pwR, MIPRE.Tailored.AnsRed.Typed.dS_le_of, MIPRE.Tailored.AnsRed.Typed.seven_le_e2Min, MIPRE.Tailored.AnsRed.Typed.field_term_le, MIPRE.Tailored.AnsRed.Typed.gN, MIPRE.Tailored.AnsRed.Typed.shape_Q, MIPRE.Tailored.AnsRed.Typed.shape_arith, MIPRE.Tailored.AnsRed.Typed.errAR_le_shape, MIPRE.Tailored.AnsRed.Typed.field_hyps, MIPRE.Tailored.AnsRed.Typed.wdC, MIPRE.Tailored.AnsRed.Typed.wdP, MIPRE.Tailored.AnsRed.Typed.r₀_le_wdC, MIPRE.Tailored.AnsRed.Typed.s₀_le_wdP, MIPRE.Tailored.AnsRed.Typed.cW, MIPRE.Tailored.AnsRed.Typed.errCM, MIPRE.Tailored.AnsRed.Typed.errPM, MIPRE.Tailored.AnsRed.Typed.pQ_facts, MIPRE.Tailored.AnsRed.Typed.pL_m_eq, MIPRE.Tailored.AnsRed.Typed.pL_m_le, MIPRE.Tailored.AnsRed.Typed.two_pow_pJ_le, MIPRE.Tailored.AnsRed.Typed.gN_le, MIPRE.Tailored.AnsRed.Typed.errCc, MIPRE.Tailored.AnsRed.Typed.errPp, MIPRE.Tailored.AnsRed.Typed.errA, MIPRE.Tailored.AnsRed.Typed.one_le_errA, MIPRE.Tailored.AnsRed.Typed.errC, MIPRE.Tailored.AnsRed.Typed.gN_le_poly, MIPRE.Tailored.AnsRed.Typed.errAR_le_delta, MIPRE.Tailored.AnsRed.Typed.one_le_delta_of_trivial', MIPRE.Tailored.AnsRed.Typed.errAR_le_delta_or, MIPRE.Tailored.AnsRed.Typed.exists_errAR_le_delta}
 \leanok
 There is $E_{2,0}$ such that for constants with $E_2 \geq E_{2,0}$ the field-size conditions of
