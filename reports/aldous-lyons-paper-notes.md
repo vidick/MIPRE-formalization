@@ -1,7 +1,7 @@
 # The Aldous–Lyons papers: notes from the formalization
 
-**Date: 2026-10-06. Tree: `main` at e9fdfca and PR #315 (Main Theorem I), during Phase 4 of
-`planning/aldous-lyons-track.md`. Tracking: #272 (the track), #284 (paper I).**
+**Date: 2026-10-06. Tree: `main` at 8540cbb, after Phase 4 of `planning/aldous-lyons-track.md`
+(PR #323), with every phase of the track done. Tracking: #272 (the track), #284 (paper I).**
 
 The track formalizes two papers, both public:
 
@@ -25,6 +25,18 @@ Each item has one of three statuses:
 
 Nothing here is an error that breaks a main result. Where a statement is wrong as written, the
 proof gives a correct one, and the Lean proves that.
+
+Both main results are proved in the Lean with no hypothesis left:
+
+- paper II's main theorem, with `≤ 1/2` (§2.1, item 1), is
+  `TailoredGameValue.tailored_halting_reduction`, with the class theorems
+  `MIPRE.Tailored.tmipStarComputable_eq_re` and `MIPRE.Tailored.tmipStar_eq_re`;
+- paper I's corollary is `SubgroupTestValue.aldous_lyons_false : ¬ AldousLyons`.
+
+They are in `MIPRE/TailoredMIP.lean`, and each depends only on the axioms `propext`,
+`Classical.choice` and `Quot.sound`. The statements they prove, `TailoredHaltingReduction` and
+`AldousLyons`, are in Mathlib-only files (`MIPRE/TailoredGameValue.lean`,
+`MIPRE/SubgroupTestValue.lean`) and can be read without the rest of the library.
 
 ## 1. Paper I
 
@@ -164,6 +176,11 @@ proof gives a correct one, and the Lean proves that.
    the tableau's input region tied to the answers. The third window starts at a power of two,
    because the closure library has no binary addition (`MIPRE.SAT.windowDescriber`; blueprint
    `lem:ar-window-describer`).
+6. **The no-error clause of answer reduction's length calculator** (`thm:main_ans_red`, II:6908).
+   The readers found it not discharged in the proof; it follows from II:10795. Its Lean form,
+   that the output's calculator halts with a length on every question of the sampler, is the
+   contract's `len_total`. It is proved for the answer-reduced verifier
+   (`ArRoutine.lenD_total`).
 
 ### 2.2 Formalized differently
 
@@ -175,7 +192,7 @@ the paper. They are not findings against the paper.
    value form the content of the proofs. This avoids the dimension-preserving reading of
    Bavarian–Vidick–Yuen (II:11425, footnote II:11431) and the rounding `Fact` II:3227
    (`planning/aldous-lyons-track.md` §4.1).
-2. **Answer reduction's game** (Phase 4, in progress). It departs from the paper in three ways:
+2. **Answer reduction's game** (Phase 4, done). It departs from the paper in three ways:
    - the type graph is complete on the nine types, not the tensor product of two paths
      (II:10313);
    - soundness is proved in the bipartite model through the repository's oracularization;
@@ -185,9 +202,30 @@ the paper. They are not findings against the paper.
    The Lean's PCP formula polynomial has degree at most 17, counting each factor separately,
    where the paper has 9. The soundness bound is unaffected in form.
 
+   Because of the first two departures, the soundness proof of §5 (II:10622–10733), with its
+   constants `1/2, 3/10, 2/5, 1/25, 8/25`, is not formalized. Soundness is instead `24√ε` from
+   oracularization, composed with the low individual degree test. The contract's loss
+   `σ^a((λn)^{μa} ε^b + (λn)^{-μb})` is proved with `b` half the test's exponent.
+3. **The honest PCP's certificates** (II:7257, II:9103). The paper builds the certificates of
+   vanishing on the cube explicitly, by `Div` and `Mod`. The Lean needs only that they can be
+   chosen linearly in the polynomial, and takes any linear right inverse of
+   `c ↦ Σ_i c_i X_i(1 − X_i)` on the vanishing polynomials
+   (`MIPRE/Foundations/LowDegree/ZeroCertificate.lean`).
+4. **The answer reduction's parameters** (II:10846–11074). The Lean's parameters are its own,
+   chosen to fit its PCP and window describer. With `Q = (λn + 1)^μ`, the windows have width
+   `Q`, the description time is `2^K` with `K = E₁(μ + 1)(oW + Q + 4)` (`oW` the third window's
+   width), the formula polynomial's degree bound is `17`, and the field has `2^t` elements with
+   `t = E₂(j + r + Q + 1)` (`j` the bit size of the PCP's dimension, `r` the describer's)
+   (`MIPRE/Tailored/AnsRed/ArParams.lean`). The parameters grow like a power of `(λn + 1)^μ`,
+   and the programs read them in unary, so they are computed by a separate parameter program
+   whose running time is bounded on its own. The paper's §5.6 was not re-read against them.
+
 ### 2.3 Reader findings, not yet met
 
-These are from the readers' pass (plan §8), unchanged. Phase 4 will meet the §5 items.
+These are from the readers' pass (plan §8). Phase 4 met only one of the §5 items, the no-error
+clause (§2.1, item 6). The rest lie on parts of §5 that the Lean goes around (§2.2, items 2 and
+3). Two of them were checked again against the source: the `Ψ^R` at II:9103, where `Ψ^L` is
+meant, and the `1 − 63m/1` at II:10701, 10716 and 10721.
 
 - II:11293–11371: §6.2, with `lem:sync-game` and `thm:synchronous`, is inside a `comment`
   block. The live almost-synchronous statement is `Fact` II:3227, which has only a proof idea.
@@ -223,8 +261,6 @@ These are from the readers' pass (plan §8), unchanged. Phase 4 will meet the §
   - II:10689, 10704 and 10711 read `1 − 63m/1` for `1 − 63m/q`;
   - `eq:def_Delta_proof_ans_red` is used twice (II:10970, 10975), and the second display says
     `|Λ| = O(|Λ|)` for `|Δ|`;
-  - the no-error clause of `A_ar` in `thm:main_ans_red` is not discharged in its proof (it
-    follows from II:10795);
   - the constants `1/2, 3/10, 2/5, 1/25, 8/25` of the soundness proof (II:10622–10733) depend
     on §4's typed sampling convention, which §5 does not restate.
 - Sketched or cited on the main path, besides the two in §2.1:
