@@ -647,8 +647,8 @@ P1e.
     pair (`classSampler`).
   - *Extensions* (`Tailored/Extend.lean`). A tailored game with another's weights, lengths and
     constraints on the image of an embedding of questions, and no weight off it, has the other's
-    value and inherits its perfect ZPC strategies, with identities off the image; the doubled
-    games extend each other too.
+    value and inherits its perfect ZPC strategies, pulled back along the inverse of the embedding
+    with P2a's `PermStrategy.comap`; the doubled games extend each other too.
   - *The class verifier* (`Tailored/ClassVerifier.lean`). On `z`, the calculator and the
     processor compute the programs of `V^{R z, λ(z)}`'s and run them on the level `C` through
     the universal machine, which halts exactly when they do (`seqUniv_runs`,

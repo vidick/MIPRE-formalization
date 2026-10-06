@@ -956,8 +956,9 @@ The paper's clause~(1) of Theorem~\ref{thm:tmip-re} asks that sampling a questio
 evaluating the decision predicate take time polynomial in the input. The decision predicate is
 the canonical decider (Definition~\ref{def:canonical-decider}) on what the calculator and the
 processor output, so the efficiency clause bounds those two programs, as
-Definition~\ref{def:mipstar} bounds the decider; the canonical decider's own cost, a
-polynomial-time check on their outputs, is not tracked, no statement needing it. The
+Definition~\ref{def:mipstar} bounds the decider. The canonical decider's own running time, a
+polynomial in theirs, is Lemma~\ref{lem:canonical-decider-cost} for tailored normal form
+verifiers; no statement here needs it. The
 completeness clause is read on the doubled game, as for tailored normal form verifiers
 (\texttt{TailoredVerifier.HasPerfectZPC}), and the threshold is $\leq \frac12$, as everywhere
 in this project (Remark~\ref{rem:tailored-route}). In Lean the verifier is a
@@ -993,11 +994,10 @@ Theorem~\ref{thm:tmipstar-eq-re}.
 
 \begin{lemma}[Extending a tailored game along its questions]
 \label{lem:tailored-extend}
-\uses{def:tailored-game,def:zpc-strategy}
+\uses{def:tailored-game,def:zpc-strategy,lem:tensor-power-zpc}
 \lean{MIPRE.Tailored.TailoredGame.Extends, MIPRE.Tailored.TailoredGame.Extends.valStar_eq,
   MIPRE.Tailored.TailoredGame.Extends.hasPerfectZPC,
-  MIPRE.Tailored.TailoredGame.Extends.doubled, MIPRE.Tailored.TailoredGame.Extends.strategy,
-  MIPRE.Tailored.TailoredGame.Extends.value_strategy}
+  MIPRE.Tailored.TailoredGame.Extends.doubled}
 \leanok
 Let $\game'$ and $\game$ be tailored games on question sets $X'$ and $X$, and $e : X \to X'$
 injective, such that $\game'$ has the weights, the lengths and the constraints of $\game$ on the
@@ -1011,10 +1011,11 @@ $\game$ in the same way, along $\mathrm{id} \times e$.
 Restricting $\game'$ to the image of $e$ does not change its value, its distribution being
 supported there. The answers of length at most the largest length of $\game$ then sit inside
 those of $\game'$, and the canonical decider rejects the longer ones, so the value is $\game$'s.
-For a ZPC strategy of $\game$, keep its observables on the image of $e$ and take identities
-elsewhere. Identities are signed permutations, involutions and diagonal, and commute with
-everything; an edge of positive weight has both ends in the image. So the new strategy is a ZPC
-strategy, and its value is that of the old one, term by term.
+For a ZPC strategy of $\game$, pull it back along the inverse of $e$: its observables on the
+image of $e$, and identities elsewhere, where no question is asked. An edge of positive weight
+has both ends in the image, with the lengths of their preimages and an edge of $\game$ between
+these, on which the two canonical deciders agree; so the pulled-back strategy is a perfect ZPC
+strategy, by the pull-back of permutation strategies of the repetition phase.
 \end{proof}
 
 \begin{theorem}[$\mathrm{TMIP}^* = \RE$ for the polynomial-time class; II:787, II:1505]

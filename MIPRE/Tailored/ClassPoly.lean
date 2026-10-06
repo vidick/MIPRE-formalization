@@ -37,8 +37,9 @@ A `TPolyVerifier` is three closed programs and one polynomial `P`; write `B z = 
 that rejects everything where a program does not halt (`consOf`), as `TailoredVerifier.tgame`.
 **Efficiency** (`Efficient`) bounds the three programs by `P` of the total input length, as
 `PolyVerifier.Efficient` bounds the sampler and the decider; the canonical decider itself is
-then a polynomial-time check on what they output (`Tailored/Canonical.lean`), whose cost the plan
-deferred because no statement needs it.
+then a polynomial-time check on what they output (`Tailored/Canonical.lean`). Its running time,
+for tailored normal form verifiers, is `Tailored/CanonicalCost.lean`'s; no statement here needs
+it.
 
 `TMIPStar L`: some polynomial-time tailored verifier is efficient on every input, its doubled game
 has a perfect ZPC strategy on the members of `L`, and its game has value at most `1/2` off them.

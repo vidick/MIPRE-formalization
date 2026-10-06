@@ -3871,8 +3871,7 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:tailored-extend`
 #guard_sorry_free MIPRE.Tailored.TailoredGame.Extends,
   MIPRE.Tailored.TailoredGame.Extends.valStar_eq, MIPRE.Tailored.TailoredGame.Extends.hasPerfectZPC,
-  MIPRE.Tailored.TailoredGame.Extends.doubled, MIPRE.Tailored.TailoredGame.Extends.strategy,
-  MIPRE.Tailored.TailoredGame.Extends.value_strategy
+  MIPRE.Tailored.TailoredGame.Extends.doubled
 
 -- blueprint `thm:tmipstar-poly-eq-re`
 #guard_sorry_free MIPRE.Tailored.re_subset_tmipStar_of, MIPRE.Tailored.tmipStar_eq_re_of,
