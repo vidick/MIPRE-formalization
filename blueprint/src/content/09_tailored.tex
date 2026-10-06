@@ -1852,6 +1852,129 @@ their equality at equal labels, the Pauli basis test at two Pauli labels and the
 in both orders, each of which is one of the families.
 \end{proof}
 
+\begin{lemma}[Completeness of a presentation from a typed strategy]
+\label{lem:presentation-typed}
+\uses{lem:presentation}
+\lean{MIPRE.Tailored.decodeQuestion_eq_some, MIPRE.Tailored.decodeQuestion_eq_none,
+  MIPRE.Tailored.hasPerfectZPC_presented_typed}
+\leanok
+In Lemma~\ref{lem:presentation}, take for the detyped game's perfect PCC strategy the one the
+finite detyping builds from a typed perfect PCC strategy. Its hypotheses then become typed: the
+typed strategy charges only encodable answers, and its bit observables along the encoding are
+signed permutations, diagonal at the readable bits.
+\end{lemma}
+
+\begin{proof}
+\leanok
+At a view decoding to a typed question the detyped measurement is the typed one there; at the
+other views the detyped tailored game has no answer bits, and the measurement is concentrated on
+a fixed answer.
+\end{proof}
+
+\begin{lemma}[Soundness of the tailored presentation of the introspection verifier]
+\label{lem:intro-presentation-sound}
+\uses{lem:intro-typed-cons,lem:presentation,def:typed-sampler-interface,lem:intro-ambient-kernel,
+  lem:intro-canonical-sampler,lem:intro-executable-sampler,lem:intro-quotient-kernel,
+  lem:intro-type-presentation}
+\lean{MIPRE.Tailored.Intro.Sound.tdata, MIPRE.Tailored.Intro.Sound.decT,
+  MIPRE.Tailored.Intro.Sound.lenR_le_len, MIPRE.Tailored.Intro.Sound.guards_of_readOK,
+  MIPRE.Tailored.Intro.Sound.pauliFormatted_parsedT, MIPRE.Tailored.Intro.Sound.tdata_sound,
+  MIPRE.Tailored.Intro.Sound.H, MIPRE.Tailored.Intro.Sound.valStar_tpresented_le}
+\leanok
+At the introspection verifier's canonical parameters, on every edge of its type graph, a pair of
+answers the typed tailored data accepts decodes --- through the parsed answers read off the
+layout, re-encoded as the kernel's bytes --- to a pair the reference verifier's typed predicate
+accepts. Hence the detyped tailored game has $\val^*$ at most the quantum value of the reference
+verifier's detyped game.
+\end{lemma}
+
+\begin{proof}
+\leanok
+By Lemma~\ref{lem:intro-typed-cons} the readable conditions hold and the kernel's semantic check
+accepts the parsed answers. The readable conditions are the kernel's prefix guard and source-output
+condition, and parsed Pauli answers are formatted, so the kernel's completeness gives acceptance
+by the kernel program on the re-encoded answers, which is the typed predicate.
+\end{proof}
+
+\begin{lemma}[Completeness of the tailored presentation of the introspection verifier]
+\label{lem:intro-presentation-complete}
+\uses{lem:intro-presentation-sound,lem:presentation-typed,def:intro-layout,lem:intro-layout,
+  def:typed-sampler-interface,lem:intro-ambient-kernel,lem:intro-canonical-sampler,
+  lem:intro-executable-sampler,lem:intro-quotient-kernel,lem:intro-type-presentation}
+\lean{MIPRE.Tailored.Intro.Complete.parsedT_enc, MIPRE.Tailored.Intro.Complete.length_encL,
+  MIPRE.Tailored.Intro.Complete.encT, MIPRE.Tailored.Intro.Complete.okT,
+  MIPRE.Tailored.Intro.Complete.tdata_complete,
+  MIPRE.Tailored.Intro.Complete.hasPerfectZPC_tpresented}
+\leanok
+The parsed answer read off the layout's encoding of a well-formed byte answer is the kernel's
+decoding of it. Hence, on every edge, when the reference verifier's typed predicate accepts two
+well-formed byte answers whose encodings satisfy the readable conditions, the typed tailored
+data accepts the encodings; and a perfect PCC strategy of the reference verifier's typed game
+charging only such answers, with signed-permutation bit observables along the encoding, diagonal
+at the readable bits, gives a perfect ZPC strategy of the doubled detyped tailored game.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The kernel's soundness turns acceptance by the kernel program into its semantic check on the
+decoded answers, which are the parsed encodings; Lemma~\ref{lem:intro-typed-cons} turns that into
+the constraints. The rest is Lemma~\ref{lem:presentation-typed}.
+\end{proof}
+
+\begin{lemma}[Kernel generators of a register-local linear map]
+\label{lem:intro-kergens}
+\uses{lem:intro-aux-cons}
+\lean{MIPRE.Tailored.Intro.kernelGens, MIPRE.Tailored.Intro.kernelGens_correct,
+  MIPRE.Tailored.Intro.linRows, MIPRE.Tailored.Intro.regKerGens,
+  MIPRE.Tailored.Intro.kerGens_regKerGens}
+\leanok
+The binary kernel program, run on the rows of the matrix of a register-local linear map, outputs
+vectors in its kernel that span it. So it provides the kernel generators the hiding comparisons
+need.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The program's correctness, read in the sampler's encoding of vectors.
+\end{proof}
+
+\begin{lemma}[The output tailored verifier, from a specification of its programs]
+\label{lem:intro-output}
+\uses{lem:intro-presentation-sound,lem:intro-presentation-complete,lem:of-tnfvt,cor:qld-valid,
+  lem:intro-extracted-soundness,lem:introspection-supply,lem:povm-domination,lem:qld-sound-in-tensor,
+  lem:tailored-extend,lem:tailored-presents}
+\lean{MIPRE.Tailored.Intro.Output.quantumValue_H,
+  MIPRE.Tailored.Intro.Output.valStar_presented_le_output, MIPRE.Tailored.Intro.Output.outTV,
+  MIPRE.Tailored.Intro.Output.qe, MIPRE.Tailored.Intro.Output.IntroSpec,
+  MIPRE.Tailored.Intro.Output.lenOf_eq_of, MIPRE.Tailored.Intro.Output.extends_presented,
+  MIPRE.Tailored.Intro.Output.valStar_outTV_le, MIPRE.Tailored.Intro.Output.soundness_seven,
+  MIPRE.Tailored.Intro.Output.hasPerfectZPC_outTV,
+  MIPRE.Tailored.Intro.Output.acceptsAsInput_ofTNFVT, MIPRE.Tailored.Intro.Output.delta_mul_le,
+  MIPRE.Tailored.Intro.Output.lenOf_le_of_isBounded,
+  MIPRE.Tailored.Intro.Output.maxLen_le_of_isBounded,
+  MIPRE.Tailored.Intro.Output.soundness_contract}
+\leanok
+Give the output tailored verifier at $\lambda$ the sampler of the introspection verifier and two
+programs which, at index $n$, output at every detyped question the presented game's lengths and
+at every pair its constraints. Then its $n$-th game extends the presented one, so it has the
+presented game's $\val^*$, which is at most the value of the introspection verifier's output on
+the input's normal form verifier; and a perfect strategy of the reference verifier's typed game
+meeting the conditions of Lemma~\ref{lem:intro-presentation-complete} gives it a perfect ZPC
+strategy. For a $\lambda$-bounded tailored input whose normal form verifier is $C\lambda$-bounded,
+$C \geq 2$, with the programs meeting the specification at $C\lambda$: $\val^*$ of the output at
+$n \geq 1$ above $1 - \varepsilon$ gives $\val^*$ of the input at $2^n$ at least
+$1 - \delta(aC^a, b, \lambda, n, \varepsilon)$, with the introspection verifier's $a$ and $b$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The detyped game is the reference verifier's along the numbering of the detyped registers, and
+the reference verifier has the value of the introspection verifier's output. Its soundness at
+$C\lambda$, the identification of the input's normal form verifier's value with the input's, and
+$\delta(a, b, C\lambda, n, \varepsilon) \le \delta(aC^a, b, \lambda, n, \varepsilon)$ for $a \geq 1$,
+$C \geq 1$ and $\lambda n \geq 1$.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}
