@@ -1209,6 +1209,7 @@ public import MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic
 public import MIPRE.Foundations.LowDegree.UnaryPrimality
 public import MIPRE.Foundations.LowDegree.UnaryPrimePower
 public import MIPRE.Foundations.LowDegree.ZeroBasis
+public import MIPRE.Foundations.LowDegree.ZeroCertificate
 public import MIPRE.Foundations.LowDegreeSandwich
 public import MIPRE.Foundations.MatUnits
 public import MIPRE.Foundations.Measurement
@@ -1449,6 +1450,7 @@ public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.AnsRed.IndicatorProg
 public import MIPRE.Tailored.AnsRed.Linear
 public import MIPRE.Tailored.AnsRed.Pcp
+public import MIPRE.Tailored.AnsRed.PcpComplete
 public import MIPRE.Tailored.AnsRed.PcpSound
 public import MIPRE.Tailored.Canonical
 public import MIPRE.Tailored.CanonicalCost

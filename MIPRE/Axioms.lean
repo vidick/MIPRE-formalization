@@ -250,6 +250,7 @@ public import MIPRE.Tailored.AnsRed.Linear
 public import MIPRE.TM.CookLevin.Decoupled6Prog
 public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.AnsRed.PcpSound
+public import MIPRE.Tailored.AnsRed.PcpComplete
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -3944,6 +3945,19 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `thm:ar-pcp-accepts`
 #guard_sorry_free MIPRE.Tailored.AnsRed.accepts_of_identities,
   MIPRE.Tailored.AnsRed.accepts_of_dense
+
+-- blueprint `lem:ar-linear-certificates`
+#guard_sorry_free MIPRE.LowDegree.cubeVanishing, MIPRE.LowDegree.mem_cubeVanishing,
+  MIPRE.LowDegree.cert, MIPRE.LowDegree.degreeOf_cert_le, MIPRE.LowDegree.cert_sum
+
+-- blueprint `lem:ar-pcp-complete`
+#guard_sorry_free MIPRE.Tailored.AnsRed.indDeg_induce, MIPRE.Tailored.AnsRed.assignChecks_induce,
+  MIPRE.Tailored.AnsRed.formulaCheck_induce, MIPRE.Tailored.AnsRed.systemCheck_induce,
+  MIPRE.Tailored.AnsRed.identities_induce
+
+-- blueprint `lem:ar-pcp-parts`
+#guard_sorry_free MIPRE.Tailored.AnsRed.readable_induce, MIPRE.Tailored.AnsRed.linear_induce_add,
+  MIPRE.Tailored.AnsRed.res_encB, MIPRE.Tailored.AnsRed.resZ_encZ
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
