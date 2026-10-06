@@ -4046,6 +4046,10 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.PauliHideProg.pauliHideRevProg_eq,
   MIPRE.Tailored.Intro.PauliConsProg.zGuardProg, MIPRE.Tailored.Intro.PauliConsProg.zGuardProg_eq
 
+-- blueprint `lem:intro-pauli-cons-prog`
+#guard_sorry_free MIPRE.Tailored.Intro.PauliConsProg.pauliConsProg,
+  MIPRE.Tailored.Intro.PauliConsProg.pauliConsProg_eq
+
 -- blueprint `lem:intro-len-program`
 #guard_sorry_free MIPRE.Tailored.Intro.LenIntro.introLenR, MIPRE.Tailored.Intro.LenIntro.introLenL,
   MIPRE.Tailored.Intro.LenIntro.introLen, MIPRE.Tailored.Intro.LenIntro.lin_coef,
