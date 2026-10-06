@@ -3960,7 +3960,8 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:intro-typed-cons`
 #guard_sorry_free MIPRE.Tailored.Intro.Typed.prefixOK, MIPRE.Tailored.Intro.Typed.G,
   MIPRE.Tailored.Intro.Typed.pauliDir, MIPRE.Tailored.Intro.Typed.pauliAux,
-  MIPRE.Tailored.Intro.Typed.consL, MIPRE.Tailored.Intro.Typed.lenR,
+  MIPRE.Tailored.Intro.Typed.consRaw, MIPRE.Tailored.Intro.Typed.consL,
+  MIPRE.Tailored.Intro.Typed.lenR_le_len, MIPRE.Tailored.Intro.Typed.lenR,
   MIPRE.Tailored.Intro.Typed.len, MIPRE.Tailored.Intro.Typed.parsedT,
   MIPRE.Tailored.Intro.Typed.readOK, MIPRE.Tailored.Intro.Typed.pauliAux_iff,
   MIPRE.Tailored.Intro.Typed.AcceptsAsInput, MIPRE.Tailored.Intro.Typed.hD_of_acceptsAsInput,
