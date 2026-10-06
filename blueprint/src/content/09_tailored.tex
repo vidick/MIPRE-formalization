@@ -1976,6 +1976,35 @@ $\delta(a, b, C\lambda, n, \varepsilon) \le \delta(aC^a, b, \lambda, n, \varepsi
 $C \geq 1$ and $\lambda n \geq 1$.
 \end{proof}
 
+\begin{lemma}[The honest strategy is a perfect ZPC strategy]
+\label{lem:intro-honest-zpc}
+\uses{lem:intro-output,lem:intro-presentation-complete,lem:encoded-pvm-obs,lem:weyl-signed-perm,
+  lem:controlled-signed-perm,lem:binary-signed-perm,lem:input-answer-bits}
+\lean{MIPRE.Tailored.Intro.HonestChain.honest_zpc,
+  MIPRE.Tailored.Intro.HonestChain.honest_zpc_ofTNFVT,
+  MIPRE.Tailored.Intro.Output.completeness_contract}
+\leanok
+Let $W$ be a $\lambda$-bounded seven-level verifier and $n \geq 1$. A perfect PCC strategy of
+$W$ at $2^n$ whose answers at each question have the lengths a tailored verifier assigns to it,
+and whose answer bits are signed permutations, diagonal at the readable ones, gives the honest
+strategy of the reference verifier's typed game. That strategy is perfect and PCC, charges only
+answers of the layout whose readable conditions hold, and its bit observables along the layout
+are signed permutations, diagonal at the readable bits. A perfect ZPC strategy of a tailored
+input $\mathcal{V}$ at $2^n$ gives such a strategy of its normal form verifier. Hence, for a
+$\lambda$-bounded tailored input whose normal form verifier is $C\lambda$-bounded, $C \geq 2$,
+with the output's programs meeting the specification at $C\lambda$: if $\mathcal{V}$ has a perfect
+ZPC strategy at $2^n$, the output has one at $n$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The honest strategy measures in the eigenbases of Weyl operators, in the computational basis,
+and by controlled sums over a control register; its answer bits are read out linearly or from
+the computational basis. Each of the three gives signed-permutation bit observables, diagonal for
+the computational-basis reads, which are the readable bits. The support condition is checked
+label by label. Then Lemma~\ref{lem:intro-output}.
+\end{proof}
+
 \begin{lemma}[The input's programs, run on a clamped description]
 \label{lem:intro-input-runs}
 \uses{def:tailored-verifier,def:tailored-bounded,lem:detype-total-clock,lem:intro-ambient-runtime}

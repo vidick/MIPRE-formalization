@@ -261,6 +261,7 @@ public import MIPRE.Tailored.Intro.CLData
 public import MIPRE.Background.Tailored.Intro.PauliHideProg
 public import MIPRE.Background.Tailored.Intro.PauliConsProg
 public import MIPRE.Background.Tailored.Intro.LenIntro
+public import MIPRE.Background.Tailored.Intro.CompleteContract
 public import MIPRE.Tailored.Intro.AuxProg
 
 @[expose] public section
@@ -4017,6 +4018,11 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.Output.lenOf_le_of_isBounded,
   MIPRE.Tailored.Intro.Output.maxLen_le_of_isBounded,
   MIPRE.Tailored.Intro.Output.soundness_contract
+
+-- blueprint `lem:intro-honest-zpc`
+#guard_sorry_free MIPRE.Tailored.Intro.HonestChain.honest_zpc,
+  MIPRE.Tailored.Intro.HonestChain.honest_zpc_ofTNFVT,
+  MIPRE.Tailored.Intro.Output.completeness_contract
 
 -- blueprint `lem:intro-input-runs`
 #guard_sorry_free MIPRE.Tailored.TailoredVerifier.IsBounded.two_le,
