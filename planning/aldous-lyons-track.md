@@ -1106,6 +1106,20 @@ P6a–P6e are finitary and independent of Phase 4. Each conclusion is conditiona
 `TailoredHaltingReduction`, which `cor:tmip-re-from-ar` reduces to Phase 4's
 `TailoredAnswerReduction 5`.
 
+**Phase 6 status (2026-10-06): done, conditional on Phase 4.** All six slices are in `main`
+(#312, #313 and the Main Theorem I PR). Main Theorem II is `Sofic.mainTheoremII` with gap
+`gapK Λ = 600 (Λ+1)^4 2^{6(Λ+1)}` (perturbation `Cp = 300`, quotient `Cq = 2`). Main Theorem I is
+`Measure.mainTheoremI_one` and `Measure.mainTheoremI_two`, both with primitive recursive dyadic
+sequences. The conclusions are `Sofic.aldous_lyons_false : TailoredHaltingReduction →
+¬ AldousLyons` and `Tailored.aldous_lyons_false_of_answerReduction : TailoredAnswerReduction 5 →
+¬ AldousLyons`. Two departures from the paper, both recorded in the blueprint chapter:
+* Proposition I:2279 and completeness use the trace identity above, not the Fourier/orbit argument.
+* Main Theorem I (2) replaces the pseudo-IRS polytope and its LP by an exhaustive search over a
+  grid. Stage `t` takes the words of length `≤ t+2` in `n+t` letters. Its patterns of positive
+  weight must be locally closed, and invariance under each generator may fail by an `ℓ¹` slack
+  of `4P`, which absorbs rounding. Convergence goes through Prokhorov compactness on word
+  indicators and a transfer to IRSs (`irs_of_good`).
+
 ## 6. The estimate
 
 ### 6.1 Calibration, measured in this repository

@@ -19,8 +19,10 @@ halting reduction makes the sofic value not approximable
 (Theorem~\ref{thm:sofic-not-approximable}); and the perturbation half of Main Theorem~II's
 soundness (Proposition~\ref{prop:assoc-perturb}); Main Theorem~II itself
 (Theorem~\ref{thm:main-theorem-ii}); and so the sofic value is not approximable from a halting
-reduction to tailored games (Corollary~\ref{cor:sofic-not-approximable-ar}). Main Theorem~I is in
-progress.
+reduction to tailored games (Corollary~\ref{cor:sofic-not-approximable-ar}). Main Theorem~I
+(Theorems~\ref{thm:main-theorem-i-lower} and~\ref{thm:main-theorem-i-upper}) is formalized too, so
+the Aldous--Lyons conjecture is false from a halting reduction to tailored games, and from a
+tailored answer reduction (Corollary~\ref{cor:aldous-lyons-false-ar}).
 
 \subsection{Subgroup tests and the conjecture}
 
@@ -392,15 +394,215 @@ non-halting one gives sofic value at most $1 - 1/(2K)$, and the approximation is
 $k/(k+1)$. The comparison is computable, and decides the halting problem.
 \end{proof}
 
-\begin{theorem}[The Aldous--Lyons conjecture is false; Corollary~I:2144]
-\label{thm:aldous-lyons-false}
-\uses{def:aldous-lyons,thm:sofic-not-approximable,thm:main-theorem-ii}
-The Aldous--Lyons conjecture fails.
+\subsection{The measure side: Main Theorem~I}
+
+\begin{definition}[The value of a measure, and the ergodic value; I:486--499]
+\label{def:erg-value}
+\uses{def:subgroup-test,def:aldous-lyons}
+\lean{MIPRE.Tailored.Sofic.Measure.letterFG, MIPRE.Tailored.Sofic.Measure.wordFG,
+  MIPRE.Tailored.Sofic.Measure.litB, MIPRE.Tailored.Sofic.Measure.passB,
+  MIPRE.Tailored.Sofic.Measure.passSet, MIPRE.Tailored.Sofic.Measure.valGen,
+  SubgroupTestValue.FiniteAction.finDesc, SubgroupTestValue.SubgroupTestData.valOn,
+  SubgroupTestValue.SubgroupTestData.valErg}
+\leanok
+The value of a test $T$ against a probability measure $\mu$ on $\mathrm{Sub}(F)$ is the weighted
+average over challenges of the measure of the set of subgroups passing the challenge. The
+ergodic value $\mathrm{val}_{\mathrm{erg}}(T)$ is its supremum over the invariant random
+subgroups. A finite action $\sigma$ gives the measure $\Phi(\sigma)$, the stabilizer of a uniform
+point.
+\end{definition}
+
+\begin{lemma}[The value is a continuous functional; I:550]
+\label{lem:val-on-continuous}
+\uses{def:erg-value}
+\lean{MIPRE.Tailored.Sofic.Measure.lift_wordFG, MIPRE.Tailored.Sofic.Measure.isClopen_passSet,
+  SubgroupTestValue.SubgroupTestData.continuous_valOn, SubgroupTestValue.SubgroupTestData.valOn_of_eq,
+  SubgroupTestValue.SubgroupTestData.valOn_finDesc, SubgroupTestValue.finDescIRS_subset_IRS}
+\leanok
+The value against a measure is weak-$*$ continuous, and the value against $\Phi(\sigma)$ is the
+value of $\sigma$. Finitely described IRSs are IRSs.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Each passing set is clopen in the product topology, so its measure is continuous in $\mu$; the
+value is a finite weighted sum of these.
+\end{proof}
+
+\begin{corollary}[The sofic value is at most the ergodic value, with equality under
+Aldous--Lyons; Corollary~I:550]
+\label{cor:sof-eq-erg}
+\uses{lem:val-on-continuous}
+\lean{SubgroupTestValue.SubgroupTestData.valSof_le_valErg,
+  SubgroupTestValue.SubgroupTestData.valSof_eq_valErg}
+\leanok
+For every test, $\mathrm{val}_{\mathrm{sof}}(T) \leq \mathrm{val}_{\mathrm{erg}}(T)$, and if
+the Aldous--Lyons conjecture holds they are equal.
+\end{corollary}
+
+\begin{proof}
+\leanok
+The finitely described IRSs are IRSs; under the conjecture every IRS is a weak-$*$ limit of
+finitely described ones, and the value is continuous.
+\end{proof}
+
+\begin{theorem}[Main Theorem~I (1): the sofic value is approximable from below; I:594]
+\label{thm:main-theorem-i-lower}
+\uses{lem:val-on-continuous}
+\lean{MIPRE.Tailored.Sofic.Measure.Represents, MIPRE.Tailored.Sofic.Measure.ValidC,
+  MIPRE.Tailored.Sofic.Measure.Represents.value_eq, MIPRE.Tailored.Sofic.Measure.decodeAct,
+  MIPRE.Tailored.Sofic.Measure.codeOf, MIPRE.Tailored.Sofic.Measure.lowerSeq,
+  MIPRE.Tailored.Sofic.Measure.dyadic, MIPRE.Tailored.Sofic.Measure.lowerSeq_le,
+  MIPRE.Tailored.Sofic.Measure.lowerSeq_monotone, MIPRE.Tailored.Sofic.Measure.tendsto_lowerSeq,
+  MIPRE.Tailored.Sofic.Measure.primrec_lowerSeq, MIPRE.Tailored.Sofic.Measure.mainTheoremI_one}
+\leanok
+There is a primitive recursive $\alpha(T, t)$ such that $\alpha(T,t)/2^t$ is non-decreasing in
+$t$, at most $\mathrm{val}_{\mathrm{sof}}(T)$, and converges to it.
 \end{theorem}
 
 \begin{proof}
-Under the conjecture the sofic value equals the ergodic value (Corollary~I:550), which is
-approximable from above by pseudo-subgroup polytopes (Main Theorem~I, I:594), while the sofic
-value is approximable from below by enumerating finite actions; so it is approximable, against
-Theorem~\ref{thm:sofic-not-approximable}. In progress.
+\leanok
+Enumerate the finite actions by codes; $\alpha(T, t)/2^t$ is the largest value of the first $t$
+codes' actions, rounded down to a multiple of $2^{-t}$.
+\end{proof}
+
+\begin{lemma}[From word indicators to invariant random subgroups]
+\label{lem:irs-of-good}
+\uses{def:erg-value}
+\lean{MIPRE.Tailored.Sofic.Measure.valΩ, MIPRE.Tailored.Sofic.Measure.Good,
+  MIPRE.Tailored.Sofic.Measure.wordEval, MIPRE.Tailored.Sofic.Measure.evW,
+  MIPRE.Tailored.Sofic.Measure.conjW, MIPRE.Tailored.Sofic.Measure.toSub,
+  MIPRE.Tailored.Sofic.Measure.irs_of_good, MIPRE.Tailored.Sofic.Measure.valOn_eq_valΩ}
+\leanok
+Index the indicator of a subgroup by words rather than group elements. A probability measure on
+word indicators carried by the indicators that respect free reduction and the subgroup axioms,
+and invariant under conjugation by each letter, is the image of an IRS with the same value
+against every test.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The good indicators are the complement of a countable union of clopen sets, and on them
+evaluation at a reduced word is a subgroup indicator; push forward and check invariance on
+generators.
+\end{proof}
+
+\begin{definition}[Pseudo-subgroup polytopes, discretized; I:927, I:1105]
+\label{def:pseudo-subgroup-polytope}
+\uses{def:subgroup-test}
+\lean{MIPRE.Tailored.Sofic.Measure.wordsUpTo, MIPRE.Tailored.Sofic.Measure.stageW,
+  MIPRE.Tailored.Sofic.Measure.stageD, MIPRE.Tailored.Sofic.Measure.goodP,
+  MIPRE.Tailored.Sofic.Measure.allVecs, MIPRE.Tailored.Sofic.Measure.invErr,
+  MIPRE.Tailored.Sofic.Measure.Feasible, MIPRE.Tailored.Sofic.Measure.numG,
+  MIPRE.Tailored.Sofic.Measure.maxNum, MIPRE.Tailored.Sofic.Measure.Covers,
+  MIPRE.Tailored.Sofic.Measure.upperSeq}
+\leanok
+At stage $t$ take the words of length at most $t+2$ in the first $n+t$ letters, and the grid
+points of weight $M = P \cdot 2^t$ on its $P$ patterns. A grid point is feasible when every
+pattern of positive weight is locally closed (contains the empty word, closed under cancelling a
+pair, deleting a letter beyond the $n$ generators, and $u, v \mapsto u v^{-1}$ within the stage)
+and conjugation by each generator moves it by at most $4P$ in $\ell^1$. The upper value at stage
+$t$ is the best value of a feasible point, plus $2/2^t$, rounded up to a multiple of $2^{-t}$.
+This replaces the paper's pseudo IRS polytope and its linear program by an exhaustive search over
+a grid, with the invariance relaxed to absorb rounding.
+\end{definition}
+
+\begin{lemma}[The upper value bounds the ergodic value]
+\label{lem:erg-le-upper}
+\uses{def:pseudo-subgroup-polytope,lem:irs-of-good}
+\lean{MIPRE.Tailored.Sofic.Measure.exists_rounding,
+  MIPRE.Tailored.Sofic.Measure.exists_feasible_of_irs,
+  MIPRE.Tailored.Sofic.Measure.valOn_le_upperSeq,
+  MIPRE.Tailored.Sofic.Measure.valErg_le_upperSeq}
+\leanok
+For every stage $t$, $\mathrm{val}_{\mathrm{erg}}(T) \leq \mathrm{upper}(T, t)/2^t$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Round the restriction of an IRS to the stage's words to the grid: it is feasible, and its value
+is within $2/2^t$ of the IRS's.
+\end{proof}
+
+\begin{lemma}[The upper value converges to the ergodic value]
+\label{lem:upper-converge}
+\uses{lem:erg-le-upper,lem:irs-of-good}
+\lean{MIPRE.Tailored.Sofic.Measure.isPiSystem_cylinders,
+  MIPRE.Tailored.Sofic.Measure.eventually_valΩ_le, MIPRE.Tailored.Sofic.Measure.liftStage,
+  MIPRE.Tailored.Sofic.Measure.valΩ_liftStage, MIPRE.Tailored.Sofic.Measure.tendsto_upperSeq}
+\leanok
+$\mathrm{upper}(T, t)/2^t \to \mathrm{val}_{\mathrm{erg}}(T)$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Lift the optimal feasible point of each stage to a measure on word indicators. The probability
+measures on word indicators form a compact space, so a subsequence converges; the limit is
+carried by the good indicators and is invariant, because the cylinder sets are a generating
+$\pi$-system and the stage's conditions hold on ever more of them. By
+Lemma~\ref{lem:irs-of-good} it is an IRS, and the value is continuous.
+\end{proof}
+
+\begin{theorem}[Main Theorem~I (2): the ergodic value is approximable from above; I:594]
+\label{thm:main-theorem-i-upper}
+\uses{lem:erg-le-upper,lem:upper-converge}
+\lean{MIPRE.Tailored.Sofic.Measure.primrec_upperSeq, MIPRE.Tailored.Sofic.Measure.upperMin,
+  MIPRE.Tailored.Sofic.Measure.primrec_upperMin, MIPRE.Tailored.Sofic.Measure.valErg_le_upperMin,
+  MIPRE.Tailored.Sofic.Measure.antitone_upperMin, MIPRE.Tailored.Sofic.Measure.mainTheoremI_two,
+  MIPRE.Tailored.Sofic.Measure.ErgUpperApprox, MIPRE.Tailored.Sofic.Measure.MainTheoremITwo,
+  MIPRE.Tailored.Sofic.Measure.ergUpperApprox, MIPRE.Tailored.Sofic.Measure.mainTheoremITwo}
+\leanok
+There is a primitive recursive $\beta(T, t)$ such that $\beta(T,t)/2^t$ is non-increasing in
+$t$, at least $\mathrm{val}_{\mathrm{erg}}(T)$, and converges to it.
+\end{theorem}
+
+\begin{proof}
+\leanok
+The running minimum of the upper values, which is primitive recursive because the stage search
+is.
+\end{proof}
+
+\begin{corollary}[Aldous--Lyons makes the sofic value approximable; Corollary~I:605]
+\label{cor:al-sof-approximable}
+\uses{cor:sof-eq-erg,thm:main-theorem-i-lower,thm:main-theorem-i-upper,def:sofic-approximable}
+\lean{MIPRE.Tailored.Sofic.Measure.ceilDiv, MIPRE.Tailored.Sofic.Measure.approx_of_bounds,
+  MIPRE.Tailored.Sofic.Measure.sofValueApproximable_of,
+  MIPRE.Tailored.Sofic.Measure.sofValueApproximable_of_aldousLyons}
+\leanok
+If the Aldous--Lyons conjecture holds, the sofic value is approximable.
+\end{corollary}
+
+\begin{proof}
+\leanok
+Under the conjecture both sequences converge to the same value from either side; run them until
+their gap is at most $1/(k+1)$, which happens, and output a point between them.
+\end{proof}
+
+\begin{theorem}[The Aldous--Lyons conjecture is false; Corollary~I:2144]
+\label{thm:aldous-lyons-false}
+\uses{def:aldous-lyons,thm:sofic-not-approximable,thm:main-theorem-ii,cor:al-sof-approximable}
+\lean{MIPRE.Tailored.Sofic.Measure.aldous_lyons_false_of_upper,
+  MIPRE.Tailored.Sofic.Measure.aldous_lyons_false_of, MIPRE.Tailored.Sofic.aldous_lyons_false}
+\leanok
+A halting reduction to tailored games refutes the Aldous--Lyons conjecture.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Under the conjecture the sofic value is approximable (Corollary~\ref{cor:al-sof-approximable}),
+against Theorem~\ref{thm:sofic-not-approximable} with Main Theorem~II.
+\end{proof}
+
+\begin{corollary}[The Aldous--Lyons conjecture is false, from tailored answer reduction]
+\label{cor:aldous-lyons-false-ar}
+\uses{thm:aldous-lyons-false,cor:tmip-re-from-ar}
+\lean{MIPRE.Tailored.aldous_lyons_false_of_answerReduction}
+\leanok
+A tailored answer reduction at input level~$5$ refutes the Aldous--Lyons conjecture.
+\end{corollary}
+
+\begin{proof}
+\leanok
+Theorem~\ref{thm:aldous-lyons-false} with the halting reduction of
+Corollary~\ref{cor:tmip-re-from-ar}.
 \end{proof}
