@@ -33,7 +33,9 @@ systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`), and so are P4g, the desc
 three windows (`MIPRE.SAT.windowDescriber`), and P4f, the output indicator
 (`MIPRE/Tailored/AnsRed/Indicator*.lean`), and P4b, the PCP: its blocks, checks and soundness
 (`MIPRE/Tailored/AnsRed/{Pcp,PcpSound}.lean`) and its completeness (`PcpComplete.lean`). P4c, the
-game, has begun with the functional viewpoint's completeness (`PcpHonest.lean`).
+game, is done: the functional viewpoint's completeness (`PcpHonest.lean`), the PCP's slots
+(`Slots.lean`) and the typed tailored data with its reading
+(`Background/Tailored/AnswerReduction/Typed.lean`). P4d, its ZPC completeness, is next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -991,12 +993,21 @@ What the reading settled.
   of accepted answers — the readable answers padded to `2^ℓ`, `O = lsTable`, witnesses of
   `DescribesWindows` chosen from the readable data alone (`honestR`), and `Extend` of the linear
   answers, `F₂`-linear in them (`honestL`, `honestL_xorBits`) — whose honest PCP satisfies the
-  checks identically (`identities_honest`). Then: typed tailored data on `Role × LIDT.CL.Ty`
-  over the direct sum of the oracle content and the seeded test's content, built from abstract
-  data: the input's game at index `n` and a circuit family `C x y` with its specification (it
-  describes `L*(x, y, ·)`). The four checks are bit-level rows (an `F_q`-linear check is `t` rows
-  under `BinField`, `Tailored/Intro/LinearCheck.lean`); the functional viewpoint
-  (cor:functional_viewpoint_final) combines P4a, P4b and the specification.
+  checks identically (`identities_honest`). Then (done, 1.3k lines): `Tailored/AnsRed/Slots.lean`
+  names the PCP's polynomials (`Slot`, readable first; `slotsOf`: all of them for the oracle,
+  `g_A, g_{La}` for Alice, `g_B, g_{Lb}` for Bob), reads the thirteen checks off slot values
+  (`PassesV`, split into `PassesR` and `PassesL`), and rebuilds a PCP from polynomials on more
+  variables that depend only on their blocks (`Pcp.ofPolys`, the soundness side).
+  `Background/Tailored/AnswerReduction/Typed.lean` is the typed tailored data (`tdata`) on
+  `Role × LIDT.CL.Ty` at one index, from abstract data: the field `q = 2^t`, `M = 2^j ≥ m`
+  variables for the seeded test (so that `M ∣ q`), the degree `d`, the input sampler's dimension
+  `r`, a seed selector, and a circuit polynomial per seed. Answers are codeword-major, readable
+  codewords first (`decAns` reads them as answers of `LIDT.CL.clGame`); the four checks are
+  `F₂`-linear rows (`ldCons`, `consCons`, `indCons`, `proofCons`, through `fieldChecks`), and
+  `cons_iff`/`accepts_iff` read them as the field-level predicate `ArPred`: the seeded test at one
+  role, slot equality at one low-degree type, indifference at axis-parallel lines, and
+  `PassesV` at the oracle's point. The degree `d` is a parameter: the honest PCP has degree 17
+  (P4b), so the instance takes `d ≥ 17` where the paper has 9.
 - **P4d — ZPC completeness (1.5–2.5k).** The oracularized strategy (the oracle's observables are
   the isolated players', which commute along edges), then data processing along `eval_ρ ∘ Ind`
   and `eval_ρ ∘ PCP_z`, affine in the linear answers with coefficients read from the readable
