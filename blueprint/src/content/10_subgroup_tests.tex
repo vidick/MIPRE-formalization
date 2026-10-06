@@ -468,7 +468,7 @@ codes' actions, rounded down to a multiple of $2^{-t}$.
 
 \begin{lemma}[From word indicators to invariant random subgroups]
 \label{lem:irs-of-good}
-\uses{def:erg-value}
+\uses{def:erg-value,def:assoc-test}
 \lean{MIPRE.Tailored.Sofic.Measure.valΩ, MIPRE.Tailored.Sofic.Measure.Good,
   MIPRE.Tailored.Sofic.Measure.wordEval, MIPRE.Tailored.Sofic.Measure.evW,
   MIPRE.Tailored.Sofic.Measure.conjW, MIPRE.Tailored.Sofic.Measure.toSub,
@@ -489,7 +489,7 @@ generators.
 
 \begin{definition}[Pseudo-subgroup polytopes, discretized; I:927, I:1105]
 \label{def:pseudo-subgroup-polytope}
-\uses{def:subgroup-test}
+\uses{def:subgroup-test,def:assoc-test,lem:irs-of-good}
 \lean{MIPRE.Tailored.Sofic.Measure.wordsUpTo, MIPRE.Tailored.Sofic.Measure.stageW,
   MIPRE.Tailored.Sofic.Measure.stageD, MIPRE.Tailored.Sofic.Measure.goodP,
   MIPRE.Tailored.Sofic.Measure.allVecs, MIPRE.Tailored.Sofic.Measure.invErr,
@@ -509,7 +509,7 @@ a grid, with the invariance relaxed to absorb rounding.
 
 \begin{lemma}[The upper value bounds the ergodic value]
 \label{lem:erg-le-upper}
-\uses{def:pseudo-subgroup-polytope,lem:irs-of-good}
+\uses{def:pseudo-subgroup-polytope,lem:irs-of-good,def:assoc-test,thm:main-theorem-i-lower}
 \lean{MIPRE.Tailored.Sofic.Measure.exists_rounding,
   MIPRE.Tailored.Sofic.Measure.exists_feasible_of_irs,
   MIPRE.Tailored.Sofic.Measure.valOn_le_upperSeq,
@@ -526,7 +526,7 @@ is within $2/2^t$ of the IRS's.
 
 \begin{lemma}[The upper value converges to the ergodic value]
 \label{lem:upper-converge}
-\uses{lem:erg-le-upper,lem:irs-of-good}
+\uses{lem:erg-le-upper,lem:irs-of-good,def:assoc-test,lem:val-on-continuous,thm:main-theorem-i-lower}
 \lean{MIPRE.Tailored.Sofic.Measure.isPiSystem_cylinders,
   MIPRE.Tailored.Sofic.Measure.eventually_valΩ_le, MIPRE.Tailored.Sofic.Measure.liftStage,
   MIPRE.Tailored.Sofic.Measure.valΩ_liftStage, MIPRE.Tailored.Sofic.Measure.tendsto_upperSeq}
@@ -545,7 +545,7 @@ Lemma~\ref{lem:irs-of-good} it is an IRS, and the value is continuous.
 
 \begin{theorem}[Main Theorem~I (2): the ergodic value is approximable from above; I:594]
 \label{thm:main-theorem-i-upper}
-\uses{lem:erg-le-upper,lem:upper-converge}
+\uses{lem:erg-le-upper,lem:upper-converge,def:assoc-test,lem:assoc-test-primrec,thm:main-theorem-i-lower}
 \lean{MIPRE.Tailored.Sofic.Measure.primrec_upperSeq, MIPRE.Tailored.Sofic.Measure.upperMin,
   MIPRE.Tailored.Sofic.Measure.primrec_upperMin, MIPRE.Tailored.Sofic.Measure.valErg_le_upperMin,
   MIPRE.Tailored.Sofic.Measure.antitone_upperMin, MIPRE.Tailored.Sofic.Measure.mainTheoremI_two,
