@@ -683,6 +683,10 @@ public import MIPRE.Background.Repetition.TracialApprox
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
+public import MIPRE.Background.Tailored.AnswerReduction.ArFamily
+public import MIPRE.Background.Tailored.AnswerReduction.Complete
+public import MIPRE.Background.Tailored.AnswerReduction.Honest
+public import MIPRE.Background.Tailored.AnswerReduction.HonestBits
 public import MIPRE.Background.Tailored.AnswerReduction.Typed
 public import MIPRE.Background.Tailored.Intro.Budget
 public import MIPRE.Background.Tailored.Intro.Complete
@@ -1448,6 +1452,7 @@ public import MIPRE.TM.MultiInput.Deterministic
 public import MIPRE.TM.MultiInput.OneInputEquiv
 public import MIPRE.TM.Universal.Spec
 public import MIPRE.Tactics
+public import MIPRE.Tailored.AnsRed.HonestPair
 public import MIPRE.Tailored.AnsRed.Indicator
 public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.AnsRed.IndicatorProg
@@ -1465,6 +1470,7 @@ public import MIPRE.Tailored.ClassPolyTab
 public import MIPRE.Tailored.ClassVerifier
 public import MIPRE.Tailored.Compose
 public import MIPRE.Tailored.Compression
+public import MIPRE.Tailored.ControlledBits
 public import MIPRE.Tailored.Data.Bridge
 public import MIPRE.Tailored.Data.Convert
 public import MIPRE.Tailored.Data.Presents

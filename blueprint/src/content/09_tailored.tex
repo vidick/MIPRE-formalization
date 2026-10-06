@@ -2917,3 +2917,181 @@ answers; the readable checks of the proof check read only readable values, which
 readable part.
 \end{proof}
 
+
+\subsection{Completeness of the answer-reduced game}
+
+The honest strategy of the answer-reduced game measures the oracularization of a perfect
+Z-aligned permutation strategy of the input (Lemma~\ref{lem:oracular-completeness}), and answers
+each typed question with the honest low-degree answers of the polynomials of the honest PCP of the
+input answers (cor:functional\_viewpoint\_final): the oracle with all of them, an isolated player
+with the two of its own answer. Its answers pass the four checks
+(Lemma~\ref{lem:ar-honest-checks}), and its answer bits are signed permutations, diagonal at the
+readable bits, because each is, the readable input bits fixed, an $\F_2$-affine function of the
+linear ones (Lemma~\ref{lem:ar-honest-bits}).
+
+\begin{definition}[The honest answers]
+\label{def:ar-honest-answers}
+\uses{lem:ar-pcp-honest,def:ar-tailored-game,def:line-restriction}
+\lean{MIPRE.Tailored.AnsRed.pairPcp, MIPRE.Tailored.AnsRed.circOf,
+  MIPRE.Tailored.AnsRed.HonestHyp, MIPRE.Tailored.AnsRed.Typed.encCws,
+  MIPRE.Tailored.AnsRed.Typed.honestCoef, MIPRE.Tailored.AnsRed.Typed.honestBits,
+  MIPRE.Tailored.AnsRed.Typed.ldPolys, MIPRE.Tailored.AnsRed.Typed.inSeeded,
+  MIPRE.Tailored.AnsRed.Typed.rolePcp, MIPRE.Tailored.AnsRed.Typed.honestAns}
+\leanok
+The honest PCP of an answer pair $(a, b)$ at a question pair $(x, y)$ is $\mathrm{Induce}$ of the
+readable tables of the readable parts of $a, b$ and the linear tables of their linear parts. The
+honest answer of a tuple of polynomials on the test's $M$ variables to a question of the seeded
+low-degree test is its values at a point, or the coefficients of its restrictions to a line, each
+field element as its canonical bits, codeword after codeword. At a typed question of role $r$,
+to an answer of the oracularized input game, the honest answer is the honest answer of the role's
+codewords of the PCP of the oracle's pair at the questions of its seed, or of an isolated
+player's answer paired with itself. The hypotheses under which these PCPs satisfy the checks at
+every seed are that the parameters fit the lengths and constraints of the input game and that
+each seed's circuit describes the output indicator through the windows of its question pair
+within a time $L^*$ meets.
+\end{definition}
+
+\begin{lemma}[The honest PCP of an answer pair]
+\label{lem:ar-pair-pcp}
+\uses{def:ar-honest-answers,lem:ar-pcp-parts,lem:ar-pcp-honest}
+\lean{MIPRE.Tailored.AnsRed.slot_pairPcp_readable, MIPRE.Tailored.AnsRed.slot_pairPcp_affine,
+  MIPRE.Tailored.AnsRed.slot_pairPcp_alice, MIPRE.Tailored.AnsRed.slot_pairPcp_bob,
+  MIPRE.Tailored.AnsRed.indDeg_pairPcp, MIPRE.Tailored.AnsRed.accepts_halts,
+  MIPRE.Tailored.AnsRed.identities_pairPcp, MIPRE.Tailored.AnsRed.HonestHyp.identities}
+\leanok
+A readable polynomial of the honest PCP depends only on the readable answers; a linear one is,
+the readable answers fixed, $\F_2$-affine in the linear answers. Alice's polynomials depend only
+on her question and answer, when that answer carries its readable part and the part fits the
+table, and Bob's only on his; so they are the oracle's in the same slots. The PCP has individual
+degree at most $17$, and under the hypotheses of Definition~\ref{def:ar-honest-answers} the PCP of
+an answer pair the input game accepts satisfies the thirteen checks identically.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The readable tables are read off the readable answers, and the readable polynomials off the
+readable tables. The linear tables are additive in the linear answers and the linear polynomials
+affine in the linear tables (Lemma~\ref{lem:ar-pcp-parts}). Alice's encodings read only the cells
+of the padded readable answer and of her linear answer below $2^\ell$, Bob's only his. An accepted
+pair makes the verifier's programs halt, since otherwise its constraint rejects everything; then
+Lemma~\ref{lem:ar-pcp-honest} applies.
+\end{proof}
+
+\begin{lemma}[The checks hold of honest answers]
+\label{lem:ar-honest-checks}
+\uses{def:ar-honest-answers,lem:ar-pair-pcp,lem:oracular-completeness,lem:ar-completeness}
+\lean{MIPRE.Tailored.AnsRed.Typed.cw_encCws, MIPRE.Tailored.AnsRed.Typed.decAns_honestBits,
+  MIPRE.Tailored.AnsRed.Typed.accepts_honestBits, MIPRE.Tailored.AnsRed.Typed.indOK_honestBits,
+  MIPRE.Tailored.AnsRed.Typed.isoAgrees_honestBits,
+  MIPRE.Tailored.AnsRed.Typed.passesV_honestBits, MIPRE.Tailored.AnsRed.Typed.arPred_honest}
+\leanok
+At two typed questions read off one seed, honest answers to answers of the oracularized input game
+that its predicate accepts pass the four checks of the answer-reduced predicate, for a degree
+$d \geq 17$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:ar-slots}
+\leanok
+The two low-degree questions come from one sample of the seeded test. Equal roles carry equal
+oracularized answers, so one tuple of polynomials of individual degree at most $d$ answers both,
+and the test accepts its honest answers. At one low-degree type the questions agree, and an
+isolated player's polynomials are the oracle's in its slots. A codeword whose block misses the
+direction of an axis-parallel line does not involve that variable, so its restriction to the line
+is constant. An oracle's pair is accepted by the input game, so its PCP satisfies the identities,
+and the values of the oracle's point answer are the PCP's values at the point.
+\end{proof}
+
+\begin{lemma}[Bits controlled by readable data]
+\label{lem:ar-controlled-bits}
+\uses{lem:input-answer-bits,lem:zpc-pcc,def:ld-encoding}
+\lean{MIPRE.Tailored.isSignedPerm_controlledSum, MIPRE.Tailored.isXBit_controlledBy,
+  MIPRE.Tailored.isZBit_comp_of_isDiag, MIPRE.Tailored.isDiag_coarse_of_isZBit,
+  MIPRE.Tailored.IsAffine2.eq_sum, MIPRE.Tailored.isXBit_affine,
+  MIPRE.Tailored.isXBit_of_controlledAffine, MIPRE.Tailored.isZBit_of_readable,
+  MIPRE.Tailored.PermStrategy.toSync_len, MIPRE.Tailored.PermStrategy.toSync_bit}
+\leanok
+Let $P$ be a projective measurement on $\C^m$. A bit of its outcome that is a function of some
+Z-bits of $P$ (bits whose observables are diagonal signed permutations) is a Z-bit. A bit that is,
+for each value of those Z-bits, an $\F_2$-affine function of some X-bits of $P$ (bits whose
+observables are signed permutations) is an X-bit. The answer bits of the synchronous strategy of a
+permutation strategy are X-bits, and Z-bits below the readable length.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The coarse-graining of $P$ along Z-bits is diagonal, and a sum $\sum_k \Pi_k W_k$ over a diagonal
+projective measurement $\Pi$ of signed permutations $W_k$ commuting with it is a signed
+permutation: on the basis vectors of outcome $k$ it acts as $W_k$, which keeps them there. An
+affine function of X-bits is a constant exclusive or of some of them, whose observable is a product
+of signed permutations.
+\end{proof}
+
+\begin{lemma}[The answer bits of the honest answers]
+\label{lem:ar-honest-bits}
+\uses{lem:ar-controlled-bits, lem:ar-pair-pcp, def:ar-honest-answers}
+\lean{MIPRE.Tailored.AnsRed.Typed.getD_honestBits_readable,
+  MIPRE.Tailored.AnsRed.Typed.ofBool_getD_pairPcp_affine, MIPRE.Tailored.AnsRed.Typed.isXBit_diag,
+  MIPRE.Tailored.AnsRed.Typed.isZBit_diag, MIPRE.Tailored.AnsRed.Typed.isXBit_pair,
+  MIPRE.Tailored.AnsRed.Typed.isZBit_pair}
+\leanok
+The answer bits of an isolated player's honest answer are X-bits of the input strategy's
+measurement at its question, and its readable answer bits are Z-bits; the same holds of the
+oracle's honest answer and the input strategy's measurements at both questions of its seed,
+jointly.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:presentation-transport,lem:ar-slots}
+\leanok
+A readable bit lies in a readable codeword, a function of the readable input bits, which are
+Z-bits. Every bit is, the readable input bits fixed, affine in the linear input bits, which are
+X-bits: the codewords are affine in them, and values, restrictions to lines and canonical bits of
+field elements are additive. Lemma~\ref{lem:ar-controlled-bits} concludes.
+\end{proof}
+
+\begin{definition}[The honest strategy of the answer-reduced game]
+\label{def:ar-honest-strategy}
+\uses{def:ar-honest-answers,lem:oracular-completeness,lem:zpc-pcc,lem:detype-game-soundness,
+  def:ar-typed-game}
+\lean{MIPRE.Tailored.AnsRed.Typed.arGraph, MIPRE.Tailored.AnsRed.Typed.arDt,
+  MIPRE.Tailored.AnsRed.Typed.ArSampler, MIPRE.Tailored.AnsRed.Typed.arGame,
+  MIPRE.Tailored.AnsRed.Typed.auxGame, MIPRE.Tailored.AnsRed.Typed.pullStrat,
+  MIPRE.Tailored.AnsRed.Typed.inSync, MIPRE.Tailored.AnsRed.Typed.orStrat,
+  MIPRE.Tailored.AnsRed.Typed.arStrat, MIPRE.Tailored.AnsRed.Typed.arCl,
+  MIPRE.Tailored.AnsRed.Typed.arSampler_arCl}
+\leanok
+An answer-reduced sampler is a family of CL functions on the typed questions whose questions carry
+the oracularized input question of the seed's input part, in the type's role, and the question of
+the seeded low-degree test of the seed's low-degree part. One is the direct sum of the
+oracularized input sampler and the seeded test's presentation, downsized along the Shoup basis.
+The answer-reduced typed game samples a pair of types and a seed and accepts by the typed data.
+Its honest strategy is the oracularization of the input's synchronous strategy, pulled back to
+the typed questions along their roles and oracularized parts and pushed forward along the honest
+answers.
+\end{definition}
+
+\begin{theorem}[ZPC completeness of the answer-reduced game]
+\label{thm:ar-zpc-complete}
+\uses{def:ar-honest-strategy, lem:ar-honest-checks, lem:ar-honest-bits, lem:presentation-typed}
+\lean{MIPRE.Tailored.AnsRed.Typed.isPCC_arStrat, MIPRE.Tailored.AnsRed.Typed.value_arStrat,
+  MIPRE.Tailored.AnsRed.Typed.arStrat_support, MIPRE.Tailored.AnsRed.Typed.isXBit_arStrat,
+  MIPRE.Tailored.AnsRed.Typed.isZBit_arStrat, MIPRE.Tailored.AnsRed.Typed.hasPerfectZPC_ar}
+\leanok
+If the input's $n$-th game has a perfect Z-aligned permutation strategy, so does the
+answer-reduced game presented by the typed data on the typed game of an answer-reduced sampler,
+for a degree $d \geq 17$, an answer bound at least the types' lengths, and circuits under which the
+honest PCPs of accepted answers satisfy the checks.
+\end{theorem}
+
+\begin{proof}
+\uses{lem:ar-tailored-reading}
+\leanok
+The honest strategy is PCC because the oracularization is, its questions of positive weight
+having oracularized parts of positive weight. It is perfect because every outcome it produces at
+such a pair is accepted by the oracularized predicate, which Lemma~\ref{lem:ar-honest-checks} turns
+into acceptance by the typed data. It charges only answers of the types' lengths, and its bit
+observables are those of the oracularized measurements along the honest answers, signed
+permutations diagonal at the readable bits by Lemma~\ref{lem:ar-honest-bits}.
+Lemma~\ref{lem:presentation-typed} concludes.
+\end{proof}

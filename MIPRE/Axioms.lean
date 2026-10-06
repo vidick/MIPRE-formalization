@@ -254,6 +254,11 @@ public import MIPRE.Tailored.AnsRed.PcpComplete
 public import MIPRE.Tailored.AnsRed.PcpHonest
 public import MIPRE.Tailored.AnsRed.Slots
 public import MIPRE.Background.Tailored.AnswerReduction.Typed
+public import MIPRE.Tailored.ControlledBits
+public import MIPRE.Tailored.AnsRed.HonestPair
+public import MIPRE.Background.Tailored.AnswerReduction.Honest
+public import MIPRE.Background.Tailored.AnswerReduction.HonestBits
+public import MIPRE.Background.Tailored.AnswerReduction.Complete
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -3983,6 +3988,38 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.AnsRed.Typed.indCons_iff_b, MIPRE.Tailored.AnsRed.Typed.proofCons_iff_a,
   MIPRE.Tailored.AnsRed.Typed.proofCons_iff_b, MIPRE.Tailored.AnsRed.Typed.cons_iff,
   MIPRE.Tailored.AnsRed.Typed.accepts_iff
+
+-- blueprint `lem:ar-pair-pcp`
+#guard_sorry_free MIPRE.Tailored.AnsRed.slot_pairPcp_readable,
+  MIPRE.Tailored.AnsRed.slot_pairPcp_affine, MIPRE.Tailored.AnsRed.slot_pairPcp_alice,
+  MIPRE.Tailored.AnsRed.slot_pairPcp_bob, MIPRE.Tailored.AnsRed.indDeg_pairPcp,
+  MIPRE.Tailored.AnsRed.accepts_halts, MIPRE.Tailored.AnsRed.identities_pairPcp,
+  MIPRE.Tailored.AnsRed.HonestHyp.identities
+
+-- blueprint `lem:ar-honest-checks`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.cw_encCws,
+  MIPRE.Tailored.AnsRed.Typed.decAns_honestBits, MIPRE.Tailored.AnsRed.Typed.accepts_honestBits,
+  MIPRE.Tailored.AnsRed.Typed.indOK_honestBits, MIPRE.Tailored.AnsRed.Typed.isoAgrees_honestBits,
+  MIPRE.Tailored.AnsRed.Typed.passesV_honestBits, MIPRE.Tailored.AnsRed.Typed.arPred_honest
+
+-- blueprint `lem:ar-controlled-bits`
+#guard_sorry_free MIPRE.Tailored.isSignedPerm_controlledSum, MIPRE.Tailored.isXBit_controlledBy,
+  MIPRE.Tailored.isZBit_comp_of_isDiag, MIPRE.Tailored.isDiag_coarse_of_isZBit,
+  MIPRE.Tailored.IsAffine2.eq_sum, MIPRE.Tailored.isXBit_affine,
+  MIPRE.Tailored.isXBit_of_controlledAffine, MIPRE.Tailored.isZBit_of_readable,
+  MIPRE.Tailored.PermStrategy.toSync_len, MIPRE.Tailored.PermStrategy.toSync_bit
+
+-- blueprint `lem:ar-honest-bits`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.getD_honestBits_readable,
+  MIPRE.Tailored.AnsRed.Typed.ofBool_getD_pairPcp_affine, MIPRE.Tailored.AnsRed.Typed.isXBit_diag,
+  MIPRE.Tailored.AnsRed.Typed.isZBit_diag, MIPRE.Tailored.AnsRed.Typed.isXBit_pair,
+  MIPRE.Tailored.AnsRed.Typed.isZBit_pair
+
+-- blueprint `thm:ar-zpc-complete`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.isPCC_arStrat,
+  MIPRE.Tailored.AnsRed.Typed.value_arStrat, MIPRE.Tailored.AnsRed.Typed.arStrat_support,
+  MIPRE.Tailored.AnsRed.Typed.isXBit_arStrat, MIPRE.Tailored.AnsRed.Typed.isZBit_arStrat,
+  MIPRE.Tailored.AnsRed.Typed.hasPerfectZPC_ar
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
