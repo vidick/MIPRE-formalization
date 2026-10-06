@@ -3095,3 +3095,359 @@ observables are those of the oracularized measurements along the honest answers,
 permutations diagonal at the readable bits by Lemma~\ref{lem:ar-honest-bits}.
 Lemma~\ref{lem:presentation-typed} concludes.
 \end{proof}
+
+\subsection{Soundness of the answer-reduced game}
+
+The soundness of the answer-reduced game (prop:completeness\_soundness\_combi\_ans\_red, item 2)
+follows the paper's perturbations in a bipartite model in which the seeded low-degree test is sound
+(Definition~\ref{def:lidt-sound-in}): polynomial measurements at every role
+(Lemma~\ref{lem:ar-sound-extract}), pruned to block-local outcomes
+(Lemma~\ref{lem:ar-sound-indifference}) that pass the proof check densely
+(Lemma~\ref{lem:ar-sound-check}), and decoded to answers of the input game
+(Lemma~\ref{lem:ar-decoded-value}). Two things differ from the paper. The model's soundness gives
+conclusions at points only, so the indifference check is read at two points of one axis-parallel
+line instead of at the line. And the decoded strategy plays the typed oracularized game of the
+input, oracle included, so the bound reaches $\valstar(\verifier_n)$ through detyping and
+oracularization, and is stated in the error of the test's soundness rather than through the
+paper's $10^6 m \delta^{1/8} / (1 - 72 m / q)$ for the double cover.
+
+Throughout, $T$ is a projective strategy in such a model for the answer-reduced typed game on an
+answer-reduced sampler, $\theta = 1 - \val(T)$ its failure, $Z$ the seeds of the input sampler,
+$W = \Fq^{D}$ the registers of the seeded test, $M = 2^j$ the test's variables, $d$ its individual
+degree, and $\mathrm{dis}(P, Q)$ the disagreement of a measurement $P$ of Alice's and $Q$ of
+Bob's.
+
+\begin{definition}[The per-role low-degree strategies]
+\label{def:ar-sound-roles}
+\uses{def:ar-honest-strategy,def:lidt-cl,def:model-proj-strategy}
+\lean{MIPRE.Tailored.AnsRed.Typed.ldBits, MIPRE.Tailored.AnsRed.Typed.arQr,
+  MIPRE.Tailored.AnsRed.Typed.ldq, MIPRE.Tailored.AnsRed.Typed.oq,
+  MIPRE.Tailored.AnsRed.Typed.roleStrat, MIPRE.Tailored.AnsRed.Typed.edgeFail}
+\leanok
+At the seed $(z, w) \in Z \times W$, the typed question of type $(r, \tau)$ carries the
+oracularized input question $y_r(z)$ of the role $r$ at $z$ and the seeded test's question of type
+$\tau$ of the sample the registers $w$ carry. The per-role strategy of $T$ at a role $r$ and an
+oracularized question $y$ is the strategy for the seeded low-degree test, with one codeword per
+slot of the role, that plays $T$ at the typed questions carrying $y$ and reads the role's
+codewords off its answers. The failure of $T$ at a pair of types and a seed is its failure at the
+two typed questions they determine.
+\end{definition}
+
+\begin{lemma}[The per-role failures]
+\label{lem:ar-sound-roles}
+\uses{def:ar-sound-roles,lem:ar-tailored-reading}
+\lean{MIPRE.Tailored.AnsRed.Typed.eval_seed, MIPRE.Tailored.AnsRed.Typed.arDt_role,
+  MIPRE.Tailored.AnsRed.Typed.one_sub_value_roleStrat_le,
+  MIPRE.Tailored.AnsRed.Typed.one_sub_value_eq_sum, MIPRE.Tailored.AnsRed.Typed.sum_edges_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_edge_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_one_sub_value_roleStrat_le}
+\leanok
+The failure $\theta$ is the average of $T$'s failure over the $81$ pairs of types and the seeds,
+so its failures at any set of pairs of types sum, over the seeds, to at most $81 |Z| |W| \theta$.
+At two typed questions of one role and one oracularized question, the typed data's low-degree
+check is the test's predicate on the role's codewords, and the per-role strategies' failures at
+$y_r(z)$ sum over $z \in Z$ to at most $9 |Z| \theta$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:transports-model,lem:model-proj-strategy}
+\leanok
+The detyped failure is the average over the pairs of types and the seeds of the failure at the
+questions an answer-reduced sampler gives them. A role's nine pairs of types are a ninth of the
+$81$, and the registers of a uniform vector carry a uniform sample of the test, with multiplicity
+one.
+\end{proof}
+
+\begin{definition}[The polynomial measurements]
+\label{def:ar-sound-extract}
+\uses{def:ar-sound-roles,def:lidt-sound-in,lem:lidt-ldc-error}
+\lean{MIPRE.Tailored.AnsRed.Typed.PolyR, MIPRE.Tailored.AnsRed.Typed.dS,
+  MIPRE.Tailored.AnsRed.Typed.epsR, MIPRE.Tailored.AnsRed.Typed.GA,
+  MIPRE.Tailored.AnsRed.Typed.GB}
+\leanok
+At a role $r$ with $k_r$ codewords, $\delta_r(\eps) = \delta_{\mathrm{sim}}(q, M, d, k_r, \eps)$ is
+the error of the seeded test's soundness. When the test is sound in the model, $G^\alice_{r,y}$ and
+$G^\bob_{r,y}$ are the projective measurements, in the two players' algebras, of $k_r$-tuples of
+polynomials of individual degree at most $d$ in $M$ variables that the test's soundness gives for
+the per-role strategy at a role $r$ and an oracularized question $y$; $G^\alice_r$ and $G^\bob_r$
+are those at $y_r(z)$.
+\end{definition}
+
+\begin{lemma}[The polynomial measurements]
+\label{lem:ar-sound-extract}
+\uses{def:ar-sound-extract,lem:ar-sound-roles,lem:ar-common-polynomials}
+\lean{MIPRE.Tailored.AnsRed.Typed.exists_extR, MIPRE.Tailored.AnsRed.Typed.extR_proj,
+  MIPRE.Tailored.AnsRed.Typed.extR_spec, MIPRE.Tailored.AnsRed.Typed.sum_deltaSimR_le}
+\leanok
+Let $\eps_{r,y}$ be the failure of the per-role strategy at $(r, y)$. The evaluations of
+$G^\bob_{r,y}$ at a uniform point are inconsistent with Alice's point answers of the per-role
+strategy, those of $G^\alice_{r,y}$ with Bob's, and $G^\alice_{r,y}$ with $G^\bob_{r,y}$, each at
+most $\delta_r(\eps_{r,y})$; and $\sum_{z} \delta_r(\eps_{r, y_r(z)}) \leq |Z|\,
+\delta_r(9 \theta)$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The first part is the test's soundness in the model. The second is Jensen's inequality for the
+concave error (Lemma~\ref{lem:ar-common-polynomials}), with Lemma~\ref{lem:ar-sound-roles}.
+\end{proof}
+
+\begin{lemma}[The point relations]
+\label{lem:ar-sound-relations}
+\uses{lem:ar-sound-extract,lem:ar-sound-roles,lem:ar-tailored-reading}
+\lean{MIPRE.Tailored.AnsRed.Typed.pv, MIPRE.Tailored.AnsRed.Typed.pvR,
+  MIPRE.Tailored.AnsRed.Typed.oc, MIPRE.Tailored.AnsRed.Typed.pvO,
+  MIPRE.Tailored.AnsRed.Typed.evalR, MIPRE.Tailored.AnsRed.Typed.restr,
+  MIPRE.Tailored.AnsRed.Typed.selR, MIPRE.Tailored.AnsRed.Typed.arPred_of_arDt,
+  MIPRE.Tailored.AnsRed.Typed.pvR_eq_pvO_of_arDt, MIPRE.Tailored.AnsRed.Typed.pvO_eq_pvR_of_arDt,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_edge_le, MIPRE.Tailored.AnsRed.Typed.sum_dis_MA_GB_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_GA_MB_le, MIPRE.Tailored.AnsRed.Typed.sum_dis_GA_GB_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_GAr_GBO_le, MIPRE.Tailored.AnsRed.Typed.sum_dis_GAO_GBr_le}
+\leanok
+Write $\mathrm{ev}_w$ for evaluation at the point the registers $w$ carry, and $\mathrm{res}_r$
+for the restriction of the oracle's tuple to the slots of an isolated role $r$. Summed over the
+seeds:
+\begin{enumerate}
+\item at one pair of types, if the typed data's acceptance forces two readings of the two answers
+to agree, their disagreement is at most $81 |Z| |W| \theta$; the consistency check at the point
+questions of an isolated role and the oracle forces the role's point values to be the oracle's
+in the role's slots;
+\item $\mathrm{ev}_w G^\bob_r$ disagrees with Alice's point values at most $|Z| |W|
+\delta_r(9\theta)$, $\mathrm{ev}_w G^\alice_r$ with Bob's likewise, and $G^\alice_r$ with
+$G^\bob_r$ at most $|Z| \delta_r(9\theta)$;
+\item for an isolated role $r$, $\mathrm{ev}_w G^\alice_r$ disagrees with
+$\mathrm{ev}_w \mathrm{res}_r G^\bob_\oracle$ at most $11 |Z| |W| (\delta_r(9\theta) + 81 \theta
++ \delta_\oracle(9\theta))$, and the same with the players exchanged.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-combined-points}
+\leanok
+The first part reads the typed data's acceptance (Lemma~\ref{lem:ar-tailored-reading}): two
+readings that acceptance forces to agree disagree at most as often as the strategy fails there,
+and Lemma~\ref{lem:ar-sound-roles} sums the failures. The second is
+Lemma~\ref{lem:ar-sound-extract}, the test's uniform point being read off the registers of a
+uniform vector. The third chains the second part at the role, the consistency check and the second
+part at the oracle, through Bob's point answer of the role and Alice's point answer of the oracle
+at the same seed, by the triangle inequality for disagreements across the two players, which costs
+a factor $11$.
+\end{proof}
+
+\begin{lemma}[The polynomials of the roles agree]
+\label{lem:ar-sound-poly}
+\uses{lem:ar-sound-relations,lem:lidt-ldc-extraction}
+\lean{MIPRE.Tailored.AnsRed.Typed.sum_uniform_tuple_eq_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_uniform_evalR_eq_le,
+  MIPRE.Tailored.AnsRed.Typed.dis_le_avg_evalR_add, MIPRE.Tailored.AnsRed.Typed.errP,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_le_of_evalR,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_GAr_GBO_poly_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_GAO_GBr_poly_le}
+\leanok
+Two measurements of tuples of polynomials of individual degree at most $d$ in $M$ variables
+disagree at most as often as their evaluations at a uniform point do, plus $M d / q$. So for an
+isolated role $r$, $\sum_z \mathrm{dis}(G^\alice_r, \mathrm{res}_r G^\bob_\oracle) \leq |Z|\,
+e_r(\theta)$, and the same with the players exchanged, where
+$e_r(\theta) = 11 (\delta_r(9\theta) + 81\theta + \delta_\oracle(9\theta)) + M d / q$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:qld-global-separate}
+\leanok
+Two distinct tuples agree at a uniform point with probability at most $M d / q$, by
+Schwartz--Zippel (Lemma~\ref{lem:lidt-ldc-extraction}), and the registers of a uniform vector carry
+a uniform point. Lemma~\ref{lem:ar-sound-relations} concludes. Every polynomial of the game lives on
+the same $M$ variables, an isolated role's codewords being the oracle's in the role's slots, so no
+lifting between sets of variables is needed.
+\end{proof}
+
+\begin{lemma}[Shifting a polynomial along an axis]
+\label{lem:ar-sound-shift}
+\uses{lem:lidt-ldc-extraction}
+\lean{MIPRE.LIDT.LowIndDegPoly.onAxis, MIPRE.LIDT.LowIndDegPoly.eval_onAxis,
+  MIPRE.LIDT.LowIndDegPoly.eval_shift_eq_eval_onAxis,
+  MIPRE.LIDT.LowIndDegPoly.eval_eq_eval_onAxis, MIPRE.LIDT.LowIndDegPoly.natDegree_onAxis_le,
+  MIPRE.LIDT.LowIndDegPoly.coeff_onAxis, MIPRE.LIDT.card_shift_eq_le,
+  MIPRE.LIDT.card_pairs_shift_eq_le, MIPRE.LIDT.card_shift_ne_ge}
+\leanok
+Let $g$ be a polynomial in $n$ variables of individual degree at most $d$ over a field with $q$
+elements, with a nonzero coefficient on a monomial containing $X_i$. Then $g(u + t e_i) \neq g(u)$
+for at least $q^n (q - (n + 1) d)$ of the pairs $(u, t) \in \Fq^n \times \Fq$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Restricted to the axis-parallel line through $u$ in direction $i$, $g$ is a univariate polynomial
+of degree at most $d$, whose coefficient on the power of $X_i$ in that monomial is a nonzero
+polynomial $G$ evaluated at $u$. Where $G(u) \neq 0$ the restriction is not constant, so it takes
+the value $g(u)$ at most $d$ times; and $G(u) = 0$ at no more than $n d q^{n-1}$ points, by
+Schwartz--Zippel.
+\end{proof}
+
+\begin{lemma}[Indifference, at two points of a line]
+\label{lem:ar-sound-indifference}
+\uses{lem:ar-sound-relations,lem:ar-sound-shift,lem:ar-sound-roles,def:ar-slots}
+\lean{MIPRE.Tailored.AnsRed.Typed.sum_ite_ne_le_dis_add,
+  MIPRE.Tailored.AnsRed.Typed.sum_ite_read_le, MIPRE.Tailored.AnsRed.Typed.sum_ite_read_le',
+  MIPRE.Tailored.AnsRed.Typed.sum_swap_ite, MIPRE.Tailored.AnsRed.Typed.dirIdx,
+  MIPRE.Tailored.AnsRed.Typed.shiftW, MIPRE.Tailored.AnsRed.Typed.shiftEquiv,
+  MIPRE.Tailored.AnsRed.Typed.ldq_aline_shiftW, MIPRE.Tailored.AnsRed.Typed.maskI,
+  MIPRE.Tailored.AnsRed.Typed.kv, MIPRE.Tailored.AnsRed.Typed.kv_eq_pv_of_arDt,
+  MIPRE.Tailored.AnsRed.Typed.pv_eq_kv_of_arDt, MIPRE.Tailored.AnsRed.Typed.Good,
+  MIPRE.Tailored.AnsRed.Typed.card_differ_ge, MIPRE.Tailored.AnsRed.Typed.card_steps_ge,
+  MIPRE.Tailored.AnsRed.Typed.sum_differ_le, MIPRE.Tailored.AnsRed.Typed.badGood_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_badGood_le}
+\leanok
+An outcome of the oracle's polynomial measurement is \emph{block-local} if each codeword's
+polynomial involves only the variables of its slot's block. If $q \geq 2 (M + 1) d$, the outcomes
+of $G^\alice_{\oracle}$ that are not block-local weigh, summed over the seeds, at most
+$2M |Z| (12\, \delta_\oracle(9\theta) + 1782\, \theta)$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The test's question of type $\mathrm{ALine}$ that the registers of a vector carry is the same at
+every point of its line: moving the vector's point along the line's direction keeps it. At the
+pair of types $(\oracle, \mathrm{ALine}), (\oracle, \mathrm{Point})$, the low-degree check and the
+indifference check make the point values, in the codewords whose blocks miss the line's
+direction, the constant coefficients of the line answer's polynomials. So Bob's point values at two
+points $u$ and $u + s e_i$ of one line agree, through the line answer, in those codewords, and so do
+Alice's polynomials evaluated at $u$ and at $u + s e_i$, up to the disagreements of
+Lemma~\ref{lem:ar-sound-relations} and the failures at that pair of types. A polynomial with a
+monomial in a variable outside its block changes value along at least half of the steps in that
+direction (Lemma~\ref{lem:ar-sound-shift}, as $q \geq 2 (M + 1) d$), and a uniform line has that
+direction with probability $1/M$.
+\end{proof}
+
+\begin{lemma}[The proof check, on the polynomials]
+\label{lem:ar-sound-check}
+\uses{lem:ar-sound-relations,lem:ar-sound-roles,def:ar-slots,lem:ar-tailored-reading}
+\lean{MIPRE.Tailored.AnsRed.Typed.ocs, MIPRE.Tailored.AnsRed.Typed.PassV,
+  MIPRE.Tailored.AnsRed.Typed.Dense, MIPRE.Tailored.AnsRed.Typed.passV_of_arDt,
+  MIPRE.Tailored.AnsRed.Typed.sum_notPass_le, MIPRE.Tailored.AnsRed.Typed.badDense_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_badDense_le}
+\leanok
+An outcome of the oracle's polynomial measurement at a seed \emph{passes densely} if its
+evaluations pass the thirteen checks of the seed's circuit on more than a fraction
+$m (5 + 6 (d + 1)) / q$ of the points of $\Fq^M$. If $q \geq 2 m (5 + 6 (d + 1))$, the outcomes of
+$G^\alice_\oracle$ that do not pass densely weigh, summed over the seeds, at most
+$|Z| (2\, \delta_\oracle(9\theta) + 162\, \theta)$.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:ar-sound-indifference}
+\leanok
+The typed data checks Bob's point answer at the oracle's point question against the seed's
+circuit. An outcome's evaluations at a point pass whenever Bob's point answer passes and agrees
+with them, so an outcome that does not pass densely meets, with probability at least one half, a
+point where Bob's answer fails or disagrees with it; the event moves between the two players'
+measurements at the cost of their disagreement, as in Lemma~\ref{lem:ar-sound-indifference}.
+Those points weigh at most the extraction's error at the oracle and the failure at the pair of
+types $(\oracle, \mathrm{Point}), (\oracle, \mathrm{Point})$.
+\end{proof}
+
+\begin{definition}[The decoded strategy]
+\label{def:ar-decoded-strategy}
+\uses{def:ar-sound-extract,thm:ar-pcp-accepts,lem:ar-sound-relations}
+\lean{MIPRE.Tailored.AnsRed.Typed.decStr, MIPRE.Tailored.AnsRed.Typed.decR,
+  MIPRE.Tailored.AnsRed.Typed.decO, MIPRE.Tailored.AnsRed.Typed.inCL,
+  MIPRE.Tailored.AnsRed.Typed.oGameT, MIPRE.Tailored.AnsRed.Typed.MAd,
+  MIPRE.Tailored.AnsRed.Typed.MBd, MIPRE.Tailored.AnsRed.Typed.decoded}
+\leanok
+The decoding of a readable and a linear polynomial at an input question is the table of the
+readable one on the Boolean cube, cut to the question's readable length, followed by the linear
+one's. The decoded strategy is the strategy for the typed oracularized game of the input, on the
+state of $T$, in which an isolated role measures its polynomial measurement and answers the
+decoding of its two polynomials, read on their slots' blocks, and the oracle measures its own and
+answers the pair of decodings of its polynomials in the two roles' slots.
+\end{definition}
+
+\begin{lemma}[The checks of the decoded strategy]
+\label{lem:ar-decoded-accepts}
+\uses{def:ar-decoded-strategy,lem:ar-sound-indifference,lem:ar-sound-check,thm:ar-pcp-accepts,
+  def:ar-honest-answers}
+\lean{MIPRE.Tailored.AnsRed.Typed.vars_toMv_subset, MIPRE.Tailored.AnsRed.Typed.get_ocs,
+  MIPRE.Tailored.AnsRed.Typed.good_vars, MIPRE.Tailored.AnsRed.Typed.length_decStr_le,
+  MIPRE.Tailored.AnsRed.Typed.card_filter_comp_castLE, MIPRE.Tailored.AnsRed.Typed.accepts_decO,
+  MIPRE.Tailored.AnsRed.Typed.MAd_iso, MIPRE.Tailored.AnsRed.Typed.MBd_iso,
+  MIPRE.Tailored.AnsRed.Typed.comp_decO, MIPRE.Tailored.AnsRed.Typed.gameCheck_decO,
+  MIPRE.Tailored.AnsRed.Typed.condFail_OO_le, MIPRE.Tailored.AnsRed.Typed.condFail_Or_le,
+  MIPRE.Tailored.AnsRed.Typed.condFail_rO_le, MIPRE.Tailored.AnsRed.Typed.condFail_rr_le,
+  MIPRE.Tailored.AnsRed.Typed.condFail_rr'_le, MIPRE.Tailored.AnsRed.Typed.gcA_le,
+  MIPRE.Tailored.AnsRed.Typed.gcB_le}
+\leanok
+Under the hypotheses of Definition~\ref{def:ar-honest-answers}, the input game accepts an
+oracle's decoded pair whenever its polynomials are block-local and pass densely. So at a seed, the
+decoded strategy fails each of the nine ordered pairs of roles at most as often as an oracle's
+outcome is not block-local or does not pass densely, plus the disagreements of the polynomial
+measurements its two answers are decoded from.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Block-local polynomials of individual degree at most $d$ are a PCP of individual degree $d$ whose
+values at a point are their evaluations, and passing densely on $\Fq^M$ is passing on a set of
+density more than $m (5 + 6 (d + 1))/q$ in $\Fq^m$, every point of $\Fq^m$ having equally many
+preimages. Theorem~\ref{thm:ar-pcp-accepts} then makes the input game accept the decodings of the
+PCP's input polynomials. The decoded measurements are coarse-grainings of projective measurements,
+so projective, and the decoding of the oracle's polynomials in an isolated role's slots is the
+oracle's answer in that role.
+\end{proof}
+
+\begin{lemma}[The failure of the decoded strategy]
+\label{lem:ar-decoded-value}
+\uses{lem:ar-decoded-accepts,lem:ar-sound-poly,lem:ar-sound-extract,lem:ar-sound-indifference,
+  lem:ar-sound-check,def:ar-seed-index}
+\lean{MIPRE.Tailored.AnsRed.Typed.errAR, MIPRE.Tailored.AnsRed.Typed.deltaSim_mono,
+  MIPRE.Tailored.AnsRed.Typed.dS_mono, MIPRE.Tailored.AnsRed.Typed.errP_mono,
+  MIPRE.Tailored.AnsRed.Typed.errAR_lt, MIPRE.Tailored.AnsRed.Typed.errAR_nonneg,
+  MIPRE.Tailored.AnsRed.Typed.le_errAR, MIPRE.Tailored.AnsRed.Typed.errAR_pos,
+  MIPRE.Tailored.AnsRed.Typed.sum_roles_condFail_le,
+  MIPRE.Tailored.AnsRed.Typed.one_sub_value_decoded_le}
+\leanok
+If $q \geq 2 (M + 1) d$ and $q \geq 2 m (5 + 6 (d + 1))$, the decoded strategy fails the typed
+oracularized game of the input with probability at most
+\[
+e(\theta) = 6 \bigl(2M (12\, \delta_\oracle(9\theta) + 1782\, \theta) + 2\,
+\delta_\oracle(9\theta) + 162\, \theta\bigr) + 4\, \delta_\oracle(9\theta) +
+\delta_\alice(9\theta) + \delta_\bob(9\theta) + 2 e_\alice(\theta) + 2 e_\bob(\theta),
+\]
+which is strictly increasing in $\theta \geq 0$ and at least $\theta$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The typed oracularized game's failure is the average over the seeds of its failures at the nine
+pairs of roles (Definition~\ref{def:ar-seed-index}). Lemma~\ref{lem:ar-decoded-accepts} bounds each
+by the weight of the oracle's outcomes that are not block-local or do not pass densely, which
+Lemmas~\ref{lem:ar-sound-indifference} and~\ref{lem:ar-sound-check} bound, and by disagreements of
+polynomial measurements, which Lemmas~\ref{lem:ar-sound-extract} and~\ref{lem:ar-sound-poly}
+bound.
+\end{proof}
+
+\begin{theorem}[Soundness of the answer-reduced game]
+\label{thm:ar-sound}
+\uses{lem:ar-decoded-value,def:ar-honest-strategy,lem:presentation,lem:transports-model,
+  thm:oracularization-in-model,lem:lidt-sound-in-tensor}
+\lean{MIPRE.Tailored.AnsRed.Typed.roleFamily_liftedCl_eval,
+  MIPRE.Tailored.AnsRed.Typed.inCL_toGame, MIPRE.Tailored.AnsRed.Typed.decB,
+  MIPRE.Tailored.AnsRed.Typed.valStar_presented_ar_le,
+  MIPRE.Tailored.AnsRed.Typed.valStar_ar_sound}
+\leanok
+Under the hypotheses of Definition~\ref{def:ar-honest-answers}, for $d \geq 1$, an answer bound at
+least the types' lengths, $q \geq 2 (M + 1) d$ and $q \geq 2 m (5 + 6 (d + 1))$: if the
+answer-reduced game presented by the typed data on the typed game of an answer-reduced sampler has
+$\valstar > 1 - \eps$, then $\valstar(\verifier_n) \geq 1 - 24 \sqrt{e(16^9 \eps)}$.
+\end{theorem}
+
+\begin{proof}
+\leanok
+The presented game's $\valstar$ is at most the detyped game's (Lemma~\ref{lem:presentation}),
+whose typed game then has $\valstar > 1 - 16^9 \eps$, there being nine types
+(Lemma~\ref{lem:transports-model}). $\valstar$ is approached by projective strategies in
+tensor-product models, where the test is sound and which $\valstar$ dominates
+(Lemma~\ref{lem:lidt-sound-in-tensor}); take one, $T$, of value more than $1 - 16^9 \eps$. Its
+decoded strategy has value at least $1 - e(16^9 \eps)$ (Lemma~\ref{lem:ar-decoded-value}), the
+typed oracularized game's value is at most the oracularization's, and oracularization is sound
+(Theorem~\ref{thm:oracularization-in-model}), the oracularized input's game being the input's.
+\end{proof}

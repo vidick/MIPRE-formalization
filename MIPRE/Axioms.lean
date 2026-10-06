@@ -259,6 +259,7 @@ public import MIPRE.Tailored.AnsRed.HonestPair
 public import MIPRE.Background.Tailored.AnswerReduction.Honest
 public import MIPRE.Background.Tailored.AnswerReduction.HonestBits
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
+public import MIPRE.Background.Tailored.AnswerReduction.Sound
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -4020,6 +4021,83 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.AnsRed.Typed.value_arStrat, MIPRE.Tailored.AnsRed.Typed.arStrat_support,
   MIPRE.Tailored.AnsRed.Typed.isXBit_arStrat, MIPRE.Tailored.AnsRed.Typed.isZBit_arStrat,
   MIPRE.Tailored.AnsRed.Typed.hasPerfectZPC_ar
+
+-- blueprint `lem:ar-sound-roles`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.eval_seed, MIPRE.Tailored.AnsRed.Typed.arDt_role,
+  MIPRE.Tailored.AnsRed.Typed.one_sub_value_roleStrat_le,
+  MIPRE.Tailored.AnsRed.Typed.one_sub_value_eq_sum, MIPRE.Tailored.AnsRed.Typed.sum_edges_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_edge_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_one_sub_value_roleStrat_le
+
+-- blueprint `lem:ar-sound-extract`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.exists_extR, MIPRE.Tailored.AnsRed.Typed.extR_proj,
+  MIPRE.Tailored.AnsRed.Typed.extR_spec, MIPRE.Tailored.AnsRed.Typed.sum_deltaSimR_le
+
+-- blueprint `lem:ar-sound-relations`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.pv, MIPRE.Tailored.AnsRed.Typed.pvR,
+  MIPRE.Tailored.AnsRed.Typed.oc, MIPRE.Tailored.AnsRed.Typed.pvO,
+  MIPRE.Tailored.AnsRed.Typed.evalR, MIPRE.Tailored.AnsRed.Typed.restr,
+  MIPRE.Tailored.AnsRed.Typed.selR, MIPRE.Tailored.AnsRed.Typed.arPred_of_arDt,
+  MIPRE.Tailored.AnsRed.Typed.pvR_eq_pvO_of_arDt, MIPRE.Tailored.AnsRed.Typed.pvO_eq_pvR_of_arDt,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_edge_le, MIPRE.Tailored.AnsRed.Typed.sum_dis_MA_GB_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_GA_MB_le, MIPRE.Tailored.AnsRed.Typed.sum_dis_GA_GB_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_GAr_GBO_le, MIPRE.Tailored.AnsRed.Typed.sum_dis_GAO_GBr_le
+
+-- blueprint `lem:ar-sound-poly`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.sum_uniform_tuple_eq_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_uniform_evalR_eq_le,
+  MIPRE.Tailored.AnsRed.Typed.dis_le_avg_evalR_add, MIPRE.Tailored.AnsRed.Typed.errP,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_le_of_evalR,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_GAr_GBO_poly_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_dis_GAO_GBr_poly_le
+
+-- blueprint `lem:ar-sound-shift`
+#guard_sorry_free MIPRE.LIDT.LowIndDegPoly.onAxis, MIPRE.LIDT.LowIndDegPoly.eval_onAxis,
+  MIPRE.LIDT.LowIndDegPoly.eval_shift_eq_eval_onAxis, MIPRE.LIDT.LowIndDegPoly.eval_eq_eval_onAxis,
+  MIPRE.LIDT.LowIndDegPoly.natDegree_onAxis_le, MIPRE.LIDT.LowIndDegPoly.coeff_onAxis,
+  MIPRE.LIDT.card_shift_eq_le, MIPRE.LIDT.card_pairs_shift_eq_le, MIPRE.LIDT.card_shift_ne_ge
+
+-- blueprint `lem:ar-sound-indifference`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.sum_ite_ne_le_dis_add,
+  MIPRE.Tailored.AnsRed.Typed.sum_ite_read_le, MIPRE.Tailored.AnsRed.Typed.sum_ite_read_le',
+  MIPRE.Tailored.AnsRed.Typed.sum_swap_ite, MIPRE.Tailored.AnsRed.Typed.dirIdx,
+  MIPRE.Tailored.AnsRed.Typed.shiftW, MIPRE.Tailored.AnsRed.Typed.shiftEquiv,
+  MIPRE.Tailored.AnsRed.Typed.ldq_aline_shiftW, MIPRE.Tailored.AnsRed.Typed.maskI,
+  MIPRE.Tailored.AnsRed.Typed.kv, MIPRE.Tailored.AnsRed.Typed.kv_eq_pv_of_arDt,
+  MIPRE.Tailored.AnsRed.Typed.pv_eq_kv_of_arDt, MIPRE.Tailored.AnsRed.Typed.Good,
+  MIPRE.Tailored.AnsRed.Typed.card_differ_ge, MIPRE.Tailored.AnsRed.Typed.card_steps_ge,
+  MIPRE.Tailored.AnsRed.Typed.sum_differ_le, MIPRE.Tailored.AnsRed.Typed.badGood_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_badGood_le
+
+-- blueprint `lem:ar-sound-check`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.ocs, MIPRE.Tailored.AnsRed.Typed.PassV,
+  MIPRE.Tailored.AnsRed.Typed.Dense, MIPRE.Tailored.AnsRed.Typed.passV_of_arDt,
+  MIPRE.Tailored.AnsRed.Typed.sum_notPass_le, MIPRE.Tailored.AnsRed.Typed.badDense_le,
+  MIPRE.Tailored.AnsRed.Typed.sum_badDense_le
+
+-- blueprint `lem:ar-decoded-accepts`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.vars_toMv_subset, MIPRE.Tailored.AnsRed.Typed.get_ocs,
+  MIPRE.Tailored.AnsRed.Typed.good_vars, MIPRE.Tailored.AnsRed.Typed.length_decStr_le,
+  MIPRE.Tailored.AnsRed.Typed.card_filter_comp_castLE, MIPRE.Tailored.AnsRed.Typed.accepts_decO,
+  MIPRE.Tailored.AnsRed.Typed.MAd_iso, MIPRE.Tailored.AnsRed.Typed.MBd_iso,
+  MIPRE.Tailored.AnsRed.Typed.comp_decO, MIPRE.Tailored.AnsRed.Typed.gameCheck_decO,
+  MIPRE.Tailored.AnsRed.Typed.condFail_OO_le, MIPRE.Tailored.AnsRed.Typed.condFail_Or_le,
+  MIPRE.Tailored.AnsRed.Typed.condFail_rO_le, MIPRE.Tailored.AnsRed.Typed.condFail_rr_le,
+  MIPRE.Tailored.AnsRed.Typed.condFail_rr'_le, MIPRE.Tailored.AnsRed.Typed.gcA_le,
+  MIPRE.Tailored.AnsRed.Typed.gcB_le
+
+-- blueprint `lem:ar-decoded-value`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.errAR, MIPRE.Tailored.AnsRed.Typed.deltaSim_mono,
+  MIPRE.Tailored.AnsRed.Typed.dS_mono, MIPRE.Tailored.AnsRed.Typed.errP_mono,
+  MIPRE.Tailored.AnsRed.Typed.errAR_lt, MIPRE.Tailored.AnsRed.Typed.errAR_nonneg,
+  MIPRE.Tailored.AnsRed.Typed.le_errAR, MIPRE.Tailored.AnsRed.Typed.errAR_pos,
+  MIPRE.Tailored.AnsRed.Typed.sum_roles_condFail_le,
+  MIPRE.Tailored.AnsRed.Typed.one_sub_value_decoded_le
+
+-- blueprint `thm:ar-sound`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.roleFamily_liftedCl_eval,
+  MIPRE.Tailored.AnsRed.Typed.inCL_toGame, MIPRE.Tailored.AnsRed.Typed.decB,
+  MIPRE.Tailored.AnsRed.Typed.valStar_presented_ar_le, MIPRE.Tailored.AnsRed.Typed.valStar_ar_sound
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
