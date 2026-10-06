@@ -6,6 +6,8 @@ Authors: Thomas Vidick
 module
 public import MIPRE.Background.Tailored.Intro.HonestBits
 public import MIPRE.Background.Tailored.Intro.Pauli
+public import MIPRE.Tailored.OfTNFV
+public import MIPRE.Tailored.Intro.Input
 
 @[expose] public section
 
@@ -577,6 +579,149 @@ theorem raw_support (q : Bool × CL.Detyping.Question DecisionKernel.Label
   exact canonical_support W RW he (dim_le W c hc hW hn) V hc hlen q a' ha'
 
 end RawSupport
+
+end MIPRE.Tailored.Intro.HonestChain
+
+/-! ## The input: a permutation strategy of the tailored verifier -/
+
+namespace MIPRE.Tailored.Intro.HonestChain
+
+open Cost MIPRE.CL
+
+section Input
+
+variable (V : TailoredVerifier 7) (U : UniversalMachine) {n T : ℕ}
+  (hT : (V.tgame (2 ^ n)).maxLen ≤ T) (SV : PermStrategy (V.tgame (2 ^ n)).doubled)
+
+/-- **The input's strategy** (`lem:zpc-pcc`): the measurements of a permutation strategy of the
+doubled tailored game on answer strings (`PermStrategy.toSync`), extended by zero to the answers
+of the normal form verifier `V.ofTNFV U`. -/
+noncomputable def inputSync : SyncStrategy ((V.ofTNFV U).game (2 ^ n) T).doubled :=
+  SV.toSync.extend _ (Verifier.Answers.castLE hT)
+
+theorem inputSync_isPCC : (inputSync V U hT SV).IsPCC :=
+  SV.toSync.isPCC_extend SV.isPCC_toSync _ _ fun _ _ => rfl
+
+theorem inputSync_value (h : SV.value = 1) : (inputSync V U hT SV).value = 1 := by
+  have hD : ∀ (p q : Bool × V.Questions (2 ^ n)) (a b : Verifier.Answers (V.tgame (2 ^ n)).maxLen),
+      ((V.ofTNFV U).game (2 ^ n) T).doubled.D p q (Verifier.Answers.castLE hT a)
+        (Verifier.Answers.castLE hT b) = (V.tgame (2 ^ n)).toGame.doubled.D p q a b := by
+    intro p q a b
+    change (if p.1 = false ∧ q.1 = true then ((V.ofTNFV U).game (2 ^ n) T).D p.2 q.2 _ _
+      else false) = (if p.1 = false ∧ q.1 = true then (V.tgame (2 ^ n)).toGame.D p.2 q.2 a b
+      else false)
+    split_ifs
+    · exact V.ofTNFV_game_D U hT p.2 q.2 a b
+    · rfl
+  exact (SV.toSync.value_extend _ (Verifier.Answers.castLE hT) (fun _ _ => rfl) hD).trans
+    (by rw [SV.value_toSync, h])
+
+theorem inputSync_M (p : Bool × V.Questions (2 ^ n)) :
+    (inputSync V U hT SV).P.M p =
+      Function.extend (Verifier.Answers.castLE hT) (SV.ansProj (V.tgame (2 ^ n)).maxLen p) 0 :=
+  rfl
+
+/-- **The input's answers have the tailored verifier's lengths.** -/
+theorem inputSync_len (p : Bool × V.Questions (2 ^ n)) (a : Verifier.Answers T)
+    (ha : (inputSync V U hT SV).P.M p a ≠ 0) :
+    a.1.length = V.lenOf (2 ^ n) (toBits p.2) false + V.lenOf (2 ^ n) (toBits p.2) true := by
+  rw [inputSync_M] at ha
+  by_cases h : ∃ a₀, Verifier.Answers.castLE hT a₀ = a
+  · obtain ⟨a₀, rfl⟩ := h
+    rw [(Verifier.Answers.castLE hT).injective.extend_apply] at ha
+    unfold PermStrategy.ansProj at ha
+    split_ifs at ha with hl
+    · exact hl
+    · exact absurd rfl ha
+  · exact absurd (Function.extend_apply' _ _ _ h) ha
+
+/-- **The input's answer bits are signed permutations, diagonal below the readable length.** -/
+theorem inputSync_bit (p : Bool × V.Questions (2 ^ n)) (j : ℕ) :
+    IsXBit ((inputSync V U hT SV).P.M p) (fun a => a.1.getD j false) ∧
+      (j < V.lenOf (2 ^ n) (toBits p.2) false →
+        IsZBit ((inputSync V U hT SV).P.M p) (fun a => a.1.getD j false)) := by
+  have hle := (V.tgame (2 ^ n)).len_le_maxLen p.2
+  have e : bitObs ((inputSync V U hT SV).P.M p) (fun a => a.1.getD j false) =
+      encObs (SV.ansProj (V.tgame (2 ^ n)).maxLen p)
+        (fun a (_ : Fin 1) => a.1.getD j false) 0 := by
+    rw [inputSync_M]
+    exact bitObs_extend _ (Verifier.Answers.castLE hT).injective _
+  have h2 : (V.tgame (2 ^ n)).doubled.len p = (V.tgame (2 ^ n)).len p.2 := rfl
+  unfold IsXBit IsZBit
+  rw [e]
+  by_cases hj : j < (V.tgame (2 ^ n)).doubled.len p
+  · rw [SV.encObs_ansProj_bit p hle _ 0 ⟨j, hj⟩ fun v => by simp [ofVec, List.getD_eq_getElem?_getD, hj]]
+    exact ⟨SV.signedPerm p _, fun h => ⟨SV.signedPerm p _, SV.zAligned p _ h⟩⟩
+  · rw [SV.encObs_ansProj_const p hle _ 0 false fun v =>
+      List.getD_eq_default _ _ (by simp [ofVec]; omega)]
+    exact ⟨isSignedPerm_bitSign_smul_one _, fun _ =>
+      ⟨isSignedPerm_bitSign_smul_one _, isDiag_bitSign_smul_one _⟩⟩
+
+end Input
+
+/-! ## The honest strategy, in one statement -/
+
+open MIPRE.Introspection MIPRE.Introspection.DecisionCompiler MIPRE.Introspection.SourceCompiler
+open MIPRE.Introspection.PauliSamplerParameters
+
+/-- **ZPC completeness of the tailored question reduction, the strategy** (P3c): for an input
+normal form verifier `W` presenting the tailored verifier `V`, with a perfect PCC strategy `RW`
+at index `2^n` whose answers have `V`'s lengths and whose answer bits are signed permutations,
+diagonal below `V`'s readable length, the honest strategy `raw` of the reference verifier's
+typed game is a perfect PCC strategy that charges only well-formed answers satisfying the
+readable conditions (`hsupp`), whose bit observables along the padded layout are signed
+permutations (`hperm`), diagonal at the readable bits (`hdiag`). -/
+theorem honest_zpc (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
+    (W : Verifier 7) (lam n : ℕ) (hW : W.IsBounded lam) (hn : 1 ≤ n)
+    (RW : SyncStrategy (W.game (2 ^ n) ((2 ^ n) ^ lam)).doubled) (hRW : RW.IsPCC)
+    (hv : RW.value = 1) (V : TailoredVerifier 7)
+    (hlen : ∀ p a, RW.P.M p a ≠ 0 →
+      a.1.length = V.lenOf (2 ^ n) (toBits p.2) false + V.lenOf (2 ^ n) (toBits p.2) true)
+    (hX : ∀ p j, IsXBit (RW.P.M p) fun a => a.1.getD j false)
+    (hZ : ∀ p j, j < V.lenOf (2 ^ n) (toBits p.2) false →
+      IsZBit (RW.P.M p) fun a => a.1.getD j false) :
+    ∃ R : SyncStrategy (rawGame c (one_le_c hc) he U (W.sampler.prog, W.decider.prog)
+        lam n).doubled,
+      R.IsPCC ∧ R.value = 1 ∧
+      (∀ q a, ¬(OkI W (dim_le W c hc hW hn) V q.2.1 a.1 ∧
+          readOKI W (dim_le W c hc hW hn) V q.2.1 (encI W (dim_le W c hc hW hn) V q.2 a)) →
+        R.P.M q a = 0) ∧
+      (∀ q (i : ℕ), IsSignedPerm (pvmObs (R.P.M q) fun a =>
+        bitSign ((encI W (dim_le W c hc hW hn) V q.2 a).getD i false))) ∧
+      (∀ q (i : ℕ), i < lenRI c lam n q.2.1 → (pvmObs (R.P.M q) fun a =>
+        bitSign ((encI W (dim_le W c hc hW hn) V q.2 a).getD i false)).IsDiag) :=
+  ⟨raw W RW hc he U hW hn, raw_isPCC W RW hc he U hW hn hRW,
+    raw_value W RW hc he U hW hn hRW hv,
+    fun q a h => by
+      by_contra ha
+      exact h (raw_support W RW he V hc hlen U hW hn q a ha),
+    fun q i => raw_isXBit W RW he V hc hlen hX hZ U hW hn q i,
+    fun q i hi => raw_isDiag W RW he V hc hlen hX hZ U hW hn q i hi⟩
+
+/-- **The instance**: the input `V.ofTNFV U'` of a tailored verifier `V` with a perfect ZPC
+strategy at index `2^n`, through `lem:zpc-pcc`. -/
+theorem honest_zpc_ofTNFV (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : ClockedUniversalMachine)
+    (V : TailoredVerifier 7) (U' : UniversalMachine) (lam n : ℕ)
+    (hW : (V.ofTNFV U').IsBounded lam) (hn : 1 ≤ n)
+    (hT : (V.tgame (2 ^ n)).maxLen ≤ (2 ^ n) ^ lam) (hV : V.HasPerfectZPC (2 ^ n)) :
+    ∃ R : SyncStrategy (rawGame c (one_le_c hc) he U
+        ((V.ofTNFV U').sampler.prog, (V.ofTNFV U').decider.prog) lam n).doubled,
+      R.IsPCC ∧ R.value = 1 ∧
+      (∀ q a, ¬(OkI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2.1 a.1 ∧
+          readOKI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2.1
+            (encI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2 a)) →
+        R.P.M q a = 0) ∧
+      (∀ q (i : ℕ), IsSignedPerm (pvmObs (R.P.M q) fun a =>
+        bitSign ((encI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2 a).getD i
+          false))) ∧
+      (∀ q (i : ℕ), i < lenRI c lam n q.2.1 → (pvmObs (R.P.M q) fun a =>
+        bitSign ((encI (V.ofTNFV U') (dim_le (V.ofTNFV U') c hc hW hn) V q.2 a).getD i
+          false)).IsDiag) := by
+  obtain ⟨SV, hSV⟩ := hV
+  exact honest_zpc c hc he U (V.ofTNFV U') lam n hW hn (inputSync V U' hT SV)
+    (inputSync_isPCC V U' hT SV) (inputSync_value V U' hT SV hSV) V
+    (inputSync_len V U' hT SV) (fun p j => (inputSync_bit V U' hT SV p j).1)
+    (fun p j => (inputSync_bit V U' hT SV p j).2)
 
 end MIPRE.Tailored.Intro.HonestChain
 
