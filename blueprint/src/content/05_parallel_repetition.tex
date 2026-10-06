@@ -99,23 +99,37 @@ Definition~\ref{def:commuting-value}.
 \begin{lemma}[Tracial strategies are commuting-operator strategies]
 \label{lem:tracial-le-co}
 \uses{def:sync-game,def:commuting-strategy,def:commuting-value,def:co-value-bipartite}
+\lean{MIPRE.TracialState.im_star_mul_self, MIPRE.TracialState.map_star,
+  MIPRE.TracialState.toState, MIPRE.TracialCo.form_mulRight_left,
+  MIPRE.TracialCo.form_mulRight_self, MIPRE.TracialCo.bdd_mulRight,
+  MIPRE.TracialCo.lift_mulRight_isPositive, MIPRE.TracialCo.bdd_mulLeft,
+  MIPRE.TracialCo.lift_mulLeft_isPositive,
+  MIPRE.CommutingStrategy.toCommutingOperatorStrategy,
+  MIPRE.CommutingStrategy.correlation_toCommutingOperatorStrategy,
+  MIPRE.CommutingStrategy.value_toCommutingOperatorStrategy,
+  MIPRE.commValue_le_commutingOperatorValue}
+\leanok
 \qlib{}
 For every synchronous game $\game$, $\valco(\game) \leq \omegaco(\game)$.
 The Lean proof of the main theorem does not use this lemma; it serves the downstream
 $\MIPco = \coRE$ chapter only.
 \end{lemma}
 \begin{proof}
+\leanok
 Let $(\alg, \tau, M)$ be a commuting strategy (Definition~\ref{def:commuting-strategy})
-and let $\mH = L^2(\alg, \tau)$ be the completion of $\alg$ for the inner product
+and let $\mH$ be the completion of $\alg$ for the semi-inner product
 $\langle a, b \rangle = \tau(a^* b)$, with the class of $1$ as the unit vector $\xi$.
-Left multiplication $\pi(a) : b \mapsto ab$ and right multiplication $\rho(a) : b
-\mapsto ba$ extend to bounded operators on $\mH$ (for $\rho$ this uses traciality:
-$\norm{ba}^2 = \tau(a^* b^* b a) = \tau(b^* b\, a a^*) \leq \norm{a}^2 \norm{b}^2$),
-commute with each other, and satisfy $\rho(p)^* = \rho(p^*)$ (again by traciality) so
-that $\rho$ maps projections to projections. Setting $E^x_a = \pi(M^x_a)$ and $F^y_b =
-\rho(M^y_b)$ gives a commuting-operator strategy with $\bra{\xi} E^x_a F^y_b \ket{\xi}
-= \langle 1, M^x_a M^y_b \rangle = \tau(M^x_a M^y_b)$, hence with the same value as
-$(\alg, \tau, M)$. Taking suprema yields the claim.
+A tracial state is Hermitian, $\tau(a^*) = \overline{\tau(a)}$, by polarization of its
+positivity at $1 + a$ and $1 + ia$. Left multiplication $\pi(p) : b \mapsto pb$ and right
+multiplication $\rho(p) : b \mapsto bp$ by a projection $p$ are contractions for the
+semi-norm, hence extend to $\mH$. For $\rho$ this uses the trace:
+$\tau((bp)^*(bp)) = \tau(b^* b p)$ and $\tau(b^* b) - \tau(b^* b p) = \tau((b(1-p))^*(b(1-p)))
+\geq 0$. Both are symmetric and positive for the form; for $\rho$,
+$\tau((bp)^* c) = \tau(b^* c p)$ and $\tau(b^* b p) = \tau((bp)^*(bp))$. Left and right
+multiplications commute, by associativity, and each family sums to the identity. Setting
+$E^x_a = \pi(M^x_a)$ and $F^y_b = \rho(M^y_b)$ gives a commuting-operator strategy with
+$\bra{\xi} E^x_a F^y_b \ket{\xi} = \tau(1^* M^x_a M^y_b) = \tau(M^x_a M^y_b)$, hence with the
+same value as $(\alg, \tau, M)$. Taking suprema yields the claim. No norm on $\alg$ is used.
 \end{proof}
 
 \paragraph{Comments.} This is the direction needed to apply

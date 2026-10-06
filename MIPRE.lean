@@ -1339,6 +1339,7 @@ public import MIPRE.Foundations.SyncPushQ
 public import MIPRE.Foundations.SyncTransport
 public import MIPRE.Foundations.TensorExpand
 public import MIPRE.Foundations.TensorFamily
+public import MIPRE.Foundations.TracialCommuting
 public import MIPRE.Foundations.Tsirelson.Algebra
 public import MIPRE.Foundations.Tsirelson.Certificate
 public import MIPRE.Foundations.Tsirelson.Closed
