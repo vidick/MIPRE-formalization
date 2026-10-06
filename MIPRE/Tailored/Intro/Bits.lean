@@ -72,6 +72,13 @@ theorem bitObs_comp_equiv {Λ' : Type*} [Fintype Λ'] (P : Λ → R) (e : Λ' �
   unfold bitObs pvmObs
   exact Fintype.sum_equiv e _ _ fun _ => rfl
 
+theorem bitObs_comp_equiv' {Λ' : Type*} [Fintype Λ'] (P : Λ → R) (e : Λ' ≃ Λ)
+    (f : Λ' → Bool) : bitObs (fun b => P (e b)) f = bitObs P (f ∘ e.symm) := by
+  rw [← bitObs_comp_equiv P e (f ∘ e.symm)]
+  congr 1
+  funext b
+  simp
+
 variable [StarRing R] {P : Λ → R}
 
 theorem bitObs_const (hP : IsPVMIn P) (c : Bool) : bitObs P (fun _ => c) = bitSign c • 1 :=
