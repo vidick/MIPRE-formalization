@@ -10,6 +10,7 @@ public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Topology.Instances.Discrete
 public import Mathlib.Basic.Real.Basic
+public import MIPRE.Tactics
 
 @[expose] public section
 
