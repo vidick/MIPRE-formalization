@@ -1514,6 +1514,34 @@ parse's cost, a polynomial in $|n| + |d|$. The domination tools of the repeated 
 the sum into the stated shape.
 \end{proof}
 
+\begin{lemma}[Linear forms on windows, and the input's constraints re-indexed]
+\label{lem:intro-forms}
+\uses{def:tailored-game}
+\lean{MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
+  MIPRE.Tailored.Intro.satisfies_iff_dotL, MIPRE.Tailored.Intro.dotL_append,
+  MIPRE.Tailored.Intro.satisfies_append_iff, MIPRE.Tailored.Intro.place,
+  MIPRE.Tailored.Intro.length_place, MIPRE.Tailored.Intro.dotL_place,
+  MIPRE.Tailored.Intro.unit, MIPRE.Tailored.Intro.dotL_unit, MIPRE.Tailored.Intro.eqCons,
+  MIPRE.Tailored.Intro.eqCons_iff, MIPRE.Tailored.Intro.guardCons,
+  MIPRE.Tailored.Intro.guardCons_iff, MIPRE.Tailored.Intro.place2,
+  MIPRE.Tailored.Intro.dotL_place2, MIPRE.Tailored.Intro.inputOf, MIPRE.Tailored.Intro.reindex,
+  MIPRE.Tailored.Intro.dotL_split_right, MIPRE.Tailored.Intro.satisfies_reindex_iff}
+\leanok
+A constraint $\alpha \beta \gamma$ holds of $(a, b, 1)$ exactly when $\langle \alpha, a\rangle +
+\langle \beta, b\rangle = \gamma$; a vector placed at an offset pairs with a vector as it pairs
+with the window there; the bitwise equality of two windows of the two answers is a list of such
+constraints; a condition on the readable answers is the empty list or the rejecting constraint.
+An input constraint on the two input answers, re-indexed onto the windows of two Introspect
+answers in which the layout carries them (readable bits at $Q$, linear bits at $Q + R$), holds
+exactly when the original holds of the input answers read off those windows.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The inner product is additive over concatenation, and zero against zeros; the rest is cutting
+the vectors at the offsets.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}

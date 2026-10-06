@@ -1438,6 +1438,7 @@ public import MIPRE.Tailored.Intro.Input
 public import MIPRE.Tailored.Intro.Layout
 public import MIPRE.Tailored.Intro.Presentation
 public import MIPRE.Tailored.Intro.Source
+public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.Transport
 public import MIPRE.Tailored.MagicSquare
 public import MIPRE.Tailored.OfTNFV
