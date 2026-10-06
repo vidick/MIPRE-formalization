@@ -263,6 +263,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.Complete
 public import MIPRE.Background.Tailored.AnswerReduction.Sound
 public import MIPRE.Background.Tailored.AnswerReduction.ArLen
 public import MIPRE.Background.Tailored.AnswerReduction.ArLp
+public import MIPRE.Background.Tailored.AnswerReduction.ArWithin
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -4211,6 +4212,32 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.Tailored.AnsRed.Typed.ArRoutine.arMeets_output,
   MIPRE.Tailored.AnsRed.Typed.ArRoutine.hasPerfectZPC_output,
   MIPRE.Tailored.AnsRed.Typed.ArRoutine.valStar_sound_output
+
+-- blueprint `lem:ar-sampler-time`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.le_of_arg_le,
+  MIPRE.Tailored.AnsRed.Typed.le_size_arParams, MIPRE.Tailored.AnsRed.Typed.lms_pdom,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.params_pdom,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.ldCore_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.ldPar_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.arProgs_size_pdom,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.arTyped_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.arSampler_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.arSampler_dim_pdom
+
+-- blueprint `lem:ar-len-time`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_len_pdom,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_total
+
+-- blueprint `lem:ar-lp-time`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.argCircL_eq,
+  MIPRE.Tailored.AnsRed.Typed.argPrfL_eq, MIPRE.Tailored.AnsRed.Typed.length_seedL_le,
+  MIPRE.Tailored.AnsRed.Typed.lpHdat_pdom, MIPRE.Tailored.AnsRed.Typed.margCallX_pdom,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpD_time
+
+-- blueprint `thm:ar-output-within`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.pow_le_pow_of_le',
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.output_within
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,

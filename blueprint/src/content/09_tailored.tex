@@ -3464,7 +3464,8 @@ the binary index can write: a closed program computes them and the programs run 
 (Definition~\ref{def:ar-routine}), as in the MIP* answer reduction. Every check of the game is a
 list of field equations in the answer bits, whose constraints are computed from a program of the
 equations' values (Lemma~\ref{lem:ar-field-cons}). The output verifier meets the presented game
-(Theorem~\ref{thm:ar-output}); the running times of its programs are still to be formalized.
+(Theorem~\ref{thm:ar-output}), and its programs run within the contract's output budget as soon
+as the routine's parameter program runs in polynomial time (Theorem~\ref{thm:ar-output-within}).
 
 \begin{definition}[A tailored verifier meeting a tailored game]
 \label{def:tailored-meets}
@@ -3832,9 +3833,10 @@ the processor runs, as stages that keep their input: the routine's parameter pro
 $((\lambda, \mu, \sigma), n)$; the input sampler, through the universal machine, on the marginal
 queries of both players at the seeds of $x$ and $y$; the routine's circuit function at each
 seed, and then the proof check of each question with that circuit's gates, both on encodings
-assembled from what the earlier stages output; and finally the program of
-Lemma~\ref{lem:ar-lp-final}. No stage decodes a program from data. Its program is computed from
-the input programs and $(\lambda, \mu, \sigma)$ in polynomial time.
+assembled from what the earlier stages output, the input sampler's questions and the readable
+answers read as bit strings, so that both run on encodings on every input; and finally the
+program of Lemma~\ref{lem:ar-lp-final}. No stage decodes a program from data. Its program is
+computed from the input programs and $(\lambda, \mu, \sigma)$ in polynomial time.
 \end{definition}
 
 \begin{lemma}[The processor computes the presented constraints]
@@ -3887,4 +3889,115 @@ The sampler's distribution is the presented game's weights (Lemma~\ref{lem:ar-sa
 the calculator outputs its lengths (Lemma~\ref{lem:ar-len}) and the processor its constraints
 (Lemma~\ref{lem:ar-lp}). Theorem~\ref{thm:ar-meets} concludes, the answer-reduced family being an
 answer-reduced sampler.
+\end{proof}
+
+\begin{definition}[A parameter routine in polynomial time]
+\label{def:ar-par-time}
+\uses{def:ar-routine,lem:ar-construction}
+\lean{MIPRE.Tailored.AnsRed.Typed.ArRoutine.ParTime}
+\leanok
+A parameter routine runs \emph{in polynomial time} when there are $c$, $m$ and $e$ such that,
+for every $W \geq (\lambda n + 1)^\mu + \sigma + \lambda + n$ and every $X \geq 1$, its parameter
+program halts on $((\lambda, \mu, \sigma), n)$ with the parameters within
+$(c (W + 1)^m X^e)^{\mu + 1}$ steps.
+\end{definition}
+
+\begin{lemma}[The running time and the dimension of the answer-reduced sampler]
+\label{lem:ar-sampler-time}
+\uses{def:ar-par-time,def:ar-sampler,lem:ar-typed-sampler,lem:oracle-typed-sampler,
+  lem:ar-construction}
+\lean{MIPRE.Tailored.AnsRed.Typed.le_of_arg_le, MIPRE.Tailored.AnsRed.Typed.le_size_arParams,
+  MIPRE.Tailored.AnsRed.Typed.lms_pdom, MIPRE.Tailored.AnsRed.Typed.ArRoutine.params_pdom,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.ldCore_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.ldPar_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.arProgs_size_pdom,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.arTyped_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.arSampler_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.arSampler_dim_pdom}
+\leanok
+For a parameter routine in polynomial time there are $C$, $M$ and $E$ such that, for every
+$W \geq (\lambda n + 1)^\mu + \sigma + \lambda + n$ and every input sampler $S$ with $|S| \leq W$
+running within $(\lambda n + 1)^\mu (|d| + 1)^\mu$ at $n$, the answer-reduced sampler runs within
+$(C (W + 1)^M)^{\mu + 1} (|d| + 1)^{E (\mu + 1)}$ at $n$; and when the dimension of $S$ at $n$ is
+at most $W$, the answer-reduced sampler's dimension at $n$ is at most $(C (W + 1)^M)^{\mu + 1}$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The parameters are the output of a run within the bound, so their encoding and each parameter
+are dominated. The low-degree half's parameter program is the routine's followed by a
+polynomial-time projection. The typed sampler is the product of the oracularized input sampler,
+within a monomial at degree $e (\mu + 1)$ (Lemma~\ref{lem:oracle-typed-sampler}), and the
+low-degree half, whose cost is that of the product's accounting
+(Lemma~\ref{lem:ar-typed-sampler}); detyping preserves the shape of the bound
+(Lemma~\ref{lem:ar-construction}). The dimension is the graph view's bits, the input sampler's
+dimension and $(2 M + 1) t$, with $M$ and $t$ below the parameters' size.
+\end{proof}
+
+\begin{lemma}[The running time of the answer-length calculator]
+\label{lem:ar-len-time}
+\uses{def:ar-par-time,lem:ar-len,lem:ar-sampler-time}
+\lean{MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_time,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_len_pdom,
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.lenD_total}
+\leanok
+The answer-length calculator halts on every input. For a parameter routine in polynomial time,
+it runs at $n$, on every input $(n, d)$, within $(C (W + 1)^M X^E)^{\mu + 1}$ for every $X > |d|$
+and $W \geq (\lambda n + 1)^\mu + \sigma + \lambda + n$, and the lengths it outputs are at most
+$(C (W + 1)^M)^{\mu + 1}$, for $C$, $M$ and $E$ depending only on the routine.
+\end{lemma}
+
+\begin{proof}
+\leanok
+It halts by Lemma~\ref{lem:ar-len}. Its two stages are the parameter program and a
+polynomial-time function of the context. A length is a codeword count, linear in the PCP's
+dimensions, times a number of coefficients, at most $M d + 1$, times $t$, each below a power of
+the parameters' size (Lemma~\ref{lem:ar-sampler-time}).
+\end{proof}
+
+\begin{lemma}[The running time of the linear-constraints processor]
+\label{lem:ar-lp-time}
+\uses{def:ar-par-time,def:ar-lp,lem:ar-typed-decider,lem:ar-sampler-time}
+\lean{MIPRE.Tailored.AnsRed.Typed.argCircL_eq, MIPRE.Tailored.AnsRed.Typed.argPrfL_eq,
+  MIPRE.Tailored.AnsRed.Typed.length_seedL_le, MIPRE.Tailored.AnsRed.Typed.lpHdat_pdom,
+  MIPRE.Tailored.AnsRed.Typed.margCallX_pdom, MIPRE.Tailored.AnsRed.Typed.ArRoutine.lpD_time}
+\leanok
+For a parameter routine in polynomial time there are $C$, $M$ and $E$ such that, for every
+$W \geq (\lambda n + 1)^\mu + \sigma + \lambda + n$, every input verifier with
+$|\verifier| \leq \sigma$ whose sampler runs within $(\lambda n + 1)^\mu (|d| + 1)^\mu$ at $n$,
+and every input $(n, d)$ and $X > |d|$, the processor halts within
+$(C (W + 1)^M X^E)^{\mu + 1}$ steps.
+\end{lemma}
+
+\begin{proof}
+\leanok
+As for the MIP* answer reduction's decider (Lemma~\ref{lem:ar-typed-decider}), stage by stage.
+The parameter program runs within the bound. Each call to the input sampler is on a marginal
+query of a constant-size header and a question's seed bits, at most linear in $|d|$, so costs
+$(\lambda n + 1)^\mu (c W X)^\mu$ through the universal machine. The circuit function and the
+proof check are polynomial-time functions, and their stages' arguments are encodings on every
+input: the input sampler's questions and the readable answers are read as bit strings. The last
+stage is a polynomial-time function of the context. Each stage's output is no longer than its
+running time, so the contexts stay dominated. Neither the input's calculator nor its processor
+is run: they enter the circuit function's input as data.
+\end{proof}
+
+\begin{theorem}[The complexity clause of the answer reduction]
+\label{thm:ar-output-within}
+\uses{def:ar-output,lem:ar-sampler-time,lem:ar-len-time,lem:ar-lp-time,def:tailored-bounded}
+\lean{MIPRE.Tailored.AnsRed.Typed.pow_le_pow_of_le',
+  MIPRE.Tailored.AnsRed.Typed.ArRoutine.output_within}
+\leanok
+For a parameter routine in polynomial time there are a polynomial $P$ and a degree $k$ such that
+every input tailored verifier within the input budget of answer reduction at $n$, with
+$|\verifier| \leq \sigma$, gives an output verifier whose sampler, calculator and processor run
+within $P((\lambda n + 1)^\mu + \sigma + \lambda + n)^{\mu + 1}$ at degree $k (\mu + 1)$, whose
+dimension is at most that bound, and whose lengths are at most that bound.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Take $W = (\lambda n + 1)^\mu + \sigma + \lambda + n$, $X = |d| + 1$, and the sum of the constants
+of Lemmas~\ref{lem:ar-sampler-time}, \ref{lem:ar-len-time} and~\ref{lem:ar-lp-time}. The input
+budget gives the input sampler's running time and dimension.
 \end{proof}
