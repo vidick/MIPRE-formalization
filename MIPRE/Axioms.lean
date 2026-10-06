@@ -248,6 +248,7 @@ public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.ClassVerifier
 public import MIPRE.Tailored.AnsRed.Linear
 public import MIPRE.TM.CookLevin.Decoupled6Prog
+public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -3914,6 +3915,19 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:ar-window-describer`
 #guard_sorry_free MIPRE.SAT.Circuit.formula6, MIPRE.SAT.Circuit.DescribesWindows,
   MIPRE.SAT.WindowDescriber, MIPRE.SAT.windowDescriber
+
+-- blueprint `lem:ar-indicator-table`
+#guard_sorry_free MIPRE.Tailored.AnsRed.indTable_eq_indLoop,
+  MIPRE.Tailored.AnsRed.tableSat_indTable_iff
+
+-- blueprint `lem:ar-indicator-properties`
+#guard_sorry_free MIPRE.Tailored.AnsRed.lstarOK_pad, MIPRE.Tailored.AnsRed.accepts_of_lstarOK,
+  MIPRE.Tailored.AnsRed.tableSat_of_accepts
+
+-- blueprint `lem:ar-indicator-program`
+#guard_sorry_free MIPRE.Tailored.AnsRed.lstarFinal_apply, MIPRE.Tailored.AnsRed.lstarProg_accepts,
+  MIPRE.Tailored.AnsRed.lstar_accepts_iff, MIPRE.Tailored.AnsRed.lstarProg_halts,
+  MIPRE.Tailored.AnsRed.lstar_acceptsWithin
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
