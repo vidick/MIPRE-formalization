@@ -1342,7 +1342,8 @@ of `T̃(G_M)`, which is what the paper proves; the transfer to rank 2 is extra.
   BVY17 and Vid22 (present), GH17 (present through `thm:gowers-hatami`), JNVWY's tensor-codes
   paper (present), Justesen 1972 and Akhtiamov–Dogon if Route B is taken.
 - **Paper notes.** `reports/aldous-lyons-paper-notes.md`, seeded from §8, appended as the Lean
-  finds more; the maintainer forwards to the authors as they see fit.
+  finds more; the maintainer forwards to the authors as they see fit. Written 2026-10-06, after
+  Phase 6: paper I's findings as the Lean met them, paper II's §8 with a status per item.
 - **Tracking.** One issue for the track with the phase list above as sub-issues; PRs
   `Closes #N`, `awaiting-review`, squash merge, as for every other track. The first PR is
   Phase 0's statements file and the blueprint skeleton, so that the shape is reviewed before
