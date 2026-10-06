@@ -250,6 +250,7 @@ public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
 public import MIPRE.Tailored.OfTNFVT
+public import MIPRE.Background.Tailored.Intro.Typed
 
 @[expose] public section
 
@@ -3922,5 +3923,38 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.TailoredVerifier.valStar_ofTNFVT,
   MIPRE.Tailored.TailoredVerifier.hasPerfectPCC_ofTNFVT, MIPRE.Tailored.dom_wrapCoreCost,
   MIPRE.Tailored.dom_le_pow, MIPRE.Tailored.TailoredVerifier.ofTNFVT_isBounded
+
+-- blueprint `lem:intro-pauli-hide`
+#guard_sorry_free MIPRE.Tailored.Intro.PauliHide.answerBits_decodeBits_of_length,
+  MIPRE.Tailored.Intro.PauliHide.pauliXProj, MIPRE.Tailored.Intro.PauliHide.pauliXProj_eq,
+  MIPRE.Tailored.Intro.PauliHide.hideChecks, MIPRE.Tailored.Intro.PauliHide.hideChecks_iff,
+  MIPRE.Tailored.Intro.PauliHide.pauliHideCons, MIPRE.Tailored.Intro.PauliHide.pauliHideConsRev,
+  MIPRE.Tailored.Intro.PauliHide.pauliHideCons_iff,
+  MIPRE.Tailored.Intro.PauliHide.pauliHideConsRev_iff
+
+-- blueprint `lem:intro-aux-cons`
+#guard_sorry_free MIPRE.Tailored.Intro.win, MIPRE.Tailored.Intro.win_take,
+  MIPRE.Tailored.Intro.reg, MIPRE.Tailored.Intro.reg_eq_iff, MIPRE.Tailored.Intro.regEqCons_iff,
+  MIPRE.Tailored.Intro.srcEqCons, MIPRE.Tailored.Intro.srcEqCons_iff, MIPRE.Tailored.Intro.auxLenR,
+  MIPRE.Tailored.Intro.auxLen, MIPRE.Tailored.Intro.srcAns, MIPRE.Tailored.Intro.parsed,
+  MIPRE.Tailored.Intro.srcFits, MIPRE.Tailored.Intro.sampleCons,
+  MIPRE.Tailored.Intro.sampleCons_iff, MIPRE.Tailored.Intro.readCons,
+  MIPRE.Tailored.Intro.readCons_iff, MIPRE.Tailored.Intro.hideReadCons,
+  MIPRE.Tailored.Intro.hideReadCons_iff, MIPRE.Tailored.Intro.KerGens,
+  MIPRE.Tailored.Intro.hideNextCons, MIPRE.Tailored.Intro.hideNextCons_iff,
+  MIPRE.Tailored.Intro.sameCons, MIPRE.Tailored.Intro.sameCons_iff,
+  MIPRE.Tailored.Intro.sourceCons, MIPRE.Tailored.Intro.sourceCons_iff,
+  MIPRE.Tailored.Intro.swapCon, MIPRE.Tailored.Intro.satisfies_swapCon,
+  MIPRE.Tailored.Intro.dirAux, MIPRE.Tailored.Intro.dirAux_iff, MIPRE.Tailored.Intro.auxPair,
+  MIPRE.Tailored.Intro.auxPair_iff
+
+-- blueprint `lem:intro-typed-cons`
+#guard_sorry_free MIPRE.Tailored.Intro.Typed.prefixOK, MIPRE.Tailored.Intro.Typed.G,
+  MIPRE.Tailored.Intro.Typed.pauliDir, MIPRE.Tailored.Intro.Typed.pauliAux,
+  MIPRE.Tailored.Intro.Typed.consL, MIPRE.Tailored.Intro.Typed.lenR,
+  MIPRE.Tailored.Intro.Typed.len, MIPRE.Tailored.Intro.Typed.parsedT,
+  MIPRE.Tailored.Intro.Typed.readOK, MIPRE.Tailored.Intro.Typed.pauliAux_iff,
+  MIPRE.Tailored.Intro.Typed.AcceptsAsInput, MIPRE.Tailored.Intro.Typed.hD_of_acceptsAsInput,
+  MIPRE.Tailored.Intro.Typed.consL_iff
 
 end

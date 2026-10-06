@@ -686,6 +686,8 @@ public import MIPRE.Background.Repetition.VerifierCo
 public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Background.Tailored.Intro.PauliCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
+public import MIPRE.Background.Tailored.Intro.PauliHide
+public import MIPRE.Background.Tailored.Intro.Typed
 public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Background.Tailored.Repetition.Stage
 public import MIPRE.Cslib.Computability.Machines.Turing.MultiTape.Deterministic
@@ -1438,6 +1440,7 @@ public import MIPRE.Tailored.Halting.Main
 public import MIPRE.Tailored.Halting.Reduction
 public import MIPRE.Tailored.Halting.Search
 public import MIPRE.Tailored.Halting.Tabulate
+public import MIPRE.Tailored.Intro.AuxCons
 public import MIPRE.Tailored.Intro.Binary
 public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Encoded

@@ -1759,6 +1759,99 @@ $n^{C\lambda}(|d|+1)^{C\lambda}$. The description is that of the wrapper, plus f
 the length calculator, plus that of the constraint processor, plus a constant.
 \end{proof}
 
+\begin{lemma}[The first hiding edge as linear constraints]
+\label{lem:intro-pauli-hide}
+\uses{lem:intro-pauli-cons,lem:pauli-mixing}
+\lean{MIPRE.Tailored.Intro.PauliHide.answerBits_decodeBits_of_length,
+  MIPRE.Tailored.Intro.PauliHide.pauliXProj, MIPRE.Tailored.Intro.PauliHide.pauliXProj_eq,
+  MIPRE.Tailored.Intro.PauliHide.hideChecks, MIPRE.Tailored.Intro.PauliHide.hideChecks_iff,
+  MIPRE.Tailored.Intro.PauliHide.pauliHideCons, MIPRE.Tailored.Intro.PauliHide.pauliHideConsRev,
+  MIPRE.Tailored.Intro.PauliHide.pauliHideCons_iff,
+  MIPRE.Tailored.Intro.PauliHide.pauliHideConsRev_iff}
+\leanok
+A Pauli answer of the right length is the encoding of the answer it decodes to. The kernel's
+projection of a decoded $X$-basis Pauli answer is $\F_2$-linear in its bits. So the comparison of
+an $X$-basis Pauli answer with an answer at the first hiding level --- equal dual readouts on the
+first factor, and equal coordinates off it --- is a list of linear constraints on the two answers,
+in either order, given a list of vectors spanning the kernel of the first stage's linear map.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The projection reads the self-dual coordinates of the field elements of the answer, each a fixed
+linear function of the $k$ bits encoding it. The dual readouts agree exactly when the difference
+is orthogonal to the kernel, as in Lemma~\ref{lem:intro-register-cons}.
+\end{proof}
+
+\begin{lemma}[The auxiliary checks as linear constraints]
+\label{lem:intro-aux-cons}
+\uses{lem:intro-forms,lem:intro-register-cons,def:intro-verifier}
+\lean{MIPRE.Tailored.Intro.win, MIPRE.Tailored.Intro.win_take, MIPRE.Tailored.Intro.reg,
+  MIPRE.Tailored.Intro.reg_eq_iff, MIPRE.Tailored.Intro.regEqCons_iff,
+  MIPRE.Tailored.Intro.srcEqCons, MIPRE.Tailored.Intro.srcEqCons_iff,
+  MIPRE.Tailored.Intro.auxLenR, MIPRE.Tailored.Intro.auxLen, MIPRE.Tailored.Intro.srcAns,
+  MIPRE.Tailored.Intro.parsed, MIPRE.Tailored.Intro.srcFits, MIPRE.Tailored.Intro.sampleCons,
+  MIPRE.Tailored.Intro.sampleCons_iff, MIPRE.Tailored.Intro.readCons,
+  MIPRE.Tailored.Intro.readCons_iff, MIPRE.Tailored.Intro.hideReadCons,
+  MIPRE.Tailored.Intro.hideReadCons_iff, MIPRE.Tailored.Intro.KerGens,
+  MIPRE.Tailored.Intro.hideNextCons, MIPRE.Tailored.Intro.hideNextCons_iff,
+  MIPRE.Tailored.Intro.sameCons, MIPRE.Tailored.Intro.sameCons_iff,
+  MIPRE.Tailored.Intro.sourceCons, MIPRE.Tailored.Intro.sourceCons_iff,
+  MIPRE.Tailored.Intro.swapCon, MIPRE.Tailored.Intro.satisfies_swapCon,
+  MIPRE.Tailored.Intro.dirAux, MIPRE.Tailored.Intro.dirAux_iff, MIPRE.Tailored.Intro.auxPair,
+  MIPRE.Tailored.Intro.auxPair_iff}
+\leanok
+Read an auxiliary answer of the padded layout as the kernel's parsed answer: its register, its
+dual and tail, and the input's answer made of the readable window of the input's readable length
+and the linear window of its linear length. At every ordered pair of auxiliary labels there is a
+list of constraints, given a readable condition $G$ implying that the input's answer fits the
+cutoff, the input's split and constraints, and lists of vectors spanning the kernels of the
+hiding stages' linear maps. It holds of two answers of the labels' lengths exactly when $G$
+holds at both registers, the parsed answers are equal when the labels are, and the kernel's
+directed checks accept the parsed answers in both orders: sampling ($y = L_w(z)$ and equal input
+answers), reading (equal registers and input answers), the last hiding level against Read, two
+consecutive hiding levels, and the source game, whose constraints are the input's, re-indexed.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A comparison of readable data is a readable condition; one of linear data is a list of linear
+constraints, bit by bit for an equality of windows, coordinate by coordinate for an equality on a
+coordinate set, generator by generator for an equality of dual readouts. The input's answer is
+compared by its split, readable, and its two windows. The other order swaps the two blocks of
+every constraint.
+\end{proof}
+
+\begin{lemma}[The typed tailored data of the introspection verifier]
+\label{lem:intro-typed-cons}
+\uses{lem:intro-aux-cons,lem:intro-pauli-hide,lem:intro-pauli-cons,def:intro-source}
+\lean{MIPRE.Tailored.Intro.Typed.prefixOK, MIPRE.Tailored.Intro.Typed.G,
+  MIPRE.Tailored.Intro.Typed.pauliDir, MIPRE.Tailored.Intro.Typed.pauliAux,
+  MIPRE.Tailored.Intro.Typed.consL, MIPRE.Tailored.Intro.Typed.lenR,
+  MIPRE.Tailored.Intro.Typed.len, MIPRE.Tailored.Intro.Typed.parsedT,
+  MIPRE.Tailored.Intro.Typed.readOK, MIPRE.Tailored.Intro.Typed.pauliAux_iff,
+  MIPRE.Tailored.Intro.Typed.AcceptsAsInput, MIPRE.Tailored.Intro.Typed.hD_of_acceptsAsInput,
+  MIPRE.Tailored.Intro.Typed.consL_iff}
+\leanok
+Let the normal form verifier $V$ accept at index $2^n$ as the tailored verifier $T$ does. At every
+ordered pair of labels of the introspection verifier there is a list of constraints on the two
+answers of the labels' lengths, from the question payloads and the readable answers: the Pauli
+basis test at two Pauli labels; Lemma~\ref{lem:intro-aux-cons} at two auxiliary labels, with the
+input's split and constraints those of $T$ at the source questions; and at a Pauli label and an
+auxiliary one, the readable condition, the comparison of a $Z$-basis answer with the sampled
+register, and Lemma~\ref{lem:intro-pauli-hide}. The constraints hold exactly when the readable
+conditions hold at both answers --- the input's answer fits, the prefix condition at Read and
+Hide, the source output at Introspect --- and the kernel's semantic check accepts the two parsed
+answers.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Label pair by label pair: the semantic check is the format of the parsed answers (automatic),
+their equality at equal labels, the Pauli basis test at two Pauli labels and the directed checks
+in both orders, each of which is one of the families.
+\end{proof}
+
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
 \uses{def:tailored-compression,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}
