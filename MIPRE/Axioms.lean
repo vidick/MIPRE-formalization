@@ -245,6 +245,7 @@ public import MIPRE.Tailored.Intro.Source
 public import MIPRE.Tailored.Intro.Presentation
 public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Tailored.CanonicalCost
+public import MIPRE.Tailored.Intro.SourceCons
 
 @[expose] public section
 
@@ -3853,5 +3854,16 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.canonProgT_halts, MIPRE.Tailored.canonPoly, MIPRE.Tailored.canonBound_le,
   MIPRE.Tailored.dom_canonBound, MIPRE.Tailored.canonProgT_timeBound,
   MIPRE.Tailored.esize_canonProgT
+
+-- blueprint `lem:intro-forms`
+#guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,
+  MIPRE.Tailored.Intro.satisfies_iff_dotL, MIPRE.Tailored.Intro.dotL_append,
+  MIPRE.Tailored.Intro.satisfies_append_iff, MIPRE.Tailored.Intro.place,
+  MIPRE.Tailored.Intro.length_place, MIPRE.Tailored.Intro.dotL_place,
+  MIPRE.Tailored.Intro.unit, MIPRE.Tailored.Intro.dotL_unit, MIPRE.Tailored.Intro.eqCons,
+  MIPRE.Tailored.Intro.eqCons_iff, MIPRE.Tailored.Intro.guardCons,
+  MIPRE.Tailored.Intro.guardCons_iff, MIPRE.Tailored.Intro.place2,
+  MIPRE.Tailored.Intro.dotL_place2, MIPRE.Tailored.Intro.inputOf, MIPRE.Tailored.Intro.reindex,
+  MIPRE.Tailored.Intro.dotL_split_right, MIPRE.Tailored.Intro.satisfies_reindex_iff
 
 end
