@@ -29,8 +29,9 @@ specification of its programs with the value chain through `seven` (P3d,
 three typed facts (P3c), the two programs with their costs (P3f), and the assembly (P3g); see
 "Phase 3 status (2026-10-06)" in §5.
 Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices"); P4a, the linear
-systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`), and so is P4g, the describer through
-three windows (`MIPRE.SAT.windowDescriber`).
+systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`), and so are P4g, the describer through
+three windows (`MIPRE.SAT.windowDescriber`), and P4f, the output indicator
+(`MIPRE/Tailored/AnsRed/Indicator*.lean`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -982,10 +983,18 @@ What the reading settled.
   test; extraction by `SoundIn`; the line conclusions; the indifference pruning; consistency and
   the proof check by Schwartz–Zippel and P4b's soundness; the decoded strategy for the typed
   oracularized game; `thm:oracularization`; the error.
-- **P4f — the output indicator `L*` (2.5–3.5k).** A decider with hard-wired inputs: the format
-  checks, the input's lengths and processor, purification, triangulation, decoupling, the
+- **P4f — the output indicator `L*` (done, 1.7k lines).** A decider with hard-wired inputs: the
+  format checks, the input's lengths and processor, purification, triangulation, decoupling, the
   comparison with `O`; its acceptance law (claim:properties_of_L*) and its running time
-  (eq:time_bound_L*) in the relative-cost reading.
+  (eq:time_bound_L*) in the relative-cost reading. `Tailored/AnsRed/Indicator.lean`: the table of
+  the decoupled system over `[N] × [N] × [D]³ × [64]` (the binary digits of an index are those of
+  its coordinates when `N = 2^ℓ`, `D = 2^◇`), `TableSat` and its equivalence with `DecSat`, the
+  check `LstarOK` and claim:properties_of_L*. `IndicatorProg.lean`: `lstar prm V`, the canonical
+  decider's five calls followed by a polynomial-time check written in unary, with `(ℓ, ◇)` from a
+  polynomial-time parameter program `prm` of the index; the powers of two are capped by the input
+  lengths, so no power larger than the input is written. `lstar_accepts_iff` is the acceptance
+  law. `IndicatorCost.lean`: `lstar_acceptsWithin`, the explicit bound `lstarBound`. The table
+  depends only on the readable answers, so the PCP can hold it as readable data.
 - **P4g — the decoupled describer of `L*` (done, 1.0k lines).** As above, with `M` and `s`
   polynomial in `log T`, `Q` and `D` and independent of the hard-wired inputs, and the program
   in polynomial time (prop:explicit-padded-succinct-deciders): `MIPRE.SAT.WindowDescriber`
