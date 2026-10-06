@@ -16,7 +16,9 @@ self-contained, and \texttt{MIPRE/Tailored/Sofic/}): subgroup tests and their so
 Aldous--Lyons conjecture, and the associated test of a tailored game. Proved: the associated
 test is computable from the game (Lemma~\ref{lem:assoc-test-primrec}), and Main Theorem~II with a
 halting reduction makes the sofic value not approximable
-(Theorem~\ref{thm:sofic-not-approximable}). Main Theorem~II and Main Theorem~I are in progress.
+(Theorem~\ref{thm:sofic-not-approximable}); and the perturbation half of Main Theorem~II's
+soundness (Proposition~\ref{prop:assoc-perturb}). The rest of Main Theorem~II and Main Theorem~I
+are in progress.
 
 \subsection{Subgroup tests and the conjecture}
 
@@ -109,9 +111,116 @@ values as an iterate, deduplication as a fold, and the enumeration of the fixed 
 range.
 \end{proof}
 
+\begin{lemma}[Hamming distance of permutations]
+\label{lem:perm-hamming}
+\lean{MIPRE.Tailored.Sofic.diffCard, MIPRE.Tailored.Sofic.dH, MIPRE.Tailored.Sofic.diffCard_triangle,
+  MIPRE.Tailored.Sofic.diffCard_mul, MIPRE.Tailored.Sofic.diffCard_inv,
+  MIPRE.Tailored.Sofic.card_commutator_moves, MIPRE.Tailored.Sofic.dH_triangle,
+  MIPRE.Tailored.Sofic.dH_mul, MIPRE.Tailored.Sofic.dH_inv}
+\leanok
+The normalized Hamming distance of two permutations of a finite set, the fraction of points
+where they differ, satisfies the triangle inequality, is subadditive on products, and is
+invariant under inversion.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Counting points.
+\end{proof}
+
+\begin{lemma}[Stability of involutions, fixed-point-free involutions and commuting families;
+I:2561--2649]
+\label{lem:perm-stability}
+\uses{lem:perm-hamming}
+\lean{MIPRE.Tailored.Sofic.invFix, MIPRE.Tailored.Sofic.invFix_invol,
+  MIPRE.Tailored.Sofic.diffCard_invFix, MIPRE.Tailored.Sofic.fpfFix,
+  MIPRE.Tailored.Sofic.fpfFix_invol, MIPRE.Tailored.Sofic.fpfFix_free,
+  MIPRE.Tailored.Sofic.diffCard_fpfFix, MIPRE.Tailored.Sofic.ordProd,
+  MIPRE.Tailored.Sofic.commFix, MIPRE.Tailored.Sofic.commFix_invol,
+  MIPRE.Tailored.Sofic.commFix_comm, MIPRE.Tailored.Sofic.commFix_J,
+  MIPRE.Tailored.Sofic.commFix_readable, MIPRE.Tailored.Sofic.diffCard_commFix}
+\leanok
+A permutation $\pi$ is within $d(\pi^2, 1)$ of an involution; an involution of an even set almost
+without fixed points is close to one without, given a fixed-point-free involution commuting with
+it; and a family of involutions at a vertex, together with $J$, can be made into commuting
+involutions commuting with $J$, the readable ones acting as the identity or as $J$, by changing
+them on at most $2^{\ell + 1}$ times the points at which some relation fails.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The first two as in the paper. The third replaces Claim~I:2600 and Glebsky--Rivera
+(Claim~I:2631): restrict the variables to the set of points from which every ordered product of
+them reaches only points where all relations hold, invariant under the variables and $J$, and
+let them act as the identity elsewhere.
+\end{proof}
+
+\begin{lemma}[Robustness of the value; Claim~I:1480]
+\label{lem:test-robust}
+\uses{def:subgroup-test,lem:perm-hamming}
+\lean{MIPRE.Tailored.Sofic.wordCount, MIPRE.Tailored.Sofic.sig, MIPRE.Tailored.Sofic.withPerms,
+  MIPRE.Tailored.Sofic.diffCard_wordPerm, MIPRE.Tailored.Sofic.abs_passProb_sub_le,
+  MIPRE.Tailored.Sofic.abs_value_sub_le}
+\leanok
+For two actions of the generators on the same finite set,
+$|\mathrm{val}(T, \sigma) - \mathrm{val}(T, \sigma')| \leq \sum_k S_T(k)\, d(\sigma_k,
+\sigma'_k)$, where the significance $S_T(k)$ is the expected number of occurrences of the
+generator $k$ in the words of a challenge.
+\end{lemma}
+
+\begin{proof}
+\leanok
+A word moves a point differently under the two actions only if one of its letters does at an
+intermediate point; letters and their inverses cost the same.
+\end{proof}
+
+\begin{lemma}[Significance of the associated test; Proposition~I:2283]
+\label{lem:assoc-significance}
+\uses{def:assoc-test,lem:test-robust}
+\lean{MIPRE.Tailored.Sofic.sigBound, MIPRE.Tailored.Sofic.sig_le, MIPRE.Tailored.Sofic.mdeg,
+  MIPRE.Tailored.Sofic.sum_mdeg, MIPRE.Tailored.Sofic.sig_genX_le}
+\leanok
+In the associated test every generator has significance at most a bound $S(\Lambda)$ of order
+$\Lambda 4^{\Lambda}$, and the variables at a vertex $x$ at most $S(\Lambda)$ times the weight of
+the question pairs containing $x$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The words of the challenge at $(x, y)$ use only $J$ and the variables at $x$ and $y$; their
+number and lengths are bounded, the constraint words by deduplication.
+\end{proof}
+
+\begin{proposition}[Perturbing to pass Checks~1--3; Proposition~I:2267]
+\label{prop:assoc-perturb}
+\uses{lem:perm-stability,lem:test-robust,lem:assoc-significance}
+\lean{MIPRE.Tailored.Sofic.double, MIPRE.Tailored.Sofic.value_double, MIPRE.Tailored.Sofic.dblSwap,
+  MIPRE.Tailored.Sofic.qw, MIPRE.Tailored.Sofic.qwTot, MIPRE.Tailored.Sofic.qwTot_pos,
+  MIPRE.Tailored.Sofic.value_eq, MIPRE.Tailored.Sofic.sig_eq,
+  MIPRE.Tailored.Sofic.fixed_of_passes, MIPRE.Tailored.Sofic.read_of_passes,
+  MIPRE.Tailored.Sofic.npass, MIPRE.Tailored.Sofic.SwapData, MIPRE.Tailored.Sofic.J₂,
+  MIPRE.Tailored.Sofic.Xfix, MIPRE.Tailored.Sofic.perturbed,
+  MIPRE.Tailored.Sofic.checks_perturbed, MIPRE.Tailored.Sofic.card_bad_le,
+  MIPRE.Tailored.Sofic.lose, MIPRE.Tailored.Sofic.loseAt, MIPRE.Tailored.Sofic.weighted_dist_le,
+  MIPRE.Tailored.Sofic.value_perturbed_ge, MIPRE.Tailored.Sofic.numeric_bound,
+  MIPRE.Tailored.Sofic.Cp, MIPRE.Tailored.Sofic.exists_checks_of_value}
+\leanok
+If an action has value at least $1 - \varepsilon$ against the associated test of a tailored game
+with answer length $\Lambda$, then an action passing Checks~1--3 everywhere has value at least
+$1 - 300\,(\Lambda + 1)^4\, 2^{4(\Lambda + 1)}\, \varepsilon$.
+\end{proposition}
+
+\begin{proof}
+\leanok
+Double the action first, so that the set is even and carries a fixed-point-free involution
+commuting with every generator. Make $J$ a fixed-point-free involution, then repair the variables
+vertex by vertex (Lemma~\ref{lem:perm-stability}), bounding the points changed at a vertex by its
+losing probability, and conclude by robustness and significance.
+\end{proof}
+
 \begin{theorem}[Main Theorem~II; Theorem~I:2126]
 \label{thm:main-theorem-ii}
-\uses{def:assoc-test}
+\uses{def:assoc-test,prop:assoc-perturb}
 Let $G$ be a tailored game with answer length $\Lambda$. If $G$ has a perfect ZPC strategy, its
 associated test has sofic value $1$. If its associated test has sofic value at least
 $1 - \varepsilon$, then $G$ has synchronous value at least $1 - C(\Lambda+1)^4 2^{6(\Lambda+1)}

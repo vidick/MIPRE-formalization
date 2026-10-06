@@ -269,6 +269,7 @@ public import MIPRE.Background.Tailored.Intro.CompleteContract
 public import MIPRE.Background.Tailored.Intro.Inhabit
 public import MIPRE.Background.Tailored.Main
 public import MIPRE.Tailored.Sofic.Undecidable
+public import MIPRE.Tailored.Sofic.Soundness
 public import MIPRE.Tailored.Intro.AuxProg
 
 @[expose] public section
@@ -4133,6 +4134,42 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `thm:sofic-not-approximable`
 #guard_sorry_free MIPRE.Tailored.Sofic.MainTheoremII, MIPRE.Tailored.Sofic.le_iff_of_gap,
   MIPRE.Tailored.Sofic.not_sofValueApproximable_of
+
+-- blueprint `lem:perm-hamming`
+#guard_sorry_free MIPRE.Tailored.Sofic.diffCard, MIPRE.Tailored.Sofic.dH, MIPRE.Tailored.Sofic.diffCard_triangle,
+  MIPRE.Tailored.Sofic.diffCard_mul, MIPRE.Tailored.Sofic.diffCard_inv,
+  MIPRE.Tailored.Sofic.card_commutator_moves, MIPRE.Tailored.Sofic.dH_triangle,
+  MIPRE.Tailored.Sofic.dH_mul, MIPRE.Tailored.Sofic.dH_inv
+
+-- blueprint `lem:perm-stability`
+#guard_sorry_free MIPRE.Tailored.Sofic.invFix, MIPRE.Tailored.Sofic.invFix_invol,
+  MIPRE.Tailored.Sofic.diffCard_invFix, MIPRE.Tailored.Sofic.fpfFix,
+  MIPRE.Tailored.Sofic.fpfFix_invol, MIPRE.Tailored.Sofic.fpfFix_free,
+  MIPRE.Tailored.Sofic.diffCard_fpfFix, MIPRE.Tailored.Sofic.ordProd,
+  MIPRE.Tailored.Sofic.commFix, MIPRE.Tailored.Sofic.commFix_invol,
+  MIPRE.Tailored.Sofic.commFix_comm, MIPRE.Tailored.Sofic.commFix_J,
+  MIPRE.Tailored.Sofic.commFix_readable, MIPRE.Tailored.Sofic.diffCard_commFix
+
+-- blueprint `lem:test-robust`
+#guard_sorry_free MIPRE.Tailored.Sofic.wordCount, MIPRE.Tailored.Sofic.sig, MIPRE.Tailored.Sofic.withPerms,
+  MIPRE.Tailored.Sofic.diffCard_wordPerm, MIPRE.Tailored.Sofic.abs_passProb_sub_le,
+  MIPRE.Tailored.Sofic.abs_value_sub_le
+
+-- blueprint `lem:assoc-significance`
+#guard_sorry_free MIPRE.Tailored.Sofic.sigBound, MIPRE.Tailored.Sofic.sig_le, MIPRE.Tailored.Sofic.mdeg,
+  MIPRE.Tailored.Sofic.sum_mdeg, MIPRE.Tailored.Sofic.sig_genX_le
+
+-- blueprint `prop:assoc-perturb`
+#guard_sorry_free MIPRE.Tailored.Sofic.double, MIPRE.Tailored.Sofic.value_double, MIPRE.Tailored.Sofic.dblSwap,
+  MIPRE.Tailored.Sofic.qw, MIPRE.Tailored.Sofic.qwTot, MIPRE.Tailored.Sofic.qwTot_pos,
+  MIPRE.Tailored.Sofic.value_eq, MIPRE.Tailored.Sofic.sig_eq,
+  MIPRE.Tailored.Sofic.fixed_of_passes, MIPRE.Tailored.Sofic.read_of_passes,
+  MIPRE.Tailored.Sofic.npass, MIPRE.Tailored.Sofic.SwapData, MIPRE.Tailored.Sofic.J₂,
+  MIPRE.Tailored.Sofic.Xfix, MIPRE.Tailored.Sofic.perturbed,
+  MIPRE.Tailored.Sofic.checks_perturbed, MIPRE.Tailored.Sofic.card_bad_le,
+  MIPRE.Tailored.Sofic.lose, MIPRE.Tailored.Sofic.loseAt, MIPRE.Tailored.Sofic.weighted_dist_le,
+  MIPRE.Tailored.Sofic.value_perturbed_ge, MIPRE.Tailored.Sofic.numeric_bound,
+  MIPRE.Tailored.Sofic.Cp, MIPRE.Tailored.Sofic.exists_checks_of_value
 
 -- blueprint `lem:intro-input-runs`
 #guard_sorry_free MIPRE.Tailored.TailoredVerifier.IsBounded.two_le,

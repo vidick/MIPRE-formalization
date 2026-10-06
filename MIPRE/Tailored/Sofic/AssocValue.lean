@@ -98,7 +98,7 @@ theorem sum_challenges (Ψ : List Word × List (List (ℕ × Bool)) → ℝ) :
     ext y
     simp [challenge, qw, h]
 
-theorem totalWeight_eq : ((assocTest g).totalWeight : ℝ) = qwTot g := by
+theorem assocTest_totalWeight_eq : ((assocTest g).totalWeight : ℝ) = qwTot g := by
   have h := sum_challenges g (fun _ => 1)
   simp only [mul_one] at h
   unfold SubgroupTestData.totalWeight
@@ -112,7 +112,7 @@ theorem value_eq (σ : FiniteAction (nGen g)) :
     (assocTest g).value σ = (∑ x ∈ range (g.nV + 1), ∑ y ∈ range (g.nV + 1),
       (qw g x y : ℝ) * σ.passProb (words g x y) (clauses g x y)) / qwTot g := by
   unfold SubgroupTestData.value
-  rw [totalWeight_eq]
+  rw [assocTest_totalWeight_eq]
   congr 1
   exact sum_challenges g (fun c => σ.passProb c.1 c.2)
 
@@ -121,7 +121,7 @@ theorem sig_eq (k : ℕ) :
     sig (assocTest g) k = (∑ x ∈ range (g.nV + 1), ∑ y ∈ range (g.nV + 1),
       (qw g x y : ℝ) * ((words g x y).map fun w => (wordCount k w : ℝ)).sum) / qwTot g := by
   unfold sig
-  rw [totalWeight_eq]
+  rw [assocTest_totalWeight_eq]
   congr 1
   exact sum_challenges g (fun c => (c.1.map fun w => (wordCount k w : ℝ)).sum)
 
