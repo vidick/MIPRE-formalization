@@ -167,10 +167,7 @@ section Correct
 
 variable {c lam n : ℕ} (T : TailoredVerifier 7) (V : Verifier 7) (hT : T.IsBounded lam)
   (hV : V.IsBounded lam) (hn : 1 ≤ n) (hsamp : V.sampler.prog = T.sampler.prog)
-  (hs : V.sampler.dim (2 ^ n) ≤ SourceCompiler.registerBits c lam n)
-
-/-- The register width at `(c, λ, n)`. -/
-abbrev QQ (c lam n : ℕ) : ℕ := SourceCompiler.registerBits c lam n
+  (hs : V.sampler.dim (2 ^ n) ≤ QQ c lam n)
 
 theorem envT_Q (c lam n : ℕ) (T : TailoredVerifier 7) :
     (envT c lam n T).2.2.2.2.1 = unary (QQ c lam n) := rfl
@@ -377,7 +374,6 @@ theorem sourceP_spec (aR bR : BitStr) (ha : QQ c lam n ≤ aR.length)
     srcQP_envT U T V hT hV hn hsamp hs _ _ (length_win_Q hb)]
   simp only [srcSplitR, srcSplitL, Typed.srcCons] at hrun ⊢
   rw [hrun]
-  rfl
 
 include hT hV hn hsamp in
 /-- **One orientation of the directed checks**, under the readable conditions at both

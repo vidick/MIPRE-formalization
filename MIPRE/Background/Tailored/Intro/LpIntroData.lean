@@ -41,6 +41,16 @@ open MIPRE.Introspection.SourcePadding.Program
 
 /-! ## The environment -/
 
+/-- The field width `k` and the selector width `j` at `(c, λ, n)`. -/
+abbrev kk (c lam n : ℕ) : ℕ := SourceCompiler.fieldBits c lam n
+abbrev jj (c lam n : ℕ) : ℕ := PauliSamplerParameters.selectorBits c lam n
+
+/-- The register width `Q = 2^{2^j} k` (`SourceCompiler.registerBits`), in the form of
+`Typed.Q`. -/
+abbrev QQ (c lam n : ℕ) : ℕ := 2 ^ 2 ^ jj c lam n * kk c lam n
+
+theorem QQ_eq (c lam n : ℕ) : QQ c lam n = SourceCompiler.registerBits c lam n := rfl
+
 /-- The environment: the clock, the clamped description, the index `2^n`, the Pauli parameters,
 `Q` and `R` in unary. -/
 abbrev Env := Unary × Metadata × ℕ × PauliSamplerParameters.Parameters × Unary × Unary
@@ -146,29 +156,29 @@ section Correct
 
 variable {c lam n : ℕ} (T : TailoredVerifier 7) (V : Verifier 7) (hT : T.IsBounded lam)
   (hV : V.IsBounded lam) (hn : 1 ≤ n) (hsamp : V.sampler.prog = T.sampler.prog)
-  (hs : V.sampler.dim (2 ^ n) ≤ SourceCompiler.registerBits c lam n)
+  (hs : V.sampler.dim (2 ^ n) ≤ QQ c lam n)
 
 /-- The environment of the input `T` at `(c, λ, n)`. -/
 abbrev envT (c lam n : ℕ) (T : TailoredVerifier 7) : Env := envOf c lam n (clamp (T.progs, lam))
 
 include hT hsamp in
 theorem ctxP_envT (w : Bool) :
-    ctxP w (envT c lam n T) = CLData.context V lam n (SourceCompiler.registerBits c lam n) w := by
+    ctxP w (envT c lam n T) = CLData.context V lam n (QQ c lam n) w := by
   apply ctxP_envOf
   rw [clamp_bounded T hT, hsamp]
   rfl
 
 include hT hsamp in
 theorem cIn_envT (w : Bool) (y : BitStr) :
-    cIn w (envT c lam n T, y) = (CLData.context V lam n (SourceCompiler.registerBits c lam n) w, y) := by
+    cIn w (envT c lam n T, y) = (CLData.context V lam n (QQ c lam n) w, y) := by
   simp only [cIn, pair_apply, comp_apply, fst_apply, snd_apply, ctxP_envT T V hT hsamp]
 
 include hT hV hn hsamp in
 /-- **The input question at a register.** -/
 theorem srcQP_envT (t : AuxType 7 × Bool) (y : BitStr)
-    (hy : y.length = SourceCompiler.registerBits c lam n) :
+    (hy : y.length = QQ c lam n) :
     srcQP U t (envT c lam n T, y) = srcQuestion V hs t y := by
-  have ey : CL.toBits (CL.ofBits (SourceCompiler.registerBits c lam n) y) = y := toBits_ofBits hy
+  have ey : CL.toBits (CL.ofBits (QQ c lam n) y) = y := toBits_ofBits hy
   obtain ⟨t, w⟩ := t
   cases t with
   | sample =>
@@ -193,7 +203,7 @@ theorem length_srcQuestion_le (t : AuxType 7 × Bool) (y : BitStr) :
 include hT hV hn hsamp in
 /-- **The input's split at a register**, in unary. -/
 theorem length_splitU (κ : Bool) (t : AuxType 7 × Bool) (y : BitStr)
-    (hy : y.length = SourceCompiler.registerBits c lam n) :
+    (hy : y.length = QQ c lam n) :
     (splitU U κ t (envT c lam n T, y)).length = T.lenOf (2 ^ n) (srcQuestion V hs t y) κ := by
   simp only [splitU, comp_apply, pair_apply, fst_apply, const_apply, eClock_apply,
     eM_apply, eIdx_apply, length_lenReadU, srcQP_envT U T V hT hV hn hsamp hs t y hy]
@@ -204,13 +214,13 @@ theorem length_splitU (κ : Bool) (t : AuxType 7 × Bool) (y : BitStr)
 
 include hT hV hn hsamp in
 theorem splitU_envT (κ : Bool) (t : AuxType 7 × Bool) (y : BitStr)
-    (hy : y.length = SourceCompiler.registerBits c lam n) :
+    (hy : y.length = QQ c lam n) :
     splitU U κ t (envT c lam n T, y) = unary (T.lenOf (2 ^ n) (srcQuestion V hs t y) κ) := by
   rw [← length_splitU U T V hT hV hn hsamp hs κ t y hy, unary_length]
 
 include hT hV hn hsamp in
 theorem fitsP_envT (t : AuxType 7 × Bool) (y : BitStr)
-    (hy : y.length = SourceCompiler.registerBits c lam n) :
+    (hy : y.length = QQ c lam n) :
     fitsP U t (envT c lam n T, y) = true ↔
       srcFits ((2 ^ n) ^ lam) (srcSplitR T V hs) (srcSplitL T V hs) t y := by
   have key : fitsCore U t (envT c lam n T, y) = true ↔
@@ -223,15 +233,11 @@ theorem fitsP_envT (t : AuxType 7 × Bool) (y : BitStr)
   cases t <;> simp only [fitsP, isHideT, srcFits, ↓reduceIte, key, Bool.false_eq_true,
     const_apply]
 
-/-- The field width, the selector width and the cutoff at `(c, λ, n)`. -/
-abbrev kk (c lam n : ℕ) : ℕ := SourceCompiler.fieldBits c lam n
-abbrev jj (c lam n : ℕ) : ℕ := PauliSamplerParameters.selectorBits c lam n
-
 include hT hV hn hsamp in
 theorem prefP_envT (t : AuxType 7 × Bool) (y : BitStr)
-    (hy : y.length = SourceCompiler.registerBits c lam n) :
+    (hy : y.length = QQ c lam n) :
     prefP U t (envT c lam n T, y) = true ↔ Typed.prefixOK (kk c lam n) (jj c lam n) V hs t y := by
-  have ey : CL.toBits (CL.ofBits (SourceCompiler.registerBits c lam n) y) = y := toBits_ofBits hy
+  have ey : CL.toBits (CL.ofBits (QQ c lam n) y) = y := toBits_ofBits hy
   obtain ⟨t, w⟩ := t
   cases t with
   | hide i =>
@@ -259,7 +265,7 @@ theorem srcP_envT (t : AuxType 7 × Bool) (y : BitStr) :
 include hT hV hn hsamp in
 /-- **The readable condition** `Typed.G` at a register of `Q` bits. -/
 theorem GP_envT (t : AuxType 7 × Bool) (y : BitStr)
-    (hy : y.length = SourceCompiler.registerBits c lam n) :
+    (hy : y.length = QQ c lam n) :
     GP U t (envT c lam n T, y) = true ↔ Typed.G (kk c lam n) (jj c lam n) ((2 ^ n) ^ lam) T V hs t y := by
   rw [GP, andOf_apply, andOf_apply, Bool.and_eq_true, Bool.and_eq_true,
     fitsP_envT U T V hT hV hn hsamp hs t y hy, prefP_envT U T V hT hV hn hsamp hs t y hy,
