@@ -2554,3 +2554,127 @@ written. The program is that of the canonical decider with the check in place of
 constraints' evaluation, and its running time is the sum of the five calls and of the check on a
 state whose size is bounded by the calls' outputs.
 \end{proof}
+
+\subsection{Answer reduction: the PCP and its soundness}
+
+The PCP of paper~II (Definitions~defn:blocks\_of\_vars\_circuit and
+defn:PCP\_of\_V\_n\_satisfied, II:8939--9013) certifies that the circuit of
+Lemma~\ref{lem:ar-window-describer} describes a satisfiable formula and that the table $O$ of
+Definition~\ref{def:ar-indicator} holds a satisfiable system. Its variables are the wires of the
+circuit: the three windows, each a parity wire followed by the bits of a cell (of the two readable
+answers, and of an index of $O$), the three witness indices, the six signs, and the gates. The
+index of $O$ is itself the paper's $S_0$: the bits of the cells of the two linear answers and of
+the three copies, and the six signs of the decoupled system. Two departures from the paper's text.
+The windows hold tape encodings ($0 \mapsto 00$, $1 \mapsto 01$), so the literal of a window at
+$(\pi, u)$ is $\pi \cdot g(u)$ for the polynomial $g$ of the raw table, and the paper's raw-table
+assignments are kept. And a literal is true when its variable equals its sign, so its factor is
+$g - \varepsilon$ where the paper writes $g + \varepsilon + 1$ with $\varepsilon$ the negated sign.
+
+\begin{definition}[The PCP and its thirteen checks]
+\label{def:ar-pcp}
+\lean{MIPRE.Tailored.AnsRed.PcpDims, MIPRE.Tailored.AnsRed.Pcp,
+  MIPRE.Tailored.AnsRed.AssignCheck, MIPRE.Tailored.AnsRed.FormulaCheck,
+  MIPRE.Tailored.AnsRed.SystemCheck, MIPRE.Tailored.AnsRed.Pcp.Passes,
+  MIPRE.Tailored.AnsRed.Pcp.Identities, MIPRE.Tailored.AnsRed.Pcp.IndDeg}
+\leanok
+Let $\ell, \delta, r, s$ be the exponents of the table size and of the copy size, the width of
+the witness indices and the number of gates, let $|S_0| = 2\ell + 3\delta + 6$, and let
+$m = 2(\ell + 1) + (|S_0| + 1) + 3r + 6 + s$. A \emph{PCP} over a field $\F$ consists of eleven
+\emph{assignments}, polynomials $g_A, g_B$ on $\ell$ variables, $g_O$ on $|S_0|$ and three
+$g_{W,k}$ on $r$ (readable), $g_{La}, g_{Lb}$ on $\ell$ and three $g_{L,k}$ on $\delta$ (linear),
+and of \emph{helpers}: $\alpha^R_X$ on the $m$ variables, $\alpha^L_X$ on $|S_0|$, and for each
+assignment a $\beta_X$ on its variables. At a point $p \in \F^m$, for the circuit polynomial $T$,
+it passes the \emph{formula check} when
+\[
+T(p) \bigl(p_{\pi_A} g_A(p_A) - p_{\varepsilon_A}\bigr)
+\bigl(p_{\pi_B} g_B(p_B) - p_{\varepsilon_B}\bigr)
+\bigl(p_{\pi_C} g_O(p_O) - p_{\varepsilon_C}\bigr)
+\prod_{k} \bigl(g_{W,k}(p_{W,k}) - p_{\varepsilon_{W,k}}\bigr)
+= \sum_X p_X (1 - p_X)\, \alpha^R_X(p),
+\]
+the \emph{system check} when, at $x = p_O$,
+\[
+g_O(x) \Bigl(x_{\varepsilon_A} g_{La}(x_A) + x_{\varepsilon_B} g_{Lb}(x_B)
++ \sum_k x_{\varepsilon_k} g_{L,k}(x_k) - x_{\varepsilon_0}\Bigr)
+= \sum_X x_X (1 - x_X)\, \alpha^L_X(x),
+\]
+and the \emph{assignment check} of each assignment $g$ when $g(1 - g) = \sum_X x_X (1 - x_X)\,
+\beta_X$ at the point $x$ of its block. It satisfies the checks \emph{identically} when each holds
+at every point of its own space, and it has \emph{degree} $d$ when all its polynomials have
+individual degree at most $d$.
+\end{definition}
+
+\begin{lemma}[The checks as polynomials, and Schwartz--Zippel]
+\label{lem:ar-pcp-schwartz-zippel}
+\uses{def:ar-pcp}
+\lean{MIPRE.Tailored.AnsRed.chkPolys, MIPRE.Tailored.AnsRed.passes_iff,
+  MIPRE.Tailored.AnsRed.degreeOf_chkPolys_le, MIPRE.Tailored.AnsRed.chkPolys_eq_zero,
+  MIPRE.Tailored.AnsRed.identities_of_chkPolys_eq_zero,
+  MIPRE.Tailored.AnsRed.identities_of_dense}
+\leanok
+The thirteen checks pass at a point exactly when thirteen polynomials vanish there, of individual
+degree at most $d_T + 6(d + 1)$ for a PCP of degree $d$ and a circuit polynomial of individual
+degree $d_T$. A PCP of degree $d$ over $\F_q$ passing the checks on a set of points of density
+more than $m (d_T + 6(d + 1))/q$ has all thirteen polynomials zero, and so satisfies the checks
+identically.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:schwartz-zippel}
+\leanok
+Each of the six literal factors has individual degree at most $d + 1$ and each certificate sum
+at most $d + 2$; an assignment check is renamed along an injective map of the variables, which
+keeps degrees. A nonzero polynomial of individual degree $e$ in $m$ variables vanishes on a set
+of density at most $m e/q$ (Lemma~\ref{lem:schwartz-zippel}).
+\end{proof}
+
+\begin{lemma}[From the identities to the formula and the system;
+prop:completeness\_and\_soundness\_of\_PCP\_for\_V\_n]
+\label{lem:ar-pcp-sound}
+\uses{def:ar-pcp,lem:pcp-circuit-arithmetization,lem:ar-window-describer}
+\lean{MIPRE.Tailored.AnsRed.isAssignment_of_assignCheck,
+  MIPRE.Tailored.AnsRed.tableSat_of_identities, MIPRE.Tailored.AnsRed.formula6Sat_of_identities}
+\leanok
+Over a field of characteristic two, let a PCP satisfy the checks identically for the circuit
+polynomial of a well-formed circuit with the PCP's inputs. Then every assignment is $0$ or $1$ on
+the Boolean cube; the tables of $g_{La}$, $g_{Lb}$ and the $g_{L,k}$ satisfy the system that the
+table of $g_O$ holds; and the tables of the windows, $\pi \cdot g(u)$ at the index of parity
+$\pi$ and cell $u$ for $g = g_A, g_B, g_O$, with the tables of the $g_{W,k}$, satisfy the
+decoupled 6SAT formula that the circuit describes.
+\end{lemma}
+
+\begin{proof}
+\uses{def:ar-indicator}
+\leanok
+On the cube the certificate sums vanish, so an assignment check says $g(1 - g) = 0$. At an index
+where $g_O$ is one, the system check says that the equation holds in $\F$, hence in $\F_2$, the
+binary digits of the index being those of its coordinates. For a clause that the circuit
+accepts, the circuit polynomial is one at the Boolean point holding the clause's input and the
+gates' values (Lemma~\ref{lem:pcp-circuit-arithmetization}), so a literal factor vanishes there,
+which says that the literal is true.
+\end{proof}
+
+\begin{theorem}[The game accepts the decoded answers; cor:functional\_viewpoint\_final, item 2]
+\label{thm:ar-pcp-accepts}
+\uses{lem:ar-pcp-sound, lem:ar-pcp-schwartz-zippel}
+\lean{MIPRE.Tailored.AnsRed.accepts_of_identities, MIPRE.Tailored.AnsRed.accepts_of_dense}
+\leanok
+Let a circuit describe the output indicator $L^*$ of a tailored verifier $\verifier$ at
+$(n, x, y)$ through windows of index lengths $\ell + 1$, $\ell + 1$ and $|S_0| + 1$
+(Lemma~\ref{lem:ar-window-describer}), the parameter program giving $(\ell, \delta)$ at $n$. If
+a PCP of degree $d$ over $\F_q$, of characteristic two, passes the thirteen checks on a set of
+points of density more than $m (5 + 6(d + 1))/q$, then the game $\verifier_n$ accepts at
+$(x, y)$ the answers whose readable parts are the tables of $g_A$ and $g_B$ and whose linear
+parts are those of $g_{La}$ and $g_{Lb}$, each cut at its length.
+\end{theorem}
+
+\begin{proof}
+\uses{lem:ar-window-describer, lem:ar-indicator-properties, lem:ar-indicator-program}
+\leanok
+By Lemmas~\ref{lem:ar-pcp-schwartz-zippel} and~\ref{lem:ar-pcp-sound} the tables of the windows
+satisfy the formula, so $L^*$ accepts strings $a, b$ whose tape encodings the windows hold. The
+odd positions of the windows read the strings: the readable answers are the tables of $g_A$ and
+$g_B$, and the string $O$ that $L^*$ compared is the table of $g_O$. The linear tables satisfy the
+system that table holds, and item~2 of Lemma~\ref{lem:ar-indicator-properties} gives the
+acceptance.
+\end{proof}
