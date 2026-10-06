@@ -97,8 +97,8 @@ abbrev LenIn := (ℕ × ℕ × ℕ) × ℕ × BitStr × Bool
 `((λ, μ, σ), n)`. -/
 def lenF (par : PolyTimeFun ((ℕ × ℕ × ℕ) × ℕ) LenPar) : PolyTimeFun LenIn Unary :=
   let p := par.comp (fst.pair (fst.comp snd))
-  let ik := (finiteFunction tabA).comp (((Program.readVector gdA).comp (fst.comp (snd.comp snd))).pair
-    (snd.comp (snd.comp snd)))
+  let ik := (finiteFunction tabA).comp
+    (((Program.readVector gdA).comp (fst.comp (snd.comp snd))).pair (snd.comp (snd.comp snd)))
   let cnt := (ArrayProg.getD ([] : Unary)).comp ((fst.comp ik).pair
     ((fst.comp (snd.comp p)).cons ((fst.comp (snd.comp (snd.comp p))).cons
       (const [unary 1]))))
