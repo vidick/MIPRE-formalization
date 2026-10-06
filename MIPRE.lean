@@ -1322,6 +1322,7 @@ public import MIPRE.Foundations.SAT.FrobeniusActionProg
 public import MIPRE.Foundations.SAT.FrobeniusMatrix
 public import MIPRE.Foundations.SAT.GateFieldEval
 public import MIPRE.Foundations.SAT.GatePadding
+public import MIPRE.Foundations.SAT.GatePaddingExact
 public import MIPRE.Foundations.SAT.GateProg
 public import MIPRE.Foundations.SAT.InputRouting
 public import MIPRE.Foundations.SAT.InputRoutingProg
