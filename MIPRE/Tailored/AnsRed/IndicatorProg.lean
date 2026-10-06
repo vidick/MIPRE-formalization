@@ -24,6 +24,9 @@ that decides `LstarOK` at the parameters `prm n` of the index.
   (`onesU`), the purified equation with its variables in unary (`pureEqnU`), the triangulation in
   unary (`triangleU`), and the table loop by loop (`tableU`), each with the program computing it
   and its reading (`toEqn_pureEqnU`, `map_toTri_triangleU`, `tableU_eq`).
+* `lstarCore`: the check, parameter-free, reading `(ℓ, ◇)` in unary beside its input
+  (`lstarCore_apply`); `lstarRaw prm` runs it on the parameters `prm n` of the index, the one
+  place where the parameter program enters.
 * `lstarFinal prm`: the check, deciding `LstarOK (2^ℓ) (2^◇)` with `(ℓ, ◇) = prm n` in unary
   (`lstarFinal_apply`, through `lstarCheck_eq`): the powers of two are capped by the input, so
   the check is polynomial-time.
@@ -763,45 +766,51 @@ noncomputable def tableSizeF : PolyTimeFun (Unary × Unary) Unary :=
 first) and the decider's input `(n, x, y, a, b)`, as the canonical decider stacks them. -/
 abbrev FIn : Type := Data × Data × Data × Data × Data × DIn
 
-/-- The program of the check, at the parameter program `prm` of the index. -/
-noncomputable def lstarRaw (prm : PolyTimeFun ℕ (Unary × Unary)) : PolyTimeFun FIn Bool :=
-  let i : PolyTimeFun FIn DIn := snd.comp (snd.comp (snd.comp (snd.comp snd)))
-  let n : PolyTimeFun FIn ℕ := fst.comp i
-  let a : PolyTimeFun FIn BitStr := fst.comp (snd.comp (snd.comp (snd.comp i)))
-  let b : PolyTimeFun FIn BitStr := snd.comp (snd.comp (snd.comp (snd.comp i)))
-  let cs : PolyTimeFun FIn (List BitStr) := bitsListF.comp fst
-  let lLy : PolyTimeFun FIn Unary := lenUnaryF.comp (fst.comp snd)
-  let lRy : PolyTimeFun FIn Unary := lenUnaryF.comp (fst.comp (snd.comp snd))
-  let lLx : PolyTimeFun FIn Unary := lenUnaryF.comp (fst.comp (snd.comp (snd.comp snd)))
-  let lRx : PolyTimeFun FIn Unary := lenUnaryF.comp (fst.comp (snd.comp (snd.comp (snd.comp snd))))
-  let ℓ : PolyTimeFun FIn Unary := fst.comp (prm.comp n)
-  let dm : PolyTimeFun FIn Unary := snd.comp (prm.comp n)
-  let bU : PolyTimeFun FIn Unary := length.comp b
-  let O : PolyTimeFun FIn BitStr := drop.comp (a.pair bU)
-  let Dc : PolyTimeFun FIn Unary := pow2CapF.comp (dm.pair (cons (const ()) (length.comp O)))
-  let N2 : PolyTimeFun FIn Unary := append.comp (bU.pair bU)
-  let le : PolyTimeFun FIn Unary → PolyTimeFun FIn Bool := fun u => leUnaryProg.comp (u.pair bU)
-  let c0 : PolyTimeFun FIn Bool :=
+/-- The input of the parameter-free check: the input of the check and the parameters `(ℓ, ◇)`
+in unary. -/
+abbrev CIn : Type := FIn × (Unary × Unary)
+
+/-- **The check, parameter-free**: on the input of the check and parameters `(ℓ, ◇)` in unary,
+it decides `LstarOK (2^ℓ) (2^◇)` (`lstarCore_apply`). The parameter program enters the check
+only through `lstarRaw`. -/
+noncomputable def lstarCore : PolyTimeFun CIn Bool :=
+  let i : PolyTimeFun CIn DIn := snd.comp (snd.comp (snd.comp (snd.comp (snd.comp fst))))
+  let a : PolyTimeFun CIn BitStr := fst.comp (snd.comp (snd.comp (snd.comp i)))
+  let b : PolyTimeFun CIn BitStr := snd.comp (snd.comp (snd.comp (snd.comp i)))
+  let cs : PolyTimeFun CIn (List BitStr) := bitsListF.comp (fst.comp fst)
+  let lLy : PolyTimeFun CIn Unary := lenUnaryF.comp (fst.comp (snd.comp fst))
+  let lRy : PolyTimeFun CIn Unary := lenUnaryF.comp (fst.comp (snd.comp (snd.comp fst)))
+  let lLx : PolyTimeFun CIn Unary := lenUnaryF.comp (fst.comp (snd.comp (snd.comp (snd.comp fst))))
+  let lRx : PolyTimeFun CIn Unary :=
+    lenUnaryF.comp (fst.comp (snd.comp (snd.comp (snd.comp (snd.comp fst)))))
+  let ℓ : PolyTimeFun CIn Unary := fst.comp snd
+  let dm : PolyTimeFun CIn Unary := snd.comp snd
+  let bU : PolyTimeFun CIn Unary := length.comp b
+  let O : PolyTimeFun CIn BitStr := drop.comp (a.pair bU)
+  let Dc : PolyTimeFun CIn Unary := pow2CapF.comp (dm.pair (cons (const ()) (length.comp O)))
+  let N2 : PolyTimeFun CIn Unary := append.comp (bU.pair bU)
+  let le : PolyTimeFun CIn Unary → PolyTimeFun CIn Bool := fun u => leUnaryProg.comp (u.pair bU)
+  let c0 : PolyTimeFun CIn Bool :=
     eqUnaryProg.comp ((pow2CapF.comp (ℓ.pair (cons (const ()) bU))).pair bU)
-  let c1 : PolyTimeFun FIn Bool :=
+  let c1 : PolyTimeFun CIn Bool :=
     eqUnaryProg.comp ((length.comp O).pair (tableSizeF.comp (bU.pair Dc)))
-  let c2 : PolyTimeFun FIn Bool :=
+  let c2 : PolyTimeFun CIn Bool :=
     andF.comp ((le lRx).pair (andF.comp ((le lLx).pair (andF.comp ((le lRy).pair (le lLy))))))
-  let c3 : PolyTimeFun FIn Bool := leUnaryProg.comp ((append.comp
+  let c3 : PolyTimeFun CIn Bool := leUnaryProg.comp ((append.comp
     ((mulUnaryProg.comp ((length.comp cs).pair N2)).pair N2)).pair Dc)
-  let rows : PolyTimeFun FIn (List (List Unary × Bool)) := rowsUF.comp (cs.pair (lRx.pair (lLx.pair
+  let rows : PolyTimeFun CIn (List (List Unary × Bool)) := rowsUF.comp (cs.pair (lRx.pair (lLx.pair
     (lRy.pair (lLy.pair (bU.pair ((take.comp (a.pair lRx)).pair (take.comp (b.pair lRy)))))))))
-  let c4 : PolyTimeFun FIn Bool := SAT.ArrayProg.eqBits.comp (O.pair
+  let c4 : PolyTimeFun CIn Bool := SAT.ArrayProg.eqBits.comp (O.pair
     (tableF.comp (bU.pair (Dc.pair (triangleUF.comp (rows.pair N2))))))
   andF.comp (c0.pair (andF.comp (c1.pair (andF.comp (c2.pair (andF.comp (c3.pair c4)))))))
 
-theorem lstarRaw_apply (prm : PolyTimeFun ℕ (Unary × Unary)) (r₀ r₁ r₂ r₃ r₄ : Data) (i : DIn) :
-    lstarRaw prm (r₀, r₁, r₂, r₃, r₄, i) =
-      lstarCheck (prm i.1).1.length (prm i.1).2.length (Data.spineList r₄).length
+theorem lstarCore_apply (r₀ r₁ r₂ r₃ r₄ : Data) (i : DIn) (ℓ dm : Unary) :
+    lstarCore ((r₀, r₁, r₂, r₃, r₄, i), (ℓ, dm)) =
+      lstarCheck ℓ.length dm.length (Data.spineList r₄).length
         (Data.spineList r₃).length (Data.spineList r₂).length (Data.spineList r₁).length
         (Data.bitsListD r₀) i.2.2.2.1 i.2.2.2.2 := by
   obtain ⟨n, x, y, a, b⟩ := i
-  simp only [lstarRaw, comp_apply, pair_apply, fst_apply, snd_apply, andF_apply,
+  simp only [lstarCore, comp_apply, pair_apply, fst_apply, snd_apply, andF_apply,
     LowDegree.DegreeArithmetic.eqUnaryProg_apply, LowDegree.DegreeArithmetic.leUnaryProg_apply,
     LowDegree.DegreeArithmetic.mulUnaryProg_apply, pow2CapF_apply, tableSizeF_apply,
     length_apply, cons_apply, const_apply, append_apply, drop_apply, take_apply, bitsListF_apply,
@@ -816,6 +825,25 @@ theorem lstarRaw_apply (prm : PolyTimeFun ℕ (Unary × Unary)) (r₀ r₁ r₂ 
       unary_eq_of_length (by simp), hT, map_toEqn_rowsU]
   simp only [lsTable, Bool.decide_and, Bool.and_assoc]
   congr
+
+/-- The index `n` of the input of the check. -/
+noncomputable def lstarIdx : PolyTimeFun FIn ℕ :=
+  fst.comp (snd.comp (snd.comp (snd.comp (snd.comp snd))))
+
+@[simp] theorem lstarIdx_apply (z : FIn) : lstarIdx z = z.2.2.2.2.2.1 := rfl
+
+/-- The program of the check, at the parameter program `prm` of the index: the parameter-free
+check `lstarCore`, on the input and the parameters `prm n` of its index. -/
+noncomputable def lstarRaw (prm : PolyTimeFun ℕ (Unary × Unary)) : PolyTimeFun FIn Bool :=
+  lstarCore.comp ((PolyTimeFun.id FIn).pair (prm.comp lstarIdx))
+
+theorem lstarRaw_apply (prm : PolyTimeFun ℕ (Unary × Unary)) (r₀ r₁ r₂ r₃ r₄ : Data) (i : DIn) :
+    lstarRaw prm (r₀, r₁, r₂, r₃, r₄, i) =
+      lstarCheck (prm i.1).1.length (prm i.1).2.length (Data.spineList r₄).length
+        (Data.spineList r₃).length (Data.spineList r₂).length (Data.spineList r₁).length
+        (Data.bitsListD r₀) i.2.2.2.1 i.2.2.2.2 := by
+  simp only [lstarRaw, comp_apply, pair_apply, id_apply, lstarIdx_apply]
+  exact lstarCore_apply r₀ r₁ r₂ r₃ r₄ i _ _
 
 /-- **The check of the output indicator**, as a program: it decides `LstarOK` at the table size
 `2^ℓ` and the copy size `2^◇` that `prm` gives the index (`lstarFinal_apply`). -/

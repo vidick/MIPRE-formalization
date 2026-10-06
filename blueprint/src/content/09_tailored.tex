@@ -484,7 +484,11 @@ compression.
 
 \begin{theorem}[$\mathrm{TMIP}^* = \RE$; II:1505, Theorem~7.4 of~\cite{BCLV24}]
 \label{thm:tmip-re}
-\uses{def:tailored-halting-reduction}
+\uses{def:tailored-halting-reduction,cor:tmip-re-from-ar,thm:tmipstar-poly-eq-re}
+\lean{TailoredGameValue.tailored_halting_reduction,
+  MIPRE.Tailored.tailored_halting_reduction_quantum, MIPRE.Tailored.tmipStarComputable_eq_re,
+  MIPRE.Tailored.tmipStar_eq_re}
+\leanok
 The proposition of Definition~\ref{def:tailored-halting-reduction} holds: there is a computable
 map $g$ from Turing machines to tailored game descriptions such that for every Turing machine
 $\machine$:
@@ -501,9 +505,10 @@ the synchronous value of Definition~\ref{def:sync-value}, in its standalone form
 
 \begin{proof}
 \uses{thm:tailored-halting,thm:tailored-compression-target}
+\leanok
 Theorem~\ref{thm:tailored-halting} at the compression of
-Theorem~\ref{thm:tailored-compression-target}. The first is proved, the tabulation of the halting
-verifier's game at its fixed index included; the second is Phases~2 to~5.
+Theorem~\ref{thm:tailored-compression-target}, the synchronous value being at most the quantum
+value; the class theorems for both readings of $\mathrm{TMIP}^*$ follow.
 \end{proof}
 
 \begin{remark}[Where the formalization departs from the paper]
@@ -1095,15 +1100,19 @@ are budgets at $\lambda$ (Lemma~\ref{lem:intro-rescale}).
 
 \begin{theorem}[Answer reduction for tailored verifiers; II:6883]
 \label{thm:tailored-ar}
-\uses{def:tailored-stages}
+\uses{def:tailored-stages,lem:ar-routine-fixed,lem:ar-error,thm:ar-output,thm:ar-output-within,lem:ar-params-basic}
+\lean{MIPRE.Tailored.AnsRed.Typed.one_le_delta_mu_zero, MIPRE.Tailored.AnsRed.Typed.one_le_size, MIPRE.Tailored.AnsRed.Typed.arOut, MIPRE.Tailored.AnsRed.Typed.tailoredAnswerReductionOf, MIPRE.Tailored.AnsRed.Typed.arConsts, MIPRE.Tailored.AnsRed.Typed.one_le_arConsts_E₂, MIPRE.Tailored.AnsRed.Typed.tailoredAnswerReduction}
+\leanok
 The contract \texttt{TailoredAnswerReduction} is inhabited, at input level~$5$.
 \end{theorem}
 
 \begin{proof}
-The paper's tailored PCP (II:7736--11074): purification, oracularization, triangulation and
-decoupling of the linear system, the output indicator and its decoupled succinct description,
-the degree-$9$ PCP whose linear part is affine in the linear answers, and the seeded low-degree
-test, which is this project's (\texttt{MIPRE.LIDT.CL.clGame}, with its soundness). Phase~4.
+\leanok
+The output verifier of the routine of Lemma~\ref{lem:ar-routine-fixed}, at $E_1 = 2E$, $E_2 =
+E_{2,0}$ and $c_0$ the size constant of the output indicator: its complexity clause is
+Theorem~\ref{thm:ar-output-within}, its completeness that of Theorem~\ref{thm:ar-output} under the
+honest PCPs' hypotheses, and its soundness that of Theorem~\ref{thm:ar-output} with
+Lemma~\ref{lem:ar-error}; for $\mu = 0$ the loss is at least $1$.
 \end{proof}
 
 \begin{definition}[The $k$-fold tailored product; II:11377, direct form]
@@ -2287,14 +2296,17 @@ Theorems~\ref{thm:tailored-halting} and~\ref{thm:tmipstar-eq-re}.
 
 \begin{theorem}[Tailored compression; II:5643, value form]
 \label{thm:tailored-compression-target}
-\uses{thm:tailored-compression-from-stages,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep}
+\uses{thm:tailored-compression-from-stages,thm:tailored-qr,thm:tailored-ar,thm:tailored-rep,cor:tmip-re-from-ar}
+\lean{MIPRE.Tailored.tailoredGapCompression}
+\leanok
 There is a tailored gap compression at level~$7$.
 \end{theorem}
 
 \begin{proof}
-Theorem~\ref{thm:tailored-compression-from-stages} applied to the three stages; of these only
-answer reduction (Theorem~\ref{thm:tailored-ar}) is not yet formalized, and
-Corollary~\ref{cor:tmip-re-from-ar} records what follows once it is.
+\leanok
+Theorem~\ref{thm:tailored-compression-from-stages} applied to the three stages: question
+reduction (Theorem~\ref{thm:tailored-qr}), answer reduction (Theorem~\ref{thm:tailored-ar}) and
+parallel repetition (Theorem~\ref{thm:tailored-rep}).
 \end{proof}
 
 \begin{remark}[The Aldous--Lyons conjecture]
@@ -2946,7 +2958,8 @@ field element as its canonical bits, codeword after codeword. At a typed questio
 to an answer of the oracularized input game, the honest answer is the honest answer of the role's
 codewords of the PCP of the oracle's pair at the questions of its seed, or of an isolated
 player's answer paired with itself. The hypotheses under which these PCPs satisfy the checks at
-every seed are that the parameters fit the lengths and constraints of the input game and that
+every seed are that the parameters fit the lengths of the input game and the constraints its processor outputs
+on readable answers of at most the readable lengths, and that
 each seed's circuit describes the output indicator through the windows of its question pair
 within a time $L^*$ meets.
 \end{definition}
@@ -4000,4 +4013,137 @@ dimension is at most that bound, and whose lengths are at most that bound.
 Take $W = (\lambda n + 1)^\mu + \sigma + \lambda + n$, $X = |d| + 1$, and the sum of the constants
 of Lemmas~\ref{lem:ar-sampler-time}, \ref{lem:ar-len-time} and~\ref{lem:ar-lp-time}. The input
 budget gives the input sampler's running time and dimension.
+\end{proof}
+
+
+\subsection{Answer reduction: the parameters and the contract}
+
+\begin{definition}[The parameters of the answer reduction]
+\label{def:ar-params}
+\uses{def:ar-pcp,lem:ar-window-describer}
+\lean{MIPRE.Tailored.AnsRed.Params.ArConsts, MIPRE.Tailored.AnsRed.Params.pQ, MIPRE.Tailored.AnsRed.Params.pEll, MIPRE.Tailored.AnsRed.Params.pDm, MIPRE.Tailored.AnsRed.Params.pOW, MIPRE.Tailored.AnsRed.Params.pK, MIPRE.Tailored.AnsRed.Params.pT, MIPRE.Tailored.AnsRed.Params.pSig, MIPRE.Tailored.AnsRed.Params.pR, MIPRE.Tailored.AnsRed.Params.pS, MIPRE.Tailored.AnsRed.Params.pL, MIPRE.Tailored.AnsRed.Params.pJ, MIPRE.Tailored.AnsRed.Params.pD, MIPRE.Tailored.AnsRed.Params.pTw, MIPRE.Tailored.AnsRed.Params.pExtra}
+\leanok
+For constants $E_1, E_2, c_0$ and $(\lambda, \mu, \sigma)$, at the index $n$, with
+$Q = (\lambda n + 1)^\mu$ the input's budget: the window width $\ell = Q$; the copy width
+$\Delta = (\mu + 2)(Q + 4)$; the table width $o = 2\ell + 3\Delta + 6$; the description time
+$T = 2^K$, $K = E_1 (\mu + 1)(o + Q + 4)$; the size bound $\sigma' = c_0 + 5\sigma + 4(\ell + \Delta)
++ 8$ of the output indicator's program; the witness width $r$ and the gate count $s$ the window
+describer of Lemma~\ref{lem:ar-window-describer} gives at $(n, T, Q, \sigma')$; the selector width
+$j = \lceil \log_2 (m + 1) \rceil$, $m$ the PCP's variable count; the degree $d = 17$; and the
+field width $t = E_2 (j + r + Q + 1)$.
+\end{definition}
+
+\begin{lemma}[First facts about the parameters]
+\label{lem:ar-params-basic}
+\uses{def:ar-params}
+\lean{MIPRE.Tailored.AnsRed.Params.pL_ℓ, MIPRE.Tailored.AnsRed.Params.pL_dm, MIPRE.Tailored.AnsRed.Params.pL_r, MIPRE.Tailored.AnsRed.Params.pL_s, MIPRE.Tailored.AnsRed.Params.pL_oW, MIPRE.Tailored.AnsRed.Params.one_le_pQ, MIPRE.Tailored.AnsRed.Params.pL_m_lt, MIPRE.Tailored.AnsRed.Params.pL_m_le, MIPRE.Tailored.AnsRed.Params.pJ_le_pTw, MIPRE.Tailored.AnsRed.Params.one_le_pTw, MIPRE.Tailored.AnsRed.Params.pQ_le_pK, MIPRE.Tailored.AnsRed.Params.pOW_le_pK}
+\leanok
+$m < 2^j$; once $E_2 \geq 1$, $1 \leq t$ and $j \leq t$; once $E_1 \geq 1$, $Q \leq K$ and
+$o \leq K$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+$m < 2^{\lceil \log_2 (m + 1) \rceil}$, and the other bounds are linear.
+\end{proof}
+
+\begin{lemma}[Padding a circuit to an exact gate count]
+\label{lem:circuit-pad-exact}
+\uses{lem:ar-window-describer,prop:pcp-padded-describer}
+\lean{MIPRE.SAT.Circuit.trivial, MIPRE.SAT.Circuit.wellFormed_trivial, MIPRE.SAT.Circuit.padTo, MIPRE.SAT.Circuit.padTo_inputs, MIPRE.SAT.Circuit.padTo_size, MIPRE.SAT.Circuit.wellFormed_padTo, MIPRE.SAT.Circuit.padTo_of_le, MIPRE.SAT.Circuit.evalBits_padTo, MIPRE.SAT.Circuit.formula6_padTo, MIPRE.SAT.Circuit.describesWindows_padTo, MIPRE.SAT.Circuit.trivialProg, MIPRE.SAT.Circuit.trivialProg_apply, MIPRE.SAT.Circuit.padToProg, MIPRE.SAT.Circuit.padToProg_apply}
+\leanok
+A well-formed circuit with at most $s$ gates, $s \geq 1$, padded with copies of its output gate
+is a well-formed circuit with exactly $s$ gates, the same inputs and the same function, so it
+describes the same formula and the same decider through three windows; a larger one is replaced
+by a constant circuit padded to $s$ gates. The padding is computed in polynomial time.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Each copying gate reads the previous output twice, so fan-out stays at most two and the new output
+is terminal.
+\end{proof}
+
+\begin{lemma}[The output indicator at constant parameters]
+\label{lem:lstar-const}
+\uses{lem:ar-indicator-program}
+\lean{MIPRE.Tailored.AnsRed.CIn, MIPRE.Tailored.AnsRed.lstarCore, MIPRE.Tailored.AnsRed.lstarCore_apply, MIPRE.Tailored.AnsRed.lstarIdx, MIPRE.Tailored.AnsRed.lstarIdx_apply, MIPRE.Tailored.AnsRed.polynomial_eval_le_add_two_pow, MIPRE.Tailored.AnsRed.lstarFinal_const_timeBound_eq, MIPRE.Tailored.AnsRed.lstarFinal_const_timeBound, MIPRE.Tailored.AnsRed.lstarBound_const_le, MIPRE.Tailored.AnsRed.lstar_const_acceptsWithin_pow, MIPRE.Tailored.AnsRed.consProgF, MIPRE.Tailored.AnsRed.consProgF_apply, MIPRE.Tailored.AnsRed.constProgF, MIPRE.Tailored.AnsRed.constProgF_apply, MIPRE.Tailored.AnsRed.pushProgF, MIPRE.Tailored.AnsRed.pushProgF_apply, MIPRE.Tailored.AnsRed.lstarFinal_const_code, MIPRE.Tailored.AnsRed.lstarFinalCodeF, MIPRE.Tailored.AnsRed.lstarFinalCodeF_apply, MIPRE.Tailored.AnsRed.lstarProgF, MIPRE.Tailored.AnsRed.lstarProgF_apply, MIPRE.Tailored.AnsRed.lstarProgSize₀, MIPRE.Tailored.AnsRed.esize_lstarProg_const, MIPRE.Tailored.AnsRed.esize_lstarProg_const_le, MIPRE.Tailored.AnsRed.size_lstar_const, MIPRE.Tailored.AnsRed.size_lstar_const_le}
+\leanok
+Let $p = (\ell, \Delta)$ be fixed. The output indicator reading its parameters from the constant
+function $p$ has a program computed in polynomial time from the input verifier's calculator and
+processor and $p$, of size $c_0 + 4|L| + |P| + |p|$ for a constant $c_0$; and there is a constant
+$E$ such that if the calculator and processor run within $T (|d| + 1)^k$ with $T \leq 2^\tau$, and
+the input and $p$ have size below $2^\rho$, it accepts what it accepts within
+$2^{E(k + 1)(\tau + \rho + 1)}$ steps.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The parameters enter the check in one place, so its time bound is a fixed polynomial evaluated at
+the input size plus $|p|$, and every fixed polynomial is at most $(x + 2)^D$.
+\end{proof}
+
+\begin{lemma}[The honest PCPs' hypotheses at the parameters]
+\label{lem:ar-honest-hyp}
+\uses{def:ar-params,def:ar-honest-answers,lem:circuit-pad-exact,lem:lstar-const,lem:ar-window-describer,def:tailored-bounded,lem:ar-params-basic}
+\lean{MIPRE.Tailored.AnsRed.Params.length_spineList_le, MIPRE.Tailored.AnsRed.Params.length_bitsListD_le, MIPRE.Tailored.AnsRed.Params.lenOf_le, MIPRE.Tailored.AnsRed.Params.consOf_length_le, MIPRE.Tailored.AnsRed.Params.two_mul_le_two_pow, MIPRE.Tailored.AnsRed.Params.pOW_add_le_pK, MIPRE.Tailored.AnsRed.Params.le_pQ, MIPRE.Tailored.AnsRed.Params.pQ_lt_two_pow, MIPRE.Tailored.AnsRed.Params.two_pow_ell_add_le, MIPRE.Tailored.AnsRed.Params.pK_add_two_le_pR, MIPRE.Tailored.AnsRed.Params.arPrm, MIPRE.Tailored.AnsRed.Params.arPrm_apply, MIPRE.Tailored.AnsRed.Params.arDescIn, MIPRE.Tailored.AnsRed.Params.arCirc, MIPRE.Tailored.AnsRed.Params.one_le_pS, MIPRE.Tailored.AnsRed.Params.arCirc_wf, MIPRE.Tailored.AnsRed.Params.arCirc_inputs, MIPRE.Tailored.AnsRed.Params.arCirc_size, MIPRE.Tailored.AnsRed.Params.arCc, MIPRE.Tailored.AnsRed.Params.tableSize_pow, MIPRE.Tailored.AnsRed.Params.esize_bitStr_le_pow, MIPRE.Tailored.AnsRed.Params.cons_le_ar, MIPRE.Tailored.AnsRed.Params.LstarTime, MIPRE.Tailored.AnsRed.Params.LstarSize, MIPRE.Tailored.AnsRed.Params.exists_lstarTime, MIPRE.Tailored.AnsRed.Params.lstarSize_lstarProgSize₀, MIPRE.Tailored.AnsRed.Params.acceptsWithin_mono, MIPRE.Tailored.AnsRed.Params.esize_arPrm_pair, MIPRE.Tailored.AnsRed.Params.honestHyp_ar}
+\leanok
+Let the circuit of a seed be the window describer's description of the output indicator at the
+constant parameters $(\ell, \Delta)$, through the windows $\ell + 1, \ell + 1, o + 1$, at
+$(n, T, Q, \sigma')$, padded to $s$ gates. If $E_1 \geq 2E$ and $c_0$ is the constant of
+Lemma~\ref{lem:lstar-const}, then for every input tailored verifier within the input budget of
+answer reduction at $n$, with $|\verifier| \leq \sigma$ and $\lambda, \mu \geq 1$, the hypotheses of
+Definition~\ref{def:ar-honest-answers} hold at the description time $T$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The input's lengths are at most $2^Q = 2^\ell$. On readable answers, of at most the readable
+lengths, its processor runs within $2^Q 2^{(Q + 4)\mu}$ steps, so it outputs at most that many
+constraints, and $2^\Delta$ holds them. The describer's validity holds: $Q$ and $2 \log n$ are
+below $T$, the output indicator's program is at most $\sigma'$ long, and the questions have at most
+$Q$ bits; the windows fit $T$, and $r \geq K + 2$ since $4T \leq 2^r$. On accepted inputs the
+honest strings have lengths $2^\ell + 2^o$ and $2^\ell$, so the output indicator accepts them
+within $2^{E(\mu + 1)(Q + o + 6)} \leq T$.
+\end{proof}
+
+\begin{lemma}[The routine of the answer reduction, fixed]
+\label{lem:ar-routine-fixed}
+\uses{def:ar-params,def:ar-routine,def:ar-par-time,lem:ar-honest-hyp,lem:circuit-pad-exact,
+  lem:lstar-const,lem:ar-construction}
+\lean{MIPRE.Tailored.AnsRed.Typed.arCircF, MIPRE.Tailored.AnsRed.Typed.unary_add_one, MIPRE.Tailored.AnsRed.Typed.arCircF_apply, MIPRE.Tailored.AnsRed.Typed.arCircF_wf, MIPRE.Tailored.AnsRed.Typed.arCircF_inputs, MIPRE.Tailored.AnsRed.Typed.arCircF_size, MIPRE.Tailored.AnsRed.Typed.ArPar.pushU, MIPRE.Tailored.AnsRed.Typed.ArPar.pushU_closed, MIPRE.Tailored.AnsRed.Typed.ArPar.pushU_runs, MIPRE.Tailored.AnsRed.Typed.ArPar.budStage, MIPRE.Tailored.AnsRed.Typed.ArPar.budStage_closed, MIPRE.Tailored.AnsRed.Typed.ArPar.tailProg, MIPRE.Tailored.AnsRed.Typed.ArPar.tailProg_closed, MIPRE.Tailored.AnsRed.Typed.arParCore, MIPRE.Tailored.AnsRed.Typed.arParCore_closed, MIPRE.Tailored.AnsRed.Typed.arParCore_runs, MIPRE.Tailored.AnsRed.Typed.ArPar.pushU_time, MIPRE.Tailored.AnsRed.Typed.ArPar.vals_pdom, MIPRE.Tailored.AnsRed.Typed.arParCore_time, MIPRE.Tailored.AnsRed.Typed.arFam, MIPRE.Tailored.AnsRed.Typed.arRoutine, MIPRE.Tailored.AnsRed.Typed.arRoutine_params, MIPRE.Tailored.AnsRed.Typed.arRoutine_parTime, MIPRE.Tailored.AnsRed.Typed.arRoutine_circ, MIPRE.Tailored.AnsRed.Typed.lstarE, MIPRE.Tailored.AnsRed.Typed.one_le_lstarE, MIPRE.Tailored.AnsRed.Typed.lstarTime_lstarE, MIPRE.Tailored.AnsRed.Typed.honestHyp_arRoutine}
+\leanok
+For constants with $E_2 \geq 1$ the parameters of Definition~\ref{def:ar-params} form a parameter
+routine: a closed program computes them from $((\lambda, \mu, \sigma), n)$ in polynomial time in
+the sense of Definition~\ref{def:ar-par-time}, and the circuit function computing the padded
+descriptions of Lemma~\ref{lem:ar-honest-hyp} is a polynomial-time function. Its circuits satisfy
+the honest PCPs' hypotheses for every input within the input budget.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The program reuses the budget stage of the MIP* answer reduction for $Q$, writes $Q$, $\mu$,
+$\sigma$, $r$, $s$ and $2^j$ in unary, and computes the rest by polynomial-time functions; each
+written number is at most a polynomial in $(\lambda n + 1)^\mu + \sigma + \lambda + n$ raised to
+$\mu + 1$. The circuit function reads $K$ and $\sigma'$ from the parameters' data.
+\end{proof}
+
+\begin{lemma}[The soundness error and the contract's loss]
+\label{lem:ar-error}
+\uses{def:ar-params,thm:ar-sound,lem:ar-error-assembly,lem:ar-params-basic}
+\lean{MIPRE.Tailored.AnsRed.Typed.length_slotsOf_le, MIPRE.Tailored.AnsRed.Typed.errAR_le_of_dS, MIPRE.Tailored.AnsRed.Typed.pwR, MIPRE.Tailored.AnsRed.Typed.one_le_pwR, MIPRE.Tailored.AnsRed.Typed.dS_le_of, MIPRE.Tailored.AnsRed.Typed.seven_le_e2Min, MIPRE.Tailored.AnsRed.Typed.field_term_le, MIPRE.Tailored.AnsRed.Typed.gN, MIPRE.Tailored.AnsRed.Typed.shape_Q, MIPRE.Tailored.AnsRed.Typed.shape_arith, MIPRE.Tailored.AnsRed.Typed.errAR_le_shape, MIPRE.Tailored.AnsRed.Typed.field_hyps, MIPRE.Tailored.AnsRed.Typed.wdC, MIPRE.Tailored.AnsRed.Typed.wdP, MIPRE.Tailored.AnsRed.Typed.r₀_le_wdC, MIPRE.Tailored.AnsRed.Typed.s₀_le_wdP, MIPRE.Tailored.AnsRed.Typed.cW, MIPRE.Tailored.AnsRed.Typed.errCM, MIPRE.Tailored.AnsRed.Typed.errPM, MIPRE.Tailored.AnsRed.Typed.pQ_facts, MIPRE.Tailored.AnsRed.Typed.pL_m_eq, MIPRE.Tailored.AnsRed.Typed.pL_m_le, MIPRE.Tailored.AnsRed.Typed.two_pow_pJ_le, MIPRE.Tailored.AnsRed.Typed.gN_le, MIPRE.Tailored.AnsRed.Typed.errCc, MIPRE.Tailored.AnsRed.Typed.errPp, MIPRE.Tailored.AnsRed.Typed.errA, MIPRE.Tailored.AnsRed.Typed.one_le_errA, MIPRE.Tailored.AnsRed.Typed.errC, MIPRE.Tailored.AnsRed.Typed.gN_le_poly, MIPRE.Tailored.AnsRed.Typed.errAR_le_delta, MIPRE.Tailored.AnsRed.Typed.one_le_delta_of_trivial', MIPRE.Tailored.AnsRed.Typed.errAR_le_delta_or, MIPRE.Tailored.AnsRed.Typed.exists_errAR_le_delta}
+\leanok
+There is $E_{2,0}$ such that for constants with $E_2 \geq E_{2,0}$ the field-size conditions of
+Theorem~\ref{thm:ar-output} hold, and there are $a \geq 1$ and $C$ with
+$24 \sqrt{e(16^9 \eps)} \leq \delta(\eps, n)$, $\delta$ the loss of the answer reduction contract
+with $b = c_{\mathrm{LD}}/2$, or $\delta \geq 1$, for $n \geq \max(C, 2)$, $\lambda, \sigma \geq 1$.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The error is at most $2^j$ times the simultaneous test's errors and the field terms; each of these
+is at most a polynomial in $2^j$ times $\eps^{c_{\mathrm{LD}}} + q^{-c_{\mathrm{LD}}} + 2^{-c Q}$,
+and $q = 2^t$ with $t \geq E_{2,0} (j + Q + 1)$ makes the field terms at most $2^{-(2Q + 9)}$. With
+$m$ polynomial in $Q \sigma$, the threshold of the MIP* answer reduction's error comparison
+concludes; for $\mu = 0$ or $\eps \geq 1$ the loss is at least $1$.
 \end{proof}

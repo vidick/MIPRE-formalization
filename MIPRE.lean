@@ -683,8 +683,12 @@ public import MIPRE.Background.Repetition.TracialApprox
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
+public import MIPRE.Background.Tailored.AnswerReduction.ArCirc
+public import MIPRE.Background.Tailored.AnswerReduction.ArContract
 public import MIPRE.Background.Tailored.AnswerReduction.ArCost
+public import MIPRE.Background.Tailored.AnswerReduction.ArError
 public import MIPRE.Background.Tailored.AnswerReduction.ArFamily
+public import MIPRE.Background.Tailored.AnswerReduction.ArInstance
 public import MIPRE.Background.Tailored.AnswerReduction.ArLen
 public import MIPRE.Background.Tailored.AnswerReduction.ArLp
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpArith
@@ -695,6 +699,8 @@ public import MIPRE.Background.Tailored.AnswerReduction.ArLpLd
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpProof
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpProofEqs
 public import MIPRE.Background.Tailored.AnswerReduction.ArLpSlots
+public import MIPRE.Background.Tailored.AnswerReduction.ArParCore
+public import MIPRE.Background.Tailored.AnswerReduction.ArParCoreCost
 public import MIPRE.Background.Tailored.AnswerReduction.ArRoutine
 public import MIPRE.Background.Tailored.AnswerReduction.ArWithin
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
@@ -1322,6 +1328,7 @@ public import MIPRE.Foundations.SAT.FrobeniusActionProg
 public import MIPRE.Foundations.SAT.FrobeniusMatrix
 public import MIPRE.Foundations.SAT.GateFieldEval
 public import MIPRE.Foundations.SAT.GatePadding
+public import MIPRE.Foundations.SAT.GatePaddingExact
 public import MIPRE.Foundations.SAT.GateProg
 public import MIPRE.Foundations.SAT.InputRouting
 public import MIPRE.Foundations.SAT.InputRoutingProg
@@ -1478,8 +1485,11 @@ public import MIPRE.TM.MultiInput.Deterministic
 public import MIPRE.TM.MultiInput.OneInputEquiv
 public import MIPRE.TM.Universal.Spec
 public import MIPRE.Tactics
+public import MIPRE.Tailored.AnsRed.ArHonestHyp
+public import MIPRE.Tailored.AnsRed.ArParams
 public import MIPRE.Tailored.AnsRed.HonestPair
 public import MIPRE.Tailored.AnsRed.Indicator
+public import MIPRE.Tailored.AnsRed.IndicatorConst
 public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.AnsRed.IndicatorProg
 public import MIPRE.Tailored.AnsRed.Linear
@@ -1589,4 +1599,5 @@ public import MIPRE.Tailored.Stages
 public import MIPRE.Tailored.Verifier
 public import MIPRE.Tailored.ZPC
 public import MIPRE.TailoredGameValue
+public import MIPRE.TailoredMIP
 public import MIPRE.Tsirelson

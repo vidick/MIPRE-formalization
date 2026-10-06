@@ -1,7 +1,10 @@
 # The Aldous–Lyons track: `TMIP* = RE` (Bowen–Chapman–Vidick, paper II): estimate and plan
 
-**Status: Phase 0 done (#273; tracking #272); Phases 1, 2 and 3 done (#279, #280,
-#281).** The statement and
+**Status (2026-10-06): done. `TailoredGameValue.tailored_halting_reduction` and
+`SubgroupTestValue.aldous_lyons_false` are proved without hypothesis (`MIPRE/TailoredMIP.lean`),
+with only the three standard axioms: Phases 0 to 6 are in (#273, #279–#284), Phase 4's answer
+reduction inhabiting `TailoredAnswerReduction 5` (`AnsRed.Typed.tailoredAnswerReduction`, P4i
+below).** The history follows. The statement and
 the interface are in (`MIPRE/TailoredGameValue.lean`, `MIPRE/Tailored/*`), the two checks that
 Route A rests on both passed (§4.2, "Phase 0 verdict"), and the blueprint chapter is
 `blueprint/src/content/09_tailored.tex`. All five of Phase 1's slices are done (§5 "Phase 1
@@ -1116,15 +1119,21 @@ What the reading settled.
     proof stages read the input sampler's questions and the readable answers as bit strings: a
     polynomial-time function's bound holds on encodings only. The input's calculator and
     processor are never run, only handed to the circuit function as data.
-- **P4i — parameters and the contract (1.5–2.5k).** `Λ, Q, Δ, T, D, FE` from `(λ, μ, σ)` and `n`
-  (II:10846–11074), the error chain to `AnswerReduction.delta`, the thresholds;
-  `TailoredAnswerReduction` inhabited, `Closes #282`. Concretely: `prm` of `lstar` as a stage; an
-  `ArRoutine` (`parCore` and its cost, `ArRoutine.ParTime`; `circF` the padded `windowDescriber`
-  on `lstar`); the hypotheses `HonestHyp`, `17 ≤ d`, `L.m ≤ 2^j`, `q ≥ 2 (M + 1) d`,
-  `q ≥ 2 m (5 + 6 (d + 1))` and the answer bound; `errAR` bounded by `AnswerReduction.delta`.
-  P4h being done, the final assembly takes the output `ArRoutine.output` with its programs
-  (`arSamplerProg`, `lenPF`, `lpPF`), its two clauses (`hasPerfectZPC_output`,
-  `valStar_sound_output`) and its costs (`output_within`, `lenD_total`).
+- **P4i — parameters and the contract (done, 2026-10-06, about 2.6k lines).** The parameters
+  (`Tailored/AnsRed/ArParams.lean`): `ℓ = Q = (λn + 1)^μ`, `◇ = (μ + 2)(Q + 4)`, the description
+  time `T = 2^K` with `K = E₁ (μ + 1)(oW + Q + 4)`, `σ'`, the describer's `r, s`, `j = size m`,
+  `d = 17`, `t = E₂ (j + r + Q + 1)`. `L*` reads its parameters from a *constant* function at
+  each index rather than from a stage: the circuit function knows the index, so the constant is
+  computed there, and its program is built in polynomial time (`lstarProgF`), with an explicit
+  running time at constant parameters (`lstar_const_acceptsWithin_pow`, after factoring the check
+  so that the parameters enter once). The window describer's circuits are padded to exactly `s`
+  gates (`Foundations/SAT/GatePaddingExact.lean`). `HonestHyp.cons` was weakened to readable
+  answers of at most the readable lengths, the only ones it is used at: on longer strings a
+  processor may output arbitrarily many constraints. Then `honestHyp_ar`, the circuit function
+  (`ArCirc.lean`), the parameter program and its cost (`ArParCore*.lean`, reusing the MIP*
+  budget stage), the error chain (`ArError.lean`: `errAR` against `AnswerReduction.delta` at
+  `b = clB/2`, the field threshold `E₂ ≥ e2Min`), the routine (`ArInstance.lean`) and the contract
+  (`ArContract.lean`, `tailoredAnswerReduction : TailoredAnswerReduction 5`).
 
 Order: P4a; then P4f and P4g, because the describer is the one step the paper only sketches
 (II:8757) and the PCP's input blocks rest on it; then P4b–P4e, P4h, P4i.
