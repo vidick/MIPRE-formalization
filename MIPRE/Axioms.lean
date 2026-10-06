@@ -247,6 +247,7 @@ public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.ClassVerifier
 public import MIPRE.Tailored.AnsRed.Linear
+public import MIPRE.TM.CookLevin.Decoupled6Prog
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -3901,6 +3902,10 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 -- blueprint `lem:ar-extend`
 #guard_sorry_free MIPRE.Tailored.AnsRed.extend_complete, MIPRE.Tailored.AnsRed.decSat_sound,
   MIPRE.Tailored.AnsRed.decSat_of_accepts, MIPRE.Tailored.AnsRed.accepts_of_decSat
+
+-- blueprint `lem:ar-window-describer`
+#guard_sorry_free MIPRE.SAT.Circuit.formula6, MIPRE.SAT.Circuit.DescribesWindows,
+  MIPRE.SAT.WindowDescriber, MIPRE.SAT.windowDescriber
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,

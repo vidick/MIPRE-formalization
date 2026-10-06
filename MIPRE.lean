@@ -1257,6 +1257,7 @@ public import MIPRE.Foundations.SAT.CircuitFieldCorrect
 public import MIPRE.Foundations.SAT.CircuitFieldEval
 public import MIPRE.Foundations.SAT.Cnf
 public import MIPRE.Foundations.SAT.Decoupled
+public import MIPRE.Foundations.SAT.Decoupled6
 public import MIPRE.Foundations.SAT.EffectiveNormalBasis
 public import MIPRE.Foundations.SAT.EffectiveSelfDual
 public import MIPRE.Foundations.SAT.FieldCoordinates
@@ -1374,6 +1375,8 @@ public import MIPRE.TM.CookLevin.Assemble
 public import MIPRE.TM.CookLevin.ClassicalPcp
 public import MIPRE.TM.CookLevin.Correct
 public import MIPRE.TM.CookLevin.Decoupled
+public import MIPRE.TM.CookLevin.Decoupled6
+public import MIPRE.TM.CookLevin.Decoupled6Prog
 public import MIPRE.TM.CookLevin.DecoupledProg
 public import MIPRE.TM.CookLevin.DescProg
 public import MIPRE.TM.CookLevin.Describer
@@ -1388,6 +1391,7 @@ public import MIPRE.TM.CookLevin.Kinds
 public import MIPRE.TM.CookLevin.Layout
 public import MIPRE.TM.CookLevin.LayoutProg
 public import MIPRE.TM.CookLevin.Link
+public import MIPRE.TM.CookLevin.Link6
 public import MIPRE.TM.CookLevin.Local
 public import MIPRE.TM.CookLevin.Padded
 public import MIPRE.TM.CookLevin.PaddingParams

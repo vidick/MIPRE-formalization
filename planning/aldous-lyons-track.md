@@ -29,7 +29,8 @@ specification of its programs with the value chain through `seven` (P3d,
 three typed facts (P3c), the two programs with their costs (P3f), and the assembly (P3g); see
 "Phase 3 status (2026-10-06)" in §5.
 Phase 4 (#282) is in progress, planned in nine slices (§5 "Phase 4 slices"); P4a, the linear
-systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`).
+systems, is done (`MIPRE/Tailored/AnsRed/Linear.lean`), and so is P4g, the describer through
+three windows (`MIPRE.SAT.windowDescriber`).
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -936,13 +937,17 @@ What the reading settled.
   completeness and value transport, are not needed. The honest strategy pads with zeros, which
   is linear data processing.
 - **Three input blocks for Cook–Levin.** `L*` is a `Decider` reading `(n, x, y, a, b)` with
-  `a = a^R` and `b = b^R ++ O`, its fixed inputs (the input's programs, `Λ`, `Δ`) hard-wired by
+  `a = a^R ++ O` and `b = b^R`, its fixed inputs (the input's programs, `Λ`, `Δ`) hard-wired by
   s-m-n. The 6-decoupled describer (II:8618, a sketch) is built on `SuccinctCookLevin` as
-  `DecoupledDescriber` is: link rows tie the three raw blocks `a^R, b^R, O` to the tape encoding
-  of the tableau's input region at three offsets (rows 2–7 of `Link.lean`, for three blocks of
-  unequal sizes instead of two equal ones), and two rows make the witness blocks equal. The
-  two-block describer does not serve as it stands: `O` depends on both readable answers, so the
-  isolated player `B`, who must be compared with `b^R`, cannot hold a block containing it.
+  `DecoupledDescriber` is: three link rows tie three *windows* of the tableau's input region to
+  the tape encoding there, `A` at `0` and `C` at `2^{ℓ_a}` in the first answer's region and `B`
+  at `2T` in the second's, and two rows make the witness blocks equal. The third window starts
+  at a power of two because the closure library has no binary addition, and the windows lie
+  inside the input regions, so no padding rows are needed; `L*` checks its input lengths, so the
+  windows, covering the inputs exactly, describe it completely. The blocks hold tape encodings
+  (`0 ↦ 00`, `1 ↦ 01`), affine in the raw strings, which the PCP absorbs. The two-block
+  describer does not serve as it stands: `O` depends on both readable answers, so the isolated
+  player `B`, who must be compared with `b^R`, cannot hold a block containing it.
 - **Where things live.** Linear systems, the PCP, the game and completeness under
   `MIPRE/Tailored/AnsRed/`, in the fast regime; whatever imports `Background/LIDT` or
   `Background/AnswerReduction` (the seeded test and its soundness, the CL presentation
@@ -981,9 +986,12 @@ What the reading settled.
   checks, the input's lengths and processor, purification, triangulation, decoupling, the
   comparison with `O`; its acceptance law (claim:properties_of_L*) and its running time
   (eq:time_bound_L*) in the relative-cost reading.
-- **P4g — the decoupled describer of `L*` (1.5–2.5k).** As above, with `M` and `s` polynomial in
-  `log T`, `Q` and `D` and independent of the hard-wired inputs, and the program in polynomial
-  time (prop:explicit-padded-succinct-deciders).
+- **P4g — the decoupled describer of `L*` (done, 1.0k lines).** As above, with `M` and `s`
+  polynomial in `log T`, `Q` and `D` and independent of the hard-wired inputs, and the program
+  in polynomial time (prop:explicit-padded-succinct-deciders): `MIPRE.SAT.WindowDescriber`
+  (`Foundations/SAT/Decoupled6.lean`) for any decider, inhabited by `MIPRE.SAT.windowDescriber`
+  (`TM/CookLevin/{Link6,Decoupled6,Decoupled6Prog}.lean`, blueprint
+  `lem:ar-window-describer`).
 - **P4h — `PartialAnsRed` (4–6k, 2 PRs).** The sampler (O3's typed oracle sampler `prodDirect`
   a one-copy seeded sampler downsized along the Shoup basis, then detyped), the calculator by
   type, the processor running the four checks (two calls to the input sampler, one to the
