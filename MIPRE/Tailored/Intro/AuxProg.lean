@@ -249,7 +249,8 @@ theorem maskOf_compl {s : ℕ} (S : Finset (Fin s)) : maskOf Sᶜ = (maskOf S).m
 noncomputable def hideNextConsF : PolyTimeFun HideIn (List BitStr) :=
   let Q : PolyTimeFun HideIn Unary := fst
   let m₁ : PolyTimeFun HideIn BitStr := fst.comp (fst.comp (snd.comp snd))
-  let m₂ : PolyTimeFun HideIn BitStr := notMaskF.comp (fst.comp (snd.comp (fst.comp (snd.comp snd))))
+  let m₂ : PolyTimeFun HideIn BitStr :=
+    notMaskF.comp (fst.comp (snd.comp (fst.comp (snd.comp snd))))
   let m₃ : PolyTimeFun HideIn BitStr := snd.comp (snd.comp (fst.comp (snd.comp snd)))
   catF (catF (catF (guardOf (fst.comp snd) (catF (u3Q Q) (u3Q Q)))
       (projEqOf (u3Q Q) (u3Q Q) Q Q m₁))
@@ -299,7 +300,8 @@ noncomputable def sS : PolyTimeFun SameIn Unary := snd.comp (snd.comp snd)
 noncomputable def sameConsF : PolyTimeFun SameIn (List BitStr) :=
   ite (fst.comp (fst.comp snd))
     (catF (guardOf sG (catF (u3Q inQ) (u3Q inQ)))
-      (catF (eqOf (u3Q inQ) (u3Q inQ) inQ inQ inQ) (eqOf (u3Q inQ) (u3Q inQ) (u2Q inQ) (u2Q inQ) inQ)))
+      (catF (eqOf (u3Q inQ) (u3Q inQ) inQ inQ inQ)
+        (eqOf (u3Q inQ) (u3Q inQ) (u2Q inQ) (u2Q inQ) inQ)))
     (ite (snd.comp (fst.comp snd))
       (catF (guardOf sG (catF (u2Q2R inQ inR) (u2Q2R inQ inR)))
         (catF (eqOf (u2Q2R inQ inR) (u2Q2R inQ inR) (uQR inQ inR) (uQR inQ inR) inQ)
