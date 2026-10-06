@@ -2278,3 +2278,107 @@ satisfying assignment to acceptance. The offset of the third window is a power o
 algorithm computes from $\ell_a$ without binary addition; the link conditions cost $O(r_0)$
 gates.
 \end{proof}
+
+\subsection{Answer reduction: the output indicator}
+
+The output indicator $L^*$ of paper~II (Definition~defn:decider-read, II:8381) checks that a string
+$O$ is the table of the decoupled triangulated purified system of the constraints at a pair of
+questions; the PCP checks the system through that table
+(fact:polynomial\_condition\_for\_satisfiability, II:8147). Here the input verifier is neither
+padded nor purified (II:8377): $L^*$ cuts the readable answers at the readable lengths and
+purifies on the fly (Lemma~\ref{lem:ar-purification}), so the paper's steps~3 and~4 have nothing
+to check, and the table size $N = 2^\ell$ and the copy size $D = 2^{\delta}$ come from a
+polynomial-time parameter program of the index.
+
+\begin{definition}[The table and the output indicator]
+\label{def:ar-indicator}
+\uses{def:ar-linear,def:canonical-decider,lem:binary-degree-decomposition,
+  lem:effective-normal-selfdualization}
+\lean{MIPRE.Tailored.AnsRed.tableSize, MIPRE.Tailored.AnsRed.indTable,
+  MIPRE.Tailored.AnsRed.TableSat, MIPRE.Tailored.AnsRed.LstarOK, MIPRE.Tailored.AnsRed.lstarProg,
+  MIPRE.Tailored.AnsRed.lstar}
+\leanok
+The index space of the table is $[N] \times [N] \times [D]^3 \times [64]$, the first coordinate
+fastest, so that for $N = 2^\ell$ and $D = 2^{\delta}$ the binary digits of an index are those of
+its coordinates in turn (II:8453); the last coordinate holds the six signs, one per digit. The
+\emph{table} of a triangulated system is the indicator of its decoupled system
+(Definition~\ref{def:ar-linear}) over the index space, a string of $64 N^2 D^3$ bits, and five
+assignments \emph{satisfy} a table when every equation whose index it contains holds. The
+\emph{check} at $(N, D)$ reads the four lengths at the two questions, the constraints that the
+processor outputs on the readable answers, and the inputs $a = a^R O$ and $b = b^R$: the lengths
+are at most $N$, $b$ has $N$ bits and $O$ has $64 N^2 D^3$, the number of constraints times $2N$,
+plus $2N$, is at most $D$, and $O$ is the table of the triangulated purified equations, the
+readable answers cut at the readable lengths. The \emph{output indicator} of a tailored verifier,
+at a parameter program giving $(\ell, \delta)$ in unary, is the decider that runs the
+answer-length calculator four times and the processor once, as the canonical decider does, and
+then makes the check at $(2^\ell, 2^{\delta})$.
+\end{definition}
+
+\begin{lemma}[The table holds the decoupled system; fact:polynomial\_condition\_for\_satisfiability]
+\label{lem:ar-indicator-table}
+\uses{def:ar-indicator}
+\lean{MIPRE.Tailored.AnsRed.indTable_eq_indLoop, MIPRE.Tailored.AnsRed.tableSat_indTable_iff}
+\leanok
+The table is the output of the loops over the coordinates, the signs outermost and the first
+coordinate innermost. If $N > 0$, $2N \le D$ and the triangulated equations are below $D$, five
+assignments satisfy the table exactly when they satisfy the decoupled system.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:ar-triangle-decouple}
+\leanok
+An index decodes into its coordinates by division and remainder, which locates it in the loops.
+Each kind of equation of the decoupled system has an index in range, a block of sign $0$ taking
+the coordinate $0$, and the table contains it; conversely, every equation the table contains is
+one of the system.
+\end{proof}
+
+\begin{lemma}[Properties of the output indicator; claim:properties\_of\_L*]
+\label{lem:ar-indicator-properties}
+\uses{lem:ar-indicator-table, lem:ar-extend}
+\lean{MIPRE.Tailored.AnsRed.lstarOK_pad, MIPRE.Tailored.AnsRed.accepts_of_lstarOK,
+  MIPRE.Tailored.AnsRed.tableSat_of_accepts}
+\leanok
+(1) On readable answers of the readable lengths, padded with zeros to $N$ bits, the check passes
+for $O$ the table, when the lengths are at most $N$ and $D$ is large enough; and $O$ is the only
+string it accepts after them. (2) When the check passes on the lengths and constraints of the game
+at $(x, y)$, five assignments satisfying the table held by $a$ give answers that the game accepts:
+the readable answers completed by the first two blocks, read at the linear lengths. (3) Answers
+of the right lengths that the game accepts give the satisfying 5-tuple $\mathsf{Extend}$ of the
+table, the last three blocks linear in the linear answers.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Lemma~\ref{lem:ar-indicator-table} turns the table into the decoupled system, which is below $D$
+by Lemma~\ref{lem:ar-triangle-decouple} when there are enough triangulation variables, and
+Lemma~\ref{lem:ar-extend} relates the system to the game.
+\end{proof}
+
+\begin{lemma}[The output indicator as a program; eq:time\_bound\_L*]
+\label{lem:ar-indicator-program}
+\uses{def:ar-indicator}
+\lean{MIPRE.Tailored.AnsRed.lstarFinal_apply, MIPRE.Tailored.AnsRed.lstarProg_accepts,
+  MIPRE.Tailored.AnsRed.lstar_accepts_iff, MIPRE.Tailored.AnsRed.lstarProg_halts,
+  MIPRE.Tailored.AnsRed.lstar_acceptsWithin}
+\leanok
+The check is a polynomial-time function of its input, and decides the check of
+Definition~\ref{def:ar-indicator}. The output indicator accepts $(n, x, y, a, b)$ exactly when the
+answer-length calculator gives the four lengths, the processor gives the constraints on the cut
+readable answers, and the check passes. If the two programs halt within $T (|d| + 1)^k$ on every
+input $(n, d)$, the output indicator halts on $(n, x, y, a, b)$ within an explicit bound,
+polynomial in $T$, in the size of the input and in the time bound of the check, and so accepts
+what it accepts within that bound.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:ar-indicator-table,lem:canonical-decider-cost}
+\leanok
+The check writes the readable rows, their triangulation and the table with all indices in unary,
+and loops over the coordinates of the table. The two powers of two are computed capped: $2^\ell$
+at one more than the length of $b$, which it must equal, and $2^{\delta}$ at one more than the
+length of $O$, which a satisfied length check exceeds, so nothing larger than the input is ever
+written. The program is that of the canonical decider with the check in place of the
+constraints' evaluation, and its running time is the sum of the five calls and of the check on a
+state whose size is bounded by the calls' outputs.
+\end{proof}

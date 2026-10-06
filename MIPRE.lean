@@ -1430,6 +1430,9 @@ public import MIPRE.TM.MultiInput.Deterministic
 public import MIPRE.TM.MultiInput.OneInputEquiv
 public import MIPRE.TM.Universal.Spec
 public import MIPRE.Tactics
+public import MIPRE.Tailored.AnsRed.Indicator
+public import MIPRE.Tailored.AnsRed.IndicatorCost
+public import MIPRE.Tailored.AnsRed.IndicatorProg
 public import MIPRE.Tailored.AnsRed.Linear
 public import MIPRE.Tailored.Canonical
 public import MIPRE.Tailored.CanonicalCost
