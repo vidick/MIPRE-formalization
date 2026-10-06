@@ -626,17 +626,19 @@ theorem dirAux_iff {P PA : Type*} (X Z : P) (project : PA → Fin Q → 𝔽₂)
 
 open Classical in
 variable (Q R sR sL L) in
-/-- The constraints at an ordered pair of auxiliary labels: a readable condition `G` on each
-register, consistency when the labels agree, and the directed checks in both orientations. -/
+/-- The constraints at an ordered pair of auxiliary labels: when a readable condition `G` holds
+at both registers, consistency when the labels agree and the directed checks in both
+orientations; otherwise the rejecting constraint alone (the checks' data need not be computable
+off `G`). -/
 noncomputable def auxPair (G : AuxType 7 × Bool → BitStr → Prop)
     (kg : ∀ S : Finset (Fin Q), CL.RegLinear 𝔽₂ S → List (Fin Q → 𝔽₂))
     (srcCons : BitStr → BitStr → BitStr → BitStr → List BitStr)
     (t u : AuxType 7 × Bool) (aR bR : BitStr) : List BitStr :=
-  guardCons (decide (G t (win aR 0 Q) ∧ G u (win bR 0 Q)))
-      (auxLen Q R t.1 + auxLen Q R u.1) ++
-    ((if t = u then sameCons Q R sR sL t aR bR else []) ++
+  if G t (win aR 0 Q) ∧ G u (win bR 0 Q) then
+    (if t = u then sameCons Q R sR sL t aR bR else []) ++
     (dirAux Q R sR sL L kg srcCons t u aR bR ++
-    (dirAux Q R sR sL L kg srcCons u t bR aR).map (swapCon (auxLen Q R t.1) (auxLen Q R u.1))))
+    (dirAux Q R sR sL L kg srcCons u t bR aR).map (swapCon (auxLen Q R t.1) (auxLen Q R u.1)))
+  else [rejectConstraint (auxLen Q R t.1 + auxLen Q R u.1)]
 
 theorem auxLenR_add_le (t : AuxType 7) : Q ≤ auxLenR Q R t := by
   cases t <;> simp [auxLenR]
@@ -669,13 +671,12 @@ theorem auxPair_iff {P PA : Type*} (X Z : P) (project : PA → Fin Q → 𝔽₂
           (parsed Q R sR sL t a) (parsed Q R sR sL u b) = true ∧
         AuxiliaryQuotient.directed L X Z project D (.inr u) (.inr t)
           (parsed Q R sR sL u b) (parsed Q R sR sL t a) = true := by
-  rw [auxPair, forall_mem_append, guardCons_iff]
-  simp only [decide_eq_true_eq]
-  rw [win_take (by have := auxLenR_add_le (Q := Q) (R := R) t.1; omega),
+  rw [auxPair, win_take (by have := auxLenR_add_le (Q := Q) (R := R) t.1; omega),
     win_take (by have := auxLenR_add_le (Q := Q) (R := R) u.1; omega)]
   by_cases hg : G t (win a 0 Q) ∧ G u (win b 0 Q)
   · have hfa := hG _ _ hg.1
     have hfb := hG _ _ hg.2
+    rw [if_pos hg]
     simp only [hg, true_and, forall_mem_append]
     rw [forall_swapCon_iff ha hb, dirAux_iff X Z project hkg hD hS hRd ha hb hfa hfb,
       dirAux_iff X Z project hkg hD hS hRd hb ha hfb hfa]
@@ -684,9 +685,10 @@ theorem auxPair_iff {P PA : Type*} (X Z : P) (project : PA → Fin Q → 𝔽₂
       rw [sameCons_iff (PA := PA) ha hb hfa hfb]
       simp
     · simp [htu]
-  · constructor
-    · rintro ⟨h, -⟩
-      exact absurd h hg
+  · rw [if_neg hg]
+    constructor
+    · intro h
+      exact absurd (h _ (List.mem_singleton_self _)) (not_satisfies_rejectConstraint _ _)
     · rintro ⟨h1, h2, -⟩
       exact absurd ⟨h1, h2⟩ hg
 

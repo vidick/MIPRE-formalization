@@ -683,10 +683,14 @@ public import MIPRE.Background.Repetition.TracialApprox
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
+public import MIPRE.Background.Tailored.Intro.Budget
+public import MIPRE.Background.Tailored.Intro.Complete
+public import MIPRE.Background.Tailored.Intro.Output
 public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Background.Tailored.Intro.PauliCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
 public import MIPRE.Background.Tailored.Intro.PauliHide
+public import MIPRE.Background.Tailored.Intro.Sound
 public import MIPRE.Background.Tailored.Intro.Typed
 public import MIPRE.Background.Tailored.Repetition.Soundness
 public import MIPRE.Background.Tailored.Repetition.Stage
@@ -1446,9 +1450,11 @@ public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Encoded
 public import MIPRE.Tailored.Intro.Forms
 public import MIPRE.Tailored.Intro.Input
+public import MIPRE.Tailored.Intro.KerGensProg
 public import MIPRE.Tailored.Intro.Layout
 public import MIPRE.Tailored.Intro.LinearCheck
 public import MIPRE.Tailored.Intro.Presentation
+public import MIPRE.Tailored.Intro.PresentationTyped
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Tailored.Intro.Source
 public import MIPRE.Tailored.Intro.SourceCons

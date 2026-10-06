@@ -94,9 +94,8 @@ noncomputable def pauliDir (p : Ty) (t : AuxType 7 × Bool) (aR bR : BitStr) : L
 
 /-- The constraints from a Pauli label to an auxiliary one. -/
 noncomputable def pauliAux (p : Ty) (t : AuxType 7 × Bool) (aR bR : BitStr) : List BitStr :=
-  guardCons (decide (G k j R T V hs t (win bR 0 (Q k j))))
-      (pauliLen (2 ^ j) k p + auxLen (Q k j) R t.1) ++
-    pauliDir k hk hodd j R V hs kg p t aR bR
+  if G k j R T V hs t (win bR 0 (Q k j)) then pauliDir k hk hodd j R V hs kg p t aR bR
+  else [rejectConstraint (pauliLen (2 ^ j) k p + auxLen (Q k j) R t.1)]
 
 /-- **The constraints at an ordered pair of labels**, from the two question payloads `x, y`
 and the two readable answers. -/
@@ -156,10 +155,15 @@ theorem pauliAux_iff (hkg : KerGens (Q k j) kg) (D : (Fin (Q k j) → 𝔽₂) �
         AuxiliaryQuotient.directed (L k j V hs) (.pauli .X) (.pauli .Z) (proj k hk hodd j) D
           (.inl p) (.inr t) (.pauli (pDec k hk j p a))
           (parsed (Q k j) R (sR k j T V hs) (sL k j T V hs) t b) = true := by
-  rw [pauliAux, forall_mem_append, guardCons_iff]
-  simp only [decide_eq_true_eq]
-  rw [win_take (by have := auxLenR_add_le (Q := Q k j) (R := R) t.1; omega)]
-  refine and_congr_right fun _ => ?_
+  rw [pauliAux, win_take (by have := auxLenR_add_le (Q := Q k j) (R := R) t.1; omega)]
+  by_cases hg : G k j R T V hs t (win b 0 (Q k j))
+  swap
+  · rw [if_neg hg]
+    simp only [hg, false_and, iff_false]
+    intro h
+    exact not_satisfies_rejectConstraint _ _ (h _ (List.mem_singleton_self _))
+  rw [if_pos hg]
+  simp only [hg, true_and]
   obtain ⟨t, w⟩ := t
   rw [pauliDir, forall_mem_append]
   cases t with
