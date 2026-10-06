@@ -1446,6 +1446,7 @@ public import MIPRE.Tailored.Halting.Search
 public import MIPRE.Tailored.Halting.Tabulate
 public import MIPRE.Tailored.Intro.AuxCons
 public import MIPRE.Tailored.Intro.Binary
+public import MIPRE.Tailored.Intro.CLData
 public import MIPRE.Tailored.Intro.Closure
 public import MIPRE.Tailored.Intro.Encoded
 public import MIPRE.Tailored.Intro.Forms
