@@ -91,7 +91,7 @@ every point as the identity or as $J$.
 
 \begin{lemma}[The associated test is computable from the game]
 \label{lem:assoc-test-primrec}
-\uses{def:assoc-test}
+\uses{def:assoc-test,lem:tailored-conversion}
 \lean{MIPRE.Tailored.Sofic.allBits_eq_iterate, MIPRE.Tailored.Sofic.dedup_eq_foldr,
   MIPRE.Tailored.Sofic.zipIdx_map_eq, MIPRE.Tailored.Sofic.primrec_consWord,
   MIPRE.Tailored.Sofic.primrec_consWords, MIPRE.Tailored.Sofic.primrec_clause,
@@ -134,7 +134,7 @@ times its losing probability in the test. In progress.
 \begin{theorem}[The sofic value is not approximable; Corollary~I:2144, measure-free]
 \label{thm:sofic-not-approximable}
 \uses{def:sofic-approximable,lem:assoc-test-primrec,def:tailored-halting-reduction,
-  thm:halting-undecidable}
+  thm:halting-undecidable,lem:tailored-conversion}
 \lean{MIPRE.Tailored.Sofic.MainTheoremII, MIPRE.Tailored.Sofic.le_iff_of_gap,
   MIPRE.Tailored.Sofic.not_sofValueApproximable_of}
 \leanok
