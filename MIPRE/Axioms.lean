@@ -252,6 +252,8 @@ public import MIPRE.Tailored.AnsRed.IndicatorCost
 public import MIPRE.Tailored.AnsRed.PcpSound
 public import MIPRE.Tailored.AnsRed.PcpComplete
 public import MIPRE.Tailored.AnsRed.PcpHonest
+public import MIPRE.Tailored.AnsRed.Slots
+public import MIPRE.Background.Tailored.AnswerReduction.Typed
 public import MIPRE.Tailored.Intro.SourceCons
 public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
@@ -3968,6 +3970,19 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.AnsRed.honestW, MIPRE.Tailored.AnsRed.honestR, MIPRE.Tailored.AnsRed.honestL,
   MIPRE.Tailored.AnsRed.lstar_accepts_honest, MIPRE.Tailored.AnsRed.identities_honest,
   MIPRE.Tailored.AnsRed.honestL_xorBits
+
+-- blueprint `lem:ar-slots`
+#guard_sorry_free MIPRE.Tailored.AnsRed.passes_iff_passesV, MIPRE.Tailored.AnsRed.passesV_iff,
+  MIPRE.Tailored.AnsRed.passesR_congr, MIPRE.Tailored.AnsRed.rename_ofPolys_slot,
+  MIPRE.Tailored.AnsRed.slotEval_ofPolys, MIPRE.Tailored.AnsRed.indDeg_ofPolys,
+  MIPRE.Tailored.AnsRed.idxO_lt_of_readable, MIPRE.Tailored.AnsRed.readable_getElem_slotsOf
+
+-- blueprint `lem:ar-tailored-reading`
+#guard_sorry_free MIPRE.Tailored.AnsRed.Typed.eqsCons_iff, MIPRE.Tailored.AnsRed.Typed.ldCons_iff,
+  MIPRE.Tailored.AnsRed.Typed.consCons_iff, MIPRE.Tailored.AnsRed.Typed.indCons_iff_a,
+  MIPRE.Tailored.AnsRed.Typed.indCons_iff_b, MIPRE.Tailored.AnsRed.Typed.proofCons_iff_a,
+  MIPRE.Tailored.AnsRed.Typed.proofCons_iff_b, MIPRE.Tailored.AnsRed.Typed.cons_iff,
+  MIPRE.Tailored.AnsRed.Typed.accepts_iff
 
 -- blueprint `lem:intro-forms`
 #guard_sorry_free MIPRE.Tailored.Intro.dotL, MIPRE.Tailored.Intro.dotL_eq_odd,

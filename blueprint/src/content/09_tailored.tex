@@ -2798,3 +2798,122 @@ read off the tables at the odd positions of the tape encodings, satisfy the form
 witnesses. By item~3 of Lemma~\ref{lem:ar-indicator-properties} the linear tables satisfy the
 system that the table holds. Lemma~\ref{lem:ar-pcp-complete} concludes.
 \end{proof}
+
+\subsection{Answer reduction: the answer-reduced game}
+
+The game $\mathrm{AnsRed}(\verifier_n)$ of Definition defn:combi\_ans\_red (II:10285), as typed
+tailored data (Definition~\ref{def:tailored-detyping}) at one index of the input: the codewords of
+its answers name the polynomials of a PCP (Definition~\ref{def:ar-slots}), and its four checks
+are linear constraints read in Lemma~\ref{lem:ar-tailored-reading}, the form its completeness and
+soundness are proved against. The type graph is complete with loops, as the repository's typed
+games are, rather than the paper's tensor product of two paths (II:10313); per seed and role the
+game is then the seeded low-degree test itself, and only the constants of the soundness proof
+change.
+
+\begin{definition}[The slots of a PCP]
+\label{def:ar-slots}
+\uses{def:ar-pcp,def:oracular-game}
+\lean{MIPRE.Tailored.AnsRed.Slot, MIPRE.Tailored.AnsRed.Slot.readable,
+  MIPRE.Tailored.AnsRed.Slot.emb, MIPRE.Tailored.AnsRed.slotsOf, MIPRE.Tailored.AnsRed.idxO,
+  MIPRE.Tailored.AnsRed.Pcp.slot, MIPRE.Tailored.AnsRed.Pcp.slotEval,
+  MIPRE.Tailored.AnsRed.PassesV, MIPRE.Tailored.AnsRed.PassesR, MIPRE.Tailored.AnsRed.PassesL,
+  MIPRE.Tailored.AnsRed.Pcp.ofPolys}
+\leanok
+A PCP (Definition~\ref{def:ar-pcp}) has a \emph{slot} for each of its polynomials, readable or
+linear, with its \emph{block}: the injection of the polynomial's variables into the PCP's. The
+codewords of the oracle are all the slots, the readable ones first (the paper's count of
+eq:def\_heartsuit, readable and linear); those of Alice are $g_A$ and
+$g_{L_a}$, those of Bob $g_B$ and $g_{L_b}$. The thirteen checks at a point read only the values
+of the slots there; they split into the \emph{readable checks}, the formula check and the
+readable assignment checks, and the \emph{linear checks}, the system check and the linear
+assignment checks. From polynomials on $N \geq m$ variables, one per slot, the \emph{PCP of the
+polynomials} reads each on its slot's block.
+\end{definition}
+
+\begin{lemma}[Slot values and block-local polynomials]
+\label{lem:ar-slots}
+\uses{def:ar-slots}
+\lean{MIPRE.Tailored.AnsRed.passes_iff_passesV, MIPRE.Tailored.AnsRed.passesV_iff,
+  MIPRE.Tailored.AnsRed.passesR_congr, MIPRE.Tailored.AnsRed.rename_ofPolys_slot,
+  MIPRE.Tailored.AnsRed.slotEval_ofPolys, MIPRE.Tailored.AnsRed.indDeg_ofPolys,
+  MIPRE.Tailored.AnsRed.idxO_lt_of_readable, MIPRE.Tailored.AnsRed.readable_getElem_slotsOf}
+\leanok
+The checks of a PCP at a point hold exactly when the checks on its slot values there do, which are
+the readable checks and the linear checks; the readable checks read only readable values. If
+each of a family of polynomials on $N$ variables depends only on the image of its slot's block,
+then the slots of the PCP of the polynomials, renamed back, are the polynomials: its values are
+theirs, and its degree is at most theirs. A readable slot sits among the oracle's readable
+codewords.
+\end{lemma}
+
+\begin{proof}
+\leanok
+The checks on slot values are the checks of the PCP with each evaluation replaced by the value of
+its slot. A polynomial whose variables lie in the range of an injection is the renaming of one on
+its domain, which the left inverse of renaming recovers; renaming along an injection keeps the
+individual degrees.
+\end{proof}
+
+\begin{definition}[The answer-reduced game as typed tailored data; defn:combi\_ans\_red]
+\label{def:ar-tailored-game}
+\uses{def:ar-slots,def:lidt-cl,def:tailored-detyping,lem:intro-pauli-cons,lem:intro-forms,
+  def:ar-pcp-sampler}
+\lean{MIPRE.Tailored.AnsRed.Typed.elt, MIPRE.Tailored.AnsRed.Typed.lenR,
+  MIPRE.Tailored.AnsRed.Typed.lenL, MIPRE.Tailored.AnsRed.Typed.cw,
+  MIPRE.Tailored.AnsRed.Typed.decAns, MIPRE.Tailored.AnsRed.Typed.vals,
+  MIPRE.Tailored.AnsRed.Typed.regs, MIPRE.Tailored.AnsRed.Typed.ldQ,
+  MIPRE.Tailored.AnsRed.Typed.ldCons, MIPRE.Tailored.AnsRed.Typed.consCons,
+  MIPRE.Tailored.AnsRed.Typed.indCons, MIPRE.Tailored.AnsRed.Typed.proofCons,
+  MIPRE.Tailored.AnsRed.Typed.cons, MIPRE.Tailored.AnsRed.Typed.tdata,
+  MIPRE.Tailored.AnsRed.Typed.ArPred}
+\leanok
+Fix $q = 2^t$, $M = 2^j$ dividing $q$, a degree $d$, a PCP layout with $m \leq M$ variables, the
+dimension $r$ of the input sampler at the index, a seed selector of the low-degree test
+(Definition~\ref{def:lidt-cl}), and a circuit polynomial $T_z$ for each $z \in \F_2^r$. The types
+are $\{A, B, O\} \times \{\mathrm{Point}, \mathrm{ALine}, \mathrm{DLine}\}$; a question carries an
+element of $\F_2^r$ and, over $\F_2$ through the Shoup basis, a question of the seeded low-degree
+test on $M$ variables. An answer is a codeword for each of its role's slots, readable first: one
+field element at a point, the $d + 1$ or $Md + 1$ coefficients of a polynomial at an
+axis-parallel or a diagonal line, each element as its $t$ canonical bits. The constraints at two
+typed questions are linear in the answer bits, with coefficients read off the questions and the
+readable answers:
+\begin{enumerate}
+\item at one role, the seeded low-degree test on the role's codewords;
+\item at one low-degree type, an isolated role and the oracle, the isolated codewords are the
+  oracle's in the same slots;
+\item at an axis-parallel line in the direction $i$, the codewords whose blocks miss $i$ have
+  their coefficients $1, \dots, d$ zero;
+\item at the oracle's point $p$ with seed $z$, the thirteen checks of the PCP against $T_z$ at
+  the first $m$ coordinates of $p$: the readable checks as a readable guard, and the linear checks
+  as linear equations, the system check's coefficients read off $g_O(p)$ and the linear
+  assignment checks linear because $g \mapsto g(1 - g)$ is additive in characteristic two.
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}[Reading the answer-reduced constraints]
+\label{lem:ar-tailored-reading}
+\uses{def:ar-tailored-game, lem:ar-slots}
+\lean{MIPRE.Tailored.AnsRed.Typed.eqsCons_iff, MIPRE.Tailored.AnsRed.Typed.ldCons_iff,
+  MIPRE.Tailored.AnsRed.Typed.consCons_iff, MIPRE.Tailored.AnsRed.Typed.indCons_iff_a,
+  MIPRE.Tailored.AnsRed.Typed.indCons_iff_b, MIPRE.Tailored.AnsRed.Typed.proofCons_iff_a,
+  MIPRE.Tailored.AnsRed.Typed.proofCons_iff_b, MIPRE.Tailored.AnsRed.Typed.cons_iff,
+  MIPRE.Tailored.AnsRed.Typed.accepts_iff}
+\leanok
+For answers of their types' lengths, the constraints at a pair of typed questions hold exactly
+when the four checks hold of the field elements the answers carry: when the roles agree, the
+seeded low-degree test accepts the two answers read as answers of the test; when the low-degree
+types agree, the isolated codewords are the oracle's in the same slots; each answer at an
+axis-parallel line is indifferent along it; and each oracle point answer passes the thirteen
+checks at its point.
+\end{lemma}
+
+\begin{proof}
+\leanok
+An equation $E(z) = \kappa$ between field elements, $E$ an $\F_2$-linear map of the answer bits,
+holds exactly when the $t$ coordinate checks of its canonical bits do
+(Lemma~\ref{lem:intro-pauli-cons}), and a readable guard rejects exactly when its condition fails
+(Lemma~\ref{lem:intro-forms}). Each check reads the bits of field elements lying inside their
+answers; the readable checks of the proof check read only readable values, which lie in the
+readable part.
+\end{proof}
+

@@ -683,6 +683,7 @@ public import MIPRE.Background.Repetition.TracialApprox
 public import MIPRE.Background.Repetition.TracialDensity
 public import MIPRE.Background.Repetition.Verifier
 public import MIPRE.Background.Repetition.VerifierCo
+public import MIPRE.Background.Tailored.AnswerReduction.Typed
 public import MIPRE.Background.Tailored.Intro.Budget
 public import MIPRE.Background.Tailored.Intro.Complete
 public import MIPRE.Background.Tailored.Intro.CompleteContract
@@ -1455,6 +1456,7 @@ public import MIPRE.Tailored.AnsRed.Pcp
 public import MIPRE.Tailored.AnsRed.PcpComplete
 public import MIPRE.Tailored.AnsRed.PcpHonest
 public import MIPRE.Tailored.AnsRed.PcpSound
+public import MIPRE.Tailored.AnsRed.Slots
 public import MIPRE.Tailored.Canonical
 public import MIPRE.Tailored.CanonicalCost
 public import MIPRE.Tailored.Class
