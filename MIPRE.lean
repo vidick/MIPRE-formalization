@@ -689,6 +689,7 @@ public import MIPRE.Background.Tailored.Intro.Output
 public import MIPRE.Background.Tailored.Intro.Pauli
 public import MIPRE.Background.Tailored.Intro.PauliCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
+public import MIPRE.Background.Tailored.Intro.PauliConsProg
 public import MIPRE.Background.Tailored.Intro.PauliHide
 public import MIPRE.Background.Tailored.Intro.Sound
 public import MIPRE.Background.Tailored.Intro.Typed
