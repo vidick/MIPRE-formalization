@@ -35,7 +35,9 @@ three windows (`MIPRE.SAT.windowDescriber`), and P4f, the output indicator
 (`MIPRE/Tailored/AnsRed/{Pcp,PcpSound}.lean`) and its completeness (`PcpComplete.lean`). P4c, the
 game, is done: the functional viewpoint's completeness (`PcpHonest.lean`), the PCP's slots
 (`Slots.lean`) and the typed tailored data with its reading
-(`Background/Tailored/AnswerReduction/Typed.lean`). P4d, its ZPC completeness, is next.
+(`Background/Tailored/AnswerReduction/Typed.lean`). P4d, its ZPC completeness, is done
+(`Background/Tailored/AnswerReduction/Complete.lean`, `hasPerfectZPC_ar`); P4e, its soundness, is
+next.
 Written 2026-10-05, after `MIP* = RE` (`Halting.mipstar_eq_re`), the explicit separation
 (#224) and Phases 0–5 of the commuting-operator track (`planning/mipco-track.md`).
 
@@ -1008,10 +1010,24 @@ What the reading settled.
   role, slot equality at one low-degree type, indifference at axis-parallel lines, and
   `PassesV` at the oracle's point. The degree `d` is a parameter: the honest PCP has degree 17
   (P4b), so the instance takes `d ≥ 17` where the paper has 9.
-- **P4d — ZPC completeness (1.5–2.5k).** The oracularized strategy (the oracle's observables are
-  the isolated players', which commute along edges), then data processing along `eval_ρ ∘ Ind`
-  and `eval_ρ ∘ PCP_z`, affine in the linear answers with coefficients read from the readable
-  ones (cor:encodings, P3a's closure lemmas); the honest answers pass the four checks.
+- **P4d — ZPC completeness (done, about 2k lines).** The oracularized strategy (the oracle's
+  observables are the isolated players', which commute along edges), then data processing along
+  `eval_ρ ∘ Ind` and `eval_ρ ∘ PCP_z`, affine in the linear answers with coefficients read from
+  the readable ones (cor:encodings); the honest answers pass the four checks.
+  `Tailored/ControlledBits.lean`: a controlled sum of signed permutations over a diagonal
+  projective measurement is one, so a bit that is, for each value of some Z-bits, affine in some
+  X-bits is an X-bit (`isXBit_of_controlledAffine`). `Tailored/AnsRed/HonestPair.lean`: the honest
+  PCP `pairPcp` of an answer pair, slot by slot — readable slots read the readable answers, linear
+  ones are affine in the linear answers, the isolated players' slots are the oracle's — and the
+  hypotheses `HonestHyp` under which it satisfies the checks at every seed. In
+  `Background/Tailored/AnswerReduction/`: `Honest.lean` (the honest answers `honestAns` and
+  `arPred_honest`: accepted oracularized answers give accepted honest answers), `HonestBits.lean`
+  (their bits are X-bits, Z-bits when readable) and `Complete.lean` (the strategy: the
+  oracularization of the input's, pulled back to the typed questions and pushed forward along the
+  honest answers; `hasPerfectZPC_ar` from `hasPerfectZPC_presented_typed`). The theorem is stated
+  for any answer-reduced sampler (`ArSampler`: the questions carry the oracularized question and
+  the seeded test's question of one seed), which P4h constructs; the reference predicate is the
+  typed data's acceptance (`arDt`), which P4e's soundness reads through `accepts_iff`.
 - **P4e — soundness (4–6k, 2 PRs).** The detyping restriction; per seed and role the seeded
   test; extraction by `SoundIn`; the line conclusions; the indifference pruning; consistency and
   the proof check by Schwartz–Zippel and P4b's soundness; the decoded strategy for the typed
