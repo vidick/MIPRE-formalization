@@ -251,6 +251,7 @@ public import MIPRE.Tailored.Intro.RegCons
 public import MIPRE.Background.Tailored.Intro.PauliConsKernel
 public import MIPRE.Tailored.OfTNFVT
 public import MIPRE.Background.Tailored.Intro.Typed
+public import MIPRE.Background.Tailored.Intro.Complete
 
 @[expose] public section
 
@@ -3956,5 +3957,21 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
   MIPRE.Tailored.Intro.Typed.readOK, MIPRE.Tailored.Intro.Typed.pauliAux_iff,
   MIPRE.Tailored.Intro.Typed.AcceptsAsInput, MIPRE.Tailored.Intro.Typed.hD_of_acceptsAsInput,
   MIPRE.Tailored.Intro.Typed.consL_iff
+
+-- blueprint `lem:presentation-typed`
+#guard_sorry_free MIPRE.Tailored.decodeQuestion_eq_some, MIPRE.Tailored.decodeQuestion_eq_none,
+  MIPRE.Tailored.hasPerfectZPC_presented_typed
+
+-- blueprint `lem:intro-presentation-sound`
+#guard_sorry_free MIPRE.Tailored.Intro.Sound.tdata, MIPRE.Tailored.Intro.Sound.decT,
+  MIPRE.Tailored.Intro.Sound.lenR_le_len, MIPRE.Tailored.Intro.Sound.guards_of_readOK,
+  MIPRE.Tailored.Intro.Sound.pauliFormatted_parsedT, MIPRE.Tailored.Intro.Sound.tdata_sound,
+  MIPRE.Tailored.Intro.Sound.H, MIPRE.Tailored.Intro.Sound.valStar_tpresented_le
+
+-- blueprint `lem:intro-presentation-complete`
+#guard_sorry_free MIPRE.Tailored.Intro.Complete.parsedT_enc,
+  MIPRE.Tailored.Intro.Complete.length_encL, MIPRE.Tailored.Intro.Complete.encT,
+  MIPRE.Tailored.Intro.Complete.okT, MIPRE.Tailored.Intro.Complete.tdata_complete,
+  MIPRE.Tailored.Intro.Complete.hasPerfectZPC_tpresented
 
 end
