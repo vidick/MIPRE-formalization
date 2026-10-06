@@ -687,6 +687,7 @@ public import MIPRE.Background.Tailored.AnswerReduction.ArFamily
 public import MIPRE.Background.Tailored.AnswerReduction.Complete
 public import MIPRE.Background.Tailored.AnswerReduction.Honest
 public import MIPRE.Background.Tailored.AnswerReduction.HonestBits
+public import MIPRE.Background.Tailored.AnswerReduction.LdSampler
 public import MIPRE.Background.Tailored.AnswerReduction.Meets
 public import MIPRE.Background.Tailored.AnswerReduction.ShiftPoly
 public import MIPRE.Background.Tailored.AnswerReduction.Sound
