@@ -268,6 +268,7 @@ public import MIPRE.Background.Tailored.Intro.LenIntro
 public import MIPRE.Background.Tailored.Intro.CompleteContract
 public import MIPRE.Background.Tailored.Intro.Inhabit
 public import MIPRE.Background.Tailored.Main
+public import MIPRE.Tailored.Sofic.Undecidable
 public import MIPRE.Tailored.Intro.AuxProg
 
 @[expose] public section
@@ -4121,6 +4122,17 @@ commuting-operator soundness of compression, the halting reduction to `ω_co` an
 #guard_sorry_free MIPRE.Tailored.TailoredGapCompression.ofAnswerReduction,
   MIPRE.Tailored.tailored_halting_reduction_of_answerReduction,
   MIPRE.Tailored.tmipStarComputable_eq_re_of_answerReduction
+
+-- blueprint `lem:assoc-test-primrec`
+#guard_sorry_free MIPRE.Tailored.Sofic.allBits_eq_iterate, MIPRE.Tailored.Sofic.dedup_eq_foldr,
+  MIPRE.Tailored.Sofic.zipIdx_map_eq, MIPRE.Tailored.Sofic.primrec_consWord,
+  MIPRE.Tailored.Sofic.primrec_consWords, MIPRE.Tailored.Sofic.primrec_clause,
+  MIPRE.Tailored.Sofic.primrec_clauses, MIPRE.Tailored.Sofic.totalWeight_eq,
+  MIPRE.Tailored.Sofic.primrec_assocTest
+
+-- blueprint `thm:sofic-not-approximable`
+#guard_sorry_free MIPRE.Tailored.Sofic.MainTheoremII, MIPRE.Tailored.Sofic.le_iff_of_gap,
+  MIPRE.Tailored.Sofic.not_sofValueApproximable_of
 
 -- blueprint `lem:intro-input-runs`
 #guard_sorry_free MIPRE.Tailored.TailoredVerifier.IsBounded.two_le,

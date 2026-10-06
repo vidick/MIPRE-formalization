@@ -1,0 +1,164 @@
+\section{The Aldous--Lyons conjecture: subgroup tests}
+\label{ch:subgroup-tests}
+
+This chapter is the plan and the progress of Phase~6 of \texttt{planning/aldous-lyons-track.md}:
+the companion paper~\cite{BCLV24} of Bowen, Chapman, Lubotzky and Vidick, which with
+Chapter~\ref{ch:tailored} refutes the Aldous--Lyons conjecture. Line numbers I:$n$ refer to the
+LaTeX source of its arXiv version, which is the authority on the mathematics. Its argument has
+two halves. Main Theorem~II (Theorem~I:2126), finitary, associates with a tailored game a
+subgroup test whose sofic value is $1$ when the game has a perfect ZPC strategy and bounded away
+from $1$ when the game's value is at most $\frac12$. Main Theorem~I (I:594) shows that under the
+conjecture the sofic value is approximable by a computable function. Together with a halting
+reduction to tailored games they contradict the undecidability of the halting problem.
+
+\emph{Status.} The definitions are formalized (\texttt{MIPRE/SubgroupTestValue.lean},
+self-contained, and \texttt{MIPRE/Tailored/Sofic/}): subgroup tests and their sofic value, the
+Aldous--Lyons conjecture, and the associated test of a tailored game. Proved: the associated
+test is computable from the game (Lemma~\ref{lem:assoc-test-primrec}), and Main Theorem~II with a
+halting reduction makes the sofic value not approximable
+(Theorem~\ref{thm:sofic-not-approximable}). Main Theorem~II and Main Theorem~I are in progress.
+
+\subsection{Subgroup tests and the conjecture}
+
+\begin{definition}[Subgroup tests and their sofic value; I:439--520]
+\label{def:subgroup-test}
+\lean{SubgroupTestValue.SubgroupTestData, SubgroupTestValue.SubgroupTestData.equivTuple,
+  SubgroupTestValue.FiniteAction, SubgroupTestValue.FiniteAction.letterPerm,
+  SubgroupTestValue.FiniteAction.wordPerm, SubgroupTestValue.FiniteAction.InStab,
+  SubgroupTestValue.FiniteAction.LitHolds, SubgroupTestValue.FiniteAction.Passes,
+  SubgroupTestValue.FiniteAction.passProb, SubgroupTestValue.SubgroupTestData.totalWeight,
+  SubgroupTestValue.SubgroupTestData.value, SubgroupTestValue.SubgroupTestData.valSof}
+\leanok
+A subgroup test over the free group $F$ on $n$ generators is a finite list of weighted
+challenges, each a finite list $K$ of words and a decision on the subsets of $K$, here in
+disjunctive normal form over the literals ``the $i$-th word of $K$ lies in (or out of) the
+subgroup''. A finite action $\sigma$ of $F$ on a set of size $N \geq 1$ gives the finitely
+described IRS $\Phi(\sigma)$, the stabilizer of a uniform point; its value against the test is the
+probability that the stabilizer passes a challenge drawn with probability proportional to its
+weight. The sofic value of the test is the supremum of the values of finite actions.
+\end{definition}
+
+\begin{definition}[Approximating the sofic value]
+\label{def:sofic-approximable}
+\uses{def:subgroup-test}
+\lean{SubgroupTestValue.SofValueApproximable}
+\leanok
+The sofic value is approximable when a computable function $f$ of a test $T$ and $k \in \N$
+satisfies $|\mathrm{val}_{\mathrm{sof}}(T) - f(T, k)/(k+1)| \leq 1/(k+1)$ for all $T$ and $k$.
+\end{definition}
+
+\begin{definition}[Invariant random subgroups and the Aldous--Lyons conjecture; I:467--530]
+\label{def:aldous-lyons}
+\uses{def:subgroup-test}
+\lean{SubgroupTestValue.IsSubgroupIndicator, SubgroupTestValue.SubgroupSpace,
+  SubgroupTestValue.conj, SubgroupTestValue.IRS, SubgroupTestValue.stab,
+  SubgroupTestValue.finDescIRS, SubgroupTestValue.AldousLyons}
+\leanok
+The space $\mathrm{Sub}(F)$ of subgroups of the free group on $s$ generators is a closed subspace
+of $\{0,1\}^F$ with the product topology. An invariant random subgroup is a Borel probability
+measure on it invariant under conjugation; the finitely described ones are the measures
+$\Phi(\sigma)$ of finite actions. The Aldous--Lyons conjecture asserts that for every $s$ the
+finitely described IRSs are weak-$*$ dense in the IRSs.
+\end{definition}
+
+\subsection{The test associated with a tailored game}
+
+\begin{definition}[The associated subgroup test; I:2086]
+\label{def:assoc-test}
+\uses{def:subgroup-test,def:tailored-game-data}
+\lean{MIPRE.Tailored.Sofic.invW, MIPRE.Tailored.Sofic.commW, MIPRE.Tailored.Sofic.genW,
+  MIPRE.Tailored.Sofic.allBits, MIPRE.Tailored.Sofic.genJ, MIPRE.Tailored.Sofic.wts,
+  MIPRE.Tailored.Sofic.wts_eq, MIPRE.Tailored.Sofic.genX, MIPRE.Tailored.Sofic.nGen,
+  MIPRE.Tailored.Sofic.wJ, MIPRE.Tailored.Sofic.wX, MIPRE.Tailored.Sofic.varsAt,
+  MIPRE.Tailored.Sofic.fixedLits, MIPRE.Tailored.Sofic.readVars,
+  MIPRE.Tailored.Sofic.readWords, MIPRE.Tailored.Sofic.consAt, MIPRE.Tailored.Sofic.consWord,
+  MIPRE.Tailored.Sofic.consWords, MIPRE.Tailored.Sofic.words, MIPRE.Tailored.Sofic.clause,
+  MIPRE.Tailored.Sofic.clauses, MIPRE.Tailored.Sofic.challenge, MIPRE.Tailored.Sofic.assocTest,
+  MIPRE.Tailored.Sofic.genPerm, MIPRE.Tailored.Sofic.Checks}
+\leanok
+The test associated with a tailored game has a generator $J$ and one generator for each variable
+of each vertex, and one challenge per question pair, with the pair's weight. A subgroup $H$
+passes the challenge at $(x, y)$ when: $J \notin H$, $J^2 \in H$ and $J$ commutes in $H$ with the
+variables at $x$ and $y$ (Check~1); the variables are involutions and those at a vertex commute
+(Check~2); each readable variable $X$ has $X \in H$ or $J X \in H$, which reads off a value $r$
+of the readable variables (Check~3); and the word $J^{c_J} \prod X^{c}$ of every constraint
+$c \in L_{xy}(r)$ lies in $H$ (Check~4). It is written as one clause per readable value $r$, and
+the constraint words are deduplicated, which bounds their number by $2^{2\Lambda + 1} + 1$. An
+action passes Checks~1--3 everywhere when $J$ is a fixed-point-free involution commuting with the
+variables, these are involutions commuting at each vertex, and each readable variable acts at
+every point as the identity or as $J$.
+\end{definition}
+
+\begin{lemma}[The associated test is computable from the game]
+\label{lem:assoc-test-primrec}
+\uses{def:assoc-test,lem:tailored-conversion}
+\lean{MIPRE.Tailored.Sofic.allBits_eq_iterate, MIPRE.Tailored.Sofic.dedup_eq_foldr,
+  MIPRE.Tailored.Sofic.zipIdx_map_eq, MIPRE.Tailored.Sofic.primrec_consWord,
+  MIPRE.Tailored.Sofic.primrec_consWords, MIPRE.Tailored.Sofic.primrec_clause,
+  MIPRE.Tailored.Sofic.primrec_clauses, MIPRE.Tailored.Sofic.totalWeight_eq,
+  MIPRE.Tailored.Sofic.primrec_assocTest}
+\leanok
+The map from a tailored game description to the description of its associated test is
+primitive recursive.
+\end{lemma}
+
+\begin{proof}
+\leanok
+Each construction is a composition of list operations. Three are rewritten first: the readable
+values as an iterate, deduplication as a fold, and the enumeration of the fixed literals by a
+range.
+\end{proof}
+
+\begin{theorem}[Main Theorem~II; Theorem~I:2126]
+\label{thm:main-theorem-ii}
+\uses{def:assoc-test}
+Let $G$ be a tailored game with answer length $\Lambda$. If $G$ has a perfect ZPC strategy, its
+associated test has sofic value $1$. If its associated test has sofic value at least
+$1 - \varepsilon$, then $G$ has synchronous value at least $1 - C(\Lambda+1)^4 2^{6(\Lambda+1)}
+\varepsilon$, for a universal constant $C$.
+\end{theorem}
+
+\begin{proof}
+Completeness: lift the signed permutations of the strategy to an action on twice as many
+points, $J$ swapping the two copies. Soundness: perturb a near-optimal action until it passes
+Checks~1--3 everywhere (Proposition~I:2267, with the stability of involutions, of fixed-point-free
+involutions, of commuting involutions and of actions of $\F_2^k$, and the robustness of the value,
+Claim~I:1480); then the action is a Z-aligned signed-permutation strategy on the orbits of $J$,
+whose losing probability in the game is, by a trace identity in place of the paper's Fourier
+analysis (\texttt{planning/aldous-lyons-track.md}, ``Phase 6 slices''), at most $2^{2\Lambda+2}$
+times its losing probability in the test. In progress.
+\end{proof}
+
+\subsection{The sofic value is not approximable}
+
+\begin{theorem}[The sofic value is not approximable; Corollary~I:2144, measure-free]
+\label{thm:sofic-not-approximable}
+\uses{def:sofic-approximable,lem:assoc-test-primrec,def:tailored-halting-reduction,
+  thm:halting-undecidable,lem:tailored-conversion}
+\lean{MIPRE.Tailored.Sofic.MainTheoremII, MIPRE.Tailored.Sofic.le_iff_of_gap,
+  MIPRE.Tailored.Sofic.not_sofValueApproximable_of}
+\leanok
+Given a computable halting reduction to tailored games, and the two clauses of Main Theorem~II
+with a primitive recursive gap function $K(\Lambda)$, the sofic value is not approximable.
+\end{theorem}
+
+\begin{proof}
+\leanok
+Approximate the sofic value of the associated test of the game of a machine at $k = 4K(\Lambda)$.
+A halting machine gives sofic value $1$, so the approximation is at least $k/(k+1)$; a
+non-halting one gives sofic value at most $1 - 1/(2K)$, and the approximation is less than
+$k/(k+1)$. The comparison is computable, and decides the halting problem.
+\end{proof}
+
+\begin{theorem}[The Aldous--Lyons conjecture is false; Corollary~I:2144]
+\label{thm:aldous-lyons-false}
+\uses{def:aldous-lyons,thm:sofic-not-approximable,thm:main-theorem-ii}
+The Aldous--Lyons conjecture fails.
+\end{theorem}
+
+\begin{proof}
+Under the conjecture the sofic value equals the ergodic value (Corollary~I:550), which is
+approximable from above by pseudo-subgroup polytopes (Main Theorem~I, I:594), while the sofic
+value is approximable from below by enumerating finite actions; so it is approximable, against
+Theorem~\ref{thm:sofic-not-approximable}. In progress.
+\end{proof}

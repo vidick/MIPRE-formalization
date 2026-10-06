@@ -1053,6 +1053,59 @@ guard; `blueprint-edges`, `blueprint-colours`, `lean-coverage` clean.
 (finitary), the measure-free undecidability of approximating the sofic value, then Main
 Theorem I and `aldous_lyons_false` for some finite generating set.
 
+**Phase 6 slices (2026-10-06).** From a reading of paper I's §§1, 6, 7 and 8 (I:421–760,
+I:1351–1555, I:1713–2708; the source was supplied by the maintainer, arXiv:2408.00110v1).
+
+*A shorter route for the analytic heart.* Proposition I:2279 (a strategy passing Checks 1–3 has
+game value `≥ 1 − 2·2^{2Λ}ε` when its test value is `≥ 1 − ε`) is proved in the paper by Fourier
+bases of the `F₂^k`-actions at each vertex, orbit intersections and Claim I:2389. With the
+repository's signed-permutation observables it is a trace identity. Let `U^α`, `V^β` be the
+products of the observables a constraint `α` selects at `x` and at `y`; those at a vertex commute.
+The readable observables are diagonal, so the projection `Π_r` onto readable values `r` is
+diagonal and commutes with each vertex's observables. Then
+
+`P[readable = r, ⟨α, (a, b, 1)⟩ = 1] = (1/n) Σ_{j : r(j) = r} (1 − (−1)^{α_J} (U^α V^β)_{jj}) / 2`,
+
+the fraction of points at which the test's Check 4 fails for `α`, since `(U^α V^β)_{jj} = +1`
+exactly when the signed permutation fixes `j` with sign `+`. A union bound over the at most
+`2^{2Λ+1}` distinct constraints gives the proposition. The same identity, at value `1`, gives
+completeness (Theorem I:2126 (1)) without the commutation along edges, which the paper's orbit
+argument uses. So Main Theorem II needs no Fourier analysis of `F₂^k`-actions.
+
+Six slices:
+
+* **P6a** — the statement file `MIPRE/SubgroupTestValue.lean` (Mathlib only). It holds
+  `SubgroupTestData` (challenges as weighted word lists with a DNF decision over membership
+  literals, which is general), `FiniteAction`, `value`, `valSof`, `SofValueApproximable`, and
+  `IRS`, `finDescIRS` and `AldousLyons` on the subgroup space as a subspace of `{0,1}^F`.
+* **P6b** — the permutation toolbox. Normalized Hamming distance on `Equiv.Perm (Fin N)`, and
+  on `Fin n ↪ Fin N` for the padding to `2⌈n/2⌉`. The four stability claims (I:2561–2649):
+  involutions, fixed-point-free involutions, commuting involutions, and Glebsky–Rivera for
+  `F₂^k`. The robustness claim I:1480 (weighted distance `≤ ε` gives values within `ε`), with
+  the significance function; the edit-distance minimum over conjugations is not needed.
+* **P6c** — the associated test `T̃(g)` of a `TailoredGameData` (Definition I:2086). It has one
+  challenge per question pair with the pair's weight, `K` holding the Check 1–3 words and the
+  Check 4 words of every constraint at the pair, and one clause per readable assignment.
+  Proposition I:2283 (significance) and Proposition I:2267 (perturbation to pass Checks 1–3,
+  `C₀ = 370`) come with it.
+* **P6d** — the `J`-pair quotient. An action passing Checks 1–3 everywhere is a Z-aligned
+  signed-permutation strategy on the `J`-orbits, and conversely. The trace identity above gives
+  Proposition I:2279 and completeness. Then **Main Theorem II** in the repository's terms:
+  `valSof (T̃ g) ≥ 1 − ε` gives `gameValue g.toGame ≥ 1 − C Λ^4 2^{6Λ} ε`, through the
+  synchronous strategy of the signed permutations; and `g.HasPerfectZPC` gives
+  `valSof (T̃ g) = 1`.
+* **P6e** — `g ↦ T̃(g)` is computable. Then `TailoredHaltingReduction → ¬ SofValueApproximable`:
+  approximating the sofic value to within a third of `1/(2CΛ^4 2^{6Λ})` decides halting.
+* **P6f** — the measure side: the value as a continuous functional on `IRS`, `valSof = valErg`
+  under `AldousLyons` (Corollary I:550), Main Theorem I clause 2 (`valErg` approximable from
+  above by pseudo-subgroup polytopes, I:851–1137, the decidable "locally closed in `B`"
+  constraint and a grid optimum), and `AldousLyons → SofValueApproximable`, hence
+  `aldous_lyons_false_of : TailoredHaltingReduction → ¬ AldousLyons`.
+
+P6a–P6e are finitary and independent of Phase 4. Each conclusion is conditional on
+`TailoredHaltingReduction`, which `cor:tmip-re-from-ar` reduces to Phase 4's
+`TailoredAnswerReduction 5`.
+
 ## 6. The estimate
 
 ### 6.1 Calibration, measured in this repository
