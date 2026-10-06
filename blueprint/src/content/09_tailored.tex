@@ -1544,7 +1544,7 @@ the vectors at the offsets.
 
 \begin{lemma}[Comparisons of registers as linear constraints]
 \label{lem:intro-register-cons}
-\uses{lem:intro-forms}
+\uses{lem:intro-forms,def:cl-canonical,lem:cl-canonical,lem:pauli-mixing}
 \lean{MIPRE.Tailored.Intro.dotL_toBits, MIPRE.Tailored.Intro.regForm,
   MIPRE.Tailored.Intro.dotL_regForm, MIPRE.Tailored.Intro.satisfies_regForms_iff,
   MIPRE.Tailored.Intro.projEqCons, MIPRE.Tailored.Intro.projEqCons_iff,
@@ -1566,7 +1566,12 @@ linear functional vanishing on a spanning list vanishes on the span.
 
 \begin{lemma}[The Pauli basis test as linear constraints]
 \label{lem:intro-pauli-cons}
-\uses{def:qld-game,def:tailored-game}
+\uses{def:qld-game,def:tailored-game,def:fourier-forms,def:intro-source,def:intro-verifier,
+  def:self-dual-basis,lem:binary-degree-decomposition,lem:binary-uniform-irreducible,
+  lem:cl-downsize,lem:effective-binary-field-arithmetic,lem:effective-binary-linear-algebra,
+  lem:effective-field-inverse-trace,lem:effective-field-matrices,lem:effective-normal-element,
+  lem:effective-normal-selfdualization,lem:intro-binary-pauli-predicate,lem:pcp-circuit-evaluator,
+  lem:pcp-padding-programs,lem:perm-strategy-perfect,lem:self-dual-basis,thm:pcp-decider}
 \lean{MIPRE.Tailored.Intro.LinCheck, MIPRE.Tailored.Intro.LinCheck.toCon,
   MIPRE.Tailored.Intro.satisfies_toCon_iff, MIPRE.Tailored.Intro.fldAt,
   MIPRE.Tailored.Intro.fieldChecks, MIPRE.Tailored.Intro.forall_fieldChecks_iff,
@@ -1594,7 +1599,8 @@ the questions alone, it is empty.
 
 \begin{lemma}[A tailored verifier as a bounded normal form verifier]
 \label{lem:of-tnfvt}
-\uses{def:of-tnfv,lem:of-tnfv,lem:canonical-decider-cost,def:tailored-bounded}
+\uses{def:of-tnfv,lem:of-tnfv,lem:canonical-decider-cost,def:tailored-bounded,def:lambda-bounded,
+  lem:lambda}
 \lean{MIPRE.Cost.Prog.wrapHead_cost_at, MIPRE.Cost.Prog.wrapPre_cost_at,
   MIPRE.Cost.Prog.wrapCore_cost_at, MIPRE.Cost.Prog.esize_wrapCore,
   MIPRE.Tailored.TailoredVerifier.ofTNFVT,
