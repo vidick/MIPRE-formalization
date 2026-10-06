@@ -2768,3 +2768,33 @@ The encodings are linear, the system polynomial is affine in the linear assignme
 $g \mapsto g(1 - g)$ is additive in characteristic two; the certificates are values of a linear
 map.
 \end{proof}
+
+\begin{lemma}[The honest PCP of accepted answers; cor:functional\_viewpoint\_final, item 1]
+\label{lem:ar-pcp-honest}
+\uses{lem:ar-pcp-complete, lem:ar-indicator-properties, lem:ar-window-describer}
+\lean{MIPRE.Tailored.AnsRed.honestA, MIPRE.Tailored.AnsRed.honestB,
+  MIPRE.Tailored.AnsRed.honestW, MIPRE.Tailored.AnsRed.honestR, MIPRE.Tailored.AnsRed.honestL,
+  MIPRE.Tailored.AnsRed.lstar_accepts_honest, MIPRE.Tailored.AnsRed.identities_honest,
+  MIPRE.Tailored.AnsRed.honestL_xorBits}
+\leanok
+Let a circuit describe the output indicator $L^*$ of a tailored verifier $\verifier$ at $(n, x, y)$
+through windows of index lengths $\ell + 1$, $\ell + 1$ and $|S_0| + 1$, the parameter program
+giving $(\ell, \delta)$ at $n$. To answers $a^R a^L$ and $b^R b^L$ at $(x, y)$ associate the
+readable tables of the readable answers padded with zeros to $2^\ell$ bits, of the table $O$ of the
+decoupled triangulated purified system, and of witnesses of the formula for their windows, which
+depend only on $a^R, b^R$; and the linear tables $\mathsf{Extend}(a^L, b^L)$, which are
+$\F_2$-linear in $a^L, b^L$. If the game $\verifier_n$ accepts the answers, the lengths fit
+$2^\ell$ and $2^\delta$, the programs of $\verifier$ halt at $x$ and $y$, and $L^*$ accepts the
+padded strings within the describer's time, then the honest PCP of these tables satisfies the
+thirteen checks identically.
+\end{lemma}
+
+\begin{proof}
+\uses{lem:ar-indicator-program}
+\leanok
+By item~1 of Lemma~\ref{lem:ar-indicator-properties} the output indicator accepts the padded
+readable answers followed by the table, so by Lemma~\ref{lem:ar-window-describer} their windows,
+read off the tables at the odd positions of the tape encodings, satisfy the formula with some
+witnesses. By item~3 of Lemma~\ref{lem:ar-indicator-properties} the linear tables satisfy the
+system that the table holds. Lemma~\ref{lem:ar-pcp-complete} concludes.
+\end{proof}
