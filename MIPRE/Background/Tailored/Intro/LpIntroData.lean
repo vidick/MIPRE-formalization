@@ -203,6 +203,12 @@ theorem length_splitU (κ : Bool) (t : AuxType 7 × Bool) (y : BitStr)
   rfl
 
 include hT hV hn hsamp in
+theorem splitU_envT (κ : Bool) (t : AuxType 7 × Bool) (y : BitStr)
+    (hy : y.length = SourceCompiler.registerBits c lam n) :
+    splitU U κ t (envT c lam n T, y) = unary (T.lenOf (2 ^ n) (srcQuestion V hs t y) κ) := by
+  rw [← length_splitU U T V hT hV hn hsamp hs κ t y hy, unary_length]
+
+include hT hV hn hsamp in
 theorem fitsP_envT (t : AuxType 7 × Bool) (y : BitStr)
     (hy : y.length = SourceCompiler.registerBits c lam n) :
     fitsP U t (envT c lam n T, y) = true ↔
