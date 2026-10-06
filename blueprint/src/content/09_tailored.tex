@@ -2057,6 +2057,24 @@ Every coefficient is an inner product of the generator, restricted to the factor
 of the self-dual coordinate map, or a unit vector.
 \end{proof}
 
+\begin{lemma}[The Pauli constraints, as a program]
+\label{lem:intro-pauli-cons-prog}
+\uses{lem:intro-pauli-cons,lem:intro-pauli-hide}
+\lean{MIPRE.Tailored.Intro.PauliConsProg.pauliConsProg,
+  MIPRE.Tailored.Intro.PauliConsProg.pauliConsProg_eq}
+\leanok
+A polynomial-time function outputs the Pauli constraints of an edge between two Pauli labels of
+Lemma~\ref{lem:intro-pauli-cons}, from the parameters, the register length in unary and the two
+labelled questions, at questions of the length the Pauli sampler produces.
+\end{lemma}
+
+\begin{proof}
+\leanok
+It routes the pair as the kernel does. Each check is affine in the answer bits, so its
+constraint vector is its values at the zero answer and at the unit vectors, which the kernel's
+field programs compute; a field equation gives its $k$ coordinate constraints.
+\end{proof}
+
 \begin{lemma}[The introspection answer-length calculator]
 \label{lem:intro-len-program}
 \uses{lem:intro-typed-cons,def:tailored-detyping,lem:introspection-supply}
