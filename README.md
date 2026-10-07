@@ -28,6 +28,17 @@ stages supplied:
   over the classical PCP decider;
 * parallel repetition, [`repetition 7`](MIPRE/Background/Repetition/Verifier.lean).
 
+**The Aldous–Lyons conjecture.** The development also proves the main theorem of *The
+Aldous–Lyons Conjecture II: Undecidability* (Bowen, Chapman, Vidick,
+[arXiv:2501.00173](https://arxiv.org/abs/2501.00173)), `TMIP* = RE`, as the Mathlib-only
+statement [`TailoredGameValue.TailoredHaltingReduction`](MIPRE/TailoredGameValue.lean), and
+with it the corollary of *The Aldous–Lyons Conjecture I: Subgroup Tests* (Bowen, Chapman,
+Lubotzky, Vidick, [arXiv:2408.00110](https://arxiv.org/abs/2408.00110)) that the Aldous–Lyons
+conjecture is false, `SubgroupTestValue.aldous_lyons_false : ¬ AldousLyons`
+([`MIPRE/SubgroupTestValue.lean`](MIPRE/SubgroupTestValue.lean)). Both are proved in
+[`MIPRE/TailoredMIP.lean`](MIPRE/TailoredMIP.lean), with the same three axioms; the plan was
+[`planning/aldous-lyons-track.md`](planning/aldous-lyons-track.md).
+
 ## Project links
 
 - [Project website](https://vidick.github.io/MIPRE-formalization/)
@@ -36,6 +47,12 @@ stages supplied:
 - [API documentation](https://vidick.github.io/MIPRE-formalization/docs/)
 - [Task dashboard](https://github.com/vidick/MIPRE-formalization/projects) — see
   [CONTRIBUTING.md](CONTRIBUTING.md) for how to claim a task
+- Independent verification with the Lean comparator, each in a repository whose only file
+  to audit is a Mathlib-only `Challenge.lean`:
+  [mipre-comparator](https://github.com/vidick/mipre-comparator) for the halting reduction
+  of `MIP* = RE`, and
+  [aldous-lyons-comparator](https://github.com/vidick/aldous-lyons-comparator) for
+  `TMIP* = RE` and the refutation of the Aldous–Lyons conjecture
 
 ## Building the project
 
