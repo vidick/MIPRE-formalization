@@ -1,6 +1,7 @@
 # MIP* = RE — a Lean formalization project
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-lightblue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Palomar: PALOMAR-2026-10-09-000012](https://img.shields.io/badge/Palomar-PALOMAR--2026--10--09--000012-2b7a78.svg)](https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-09-000012&version=1)
 
 This repository hosts a collaborative Lean 4 formalization project for the theorem
 **MIP\* = RE** (Ji, Natarajan, Vidick, Wright, Yuen,
@@ -20,6 +21,14 @@ the statement file imports Mathlib only. The same file proves the reduction to t
 value, the uncomputability of both values, and `MIPRE.Halting.mipstar_eq_re : MIPStar = IsRE`
 for the paper's polynomial-time class (`MIPRE.MIPStar`; the computable relaxation is
 `MIPRE.MIPStarComputable`, with `mipstarComputable_eq_re`).
+
+**Registered.** The result is registered in the [Palomar registry](https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-09-000012&version=1) of
+Lean-verified mathematics as **PALOMAR-2026-10-09-000012** (2026-10-09, commit `7798a80`). Palomar
+rebuilt the project in a fresh environment, compared the Mathlib-only statements of
+[`Palomar/Challenge.lean`](Palomar/Challenge.lean) with the proofs of
+[`Palomar/Solution.lean`](Palomar/Solution.lean) through `lake comparator`, and replayed the
+proofs through Lean's kernel and two independent checkers; its automated editorial review
+found no problem.
 
 The proof is the compression pipeline (`MIPRE.GapCompression.ofPipeline`) with its three
 stages supplied:
@@ -42,6 +51,7 @@ conjecture is false, `SubgroupTestValue.aldous_lyons_false : ¬ AldousLyons`
 ## Project links
 
 - [Project website](https://vidick.github.io/MIPRE-formalization/)
+- [Palomar entry PALOMAR-2026-10-09-000012](https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-09-000012&version=1) — the registered, independently verified record
 - [Blueprint](https://vidick.github.io/MIPRE-formalization/blueprint/) — the proof plan,
   with a dependency graph linking informal mathematics to Lean declarations
 - [API documentation](https://vidick.github.io/MIPRE-formalization/docs/)

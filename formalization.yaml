@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 # formalization.yaml v0.4 for the Palomar registry (planning/palomar.md, phase 5).
+# Registered as PALOMAR-2026-10-09-000012 on 2026-10-09, at commit 7798a80: https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-09-000012&version=1
 version: "v0.4"
 
 project:
@@ -186,7 +187,7 @@ fidelity:
     as in the paper's corollaries.
 
 review:
-  status: "self-assessed, with mechanical audits"
+  status: "self-assessed, with mechanical audits; Palomar-registered after its mechanical verification and automated editorial review"
   reviewers:
     - "none"
   notes: >-
@@ -197,7 +198,13 @@ review:
     completion mark equals the set guarded sorry-free; the blueprint's dependency edges match
     what the Lean declarations use; the four compared theorems depend on propext,
     Classical.choice and Quot.sound only. No independent human review of the Lean has been
-    performed.
+    performed. Palomar registration: PALOMAR-2026-10-09-000012 (version 1, 2026-10-09, https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-09-000012&version=1) at commit
+    7798a80300e1c63b783c214f9e0cd9c00a8721b6. Palomar's verifier rebuilt the project in a fresh environment,
+    compared Palomar/Challenge.lean with Palomar/Solution.lean through lake comparator and
+    replayed the proofs through Lean's kernel, NanoDa and con-ron
+    (https://github.com/PalomarRegistry/PalomarSubmission/actions/runs/37815959539); its
+    automated editorial review (codex:gpt-6-sol) identified no blocking problem and no
+    warning.
 
 alignment:
   namespace: "MIPRE"

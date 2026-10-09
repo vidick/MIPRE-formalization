@@ -167,6 +167,17 @@ Each phase is one pull request unless noted; the order is forced by the dependen
    `mk_all --check` wants an aggregator and is not a root, since it could not compile. The
    Challenge is exempt from the `MIPRE.Tactics` bundle and imports what it uses.
 
+   **Registered 2026-10-09 as PALOMAR-2026-10-09-000012** (https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-09-000012&version=1), at commit `7798a80`:
+   submission `jhgfkqwp2vrx` of 2026-10-08, mechanical verification in 29 minutes on Palomar's runner
+   (run 37815959539 of `PalomarRegistry/PalomarSubmission`), automated editorial review by
+   `codex:gpt-6-sol` with no blocking problem and no warning, review digest
+   `47de6765…e8b8c`; the registration itself completed 21 hours after the consent, after
+   Palomar's registration loop had stalled with intermittent server errors. The intake was
+   done by the maintainer from the browser form: the
+   agent protocol's proof of identity needs a secret gist, which a cloud session's
+   repository-scoped GitHub access cannot create. Two preflights preceded it on `main`
+   (`d375d37`, rejected by the comparator, and `7798a80`, passed), see below.
+
    **No extensible tactic inside a Challenge definition** (found 2026-10-05, by the first
    Palomar preflight). The comparator (`leanprover/comparator`, `Compare.lean`) walks every
    constant reachable from the compared statements — definitions' values, their auxiliary
