@@ -325,6 +325,9 @@ def upload_solutions(tree, meta, st, args):
             continue
         tid = st["theorems"].get(name, {}).get("theorem_id")
         if not tid:
+            if args.dry_run:
+                log(f"[dry-run] verify {name} (theorem id unknown until the theorems phase has run)")
+                continue
             sys.exit(f"no theorem_id recorded for {name}; run the theorems phase first")
         # every child must already be Proved for the parent to resolve straight to Proved
         for c in n["imported_nodes"]:
