@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""Merge and check the writers' metadata batches into prove2me/metadata.json."""
+import json, re, sys, os, glob
+
+S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
+OUT = sys.argv[1] if len(sys.argv) > 1 else f"{S}/metadata.json"
+tree = json.load(open(f"{S}/tree.json"))
+TAGS = {"computability", "complexity-theory", "turing-machines", "polynomial-time", "undecidability",
+        "recursive-compression", "universal-machine", "kleene-recursion", "smn-theorem", "cost-model",
+        "self-interpreter", "succinct-descriptions", "mip-re"}
+
+def check_text(label, t, minlen=120):
+    probs = []
+    if not isinstance(t, str) or len(t) < minlen:
+        probs.append(f"{label}: too short ({len(t) if isinstance(t, str) else t})")
+        return probs
+    if t.count("$") % 2:
+        probs.append(f"{label}: odd number of $")
+    if re.search(r"\\\\[a-zA-Z]", t):
+        probs.append(f"{label}: double backslash before a command (over-escaped?)")
+    if "sorry" in t:
+        probs.append(f"{label}: contains 'sorry'")
+    if re.search(r"\b(elegant|clever|trick)\b", t, re.I):
+        probs.append(f"{label}: forbidden adjective")
+    return probs
+
+nodes_out, problems = [], []
+by_name = {}
+for f in sorted(glob.glob(f"{S}/meta_out_[0-9].json")):
+    for o in json.load(open(f, encoding="utf-8")):
+        by_name[o["theorem_name"]] = o
+for n in tree["nodes"]:
+    name = n["theorem_name"]
+    o = by_name.get(name)
+    if not o:
+        problems.append(f"missing node metadata: {name}")
+        continue
+    for k in ("theorem_title", "natural_language_statement", "source", "tags", "explanation"):
+        if k not in o:
+            problems.append(f"{name}: missing {k}")
+    if len(o.get("theorem_title", "")) > 200 or len(o.get("theorem_title", "")) < 10:
+        problems.append(f"{name}: title length {len(o.get('theorem_title',''))}")
+    problems += check_text(f"{name}.statement", o.get("natural_language_statement", ""))
+    problems += check_text(f"{name}.explanation", o.get("explanation", ""), 80)
+    if "**Formalization Note**" not in o.get("natural_language_statement", ""):
+        problems.append(f"{name}: no Formalization Note")
+    if "$$" not in o.get("natural_language_statement", ""):
+        problems.append(f"{name}: no display-math block")
+    bad = [t for t in o.get("tags", []) if t not in TAGS]
+    if bad or not o.get("tags"):
+        problems.append(f"{name}: tags {o.get('tags')}")
+    if "github.com/vidick/MIPRE-formalization/blob/70cbf1c" not in o.get("source", ""):
+        problems.append(f"{name}: source lacks the blob link")
+    if len(o.get("explanation", "")) > 50000:
+        problems.append(f"{name}: explanation over 50k")
+    for k in ("natural_language_statement", "explanation"):
+        o[k] = o[k].replace("**Formalization Note.**", "**Formalization Note**")
+    nodes_out.append({"theorem_name": name, "theorem_title": o["theorem_title"],
+                      "natural_language_statement": o["natural_language_statement"],
+                      "source": o["source"], "tags": sorted(set(o["tags"])), "explanation": o["explanation"]})
+
+bundles_out = []
+bb = {o["definition_name"]: o for o in json.load(open(f"{S}/meta_out_bundles.json", encoding="utf-8"))}
+for b in tree["bundles"]:
+    name = b["definition_name"]
+    o = bb.get(name)
+    if not o:
+        problems.append(f"missing bundle metadata: {name}")
+        continue
+    for k in ("definition_title", "natural_language_statement", "source", "tags"):
+        if k not in o:
+            problems.append(f"{name}: missing {k}")
+    problems += check_text(f"{name}.statement", o.get("natural_language_statement", ""))
+    bad = [t for t in o.get("tags", []) if t not in TAGS]
+    if bad or not o.get("tags"):
+        problems.append(f"{name}: tags {o.get('tags')}")
+    o["natural_language_statement"] = o["natural_language_statement"].replace("**Formalization Note.**", "**Formalization Note**")
+    bundles_out.append({"definition_name": name, "definition_title": o["definition_title"],
+                        "natural_language_statement": o["natural_language_statement"],
+                        "source": o["source"], "tags": sorted(set(o["tags"]))})
+
+print(f"nodes {len(nodes_out)}/{len(tree['nodes'])}, bundles {len(bundles_out)}/{len(tree['bundles'])}, problems {len(problems)}")
+for p in problems:
+    print("  -", p)
+json.dump({"nodes": nodes_out, "bundles": bundles_out}, open(OUT, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+print("wrote", OUT)
