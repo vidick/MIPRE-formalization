@@ -296,3 +296,101 @@ definition MIPRE_Foundations_Cost_Interpreter did not publish (FAILED); later co
 17:07:03 verify MIPRE.Cost.compressibility_criterion_nested: submission 86e83eae-6143-4167-8654-d8feb9d85e75
 17:07:25 solution MIPRE.Cost.compressibility_criterion_nested: ERROR Failed to resolve platform imports: DB error looking up import 'Definitions.Def_MIPRE_Foundations_Cost_Partrec': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>
 solution of MIPRE.Cost.compressibility_criterion_nested ended ERROR: Failed to resolve platform imports: DB error looking up import 'Definitions.Def_MIPRE_Foundations_Cost_Partrec': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>
+17:34:15 token refreshed (platform version 0.12.4)
+17:34:16 account thomasvidick; licensing status of earlier contributions: not_required
+17:34:16 verify MIPRE.Cost.compressibility_criterion_nested: submission dedb7447-b20f-4fe1-bec5-8962e67e2b4d
+17:35:21 solution MIPRE.Cost.compressibility_criterion_nested: ACCEPTED 
+17:35:22 verify MIPRE.Cost.compressibility_criterion_levels: submission d4f36020-68ff-480c-b2d9-2b303792469a
+17:36:05 solution MIPRE.Cost.compressibility_criterion_levels: ACCEPTED 
+17:36:05 verify MIPRE.Cost.compressibility_criterion: submission 122594b4-638c-4b77-a7b2-9573b8e1e3b6
+17:37:13 network error on /verify: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+17:37:18 solution MIPRE.Cost.compressibility_criterion: ACCEPTED 
+17:37:18 verify MIPRE.Cost.Data.primrec_recD: submission e4a3f4ab-3800-4a09-930f-beeced20796a
+17:37:45 solution MIPRE.Cost.Data.primrec_recD: ACCEPTED 
+17:37:46 verify MIPRE.Cost.Prog.ofCode_wellScoped: submission d65d08a0-fa10-4201-b214-1551861e25d2
+17:38:48 network error on /verify: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+17:38:53 solution MIPRE.Cost.Prog.ofCode_wellScoped: ACCEPTED 
+17:38:54 verify MIPRE.Cost.Prog.fixBody_runs: submission 69bde971-0e49-4a22-a74f-c898676e6dc9
+17:40:02 network error on /verify: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+17:40:07 solution MIPRE.Cost.Prog.fixBody_runs: ACCEPTED 
+17:40:08 verify MIPRE.Cost.Prog.ofCode_sound: submission 4c3c317e-0dc2-42e2-9820-9bded1b7f746
+17:40:40 solution MIPRE.Cost.Prog.ofCode_sound: ACCEPTED 
+17:40:41 verify MIPRE.Cost.Prog.ofCode_complete: submission 875350d1-73e5-4723-97d7-237f770858aa
+17:41:29 solution MIPRE.Cost.Prog.ofCode_complete: ACCEPTED 
+17:41:30 verify MIPRE.Cost.exists_compile: submission a9b87e18-e085-4c8d-bc33-29d683102d40
+17:42:13 solution MIPRE.Cost.exists_compile: ACCEPTED 
+17:42:14 verify MIPRE.Cost.Machine.mem_evalData_iff: submission 68ee62aa-4102-4542-87a1-87f4c4195d0d
+17:42:46 solution MIPRE.Cost.Machine.mem_evalData_iff: ACCEPTED 
+17:42:47 verify MIPRE.Cost.recursive_compression_halting: submission 941299d2-2331-4c2e-b726-087261c164da
+17:43:09 network error on /verify: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+17:43:35 solution MIPRE.Cost.recursive_compression_halting: ACCEPTED 
+17:43:36 verify MIPRE.Cost.compressibility_criterion_halting: submission f87e23a2-87e0-45e3-aee5-24260cbbd402
+17:44:32 network error on /verify: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+17:44:38 solution MIPRE.Cost.compressibility_criterion_halting: ACCEPTED 
+17:44:38 verify MIPRE.Cost.smn_polyTime: submission 659cf3b7-ce44-45ea-90a1-1763c186a401
+17:44:45 network error on /verify: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+17:45:11 solution MIPRE.Cost.smn_polyTime: ACCEPTED 
+17:45:47 network error on /theorems/43e0ff5b-cc0a-456d-ad40-2cec742a7782: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+17:46:00 network error on /theorems/47bee20e-a916-4611-956e-058033e889cc: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+17:46:38 network error on /theorems/ef3ab1fe-fcea-4396-bd44-b0250d1e7a3f: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+Proved     ACCEPTED         MIPRE.Cost.recursive_compression  347236a4-0cf5-4f17-a875-e63d838001f3
+Proved     ACCEPTED         MIPRE.Cost.Prog.searchProg_runs  4342da49-7184-452f-a3ea-b1eff467ab3d
+Proved     ACCEPTED         MIPRE.Cost.Prog.searchProg_halts_of  52bd11c1-10fc-48ca-91a6-8c9bbaeed2e3
+Proved     ACCEPTED         MIPRE.Cost.compressibility_criterion_nested  43599427-3965-483a-b28f-73d2ee2b31da
+Proved     ACCEPTED         MIPRE.Cost.compressibility_criterion_levels  a1b6353c-f92c-418a-a1b6-d4d1b4eb6ada
+Proved     ACCEPTED         MIPRE.Cost.compressibility_criterion  8ffe1422-d401-4f2c-a58d-2e03a9c6d780
+Proved     ACCEPTED         MIPRE.Cost.recursive_compression_halting  1745fe1d-8a35-447b-a469-1ea57ffa6842
+Proved     ACCEPTED         MIPRE.Cost.compressibility_criterion_halting  e69bd497-8c6c-4a1a-bc7a-958c702d5b5d
+Proved     ACCEPTED         MIPRE.Cost.Eval.deterministic  49db57a3-6102-4481-8b7b-02ce75007b88
+Proved     ACCEPTED         MIPRE.Cost.Eval.of_append_of_wellScoped  091850f9-f13a-4008-a79c-8b267518afd0
+Proved     ACCEPTED         MIPRE.Cost.Prog.bitAtBody_succ  193d0178-d63e-4e6d-81fb-632c5586ac9d
+Proved     ACCEPTED         MIPRE.Cost.Prog.bitAtLoop_runs  488e79b6-1d7c-47fc-bceb-ed40aa8f37c8
+Proved     ACCEPTED         MIPRE.Cost.Data.primrec_recD  93edee8e-1b57-436a-bf0a-ade63ffd9150
+Proved     ACCEPTED         MIPRE.Cost.Prog.ofCode_wellScoped  6031da83-cc6e-45d6-a4b5-28105d3eeeb3
+Proved     ACCEPTED         MIPRE.Cost.Prog.fixBody_runs  533cd753-e47f-4aca-9c1d-15aa5d5f10dc
+Proved     ACCEPTED         MIPRE.Cost.Prog.ofCode_sound  d9955825-eda3-446a-a2dc-2c651b5be70e
+Proved     ACCEPTED         MIPRE.Cost.Prog.ofCode_complete  8b78d72a-5929-4800-9f4e-184c290c6e45
+Proved     ACCEPTED         MIPRE.Cost.exists_compile  6f331a17-d5bb-4b7a-a166-f1dcf320b430
+Proved     ACCEPTED         MIPRE.Cost.mul_pow_le_two_pow  43e0ff5b-cc0a-456d-ad40-2cec742a7782
+Proved     ACCEPTED         MIPRE.Cost.exists_threshold  439ce6b2-b6c0-4d7d-aea2-6109d6e0e6aa
+Proved     ACCEPTED         MIPRE.Cost.Machine.getListProg_runs  7a7d68d3-c1db-44d3-81c5-1afd57b88de7
+Proved     ACCEPTED         MIPRE.Cost.Machine.dispatch_runs  0b1bd7df-624b-4209-a985-7f9efb5bd9b5
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepEvProg_runs  d6d68e15-3e45-4b09-bf72-9526fceb55e9
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepRetProg_runs_cons  d1a3e6be-d281-49ed-9754-a2e021368664
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepProg_runs  9a9db460-daf8-4813-b809-cfb7dbaac8a2
+Proved     ACCEPTED         MIPRE.Cost.Prog.kleeneProg_runs  39a41401-18f5-4749-be7c-d1ad95708600
+Proved     ACCEPTED         MIPRE.Cost.Prog.kleeneProg_halts_of  d84cc5b4-eb98-43dd-8242-a334082c2a31
+Proved     ACCEPTED         MIPRE.Cost.kleeneFix_runs_of  563c8476-2b25-4de9-afce-b583de563fb7
+Proved     ACCEPTED         MIPRE.Cost.efficient_fixed_point  ffd0fe4f-5869-4b83-8b2c-dec29abf539a
+Proved     ACCEPTED         MIPRE.Cost.Prog.revOntoProg_runs  26daaaed-c79d-4df0-8a5d-b80b66b5b14a
+Proved     ACCEPTED         MIPRE.Cost.Machine.eval_steps  eb6df8c7-b7fb-4e47-9a36-9a240d95b601
+Proved     ACCEPTED         MIPRE.Cost.Machine.eval_of_steps  3667c247-5d46-4994-8c50-6285f77d4f2c
+Proved     ACCEPTED         MIPRE.Cost.Machine.halts_iff  772d6b5b-5a20-471a-8ca5-aca3c32a3ce6
+Proved     ACCEPTED         MIPRE.Cost.Machine.eval_steps_bound  d9d7ba7e-63bd-47f3-98d9-d0f5c0fbb830
+Proved     ACCEPTED         MIPRE.Cost.Machine.size_toData_le  3606237b-7d9e-473e-bc06-eba4eb057fe4
+Proved     ACCEPTED         MIPRE.Cost.Machine.eval_steps_count  4e87e335-2562-4166-8eb1-55b0a61c5558
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepData_toData  6862437d-d97e-4811-9919-e1b351567e0c
+Proved     ACCEPTED         MIPRE.Cost.Prog.isZeroProg_runs  cc15c3b8-ff14-4fd5-bc79-98da1dfd5a98
+Proved     ACCEPTED         MIPRE.Cost.Prog.decLoop_runs  bfb6b598-2612-49e1-95de-b27f0ac2536b
+Proved     ACCEPTED         MIPRE.Cost.Prog.decProg_runs  19ed6a5b-e8a4-4adc-9720-53fffd9a2898
+Proved     ACCEPTED         MIPRE.Cost.Machine.mem_evalData_iff  edf441f8-0c97-462a-9a2d-1238fd93c478
+Proved     ACCEPTED         MIPRE.Cost.Prog.bitQueryProg_runs  14265c44-cf21-4141-acd3-bc3612338665
+Proved     ACCEPTED         MIPRE.Cost.isSuccinctDesc_hardcode  a3c4dc42-4c18-45a5-97e1-fc14eb9b0771
+Proved     ACCEPTED         MIPRE.Cost.hardcode_time  739338f1-5b0a-43c4-874b-a88d4820fce6
+Proved     ACCEPTED         MIPRE.Cost.hardcode_time_rev  47bee20e-a916-4611-956e-058033e889cc
+Proved     ACCEPTED         MIPRE.Cost.hardcode_size  8e80a179-f014-4db1-a05c-36fe583c8040
+Proved     ACCEPTED         MIPRE.Cost.smn_polyTime  a0923fc2-0140-4055-983c-acbc8bedc401
+Proved     ACCEPTED         MIPRE.Cost.Machine.interpLoop_runs  a9ac2d14-0548-48cc-8d77-71c99014c318
+Proved     ACCEPTED         MIPRE.Cost.Machine.interpLoop_rev  c4dddc05-5941-404d-9025-9fe5c455b925
+Proved     ACCEPTED         MIPRE.Cost.Machine.subProg_runs  fc7d9819-dee7-4575-8669-a56d23e04c0d
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepCostProg_ev  e110fe28-c620-476f-8f4c-0f378aeb53e5
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepCost_le_size  0282f722-28c9-4418-9754-c2d84f2a499c
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepCostProg_runs  ef3ab1fe-fcea-4396-bd44-b0250d1e7a3f
+Proved     ACCEPTED         MIPRE.Cost.Machine.clockBody_prefix  38859d7f-8668-4896-b637-bfffaefc1a0d
+Proved     ACCEPTED         MIPRE.Cost.Machine.clockLoop_runs  5b8ce2c6-e9f2-41bd-9b94-e87b0de8ef51
+Proved     ACCEPTED         MIPRE.Cost.Machine.clockRun_of_final  27858064-d83e-42e3-967c-501ea03f25db
+Proved     ACCEPTED         MIPRE.Cost.Machine.clockRun_of_not  2b768f1e-f2aa-41c4-bc8a-ef3d8153d877
+Proved     ACCEPTED         MIPRE.Cost.Machine.univTProg_runs  15074767-b8f2-4895-8fc9-3e26a95e8d4e
+Proved     ACCEPTED         MIPRE.Cost.exists_efficient_universal  7442bc35-0466-471f-8209-8c855b06851f
+Proved     ACCEPTED         MIPRE.Cost.exists_clocked_universal  1b53b891-32ae-4d62-a195-004aba1772fb
+theorem statuses: {'Proved': 60}
