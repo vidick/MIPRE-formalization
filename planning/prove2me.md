@@ -198,7 +198,7 @@ no warnings, and every headline declaration depends on `propext`, `Classical.cho
 
 ## Execution record (2026-10-12)
 
-Steps 1-7 of the plan were carried out on 2026-10-12, in the cloud session that had done
+Steps 1-8 of the plan were carried out on 2026-10-12, in the cloud session that had done
 step 3 on 2026-10-01 (its scratch workspace, with the `v4.33.1` toolchain and Mathlib `0df444a`
 built, was still in place). The platform's environments were re-read from the authenticated
 endpoint that day: unchanged, `v4.33.1` still the default and newest, so the source commit is
@@ -216,8 +216,24 @@ endpoint that day: unchanged, `v4.33.1` still the default and newest, so the sou
 | build | 1,443 Lake jobs against Mathlib `0df444a`, no errors, 60 `sorry` warnings (the stubs) |
 | validation | the pretty-printed type of every node is identical in the original tree, the stub tree and its solution (60/60/60); the 25 solutions that import no stub depend on `propext`, `Classical.choice`, `Quot.sound` only, the other 35 additionally on `sorryAx` through the stubs they import, which the leaves-first upload order replaces by proofs |
 | what the first upload taught | the platform rejects `macro` and every other metaprogramming command in a submission (learned at the 16th bundle, `Cost_Interpreter`, after 15 had published); the generator now drops the `size_omega` macro and expands its 40 uses |
+| upload | three runs of `scripts/p2m_upload.py` from child sessions holding the key (16:02, 16:22 and 17:34 UTC), each resumed from `prove2me/upload-state.json`: 22 definition bundles `PUBLISHED`, 60 statements `PUBLISHED`, 60 solutions `ACCEPTED`, and the platform's own status check reports all 60 theorems **Proved**, none Open. The two stops were the macro rejection above and a platform-side database connection drop (`ConnectionTerminated`) while verifying `compressibility_criterion_nested`, which the resubmission accepted; 39 transient network errors (SSL EOF) were absorbed by the uploader's retries. The log is `prove2me/upload.log` |
 | two things the playbook did not anticipate | `rfl` lemmas used by `simp` leave no trace in a proof term, so dependencies are taken from the Stage 2 reference facts as well as from the elaborated terms; and the four structurally recursive theorems refer to themselves, so the hoisted `solution` renames those occurrences and the compiler checks the result |
 
-The upload is made **private** first: the content is visible only to the uploading account until
-a deliberate `make-public` on each headline theorem releases it with its dependency tree,
-permanently. The release and the mission proposal (step 9) are the maintainer's decisions.
+The upload was made **private**: the content is visible only to the uploading account until a
+deliberate `make-public` on each headline theorem releases it with its dependency tree,
+permanently. `python3 scripts/p2m_upload.py --release --yes`, from a session holding the key,
+does that for the three roots of the dependency graph (`recursive_compression_halting`,
+`compressibility_criterion_halting`, `smn_polyTime`) and so for everything uploaded. The release
+and the mission proposal (step 9) are the maintainer's decisions, and neither has been taken.
+
+Platform ids of the headline theorems (all `Proved`, all private; the full map is
+`prove2me/upload-state.json`):
+
+| theorem | id |
+|---|---|
+| `MIPRE.Cost.recursive_compression` | `347236a4-0cf5-4f17-a875-e63d838001f3` |
+| `MIPRE.Cost.compressibility_criterion` | `8ffe1422-d401-4f2c-a58d-2e03a9c6d780` |
+| `MIPRE.Cost.compressibility_criterion_nested` | `43599427-3965-483a-b28f-73d2ee2b31da` |
+| `MIPRE.Cost.recursive_compression_halting` | `1745fe1d-8a35-447b-a469-1ea57ffa6842` |
+| `MIPRE.Cost.compressibility_criterion_halting` | `e69bd497-8c6c-4a1a-bc7a-958c702d5b5d` |
+| `MIPRE.Cost.smn_polyTime` | `a0923fc2-0140-4055-983c-acbc8bedc401` |
