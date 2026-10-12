@@ -171,7 +171,7 @@ theorem stepRetProg_runs_nil (v env : Data) :
               (Eval.var_of_get (i := 2) (v := v) (by simp)))
             (Eval.var_of_get (i := 3) (v := .cons env .nil) (by simp)))))
   refine ⟨_, ?_, by simpa [Prog.Runs, stepRet] using run⟩
-  size_omega
+  ((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, List.map_cons, List.map_nil] at *); all_goals omega)
 end MIPRE.Cost.Machine
 
 namespace MIPRE.Cost.Machine
@@ -217,9 +217,9 @@ theorem solution (c : Cfg) :
       (S := esize p + (Data.list env).size + (Data.list (kont.map Frame.toData)).size) ?_ ?_
     · unfold stepEvBound at hs
       rw [Prog.esize_eq_size_toData] at hs ⊢
-      size_omega
+      ((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, List.map_cons, List.map_nil] at *); all_goals omega)
     · rw [Prog.esize_eq_size_toData]
-      size_omega
+      ((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, List.map_cons, List.map_nil] at *); all_goals omega)
   | ret v =>
     cases kont with
     | nil =>
@@ -235,8 +235,8 @@ theorem solution (c : Cfg) :
                   (by simp) hret))))
       refine ⟨_, ?_, by simpa [Prog.Runs, stepData, Cfg.toData, Ctrl.toData, retD] using run⟩
       refine le_stepBound_of_le (S := v.size + (Data.list env).size) ?_ ?_
-      · size_omega
-      · size_omega
+      · ((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, List.map_cons, List.map_nil] at *); all_goals omega)
+      · ((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, List.map_cons, List.map_nil] at *); all_goals omega)
     | cons f k =>
       obtain ⟨s, hs, hret⟩ :=
         stepRetProg_runs_cons v (Data.list env) f (Data.list (k.map Frame.toData))
@@ -260,5 +260,5 @@ theorem solution (c : Cfg) :
         (S := v.size + (Data.list env).size + (Frame.toData f).size +
           (Data.list (k.map Frame.toData)).size) ?_ ?_
       · unfold stepRetBound at hs
-        size_omega
-      · size_omega
+        ((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, List.map_cons, List.map_nil] at *); all_goals omega)
+      · ((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, List.map_cons, List.map_nil] at *); all_goals omega)

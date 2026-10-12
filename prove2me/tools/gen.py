@@ -14,6 +14,22 @@ REPO = "vidick/MIPRE-formalization"
 COMMIT = "70cbf1c"
 COMMIT_FULL = None  # filled from git
 
+META_CMDS = {"macro", "macro_rules", "syntax", "elab", "elab_rules", "notation", "notation3", "declare_syntax_cat"}
+# `size_omega` (Cost/Interpreter.lean) is the closure's one macro; every generated file spells
+# out its expansion, with the names the macro pre-resolved at its definition site
+MACRO_EXPANSIONS = {
+    "size_omega": "((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, "
+                  "MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, "
+                  "MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, "
+                  "MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, "
+                  "List.map_cons, List.map_nil] at *); all_goals omega)",
+}
+
+def expand_macros(text):
+    for name, body in MACRO_EXPANSIONS.items():
+        text = re.sub(r"(?<![A-Za-z0-9_.'])" + re.escape(name) + r"(?![A-Za-z0-9_'])", body, text)
+    return text
+
 plan = json.load(open(f"{S}/plan.json"))
 U = plan["units"]
 modules = plan["modules"]
@@ -182,6 +198,16 @@ for m in TOPO:
             if B[b:b+1] == b"\n":
                 b += 1
             dele.append((a, b))
+    # the platform rejects metaprogramming ("custom syntax/elaborator registration ... not
+    # supported in submissions"): drop such commands from the bundle; their uses are expanded below
+    for c in cmds:
+        if c["syntaxKind"].split(".")[-1] in META_CMDS:
+            a, b = c["start"]["offset"], c["end"]["offset"]
+            while b < len(B) and B[b:b+1] in (b" ", b"\t"):
+                b += 1
+            if B[b:b+1] == b"\n":
+                b += 1
+            dele.append((a, b))
     dele.sort()
     pieces, pos = [], body_start
     for a, b in dele:
@@ -194,7 +220,7 @@ for m in TOPO:
     header = HEADER + gen_note(m, "definition bundle: declarations the uploaded statements rest on")
     imps = ext_imports(m) and "\n".join(f"import {x}" for x in ext_imports(m))
     imps = "\n".join([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=False))
-    out = header + imps + "\n\n" + collapse(body)
+    out = expand_macros(header + imps + "\n\n" + collapse(body))
     fn = f"{WS}/Definitions/Def_{mslug(m)}.lean"
     open(fn, "w", encoding="utf-8").write(out)
     # module docstring for metadata
@@ -281,6 +307,7 @@ for uid in nodes:
                  + [""] + hoisted_context(uid))
     preamble = "\n".join(pre_lines)
     stub = HEADER + gen_note(m, f"statement stub of {u['name']}") + preamble + "\n\n" + formal + "\n"
+    stub = expand_macros(stub)
     open(f"{WS}/Theorems/Thm_{slug}.lean", "w", encoding="utf-8").write(stub)
 
     # solution
@@ -307,7 +334,7 @@ for uid in nodes:
         val_part = re.sub(r"(?<![A-Za-z0-9_.'])" + re.escape(short) + r"(?![A-Za-z0-9_'])", "solution", val_part)
         print("note: renamed self-references in recursive node", u["name"])
     sol_parts.append(f"theorem solution{stmt_part}{val_part}\n")
-    sol = "\n".join(sol_parts)
+    sol = expand_macros("\n".join(sol_parts))
     open(f"{WS}/Solutions/Sol_{slug}.lean", "w", encoding="utf-8").write(sol)
     node_meta[uid] = {
         "theorem_name": u["name"], "slug": slug, "module": m, "source_path": module_path(m),

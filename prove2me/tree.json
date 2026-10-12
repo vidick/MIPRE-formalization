@@ -738,7 +738,7 @@
    "definition_name": "MIPRE_Foundations_Cost_Interpreter",
    "file": "Definitions/Def_MIPRE_Foundations_Cost_Interpreter.lean",
    "module": "MIPRE.Foundations.Cost.Interpreter",
-   "lines": 199,
+   "lines": 192,
    "kept": [
     "MIPRE.Cost.Machine.dispEnv",
     "MIPRE.Cost.Machine.dispatch",

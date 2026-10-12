@@ -72,7 +72,7 @@ theorem solution (idx env : Data) (rest : Env) :
         (Eval.elim_nil (i := 1) (by simp) (Eval.cons (Eval.nil _) hl))
     have run := Eval.loop_stop hbody
     refine ⟨_, ?_, by simpa [getListProg, Data.getList] using run⟩
-    size_omega
+    ((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.Machine.Frame.toData, MIPRE.Cost.Machine.Cfg.toData, MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, List.map_cons, List.map_nil] at *); all_goals omega)
   | cons i₁ idx' _ ih =>
     obtain ⟨t, ht, hrun⟩ := ih env.right
     obtain ⟨s, hs, hr⟩ := projRight_runs

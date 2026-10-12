@@ -47,13 +47,6 @@ namespace Machine
 
 open Prog
 
-/-- Discharge a linear inequality between costs and sizes, after expanding the sizes of
-constructors and of encoded configurations. -/
-macro "size_omega" : tactic =>
-  `(tactic| ((try simp only [Data.size_cons, Data.size_nil, Data.size_ofNat, Frame.toData,
-      Cfg.toData, Ctrl.toData, evD, retD, Prog.toData, Data.list_cons, Data.list_nil,
-      List.map_cons, List.map_nil] at *); all_goals omega))
-
 /-! ## Projections at an arbitrary index -/
 
 /-- `left` of the value of variable `i`. -/
