@@ -215,6 +215,7 @@ endpoint that day: unchanged, `v4.33.1` still the default and newest, so the sou
 | largest solution | `Machine.eval_steps_bound`, 268 proof lines plus 73 pasted; the heaviest bundle, `Universal`, keeps 221 of 1,552 lines |
 | build | 1,443 Lake jobs against Mathlib `0df444a`, no errors, 60 `sorry` warnings (the stubs) |
 | validation | the pretty-printed type of every node is identical in the original tree, the stub tree and its solution (60/60/60); the 25 solutions that import no stub depend on `propext`, `Classical.choice`, `Quot.sound` only, the other 35 additionally on `sorryAx` through the stubs they import, which the leaves-first upload order replaces by proofs |
+| what the first upload taught | the platform rejects `macro` and every other metaprogramming command in a submission (learned at the 16th bundle, `Cost_Interpreter`, after 15 had published); the generator now drops the `size_omega` macro and expands its 40 uses |
 | two things the playbook did not anticipate | `rfl` lemmas used by `simp` leave no trace in a proof term, so dependencies are taken from the Stage 2 reference facts as well as from the elaborated terms; and the four structurally recursive theorems refer to themselves, so the hoisted `solution` renames those occurrences and the compiler checks the result |
 
 The upload is made **private** first: the content is visible only to the uploading account until

@@ -59,7 +59,11 @@ never answer a question about Lean code by pattern matching.
    reconstructing each declaration's scope (namespace chain, `open`s, `variable`s) from the
    command facts. The four structurally recursive theorems (`ofCode_*`, `dispatch_runs`) have
    their self-references renamed to `solution` in the hoisted copy; the compiler checks the
-   result. Every generated file keeps the copyright header of its source.
+   result. The platform rejects metaprogramming ("custom syntax/elaborator registration ... is
+   not supported in submissions"), so the closure's one macro, `size_omega` of
+   `Cost/Interpreter.lean`, is not uploaded: the generator drops its definition from the bundle
+   and spells out its expansion, with the fully qualified names the macro pre-resolved, at each
+   of its 40 uses. Every generated file keeps the copyright header of its source.
 4. **Build.** The three libraries compile against Mathlib `0df444a`: 1,443 Lake jobs, no
    errors, and exactly 60 `sorry` warnings, one per stub.
 5. **Validation** (`tools/validate.py`). The elaborated type of every node is pretty-printed
