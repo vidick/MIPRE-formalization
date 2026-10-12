@@ -195,3 +195,28 @@ no warnings, and every headline declaration depends on `propext`, `Classical.cho
 - **Network.** `prove2.me` was added to the cloud environment's allowed hosts on 2026-10-01
   (`docs/lean-cloud.md`); `curl` reaches it, the agent's `WebFetch` tool does not.
   `arxiv.org` remains blocked, which matters only for reading sources.
+
+## Execution record (2026-10-12)
+
+Steps 1-7 of the plan were carried out on 2026-10-12, in the cloud session that had done
+step 3 on 2026-10-01 (its scratch workspace, with the `v4.33.1` toolchain and Mathlib `0df444a`
+built, was still in place). The platform's environments were re-read from the authenticated
+endpoint that day: unchanged, `v4.33.1` still the default and newest, so the source commit is
+`70cbf1c` as planned. The generated tree, the tools and their record live in
+[`prove2me/`](../prove2me/README.md); the uploader is `scripts/p2m_upload.py`.
+
+| | |
+|---|---|
+| source | `70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed`, the 23 modules of the closure (8,702 lines) |
+| extraction | 1,295 constants (Stage 1), 631 declaration units, 474 declaration commands, 13,000 reference facts (Stage 2, extended to report every command's span) |
+| targets | the eleven headline declarations of the table above, plus the blueprint-named `bitQueryAnswer`, `hardcode_size`, `hardcode_time`, `hardcode_time_rev`, `kleeneFix`, `kleeneFix_runs_of`, `smn_polyTime` |
+| classification | 206 definition units and 111 embedded theorems in 22 bundles; 60 theorem nodes; 229 inline helpers; 2 proof-side definitions; 24 dead units |
+| renames | none needed (every node name is plain ASCII) |
+| largest solution | `Machine.eval_steps_bound`, 268 proof lines plus 73 pasted; the heaviest bundle, `Universal`, keeps 221 of 1,552 lines |
+| build | 1,443 Lake jobs against Mathlib `0df444a`, no errors, 60 `sorry` warnings (the stubs) |
+| validation | the pretty-printed type of every node is identical in the original tree, the stub tree and its solution (60/60/60); the 25 solutions that import no stub depend on `propext`, `Classical.choice`, `Quot.sound` only, the other 35 additionally on `sorryAx` through the stubs they import, which the leaves-first upload order replaces by proofs |
+| two things the playbook did not anticipate | `rfl` lemmas used by `simp` leave no trace in a proof term, so dependencies are taken from the Stage 2 reference facts as well as from the elaborated terms; and the four structurally recursive theorems refer to themselves, so the hoisted `solution` renames those occurrences and the compiler checks the result |
+
+The upload is made **private** first: the content is visible only to the uploading account until
+a deliberate `make-public` on each headline theorem releases it with its dependency tree,
+permanently. The release and the mission proposal (step 9) are the maintainer's decisions.
