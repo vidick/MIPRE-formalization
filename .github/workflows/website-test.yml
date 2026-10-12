@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Generate upstreaming dashboard snippets
-        uses: leanprover-community/upstreaming-dashboard-action@e3ee7dc54fd376f093ef62973d7b04cf7beabad0
+        uses: leanprover-community/upstreaming-dashboard-action@cdeaeff56d9531a75a19e8b9106def00c588c688 # main as of 2026-10-12
         with:
           website-directory: website
           project-name: MIPRE
