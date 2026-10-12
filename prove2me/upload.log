@@ -1,0 +1,44 @@
+16:02:22 token refreshed (platform version 0.12.4)
+16:02:23 account thomasvidick; licensing status of earlier contributions: not_required
+16:02:23 submit-definition MIPRE_Foundations_Cost_Basic: queued job e7ada560-5100-468e-b50f-9cc7d7ae0fad
+16:02:32 definition MIPRE_Foundations_Cost_Basic: PUBLISHED 078faea2-ad20-42c9-b6ee-d0aa25cfd885 
+16:02:33 submit-definition MIPRE_Foundations_Cost_Encoding: queued job ec504cec-399f-45cd-8a48-9d3783a7b477
+16:02:46 definition MIPRE_Foundations_Cost_Encoding: PUBLISHED 3c5cf47c-7fae-473c-a7bb-79aac7401587 
+16:02:46 submit-definition MIPRE_Foundations_Cost_PolyTime: queued job 9eabdc3b-ef8e-4550-ba02-7ad8310a2b5d
+16:03:08 definition MIPRE_Foundations_Cost_PolyTime: PUBLISHED f27d5923-073a-4a62-bb39-96baedc7d6a2 
+16:03:09 submit-definition MIPRE_Foundations_Cost_Closure: queued job 95037a9c-99d3-45ab-bcbd-302415b3a46b
+16:03:26 network error on /publish-jobs/95037a9c-99d3-45ab-bcbd-302415b3a46b: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+16:03:32 definition MIPRE_Foundations_Cost_Closure: PUBLISHED cf160d9c-3ed3-4ca3-9f38-c38224fea1ae 
+16:04:02 network error on /submit-definition: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+16:04:07 submit-definition MIPRE_Foundations_Cost_Loops: queued job d84f40b3-30cd-457d-bc94-2c3f1fa3d91b
+16:04:31 definition MIPRE_Foundations_Cost_Loops: PUBLISHED c86eeea6-2c99-4d6f-b739-c64149bd860c 
+16:04:31 submit-definition MIPRE_Foundations_Cost_Unary: queued job 0faa7beb-8072-4539-a62c-336525a77d0e
+16:04:58 definition MIPRE_Foundations_Cost_Unary: PUBLISHED 6da39931-8bd5-4b0c-96d5-2a01a6f5dd82 
+16:05:28 network error on /submit-definition: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+16:05:33 submit-definition MIPRE_Foundations_Cost_Numeric: queued job 2a946b05-b246-4e7b-964f-6edbbed94601
+16:05:51 network error on /publish-jobs/2a946b05-b246-4e7b-964f-6edbbed94601: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+16:06:09 definition MIPRE_Foundations_Cost_Numeric: PUBLISHED 870282b4-94a1-45c6-93c2-79fa7bdd3dc4 
+16:06:10 submit-definition MIPRE_Foundations_Cost_BitQuery: queued job 2ad8a586-6235-4631-8ce3-297ca75ea722
+16:06:48 network error on /publish-jobs/2ad8a586-6235-4631-8ce3-297ca75ea722: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+16:06:54 definition MIPRE_Foundations_Cost_BitQuery: PUBLISHED 265a5d2f-1f4e-4de1-8daa-f7f386061b28 
+16:06:54 submit-definition MIPRE_Foundations_Cost_Toolkit: queued job 99c3c8ab-1094-4801-954a-67cb3832f001
+16:07:21 definition MIPRE_Foundations_Cost_Toolkit: PUBLISHED de62090d-e146-4471-b19d-20f725896f8f 
+16:07:22 submit-definition MIPRE_Foundations_Cost_Succinct: queued job 48e649ea-f1f0-419d-8c60-f1954ee8b052
+16:07:49 definition MIPRE_Foundations_Cost_Succinct: PUBLISHED bbf05bfc-106f-4c8c-8fb5-2281c4be68a5 
+16:07:49 submit-definition MIPRE_Foundations_Cost_Clocked: queued job 4dcd9c7f-2246-4cc9-b7df-ee804cad2185
+16:08:15 definition MIPRE_Foundations_Cost_Clocked: PUBLISHED 3a08d3e6-d8d1-470a-a309-b9f5c0fd0e01 
+16:08:16 submit-definition MIPRE_Foundations_Cost_Threshold: queued job 56c58566-18e9-429e-9c66-57b944199557
+16:08:50 definition MIPRE_Foundations_Cost_Threshold: PUBLISHED f8909bc4-bdc2-445f-bd08-306dbe88f31c 
+16:08:51 submit-definition MIPRE_Foundations_Cost_Machine: queued job 81d65812-737f-4f45-b405-ebc035fb4db5
+16:09:25 network error on /publish-jobs/81d65812-737f-4f45-b405-ebc035fb4db5: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+16:10:00 network error on /publish-jobs/81d65812-737f-4f45-b405-ebc035fb4db5: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 10s
+16:10:11 definition MIPRE_Foundations_Cost_Machine: PUBLISHED 4c18dea4-c1a4-4ff6-8c8a-b91da01b521f 
+16:10:11 submit-definition MIPRE_Foundations_Cost_Codable: queued job 7f44939f-97d3-4ad5-bcf3-b3a62a05bf5b
+16:10:33 network error on /publish-jobs/7f44939f-97d3-4ad5-bcf3-b3a62a05bf5b: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+16:10:56 definition MIPRE_Foundations_Cost_Codable: PUBLISHED b83ff2ca-1c74-4bd5-a72f-79483f1700aa 
+16:10:56 submit-definition MIPRE_Foundations_Cost_MachineData: queued job 032cf687-ee91-4f07-888b-598cde09cddc
+16:11:23 definition MIPRE_Foundations_Cost_MachineData: PUBLISHED 92629817-fd4d-4f33-9d05-0b5ae36fe9b9 
+16:11:53 network error on /submit-definition: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+16:11:58 submit-definition MIPRE_Foundations_Cost_Interpreter: queued job 8a741267-9af9-4db7-ac2b-7ac6ce508d40
+16:12:03 definition MIPRE_Foundations_Cost_Interpreter: FAILED  definition does not compile: line 52: `macro` — custom syntax/elaborator registration — metaprogramming is not supported in submissions
+definition MIPRE_Foundations_Cost_Interpreter did not publish (FAILED); later content imports it, stopping

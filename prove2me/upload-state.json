@@ -1,0 +1,135 @@
+{
+ "definitions": {
+  "MIPRE_Foundations_Cost_Basic": {
+   "submitted_at": 1791820943.982944,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "e7ada560-5100-468e-b50f-9cc7d7ae0fad",
+   "theorem_id": "078faea2-ad20-42c9-b6ee-d0aa25cfd885",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Encoding": {
+   "submitted_at": 1791820953.3261821,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "ec504cec-399f-45cd-8a48-9d3783a7b477",
+   "theorem_id": "3c5cf47c-7fae-473c-a7bb-79aac7401587",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_PolyTime": {
+   "submitted_at": 1791820966.825311,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "9eabdc3b-ef8e-4550-ba02-7ad8310a2b5d",
+   "theorem_id": "f27d5923-073a-4a62-bb39-96baedc7d6a2",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Closure": {
+   "submitted_at": 1791820989.2028296,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "95037a9c-99d3-45ab-bcbd-302415b3a46b",
+   "theorem_id": "cf160d9c-3ed3-4ca3-9f38-c38224fea1ae",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Loops": {
+   "submitted_at": 1791821047.9303353,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "d84f40b3-30cd-457d-bc94-2c3f1fa3d91b",
+   "theorem_id": "c86eeea6-2c99-4d6f-b739-c64149bd860c",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Unary": {
+   "submitted_at": 1791821071.7001758,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "0faa7beb-8072-4539-a62c-336525a77d0e",
+   "theorem_id": "6da39931-8bd5-4b0c-96d5-2a01a6f5dd82",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Numeric": {
+   "submitted_at": 1791821133.7995892,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "2a946b05-b246-4e7b-964f-6edbbed94601",
+   "theorem_id": "870282b4-94a1-45c6-93c2-79fa7bdd3dc4",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_BitQuery": {
+   "submitted_at": 1791821170.1743555,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "2ad8a586-6235-4631-8ce3-297ca75ea722",
+   "theorem_id": "265a5d2f-1f4e-4de1-8daa-f7f386061b28",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Toolkit": {
+   "submitted_at": 1791821214.7990024,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "99c3c8ab-1094-4801-954a-67cb3832f001",
+   "theorem_id": "de62090d-e146-4471-b19d-20f725896f8f",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Succinct": {
+   "submitted_at": 1791821242.5780802,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "48e649ea-f1f0-419d-8c60-f1954ee8b052",
+   "theorem_id": "bbf05bfc-106f-4c8c-8fb5-2281c4be68a5",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Clocked": {
+   "submitted_at": 1791821269.56163,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "4dcd9c7f-2246-4cc9-b7df-ee804cad2185",
+   "theorem_id": "3a08d3e6-d8d1-470a-a309-b9f5c0fd0e01",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Threshold": {
+   "submitted_at": 1791821296.1546686,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "56c58566-18e9-429e-9c66-57b944199557",
+   "theorem_id": "f8909bc4-bdc2-445f-bd08-306dbe88f31c",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Machine": {
+   "submitted_at": 1791821331.301265,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "81d65812-737f-4f45-b405-ebc035fb4db5",
+   "theorem_id": "4c18dea4-c1a4-4ff6-8c8a-b91da01b521f",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Codable": {
+   "submitted_at": 1791821411.8943706,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "7f44939f-97d3-4ad5-bcf3-b3a62a05bf5b",
+   "theorem_id": "b83ff2ca-1c74-4bd5-a72f-79483f1700aa",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_MachineData": {
+   "submitted_at": 1791821456.8132107,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "032cf687-ee91-4f07-888b-598cde09cddc",
+   "theorem_id": "92629817-fd4d-4f33-9d05-0b5ae36fe9b9",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Interpreter": {
+   "submitted_at": 1791821518.8350837,
+   "http": 202,
+   "status": "FAILED",
+   "job_id": "8a741267-9af9-4db7-ac2b-7ac6ce508d40",
+   "theorem_id": null,
+   "error_message": "definition does not compile: line 52: `macro` — custom syntax/elaborator registration — metaprogramming is not supported in submissions"
+  }
+ },
+ "theorems": {},
+ "solutions": {},
+ "log": []
+}
