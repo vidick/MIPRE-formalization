@@ -1,0 +1,53 @@
+{
+ "name": "MIP* = RE",
+ "mission_type": "ResearchPaper",
+ "visibility": "private",
+ "description_file": "description.md",
+ "fields": {
+  "queries": ["quantum", "complexity", "comput", "logic", "operator", "information"],
+  "prefer": ["quantum-information", "quantum-computing", "quantum-information-theory", "quantum",
+             "computational-complexity", "complexity-theory", "complexity", "theoretical-computer-science",
+             "computer-science", "combinatorics-cs", "computability", "logic-and-foundations", "logic"]
+ },
+ "items": [
+  {
+   "kind": "definition",
+   "name": "Def_MIPRE_HaltingGameValue",
+   "definition_name": "MIPRE_HaltingGameValue",
+   "title": "Synchronous games, strategies and value; game descriptions; halting: the Mathlib-only statement surface of MIP* = RE",
+   "code_file": "Definitions/Def_MIPRE_HaltingGameValue.lean",
+   "natural_language_file": "items/Def_MIPRE_HaltingGameValue.md",
+   "source": "Z. Ji, A. Natarajan, T. Vidick, J. Wright, H. Yuen, MIP* = RE, arXiv:2001.04383 (2020, revised 2022): nonlocal games, synchronous games and strategies, the synchronous value, and the game descriptions of Theorem 12.2. Lean source, reproduced verbatim: https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/HaltingGameValue.lean (namespace HaltingGameValue: POVM, SynchronousGame, SyncStrategy, strategyValue, gameValue, GameData, GameData.toGame, HaltsOnEmptyInput, HaltingReducesToGameValue).",
+   "tags": ["mip-re", "nonlocal-games", "quantum-information", "computability", "undecidability"],
+   "readback_file": "readbacks/Def_MIPRE_HaltingGameValue.md",
+   "readback_model": "claude-fable-5-1"
+  },
+  {
+   "kind": "theorem",
+   "name": "Thm_goal",
+   "theorem_name": "HaltingGameValue.halting_reduces_to_gameValue",
+   "title": "Halting reduces to the synchronous game value (MIP* = RE, Theorem 12.2)",
+   "code_file": "Theorems/Thm_HaltingGameValue_halting_reduces_to_gameValue.lean",
+   "natural_language_file": "items/Thm_HaltingGameValue_halting_reduces_to_gameValue.md",
+   "source": "Z. Ji, A. Natarajan, T. Vidick, J. Wright, H. Yuen, MIP* = RE, arXiv:2001.04383 (2020, revised 2022), Theorem 12.2, in synchronous form and with polynomial time relaxed to computability. Lean statement: HaltingGameValue.HaltingReducesToGameValue in https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/HaltingGameValue.lean; Lean proof: HaltingGameValue.halting_reduces_to_gameValue in MIPRE/MainTheorem.lean of the same repository; blueprint node thm:main, https://vidick.github.io/MIPRE-formalization/blueprint/.",
+   "tags": ["mip-re", "nonlocal-games", "quantum-information", "computability", "undecidability"],
+   "readback_file": "readbacks/Thm_HaltingGameValue_halting_reduces_to_gameValue.md",
+   "readback_model": "claude-fable-5-1"
+  },
+  {
+   "kind": "reference",
+   "name": "recursive_compression",
+   "theorem_name": "MIPRE.Cost.recursive_compression",
+   "theorem_id": "347236a4-0cf5-4f17-a875-e63d838001f3"
+  }
+ ],
+ "main_item": "Thm_goal",
+ "item_order": ["Def_MIPRE_HaltingGameValue", "Thm_goal", "recursive_compression"],
+ "milestones": [
+  {
+   "item": "recursive_compression",
+   "title": "Lemma 5.1 (Marks, Nezhadi, Yuen): the recursive compression lemma",
+   "description_file": "milestones/recursive_compression.md"
+  }
+ ]
+}

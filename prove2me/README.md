@@ -80,6 +80,28 @@ never answer a question about Lean code by pattern matching.
    release is a separate, deliberate `POST /theorems/:id/make-public` per headline theorem,
    which publishes it and everything it depends on, permanently.
 
+## The mission proposal (`mission/`)
+
+The platform's object for "a headline theorem with its major steps" is a *mission*: a goal theorem,
+a description, and milestone theorems. `mission/` holds the private proposal "MIP\* = RE" that
+`scripts/p2m_mission.py` builds idempotently (`--dry-run` shows the requests, `--status` reads the
+proposal back; the state is `mission-state.json`):
+
+| path | what |
+|---|---|
+| `mission/proposal.json` | name, type (`ResearchPaper`), visibility (`private`), the items and their metadata, the goal, the item order, the milestones. |
+| `mission/description.md` | the mission description, in the seven sections of the platform's `mission_description.md` (motivation, setting, targets, significance, difficulty, formalization scope, references). |
+| `mission/Definitions/Def_MIPRE_HaltingGameValue.lean` | draft definition item: `MIPRE/HaltingGameValue.lean` at `70cbf1c`, verbatim, the Mathlib-only statement surface of the main theorem (POVMs, synchronous games, strategies, value, game descriptions, halting, the proposition). Built against Mathlib `0df444a`. |
+| `mission/Theorems/Thm_HaltingGameValue_halting_reduces_to_gameValue.lean` | draft goal item: `theorem HaltingGameValue.halting_reduces_to_gameValue : HaltingGameValue.HaltingReducesToGameValue := by sorry`, importing the bundle. Its proof is the whole development and is not uploadable (414k lines, vendored trees, the `MIPStarRE` dependency, a 300 s compile budget per item), so the goal stays Open on the platform; the description says so. |
+| `mission/items/*.md` | the two items' natural-language statements. |
+| `mission/readbacks/*.md` | blind read-backs of the two items, written by independent auditor subagents given only the Lean code and the platform's `mission_auditor.md`; attached to the items for the human audit. |
+| `mission/milestones/recursive_compression.md` | the first milestone: `MIPRE.Cost.recursive_compression` (already published privately, id `347236a4-…`), referenced, not re-uploaded. |
+
+The proposal stays a `Draft`. Confirming the items and clicking **Submit Proposal** on the website
+(homepage → My missions) is the maintainer's action; for a private proposal it compiles and
+publishes the draft items as private content and launches the mission privately, with no moderator
+step. Releasing the mission to the public catalog is a further, permanent, human action.
+
 ## Reproducing
 
 The build workspace is a Lake project pinned to the platform environment (toolchain

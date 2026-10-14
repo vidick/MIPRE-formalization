@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 scripts/p2m_upload.py*)"
+      "Bash(python3 scripts/p2m_upload.py*)",
+      "Bash(python3 scripts/p2m_mission.py*)"
     ]
   },
   "hooks": {
