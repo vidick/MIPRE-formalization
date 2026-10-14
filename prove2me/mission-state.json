@@ -1,0 +1,139 @@
+{
+ "proposal": {
+  "id": "4939b1d4-c604-4734-8109-f0aef34ecc4c",
+  "name": "MIP* = RE",
+  "status": "Draft",
+  "visibility": "private"
+ },
+ "items": {
+  "Def_MIPRE_HaltingGameValue": {
+   "id": "56f3db5d-2e82-496b-97c7-1ac87fa1453d",
+   "kind": "definition",
+   "key": "MIPRE_HaltingGameValue"
+  },
+  "Thm_goal": {
+   "id": "a8836d95-7962-4325-a3a5-4780eb059f5d",
+   "kind": "theorem",
+   "key": "HaltingGameValue.halting_reduces_to_gameValue"
+  },
+  "recursive_compression": {
+   "id": "d51ddc9c-404f-4017-a03c-cb32d7dfd811",
+   "kind": "reference",
+   "key": "MIPRE.Cost.recursive_compression"
+  }
+ },
+ "milestones": {
+  "recursive_compression": {
+   "item_id": "d51ddc9c-404f-4017-a03c-cb32d7dfd811",
+   "sort_order": 0,
+   "theorem_id": "347236a4-0cf5-4f17-a875-e63d838001f3"
+  }
+ },
+ "fields": {
+  "catalog": {
+   "quantum-information": {
+    "id": "9ad58b00-0dcf-42d3-98d8-5cd472f9cecd",
+    "name": "Quantum Information",
+    "mission_count": 105
+   },
+   "quantum-error-correction": {
+    "id": "c3d3e165-ea85-4d8e-8c90-195db45bfbb9",
+    "name": "Quantum Error Correction",
+    "mission_count": 13
+   },
+   "quantum-gravity": {
+    "id": "4b0201b6-b23b-4480-a052-7912a9007f37",
+    "name": "Quantum Gravity",
+    "mission_count": 5
+   },
+   "quantum-mechanics": {
+    "id": "6b40ff5d-1995-48f3-9bcc-d87aa8387742",
+    "name": "Quantum Mechanics",
+    "mission_count": 4
+   },
+   "quantum-geometrodynamics": {
+    "id": "19ff3864-925a-42f5-8868-c027e4b5f512",
+    "name": "Quantum Geometrodynamics",
+    "mission_count": 1
+   },
+   "complexity-theory": {
+    "id": "3d5dcffe-9f61-4780-a1ac-4495e16c3fa5",
+    "name": "Complexity Theory",
+    "mission_count": 108
+   },
+   "theoretical-computer-science": {
+    "id": "105f8c80-f763-4beb-822c-d9265917c2b1",
+    "name": "Theoretical Computer Science",
+    "mission_count": 442
+   },
+   "computational-geometry": {
+    "id": "3314dc3e-4f6b-4ec0-a616-1beaa811066f",
+    "name": "Computational Geometry",
+    "mission_count": 13
+   },
+   "theory-of-computation": {
+    "id": "e670664c-41dd-453b-b975-17a790aed502",
+    "name": "Theory of Computation",
+    "mission_count": 9
+   },
+   "mathematical-logic-formal-verification-theoretical-computer-science-differential-geometry-partial-differential-equations-number-theory-algebraic-geometry-topology": {
+    "id": "cbb20350-0119-4211-94e7-c6c7cf19d3e0",
+    "name": "Mathematical Logic, Formal Verification, Theoretical Computer Science, Differential Geometry, Partial Differential Equations, Number Theory, Algebraic Geometry, Topology",
+    "mission_count": 0
+   },
+   "mathematical-logic": {
+    "id": "2d847ee0-9ed4-4265-a907-547a8959dec6",
+    "name": "Mathematical Logic",
+    "mission_count": 30
+   },
+   "logic": {
+    "id": "c03bd465-f741-4bb9-9fb0-3bc5b5ecd4a9",
+    "name": "Logic",
+    "mission_count": 1
+   },
+   "information-theory": {
+    "id": "45c5c44c-1954-42ba-9006-00ccfb16a9ae",
+    "name": "Information Theory",
+    "mission_count": 50
+   }
+  },
+  "chosen": [
+   "quantum-information",
+   "complexity-theory"
+  ]
+ },
+ "log": [
+  {
+   "t": "2026-10-14T09:34:16Z",
+   "msg": "fields: ['quantum-information', 'complexity-theory']"
+  },
+  {
+   "t": "2026-10-14T09:34:17Z",
+   "msg": "created proposal 4939b1d4-c604-4734-8109-f0aef34ecc4c (private, ResearchPaper)"
+  },
+  {
+   "t": "2026-10-14T09:34:18Z",
+   "msg": "proposal metadata synced (description, type, visibility, fields)"
+  },
+  {
+   "t": "2026-10-14T09:34:18Z",
+   "msg": "item Def_MIPRE_HaltingGameValue (definition): created with read-back"
+  },
+  {
+   "t": "2026-10-14T09:34:19Z",
+   "msg": "item Thm_goal (theorem): created with read-back"
+  },
+  {
+   "t": "2026-10-14T09:34:19Z",
+   "msg": "item recursive_compression (reference): created WITHOUT read-back"
+  },
+  {
+   "t": "2026-10-14T09:34:20Z",
+   "msg": "goal = Thm_goal; order = ['Def_MIPRE_HaltingGameValue', 'Thm_goal', 'recursive_compression']"
+  },
+  {
+   "t": "2026-10-14T09:34:20Z",
+   "msg": "milestone 'recursive_compression': created"
+  }
+ ]
+}
