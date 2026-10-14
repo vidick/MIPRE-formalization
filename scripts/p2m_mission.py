@@ -270,7 +270,8 @@ def status(sp, st):
         print(f"  item        {obj.get('kind', '?'):10} {key}  {iid(obj)}{extra}")
     code, m = up.request("GET", f"/mission-proposals/{pid}/milestones")
     for ms in first_list(m) if code == 200 else []:
-        print(f"  milestone   {ms.get('sort_order')}: {ms.get('milestone_title')}  (item {ms.get('item_id')})")
+        title = ms.get("milestone_title") or ms.get("title")
+        print(f"  milestone   {ms.get('sort_order')}: {title}  (item {ms.get('item_id')})")
     st["proposal"]["status"] = d.get("status")
     save_state(st)
     print("review: prove2.me, signed in, homepage -> My missions -> the proposal; confirm each item, then Submit Proposal"

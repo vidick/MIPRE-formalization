@@ -237,3 +237,37 @@ Platform ids of the headline theorems (all `Proved`, all private; the full map i
 | `MIPRE.Cost.recursive_compression_halting` | `1745fe1d-8a35-447b-a469-1ea57ffa6842` |
 | `MIPRE.Cost.compressibility_criterion_halting` | `e69bd497-8c6c-4a1a-bc7a-958c702d5b5d` |
 | `MIPRE.Cost.smn_polyTime` | `a0923fc2-0140-4055-983c-acbc8bedc401` |
+
+## The mission proposal (2026-10-14)
+
+The maintainer's reading of the upload, on 2026-10-14: the submission was expected to be about
+$\mathrm{MIP}^* = \mathrm{RE}$ itself, and sixty small theorems are not wanted; only the major steps
+should appear. Both points are about the platform's model, not about the Lean: the main theorem's
+proof closure (`MIPRE/MainTheorem.lean`) is 1,211 modules and 414,132 lines, 213 of them vendored
+`Background/` modules and all 322 of the `MIPStarRE` dependency, against a 300-second compile budget
+per item and a proof that must be rebuilt from Mathlib and platform content; so the main theorem
+can be on the platform only as a statement, Open, and the platform's object for "a headline theorem
+with its major steps" is a *mission*. The maintainer chose to build the mission skeleton first and
+to decide the granularity of the compression upload afterwards (a coarser re-cut into 8 to 12 cards
+is feasible: the largest current solutions compile in 4 to 6 seconds each).
+
+`prove2me/mission/` and `scripts/p2m_mission.py` (idempotent; `--dry-run`, `--status`) hold the
+proposal; `prove2me/mission-state.json` and `prove2me/mission-build.log` record the run, from a
+child session holding the key, at 09:34 UTC.
+
+| | |
+|---|---|
+| proposal | `4939b1d4-c604-4734-8109-f0aef34ecc4c`, "MIP* = RE", `ResearchPaper`, **private**, status `Draft`; fields `quantum-information`, `complexity-theory` (chosen from the platform's catalog; none created) |
+| goal (draft item `a8836d95-7962-4325-a3a5-4780eb059f5d`) | `HaltingGameValue.halting_reduces_to_gameValue : HaltingGameValue.HaltingReducesToGameValue`, blueprint `thm:main`, [JNVWY20, Theorem 12.2] in synchronous form with polynomial time relaxed to computable; stays Open on the platform, which the description says |
+| definition bundle (draft item `56f3db5d-2e82-496b-97c7-1ac87fa1453d`) | `MIPRE_HaltingGameValue` = `MIPRE/HaltingGameValue.lean` at `70cbf1c`, verbatim, the Mathlib-only statement surface (POVM, SynchronousGame, SyncStrategy, strategyValue, gameValue, GameData, toGame, HaltsOnEmptyInput, HaltingReducesToGameValue); both items built against Mathlib `0df444a` (Lake, one `sorry` warning, the stub's) |
+| milestone 0 (reference item `d51ddc9c-404f-4017-a03c-cb32d7dfd811`) | `MIPRE.Cost.recursive_compression`, theorem `347236a4-…` (Proved, private), titled "Lemma 5.1 (Marks, Nezhadi, Yuen): the recursive compression lemma" |
+| description | 1,729 words in the platform's seven sections (`prove2me/mission/description.md`); honest about status: proved and machine-checked in the repository, Open here |
+| read-backs | blind renderings of the two draft items by independent auditor subagents given only the Lean code and the platform's `mission_auditor.md`, attached (`prove2me/mission/readbacks/`); they surface the supremum convention of `gameValue`, the acceptance rule on equal questions, and the absence of any running-time bound |
+| quirk | the proposal-milestone list endpoint returns the title under a field the status printer did not expect (it printed `None`); the `POST` was accepted with the title set, so check it on the website |
+
+Still the maintainer's, in this order: confirm each item on the website (homepage → My missions →
+"MIP* = RE"), comparing the read-backs with the intended statements; **Submit Proposal**, which
+for a private proposal compiles and publishes the two draft items as private content and launches
+the mission privately, with no moderator step; and, separately and permanently, **Make public**.
+The 82 private records of the compression upload are untouched, and whether to re-cut them into
+major results before any release is an open decision.
