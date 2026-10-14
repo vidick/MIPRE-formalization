@@ -170,7 +170,12 @@ Two things to know about reading it:
   resolves to unless the root package defines one, since Lake searches the root first. Those
   two kept the deploy red, and the published blueprint stale, for fifteen days in October
   2026, because nothing on a pull request ran the step. `Build project` now runs it, on the
-  `blueprint/lean_decls` that `scripts/blueprint-colours.py --lean-decls` writes.
+  `blueprint/lean_decls` that `scripts/blueprint-colours.py --lean-decls` writes. A tool that
+  imports the whole library must do so at `OLeanLevel.exported`, as that executable does: at
+  the default private level Lean maps five files per module, and the closure's 13,095 modules
+  exceed the 65,530 memory mappings a Linux process may hold (`vm.max_map_count`), so the
+  importer dies with `INTERNAL PANIC: out of memory` with memory to spare. doc-gen4 imports
+  privately and offers no choice, so the deploy raises the limit before running it.
 - **`\leanok` is two marks, not one**: inside the environment it claims the
   *statement* is formalized, inside `\begin{proof}` that the *proof* is. The second is now
   mechanical: every declaration under a proof-level `\leanok` must be named in an axiom-guard

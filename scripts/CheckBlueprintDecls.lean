@@ -19,6 +19,15 @@ executable of its own, which `lake exe` otherwise finds first and which checks t
 against that project's library. The root package's executable is the one `lake exe`
 resolves. It imports `MIPRE` alone: the blueprint cites no Palomar declaration, and
 `scripts/lean-coverage.py` resolves the tags against `MIPRE/` for the same reason.
+
+The import is at `OLeanLevel.exported`, as the compiler's own `import` of a `module` is,
+and not at the default `.private`. At the default level every module counts as `import all`,
+so the importer maps five files per module (`.olean`, `.olean.server`, `.olean.private`,
+`.ir.sig`, `.ir`), and the library's closure, 13,095 modules with Mathlib, needs more than
+the 65,530 memory mappings a Linux process may hold by default (`vm.max_map_count`): the
+importer then dies with `INTERNAL PANIC: out of memory` after a few seconds, with memory to
+spare. At the exported level it maps three, and the exported data holds every declaration
+of a `public section`, which is where every cited name lives.
 -/
 
 @[expose] public section
@@ -40,7 +49,7 @@ def declLines (contents : String) : Array (Nat × String) := Id.run do
 def missingDecls (env : Environment) (decls : Array (Nat × String)) : Array (Nat × String) :=
   decls.filter fun (_, decl) => !env.contains decl.toName
 
-unsafe def main (args : List String) : IO UInt32 := do
+def main (args : List String) : IO UInt32 := do
   let [pathStr] := args
     | IO.eprintln "usage: lake exe checkdecls blueprint/lean_decls"
       return 1
@@ -50,8 +59,7 @@ unsafe def main (args : List String) : IO UInt32 := do
     return 1
   let decls := declLines (← IO.FS.readFile path)
   initSearchPath (← findSysroot)
-  enableInitializersExecution
-  let env ← importModules #[{ module := `MIPRE }] {} (trustLevel := 1024)
+  let env ← importModules #[{ module := `MIPRE }] {} (trustLevel := 1024) (level := .exported)
   let missing := missingDecls env decls
   if missing.isEmpty then
     IO.println s!"checkdecls: all {decls.size} declarations cited in {path} exist in MIPRE"

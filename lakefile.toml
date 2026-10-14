@@ -55,4 +55,3 @@ roots = ["Palomar.Challenge", "Palomar.Bridge", "Palomar.Solution"]
 name = "checkdecls"
 root = "CheckBlueprintDecls"
 srcDir = "scripts"
-supportInterpreter = true
