@@ -13,10 +13,6 @@ name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.35.0-rc3"
 
-[[require]]
-name = "checkdecls"
-git = "https://github.com/PatrickMassot/checkdecls.git"
-
 # Pinned to the toolchain tag rather than `main` so that doc-gen4 always
 # matches `lean-toolchain`; bump both together (see scripts/update.sh).
 [[require]]
@@ -43,3 +39,20 @@ name = "MIPRE"
 [[lean_lib]]
 name = "Palomar"
 roots = ["Palomar.Challenge", "Palomar.Bridge", "Palomar.Solution"]
+
+# The blueprint's declaration checker, `lake exe checkdecls blueprint/lean_decls`
+# (`scripts/CheckBlueprintDecls.lean`): the documentation deploy runs it on `main` right after
+# `leanblueprint web`, and `Build project` runs it on every pull request. The project's own
+# executable rather than the `PatrickMassot/checkdecls` dependency it required until
+# 2026-10-14, for two reasons. That program imports every library root of the package into
+# one environment, and the Palomar `Challenge` and `Solution` roots declare the same names,
+# so the import fails. And
+# the `MIPStarRE` dependency ships a `checkdecls` executable of its own, which `lake exe`
+# otherwise finds first and which checks the names against that project's library; Lake
+# searches the root package first, so this one shadows it. Between them the two kept the
+# deploy red, and the published blueprint stale, from 2026-09-29 to 2026-10-14.
+[[lean_exe]]
+name = "checkdecls"
+root = "CheckBlueprintDecls"
+srcDir = "scripts"
+supportInterpreter = true

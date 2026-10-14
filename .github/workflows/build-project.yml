@@ -60,12 +60,15 @@ jobs:
       # blueprint (plasTeX, nothing rendered, about ten seconds): a `\leanok` proof that it does
       # not attach to its statement, or a proved result that is not dark green, fails here.
       # `pip install leanblueprint` is what the blueprint deploy runs. See
-      # scripts/blueprint-colours.py.
+      # scripts/blueprint-colours.py. The same parse writes `blueprint/lean_decls`, the list
+      # of `\lean{}` names that the deploy's `lake exe checkdecls` step reads, for the check
+      # after the build below.
       - name: Blueprint graph colours, as leanblueprint computes them
         run: |
           python3 -m venv "$RUNNER_TEMP/leanblueprint"
           "$RUNNER_TEMP/leanblueprint/bin/pip" install --quiet leanblueprint
-          "$RUNNER_TEMP/leanblueprint/bin/python" scripts/blueprint-colours.py --check
+          "$RUNNER_TEMP/leanblueprint/bin/python" scripts/blueprint-colours.py --check \
+            --lean-decls blueprint/lean_decls
 
       - name: Install and configure Lean, and get mathlib cache
         uses: leanprover/lean-action@f061402b660e0c34644504b324e830f2991d4865 # v1.6.1
@@ -152,3 +155,13 @@ jobs:
       # holds back the bundle above. See scripts/blueprint-edges.py.
       - name: Blueprint dependency edges against the Lean
         run: LAKE=~/.elan/bin/lake python3 scripts/blueprint-edges.py --check
+
+      # The deploy's own check, which `leanprover-community/docgen-action` runs on `main`
+      # right after `leanblueprint web`: every `\lean{}` name of the blueprint is a declaration
+      # of the built library (`scripts/CheckBlueprintDecls.lean`, on the list the colours step
+      # wrote above). `scripts/lean-coverage.py` resolves the same names against the sources;
+      # this is the import-level check, and it is what broke the deploy for fifteen days
+      # without a pull request noticing (`lakefile.toml`). Last, like the edges check, so
+      # that a failure never holds back the bundle.
+      - name: Blueprint declarations exist in the built library (the deploy's checkdecls)
+        run: ~/.elan/bin/lake exe checkdecls blueprint/lean_decls

@@ -162,6 +162,15 @@ Two things to know about reading it:
   that LaTeX or a package provides live in `scripts/latex-allowed-commands.txt`; `scripts/ledger-sync.py` checks the ledger correspondence. CI
   runs both before the Lean build. Tags and `\uses` lists wrap across lines here, so
   never check them with a per-line grep: that silently skips the continuations.
+- **`lake exe checkdecls` is the project's own executable** (`scripts/CheckBlueprintDecls.lean`,
+  declared in `lakefile.toml`), and the deploy's first step after `leanblueprint web` runs it on
+  `main`. It is not the `PatrickMassot/checkdecls` program, which imports every library root
+  at once and so fails on the Palomar `Challenge` and `Solution` roots, which declare the same
+  names; and the `MIPStarRE` dependency ships a `checkdecls` of its own, which `lake exe`
+  resolves to unless the root package defines one, since Lake searches the root first. Those
+  two kept the deploy red, and the published blueprint stale, for fifteen days in October
+  2026, because nothing on a pull request ran the step. `Build project` now runs it, on the
+  `blueprint/lean_decls` that `scripts/blueprint-colours.py --lean-decls` writes.
 - **`\leanok` is two marks, not one**: inside the environment it claims the
   *statement* is formalized, inside `\begin{proof}` that the *proof* is. The second is now
   mechanical: every declaration under a proof-level `\leanok` must be named in an axiom-guard
