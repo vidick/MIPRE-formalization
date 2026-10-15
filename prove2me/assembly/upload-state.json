@@ -2056,8 +2056,35 @@
    "submitted_at": 1792099161.2656097,
    "http": 200,
    "submission_id": "fb5e4884-2a25-478b-86fa-00d6530ab424",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.sampProg_runs": {
+   "submitted_at": 1792099263.1744146,
+   "http": 200,
+   "submission_id": "62eb6620-1585-47c1-a1fb-80034e6b21ea",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.classV_efficient": {
+   "submitted_at": 1792099360.601424,
+   "http": 200,
+   "submission_id": "09a8c0ca-7f5f-49fe-ae12-da82ee5fdce6",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.length_filter_flatMap_bits": {
+   "submitted_at": 1792099514.9093418,
+   "http": 200,
+   "submission_id": "4285d2d1-2a95-4528-8ad7-84b1b7a024ca",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.seedCount_eq": {
+   "submitted_at": 1792099585.852141,
+   "http": 200,
+   "submission_id": "cf7aeea6-916b-444b-9256-4839f7637770",
+   "status": "PENDING"
   }
  },
  "log": []
