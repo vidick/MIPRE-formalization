@@ -1867,6 +1867,55 @@
    "submitted_at": 1792096640.0012136,
    "http": 200,
    "submission_id": "6491c1dd-4ea9-4a45-b4bf-36206b6c4f80",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.acc_mem_iff": {
+   "submitted_at": 1792096699.3034415,
+   "http": 200,
+   "submission_id": "cb66c2cd-169a-4269-8f7a-54fd5fceaed8",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.tab_match": {
+   "submitted_at": 1792096786.3308332,
+   "http": 200,
+   "submission_id": "ec1b867b-b3a7-4536-aac6-4b304bd36d7b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.primrec_decode_prod_nat": {
+   "submitted_at": 1792096861.2905672,
+   "http": 200,
+   "submission_id": "6a29c2f1-ee22-46b7-a15d-0bc0ab9c309a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.exists_semidecider_of_decode": {
+   "submitted_at": 1792096924.0793576,
+   "http": 200,
+   "submission_id": "1c26031c-6ac6-47f4-a5ec-8ec52ad59d61",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.not_isBounded_iff_exists": {
+   "submitted_at": 1792096970.618455,
+   "http": 200,
+   "submission_id": "9679228a-6b79-4cf7-87ae-e86958403044",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.REPred.of_computable_exists": {
+   "submitted_at": 1792097061.3497062,
+   "http": 200,
+   "submission_id": "533c6244-48a7-4e79-a612-2f9ed0d5bd59",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.rePred_not_isBounded": {
+   "submitted_at": 1792097171.7047052,
+   "http": 200,
+   "submission_id": "a51acc80-4cf3-4ad0-9e27-395843f75a81",
    "status": "PENDING"
   }
  },
