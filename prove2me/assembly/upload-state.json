@@ -59,8 +59,104 @@
   "MIPRE_Foundations_Games": {
    "submitted_at": 1792087550.7818823,
    "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "5cff353e-85a3-4ce1-8647-a2d0d7dc34cc",
+   "theorem_id": "2894f932-d6e1-464e-8158-fbe5710be380",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox": {
+   "submitted_at": 1792087569.9193602,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "f67f1af4-3c42-46f5-984f-b8cb34eb1d83",
+   "theorem_id": "116e80ed-adda-4d72-a077-16a135b3bbf4",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_Cayley": {
+   "submitted_at": 1792087593.0303562,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "8c7626e1-2751-4351-ae7c-ea63ef26dedd",
+   "theorem_id": "f3eb4e59-efbc-4bd0-83d1-1669373d7a2f",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_Projective": {
+   "submitted_at": 1792087612.2338436,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "31a2a3ae-cb30-48d7-9d45-199dfebffc7a",
+   "theorem_id": "8e817134-232c-40ea-8d98-1c925ed18a96",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_Gaussian": {
+   "submitted_at": 1792087635.4053695,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "ca14bb39-7317-4a8d-9fbe-91e430d04f3d",
+   "theorem_id": "42a2977d-7152-4213-acfb-0e6c8c8ccfa5",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_Norms": {
+   "submitted_at": 1792087680.3120854,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "d0581b3d-3c64-4330-85f0-b64a9810c08e",
+   "theorem_id": "dbb073f0-486c-4e04-9d75-d5f6996079f4",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_Dense": {
+   "submitted_at": 1792087712.1707876,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "98302be6-234b-47e4-bc74-7982f56e76c7",
+   "theorem_id": "a5271547-6975-4ddd-989b-e1a0b676fd13",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_Strategy": {
+   "submitted_at": 1792087743.2646177,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "7470e42f-7c71-44d0-b535-29919d369e82",
+   "theorem_id": "2c96aa82-160a-47ba-b9d6-d4533e53cd4a",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_GameTransport": {
+   "submitted_at": 1792087783.1958442,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "d977dd19-ea69-4cb5-8d90-85d963da10dd",
+   "theorem_id": "17e983ae-34e5-455e-9836-1f32c6542d1e",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_GameDescription": {
+   "submitted_at": 1792087799.0326016,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "afe09ccc-d1b2-442d-ac97-0cb774a3c827",
+   "theorem_id": "a8f0a0fc-1a83-4e8d-8a14-17c5d042b1ce",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_RawStrategy": {
+   "submitted_at": 1792087852.4242504,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "a01d23f4-c189-44a2-b7a2-3605839e010a",
+   "theorem_id": "6ec5d372-cc38-4928-a516-7cea0e5a6b3b",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_RawSemantics": {
+   "submitted_at": 1792087998.0364091,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "4914e579-810a-405a-903c-97bc9eabab22",
+   "theorem_id": "52cabd6b-edde-476b-87a1-8f0b909b06c7",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_RawComplete": {
+   "submitted_at": 1792088076.9007926,
+   "http": 202,
    "status": "PENDING",
-   "job_id": "5cff353e-85a3-4ce1-8647-a2d0d7dc34cc"
+   "job_id": "ec44252e-aa5f-486e-8c32-6b2dce3b24f5"
   }
  },
  "theorems": {},
