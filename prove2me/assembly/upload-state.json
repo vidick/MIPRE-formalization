@@ -1,0 +1,69 @@
+{
+ "definitions": {
+  "MIPRE_Foundations_CL_Register": {
+   "submitted_at": 1792087418.0581803,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "45b04ec6-485a-45f7-a057-1d498e92b4d3",
+   "theorem_id": "32a98fb5-ceec-4ef9-9d16-89d1a3249682",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Basic": {
+   "submitted_at": 1792087427.488678,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "f04f88d1-4cac-4a4f-b30b-9aa1bbcb0364",
+   "theorem_id": "c8b380b7-685a-4b4b-bc43-fc2c46fe7fee",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Closure": {
+   "submitted_at": 1792087441.3624818,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "12a60b85-4b5d-4461-ada8-b8c097429a91",
+   "theorem_id": "c92faad3-cdf8-4911-b64f-a3a5088ec6d4",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Basic_B": {
+   "submitted_at": 1792087460.2945023,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "514d260e-b267-43af-85bc-c1752e55cf76",
+   "theorem_id": "305e105c-8511-4ee0-9162-d00332d84cc7",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Encoding_B": {
+   "submitted_at": 1792087469.7591596,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "18bbb356-4973-44bf-92e3-301eab3e5f25",
+   "theorem_id": "903c91ad-c51e-45d6-84c7-cbdb21ef7a38",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Sampler": {
+   "submitted_at": 1792087514.466292,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "72872bdf-655e-4669-9ed7-be4ad5608521",
+   "theorem_id": "58e35120-9600-4b76-8b11-35de649101f8",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ValueApprox_RawInt": {
+   "submitted_at": 1792087541.2205474,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "cde9130a-e732-4992-8b71-3f32d6365dd4",
+   "theorem_id": "bd928cfb-ad87-417e-8be4-b016a28a37a1",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Games": {
+   "submitted_at": 1792087550.7818823,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "5cff353e-85a3-4ce1-8647-a2d0d7dc34cc"
+  }
+ },
+ "theorems": {},
+ "solutions": {},
+ "log": []
+}
