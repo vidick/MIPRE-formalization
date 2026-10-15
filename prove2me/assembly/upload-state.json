@@ -710,18 +710,76 @@
    "submitted_at": 1792092272.0512493,
    "http": 202,
    "job_id": "13437d92-965e-4ef9-9bc8-24d0d5e30a47",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "bf7c41fc-fe4f-4f12-9548-909b1c3f3591",
+   "error_message": ""
   },
   "MIPRE.PolyVerifier.mu_clause": {
    "submitted_at": 1792092272.5373533,
    "http": 202,
    "job_id": "b44300cb-7045-4527-a639-76556fa3a491",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "fc351fb9-8582-4e4f-9560-15c12c52a17f",
+   "error_message": ""
   },
   "MIPRE.PolyVerifier.acc_mem_iff": {
    "submitted_at": 1792092272.941483,
    "http": 202,
    "job_id": "8054b951-ee0e-46ec-836a-f6358a02bee0",
+   "status": "QUEUED"
+  },
+  "MIPRE.PolyVerifier.D_clause": {
+   "submitted_at": 1792092309.3148503,
+   "http": 202,
+   "job_id": "7c0c9415-be7d-4c89-8deb-b4353a132af5",
+   "status": "QUEUED"
+  },
+  "MIPRE.Cost.Machine.runs_of_runForD": {
+   "submitted_at": 1792092309.8899488,
+   "http": 202,
+   "job_id": "7c836efa-425c-42ca-83d9-c10b84de8a1c",
+   "status": "QUEUED"
+  },
+  "MIPRE.Cost.halts_haltingReduction_iff": {
+   "submitted_at": 1792092310.5269902,
+   "http": 202,
+   "job_id": "0af70a6a-d03f-4ea7-9b36-d289aeaba373",
+   "status": "QUEUED"
+  },
+  "MIPRE.TensorProductStrategy.value_relabel_of_support": {
+   "submitted_at": 1792092311.1288574,
+   "http": 202,
+   "job_id": "3c92f22d-8246-4344-9291-78036d6f57cb",
+   "status": "QUEUED"
+  },
+  "MIPRE.TensorProductStrategy.value_relabel_invFun": {
+   "submitted_at": 1792092311.687368,
+   "http": 202,
+   "job_id": "69b0a512-fa91-48f1-b894-0dde49e70d10",
+   "status": "QUEUED"
+  },
+  "MIPRE.SyncStrategy.value_const": {
+   "submitted_at": 1792092312.5406451,
+   "http": 202,
+   "job_id": "5b9168f0-29de-476e-b3b5-839a5fff0a47",
+   "status": "QUEUED"
+  },
+  "MIPRE.tracialValue_le_one": {
+   "submitted_at": 1792092313.2647142,
+   "http": 202,
+   "job_id": "54c281f4-6127-41f0-8b91-86763a0f7dbc",
+   "status": "QUEUED"
+  },
+  "MIPRE.Cost.Prog.incLoop_runs": {
+   "submitted_at": 1792092314.0400093,
+   "http": 202,
+   "job_id": "959cef72-0f97-4f90-9e74-f638f3060759",
+   "status": "QUEUED"
+  },
+  "MIPRE.Cost.Prog.incProg_runs": {
+   "submitted_at": 1792092350.0857832,
+   "http": 202,
+   "job_id": "9ed60b06-4b55-4445-9ea5-8defa41d6009",
    "status": "QUEUED"
   }
  },
