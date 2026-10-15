@@ -587,8 +587,56 @@
   "MIPRE_Foundations_Halting_Paper_Decider": {
    "submitted_at": 1792091094.6302376,
    "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "88abe152-7251-4cb4-ad19-41848c987812",
+   "theorem_id": "99e94fbc-da2d-4c07-899f-752fa6199693",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Paper_Size": {
+   "submitted_at": 1792091195.8345346,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "7ccb520a-e4d1-4777-af08-c24438eb1791",
+   "theorem_id": "0c690fc5-5f9d-4bd6-9d17-ca3cdb90be41",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Paper_Cost": {
+   "submitted_at": 1792091346.740145,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "f12927d8-c149-41f8-82d9-0f21e7fbdddc",
+   "theorem_id": "ddd20a0e-ba36-46ff-848b-30e1bc6228e2",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Paper_Induction": {
+   "submitted_at": 1792091501.7292116,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "bd2c293d-2df5-408b-a77f-7d790476b731",
+   "theorem_id": "e4fed09b-d0f6-49b6-96e9-fea04b7cdb02",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Paper_Stages": {
+   "submitted_at": 1792091625.5450428,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "cd2d2f59-8efc-4180-bbb9-c785d624319e",
+   "theorem_id": "b4436322-7353-4aef-87ce-a455821ba60f",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Paper_Build": {
+   "submitted_at": 1792091696.2981942,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "e709afa5-d2b6-458b-8e79-033fe3ec7b57",
+   "theorem_id": "d0b492c8-0c16-4b53-abe7-00685c5db4e4",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Paper_Main": {
+   "submitted_at": 1792091784.2226298,
+   "http": 202,
    "status": "PENDING",
-   "job_id": "88abe152-7251-4cb4-ad19-41848c987812"
+   "job_id": "a53070b3-88d5-4922-8ee0-ef14701fe99e"
   }
  },
  "theorems": {},
