@@ -2208,6 +2208,41 @@
    "submitted_at": 1792102237.627454,
    "http": 200,
    "submission_id": "02e6e1ec-38ae-4709-9c1e-9464e208b8ed",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.halting_reduction_quantum_of_answerReduction": {
+   "submitted_at": 1792102364.7032545,
+   "http": 200,
+   "submission_id": "4df55477-7aea-421c-b988-20cf7cb772ce",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.gameValue_uncomputable_of_answerReduction": {
+   "submitted_at": 1792102499.7965682,
+   "http": 200,
+   "submission_id": "8403115c-2003-46ae-8c0d-466f5d1307ad",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.quantumValue_uncomputable_of_answerReduction": {
+   "submitted_at": 1792102653.464625,
+   "http": 200,
+   "submission_id": "55f81ce1-b3b7-4631-aeef-35af277772dd",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.re_subset_mipstarComputable_of_answerReduction": {
+   "submitted_at": 1792102760.7341478,
+   "http": 200,
+   "submission_id": "cb4c7bac-c8c9-4387-940d-da1b79d9cffd",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.mipstarComputable_eq_re_of_answerReduction": {
+   "submitted_at": 1792102879.6173854,
+   "http": 200,
+   "submission_id": "94610963-f3d0-4d18-93d5-2fed9b2f95d2",
    "status": "PENDING"
   }
  },
