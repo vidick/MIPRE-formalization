@@ -878,9 +878,9 @@
    "submitted_at": 1792093415.3058157,
    "http": 202,
    "job_id": "4b3cfedb-5b7d-4739-bdae-ff20a43d70ce",
-   "status": "QUEUED",
-   "theorem_id": null,
-   "error_message": "formal statement does not compile: DB error looking up import 'Definitions.Def_MIPRE_Foundations_Verifier': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "PUBLISHED",
+   "theorem_id": "5018da1d-0dd1-404d-9a14-078517a10a58",
+   "error_message": ""
   },
   "MIPRE.Halting.wrapCoreCost_le_decZ": {
    "submitted_at": 1792092484.320568,
@@ -926,9 +926,9 @@
    "submitted_at": 1792093415.8420115,
    "http": 202,
    "job_id": "1ea93195-ad25-43d2-8d40-1cd6ac85de71",
-   "status": "QUEUED",
-   "theorem_id": null,
-   "error_message": "formal statement does not compile: DB error looking up import 'Definitions.Def_MIPRE_Foundations_CL_Basic': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "PUBLISHED",
+   "theorem_id": "8290a566-9c9e-4c8a-ad18-22f9d292e9d6",
+   "error_message": ""
   },
   "MIPRE.Halting.halting_reduction_quantum_of": {
    "submitted_at": 1792092535.2085686,
@@ -1568,6 +1568,13 @@
    "error_message": ""
   }
  },
- "solutions": {},
+ "solutions": {
+  "MIPRE.Cost.Machine.runs_of_runForD": {
+   "submitted_at": 1792093523.4132082,
+   "http": 200,
+   "submission_id": "57723c34-2aad-42e4-829a-3de759025b3e",
+   "status": "PENDING"
+  }
+ },
  "log": []
 }
