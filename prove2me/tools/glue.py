@@ -146,7 +146,7 @@ for name, head, body, a, b, ns in cond:
     if tslug not in {n["slug"] for n in tree["nodes"]}:
         sys.exit(f"glue: {target} is not a generated node (check the plan's targets)")
     formal = f"theorem {full} (A : MIPRE.AnswerReduction 5){head} := by sorry"
-    pre = import_lines(STMT_CONSTS, []) + ["", OPENS.strip()]
+    pre = import_lines(STMT_CONSTS, []) + ["", "open MIPRE MIPRE.Cost"]   # MIPRE.Halting exists only with the proof's imports
     emit(f"Theorems/Thm_{slug(full)}.lean", HEADER + note(f"statement stub of {full}, binder A made explicit", "MIPRE/Background/Pipeline.lean")
          + "\n".join(pre) + "\n\n" + formal + "\n")
     body2 = body.replace("(GapCompression.ofAnswerReduction A)", OF_PIPELINE).replace("GapCompression.ofAnswerReduction A", OF_PIPELINE)
@@ -175,7 +175,7 @@ for name, head, body, a, b, ns in uncond:
     used = [c for c in cond_names if c.split(".")[-1] in body2]
     published_stub = full == "HaltingGameValue.halting_reduces_to_gameValue"
     opens = OPENS if ns.startswith("MIPRE") else "open MIPRE\n"
-    pre = import_lines(STMT_CONSTS, []) + ["", opens.strip()]
+    pre = import_lines(STMT_CONSTS, []) + ["", "open MIPRE MIPRE.Cost" if ns.startswith("MIPRE") else "open MIPRE"]
     formal = f"theorem {full}{head} := by sorry"
     if not published_stub:
         emit(f"Theorems/Thm_{slug(full)}.lean", HEADER + note(f"statement stub of {full}", "MIPRE/MainTheorem.lean")

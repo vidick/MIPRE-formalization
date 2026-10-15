@@ -104,17 +104,47 @@ for r in rows:
 
 # ---------- scope map: context of every declaration command ----------
 CTX = {}  # (module, declStart.offset) -> {"ns": [...], "opens": [...], "vars": [...]}
+ATTRS = {}  # module -> [attribute commands: {"start", "end", "attr", "names": [(token, uid|None)]}]
+const_unit = {}
+for uid, u in U.items():
+    for r in u["rows"]:
+        const_unit[r] = uid
 for m in modules:
-    stack = []  # frames: {"name", "opens", "vars"}
+    stack = []  # frames: {"name" (None for a section), "opens", "vars"}
     root = {"name": None, "opens": [], "vars": []}
+    ATTRS[m] = []
     for c in F[m]["cmds"]:
         k = c["syntaxKind"].split(".")[-1]
         t = txt(m, c["start"]["offset"], c["end"]["offset"]).strip()
         if k == "namespace":
             stack.append({"name": t.split()[1], "opens": [], "vars": []})
+        elif k in ("section", "noncomputableSection"):
+            stack.append({"name": None, "opens": [], "vars": []})
         elif k == "end":
             if stack:
                 stack.pop()
+        elif k == "attribute":
+            raw = txt(m, c["start"]["offset"], c["end"]["offset"])
+            lead = len(raw) - len(raw.lstrip())
+            mm = re.match(r"attribute\s*(\[.*?\])\s*(.*)$", t, re.S)
+            if mm:
+                names = []
+                names_at = t.index(mm.group(2), mm.end(1))
+                base = c["start"]["offset"] + len(raw[:lead].encode("utf-8"))
+                for tok in re.finditer(r"\S+", mm.group(2)):
+                    ta = base + len(t[:names_at + tok.start()].encode("utf-8"))
+                    tb = ta + len(tok.group(0).encode("utf-8"))
+                    uid = None
+                    for rf in F[m]["refs"]:
+                        if ta <= rf["start"]["offset"] < tb:
+                            uid = const_unit.get(rf["const"])
+                            if uid is None:
+                                pm = re.match(r"_private\.(?:[^.]+\.)*?\d+\.(.*)$", rf["const"])
+                                if pm:
+                                    uid = next((x for x, uu in U.items() if uu["name"] and uu["name"].endswith(pm.group(1))), None)
+                            break
+                    names.append((tok.group(0), uid))
+                ATTRS[m].append({"start": c["start"]["offset"], "end": c["end"]["offset"], "attr": mm.group(1), "names": names})
         elif k == "open":
             (stack[-1] if stack else root)["opens"].append(t)
         elif k == "variable":
@@ -122,7 +152,7 @@ for m in modules:
         elif k in ("declaration", "in"):
             frames = [root] + stack
             CTX[(m, c["start"]["offset"])] = {
-                "ns": [f["name"] for f in stack],
+                "ns": [f["name"] for f in stack if f["name"]],
                 "opens": [o for f in frames for o in f["opens"]],
                 "vars": [v for f in frames for v in f["vars"]],
             }
@@ -268,12 +298,27 @@ for m in TOPO:
             if B[b:b+1] == b"\n":
                 b += 1
             dele.append((a, b))
+    # attribute commands: keep the names this bundle's environment has (kept here, kept in an
+    # imported bundle, or not a project declaration); drop the command when none remains
+    repl = {}
+    visible = set(kept_units) | {uid for uid, u in U.items() if u["cls"] in ("avail",)
+                                  or (u["cls"] in ("defmat", "embedded") and u["module"] in mod_closure[m])}
+    for at in ATTRS[m]:
+        keep = [tok if uid is None else U[uid]["name"] for tok, uid in at["names"] if uid is None or uid in visible]
+        a, b = at["start"], at["end"]
+        while b < len(B) and B[b:b+1] in (b" ", b"\t"):
+            b += 1
+        if B[b:b+1] == b"\n":
+            b += 1
+        dele.append((a, b))
+        repl[a] = (f"attribute {at['attr']} " + " ".join(keep) + "\n").encode("utf-8") if keep else b""
     dele.sort()
     pieces, pos = [], body_start
     for a, b in dele:
         if a < pos:
             raise RuntimeError(f"overlapping spans in {m}")
         pieces.append(B[pos:a])
+        pieces.append(repl.get(a, b""))
         pos = b
     pieces.append(B[pos:body_end])
     body = b"".join(pieces).decode("utf-8")
@@ -382,11 +427,28 @@ for uid in nodes:
     imp_lines = ([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=True)
                  + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(c["imported_nodes"], key=lambda v: slugs[v])])
     sol_parts = [HEADER + gen_note(m, f"solution of {u['name']}"), "\n".join(imp_lines), ""]
+    pasted_set = set(pasted)
+    attr_top, attr_after = [], collections.defaultdict(list)
+    for am in sorted({m} | {U[v]["module"] for v in pasted}, key=lambda x: TOPO_IDX[x]):
+        for at in ATTRS[am]:
+            top = [tok if uid is None else U[uid]["name"] for tok, uid in at["names"]
+                   if uid is None or U[uid]["cls"] in ("defmat", "embedded", "avail")]
+            if top:
+                attr_top.append(f"attribute {at['attr']} " + " ".join(top))
+            for tok, tu in at["names"]:
+                if tu in pasted_set:
+                    attr_after[tu].append(f"attribute {at['attr']} {U[tu]['name']}")
+    if attr_top:
+        sol_parts.append("/-! Attribute commands of the source modules, for the declarations imported here. -/")
+        sol_parts += attr_top
+        sol_parts.append("")
     if pasted:
         sol_parts.append("/-! Helper declarations, pasted verbatim from the source modules with their\n"
                          "namespace and `open` context; each is used only by proofs. -/")
         for v in pasted:
             sol_parts.append(pasted_block(v))
+            for line in attr_after.get(v, []):
+                sol_parts.append(line + "\n")
     sol_parts.append("/-! The uploaded declaration, hoisted to the top level as `solution`. -/")
     sol_parts.append("\n".join(hoisted_context(uid)))
     body = head_rest(uid, 'end').rstrip()

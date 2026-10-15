@@ -70,7 +70,10 @@ def compile_one(m):
     o = olean_of(rel)
     os.makedirs(os.path.dirname(o), exist_ok=True)
     t0 = time.time()
-    r = subprocess.run(["lake", "env", "lean", "-o", o, "-i", o[:-6] + ".ilean", rel],
+    # `lake env lean` does not apply the lakefile's leanOptions; the platform compiles with
+    # autoImplicit off, so pass the same options explicitly
+    r = subprocess.run(["lake", "env", "lean", "-DautoImplicit=false", "-DrelaxedAutoImplicit=false",
+                        "-o", o, "-i", o[:-6] + ".ilean", rel],
                        cwd=WS, env=ENV, capture_output=True, text=True)
     out = r.stdout + r.stderr
     diag = f"{A}/diag/{m}.txt"
