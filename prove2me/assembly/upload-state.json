@@ -998,60 +998,164 @@
    "submitted_at": 1792092697.7625291,
    "http": 202,
    "job_id": "6bda4d95-a02e-4031-a976-586ee60fd246",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "7f18b635-2c80-449b-b3f1-8acf3fcde098",
+   "error_message": ""
   },
   "MIPRE.Verifier.freeze_hasPerfectPCC": {
    "submitted_at": 1792092698.510025,
    "http": 202,
    "job_id": "485aece6-0a0c-44d5-9910-118019e0ecf5",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "c0be4f05-9b8c-4444-8fbe-f8db8f80d07b",
+   "error_message": ""
   },
   "MIPRE.Halting.exists_ansBound_le": {
    "submitted_at": 1792092699.2175448,
    "http": 202,
    "job_id": "f812d518-9657-4346-8985-c9a7eb3067ce",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "295b87e8-6022-43fe-ba0b-e89373769593",
+   "error_message": ""
   },
   "MIPRE.Halting.mu_clause": {
    "submitted_at": 1792092699.986245,
    "http": 202,
    "job_id": "2b8174fa-cf9a-402b-b7b1-7e7792d7a219",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "490fda09-a685-44e8-853c-79e71b2320e2",
+   "error_message": ""
   },
   "MIPRE.Halting.acc_mem_iff": {
    "submitted_at": 1792092713.7009807,
    "http": 202,
    "job_id": "98836886-79e7-4381-a7bb-667bce3f908c",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "65e4b9f2-8aa9-42e7-9b78-be2d3432a35a",
+   "error_message": ""
   },
   "MIPRE.Halting.tab_match": {
    "submitted_at": 1792092714.4572,
    "http": 202,
    "job_id": "bf0715bb-a99f-4105-bf04-b9c9352010c5",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "524f581d-f921-4797-87ff-92dae10f6c1a",
+   "error_message": ""
   },
   "MIPRE.Cost.Data.canonWalk_iff": {
    "submitted_at": 1792092715.1713798,
    "http": 202,
    "job_id": "8791ed3b-962d-48d9-aa79-a181c3ba74ac",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "2c5ae16f-5094-4833-acaf-28b8097bfd4a",
+   "error_message": ""
   },
   "MIPRE.Cost.Data.canonWalk_eq_isCanonBin": {
    "submitted_at": 1792092720.694958,
    "http": 202,
    "job_id": "8bc24b20-bbba-443a-8127-1131cbb638cc",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "1706cdac-ffc8-495d-9b67-8d5b6ab62e69",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.canonLoop_runs": {
    "submitted_at": 1792092721.4735081,
    "http": 202,
    "job_id": "7c0f3818-2d83-4bdf-a740-bea7b6331e9a",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "f436b7a3-1ae7-46aa-adcd-1e73dad8f162",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.normBinProg_runs": {
    "submitted_at": 1792092722.333168,
    "http": 202,
    "job_id": "999eb709-2116-419a-a123-b8f8ce9400e3",
+   "status": "PUBLISHED",
+   "theorem_id": "1181913f-309b-40d3-9296-c02a51cc3be6",
+   "error_message": ""
+  },
+  "MIPRE.Halting.exists_cut_ge": {
+   "submitted_at": 1792092831.94902,
+   "http": 202,
+   "job_id": "c9465ec2-183b-40cf-8959-ca58fc5a84e9",
+   "status": "PUBLISHED",
+   "theorem_id": "e7671d84-f64e-40e0-b8a6-bd40775cc228",
+   "error_message": ""
+  },
+  "MIPRE.Halting.classV_efficient": {
+   "submitted_at": 1792092832.7375305,
+   "http": 202,
+   "job_id": "e378a78a-625e-4eba-ac74-a0bd1e57a0db",
+   "status": "PUBLISHED",
+   "theorem_id": "1f7c1e74-84ff-4127-ad2e-f30c2aff4920",
+   "error_message": ""
+  },
+  "MIPRE.Halting.seedCount_eq": {
+   "submitted_at": 1792092833.4171886,
+   "http": 202,
+   "job_id": "d2f62038-1f8f-4192-8389-4a88af490abf",
+   "status": "PUBLISHED",
+   "theorem_id": "a4dbbaa5-fb7e-4365-bc4f-b9a7225a0815",
+   "error_message": ""
+  },
+  "MIPRE.Halting.classV_game_mu": {
+   "submitted_at": 1792092834.096581,
+   "http": 202,
+   "job_id": "77b00067-a60f-4d13-a05a-c049e5339069",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.classV_game_support": {
+   "submitted_at": 1792092834.7783337,
+   "http": 202,
+   "job_id": "ce718a48-0fea-4ab4-9da8-98b76e33139e",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.classV_value": {
+   "submitted_at": 1792092840.9720922,
+   "http": 202,
+   "job_id": "de761b88-8374-4619-8827-74cc20de24d8",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.classV_values": {
+   "submitted_at": 1792092841.741081,
+   "http": 202,
+   "job_id": "96ac947e-fcc8-4d75-9961-b7bd78a68ad3",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.re_subset_mipstar_of": {
+   "submitted_at": 1792092842.4774613,
+   "http": 202,
+   "job_id": "29f19709-63bd-4a69-85d6-5f6e69866ff3",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.mipstar_eq_re_of": {
+   "submitted_at": 1792092843.2489076,
+   "http": 202,
+   "job_id": "6ea4cc81-0d33-4e7c-9763-a3ff0b748cec",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.sampProg_runs": {
+   "submitted_at": 1792092843.9666483,
+   "http": 202,
+   "job_id": "7e19fd3e-d359-4fd4-822a-5f6715390b23",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.D1_apply": {
+   "submitted_at": 1792092909.7851322,
+   "http": 202,
+   "job_id": "96d9f2b9-8399-47ec-b743-a53d248f17f6",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.decProg_accepts": {
+   "submitted_at": 1792092910.7154887,
+   "http": 202,
+   "job_id": "bdae5f37-597e-4482-9657-3c1a8a516997",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.decProg_runs": {
+   "submitted_at": 1792092959.7904031,
+   "http": 202,
+   "job_id": "12b0ef44-46c1-41db-b728-861c71f3a571",
    "status": "QUEUED"
   }
  },
