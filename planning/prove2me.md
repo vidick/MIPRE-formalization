@@ -296,28 +296,54 @@ script, and the next `--status` run refreshes it), status `Draft`, fields `compl
 `quantum-information`, the milestone in place. Nothing was submitted or launched: that is the
 maintainer's click on the website.
 
-Facts for the top-down upload, measured at `70cbf1c` (the main theorem is proved there:
-`MainTheorem.lean` has no `sorry`): the proof closure is 1,188 modules and 404,292 lines, with
-548 modules under `Background/` and the `MIPStarRE` dependency imported from `LIDT/`. The first
-level of the sketch is one application:
-`MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction : AnswerReduction 5 →
-HaltingReducesToGameValue` (`Background/Pipeline.lean`) applied to
-`MIPRE.AnswerReduction.answerReduction : AnswerReduction 5` (`Background/AnswerReduction/Instance.lean`).
-The contract instances (`AnswerReduction 5`, `Introspection 7`, `GapCompression`) are `def`s carrying
-data and proofs, and a platform definition may not be `sorry`ed, so the sketch's children must be
-theorems: `∀ A : AnswerReduction 5, HaltingReducesToGameValue` and `Nonempty (AnswerReduction 5)`,
-with the instance's components descended the same way, or the instance is imported as a definition
-only once its whole body is on the platform. Steps, in order:
+The maintainer submitted the proposal on 2026-10-15; it is `In review` (the two draft items were
+compiled and published at submission; a moderator's approval launches the mission publicly).
 
-1. Stage 1 and Stage 2 over the modules in the *statement* closure of the top levels (their
-   `typeDeps`), built against Mathlib `0df444a` in the `p2m` workspace; the proof closure of the
-   vendored and dependency modules is not needed for statements.
-2. The planner in top-down mode: the first levels of the proof DAG as nodes (statements first,
-   each with its definition bundles), the glue proofs as sketches that import the children's stubs;
-   each sketch must compile within the platform's 300-second budget against the stubs.
-3. Upload under the launched mission: definitions, then statements (Open), then sketches
-   (`SKETCH_ACCEPTED`), level by level; link the chapter theorems as milestones as they appear.
-4. Descend until the leaves are the compression tree (already Proved), Mathlib, or code the
-   platform cannot host yet: the 71k-line vendored module (thousands of objects if split) and
-   `MIPStarRE`, whose licence rests on its authors' consent. Those leaves stay Open, which the
-   mission description says.
+**The structure of the top-down upload**, read off `70cbf1c` (the main theorem is proved there;
+`MainTheorem.lean` has no `sorry`; proof closure 1,188 modules, 404,292 lines). The proof is
+
+```
+halting_reduces_to_gameValue := Halting.halting_reduces_to_gameValue_of_answerReduction answerReduction
+halting_reduces_to_gameValue_of_answerReduction A :=
+  halting_reduces_to_gameValue_of (GapCompression.ofPipeline Introspection.seven A (repetition 7)) Cost.selfUniversal
+```
+
+(`MainTheorem.lean`, `Background/Pipeline.lean`). Everything in the second line except the three
+stage instances is own code: `GapCompression.ofPipeline : Introspection 7 → AnswerReduction 5 →
+Repetition 7 → GapCompression` (`Foundations/Pipeline/Compress.lean`, blueprint `thm:compression`),
+`halting_reduces_to_gameValue_of : ∀ (G : GapCompression) (U : UniversalMachine), …`
+(`Foundations/Halting/CompressorProgram.lean`, `thm:halting`), `Cost.selfUniversal : UniversalMachine`
+(`Cost/Universal.lean`). The union of their import closures with `HaltingGameValue` is **103 modules,
+32,478 lines, none under `Background/`**, 23 of them the compression closure already on the platform.
+The three instances are data whose bodies are the introspection development (`Introspection.seven`,
+closure 964 modules, `MIPStarRE` through the LIDT bridge), the answer-reduction development
+(`answerReduction`, 618 modules, likewise) and the repetition verifier (`repetition 7`, 60 modules,
+the 72k-line vendored `TenProofs`). A platform definition may not be `sorry`ed, so they enter the
+graph as theorem nodes `Nonempty (Introspection 7)`, `Nonempty (AnswerReduction 5)`,
+`Nonempty (Repetition 7)`: Open leaves for now, with `Classical.choice` in two hand-written glue
+sketches (the goal from `∀ A, …` and `Nonempty (AnswerReduction 5)`; `∀ A, …` from
+`halting_reduces_to_gameValue_of`, `ofPipeline`, the two other `Nonempty`s and `selfUniversal`),
+the only non-mechanical Lean in the upload, each a few lines the compiler checks against the stubs.
+
+Increments, each a run of the existing pipeline over a closure, with a registry of what is already
+published so that bundles and solutions import the platform's copies:
+
+1. **The assembly layer**: the 80 own modules of the 103 not yet uploaded (Compress, the Halting
+   development, games, values, verifiers, `UniversalMachine`), plus the two glue sketches and the
+   three `Nonempty` leaves; `selfUniversal` becomes definition material (a new bundle, since the
+   published `Universal` bundle is immutable). Expected size: a few hundred theorem nodes, 60 to 80
+   bundles. After it, the goal is `SKETCH_ACCEPTED` and its open frontier is exactly the three
+   instances. Milestones: `thm:compression` (`ofPipeline`'s correctness, as the structure it builds),
+   `thm:halting`, `lem:universal-tm`.
+2. **Repetition** (own part 46 modules, 17.6k lines; the vendored repetition theorems as Open
+   leaves), **introspection** (own part 473 modules, 86.6k lines; `thm:qld`'s proof is own code under
+   `Background/QLD/`, its LIDT inputs through `MIPStarRE` are the leaves), **answer reduction** (own
+   part 234 modules plus the classical PCP, 184 modules): the same pipeline, one closure at a time.
+3. The leaves that remain are third-party code: the vendored `TenProofs`, `CommutingRepetition` and
+   `Orthogonalization` trees and the `MIPStarRE` dependency, whose authors' licence terms decide.
+
+Practicalities: the source stays `70cbf1c` (Lean `v4.33.0`, one toolchain commit behind the
+platform's `0df444a`; the platform offers no newer environment); the build and extraction run in
+the `p2m` workspace, which needs the modules of each increment added from `git show 70cbf1c:…`;
+the session's disk allowance (about 400 MB free on 2026-10-15 before clearing re-downloadable
+caches) bounds how much can be built at once, so increments are built one at a time.
