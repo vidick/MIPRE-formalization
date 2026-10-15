@@ -1,84 +1,84 @@
 [
  {
   "title": "Lemma 5.1 (Marks, Nezhadi, Yuen): the recursive compression lemma",
-  "description_file": "recursive_compression.md",
+  "description_file": "milestones/recursive_compression.md",
   "theorem_name": "MIPRE.Cost.recursive_compression",
   "state_file": "prove2me/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "lem:universal-tm: an efficient universal machine",
-  "description_file": "universal_tm.md",
+  "description_file": "milestones/universal_tm.md",
   "theorem_name": "MIPRE.Cost.exists_efficient_universal",
   "state_file": "prove2me/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "lem:smn: efficient s-m-n",
-  "description_file": "smn.md",
+  "description_file": "milestones/smn.md",
   "theorem_name": "MIPRE.Cost.smn_polyTime",
   "state_file": "prove2me/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "lem:kleene: the efficient Kleene recursion theorem",
-  "description_file": "kleene.md",
+  "description_file": "milestones/kleene.md",
   "theorem_name": "MIPRE.Cost.efficient_fixed_point",
   "state_file": "prove2me/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "thm:halting: halting reduces to the game value, given gap compression",
-  "description_file": "halting.md",
+  "description_file": "milestones/halting.md",
   "theorem_name": "MIPRE.Halting.halting_reduces_to_gameValue_of",
   "state_file": "prove2me/assembly/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "thm:compression-target: a gap-preserving compression procedure exists",
-  "description_file": "compression_target.md",
+  "description_file": "milestones/compression_target.md",
   "theorem_name": null,
   "state_file": null,
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "thm:introspection: an introspection stage for seven-level verifiers",
-  "description_file": "introspection.md",
+  "description_file": "milestones/introspection.md",
   "theorem_name": "MIPRE.Introspection.nonempty_seven",
   "state_file": "prove2me/assembly/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "thm:answer-reduction: an answer reduction stage for five-level verifiers",
-  "description_file": "answer_reduction.md",
+  "description_file": "milestones/answer_reduction.md",
   "theorem_name": "MIPRE.AnswerReduction.nonempty_five",
   "state_file": "prove2me/assembly/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "thm:parallel-repetition: a repetition stage for seven-level verifiers",
-  "description_file": "parallel_repetition.md",
+  "description_file": "milestones/parallel_repetition.md",
   "theorem_name": "MIPRE.Repetition.nonempty_seven",
   "state_file": "prove2me/assembly/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "cor:main-quantum: halting reduces to the entangled value",
-  "description_file": "main_quantum.md",
+  "description_file": "milestones/main_quantum.md",
   "theorem_name": "MIPRE.Halting.halting_reduction_quantum",
   "state_file": "prove2me/assembly/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "cor:value-uncomputable: the game value is uncomputable",
-  "description_file": "value_uncomputable.md",
+  "description_file": "milestones/value_uncomputable.md",
   "theorem_name": "MIPRE.Halting.gameValue_uncomputable",
   "state_file": "prove2me/assembly/upload-state.json",
   "reason": "the uploaded formalization of this milestone"
  },
  {
   "title": "thm:mipstar-eq-re: MIP* = RE",
-  "description_file": "mipstar_eq_re.md",
+  "description_file": "milestones/mipstar_eq_re.md",
   "theorem_name": "MIPRE.Halting.mipstar_eq_re",
   "state_file": "prove2me/assembly/upload-state.json",
   "reason": "the uploaded formalization of this milestone"

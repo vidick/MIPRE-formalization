@@ -162,6 +162,60 @@
   {
    "t": "2026-10-15T05:27:10Z",
    "msg": "milestone 'recursive_compression': updated"
+  },
+  {
+   "t": "2026-10-15T22:49:51Z",
+   "msg": "milestone 'Lemma 5.1 (Marks, Nezhadi, Yuen): the recursive compression lemma': PATCH 200"
+  },
+  {
+   "t": "2026-10-15T22:49:51Z",
+   "msg": "milestone 'lem:universal-tm: an efficient universal machine': created (01db2099-7468-4095-a047-4292814357b2), theorem 7442bc35-0466-471f-8209-8c855b06851f"
+  },
+  {
+   "t": "2026-10-15T22:49:52Z",
+   "msg": "milestone 'lem:smn: efficient s-m-n': created (cd0cce7e-0ce1-45e6-9729-df57f83e1515), theorem a0923fc2-0140-4055-983c-acbc8bedc401"
+  },
+  {
+   "t": "2026-10-15T22:49:52Z",
+   "msg": "milestone 'lem:kleene: the efficient Kleene recursion theorem': created (a3238274-94fc-4c09-8985-d1f7d140cfc8), theorem ffd0fe4f-5869-4b83-8b2c-dec29abf539a"
+  },
+  {
+   "t": "2026-10-15T22:49:53Z",
+   "msg": "milestone 'thm:halting: halting reduces to the game value, given gap compression': created (3f60f63a-2c69-4870-9b1c-818ccd87d24c), theorem 8290a566-9c9e-4c8a-ad18-22f9d292e9d6"
+  },
+  {
+   "t": "2026-10-15T22:49:53Z",
+   "msg": "milestone 'thm:compression-target: a gap-preserving compression procedure exists': created (2ac4d4d9-9451-4f9f-bf9b-17fc804d7d2b), theorem None"
+  },
+  {
+   "t": "2026-10-15T22:49:53Z",
+   "msg": "milestone 'thm:introspection: an introspection stage for seven-level verifiers': created (b4c99d6d-21e7-462c-8e74-f87f5223e860), theorem ad7c754c-d110-4bcd-925d-bba46df98838"
+  },
+  {
+   "t": "2026-10-15T22:49:54Z",
+   "msg": "milestone 'thm:answer-reduction: an answer reduction stage for five-level verifiers': created (7d2075c0-e3c4-4a46-a8b1-2c333a6dc069), theorem 782fac86-587a-4954-ae00-f27c4c7c508d"
+  },
+  {
+   "t": "2026-10-15T22:49:54Z",
+   "msg": "milestone 'thm:parallel-repetition: a repetition stage for seven-level verifiers': created (5abafefc-6a08-4ec6-b8c3-c50335c3695d), theorem 3a2d03dc-4d4e-4266-a43d-b6e64873e04b"
+  },
+  {
+   "t": "2026-10-15T22:49:55Z",
+   "msg": "milestone 'cor:main-quantum: halting reduces to the entangled value': created (a6d107ea-2f4e-4f11-8a4f-dcb0a5196f23), theorem 04943909-2f72-407d-a1fe-1d81bb05ac8d"
+  },
+  {
+   "t": "2026-10-15T22:49:55Z",
+   "msg": "milestone 'cor:value-uncomputable: the game value is uncomputable': created (4b7ec400-77d3-4b50-a0bf-8d3cd7a3c1c5), theorem 7fa7e4a7-6d4a-4780-beb9-56cc44c541a4"
+  },
+  {
+   "t": "2026-10-15T22:49:55Z",
+   "msg": "milestone 'thm:mipstar-eq-re: MIP* = RE': created (1c717672-4380-41b8-9c85-a12877195d2e), theorem 91337971-2705-496b-8c51-616ba7c648bb"
   }
- ]
+ ],
+ "mission": {
+  "id": "6ff9eecb-d880-4866-b56a-aafcd2c60a92",
+  "name": "MIP* = RE",
+  "visibility": "public",
+  "main_theorem": "7f0a0737-afba-4747-84f7-09fe6d0e0c6a"
+ }
 }

@@ -270,9 +270,10 @@ def find_mission(sp, st):
     sys.exit(f"no live mission named {sp['name']!r} is visible to this account (not launched yet?)")
 
 
-def link_milestones(sp, st, path):
+def link_milestones(sp, st, path, dry=False):
     """Create or update the live mission's milestones from a JSON list of
-    {title, description_file, theorem_name, state_file (upload-state.json holding the theorem id)}."""
+    {title, description_file, theorem_name, state_file (upload-state.json holding the theorem id)}.
+    With dry=True the planned POST/PATCH calls are printed and nothing is sent."""
     spec_ = json.load(open(path, encoding="utf-8"))
     base = os.path.dirname(os.path.abspath(path))
     mid = find_mission(sp, st)
@@ -296,11 +297,15 @@ def link_milestones(sp, st, path):
             patch = {k: v for k, v in body.items() if k != "sort_order" and e.get(k) != v}
             if "theorem_id" in patch:
                 patch["reason"] = ms.get("reason", "linking the uploaded formalization of this milestone")
-            if patch:
+            if patch and dry:
+                log(f"[dry-run] milestone {ms['title']!r}: PATCH {sorted(patch)} (theorem {tid})")
+            elif patch:
                 code, d = up.request("PATCH", f"/milestones/{e['id']}", body=patch)
                 note(st, f"milestone {ms['title']!r}: PATCH {code}")
             else:
                 log(f"milestone {ms['title']!r}: unchanged")
+        elif dry:
+            log(f"[dry-run] milestone {ms['title']!r}: POST sort_order {i}, theorem {tid}, {len(desc)} chars")
         else:
             code, d = up.request("POST", f"/missions/{mid}/milestones", body=body)
             if code not in (200, 201):
@@ -366,7 +371,7 @@ def main():
     sp = spec()
     if a.name:
         sp["name"] = a.name
-    if a.dry_run:
+    if a.dry_run and not a.milestones:
         dry_run(sp)
         return
     st = load_state()
@@ -377,7 +382,7 @@ def main():
         status(sp, st)
         return
     if a.milestones:
-        link_milestones(sp, st, a.milestones)
+        link_milestones(sp, st, a.milestones, dry=a.dry_run)   # a dry run reads the mission, sends nothing
         return
     field_ids = choose_fields(sp, st, a.fields)
     pid = ensure_proposal(sp, st, field_ids)
