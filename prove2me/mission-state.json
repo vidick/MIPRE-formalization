@@ -34,12 +34,12 @@
    "quantum-information": {
     "id": "9ad58b00-0dcf-42d3-98d8-5cd472f9cecd",
     "name": "Quantum Information",
-    "mission_count": 105
+    "mission_count": 111
    },
    "quantum-error-correction": {
     "id": "c3d3e165-ea85-4d8e-8c90-195db45bfbb9",
     "name": "Quantum Error Correction",
-    "mission_count": 13
+    "mission_count": 14
    },
    "quantum-gravity": {
     "id": "4b0201b6-b23b-4480-a052-7912a9007f37",
@@ -59,12 +59,12 @@
    "complexity-theory": {
     "id": "3d5dcffe-9f61-4780-a1ac-4495e16c3fa5",
     "name": "Complexity Theory",
-    "mission_count": 108
+    "mission_count": 109
    },
    "theoretical-computer-science": {
     "id": "105f8c80-f763-4beb-822c-d9265917c2b1",
     "name": "Theoretical Computer Science",
-    "mission_count": 442
+    "mission_count": 453
    },
    "computational-geometry": {
     "id": "3314dc3e-4f6b-4ec0-a616-1beaa811066f",
@@ -94,7 +94,7 @@
    "information-theory": {
     "id": "45c5c44c-1954-42ba-9006-00ccfb16a9ae",
     "name": "Information Theory",
-    "mission_count": 50
+    "mission_count": 53
    }
   },
   "chosen": [
@@ -134,6 +134,34 @@
   {
    "t": "2026-10-14T09:34:20Z",
    "msg": "milestone 'recursive_compression': created"
+  },
+  {
+   "t": "2026-10-15T05:27:06Z",
+   "msg": "fields: ['quantum-information', 'complexity-theory']"
+  },
+  {
+   "t": "2026-10-15T05:27:07Z",
+   "msg": "proposal metadata synced (description, type, visibility, fields)"
+  },
+  {
+   "t": "2026-10-15T05:27:08Z",
+   "msg": "item Def_MIPRE_HaltingGameValue (definition): updated with read-back"
+  },
+  {
+   "t": "2026-10-15T05:27:08Z",
+   "msg": "item Thm_goal (theorem): updated with read-back"
+  },
+  {
+   "t": "2026-10-15T05:27:08Z",
+   "msg": "reference MIPRE.Cost.recursive_compression already in the proposal"
+  },
+  {
+   "t": "2026-10-15T05:27:09Z",
+   "msg": "goal = Thm_goal; order = ['Def_MIPRE_HaltingGameValue', 'Thm_goal', 'recursive_compression']"
+  },
+  {
+   "t": "2026-10-15T05:27:10Z",
+   "msg": "milestone 'recursive_compression': updated"
   }
  ]
 }

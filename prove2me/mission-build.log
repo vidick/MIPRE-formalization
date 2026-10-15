@@ -30,3 +30,35 @@ proposal 4939b1d4-c604-4734-8109-f0aef34ecc4c
   item        reference  MIPRE.Cost.recursive_compression  d51ddc9c-404f-4017-a03c-cb32d7dfd811
   milestone   0: None  (item d51ddc9c-404f-4017-a03c-cb32d7dfd811)
 review: prove2.me, signed in, homepage -> My missions -> the proposal; confirm each item, then Submit Proposal (a private proposal launches privately, with no moderator step)
+05:26:59 token refreshed (platform version 0.12.6)
+05:26:59 account thomasvidick
+05:26:59 network error on /fields: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)>; retrying in 5s
+05:27:06 fields: ['quantum-information', 'complexity-theory']
+05:27:07 proposal metadata synced (description, type, visibility, fields)
+05:27:08 item Def_MIPRE_HaltingGameValue (definition): updated with read-back
+05:27:08 item Thm_goal (theorem): updated with read-back
+05:27:08 reference MIPRE.Cost.recursive_compression already in the proposal
+05:27:09 goal = Thm_goal; order = ['Def_MIPRE_HaltingGameValue', 'Thm_goal', 'recursive_compression']
+05:27:10 milestone 'recursive_compression': updated
+proposal 4939b1d4-c604-4734-8109-f0aef34ecc4c
+  name        MIP* = RE
+  status      Draft    visibility public    type ResearchPaper
+  fields      ['complexity-theory', 'quantum-information']
+  main item   a8836d95-7962-4325-a3a5-4780eb059f5d
+  item        definition MIPRE_HaltingGameValue  56f3db5d-2e82-496b-97c7-1ac87fa1453d read-back
+  item        theorem    HaltingGameValue.halting_reduces_to_gameValue  a8836d95-7962-4325-a3a5-4780eb059f5d read-back
+  item        reference  MIPRE.Cost.recursive_compression  d51ddc9c-404f-4017-a03c-cb32d7dfd811
+  milestone   0: Lemma 5.1 (Marks, Nezhadi, Yuen): the recursive compression lemma  (item d51ddc9c-404f-4017-a03c-cb32d7dfd811)
+review: prove2.me, signed in, homepage -> My missions -> the proposal; confirm each item, then Submit Proposal (a private proposal launches privately, with no moderator step)
+05:27:13 token refreshed (platform version 0.12.6)
+05:27:14 account thomasvidick
+proposal 4939b1d4-c604-4734-8109-f0aef34ecc4c
+  name        MIP* = RE
+  status      Draft    visibility public    type ResearchPaper
+  fields      ['complexity-theory', 'quantum-information']
+  main item   a8836d95-7962-4325-a3a5-4780eb059f5d
+  item        definition MIPRE_HaltingGameValue  56f3db5d-2e82-496b-97c7-1ac87fa1453d read-back
+  item        theorem    HaltingGameValue.halting_reduces_to_gameValue  a8836d95-7962-4325-a3a5-4780eb059f5d read-back
+  item        reference  MIPRE.Cost.recursive_compression  d51ddc9c-404f-4017-a03c-cb32d7dfd811
+  milestone   0: Lemma 5.1 (Marks, Nezhadi, Yuen): the recursive compression lemma  (item d51ddc9c-404f-4017-a03c-cb32d7dfd811)
+review: prove2.me, signed in, homepage -> My missions -> the proposal; confirm each item, then Submit Proposal (a private proposal launches privately, with no moderator step)

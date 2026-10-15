@@ -394,3 +394,82 @@ Proved     ACCEPTED         MIPRE.Cost.Machine.univTProg_runs  15074767-b8f2-489
 Proved     ACCEPTED         MIPRE.Cost.exists_efficient_universal  7442bc35-0466-471f-8209-8c855b06851f
 Proved     ACCEPTED         MIPRE.Cost.exists_clocked_universal  1b53b891-32ae-4d62-a195-004aba1772fb
 theorem statuses: {'Proved': 60}
+05:26:28 token refreshed (platform version 0.12.6)
+05:26:29 account thomasvidick; licensing status of earlier contributions: not_required
+DAG roots to release (each with its dependency tree):
+   MIPRE.Cost.recursive_compression_halting 1745fe1d-8a35-447b-a469-1ea57ffa6842
+   MIPRE.Cost.compressibility_criterion_halting e69bd497-8c6c-4a1a-bc7a-958c702d5b5d
+   MIPRE.Cost.smn_polyTime a0923fc2-0140-4055-983c-acbc8bedc401
+re-run with --yes to publish; this cannot be undone
+05:26:31 token refreshed (platform version 0.12.6)
+05:26:32 account thomasvidick; licensing status of earlier contributions: not_required
+DAG roots to release (each with its dependency tree):
+   MIPRE.Cost.recursive_compression_halting 1745fe1d-8a35-447b-a469-1ea57ffa6842
+   MIPRE.Cost.compressibility_criterion_halting e69bd497-8c6c-4a1a-bc7a-958c702d5b5d
+   MIPRE.Cost.smn_polyTime a0923fc2-0140-4055-983c-acbc8bedc401
+05:26:32 make-public MIPRE.Cost.recursive_compression_halting: HTTP 200 {"theorem_id": "1745fe1d-8a35-447b-a469-1ea57ffa6842", "already_public": false, "made_public": ["0282f722-28c9-4418-9754-c2d84f2a499c", "078faea2-ad20-42c9-b6ee-d0aa25cfd885", "091850f9-f13a-4008-a79c-8b267518afd0", "0b1bd7df-624b-4209-a985-7f9efb5bd9b5", "1252f11f-cc5d-4096-b874-fe5da58c5937", "14265c44-cf21-4141-acd3-bc3612338665", "15074767-b8f2-4895-8fc9-3e26a95e8d4e", "1745fe1d-8a35-447b-a469
+05:26:33 make-public MIPRE.Cost.compressibility_criterion_halting: HTTP 200 {"theorem_id": "e69bd497-8c6c-4a1a-bc7a-958c702d5b5d", "already_public": false, "made_public": ["4342da49-7184-452f-a3ea-b1eff467ab3d", "43599427-3965-483a-b28f-73d2ee2b31da", "52bd11c1-10fc-48ca-91a6-8c9bbaeed2e3", "8e80a179-f014-4db1-a05c-36fe583c8040", "8ffe1422-d401-4f2c-a58d-2e03a9c6d780", "a1b6353c-f92c-418a-a1b6-d4d1b4eb6ada", "e69bd497-8c6c-4a1a-bc7a-958c702d5b5d"]}
+05:26:33 make-public MIPRE.Cost.smn_polyTime: HTTP 200 {"theorem_id": "a0923fc2-0140-4055-983c-acbc8bedc401", "already_public": false, "made_public": ["a0923fc2-0140-4055-983c-acbc8bedc401"]}
+05:26:38 token refreshed (platform version 0.12.6)
+05:26:38 account thomasvidick; licensing status of earlier contributions: not_required
+Proved     ACCEPTED         MIPRE.Cost.recursive_compression  347236a4-0cf5-4f17-a875-e63d838001f3
+Proved     ACCEPTED         MIPRE.Cost.Prog.searchProg_runs  4342da49-7184-452f-a3ea-b1eff467ab3d
+Proved     ACCEPTED         MIPRE.Cost.Prog.searchProg_halts_of  52bd11c1-10fc-48ca-91a6-8c9bbaeed2e3
+Proved     ACCEPTED         MIPRE.Cost.compressibility_criterion_nested  43599427-3965-483a-b28f-73d2ee2b31da
+Proved     ACCEPTED         MIPRE.Cost.compressibility_criterion_levels  a1b6353c-f92c-418a-a1b6-d4d1b4eb6ada
+Proved     ACCEPTED         MIPRE.Cost.compressibility_criterion  8ffe1422-d401-4f2c-a58d-2e03a9c6d780
+Proved     ACCEPTED         MIPRE.Cost.recursive_compression_halting  1745fe1d-8a35-447b-a469-1ea57ffa6842
+Proved     ACCEPTED         MIPRE.Cost.compressibility_criterion_halting  e69bd497-8c6c-4a1a-bc7a-958c702d5b5d
+Proved     ACCEPTED         MIPRE.Cost.Eval.deterministic  49db57a3-6102-4481-8b7b-02ce75007b88
+Proved     ACCEPTED         MIPRE.Cost.Eval.of_append_of_wellScoped  091850f9-f13a-4008-a79c-8b267518afd0
+Proved     ACCEPTED         MIPRE.Cost.Prog.bitAtBody_succ  193d0178-d63e-4e6d-81fb-632c5586ac9d
+Proved     ACCEPTED         MIPRE.Cost.Prog.bitAtLoop_runs  488e79b6-1d7c-47fc-bceb-ed40aa8f37c8
+Proved     ACCEPTED         MIPRE.Cost.Data.primrec_recD  93edee8e-1b57-436a-bf0a-ade63ffd9150
+Proved     ACCEPTED         MIPRE.Cost.Prog.ofCode_wellScoped  6031da83-cc6e-45d6-a4b5-28105d3eeeb3
+Proved     ACCEPTED         MIPRE.Cost.Prog.fixBody_runs  533cd753-e47f-4aca-9c1d-15aa5d5f10dc
+Proved     ACCEPTED         MIPRE.Cost.Prog.ofCode_sound  d9955825-eda3-446a-a2dc-2c651b5be70e
+Proved     ACCEPTED         MIPRE.Cost.Prog.ofCode_complete  8b78d72a-5929-4800-9f4e-184c290c6e45
+Proved     ACCEPTED         MIPRE.Cost.exists_compile  6f331a17-d5bb-4b7a-a166-f1dcf320b430
+Proved     ACCEPTED         MIPRE.Cost.mul_pow_le_two_pow  43e0ff5b-cc0a-456d-ad40-2cec742a7782
+Proved     ACCEPTED         MIPRE.Cost.exists_threshold  439ce6b2-b6c0-4d7d-aea2-6109d6e0e6aa
+Proved     ACCEPTED         MIPRE.Cost.Machine.getListProg_runs  7a7d68d3-c1db-44d3-81c5-1afd57b88de7
+Proved     ACCEPTED         MIPRE.Cost.Machine.dispatch_runs  0b1bd7df-624b-4209-a985-7f9efb5bd9b5
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepEvProg_runs  d6d68e15-3e45-4b09-bf72-9526fceb55e9
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepRetProg_runs_cons  d1a3e6be-d281-49ed-9754-a2e021368664
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepProg_runs  9a9db460-daf8-4813-b809-cfb7dbaac8a2
+Proved     ACCEPTED         MIPRE.Cost.Prog.kleeneProg_runs  39a41401-18f5-4749-be7c-d1ad95708600
+Proved     ACCEPTED         MIPRE.Cost.Prog.kleeneProg_halts_of  d84cc5b4-eb98-43dd-8242-a334082c2a31
+Proved     ACCEPTED         MIPRE.Cost.kleeneFix_runs_of  563c8476-2b25-4de9-afce-b583de563fb7
+Proved     ACCEPTED         MIPRE.Cost.efficient_fixed_point  ffd0fe4f-5869-4b83-8b2c-dec29abf539a
+Proved     ACCEPTED         MIPRE.Cost.Prog.revOntoProg_runs  26daaaed-c79d-4df0-8a5d-b80b66b5b14a
+Proved     ACCEPTED         MIPRE.Cost.Machine.eval_steps  eb6df8c7-b7fb-4e47-9a36-9a240d95b601
+Proved     ACCEPTED         MIPRE.Cost.Machine.eval_of_steps  3667c247-5d46-4994-8c50-6285f77d4f2c
+Proved     ACCEPTED         MIPRE.Cost.Machine.halts_iff  772d6b5b-5a20-471a-8ca5-aca3c32a3ce6
+Proved     ACCEPTED         MIPRE.Cost.Machine.eval_steps_bound  d9d7ba7e-63bd-47f3-98d9-d0f5c0fbb830
+Proved     ACCEPTED         MIPRE.Cost.Machine.size_toData_le  3606237b-7d9e-473e-bc06-eba4eb057fe4
+Proved     ACCEPTED         MIPRE.Cost.Machine.eval_steps_count  4e87e335-2562-4166-8eb1-55b0a61c5558
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepData_toData  6862437d-d97e-4811-9919-e1b351567e0c
+Proved     ACCEPTED         MIPRE.Cost.Prog.isZeroProg_runs  cc15c3b8-ff14-4fd5-bc79-98da1dfd5a98
+Proved     ACCEPTED         MIPRE.Cost.Prog.decLoop_runs  bfb6b598-2612-49e1-95de-b27f0ac2536b
+Proved     ACCEPTED         MIPRE.Cost.Prog.decProg_runs  19ed6a5b-e8a4-4adc-9720-53fffd9a2898
+Proved     ACCEPTED         MIPRE.Cost.Machine.mem_evalData_iff  edf441f8-0c97-462a-9a2d-1238fd93c478
+Proved     ACCEPTED         MIPRE.Cost.Prog.bitQueryProg_runs  14265c44-cf21-4141-acd3-bc3612338665
+Proved     ACCEPTED         MIPRE.Cost.isSuccinctDesc_hardcode  a3c4dc42-4c18-45a5-97e1-fc14eb9b0771
+Proved     ACCEPTED         MIPRE.Cost.hardcode_time  739338f1-5b0a-43c4-874b-a88d4820fce6
+Proved     ACCEPTED         MIPRE.Cost.hardcode_time_rev  47bee20e-a916-4611-956e-058033e889cc
+Proved     ACCEPTED         MIPRE.Cost.hardcode_size  8e80a179-f014-4db1-a05c-36fe583c8040
+Proved     ACCEPTED         MIPRE.Cost.smn_polyTime  a0923fc2-0140-4055-983c-acbc8bedc401
+Proved     ACCEPTED         MIPRE.Cost.Machine.interpLoop_runs  a9ac2d14-0548-48cc-8d77-71c99014c318
+Proved     ACCEPTED         MIPRE.Cost.Machine.interpLoop_rev  c4dddc05-5941-404d-9025-9fe5c455b925
+Proved     ACCEPTED         MIPRE.Cost.Machine.subProg_runs  fc7d9819-dee7-4575-8669-a56d23e04c0d
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepCostProg_ev  e110fe28-c620-476f-8f4c-0f378aeb53e5
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepCost_le_size  0282f722-28c9-4418-9754-c2d84f2a499c
+Proved     ACCEPTED         MIPRE.Cost.Machine.stepCostProg_runs  ef3ab1fe-fcea-4396-bd44-b0250d1e7a3f
+Proved     ACCEPTED         MIPRE.Cost.Machine.clockBody_prefix  38859d7f-8668-4896-b637-bfffaefc1a0d
+Proved     ACCEPTED         MIPRE.Cost.Machine.clockLoop_runs  5b8ce2c6-e9f2-41bd-9b94-e87b0de8ef51
+Proved     ACCEPTED         MIPRE.Cost.Machine.clockRun_of_final  27858064-d83e-42e3-967c-501ea03f25db
+Proved     ACCEPTED         MIPRE.Cost.Machine.clockRun_of_not  2b768f1e-f2aa-41c4-bc8a-ef3d8153d877
+Proved     ACCEPTED         MIPRE.Cost.Machine.univTProg_runs  15074767-b8f2-4895-8fc9-3e26a95e8d4e
+Proved     ACCEPTED         MIPRE.Cost.exists_efficient_universal  7442bc35-0466-471f-8209-8c855b06851f
+Proved     ACCEPTED         MIPRE.Cost.exists_clocked_universal  1b53b891-32ae-4d62-a195-004aba1772fb
+theorem statuses: {'Proved': 60}
