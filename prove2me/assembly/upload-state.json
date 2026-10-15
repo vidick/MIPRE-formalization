@@ -875,10 +875,10 @@
    "error_message": ""
   },
   "MIPRE.Halting.outDec_cost": {
-   "submitted_at": 1792092448.0375974,
+   "submitted_at": 1792093415.3058157,
    "http": 202,
-   "job_id": "953dcb1d-021e-4aaf-bb25-02540c116abc",
-   "status": "FAILED",
+   "job_id": "4b3cfedb-5b7d-4739-bdae-ff20a43d70ce",
+   "status": "QUEUED",
    "theorem_id": null,
    "error_message": "formal statement does not compile: DB error looking up import 'Definitions.Def_MIPRE_Foundations_Verifier': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   },
@@ -923,10 +923,10 @@
    "error_message": ""
   },
   "MIPRE.Halting.halting_reduces_to_gameValue_of": {
-   "submitted_at": 1792092529.3447962,
+   "submitted_at": 1792093415.8420115,
    "http": 202,
-   "job_id": "373ce54f-41bf-4f37-a431-1451338d9fbe",
-   "status": "FAILED",
+   "job_id": "1ea93195-ad25-43d2-8d40-1cd6ac85de71",
+   "status": "QUEUED",
    "theorem_id": null,
    "error_message": "formal statement does not compile: DB error looking up import 'Definitions.Def_MIPRE_Foundations_CL_Basic': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   },
