@@ -1811,6 +1811,62 @@
    "submitted_at": 1792095988.6406424,
    "http": 200,
    "submission_id": "f2deafaf-2174-4db7-a423-f83cc74ad10d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.decider_clause": {
+   "submitted_at": 1792096081.00345,
+   "http": 200,
+   "submission_id": "7f4bc90e-a95d-4bc7-8c12-6507316e967d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.lamOf_ge": {
+   "submitted_at": 1792096157.037087,
+   "http": 200,
+   "submission_id": "361992f6-ded2-439b-ad50-478677667012",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.exists_ansBound_le": {
+   "submitted_at": 1792096233.7110567,
+   "http": 200,
+   "submission_id": "a1e0ec98-3794-4921-9cd2-656ce8c1db7b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.exists_compressorSpec": {
+   "submitted_at": 1792096304.2883432,
+   "http": 200,
+   "submission_id": "4cfbdb18-044b-4d33-9f12-e6d1e6a74ae6",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.freeze_hasPerfectPCC": {
+   "submitted_at": 1792096388.7126951,
+   "http": 200,
+   "submission_id": "147f6951-594b-413f-9ef1-137dc5974c48",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.length_filter_bitStrsOfLen": {
+   "submitted_at": 1792096430.1430702,
+   "http": 200,
+   "submission_id": "c571857c-d676-47ea-b8be-fd8b9af2fdf7",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.mu_clause": {
+   "submitted_at": 1792096494.6976788,
+   "http": 200,
+   "submission_id": "21f85c83-54e3-4cbb-9ef5-14da0ab480cf",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.mem_accListW_iff": {
+   "submitted_at": 1792096640.0012136,
+   "http": 200,
+   "submission_id": "6491c1dd-4ea9-4a45-b4bf-36206b6c4f80",
    "status": "PENDING"
   }
  },
