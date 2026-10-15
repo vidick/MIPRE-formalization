@@ -2164,6 +2164,50 @@
    "submitted_at": 1792101671.5510046,
    "http": 200,
    "submission_id": "e2a8dd34-edda-44ee-bb7a-0bbb28cb7bbc",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.valStar_le_of_not_halts": {
+   "submitted_at": 1792101766.7334437,
+   "http": 200,
+   "submission_id": "6f8a5f31-bbc3-419b-b6e3-483a5209c06d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.classV_values": {
+   "submitted_at": 1792101885.9168532,
+   "http": 200,
+   "submission_id": "c9bdfcc1-4f87-459f-9886-d658eb92fec2",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.re_subset_mipstar_of": {
+   "submitted_at": 1792102003.900929,
+   "http": 200,
+   "submission_id": "616b2ba6-6c1e-40f0-840d-11cb42191f55",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.mipstar_eq_re_of": {
+   "submitted_at": 1792102110.8167853,
+   "http": 200,
+   "submission_id": "76ccf6c9-6058-4c30-8ce4-26343066dac8",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.nonempty_seven": {
+   "status": "LEAF_OPEN"
+  },
+  "MIPRE.AnswerReduction.nonempty_five": {
+   "status": "LEAF_OPEN"
+  },
+  "MIPRE.Repetition.nonempty_seven": {
+   "status": "LEAF_OPEN"
+  },
+  "MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction": {
+   "submitted_at": 1792102237.627454,
+   "http": 200,
+   "submission_id": "02e6e1ec-38ae-4709-9c1e-9464e208b8ed",
    "status": "PENDING"
   }
  },
