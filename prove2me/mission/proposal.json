@@ -1,7 +1,7 @@
 {
  "name": "MIP* = RE",
  "mission_type": "ResearchPaper",
- "visibility": "private",
+ "visibility": "public",
  "description_file": "description.md",
  "fields": {
   "queries": ["quantum", "complexity", "comput", "logic", "operator", "information"],
