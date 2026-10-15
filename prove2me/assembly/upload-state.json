@@ -1736,6 +1736,82 @@
    "submission_id": "e61738a7-cb43-46e6-a74e-0194f10d9d82",
    "status": "ACCEPTED",
    "error_message": ""
+  },
+  "MIPRE.Cost.Prog.canonLoop_runs": {
+   "submitted_at": 1792095438.916456,
+   "http": 200,
+   "submission_id": "4799607e-9e65-4b1a-b95c-6ac248d3ffb0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.canonWalk_iff": {
+   "submitted_at": 1792095471.7766087,
+   "http": 200,
+   "submission_id": "5367d972-3781-4b5f-9582-97f951a2b7be",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.canonWalk_eq_isCanonBin": {
+   "submitted_at": 1792095504.4998884,
+   "http": 200,
+   "submission_id": "3f98fd8c-9adb-4c35-ac6a-248525b6d860",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.normBinProg_runs": {
+   "submitted_at": 1792095543.1660304,
+   "http": 200,
+   "submission_id": "5c149a48-fe99-4f7c-8930-a93043bd96ff",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.parseLoop_runs": {
+   "submitted_at": 1792095576.02396,
+   "http": 200,
+   "submission_id": "7d145bc1-00d6-4117-ae79-0303a78c27d0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.parseProg_runs": {
+   "submitted_at": 1792095609.3148234,
+   "http": 200,
+   "submission_id": "26faf22b-be60-4988-88b3-18c3186abda3",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.prepProg_runs": {
+   "submitted_at": 1792095647.4807394,
+   "http": 200,
+   "submission_id": "4d655a21-56ee-4074-baa1-778422f9fdc3",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.haltProg_runs_inv": {
+   "submitted_at": 1792095726.3241851,
+   "http": 200,
+   "submission_id": "cc6b6cf4-4088-48df-9a59-6e46b414262b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.esize_wrapCore_le": {
+   "submitted_at": 1792095807.7216854,
+   "http": 200,
+   "submission_id": "0a152dd5-f7b5-437c-990f-d550acda34ee",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.outDec_cost": {
+   "submitted_at": 1792095883.3136518,
+   "http": 200,
+   "submission_id": "4277fb7b-a599-4a2b-8ab7-2cf52c4197e6",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.wrapCoreCost_le_decZ": {
+   "submitted_at": 1792095988.6406424,
+   "http": 200,
+   "submission_id": "f2deafaf-2174-4db7-a423-f83cc74ad10d",
+   "status": "PENDING"
   }
  },
  "log": []
