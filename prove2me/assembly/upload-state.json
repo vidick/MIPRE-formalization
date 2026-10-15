@@ -1965,6 +1965,48 @@
    "submitted_at": 1792097829.998542,
    "http": 200,
    "submission_id": "800712d6-3416-4626-a112-91c9b069cbd3",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.hasPerfectPCC_of_accepts_iff": {
+   "submitted_at": 1792097905.9051695,
+   "http": 200,
+   "submission_id": "a82c3c48-f87c-475b-bf6a-b64a2f054152",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.halting_reduction_both_of": {
+   "submitted_at": 1792097943.9979556,
+   "http": 200,
+   "submission_id": "300ddf83-9e23-4b02-9159-6eb735c8006a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.halting_reduces_to_gameValue_of": {
+   "submitted_at": 1792098076.0515602,
+   "http": 200,
+   "submission_id": "b3ede27f-caa7-4083-92d6-b04df6dc515b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.halting_reduction_quantum_of": {
+   "submitted_at": 1792098160.8036244,
+   "http": 200,
+   "submission_id": "b16f79a0-a641-4424-8e35-ce78974b6d85",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.gameValue_uncomputable_of": {
+   "submitted_at": 1792098277.264388,
+   "http": 200,
+   "submission_id": "380acf0c-54c6-4341-927f-eb7e93193c1d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.quantumValue_uncomputable_of": {
+   "submitted_at": 1792098417.8778536,
+   "http": 200,
+   "submission_id": "897b6220-c11b-43f2-bccd-3a90c815acb6",
    "status": "PENDING"
   }
  },
