@@ -2306,7 +2306,15 @@
    "submitted_at": 1792104074.687903,
    "http": 200,
    "submission_id": "9f4dad41-8491-438d-bb41-32f1e9e16278",
-   "status": "PENDING"
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.mipstar_eq_re": {
+   "submitted_at": 1792104185.8764951,
+   "http": 200,
+   "submission_id": "36f82576-d43e-439a-8137-359dee463eff",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
   }
  },
  "log": []
