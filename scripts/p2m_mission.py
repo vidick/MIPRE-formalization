@@ -193,6 +193,8 @@ def ensure_proposal(sp, st, field_ids):
     code, d = up.request("PATCH", f"/mission-proposals/{pid}", body=body)
     if code != 200:
         sys.exit(f"PATCH /mission-proposals/{pid} failed: {code} {str(d)[:600]}")
+    st["proposal"].update({"status": d.get("status", st["proposal"].get("status")),
+                           "visibility": d.get("visibility", sp["visibility"])})
     note(st, "proposal metadata synced (description, type, visibility" + (", fields)" if field_ids else ")"))
     return pid
 
@@ -273,6 +275,7 @@ def status(sp, st):
         title = ms.get("milestone_title") or ms.get("title")
         print(f"  milestone   {ms.get('sort_order')}: {title}  (item {ms.get('item_id')})")
     st["proposal"]["status"] = d.get("status")
+    st["proposal"]["visibility"] = d.get("visibility")
     save_state(st)
     print("review: prove2.me, signed in, homepage -> My missions -> the proposal; confirm each item, then Submit Proposal"
           " (a private proposal launches privately, with no moderator step)")

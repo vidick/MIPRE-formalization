@@ -285,6 +285,17 @@ mission is complete when the target is proved. So the granularity question of th
 section is settled in favour of the graph: the compression tree is released and linked, not
 hidden, and the proposal's visibility is changed to public (one field, while it is a Draft).
 
+Done on 2026-10-15 at 05:27 UTC from a child session holding the key (`prove2me/upload.log`,
+`prove2me/mission-build.log`, commit `3812b54`): `make-public` on the three roots returned HTTP 200
+each and published 74 + 7 + 1 = 82 records (`recursive_compression_halting`,
+`compressibility_criterion_halting` and `smn_polyTime` with their trees: the 60 theorems and the 22
+definition bundles), all still Proved; the proposal `4939b1d4-…` was changed to `public` and
+re-synced (the platform's read-back in the log says `visibility public`; `mission-state.json` still
+shows the pre-change value because the builder recorded visibility before its PATCH, fixed in the
+script, and the next `--status` run refreshes it), status `Draft`, fields `complexity-theory` and
+`quantum-information`, the milestone in place. Nothing was submitted or launched: that is the
+maintainer's click on the website.
+
 Facts for the top-down upload, measured at `70cbf1c` (the main theorem is proved there:
 `MainTheorem.lean` has no `sorry`): the proof closure is 1,188 modules and 404,292 lines, with
 548 modules under `Background/` and the `MIPStarRE` dependency imported from `LIDT/`. The first
