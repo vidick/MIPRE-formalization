@@ -19,11 +19,13 @@ TAGS = {"computability", "complexity-theory", "turing-machines", "polynomial-tim
         "gap-compression", "game-value", "synchronous-games", "entangled-strategies", "bit-strings",
         "list-programs", "binary-arithmetic", "semidecidability", "tabulation", "pcc-strategies"}
 
-def check_text(label, t, minlen=120):
+def check_text(label, t, minlen=120, maxlen=2500):
     probs = []
     if not isinstance(t, str) or len(t) < minlen:
         probs.append(f"{label}: too short ({len(t) if isinstance(t, str) else t})")
         return probs
+    if len(t) > maxlen:
+        probs.append(f"{label}: too long ({len(t)} > {maxlen})")
     if t.count("$") % 2:
         probs.append(f"{label}: odd number of $")
     if re.search(r"\\\\[a-zA-Z]", t):
@@ -51,7 +53,7 @@ for n in tree["nodes"]:
     if len(o.get("theorem_title", "")) > 200 or len(o.get("theorem_title", "")) < 10:
         problems.append(f"{name}: title length {len(o.get('theorem_title',''))}")
     problems += check_text(f"{name}.statement", o.get("natural_language_statement", ""))
-    problems += check_text(f"{name}.explanation", o.get("explanation", ""), 80)
+    problems += check_text(f"{name}.explanation", o.get("explanation", ""), 80, 50000)
     if "**Formalization Note**" not in o.get("natural_language_statement", ""):
         problems.append(f"{name}: no Formalization Note")
     if "$$" not in o.get("natural_language_statement", ""):
@@ -84,6 +86,10 @@ for b in tree["bundles"]:
         if k not in o:
             problems.append(f"{name}: missing {k}")
     problems += check_text(f"{name}.statement", o.get("natural_language_statement", ""))
+    if len(o.get("definition_title", "")) > 200 or len(o.get("definition_title", "")) < 10:
+        problems.append(f"{name}: title length {len(o.get('definition_title',''))}")
+    if "**Formalization Note**" not in o.get("natural_language_statement", "").replace("**Formalization Note.**", "**Formalization Note**"):
+        problems.append(f"{name}: no Formalization Note")
     bad = [t for t in o.get("tags", []) if t not in TAGS]
     if bad or not o.get("tags"):
         problems.append(f"{name}: tags {o.get('tags')}")
