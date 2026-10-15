@@ -451,8 +451,112 @@
   "MIPRE_Foundations_Cost_BinaryCompare": {
    "submitted_at": 1792089954.9367268,
    "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "f1e4c600-5f4d-42ab-afb3-9755971da26d",
+   "theorem_id": "ffb2f40d-6f3c-4251-a6b9-fc10cca00039",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_ManyOne": {
+   "submitted_at": 1792089982.2345676,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "b2abd81e-ec79-49c9-b217-129aaeda6411",
+   "theorem_id": "580bb4bd-3772-42c4-ac70-b5dc255b3c41",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_SizeProgram": {
+   "submitted_at": 1792090013.4203234,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "3c50ccf9-68d1-4279-ab2c-ea7e2c1fe690",
+   "theorem_id": "4c88e3cd-893c-40a6-af22-efb2ed4a7434",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_PolyBounded": {
+   "submitted_at": 1792090044.9274368,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "3274bd42-abd5-459b-9dcf-2e57fe07ba34",
+   "theorem_id": "2aa30def-46e1-4874-9431-dcfc098f8afe",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_LambdaBound": {
+   "submitted_at": 1792090063.2576497,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "ddc86bd5-5018-4674-a9fe-140722cd8a31",
+   "theorem_id": "1da96623-614a-43eb-a6d1-0933afd65055",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Absorb": {
+   "submitted_at": 1792090072.6703174,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "317dffed-80e7-4fe4-803e-505e1a1be10e",
+   "theorem_id": "09534cd3-5434-44e5-a88a-e53aea78ae4c",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_CostBudget": {
+   "submitted_at": 1792090090.78657,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "140dc899-62e9-45ff-9cc6-2093bd50a8ee",
+   "theorem_id": "ce78c537-525c-4acf-a7d2-f9c3f4ea727a",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Instantiation": {
+   "submitted_at": 1792090122.092909,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "38386237-2a7d-4de2-b56b-b0f73566c006",
+   "theorem_id": "b6039a26-6e6a-4244-a520-1b82f6b00e6b",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Serial": {
+   "submitted_at": 1792090227.8703008,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "712ff71d-528c-4500-b7de-bb847d08c976",
+   "theorem_id": "80334891-fa3a-49cc-a526-19f6bdf7610e",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Semidecider": {
+   "submitted_at": 1792090255.1411226,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "87f65f91-feb2-482f-925d-31982cde397e",
+   "theorem_id": "13e8776f-e409-4c2b-8525-e847685d8d00",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_WrapperCost": {
+   "submitted_at": 1792090353.6278756,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "5bc67717-f3c3-4505-b869-2bb5e21c09ca",
+   "theorem_id": "337c33d8-2e8d-4ed7-9e60-6e239e963e74",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Strings": {
+   "submitted_at": 1792090389.5195348,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "e27266ce-72c8-4ef9-92c5-bfdd1074b7af",
+   "theorem_id": "e52ba689-950e-4be7-859b-a2dc3464a8d4",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Reduction": {
+   "submitted_at": 1792090443.5155053,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "921b8eab-a7ba-4739-85e4-c7e3421d9455",
+   "theorem_id": "f8664a89-6087-44a6-8dbe-dd03f614add3",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Compressor": {
+   "submitted_at": 1792090532.627428,
+   "http": 202,
    "status": "PENDING",
-   "job_id": "f1e4c600-5f4d-42ab-afb3-9755971da26d"
+   "job_id": "0e48aed5-7a3f-4d4c-ac48-e36b381f70a0"
   }
  },
  "theorems": {},
