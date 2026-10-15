@@ -77,7 +77,9 @@ slug = lambda n: n.replace(".", "_")
 generated, items = [], []
 def emit(rel, text):
     fn = f"{WS}/{rel}"
-    open(fn, "w", encoding="utf-8").write(text); generated.append(rel)
+    if not (os.path.exists(fn) and open(fn, encoding="utf-8").read() == text):
+        open(fn, "w", encoding="utf-8").write(text)
+    generated.append(rel)
 
 # ---------- the three leaves ----------
 LEAVES = [
