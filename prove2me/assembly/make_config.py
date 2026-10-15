@@ -57,6 +57,9 @@ cfg = {
     "published_bundles": [
         {"module": "MIPRE.HaltingGameValue", "definition_name": "MIPRE_HaltingGameValue", "kept": "all"}
     ],
+    "blueprint_seeds": False,
+    "force_blueprint_nodes": False,
+    "renames": {"MIPRE.Halting.classV_game_μ": "MIPRE.Halting.classV_game_mu"},
 }
 json.dump(cfg, open(f"{REPO}/prove2me/assembly/config.json", "w", encoding="utf-8"), indent=1)
 print(f"blueprint-named declarations in the closure: {len(blueprint)}; wrote prove2me/assembly/config.json")

@@ -49,6 +49,12 @@ DEFAULT_CFG = {
     # already published content: an earlier tree.json (its nodes and bundles) and extra bundles
     "published_tree": None,
     "published_bundles": [],   # [{"module": ..., "definition_name": ..., "kept": "all" | [names]}]
+    # the 2026-10-12 run seeded reachability with the blueprint names and forced them to be nodes;
+    # a layer with hundreds of blueprint names uses them as a promotion signal only
+    "blueprint_seeds": True,
+    "force_blueprint_nodes": True,
+    # platform names must be ASCII identifiers: {"old.full.name": "new.full.name"}
+    "renames": {},
 }
 CFG = dict(DEFAULT_CFG)
 if os.environ.get("P2M_CONFIG"):
@@ -194,8 +200,11 @@ def main():
     def rows_of_unit(uid):
         return [r["name"] for r in units[uid]["rows"]]
     extra = sorted(n for n in BLUEPRINT_NAMES if n in by_name and n not in TARGETS)
-    print("blueprint-named declarations added as targets:", len(extra))
-    TARGETS.extend(extra)
+    if CFG["blueprint_seeds"]:
+        print("blueprint-named declarations added as targets:", len(extra))
+        TARGETS.extend(extra)
+    else:
+        print("blueprint-named declarations in the closure (promotion signal only):", len(extra))
     seeds = list(TARGETS) + list(DEFMAT_TARGETS) + [r["name"] for r in rows if r["isInstance"]]
     missing_targets = [t for t in TARGETS + DEFMAT_TARGETS if t not in by_name]
     reach = set()
@@ -306,6 +315,7 @@ def main():
             embedded.add(uid)
     reach_units |= embedded
     # closure: bundles may not import sorry stubs, so bodies of bundle content stay in bundles
+    bundle_node_imports = collections.defaultdict(set)  # module -> published nodes its bundle imports
     changed = True
     while changed:
         changed = False
@@ -314,8 +324,10 @@ def main():
                 if v in avail_units:
                     continue
                 if v in pubnode_units:
-                    raise RuntimeError(f"bundle content {units[uid]['name']} depends on the published node {units[v]['name']}: "
-                                       "a bundle may not import a theorem stub; classify by hand")
+                    # a published node is Proved on the platform, so a bundle may import its theorem
+                    # (the platform rejects only imports of theorems that are not yet Proved)
+                    bundle_node_imports[units[uid]["module"]].add(v)
+                    continue
                 if units[v]["is_thm"]:
                     if v not in embedded:
                         embedded.add(v); changed = True
@@ -327,7 +339,8 @@ def main():
     # theorems: node / inline
     thm_units = [uid for uid in reach_units if units[uid]["is_thm"] and uid not in embedded
                  and uid not in avail_units and uid not in pubnode_units]
-    nodes = set(uid for uid in thm_units if units[uid]["name"] in TARGETS)
+    forced = set(TARGETS) | (BLUEPRINT_NAMES if CFG["force_blueprint_nodes"] else set())
+    nodes = set(uid for uid in thm_units if units[uid]["name"] in forced)
     for uid in thm_units:
         u = units[uid]
         if u["is_private"]:
@@ -405,9 +418,10 @@ def main():
     # every published bundle whose module is in the closure is importable content
     published_bundles = {m: pub_bundles[m]["definition_name"] for m in modules if m in pub_bundles}
 
+    RENAMES = CFG.get("renames", {})
     def slug(name):
-        return name.replace(".", "_")
-    bad_names = sorted(units[uid]["name"] for uid in nodes if not re.fullmatch(r"[A-Za-z0-9_.]+", units[uid]["name"]))
+        return RENAMES.get(name, name).replace(".", "_")
+    bad_names = sorted(units[uid]["name"] for uid in nodes if not re.fullmatch(r"[A-Za-z0-9_.]+", RENAMES.get(units[uid]["name"], units[uid]["name"])))
 
     # ---- report ----
     def nm(uid):
@@ -421,6 +435,8 @@ def main():
     print(f"published nodes reached {len(reach_pub_nodes)}, published bundle declarations reached {len(reach_avail)}")
     print(f"def-material {len(defmat)}, embedded theorems {len(embedded)}, nodes {len(nodes)}, inline {len(inline)}, proof-side defs {len(proofdefs)}")
     print(f"bundles: new {len(new_bundles)}, delta {len(delta_bundles)} (modules with a published bundle that lacks something needed)")
+    for m, vs in sorted(bundle_node_imports.items()):
+        print(f"  bundle of {m.split('.')[-1]} imports published theorems: {sorted(nm(v).split('.')[-1] for v in vs)}")
     for m in bundle_modules:
         us = [uid for uid in bundle_units if units[uid]["module"] == m]
         lines = sum(units[uid]["span_lines"] for uid in us)
@@ -464,6 +480,7 @@ def main():
         "delta_bundles": delta_bundles,
         "published_bundles": published_bundles,
         "published_nodes": {uid: pub_nodes[units[uid]["name"]] for uid in reach_pub_nodes},
+        "bundle_imported_nodes": {m: sorted(pub_nodes[units[v]["name"]] for v in vs) for m, vs in bundle_node_imports.items()},
         "units": {uid: {
             "id": uid, "module": u["module"], "name": u["name"], "kind": u["kind"], "is_thm": u["is_thm"],
             "is_instance": u["is_instance"], "is_private": u["is_private"], "prooflines": u["prooflines"],
@@ -475,6 +492,7 @@ def main():
         "nodes": sorted(nodes, key=lambda uid: (units[uid]["module"], units[uid]["decl"]["declStart"]["offset"])),
         "composition": comp,
         "slugs": {**{uid: slug(units[uid]["name"]) for uid in nodes}, **{uid: pub_nodes[units[uid]["name"]] for uid in reach_pub_nodes}},
+        "renames": RENAMES,
     }
     json.dump(plan, open(OUT, "w"), indent=1)
     print("wrote", OUT)
