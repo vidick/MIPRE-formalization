@@ -1692,8 +1692,50 @@
    "submitted_at": 1792094818.0622513,
    "http": 200,
    "submission_id": "c7d58337-c142-4c66-949b-9e6d68648772",
-   "status": "PENDING",
-   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Foundations_Cost_FromPartrec': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.readLoop_runs": {
+   "submitted_at": 1792094966.2383037,
+   "http": 200,
+   "submission_id": "eec076e8-52e3-41b0-847d-04f816f13836",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.readProg_runs": {
+   "submitted_at": 1792095068.6149828,
+   "http": 200,
+   "submission_id": "883e72b1-8f92-44ad-a4a1-b459960f6d25",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.size_sum_stackStep_le": {
+   "submitted_at": 1792095160.062965,
+   "http": 200,
+   "submission_id": "8e53a893-1254-495b-ab33-ff0646829c3b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.encode_of_decode_bitStr": {
+   "submitted_at": 1792095188.4760606,
+   "http": 200,
+   "submission_id": "6261f34b-8119-4e40-98a7-8c3049d4794d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.encode_natOf": {
+   "submitted_at": 1792095251.7460263,
+   "http": 200,
+   "submission_id": "b7ef7bfa-9f61-4ddf-8627-363a8517402d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.esize_frozen_le": {
+   "submitted_at": 1792095319.0345955,
+   "http": 200,
+   "submission_id": "e61738a7-cb43-46e6-a74e-0194f10d9d82",
+   "status": "ACCEPTED",
+   "error_message": ""
   }
  },
  "log": []
