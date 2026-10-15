@@ -2243,7 +2243,36 @@
    "submitted_at": 1792102879.6173854,
    "http": 200,
    "submission_id": "94610963-f3d0-4d18-93d5-2fed9b2f95d2",
-   "status": "PENDING"
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.re_subset_mipstar_of_answerReduction": {
+   "submitted_at": 1792102994.7896733,
+   "http": 200,
+   "submission_id": "651fa492-8528-4f06-840b-8e9057aeb4a6",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.mipstar_eq_re_of_answerReduction": {
+   "submitted_at": 1792103082.3011518,
+   "http": 200,
+   "submission_id": "a6b4984b-f8be-414d-825c-819a3332ea07",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "HaltingGameValue.halting_reduces_to_gameValue": {
+   "submitted_at": 1792103198.023163,
+   "http": 200,
+   "submission_id": "c16047ef-3bf7-4beb-8c30-8ee0c6399b38",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.halting_reduction_quantum": {
+   "submitted_at": 1792103338.5274968,
+   "http": 200,
+   "submission_id": "bffc56c8-f647-42a9-8299-b1c5e4f825fc",
+   "status": "ERROR",
+   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Foundations_Pipeline_Introspection': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
   }
  },
  "log": []
