@@ -96,7 +96,7 @@ def log(msg):
     print(time.strftime("%H:%M:%S"), msg, flush=True)
 
 
-def request(method, path, body=None, params=None, multipart=None, retries=5):
+def request(method, path, body=None, params=None, multipart=None, retries=8):
     url = f"{API}{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
@@ -138,6 +138,14 @@ def request(method, path, body=None, params=None, multipart=None, retries=5):
                 log(f"429 rate limited on {path}; sleeping 60s")
                 time.sleep(60)
                 continue
+            # the host's security checkpoint answers 403 with an HTML page in place of the API
+            # (seen 2026-10-15, "Vercel Security Checkpoint"); it clears on its own, so wait it out
+            if e.code in (403, 502, 503, 504) and "raw" in d and attempt < retries - 1:
+                wait = min(30 * 2 ** attempt, 600)
+                kind = "security checkpoint" if "Security Checkpoint" in txt else "non-API response"
+                log(f"{e.code} {kind} on {path}; retrying in {wait}s")
+                time.sleep(wait)
+                continue
             if e.code >= 500 and attempt < retries - 1:
                 log(f"{e.code} on {path}; retrying in {5 * (attempt + 1)}s")
                 time.sleep(5 * (attempt + 1))
@@ -145,8 +153,9 @@ def request(method, path, body=None, params=None, multipart=None, retries=5):
             return e.code, d
         except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
             if attempt < retries - 1:
-                log(f"network error on {path}: {e}; retrying in {5 * (attempt + 1)}s")
-                time.sleep(5 * (attempt + 1))
+                wait = min(5 * 2 ** attempt, 300)
+                log(f"network error on {path}: {e}; retrying in {wait}s")
+                time.sleep(wait)
                 continue
             raise
     return 599, {"error": "retries exhausted"}
