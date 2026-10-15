@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """Merge and check the writers' metadata batches into prove2me/metadata.json."""
-import json, re, sys, os, glob
+import argparse, json, re, sys, os, glob
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
+ap = argparse.ArgumentParser(description="merge meta_out_*.json writer packets into metadata.json")
+ap.add_argument("out", nargs="?", default=None, help="output path (default: <tree dir>/metadata.json)")
+ap.add_argument("--tree", default=None, help="tree directory holding tree.json, glue.json and the meta_out_* files "
+                "(default: the P2M_CONFIG tree directory, else the p2m scratch directory)")
+args = ap.parse_args()
 # with P2M_CONFIG: the tree directory's tree.json (+ glue.json items) and meta_out_* packets
 CFG = json.load(open(os.environ["P2M_CONFIG"], encoding="utf-8")) if os.environ.get("P2M_CONFIG") else None
-A = os.path.dirname(CFG["tree_out"]) if CFG else S
-OUT = sys.argv[1] if len(sys.argv) > 1 else f"{A}/metadata.json"
-tree = json.load(open(CFG["tree_out"] if CFG else f"{S}/tree.json", encoding="utf-8"))
-if CFG and os.path.exists(f"{A}/glue.json"):
+A = args.tree if args.tree else (os.path.dirname(CFG["tree_out"]) if CFG else S)
+OUT = args.out if args.out else f"{A}/metadata.json"
+tree = json.load(open(f"{A}/tree.json", encoding="utf-8"))
+if os.path.exists(f"{A}/glue.json"):
     for g in json.load(open(f"{A}/glue.json", encoding="utf-8"))["items"]:
         tree["nodes"].append({"theorem_name": g["theorem_name"]})
 TAGS = {"computability", "complexity-theory", "turing-machines", "polynomial-time", "undecidability",
