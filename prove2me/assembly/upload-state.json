@@ -367,6 +367,92 @@
    "job_id": "26514e07-9db8-4ff3-a7e4-88aacc8113ba",
    "theorem_id": "a1f99f09-880a-4580-9059-6fcafa9d02cf",
    "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Wrapper": {
+   "submitted_at": 1792089394.0737498,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "ab738f0c-f153-4c67-bed1-020a8e0a5e66",
+   "theorem_id": "7240173e-c73c-43be-9ee7-72d1d041a814",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Enumerate": {
+   "submitted_at": 1792089452.688173,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "701e4b0a-ca9d-48ab-be0a-44ab06c570d0",
+   "theorem_id": "99d6c4fc-5afd-49ea-a108-4831cbcc5b96",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ClassMIPStar": {
+   "submitted_at": 1792089523.9566886,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "36ef475c-b2b2-45c2-b59e-8f4e9d42a7ea",
+   "theorem_id": "cd2529e9-7880-4b65-a9e0-e82b046e56ed",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_BoundedEval": {
+   "submitted_at": 1792089642.6995127,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "95de9339-c3a3-476c-937f-6f6d44b1500e",
+   "theorem_id": "846cff3c-26b6-482d-baee-b262d61e97d0",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Tabulate": {
+   "submitted_at": 1792089669.9324005,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "5fdac96e-b354-40cf-8e6b-2297c35e4dee",
+   "theorem_id": "d2ed562b-6ba6-445e-ac79-f019869fdf33",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_ClassMIPStarTab": {
+   "submitted_at": 1792089747.9056563,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "5b1d3df7-1720-4b4d-bd49-b51701a08668",
+   "theorem_id": "8eb39621-1d3d-4572-878d-424e922d62c7",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Fold": {
+   "submitted_at": 1792089871.9865158,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "924c07c2-ae89-4c19-bd1f-9d17782357f9",
+   "theorem_id": "a4df54cd-d936-4dbd-ad5b-1547d85a95dc",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Binary": {
+   "submitted_at": 1792089890.2108846,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "07c2b23f-aaa9-42d9-a3a0-b555a38812ce",
+   "theorem_id": "c15a8740-b035-4df5-92d0-2580b45c5b5a",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_Reader": {
+   "submitted_at": 1792089913.0254498,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "a0818c57-020c-404b-8b4d-b37eb63b6f57",
+   "theorem_id": "a4e67a86-8ae6-47cb-8d9b-059411df0d85",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_BinaryArithmetic": {
+   "submitted_at": 1792089936.6039348,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "01541709-8c7b-4c98-a79d-3f5ba9751d66",
+   "theorem_id": "80ef1d4c-98f7-49d6-b9e7-181d569a06d1",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Cost_BinaryCompare": {
+   "submitted_at": 1792089954.9367268,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "f1e4c600-5f4d-42ab-afb3-9755971da26d"
   }
  },
  "theorems": {},
