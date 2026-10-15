@@ -1,0 +1,258 @@
+[
+ {
+  "kind": "glue-unconditional",
+  "theorem_name": "HaltingGameValue.halting_reduces_to_gameValue",
+  "formal_statement": "theorem HaltingGameValue.halting_reduces_to_gameValue : HaltingReducesToGameValue := by sorry",
+  "preamble_opens": [
+   "open MIPRE"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/MainTheorem.lean#L33-L35",
+  "source_path": "MIPRE/MainTheorem.lean",
+  "lines": [
+   33,
+   35
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "thm:main",
+    "env": "theorem",
+    "title": "Halting reduces to the game value; Theorem 12.2 of~\\cite{JNVWY20},\nsynchronous form",
+    "file": "07_main_theorem.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction",
+   "MIPRE.AnswerReduction.nonempty_five"
+  ],
+  "stub_published": true,
+  "solution_file": "Solutions/Sol_HaltingGameValue_halting_reduces_to_gameValue.lean"
+ },
+ {
+  "kind": "glue-unconditional",
+  "theorem_name": "MIPRE.Halting.halting_reduction_quantum",
+  "formal_statement": "theorem MIPRE.Halting.halting_reduction_quantum :\n    ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧\n      ∀ pc : Nat.Partrec.Code,\n        (HaltingGameValue.HaltsOnEmptyInput pc → quantumValue (g pc).game = 1) ∧\n        (¬ HaltingGameValue.HaltsOnEmptyInput pc → quantumValue (g pc).game ≤ 1 / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/MainTheorem.lean#L44-L49",
+  "source_path": "MIPRE/MainTheorem.lean",
+  "lines": [
+   44,
+   49
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:main-quantum",
+    "env": "corollary",
+    "title": "Halting reduces to the quantum value",
+    "file": "07_main_theorem.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduction_quantum_of_answerReduction",
+   "MIPRE.AnswerReduction.nonempty_five"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_halting_reduction_quantum.lean"
+ },
+ {
+  "kind": "glue-unconditional",
+  "theorem_name": "MIPRE.Halting.gameValue_uncomputable",
+  "formal_statement": "theorem MIPRE.Halting.gameValue_uncomputable :\n    ¬ ∃ f : HaltingGameValue.GameData → Bool, Computable f ∧\n      (∀ d, HaltingGameValue.gameValue d.toGame = 1 → f d = true) ∧\n      (∀ d, HaltingGameValue.gameValue d.toGame ≤ 1 / 2 → f d = false) := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/MainTheorem.lean#L52-L56",
+  "source_path": "MIPRE/MainTheorem.lean",
+  "lines": [
+   52,
+   56
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:value-uncomputable",
+    "env": "corollary",
+    "title": "Uncomputability of the game value",
+    "file": "07_main_theorem.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.gameValue_uncomputable_of_answerReduction",
+   "MIPRE.AnswerReduction.nonempty_five"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_gameValue_uncomputable.lean"
+ },
+ {
+  "kind": "glue-unconditional",
+  "theorem_name": "MIPRE.Halting.quantumValue_uncomputable",
+  "formal_statement": "theorem MIPRE.Halting.quantumValue_uncomputable :\n    ¬ ∃ f : HaltingGameValue.GameData → Bool, Computable f ∧\n      (∀ d, quantumValue d.game = 1 → f d = true) ∧\n      (∀ d, quantumValue d.game ≤ 1 / 2 → f d = false) := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/MainTheorem.lean#L59-L63",
+  "source_path": "MIPRE/MainTheorem.lean",
+  "lines": [
+   59,
+   63
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:value-uncomputable",
+    "env": "corollary",
+    "title": "Uncomputability of the game value",
+    "file": "07_main_theorem.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.quantumValue_uncomputable_of_answerReduction",
+   "MIPRE.AnswerReduction.nonempty_five"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_quantumValue_uncomputable.lean"
+ },
+ {
+  "kind": "glue-unconditional",
+  "theorem_name": "MIPRE.Halting.re_subset_mipstarComputable",
+  "formal_statement": "theorem MIPRE.Halting.re_subset_mipstarComputable {L : Set BitStr} (h : IsRE L) : MIPStarComputable L := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/MainTheorem.lean#L66-L67",
+  "source_path": "MIPRE/MainTheorem.lean",
+  "lines": [
+   66,
+   67
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "thm:mipstar-eq-re",
+    "env": "theorem",
+    "title": "$\\MIPstar = \\RE$",
+    "file": "07_main_theorem.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.re_subset_mipstarComputable_of_answerReduction",
+   "MIPRE.AnswerReduction.nonempty_five"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_re_subset_mipstarComputable.lean"
+ },
+ {
+  "kind": "glue-unconditional",
+  "theorem_name": "MIPRE.Halting.mipstarComputable_eq_re",
+  "formal_statement": "theorem MIPRE.Halting.mipstarComputable_eq_re : MIPStarComputable = IsRE := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/MainTheorem.lean#L70-L71",
+  "source_path": "MIPRE/MainTheorem.lean",
+  "lines": [
+   70,
+   71
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "thm:mipstar-eq-re",
+    "env": "theorem",
+    "title": "$\\MIPstar = \\RE$",
+    "file": "07_main_theorem.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.mipstarComputable_eq_re_of_answerReduction",
+   "MIPRE.AnswerReduction.nonempty_five"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_mipstarComputable_eq_re.lean"
+ },
+ {
+  "kind": "glue-unconditional",
+  "theorem_name": "MIPRE.Halting.re_subset_mipstar",
+  "formal_statement": "theorem MIPRE.Halting.re_subset_mipstar {L : Set BitStr} (h : IsRE L) : MIPStar L := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/MainTheorem.lean#L74-L75",
+  "source_path": "MIPRE/MainTheorem.lean",
+  "lines": [
+   74,
+   75
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "thm:mipstar-eq-re",
+    "env": "theorem",
+    "title": "$\\MIPstar = \\RE$",
+    "file": "07_main_theorem.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.re_subset_mipstar_of_answerReduction",
+   "MIPRE.AnswerReduction.nonempty_five"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_re_subset_mipstar.lean"
+ },
+ {
+  "kind": "glue-unconditional",
+  "theorem_name": "MIPRE.Halting.mipstar_eq_re",
+  "formal_statement": "theorem MIPRE.Halting.mipstar_eq_re : MIPStar = IsRE := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/MainTheorem.lean#L78-L79",
+  "source_path": "MIPRE/MainTheorem.lean",
+  "lines": [
+   78,
+   79
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "thm:mipstar-eq-re",
+    "env": "theorem",
+    "title": "$\\MIPstar = \\RE$",
+    "file": "07_main_theorem.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.mipstar_eq_re_of_answerReduction",
+   "MIPRE.AnswerReduction.nonempty_five"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_mipstar_eq_re.lean"
+ }
+]

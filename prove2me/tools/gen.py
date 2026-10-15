@@ -450,28 +450,40 @@ for uid in nodes:
     imp_lines = ([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=True)
                  + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(c["imported_nodes"], key=lambda v: slugs[v])])
     sol_parts = [HEADER + gen_note(m, f"solution of {u['name']}"), "\n".join(imp_lines), ""]
-    pasted_set = set(pasted)
-    attr_top, attr_after = [], collections.defaultdict(list)
+    # The attribute commands of the source modules are replayed at their source position, in the
+    # same (module, offset) order as the pasted helpers: a `local` attribute (`[local irreducible]
+    # tab` in Reduction.lean, after the lemmas whose proofs unfold `tab`) is in effect only for the
+    # rest of its own module, and a global one only from its position on.  Commands after the
+    # uploaded declaration, and local commands nothing pasted follows, are not in effect for any
+    # proof reproduced here and are dropped.
+    main_off = u["decl"]["declStart"]["offset"]
+    events = [("unit", TOPO_IDX[U[v]["module"]], U[v]["decl"]["declStart"]["offset"], v) for v in pasted]
     for am in sorted({m} | {U[v]["module"] for v in pasted}, key=lambda x: TOPO_IDX[x]):
+        last_pasted = max([U[v]["decl"]["declStart"]["offset"] for v in pasted if U[v]["module"] == am], default=-1)
         for at in ATTRS[am]:
-            top = [tok if uid is None else const for tok, uid, const in at["names"]
-                   if uid is None or U[uid]["cls"] in ("defmat", "embedded", "avail")]
-            if top:
-                attr_top.append(f"attribute {at['attr']} " + " ".join(top))
-            for tok, tu, tconst in at["names"]:
-                if tu in pasted_set:
-                    attr_after[tu].append(f"attribute {at['attr']} {tconst}")
-    if attr_top:
-        sol_parts.append("/-! Attribute commands of the source modules, for the declarations imported here. -/")
-        sol_parts += list(dict.fromkeys(attr_top))
-        sol_parts.append("")
-    if pasted:
+            if am == m and at["start"] >= main_off:
+                continue
+            is_local = re.match(r"\[\s*(local|scoped)\b", at["attr"]) is not None
+            if is_local and am != m and at["start"] > last_pasted:
+                continue
+            events.append(("attr", TOPO_IDX[am], at["start"], at))
+    events.sort(key=lambda e: (e[1], e[2]))
+    if events:
         sol_parts.append("/-! Helper declarations, pasted verbatim from the source modules with their\n"
-                         "namespace and `open` context; each is used only by proofs. -/")
-        for v in pasted:
-            sol_parts.append(pasted_block(v))
-            for line in dict.fromkeys(attr_after.get(v, [])):
-                sol_parts.append(line + "\n")
+                         "namespace and `open` context, each used only by proofs, interleaved with the\n"
+                         "attribute commands of those modules at their source positions. -/")
+    emitted = set()
+    for e in events:
+        if e[0] == "unit":
+            sol_parts.append(pasted_block(e[3]))
+            emitted.add(e[3])
+        else:
+            at = e[3]
+            names = [tok if tu is None else const for tok, tu, const in at["names"]
+                     if tu is None or U[tu]["cls"] in ("defmat", "embedded", "avail", "pubnode")
+                     or tu in emitted or tu in c["imported_nodes"]]
+            if names:
+                sol_parts.append(f"attribute {at['attr']} " + " ".join(dict.fromkeys(names)) + "\n")
     sol_parts.append("/-! The uploaded declaration as `solution` (a root name declared inside the source's\n"
                      "namespace, so that names resolve as they do in the source). -/")
     sctx = unit_ctx(uid)

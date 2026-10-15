@@ -1,0 +1,545 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.length_filter_bitStrsOfLen",
+  "source_name": "MIPRE.Verifier.length_filter_bitStrsOfLen",
+  "formal_statement": "theorem MIPRE.Verifier.length_filter_bitStrsOfLen {s : ℕ} (P : (Fin s → CL.𝔽₂) → Bool) :\n    ((Data.bitStrsOfLen s).filter fun z => P (CL.ofBits s z)).length\n      = (Finset.univ.filter fun v : Fin s → CL.𝔽₂ => P v = true).card := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "**Counting over `𝔽₂^s` by enumerating bit strings.** The bit strings of length `s` are the\nvectors of `𝔽₂^s`, so a count over one is a count over the other — which is what turns the\ntabulation's weight list into the numerator of `CL.clDist`.",
+  "module": "MIPRE.Foundations.Halting.Tabulate",
+  "module_doc": "/-!\n# Deciding acceptance under a time bound\n\nThe first half of obligation **O2** (blueprint `rem:compression-abstract`, item 3): the\nacceptance table of the tabulated game. Filling it in needs `Decider.Accepts` — a `Σ₁`\nstatement, `∃ t, prog.Runs …` — to be *decided*, and that is exactly what `n`-boundedness\nbuys: the bound supplies a budget within which the decider must halt, so one budgeted run\nsettles the question (`Machine.runForD`).\n\n* `Decider.acceptBudget`: the budget `T · (|d| + 1) ^ k` the bound gives at index `n` on the\n  tuple `(x, y, a, b)`, read off the shape of `Decider.TimeBoundAt`.\n* `Decider.accepts_iff_runForD`: for a decider obeying that bound, acceptance is one budgeted\n  run returning `encode true`.\n* `Decider.decidableAccepts` and `Verifier.decidableAccepts`: the resulting decision\n  procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the\n  bound comes from `Verifier.IsBounded`.\n\nThe other half of the tabulation is the question distribution, and the rest of this file is\nwhat a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same\nkind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a\n`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and\n`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of\n`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the\nnumber of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly\nthe quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of\nlength `s` being the vectors of `𝔽₂^s`.\n\n`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is\nits position among the bit strings of length at most `T`, the enumeration `answerList` being\n`bitStrsLE` mapped by a truncation that is the identity on them.\n\n`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a\npredicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly\nwhat is in it. It takes the two question indexings `fA`, `fB` as parameters, because the\ntabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case\n`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing\ndownstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the\nindex of a question determines it, among the strings of a fixed length — and `tagEquiv` is the\ntagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by\n*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.\n\n`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and\nfive numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,\nbecause a `Ver",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Tabulate.lean#L294-L314",
+  "source_path": "MIPRE/Foundations/Halting/Tabulate.lean",
+  "lines": [
+   294,
+   314
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.idxOf_map_of_injOn",
+  "source_name": "MIPRE.Verifier.idxOf_map_of_injOn",
+  "formal_statement": "theorem MIPRE.Verifier.idxOf_map_of_injOn {α β : Type*} [BEq α] [LawfulBEq α] [BEq β] [LawfulBEq β]\n    (f : α → β) (l : List α) (hinj : ∀ x ∈ l, ∀ y ∈ l, f x = f y → x = y) {x : α} (hx : x ∈ l) :\n    (l.map f).idxOf (f x) = l.idxOf x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "The index of a mapped element, when the map is injective on the list.",
+  "module": "MIPRE.Foundations.Halting.Tabulate",
+  "module_doc": "/-!\n# Deciding acceptance under a time bound\n\nThe first half of obligation **O2** (blueprint `rem:compression-abstract`, item 3): the\nacceptance table of the tabulated game. Filling it in needs `Decider.Accepts` — a `Σ₁`\nstatement, `∃ t, prog.Runs …` — to be *decided*, and that is exactly what `n`-boundedness\nbuys: the bound supplies a budget within which the decider must halt, so one budgeted run\nsettles the question (`Machine.runForD`).\n\n* `Decider.acceptBudget`: the budget `T · (|d| + 1) ^ k` the bound gives at index `n` on the\n  tuple `(x, y, a, b)`, read off the shape of `Decider.TimeBoundAt`.\n* `Decider.accepts_iff_runForD`: for a decider obeying that bound, acceptance is one budgeted\n  run returning `encode true`.\n* `Decider.decidableAccepts` and `Verifier.decidableAccepts`: the resulting decision\n  procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the\n  bound comes from `Verifier.IsBounded`.\n\nThe other half of the tabulation is the question distribution, and the rest of this file is\nwhat a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same\nkind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a\n`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and\n`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of\n`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the\nnumber of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly\nthe quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of\nlength `s` being the vectors of `𝔽₂^s`.\n\n`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is\nits position among the bit strings of length at most `T`, the enumeration `answerList` being\n`bitStrsLE` mapped by a truncation that is the identity on them.\n\n`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a\npredicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly\nwhat is in it. It takes the two question indexings `fA`, `fB` as parameters, because the\ntabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case\n`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing\ndownstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the\nindex of a question determines it, among the strings of a fixed length — and `tagEquiv` is the\ntagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by\n*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.\n\n`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and\nfive numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,\nbecause a `Ver",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Tabulate.lean#L318-L333",
+  "source_path": "MIPRE/Foundations/Halting/Tabulate.lean",
+  "lines": [
+   318,
+   333
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.answerEquiv_symm_val",
+  "source_name": "MIPRE.Verifier.answerEquiv_symm_val",
+  "formal_statement": "theorem MIPRE.Verifier.answerEquiv_symm_val (T : ℕ) (a : Answers T) :\n    (((answerEquiv T).symm a : Fin (answerList T).length) : ℕ) = (Data.bitStrsLE T).idxOf a.1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "The answers of length at most `T` are indexed by their position among the bit strings of\nlength at most `T`: the enumeration `answerList` is `bitStrsLE` mapped by truncation, which is\nthe identity on those strings.",
+  "module": "MIPRE.Foundations.Halting.Tabulate",
+  "module_doc": "/-!\n# Deciding acceptance under a time bound\n\nThe first half of obligation **O2** (blueprint `rem:compression-abstract`, item 3): the\nacceptance table of the tabulated game. Filling it in needs `Decider.Accepts` — a `Σ₁`\nstatement, `∃ t, prog.Runs …` — to be *decided*, and that is exactly what `n`-boundedness\nbuys: the bound supplies a budget within which the decider must halt, so one budgeted run\nsettles the question (`Machine.runForD`).\n\n* `Decider.acceptBudget`: the budget `T · (|d| + 1) ^ k` the bound gives at index `n` on the\n  tuple `(x, y, a, b)`, read off the shape of `Decider.TimeBoundAt`.\n* `Decider.accepts_iff_runForD`: for a decider obeying that bound, acceptance is one budgeted\n  run returning `encode true`.\n* `Decider.decidableAccepts` and `Verifier.decidableAccepts`: the resulting decision\n  procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the\n  bound comes from `Verifier.IsBounded`.\n\nThe other half of the tabulation is the question distribution, and the rest of this file is\nwhat a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same\nkind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a\n`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and\n`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of\n`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the\nnumber of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly\nthe quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of\nlength `s` being the vectors of `𝔽₂^s`.\n\n`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is\nits position among the bit strings of length at most `T`, the enumeration `answerList` being\n`bitStrsLE` mapped by a truncation that is the identity on them.\n\n`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a\npredicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly\nwhat is in it. It takes the two question indexings `fA`, `fB` as parameters, because the\ntabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case\n`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing\ndownstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the\nindex of a question determines it, among the strings of a fixed length — and `tagEquiv` is the\ntagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by\n*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.\n\n`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and\nfive numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,\nbecause a `Ver",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Tabulate.lean#L335-L351",
+  "source_path": "MIPRE/Foundations/Halting/Tabulate.lean",
+  "lines": [
+   335,
+   351
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Verifier.idxOf_map_of_injOn"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.mem_accListW_iff",
+  "source_name": "MIPRE.Verifier.mem_accListW_iff",
+  "formal_statement": "theorem MIPRE.Verifier.mem_accListW_iff {s T : ℕ} {fA fB : BitStr → ℕ}\n    {acc? : BitStr → BitStr → BitStr → BitStr → Bool} {i j k l : ℕ} :\n    (i, j, k, l) ∈ accListW s T fA fB acc? ↔\n      ∃ x ∈ Data.bitStrsOfLen s, ∃ y ∈ Data.bitStrsOfLen s,\n        ∃ a ∈ Data.bitStrsLE T, ∃ b ∈ Data.bitStrsLE T,\n          acc? x y a b = true ∧ i = fA x ∧ j = fB y ∧\n            k = (Data.bitStrsLE T).idxOf a ∧ l = (Data.bitStrsLE T).idxOf b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Halting.Tabulate",
+  "module_doc": "/-!\n# Deciding acceptance under a time bound\n\nThe first half of obligation **O2** (blueprint `rem:compression-abstract`, item 3): the\nacceptance table of the tabulated game. Filling it in needs `Decider.Accepts` — a `Σ₁`\nstatement, `∃ t, prog.Runs …` — to be *decided*, and that is exactly what `n`-boundedness\nbuys: the bound supplies a budget within which the decider must halt, so one budgeted run\nsettles the question (`Machine.runForD`).\n\n* `Decider.acceptBudget`: the budget `T · (|d| + 1) ^ k` the bound gives at index `n` on the\n  tuple `(x, y, a, b)`, read off the shape of `Decider.TimeBoundAt`.\n* `Decider.accepts_iff_runForD`: for a decider obeying that bound, acceptance is one budgeted\n  run returning `encode true`.\n* `Decider.decidableAccepts` and `Verifier.decidableAccepts`: the resulting decision\n  procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the\n  bound comes from `Verifier.IsBounded`.\n\nThe other half of the tabulation is the question distribution, and the rest of this file is\nwhat a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same\nkind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a\n`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and\n`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of\n`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the\nnumber of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly\nthe quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of\nlength `s` being the vectors of `𝔽₂^s`.\n\n`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is\nits position among the bit strings of length at most `T`, the enumeration `answerList` being\n`bitStrsLE` mapped by a truncation that is the identity on them.\n\n`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a\npredicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly\nwhat is in it. It takes the two question indexings `fA`, `fB` as parameters, because the\ntabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case\n`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing\ndownstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the\nindex of a question determines it, among the strings of a fixed length — and `tagEquiv` is the\ntagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by\n*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.\n\n`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and\nfive numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,\nbecause a `Ver",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Tabulate.lean#L509-L526",
+  "source_path": "MIPRE/Foundations/Halting/Tabulate.lean",
+  "lines": [
+   509,
+   526
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.primrec_accOf",
+  "source_name": "MIPRE.Halting.primrec_accOf",
+  "formal_statement": "theorem MIPRE.Halting.primrec_accOf {α : Type*} [Primcodable α] {pd : α → Data} {lvl : α → ℕ}\n    (hpd : Primrec pd) (hlvl : Primrec lvl) :\n    Primrec fun q : α × BitStr × BitStr × BitStr × BitStr =>\n      accOf (pd q.1) (lvl q.1) q.2.1 q.2.2.1 q.2.2.2.1 q.2.2.2.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "`primrec_accOf`, generic in the ambient parameter type.  `accOf` reads only the decider\ndata and the level, so the shape of the tuple carrying them is irrelevant.  Stating it this way\nis what makes the re-budget cheap: a change to `tabOf`'s parameter list never re-runs this\nproof, which measures 210049 heartbeats at one fixed tuple, and composing it with a projection\nto reach a wider one times out at the default budget.",
+  "module": "MIPRE.Foundations.Halting.Tabulate",
+  "module_doc": "/-!\n# Deciding acceptance under a time bound\n\nThe first half of obligation **O2** (blueprint `rem:compression-abstract`, item 3): the\nacceptance table of the tabulated game. Filling it in needs `Decider.Accepts` — a `Σ₁`\nstatement, `∃ t, prog.Runs …` — to be *decided*, and that is exactly what `n`-boundedness\nbuys: the bound supplies a budget within which the decider must halt, so one budgeted run\nsettles the question (`Machine.runForD`).\n\n* `Decider.acceptBudget`: the budget `T · (|d| + 1) ^ k` the bound gives at index `n` on the\n  tuple `(x, y, a, b)`, read off the shape of `Decider.TimeBoundAt`.\n* `Decider.accepts_iff_runForD`: for a decider obeying that bound, acceptance is one budgeted\n  run returning `encode true`.\n* `Decider.decidableAccepts` and `Verifier.decidableAccepts`: the resulting decision\n  procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the\n  bound comes from `Verifier.IsBounded`.\n\nThe other half of the tabulation is the question distribution, and the rest of this file is\nwhat a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same\nkind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a\n`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and\n`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of\n`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the\nnumber of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly\nthe quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of\nlength `s` being the vectors of `𝔽₂^s`.\n\n`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is\nits position among the bit strings of length at most `T`, the enumeration `answerList` being\n`bitStrsLE` mapped by a truncation that is the identity on them.\n\n`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a\npredicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly\nwhat is in it. It takes the two question indexings `fA`, `fB` as parameters, because the\ntabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case\n`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing\ndownstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the\nindex of a question determines it, among the strings of a fixed length — and `tagEquiv` is the\ntagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by\n*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.\n\n`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and\nfive numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,\nbecause a `Ver",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Tabulate.lean#L689-L730",
+  "source_path": "MIPRE/Foundations/Halting/Tabulate.lean",
+  "lines": [
+   689,
+   730
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.primrec_tabOf",
+  "source_name": "MIPRE.Halting.primrec_tabOf",
+  "formal_statement": "theorem MIPRE.Halting.primrec_tabOf {α : Type*} [Primcodable α] {sd pd : α → Data} {s T B lvl : α → ℕ}\n    (k : ℕ) (hsd : Primrec sd) (hpd : Primrec pd) (hs : Primrec s) (hT : Primrec T)\n    (hB : Primrec B) (hlvl : Primrec lvl) :\n    Primrec fun a : α => tabOf (sd a) (pd a) (s a) (T a) (B a) k (lvl a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "**O2, computability, on numbers alone**: the doubled, re-budgeted tabulation is primitive\nrecursive in every one of its parameters.",
+  "module": "MIPRE.Foundations.Halting.Tabulate",
+  "module_doc": "/-!\n# Deciding acceptance under a time bound\n\nThe first half of obligation **O2** (blueprint `rem:compression-abstract`, item 3): the\nacceptance table of the tabulated game. Filling it in needs `Decider.Accepts` — a `Σ₁`\nstatement, `∃ t, prog.Runs …` — to be *decided*, and that is exactly what `n`-boundedness\nbuys: the bound supplies a budget within which the decider must halt, so one budgeted run\nsettles the question (`Machine.runForD`).\n\n* `Decider.acceptBudget`: the budget `T · (|d| + 1) ^ k` the bound gives at index `n` on the\n  tuple `(x, y, a, b)`, read off the shape of `Decider.TimeBoundAt`.\n* `Decider.accepts_iff_runForD`: for a decider obeying that bound, acceptance is one budgeted\n  run returning `encode true`.\n* `Decider.decidableAccepts` and `Verifier.decidableAccepts`: the resulting decision\n  procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the\n  bound comes from `Verifier.IsBounded`.\n\nThe other half of the tabulation is the question distribution, and the rest of this file is\nwhat a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same\nkind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a\n`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and\n`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of\n`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the\nnumber of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly\nthe quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of\nlength `s` being the vectors of `𝔽₂^s`.\n\n`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is\nits position among the bit strings of length at most `T`, the enumeration `answerList` being\n`bitStrsLE` mapped by a truncation that is the identity on them.\n\n`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a\npredicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly\nwhat is in it. It takes the two question indexings `fA`, `fB` as parameters, because the\ntabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case\n`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing\ndownstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the\nindex of a question determines it, among the strings of a fixed length — and `tagEquiv` is the\ntagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by\n*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.\n\n`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and\nfive numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,\nbecause a `Ver",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Tabulate.lean#L732-L753",
+  "source_path": "MIPRE/Foundations/Halting/Tabulate.lean",
+  "lines": [
+   732,
+   753
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Halting.primrec_accOf"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.polyBounded_wrapHeadZ",
+  "source_name": "MIPRE.Cost.Prog.polyBounded_wrapHeadZ",
+  "formal_statement": "theorem MIPRE.Cost.Prog.polyBounded_wrapHeadZ {Cf : ℕ → ℕ} (hCf : PolyBounded Cf) (kf : ℕ)\n    (hdim : PolyBounded S.dim) : PolyBounded fun n => wrapHeadZ U S Cf kf n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data",
+   "variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ)"
+  ],
+  "docstring": "`wrapHeadZ` is polynomially bounded in the index when the sampler's cost and dimension\nare.",
+  "module": "MIPRE.Foundations.Halting.WrapperCost",
+  "module_doc": "/-!\n# The running time of the wrapper\n\n`Decider.wrap` reads a string as a decider (`Halting/Wrapper.lean`); this file bounds its\nrunning time. That bound is what makes the verifier a string denotes `λ`-bounded, and so what\nmakes the classes `MIPRE.Halting.classA`, `classB` inhabited at all: until it, every proof of\n`Verifier.IsBounded` in the repository was conditional on another time bound.\n\nThe shape throughout is `Cost.Prog.HasPolyCost`: cost at most `C n · (|d| + 1) ^ k` at index\n`n` on input `d`, with `C` polynomially bounded and `k` constant — what `Decider.TimeBoundAt`\nasks for after `Halting/Bounded.lean`, and what composes (`Cost.PolyCost`). Nothing here is\ntight: each stage is bounded by a generous square and the stages are summed, since\n`λ`-boundedness quantifies the constants away.\n\n**Everything is proved on arbitrary data.** `TimeBoundAt` quantifies over every input at the\nindex, well formed or not, so no stage may assume it is handed a question pair:\n\n* `Data.toSpine` and `Prog.lenProgD_runs`: the length program on any datum, walking its right\n  spine, not only on a list built by `Data.list`.\n* `Prog.wrapCheckEnvN` and `wrapCheckD_cost_of_eq`, `wrapCheckD_cost_of_ne`: one length check,\n  which compares `Data.spine` with the sampler's dimension — on `encode l` that is `l.length`,\n  and on anything else it is what the program actually computes.\n* `Prog.wrapHead_cost` and `wrapPre_cost`: the head, whose cost depends on the index alone (the\n  dimension query runs on a fixed input), and the prefix, which on a tail too short to hold two\n  questions rejects outright.\n* `Prog.wrapCore_hasPolyCost`: the whole, by the three outcomes — the first check fails, the\n  second fails, or both pass and the string's own decider runs through the universal machine.\n* `Verifier.ofSamplerDecider_isBounded`: the verifier a pair denotes is `n`-bounded at every\n  level from some `n₀` on, by `Verifier.exists_isBounded`.\n\nThe hypotheses are exactly three: the sampler's program and the string's decider have\npolynomially bounded cost, and the sampler's dimension is polynomially bounded. For a sampler\ncoming from `MIPRE.GapCompression` all three are its fields, through\n`CL.Sampler.hasPolyCost_of_timeBound`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/WrapperCost.lean#L109-L128",
+  "source_path": "MIPRE/Foundations/Halting/WrapperCost.lean",
+  "lines": [
+   109,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
+  "source_name": "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
+  "formal_statement": "theorem MIPRE.Cost.Prog.wrapCore_hasPolyCost (hS : S.prog.HasPolyCost) (hdim : PolyBounded S.dim)\n    (hdec : dec.HasPolyCost) : (wrapCore U.univ S.prog (encode dec)).HasPolyCost := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data",
+   "variable {ℓ : ℕ} (U : UniversalMachine) (S : CL.Sampler ℓ) (dec : Prog)"
+  ],
+  "docstring": "**The wrapper halts within a polynomially bounded cost on every input**, well formed or\nnot, provided the sampler and the string's own decider do. This is what inhabits\n`Verifier.IsBounded` for the verifier a string denotes.",
+  "module": "MIPRE.Foundations.Halting.WrapperCost",
+  "module_doc": "/-!\n# The running time of the wrapper\n\n`Decider.wrap` reads a string as a decider (`Halting/Wrapper.lean`); this file bounds its\nrunning time. That bound is what makes the verifier a string denotes `λ`-bounded, and so what\nmakes the classes `MIPRE.Halting.classA`, `classB` inhabited at all: until it, every proof of\n`Verifier.IsBounded` in the repository was conditional on another time bound.\n\nThe shape throughout is `Cost.Prog.HasPolyCost`: cost at most `C n · (|d| + 1) ^ k` at index\n`n` on input `d`, with `C` polynomially bounded and `k` constant — what `Decider.TimeBoundAt`\nasks for after `Halting/Bounded.lean`, and what composes (`Cost.PolyCost`). Nothing here is\ntight: each stage is bounded by a generous square and the stages are summed, since\n`λ`-boundedness quantifies the constants away.\n\n**Everything is proved on arbitrary data.** `TimeBoundAt` quantifies over every input at the\nindex, well formed or not, so no stage may assume it is handed a question pair:\n\n* `Data.toSpine` and `Prog.lenProgD_runs`: the length program on any datum, walking its right\n  spine, not only on a list built by `Data.list`.\n* `Prog.wrapCheckEnvN` and `wrapCheckD_cost_of_eq`, `wrapCheckD_cost_of_ne`: one length check,\n  which compares `Data.spine` with the sampler's dimension — on `encode l` that is `l.length`,\n  and on anything else it is what the program actually computes.\n* `Prog.wrapHead_cost` and `wrapPre_cost`: the head, whose cost depends on the index alone (the\n  dimension query runs on a fixed input), and the prefix, which on a tail too short to hold two\n  questions rejects outright.\n* `Prog.wrapCore_hasPolyCost`: the whole, by the three outcomes — the first check fails, the\n  second fails, or both pass and the string's own decider runs through the universal machine.\n* `Verifier.ofSamplerDecider_isBounded`: the verifier a pair denotes is `n`-bounded at every\n  level from some `n₀` on, by `Verifier.exists_isBounded`.\n\nThe hypotheses are exactly three: the sampler's program and the string's decider have\npolynomially bounded cost, and the sampler's dimension is polynomially bounded. For a sampler\ncoming from `MIPRE.GapCompression` all three are its fields, through\n`CL.Sampler.hasPolyCost_of_timeBound`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/WrapperCost.lean#L455-L486",
+  "source_path": "MIPRE/Foundations/Halting/WrapperCost.lean",
+  "lines": [
+   455,
+   486
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.polyBounded_wrapHeadZ"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.hasPerfectPCC_of_accepts_iff",
+  "source_name": "MIPRE.Verifier.hasPerfectPCC_of_accepts_iff",
+  "formal_statement": "theorem MIPRE.Verifier.hasPerfectPCC_of_accepts_iff {V W : Verifier ℓ} {n T : ℕ} (hS : W.sampler = V.sampler)\n    (h : ∀ x y a b, V.decider.Accepts n x y a b ↔ W.decider.Accepts n x y a b)\n    (hV : V.HasPerfectPCC n T) : W.HasPerfectPCC n T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier ℓ)"
+  ],
+  "docstring": "With the same sampler, deciders accepting the same tuples at index `n` have the same\nperfect PCC strategies.",
+  "module": "MIPRE.Foundations.VerifierValue",
+  "module_doc": "/-!\n# The games of a verifier: congruence, answer padding, perfect PCC strategies\n\nBookkeeping for `Verifier.game n T` needed by the instantiation of the compressibility\ncriterion (blueprint `rem:compression-abstract`), all consequences of the transport lemmas of\n`GameTransport`:\n\n* **Same sampler, comparable deciders.** Two verifiers with the same sampler whose deciders\n  accept the same tuples at index `n` have the same `val*` and the same perfect PCC strategies\n  there (`valStar_congr`, `hasPerfectPCC_congr`); accepting more raises `val*`\n  (`valStar_le_of_accepts_imp`).\n* **Answer padding.** Enlarging the answer-length bound `T` can only raise `val*`\n  (`valStar_le_of_le`) and preserves perfect PCC strategies (`hasPerfectPCC_of_le`); when the\n  decider rejects every answer longer than `T`, it does not change `val*` at all\n  (`valStar_eq_of_rejects`). This is what lets the game of a verifier be compared across the\n  answer bounds `N ^ λ` and `poly(n, λ)` of `GapCompression` and the bound a class of\n  descriptions is defined with.\n* A perfect PCC strategy gives `val* = 1` (`valStar_eq_one_of_hasPerfectPCC`), through\n  `syncValue_le_quantumValue` on the doubled game and `quantumValue_doubledGame`.\n\n`Verifier.HasPerfectPCC` is a PCC strategy of value `1` on the *doubled* game\n(`Verifier.doubledGame`, `Foundations/GapCompression.lean`), so none of the lemmas here asks\nthe decider to be synchronous at `n`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/VerifierValue.lean#L81-L100",
+  "source_path": "MIPRE/Foundations/VerifierValue.lean",
+  "lines": [
+   81,
+   100
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "glue-leaf",
+  "theorem_name": "MIPRE.Introspection.nonempty_seven",
+  "formal_statement": "theorem MIPRE.Introspection.nonempty_seven : Nonempty (MIPRE.Introspection 7) := by sorry",
+  "preamble_opens": [],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/Compiler.lean",
+  "source_path": "MIPRE/Background/Introspection/Compiler.lean",
+  "lines": null,
+  "witness": "MIPRE.Introspection.seven",
+  "blueprint": [],
+  "imported_nodes": [],
+  "stub_published": false,
+  "solution_file": null
+ },
+ {
+  "kind": "glue-leaf",
+  "theorem_name": "MIPRE.AnswerReduction.nonempty_five",
+  "formal_statement": "theorem MIPRE.AnswerReduction.nonempty_five : Nonempty (MIPRE.AnswerReduction 5) := by sorry",
+  "preamble_opens": [],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Instance.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/Instance.lean",
+  "lines": null,
+  "witness": "MIPRE.AnswerReduction.answerReduction",
+  "blueprint": [],
+  "imported_nodes": [],
+  "stub_published": false,
+  "solution_file": null
+ },
+ {
+  "kind": "glue-leaf",
+  "theorem_name": "MIPRE.Repetition.nonempty_seven",
+  "formal_statement": "theorem MIPRE.Repetition.nonempty_seven : Nonempty (MIPRE.Repetition 7) := by sorry",
+  "preamble_opens": [],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Verifier.lean",
+  "source_path": "MIPRE/Background/Repetition/Verifier.lean",
+  "lines": null,
+  "witness": "MIPRE.repetition",
+  "blueprint": [],
+  "imported_nodes": [],
+  "stub_published": false,
+  "solution_file": null
+ },
+ {
+  "kind": "glue-conditional",
+  "theorem_name": "MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction",
+  "formal_statement": "theorem MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction (A : MIPRE.AnswerReduction 5) :\n    ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧\n      ∀ pc : Nat.Partrec.Code,\n        (HaltingGameValue.HaltsOnEmptyInput pc → HaltingGameValue.gameValue (g pc).toGame = 1) ∧\n        (¬ HaltingGameValue.HaltsOnEmptyInput pc →\n          HaltingGameValue.gameValue (g pc).toGame ≤ 1 / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Pipeline.lean#L51-L57",
+  "source_path": "MIPRE/Background/Pipeline.lean",
+  "lines": [
+   51,
+   57
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:compression-from-answer-reduction",
+    "env": "corollary",
+    "title": "Compression, and $\\MIPstar = \\RE$, from answer reduction alone",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduces_to_gameValue_of",
+   "MIPRE.Introspection.nonempty_seven",
+   "MIPRE.Repetition.nonempty_seven"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_halting_reduces_to_gameValue_of_answerReduction.lean"
+ },
+ {
+  "kind": "glue-conditional",
+  "theorem_name": "MIPRE.Halting.halting_reduction_quantum_of_answerReduction",
+  "formal_statement": "theorem MIPRE.Halting.halting_reduction_quantum_of_answerReduction (A : MIPRE.AnswerReduction 5) :\n    ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧\n      ∀ pc : Nat.Partrec.Code,\n        (HaltingGameValue.HaltsOnEmptyInput pc → quantumValue (g pc).game = 1) ∧\n        (¬ HaltingGameValue.HaltsOnEmptyInput pc → quantumValue (g pc).game ≤ 1 / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Pipeline.lean#L61-L66",
+  "source_path": "MIPRE/Background/Pipeline.lean",
+  "lines": [
+   61,
+   66
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:compression-from-answer-reduction",
+    "env": "corollary",
+    "title": "Compression, and $\\MIPstar = \\RE$, from answer reduction alone",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduction_quantum_of",
+   "MIPRE.Introspection.nonempty_seven",
+   "MIPRE.Repetition.nonempty_seven"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_halting_reduction_quantum_of_answerReduction.lean"
+ },
+ {
+  "kind": "glue-conditional",
+  "theorem_name": "MIPRE.Halting.gameValue_uncomputable_of_answerReduction",
+  "formal_statement": "theorem MIPRE.Halting.gameValue_uncomputable_of_answerReduction (A : MIPRE.AnswerReduction 5) :\n    ¬ ∃ f : HaltingGameValue.GameData → Bool, Computable f ∧\n      (∀ d, HaltingGameValue.gameValue d.toGame = 1 → f d = true) ∧\n      (∀ d, HaltingGameValue.gameValue d.toGame ≤ 1 / 2 → f d = false) := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Pipeline.lean#L70-L74",
+  "source_path": "MIPRE/Background/Pipeline.lean",
+  "lines": [
+   70,
+   74
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:compression-from-answer-reduction",
+    "env": "corollary",
+    "title": "Compression, and $\\MIPstar = \\RE$, from answer reduction alone",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.gameValue_uncomputable_of",
+   "MIPRE.Introspection.nonempty_seven",
+   "MIPRE.Repetition.nonempty_seven"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_gameValue_uncomputable_of_answerReduction.lean"
+ },
+ {
+  "kind": "glue-conditional",
+  "theorem_name": "MIPRE.Halting.quantumValue_uncomputable_of_answerReduction",
+  "formal_statement": "theorem MIPRE.Halting.quantumValue_uncomputable_of_answerReduction (A : MIPRE.AnswerReduction 5) :\n    ¬ ∃ f : HaltingGameValue.GameData → Bool, Computable f ∧\n      (∀ d, quantumValue d.game = 1 → f d = true) ∧\n      (∀ d, quantumValue d.game ≤ 1 / 2 → f d = false) := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Pipeline.lean#L78-L82",
+  "source_path": "MIPRE/Background/Pipeline.lean",
+  "lines": [
+   78,
+   82
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:compression-from-answer-reduction",
+    "env": "corollary",
+    "title": "Compression, and $\\MIPstar = \\RE$, from answer reduction alone",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.quantumValue_uncomputable_of",
+   "MIPRE.Introspection.nonempty_seven",
+   "MIPRE.Repetition.nonempty_seven"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_quantumValue_uncomputable_of_answerReduction.lean"
+ },
+ {
+  "kind": "glue-conditional",
+  "theorem_name": "MIPRE.Halting.re_subset_mipstarComputable_of_answerReduction",
+  "formal_statement": "theorem MIPRE.Halting.re_subset_mipstarComputable_of_answerReduction (A : MIPRE.AnswerReduction 5) {L : Set BitStr} (h : IsRE L) :\n    MIPStarComputable L := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Pipeline.lean#L85-L87",
+  "source_path": "MIPRE/Background/Pipeline.lean",
+  "lines": [
+   85,
+   87
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:compression-from-answer-reduction",
+    "env": "corollary",
+    "title": "Compression, and $\\MIPstar = \\RE$, from answer reduction alone",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.re_subset_mipstarComputable_of",
+   "MIPRE.Introspection.nonempty_seven",
+   "MIPRE.Repetition.nonempty_seven"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_re_subset_mipstarComputable_of_answerReduction.lean"
+ },
+ {
+  "kind": "glue-conditional",
+  "theorem_name": "MIPRE.Halting.mipstarComputable_eq_re_of_answerReduction",
+  "formal_statement": "theorem MIPRE.Halting.mipstarComputable_eq_re_of_answerReduction (A : MIPRE.AnswerReduction 5) : MIPStarComputable = IsRE := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Pipeline.lean#L91-L92",
+  "source_path": "MIPRE/Background/Pipeline.lean",
+  "lines": [
+   91,
+   92
+  ],
+  "witness": null,
+  "blueprint": [
+   {
+    "label": "cor:compression-from-answer-reduction",
+    "env": "corollary",
+    "title": "Compression, and $\\MIPstar = \\RE$, from answer reduction alone",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.mipstarComputable_eq_re_of",
+   "MIPRE.Introspection.nonempty_seven",
+   "MIPRE.Repetition.nonempty_seven"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_mipstarComputable_eq_re_of_answerReduction.lean"
+ },
+ {
+  "kind": "glue-conditional",
+  "theorem_name": "MIPRE.Halting.re_subset_mipstar_of_answerReduction",
+  "formal_statement": "theorem MIPRE.Halting.re_subset_mipstar_of_answerReduction (A : MIPRE.AnswerReduction 5) {L : Set BitStr} (h : IsRE L) :\n    MIPStar L := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Pipeline.lean#L95-L98",
+  "source_path": "MIPRE/Background/Pipeline.lean",
+  "lines": [
+   95,
+   98
+  ],
+  "witness": null,
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Halting.re_subset_mipstar_of",
+   "MIPRE.Introspection.nonempty_seven",
+   "MIPRE.Repetition.nonempty_seven"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_re_subset_mipstar_of_answerReduction.lean"
+ },
+ {
+  "kind": "glue-conditional",
+  "theorem_name": "MIPRE.Halting.mipstar_eq_re_of_answerReduction",
+  "formal_statement": "theorem MIPRE.Halting.mipstar_eq_re_of_answerReduction (A : MIPRE.AnswerReduction 5) : MIPStar = IsRE := by sorry",
+  "preamble_opens": [
+   "open MIPRE MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Pipeline.lean#L102-L104",
+  "source_path": "MIPRE/Background/Pipeline.lean",
+  "lines": [
+   102,
+   104
+  ],
+  "witness": null,
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Halting.mipstar_eq_re_of",
+   "MIPRE.Introspection.nonempty_seven",
+   "MIPRE.Repetition.nonempty_seven"
+  ],
+  "stub_published": false,
+  "solution_file": "Solutions/Sol_MIPRE_Halting_mipstar_eq_re_of_answerReduction.lean"
+ }
+]

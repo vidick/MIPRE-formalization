@@ -106,6 +106,35 @@ Proposal** on the website (homepage → My missions); that compiles and publishe
 and sends the mission to a moderator, whose approval launches it publicly. After launch, the
 dependency graph of the goal is uploaded top-down under it (`planning/prove2me.md`).
 
+## The assembly layer (`assembly/`)
+
+The first increment of the top-down upload after the mission's launch: everything between the
+mission's goal `HaltingGameValue.halting_reduces_to_gameValue` and the published compression tree
+that is this project's own Mathlib-only code (103 modules, 32,478 lines: the compressor, the
+halting reduction, the class statements, the verifier and tabulation layers). The three stage
+instances the pipeline consumes (`Introspection 7`, `AnswerReduction 5`, `Repetition 7`) are data in
+vendored or `MIPStarRE`-dependent code the platform cannot host yet; they appear as three *Open*
+leaves `Nonempty (MIPRE.Introspection 7)` etc., and the 16 glue theorems of
+`MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean` are uploaded with their source
+statement and a one-line sketch that applies the own-code theorem to the leaves' witnesses
+(`Classical.choice`), so they stand as accepted sketches whose open frontier is the leaves. Later
+increments fill the leaves.
+
+| path | what |
+|---|---|
+| `assembly/config.json` | the planner/generator configuration (`make_config.py`): targets, definition-material targets, the published trees reused, renames. |
+| `assembly/Definitions/`, `Theorems/`, `Solutions/` | 88 bundles (74 new, 14 *delta* bundles `…_B` adding declarations to a published compression bundle), 107 stubs (89 nodes, 3 leaves, 15 glue; the goal's stub is the mission's), 105 solutions. |
+| `assembly/tree.json`, `glue.json`, `plan.json` | the manifest, the glue items, the classification of the 2,673 units of the closure. |
+| `assembly/validation.json` | type diff (source, stub, solution) and axioms of every solution. |
+| `assembly/metadata.json`, `META_WRITER.md`, `meta_packets/` | the platform metadata and how it was drafted. |
+| `assembly/milestones.json`, `milestones/` | the twelve live-mission milestones (`scripts/p2m_mission.py --milestones`). |
+| `assembly/upload-config.json` | `{"public": true}`: the mission is public, so is everything uploaded under it. |
+
+The same pipeline runs with `P2M_CONFIG=prove2me/assembly/config.json`; the generated files are
+compiled with `tools/build_tree.py` (direct `lake env lean -o`, dependency order) rather than
+`lake build`, whose per-module setup files exhausted the session's disk allowance. The upload is
+`python3 scripts/p2m_upload.py --tree prove2me/assembly`, after the launch.
+
 ## Reproducing
 
 The build workspace is a Lake project pinned to the platform environment (toolchain

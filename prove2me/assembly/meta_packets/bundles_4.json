@@ -1,0 +1,2813 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Paper_ClassVerifier",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassVerifier",
+  "module_doc": "/-!\n# The class verifier of the polynomial-time halting reduction\n\nThe two programs of the `PolyVerifier` (`def:mipstar`) that puts an r.e. language `L` in the\npaper's class `MIP*_{1,1/2}(2,1)`, for a polynomial-time reduction `R` of `L` to halting on the\nempty input (`Cost.exists_polyTime_reduction`): on input `z` they play the game of\n`𝒱^halt (R z) λ(z)` at the fixed level `C` (`Paper/Main.lean`), with\n`λ(z) = Λ₀ + 4|R z|` the parameter of `lem:lambda`.\n\n* **The sampler** `sampProg`, on `(z, r)`: computes `M = R z`, `λ(z)` and the compressed\n  sampler's program `S = ComputeSampler(λ(z))` (`A1`); asks `S` its dimension `s = s(C)` through\n  the universal machine (`runUK`); converts `s` to unary (`unaryStage`); takes the first `s`\n  bits `r'` of the seed and asks `S` Alice's marginal `L^A(r')` (`A2`, `runUK`); then Bob's\n  (`A3`, `runUK`). Its output is the question pair of `𝒱^halt` at the point `r'`\n  (`sampProg_runs`), so that the uniform seed of length `B ≥ s` pushes forward to the\n  compressed sampler's distribution.\n* **The decider** `decProg`, on `(z, x, y, a, b)`: computes `M`, `λ(z)` and the description of\n  `𝒱^halt`'s decider (`wrapCore` around `dec M λ(z)`, `decBuild`), rejects if `a` or `b` is\n  longer than the cutoff `2 ^ (K + deg · |λ(z)|)` (`cutF`, at least the compressor's answer\n  bound `poly(C, λ(z))` by `exists_cut_ge`), and otherwise runs the description on\n  `(C, x, y, a, b)` through the universal machine (`runU`). It accepts exactly when both\n  answers are within the cutoff and `𝒱^halt`'s decider accepts (`decProg_accepts`).\n\nThe costs are bounded by explicit expressions in the total input length (`sampB`, `decB`),\npolynomially bounded (`polyBounded_sampB`, `polyBounded_decB`); `Paper/ClassMain.lean` chooses\nthe verifier's polynomial above them and proves the game's value.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassVerifier.lean",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassVerifier.lean",
+  "defmat": [
+   "MIPRE.Halting.A1",
+   "MIPRE.Halting.A2",
+   "MIPRE.Halting.A3",
+   "MIPRE.Halting.D1",
+   "MIPRE.Halting.MzF",
+   "MIPRE.Halting.R1B",
+   "MIPRE.Halting.R2B",
+   "MIPRE.Halting.R3B",
+   "MIPRE.Halting.Sz",
+   "MIPRE.Halting.T1B",
+   "MIPRE.Halting.T2B",
+   "MIPRE.Halting.T3B",
+   "MIPRE.Halting.TDB",
+   "MIPRE.Halting.UnB",
+   "MIPRE.Halting.aF",
+   "MIPRE.Halting.bF",
+   "MIPRE.Halting.cutz",
+   "MIPRE.Halting.cutzF",
+   "MIPRE.Halting.decB",
+   "MIPRE.Halting.decProg",
+   "MIPRE.Halting.dimB",
+   "MIPRE.Halting.dimz",
+   "MIPRE.Halting.inputF",
+   "MIPRE.Halting.lamB",
+   "MIPRE.Halting.lamz",
+   "MIPRE.Halting.lamzF",
+   "MIPRE.Halting.qOf",
+   "MIPRE.Halting.qdim",
+   "MIPRE.Halting.queryF",
+   "MIPRE.Halting.rejF",
+   "MIPRE.Halting.sampB",
+   "MIPRE.Halting.sampProg",
+   "MIPRE.Halting.spF",
+   "MIPRE.Halting.unB",
+   "MIPRE.Halting.wF",
+   "MIPRE.Halting.wdec",
+   "MIPRE.Halting.zB"
+  ],
+  "embedded": [
+   "MIPRE.Halting.decProg_wellScoped",
+   "MIPRE.Halting.dimz_le",
+   "MIPRE.Halting.lamz_le",
+   "MIPRE.Halting.queryF_apply",
+   "MIPRE.Halting.sampProg_wellScoped"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Halting.A1",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     83,
+     85
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.A2",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     92,
+     97
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.A3",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     103,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.D1",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     402,
+     410
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.MzF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     355,
+     357
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.R1B",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     151
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.R2B",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     160
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.R3B",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     163,
+     166
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.Sz",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.T1B",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     146,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.T2B",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     155,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.T3B",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     161,
+     162
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.TDB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     474,
+     475
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.UnB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.aF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     370,
+     372
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.bF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     374,
+     376
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.cutz",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     363,
+     364
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.cutzF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     366,
+     368
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.decB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     479,
+     482
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.decProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     432,
+     433
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.decProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     435,
+     436
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.dimB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     144,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.dimz",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.dimz_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     180,
+     182
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.inputF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     392,
+     395
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.lamB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     142,
+     143
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.lamz",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     47,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.lamzF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     359,
+     361
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.lamz_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     172,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.qOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     56,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.qdim",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     80,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.queryF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     71,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.queryF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     77,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.rejF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     397,
+     400
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.sampB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     167,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.sampProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.sampProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     115,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.spF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.unB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     132,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.wF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     378,
+     381
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.wdec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     383,
+     384
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.zB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     476,
+     478
+    ]
+   }
+  ],
+  "lines": 361,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawInt",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawStrategy",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawSemantics",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawComplete",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawPrimrec",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RE",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Semidecide",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStarComputable",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Classes",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Wrapper",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Enumerate",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStar",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BoundedEval",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Tabulate",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BitQuery",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Clocked",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Threshold",
+   "import Definitions.Def_MIPRE_Foundations_Compression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_ManyOne",
+   "import Definitions.Def_MIPRE_Foundations_Cost_SizeProgram",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Halting_LambdaBound",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Absorb",
+   "import Definitions.Def_MIPRE_Foundations_Halting_CostBudget",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Instantiation",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Serial",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Semidecider",
+   "import Definitions.Def_MIPRE_Foundations_Halting_WrapperCost",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Strings",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Reduction",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Compressor",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_TabulateL",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Decider",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Size",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Cost",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Induction",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Stages",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Build",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Main"
+  ],
+  "blueprint": [
+   "lem:lambda",
+   "thm:halting"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.Halting.A1": [
+    "/-- Stage 1: from `(z, r)`, the pair `(S, dimension)` to run and the state `(S, r)`. -/"
+   ],
+   "MIPRE.Halting.A2": [
+    "/-- Stage 2: from `((S, r), s)` with `s` in unary, the pair `(S, marginal A (r.take s))` to",
+    "run and the state `(S, r.take s)`. -/"
+   ],
+   "MIPRE.Halting.A3": [
+    "/-- Stage 3: from `((S, r'), x)`, the pair `(S, marginal B r')` to run and the state `x`. -/"
+   ],
+   "MIPRE.Halting.D1": [
+    "/-- **The preparation of the class decider**: the program to run and its input — the",
+    "constant-`false` program if `a` or `b` exceeds the cutoff, else `𝒱^halt`'s decider on",
+    "`(C, x, y, a, b)`. -/"
+   ],
+   "MIPRE.Halting.MzF": [
+    "/-- `q ↦ R z` on the decider's input `q = (z, x, y, a, b)`. -/"
+   ],
+   "MIPRE.Halting.R1B": [
+    "/-- The first universal call's cost. -/"
+   ],
+   "MIPRE.Halting.R2B": [
+    "/-- The second universal call's cost. -/"
+   ],
+   "MIPRE.Halting.R3B": [
+    "/-- The third universal call's cost. -/"
+   ],
+   "MIPRE.Halting.Sz": [
+    "/-- The compressed sampler of the input `z`. -/"
+   ],
+   "MIPRE.Halting.T1B": [
+    "/-- Stage 1's cost. -/"
+   ],
+   "MIPRE.Halting.T2B": [
+    "/-- Stage 2's cost. -/"
+   ],
+   "MIPRE.Halting.T3B": [
+    "/-- Stage 3's cost. -/"
+   ],
+   "MIPRE.Halting.TDB": [
+    "/-- The preparation's cost, in the total input length. -/"
+   ],
+   "MIPRE.Halting.UnB": [
+    "/-- The conversion's cost. -/"
+   ],
+   "MIPRE.Halting.aF": [
+    "/-- `q ↦ a`. -/"
+   ],
+   "MIPRE.Halting.bF": [
+    "/-- `q ↦ b`. -/"
+   ],
+   "MIPRE.Halting.cutz": [
+    "/-- The cutoff on the input `z`: `2 ^ (K + deg · |λ(z)|)`. -/"
+   ],
+   "MIPRE.Halting.cutzF": [
+    "/-- `q ↦ cutz z`. -/"
+   ],
+   "MIPRE.Halting.decB": [
+    "/-- **The class decider's cost**, in the total input length. -/"
+   ],
+   "MIPRE.Halting.decProg": [
+    "/-- **The decider of the class verifier**: the preparation, then the universal machine. -/"
+   ],
+   "MIPRE.Halting.dimB": [
+    "/-- The compressor's bound `poly(C, λ)`, in `m`: bounds the dimension and the times. -/"
+   ],
+   "MIPRE.Halting.dimz": [
+    "/-- The dimension of its questions at the fixed level. -/"
+   ],
+   "MIPRE.Halting.inputF": [
+    "/-- `q ↦ encode (C, x, y, a, b)`, the decider's input at the fixed level. -/"
+   ],
+   "MIPRE.Halting.lamB": [
+    "/-- The parameter, in the total input length `m`. -/"
+   ],
+   "MIPRE.Halting.lamz": [
+    "/-- The parameter of the input `z`: `Λ₀ + 4|R z|`. -/"
+   ],
+   "MIPRE.Halting.lamzF": [
+    "/-- `q ↦ λ(z)`. -/"
+   ],
+   "MIPRE.Halting.qOf": [
+    "/-- Player `w`'s question on the seed `r`, on the input `z`: the marginal of the compressed",
+    "sampler at the first `dimz z` bits of `r`. -/"
+   ],
+   "MIPRE.Halting.qdim": [
+    "/-- The dimension query at the fixed level, as data. -/"
+   ],
+   "MIPRE.Halting.queryF": [
+    "/-- The marginal query of player `w` at the fixed level, as data. -/"
+   ],
+   "MIPRE.Halting.rejF": [
+    "/-- The rejecting branch: the constant-`false` program on the empty input. -/"
+   ],
+   "MIPRE.Halting.sampB": [
+    "/-- **The sampler's cost**, in the total input length. -/"
+   ],
+   "MIPRE.Halting.sampProg": [
+    "/-- **The sampler of the class verifier.** -/"
+   ],
+   "MIPRE.Halting.spF": [
+    "/-- `(z, r) ↦ ComputeSampler(λ(z))`. -/"
+   ],
+   "MIPRE.Halting.unB": [
+    "/-- The cost of the binary-to-unary conversion, monotone in the number. -/"
+   ],
+   "MIPRE.Halting.wF": [
+    "/-- `q ↦ wrapCore univ (ComputeSampler λ(z)) (dec (R z) λ(z))`, the decider of `𝒱^halt`. -/"
+   ],
+   "MIPRE.Halting.wdec": [
+    "/-- The decider of `𝒱^halt (R z) λ(z)`, wrapped. -/"
+   ],
+   "MIPRE.Halting.zB": [
+    "/-- A common bound on the atoms of the wrapped decider's cost, in `m`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Paper_ClassMain",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "defmat": [
+   "MIPRE.Halting.Vz",
+   "MIPRE.Halting.classP",
+   "MIPRE.Halting.classV",
+   "MIPRE.Halting.cutB",
+   "MIPRE.Halting.qEmb"
+  ],
+  "embedded": [
+   "MIPRE.Halting.dimB_le",
+   "MIPRE.Halting.dimz_le_B",
+   "MIPRE.Halting.polyBounded_R1B",
+   "MIPRE.Halting.polyBounded_R2B",
+   "MIPRE.Halting.polyBounded_R3B",
+   "MIPRE.Halting.polyBounded_T1B",
+   "MIPRE.Halting.polyBounded_T2B",
+   "MIPRE.Halting.polyBounded_T3B",
+   "MIPRE.Halting.polyBounded_TDB",
+   "MIPRE.Halting.polyBounded_UnB",
+   "MIPRE.Halting.polyBounded_call",
+   "MIPRE.Halting.polyBounded_cutB",
+   "MIPRE.Halting.polyBounded_decB",
+   "MIPRE.Halting.polyBounded_dimB",
+   "MIPRE.Halting.polyBounded_lamB",
+   "MIPRE.Halting.polyBounded_sampB",
+   "MIPRE.Halting.polyBounded_unB_dimB",
+   "MIPRE.Halting.polyBounded_zB",
+   "MIPRE.Halting.qOf_length"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Halting.Vz",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     175,
+     176
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.classP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     135,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.classV",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.cutB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     109,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.dimB_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     145,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.dimz_le_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     169,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_R1B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_R2B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     80,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_R3B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     86,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_T1B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_T2B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     77,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_T3B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_TDB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     96
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_UnB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     73,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_call",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     57,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_cutB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     113,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_decB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     103,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_dimB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_lamB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_sampB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_unB_dimB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.polyBounded_zB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     98,
+     101
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.qEmb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     215,
+     223
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.qOf_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     178,
+     179
+    ]
+   }
+  ],
+  "lines": 300,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawInt",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawStrategy",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawSemantics",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawComplete",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawPrimrec",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RE",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Semidecide",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStarComputable",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Classes",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Wrapper",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Enumerate",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStar",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BoundedEval",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Tabulate",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStarTab",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BitQuery",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Clocked",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Threshold",
+   "import Definitions.Def_MIPRE_Foundations_Compression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_ManyOne",
+   "import Definitions.Def_MIPRE_Foundations_Cost_SizeProgram",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Halting_LambdaBound",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Absorb",
+   "import Definitions.Def_MIPRE_Foundations_Halting_CostBudget",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Instantiation",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Serial",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Semidecider",
+   "import Definitions.Def_MIPRE_Foundations_Halting_WrapperCost",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Strings",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Reduction",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Compressor",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_TabulateL",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Decider",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Size",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Cost",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Induction",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Stages",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Build",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_Main",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Paper_ClassVerifier"
+  ],
+  "blueprint": [
+   "thm:halting"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.Halting.Vz": [
+    "/-- The verifier `𝒱^halt (R z) λ(z)` the class verifier plays on `z`. -/"
+   ],
+   "MIPRE.Halting.classP": [
+    "/-- **The polynomial of the class verifier**: above the sampler's cost, the dimension, the",
+    "decider's cost and the cutoff. -/"
+   ],
+   "MIPRE.Halting.classV": [
+    "/-- **The class verifier** of the language reduced to halting by `R`. -/"
+   ],
+   "MIPRE.Halting.cutB": [
+    "/-- The cutoff, in the input length. -/"
+   ],
+   "MIPRE.Halting.qEmb": [
+    "/-- The embedding of the compressed sampler's questions into the strings of length at most",
+    "`B z`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Pipeline_Budget",
+  "module": "MIPRE.Foundations.Pipeline.Budget",
+  "module_doc": "/-!\n# Resource budgets of a verifier at one index\n\nThe four transformations of chapter 6 of the blueprint (introspection, oracularization,\nanswer reduction, parallel repetition) each take a normal form verifier and return one, and\neach states its complexity as bounds on the output *in terms of bounds on the input*: the\npaper's `TIME_𝒮(n)`, `TIME_𝒟(n)`, the dimension `s(n)` and the timeout bound `B_𝒟(n)` of a\ndecider in timeout-counter form. In the ambient cost model these are five numbers per index\n(`MIPRE.Verifier` explains the degree): the running-time coefficients of the sampler and the\ndecider, their common degree in the size of the input, a bound on the dimension of the\nquestions, and a length of answers beyond which the decider rejects (`Verifier.RejectsLong`,\nthe ambient reading of \"the decider first parses its answers against `B_𝒟(n)`\"). `Budget`\ncollects them and `Verifier.Within V n R` says `V` respects `R` at index `n`.\n\nNothing here has content: it is the vocabulary in which the hypothesis structures of\n`MIPRE.Foundations.Pipeline` state their complexity clauses, so that the composition\n`MIPRE.GapCompression.ofPipeline` can chain them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/Budget.lean",
+  "source_path": "MIPRE/Foundations/Pipeline/Budget.lean",
+  "defmat": [
+   "MIPRE.Budget",
+   "MIPRE.Budget.Le",
+   "MIPRE.Budget.uniform",
+   "MIPRE.Verifier.Within"
+  ],
+  "embedded": [
+   "MIPRE.Budget.uniform_B",
+   "MIPRE.Budget.uniform_D",
+   "MIPRE.Budget.uniform_S",
+   "MIPRE.Budget.uniform_d",
+   "MIPRE.Budget.uniform_k",
+   "MIPRE.Verifier.RejectsLong.mono",
+   "MIPRE.Verifier.Within.decider_time",
+   "MIPRE.Verifier.Within.mono",
+   "MIPRE.Verifier.Within.rejectsLong",
+   "MIPRE.Verifier.Within.sampler_dim",
+   "MIPRE.Verifier.Within.sampler_time",
+   "MIPRE.Verifier.Within.valStar_eq"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Budget",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     31,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.Budget.Le",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     58,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.Budget.uniform",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     49,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.Budget.uniform_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.Budget.uniform_D",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.Budget.uniform_S",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     52,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.Budget.uniform_d",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     53,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.Budget.uniform_k",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.RejectsLong.mono",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     82,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.Within",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.Within.decider_time",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.Within.mono",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     86,
+     89
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.Within.rejectsLong",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     101
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.Within.sampler_dim",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.Within.sampler_time",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     91,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.Within.valStar_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     103,
+     107
+    ]
+   }
+  ],
+  "lines": 139,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Budget": [
+    "/-- A resource budget at one index: a bound `S` on the sampler's running-time coefficient, `d`",
+    "on the dimension of its questions, `D` on the decider's running-time coefficient, `k` on the",
+    "degree of both running times in the size of the input, and `B` on the length of the answers",
+    "the decider can accept. -/"
+   ],
+   "MIPRE.Budget.Le": [
+    "/-- Pointwise comparison of budgets. -/"
+   ],
+   "MIPRE.Budget.uniform": [
+    "/-- The budget with the same bound `z` on every quantity, at degree `k`. -/"
+   ],
+   "MIPRE.Verifier.Within": [
+    "/-- `V` respects the budget `R` at index `n`: its sampler runs within `R.S` at degree `R.k`,",
+    "its questions have dimension at most `R.d`, its decider runs within `R.D` at degree `R.k`, and",
+    "its decider rejects every answer longer than `R.B`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Pipeline_AnswerReduction",
+  "module": "MIPRE.Foundations.Pipeline.AnswerReduction",
+  "module_doc": "/-!\n# Answer reduction, as a hypothesis\n\nBlueprint `thm:answer-reduction` (paper `ld_compiler.tex`, `thm:ar`; ledger nodes `1.3`,\n`1.3.4`), stated as the data the theorem provides: the structure `AnswerReduction ℓ`. Its\ninhabitation is the theorem — oracularization (`MIPRE.Oracularization`) composed with the\nbespoke PCP for deciders (`thm:pcp-decider`) — and nothing here proves it. The composition\n`MIPRE.GapCompression.ofPipeline` consumes an instance at `ℓ = 5`, the level of the\nintrospective verifier, and reads its output at `max (5 + 2) 5 = 7` levels.\n\nThe reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:\n\n* `ComputeAnsVerifier` takes `(𝒱, λ, μ, σ)` (and `ℓ`, here a parameter of the structure). The\n  answer-reduced sampler depends only on the input sampler and the parameters (`sampler`),\n  with its program computable in polynomial time (`samplerProg`); the decider is computed\n  from the input programs and the parameters (`compute`).\n* The ambient input budget `inBudget λ μ n` bounds the sampler and dimension by\n  `(λn + 1)^μ`, and the decider and answer length by `2^{(λn + 1)^μ}`, together with\n  `𝒟.size ≤ σ`; the complexity clause asks `𝒮.size ≤ σ` as well (below). This explicitly\n  adapts the paper's absolute-time hypothesis `TIME_𝒟(n) ≤ (2^{λn})^μ` to the ambient\n  input-size degree: the logarithm of the permitted absolute decider time on legal inputs is\n  polynomial in the sampler's budget when `λ, n ≥ 1`.\n  The ambient sampler also has input-size degree `μ`: on inputs of size `O(L)`, where\n  `L = (λn + 1)^μ`, its cost can be `L * O(L)^μ`. A universal polynomial in `L + σ` alone\n  does not bound that uniformly in `μ`. We therefore use the explicit ambient output bound\n  `outBound bound λ μ σ n = (bound.eval (L + σ + λ + n))^(μ + 1)`, at degree\n  `outDegree deg μ = deg * (μ + 1)`, and reject longer answers. This is a conservative\n  adaptation of the paper's absolute-time contract, not a proof of that adaptation or of\n  answer reduction. Compression fixes `μ`, so its final bound remains polynomial.\n* The complexity clause bounds the input sampler's description by `σ` too. The output\n  simulates the input sampler (the oracularized sampler and the answer-reduced decider both\n  call it through the universal machine), and the simulation's overhead is polynomial in the\n  size of the program simulated as well as in its running time; the paper's `thm:ar` bounds\n  only `|𝒟|`, and its `poly((λn)^μ, σ)` running times hold for a sampler of bounded size, as\n  the introspective sampler that compression feeds it is. Completeness and soundness do not\n  need the bound and keep the paper's hypothesis.\n* For `n ≥ C_ar` (the paper's threshold): a value-`1` PCC strategy for `𝒱_n` gives one for\n  `𝒱^ans_n` (completeness), and `val*(𝒱^ans_n) > 1 - ε` gives `val*(𝒱_n) ≥ 1 - δ(ε, n)` with\n  `δ(ε, n) = σ^a((λn)^{μa} ε^b + (λn)^{-μb})` (soundness), for universal constants `a, b`, with\n  `a ≥ 1` assumed as in `Introspection`. The blueprint's statement has no threshold; the\n  paper's does, and it is kept. Completeness also asks `λ, μ ≥ 1`, as soundness asks `λ ≥ 1`:\n  the paper's regime, in which `(λn + 1)^μ ≥ n + 1`. The PCP's validity hypotheses bound\n  `2 log n` by its time bound, which grows with `(λn + 1)^μ` only; at `λ = 0` or `μ = 0` that is\n  a constant and fails for large `n`, so the clause would be false there. Compression's `λ` is at\n  least `2` and its `μ` at least `1`.\n\nAnswer alphabets: `𝒱_n` is read with answers of length at most the decider's time bound\n`2^{(λn + 1)^μ}`, the length the PCP decodes to, and `𝒱^ans_n`\nwith answers of length at most its own time bound, beyond which its decider rejects.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/AnswerReduction.lean",
+  "source_path": "MIPRE/Foundations/Pipeline/AnswerReduction.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction",
+   "MIPRE.AnswerReduction.arg",
+   "MIPRE.AnswerReduction.delta",
+   "MIPRE.AnswerReduction.inAns",
+   "MIPRE.AnswerReduction.inBudget",
+   "MIPRE.AnswerReduction.outBound",
+   "MIPRE.AnswerReduction.outDegree"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     107,
+     160
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.arg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     76,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.delta",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     100,
+     103
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.inAns",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     66,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.inBudget",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     70,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.outBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     85
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.outDegree",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     87,
+     88
+    ]
+   }
+  ],
+  "lines": 185,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget"
+  ],
+  "blueprint": [
+   "def:answer-reduction-contract"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction": [
+    "/-- **Answer reduction** (blueprint `thm:answer-reduction`) for `ℓ`-level inputs: the data of",
+    "the procedure `ComputeAnsVerifier` together with the guarantees of the theorem. An instance of",
+    "this structure is the theorem. -/"
+   ],
+   "MIPRE.AnswerReduction.arg": [
+    "/-- The argument of the polynomial bounding the output at index `n`: `(λn + 1)^μ + σ + λ + n`.",
+    "For `λ, μ ≥ 1` and `n ≥ 2`, the paper's regime, `λ + n ≤ 2 (λn)^μ` and the last two terms change",
+    "nothing; they are there for the indices where `(λn + 1)^μ` does not grow with `n` — `λ = 0`,",
+    "`μ = 0`, or `n = 0` — at which the output still computes the PCP's parameters from `n` and `λ`. -/"
+   ],
+   "MIPRE.AnswerReduction.delta": [
+    "/-- The soundness loss `δ(ε, n) = σ^a((λn)^{μa} ε^b + (λn)^{-μb})`. -/"
+   ],
+   "MIPRE.AnswerReduction.inAns": [
+    "/-- The answer bound answer reduction reads its input at: the decider's time bound",
+    "`2^{(λn + 1)^μ}`. -/"
+   ],
+   "MIPRE.AnswerReduction.inBudget": [
+    "/-- The budget answer reduction asks of its input at index `n`: sampler within `(λn + 1)^μ`,",
+    "questions of dimension at most `(λn + 1)^μ`, decider within `2^{(λn + 1)^μ}`, at degree `μ`,",
+    "and no answer longer than `2^{(λn + 1)^μ}` accepted. -/"
+   ],
+   "MIPRE.AnswerReduction.outBound": [
+    "/-- The ambient output bound, retaining the input sampler's degree `μ`. For fixed `μ`,",
+    "this is a polynomial in the base argument. -/"
+   ],
+   "MIPRE.AnswerReduction.outDegree": [
+    "/-- The output's input-size degree after simulating a degree-`μ` input sampler. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Pipeline_Introspection",
+  "module": "MIPRE.Foundations.Pipeline.Introspection",
+  "module_doc": "/-!\n# Introspection, as a hypothesis\n\nBlueprint `thm:introspection` (paper `introspection.tex`, `thm:introspection`; ledger nodes\n`1.2`, `1.2.3.8`), stated as the data the theorem provides: the structure `Introspection ℓ`.\nIts inhabitation is the theorem — the rigidity argument of the paper's Section 8 through the\nPauli basis test `thm:qld` — and nothing here proves it. The composition\n`MIPRE.GapCompression.ofPipeline` consumes an instance at `ℓ = 7`.\n\nThe reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:\n\n* `ComputeIntroVerifier` takes `(𝒱, λ, ℓ)`; with `ℓ` a parameter of the structure, the\n  procedure is a polynomial-time function `compute` of `((S̄, D̄), λ)` returning the program of\n  the introspective decider, and the introspective sampler `𝒮^intro_λ` depends only on `λ`\n  (paper `lem:intro-sampler-complexity`), with its program computable from `λ`\n  (`samplerProg`). On every input, well-formed or not, the output is a `5`-level normal form\n  verifier (`output`).\n* The ambient complexity clauses hold for every input and every index:\n  `TIME_𝒮(n) ≤ (λn + 1)^C`, `TIME_𝒟(n) ≤ 2^{(λn + 1)^C}` and\n  `|𝒟^intro| ≤ C(λ+1)^C`. The polynomial exponent is an explicit adaptation of the\n  paper's absolute-time bound `2^{Cλn}`: `IsBounded λ` permits input-size degree `λ`,\n  which introduces a quadratic exponent in `λ` on legal answers of length `(2^n)^λ`.\n  The running times carry the fixed degree `C` in the size of the output verifier's\n  input, and the decider rejects every answer longer than its bound (`Budget.B`).\n  Answer reduction consumes the same polynomial-exponent budget, and the proved\n  compression composition still has polynomial output bounds. The introspective decider keeps `𝒟` within its own\n  description only up to `λ` bits (paper `lem:intro-decider-complexity`), which is why the\n  size bound does not depend on the input.\n* For a `λ`-bounded `ℓ`-level input: a value-`1` PCC strategy for `𝒱_{2^n}` gives\n  one for `𝒱^intro_n` (completeness), and `val*(𝒱^intro_n) > 1 - ε` gives\n  `val*(𝒱_{2^n}) ≥ 1 - δ(ε, n)` with `δ(ε, n) = a((λn)^a ε^b + (λn)^{-b})` (soundness), the\n  constants `a, b` depending on `ℓ` only. Soundness requires `1 ≤ n`, as in the construction's\n  indexing convention: the original input is bounded only at `2 ≤ 2^n`. At zero the displayed\n  error would vanish and assert an unintended exact conclusion. The paper has `a > 0`; `a ≥ 1` is assumed here,\n  which only weakens the clause and is what the proof of `thm:compression` uses.\n\nAnswer alphabets follow `MIPRE.GapCompression`: `𝒱_{2^n}` is read with answers of length at\nmost `(2^n)^λ`, and `𝒱^intro_n` with answers of length at most its time bound, beyond which\nits decider rejects.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/Introspection.lean",
+  "source_path": "MIPRE/Foundations/Pipeline/Introspection.lean",
+  "defmat": [
+   "MIPRE.Introspection",
+   "MIPRE.Introspection.ansBound",
+   "MIPRE.Introspection.budget",
+   "MIPRE.Introspection.delta"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     87,
+     126
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ansBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     56,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.budget",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     60,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.delta",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     66,
+     68
+    ]
+   }
+  ],
+  "lines": 146,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget"
+  ],
+  "blueprint": [
+   "def:introspection-contract"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.Introspection": [
+    "/-- **Introspection** (blueprint `thm:introspection`) for `ℓ`-level inputs: the data of the",
+    "procedure `ComputeIntroVerifier` together with the guarantees of the theorem. An instance of",
+    "this structure is the theorem. -/"
+   ],
+   "MIPRE.Introspection.ansBound": [
+    "/-- The answer bound of the introspective verifier at level `λ` and index `n`: its decider's",
+    "running-time coefficient `2^{(λn + 1)^C}`. -/"
+   ],
+   "MIPRE.Introspection.budget": [
+    "/-- The budget of the introspective verifier at level `λ` and index `n`: sampler within",
+    "`(λn + 1)^C`, questions of dimension at most `(λn + 1)^C`, decider within `2^{(λn + 1)^C}`, both",
+    "at degree `C`, and no answer longer than `2^{(λn + 1)^C}` accepted. -/"
+   ],
+   "MIPRE.Introspection.delta": [
+    "/-- The soundness loss `δ(ε, n) = a((λn)^a ε^b + (λn)^{-b})`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Pipeline_Repetition",
+  "module": "MIPRE.Foundations.Pipeline.Repetition",
+  "module_doc": "/-!\n# Parallel repetition of normal form verifiers, as a hypothesis\n\nBlueprint `thm:parallel-repetition` (paper `parallel_amplification.tex`, `thm:repetition`, in\nits direct rather than anchored form; ledger nodes `1.4`, `1.4.3`, `1.4.3.1`), stated as the\ndata the theorem provides: the structure `Repetition ℓ`. Its inhabitation is the theorem: the\ngame-level direct repetition theorem `thm:direct-repetition-q`\n(`MIPRE.Repetition.quantumValue_repeat_le`, vendored) packaged at the level of verifiers — a\nsampler running `k(n)` independent copies of the input sampler, a decider parsing a\nself-delimiting `k(n)`-tuple of answers and running the input decider on every coordinate.\nNothing here proves it. The composition `MIPRE.GapCompression.ofPipeline` consumes an\ninstance at `ℓ = 7`.\n\nThe reading of the paper's statement in the vocabulary of `MIPRE.Verifier`:\n\n* `ComputeParrepVerifier` takes `(𝒱, ℓ, λ, τ)`; the number of repetitions is\n  `k(n) = (λn)^τ`, read as `2^{τ(|λ| + |n|)}` with `|·|` the bit length — the power of two just\n  above `(λn)^τ` (`Nat.size`), which a program of the ambient model writes down by a walk over\n  the bits of `λ` and `n`, where the paper's expression would need multiplication. The repeated\n  decider parses each coordinate of an answer against a length `2^{β(|λ| + |n|)}` — the paper's\n  `B_𝒟(n)`, read from the timeout-counter form of the decider there, and a further parameter\n  `β` here — so the procedure is a polynomial-time function of the input programs and\n  `(λ, τ, β)` (`compute`); the repeated sampler depends only on the input sampler and `(λ, τ)`\n  (`sampler`).\n* The complexity clause bounds the output at index `n` by a polynomial in `k(n)`, the parse\n  length, the input's budget at `n`, the input's description length, the raw parameters and the\n  input's cost on the dimension query (`Repetition.arg`; the paper's\n  `poly(k(n), TIME_𝒮(n))` and `poly(k(n), B_𝒟(n))`), at a degree affine in the input's — the\n  repeated decider runs the input decider through the universal machine, whose overhead is\n  polynomial — and the answers it accepts by a polynomial in `k(n)` and the parse length alone.\n* Completeness: a value-`1` PCC strategy for `𝒱_n` gives one for `𝒱^rep_n`.\n* Soundness: `val*(𝒱_n) ≤ 1 - ε` gives `val*(𝒱^rep_n) ≤ exp(-c ε^13 k(n) / (B + 1))`, with\n  `B = 2^{β(|λ| + |n|)}` the parse length: `thm:direct-repetition-q` with `log(|𝒜||ℬ|) ≤ 2(B + 1)`\n  for answer alphabets of strings of length at most `B`, the constant `c` absorbing the\n  factor `3`. The exponent `13` is the vendored theorem's.\n\nAnswer alphabets: `𝒱_n` is read with answers of length at most the parse length, so that the\nrepeated game is exactly the direct repetition of `𝒱_n` at that alphabet, and `𝒱^rep_n` with\nanswers of length at most its own bound, beyond which its decider rejects.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/Repetition.lean",
+  "source_path": "MIPRE/Foundations/Pipeline/Repetition.lean",
+  "defmat": [
+   "MIPRE.Repetition",
+   "MIPRE.Repetition.ansArg",
+   "MIPRE.Repetition.arg",
+   "MIPRE.Repetition.parseBound",
+   "MIPRE.Repetition.reps",
+   "MIPRE.Repetition.soundBound"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Repetition",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     83,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.Repetition.ansArg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     74,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.Repetition.arg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.Repetition.parseBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.Repetition.reps",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     56,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.Repetition.soundBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     79
+    ]
+   }
+  ],
+  "lines": 166,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget"
+  ],
+  "blueprint": [
+   "thm:parallel-repetition"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.Repetition": [
+    "/-- **Parallel repetition of normal form verifiers** (blueprint `thm:parallel-repetition`) for",
+    "`ℓ`-level inputs: the data of the procedure `ComputeParrepVerifier` together with the",
+    "guarantees of the theorem. An instance of this structure is the theorem. -/"
+   ],
+   "MIPRE.Repetition.ansArg": [
+    "/-- The argument of the polynomial bounding the answers of the output at index `n`. -/"
+   ],
+   "MIPRE.Repetition.arg": [
+    "/-- The argument of the polynomial bounding the running times of the output at index `n`: the",
+    "repetition count, the parse length, the input's budget and description length, the raw",
+    "parameters `λ, τ, β, n` (the paper's `poly(k(n), TIME_𝒮(n))` dominates them when `τ ≥ 1`; here",
+    "they are added, since `τ = 0` is allowed), and `10^{R.k}`, the input's time on the dimension",
+    "query — an input of fixed size `9`, which the output asks on every input of its own,",
+    "including the empty one, and whose cost at degree `R.k` no polynomial in the other quantities",
+    "dominates. -/"
+   ],
+   "MIPRE.Repetition.parseBound": [
+    "/-- The length against which each coordinate of an answer is parsed: `2^{β(|λ| + |n|)}`, at",
+    "least `(λn + 1)^β` and at most `(λn + 1)^{6β}` for `λ, n ≥ 1`. -/"
+   ],
+   "MIPRE.Repetition.reps": [
+    "/-- The number of repetitions `k(n) = 2^{τ(|λ| + |n|)}`, at least `(λn + 1)^τ`. -/"
+   ],
+   "MIPRE.Repetition.soundBound": [
+    "/-- The soundness bound `exp(-c ε^13 k / (B + 1))`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Pipeline_Margin",
+  "module": "MIPRE.Foundations.Pipeline.Margin",
+  "module_doc": "/-!\n# The parameter arithmetic of the compression theorem\n\nBlueprint `lem:compress-margin` and `lem:compress-tau` (paper `recursive.tex`, the proof of\n`thm:compression`; ledger nodes `1.5.3`, `1.5.5`): the four stages of `Compress` are chained\nthrough a budget of margins, and these are the arithmetic facts about the imported constants\nthat make each application of a soundness clause, taken contrapositively, land strictly inside\nthe gap it is handed.\n\nWrite `x = λn`, `(a₁, b₁)` for the constants of introspection and `(a₂, b₂)` for those of\nanswer reduction (`a₁, a₂ ≥ 1`, `0 < b₁, b₂ ≤ 1`).\n\n* `ε₁(x) = (8 a₁ x^{a₁})^{-1/b₁}` makes the introspection loss `δ₁(ε₁, n) < 1/2` once\n  `x ≥ (4a₁)^{1/b₁}` (`intro_margin`): the first term of `δ₁` is exactly `1/8`, the second at\n  most `1/4`.\n* `ε₂ = (ε₁ / (3 σ^{a₂} x^{μ a₂}))^{1/b₂}` makes the first term of the answer-reduction loss\n  `δ₂(ε₂, n)` exactly `ε₁/3`; the second, `σ^{a₂} x^{-μ b₂}`, is below `ε₁/2` for `μ` large\n  (`exists_mu`, the margin claim): with `σ ≤ x^K`, any `μ b₂ ≥ K a₂ + a₁/b₁ + 1` works past a\n  threshold on `x`. The paper fixes `μ = ⌈max{C_intro, (9a₁ + 2a₂ C_intro)/(b₁ b₂)}⌉` and\n  `n ≥ 2`; the threshold here is absorbed by `C₀`.\n* `1/ε₂` is bounded by a fixed power of `x` (`exists_eps2_lower`), so a universal repetition\n  exponent `τ` brings the repetition bound `exp(-c ε₂^{13} k / (B + 1))` below `1/2` for any\n  `k ≥ z^τ` and `B ≤ z^β`, `z = λn + 1`, for `n ≥ τ` (`exists_tau`).\n\nEverything is real arithmetic with `Real.rpow`; nothing depends on the verifiers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/Margin.lean",
+  "source_path": "MIPRE/Foundations/Pipeline/Margin.lean",
+  "defmat": [
+   "MIPRE.Pipeline.eps1",
+   "MIPRE.Pipeline.eps2"
+  ],
+  "embedded": [
+   "MIPRE.Pipeline.ar_margin",
+   "MIPRE.Pipeline.eps1_eq",
+   "MIPRE.Pipeline.eps1_le_one",
+   "MIPRE.Pipeline.eps1_pos",
+   "MIPRE.Pipeline.eps1_rpow",
+   "MIPRE.Pipeline.eps2_le_one",
+   "MIPRE.Pipeline.eps2_pos",
+   "MIPRE.Pipeline.eps2_rpow",
+   "MIPRE.Pipeline.exists_eps2_lower",
+   "MIPRE.Pipeline.exists_mu",
+   "MIPRE.Pipeline.exists_tau",
+   "MIPRE.Pipeline.intro_margin"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Pipeline.ar_margin",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     177,
+     192
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps1",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     45,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps1_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     61,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps1_le_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps1_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     48,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps1_rpow",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     56,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps2",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     142,
+     144
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps2_le_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     154,
+     165
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps2_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     146,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps2_rpow",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     167,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.exists_eps2_lower",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     194,
+     261
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.exists_mu",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     91,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.exists_tau",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     265,
+     320
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.intro_margin",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     67,
+     87
+    ]
+   }
+  ],
+  "lines": 357,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_AnswerReduction",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition"
+  ],
+  "blueprint": [
+   "lem:compress-margin",
+   "lem:compress-tau"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.Pipeline.eps1": [
+    "/-- `ε₁(x) = (8 a x^a)^{-1/b}`. -/"
+   ],
+   "MIPRE.Pipeline.eps2": [
+    "/-- `ε₂ = (ε₁ / (3 σ^{a₂} x^{μ a₂}))^{1/b₂}`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Pipeline_Compress",
+  "module": "MIPRE.Foundations.Pipeline.Compress",
+  "module_doc": "/-!\n# The compression theorem from its three stages\n\nBlueprint `thm:compression`, its proof (paper `recursive.tex`, Section \"Proof of Theorem\ncompression\"; ledger nodes `1.5`, `1.5.7`, `1.5.8`): `Compress` is introspection at `ℓ = 7`,\nthen answer reduction at `(λ, μ, σ(λ))`, then parallel repetition at `(λ, τ, β)`, and its\nguarantees are those of the three stages chained through the margins of\n`MIPRE.Foundations.Pipeline.Margin`. `GapCompression.ofPipeline` is that composition: from an\n`Introspection 7`, an `AnswerReduction 5` and a `Repetition 7` it builds a `GapCompression`.\nOracularization is not a stage of `Compress` (it is the first step of the proof of answer\nreduction) and is not consumed here.\n\nThe parameters, all determined by the three structures:\n\n* `σ(λ)`: the paper's `⌈C λ^C⌉`, any polynomial in `λ` computable in polynomial time that\n  dominates the size `C(λ + 1)^C` of the introspective decider and the size `s₁(λ)` of the\n  introspective sampler — the second because answer reduction runs the input sampler through\n  the universal machine, whose overhead grows with the program simulated, so its complexity\n  clause asks `|𝒮|, |𝒟| ≤ σ`. It is `sigmaFun C_σ λ`, the\n  `C_σ`-fold iterate of `n ↦ 2^{2·size n}` on `2λ + 1`, which is `2^{C(size λ + 2)}` at least\n  and is computed by iterating `lamProg`; there is no polynomial-time arithmetic in the\n  toolkit to compute the paper's expression directly, and any dominating polynomial serves.\n* `μ`: the margin claim `exists_mu`, at least `C + 1`: at least `C` so that the introspective\n  verifier is within answer reduction's input budget, and positive, as answer reduction's\n  completeness asks.\n* `β`: an exponent with `poly((λn + 1)^μ + σ(λ) + λ + n)^(μ + 1) ≤ (λn + 1)^β`, the parse length\n  handed to repetition, dominating the ambient answer bound of the answer-reduced verifier.\n* `τ`: the repetition exponent `exists_tau`, from the lower bound `ε₂ ≥ x^{-P}` of\n  `exists_eps2_lower`, against the parse length `2^{β(|λ| + |n|)} ≤ (λn + 1)^{6β}`.\n* `C₀`: the largest of the thresholds — `2`, the introspection margin's, the margin claim's,\n  the lower bound's, answer reduction's own `C_ar`, and `τ`.\n\nThe complexity accounting is `PolyBounded` arithmetic: every bound of the repeated verifier at\n`(λ, n)` is a monotone polynomial expression in `λ`, `n`, `σ(λ)` and the sizes of the programs\nalong the chain, hence at most a polynomial in `n + λ` (`bound`). The value chain is the one\nof `rem:compression-chain`: each soundness clause contrapositively, landing inside the margin\nthe previous stage left.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/Compress.lean",
+  "source_path": "MIPRE/Foundations/Pipeline/Compress.lean",
+  "defmat": [
+   "MIPRE.GapCompression.ofPipeline",
+   "MIPRE.Pipeline.Csig",
+   "MIPRE.Pipeline.C₀",
+   "MIPRE.Pipeline.C₁",
+   "MIPRE.Pipeline.G",
+   "MIPRE.Pipeline.K",
+   "MIPRE.Pipeline.N₁",
+   "MIPRE.Pipeline.N₂",
+   "MIPRE.Pipeline.P",
+   "MIPRE.Pipeline.ansB",
+   "MIPRE.Pipeline.arBound",
+   "MIPRE.Pipeline.arDegree",
+   "MIPRE.Pipeline.arOutput",
+   "MIPRE.Pipeline.arSampler",
+   "MIPRE.Pipeline.beta",
+   "MIPRE.Pipeline.bound",
+   "MIPRE.Pipeline.cS",
+   "MIPRE.Pipeline.compress",
+   "MIPRE.Pipeline.mu",
+   "MIPRE.Pipeline.output",
+   "MIPRE.Pipeline.pArg",
+   "MIPRE.Pipeline.sampler",
+   "MIPRE.Pipeline.samplerProg",
+   "MIPRE.Pipeline.sigma",
+   "MIPRE.Pipeline.sigmaFun",
+   "MIPRE.Pipeline.s₁",
+   "MIPRE.Pipeline.tau",
+   "MIPRE.Pipeline.timeB",
+   "MIPRE.Pipeline.twoPowFun",
+   "MIPRE.Pipeline.wSize"
+  ],
+  "embedded": [
+   "MIPRE.Pipeline.C_le_mu",
+   "MIPRE.Pipeline.C_succ_le_mu",
+   "MIPRE.Pipeline.C₀_spec",
+   "MIPRE.Pipeline.ansB_le_G",
+   "MIPRE.Pipeline.ansB_le_bound",
+   "MIPRE.Pipeline.ansB_mono",
+   "MIPRE.Pipeline.ansBound_le_inAns",
+   "MIPRE.Pipeline.arBound_le_parseBound",
+   "MIPRE.Pipeline.arBound_le_pow",
+   "MIPRE.Pipeline.arOutput_decider",
+   "MIPRE.Pipeline.arOutput_sampler",
+   "MIPRE.Pipeline.arOutput_size_le",
+   "MIPRE.Pipeline.arOutput_within",
+   "MIPRE.Pipeline.arSampler_prog",
+   "MIPRE.Pipeline.decider_size_le_sigma",
+   "MIPRE.Pipeline.eps2_lower_spec",
+   "MIPRE.Pipeline.esize_params_le",
+   "MIPRE.Pipeline.introOutput_within",
+   "MIPRE.Pipeline.le_sigmaFun",
+   "MIPRE.Pipeline.margin_spec",
+   "MIPRE.Pipeline.mul_pow_le_Csig",
+   "MIPRE.Pipeline.one_le_mu",
+   "MIPRE.Pipeline.one_le_sigma",
+   "MIPRE.Pipeline.one_le_sigmaFun",
+   "MIPRE.Pipeline.output_decider",
+   "MIPRE.Pipeline.output_hasPerfectPCC",
+   "MIPRE.Pipeline.output_sampler",
+   "MIPRE.Pipeline.output_valStar_le",
+   "MIPRE.Pipeline.output_within",
+   "MIPRE.Pipeline.parseBound_le",
+   "MIPRE.Pipeline.polyBounded_G",
+   "MIPRE.Pipeline.polyBounded_arBound",
+   "MIPRE.Pipeline.polyBounded_sigmaFun",
+   "MIPRE.Pipeline.pow_le_reps",
+   "MIPRE.Pipeline.samplerProg_eq",
+   "MIPRE.Pipeline.sampler_size_le_sigma",
+   "MIPRE.Pipeline.sampler_size_le_s₁",
+   "MIPRE.Pipeline.sigmaFun_mono",
+   "MIPRE.Pipeline.sigmaFun_succ",
+   "MIPRE.Pipeline.sigmaFun_zero",
+   "MIPRE.Pipeline.sigma_le_pow",
+   "MIPRE.Pipeline.sigma_mono",
+   "MIPRE.Pipeline.size_le_sigma",
+   "MIPRE.Pipeline.size_mul_add_one_le",
+   "MIPRE.Pipeline.size_sigmaFun",
+   "MIPRE.Pipeline.s₁_le",
+   "MIPRE.Pipeline.tau_spec",
+   "MIPRE.Pipeline.timeB_le_G",
+   "MIPRE.Pipeline.timeB_le_bound",
+   "MIPRE.Pipeline.timeB_mono"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.GapCompression.ofPipeline",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     620,
+     653
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.C_le_mu",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     178,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.C_succ_le_mu",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     175,
+     176
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.Csig",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     135,
+     137
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.C₀",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     267,
+     269
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.C₀_spec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     271,
+     274
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.C₁",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     264,
+     265
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.G",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     400,
+     401
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.K",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     165,
+     166
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.N₁",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     183,
+     185
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.N₂",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     207,
+     209
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.P",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     203,
+     205
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.ansB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     396,
+     398
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.ansB_le_G",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     420,
+     421
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.ansB_le_bound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     461,
+     462
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.ansB_mono",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     412,
+     415
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.ansBound_le_inAns",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     475,
+     477
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     383,
+     385
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arBound_le_parseBound",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     501,
+     516
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arBound_le_pow",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     199,
+     201
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arDegree",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     387,
+     389
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arOutput",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     278,
+     280
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arOutput_decider",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     294,
+     297
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arOutput_sampler",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     286,
+     288
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arOutput_size_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     361,
+     381
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arOutput_within",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     479,
+     484
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arSampler",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     282,
+     284
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.arSampler_prog",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     290,
+     292
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.beta",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     196,
+     197
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.bound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     455,
+     456
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.cS",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     123,
+     126
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.compress",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     318,
+     327
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.decider_size_le_sigma",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     146,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.eps2_lower_spec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     211,
+     213
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.esize_params_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     350,
+     354
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.introOutput_within",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     464,
+     473
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.le_sigmaFun",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     86,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.margin_spec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     187,
+     189
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.mu",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     171,
+     173
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.mul_pow_le_Csig",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     139,
+     141
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.one_le_mu",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     180,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.one_le_sigma",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     161,
+     161
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.one_le_sigmaFun",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.output",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     329,
+     331
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.output_decider",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     336,
+     342
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.output_hasPerfectPCC",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     520,
+     533
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.output_sampler",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     333,
+     334
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.output_valStar_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     535,
+     612
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.output_within",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     486,
+     499
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.pArg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     346,
+     348
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.parseBound_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     241,
+     262
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.polyBounded_G",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     423,
+     453
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.polyBounded_arBound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     191,
+     194
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.polyBounded_sigmaFun",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     103,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.pow_le_reps",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     232,
+     239
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sampler",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     299,
+     301
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.samplerProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     303,
+     309
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.samplerProg_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     311,
+     316
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sampler_size_le_sigma",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     151,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sampler_size_le_s₁",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     118,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sigma",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     143,
+     144
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sigmaFun",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     65,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sigmaFun_mono",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     96,
+     101
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sigmaFun_succ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     73,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sigmaFun_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     71,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sigma_le_pow",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     168,
+     169
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.sigma_mono",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     163,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.size_le_sigma",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     157,
+     159
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.size_mul_add_one_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     223,
+     230
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.size_sigmaFun",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     75,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.s₁",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     115,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.s₁_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     128,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.tau",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     215,
+     216
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.tau_spec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     218,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.timeB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     391,
+     394
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.timeB_le_G",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     417,
+     418
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.timeB_le_bound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     458,
+     459
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.timeB_mono",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     405,
+     410
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.twoPowFun",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     55,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Pipeline.wSize",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     356,
+     359
+    ]
+   }
+  ],
+  "lines": 789,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawInt",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawStrategy",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawSemantics",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawComplete",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawPrimrec",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RE",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Semidecide",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStarComputable",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Classes",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Wrapper",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Enumerate",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BoundedEval",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Tabulate",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BitQuery",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Clocked",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Threshold",
+   "import Definitions.Def_MIPRE_Foundations_Compression",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Halting_LambdaBound",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Absorb",
+   "import Definitions.Def_MIPRE_Foundations_Halting_CostBudget",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Instantiation",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Serial",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Semidecider",
+   "import Definitions.Def_MIPRE_Foundations_Halting_WrapperCost",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Strings",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Reduction",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Compressor",
+   "import Definitions.Def_MIPRE_Foundations_Halting_CompressorCost",
+   "import Definitions.Def_MIPRE_Foundations_Halting_CompressorProgram",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_AnswerReduction",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Margin"
+  ],
+  "blueprint": [
+   "lem:compress-sampler-indep",
+   "thm:compression"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.GapCompression.ofPipeline": [
+    "/-- **The compression theorem from its stages** (blueprint `thm:compression`, proof): an",
+    "`Introspection 7`, an `AnswerReduction 5` and a `Repetition 7` give a `GapCompression`. -/"
+   ],
+   "MIPRE.Pipeline.Csig": [
+    "/-- The exponent of `σ`: large enough that `C_σ (λ + 1)^{C_σ}` dominates both the introspective",
+    "decider's size `C(λ + 1)^C` and the introspective sampler's size `s₁`. -/"
+   ],
+   "MIPRE.Pipeline.C₀": [
+    "/-- `C₀`, the threshold of the compression theorem. -/"
+   ],
+   "MIPRE.Pipeline.C₁": [
+    "/-- The threshold of the introspection margin, `⌈(4a)^{1/b}⌉`. -/"
+   ],
+   "MIPRE.Pipeline.G": [
+    "/-- Both bounds, as one function of `z = n + λ`. -/"
+   ],
+   "MIPRE.Pipeline.K": [
+    "/-- The exponent `K` with `σ(z) ≤ z^K` for `z ≥ 2`. -/"
+   ],
+   "MIPRE.Pipeline.N₁": [
+    "/-- The threshold of the margin claim. -/"
+   ],
+   "MIPRE.Pipeline.N₂": [
+    "/-- The threshold of the lower bound on `ε₂`. -/"
+   ],
+   "MIPRE.Pipeline.P": [
+    "/-- `P`, with `ε₂ ≥ x^{-P}`. -/"
+   ],
+   "MIPRE.Pipeline.ansB": [
+    "/-- The answer bound of the compressed verifier at `(λ, n)`. -/"
+   ],
+   "MIPRE.Pipeline.arBound": [
+    "/-- The bound of the answer-reduced verifier at `(λ, n)`. -/"
+   ],
+   "MIPRE.Pipeline.arDegree": [
+    "/-- The answer-reduced verifier's input-size degree. The pipeline fixes `μ`, so this",
+    "degree is independent of `λ`, `n`, and the input verifier. -/"
+   ],
+   "MIPRE.Pipeline.arOutput": [
+    "/-- The answer-reduced verifier, at level `7 = max (5 + 2) 5`. -/"
+   ],
+   "MIPRE.Pipeline.arSampler": [
+    "/-- The answer-reduced sampler, at level `7`. -/"
+   ],
+   "MIPRE.Pipeline.beta": [
+    "/-- `β`, the parse-length exponent handed to repetition. -/"
+   ],
+   "MIPRE.Pipeline.bound": [
+    "/-- The polynomial `poly(n, λ)` of the compression theorem. -/"
+   ],
+   "MIPRE.Pipeline.cS": [
+    "/-- The coefficient of the monomial bound on `s₁`. -/"
+   ],
+   "MIPRE.Pipeline.compress": [
+    "/-- `Compress`: the program of the compressed decider, as a polynomial-time function of the",
+    "input programs and `λ`. -/"
+   ],
+   "MIPRE.Pipeline.mu": [
+    "/-- `μ`, from the margin claim. -/"
+   ],
+   "MIPRE.Pipeline.output": [
+    "/-- The output of `Compress` on any input, as a `7`-level normal form verifier. -/"
+   ],
+   "MIPRE.Pipeline.pArg": [
+    "/-- A bound on the size of the encoded parameters `(λ, μ, σ(λ))`. -/"
+   ],
+   "MIPRE.Pipeline.sampler": [
+    "/-- The compressed sampler `𝒮^compr_λ`. -/"
+   ],
+   "MIPRE.Pipeline.samplerProg": [
+    "/-- Its program, as a polynomial-time function of `λ`. -/"
+   ],
+   "MIPRE.Pipeline.sigma": [
+    "/-- `σ(λ) = sigmaFun C_σ λ`. -/"
+   ],
+   "MIPRE.Pipeline.sigmaFun": [
+    "/-- `sigmaFun C`: the `C`-fold iterate of `n ↦ 2^{2·size n}` on `2n + 1`, a polynomial-time",
+    "function of `n` bounded below by `2^{C(size n + 2)}` and above by a polynomial in `n`. -/"
+   ],
+   "MIPRE.Pipeline.s₁": [
+    "/-- A bound on the size of the introspective sampler's program. -/"
+   ],
+   "MIPRE.Pipeline.tau": [
+    "/-- `τ`, the repetition exponent, against the parse length `2^{β(|λ| + |n|)} ≤ (λn + 1)^{6β}`. -/"
+   ],
+   "MIPRE.Pipeline.timeB": [
+    "/-- The running-time bound of the compressed verifier at `(λ, n)`. -/"
+   ],
+   "MIPRE.Pipeline.twoPowFun": [
+    "/-- `n ↦ 2^{2·size n}` as a polynomial-time function (`lamProg`). -/"
+   ],
+   "MIPRE.Pipeline.wSize": [
+    "/-- A bound on the size of the answer-reduced verifier, as a function of `λ`. -/"
+   ]
+  }
+ }
+]

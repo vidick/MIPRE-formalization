@@ -1,0 +1,5545 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Classes",
+  "module": "MIPRE.Foundations.Halting.Classes",
+  "module_doc": "/-!\n# The classes of the compressibility criterion, at the level of verifiers\n\nBlueprint `rem:compression-abstract`, item 1: the classes the criterion is instantiated with\nare, at level `n`, the strings whose verifier is `n`-bounded, rejects every answer longer than\nthe answer bound at index `n`, and has a value-`1` PCC strategy there (`A n`), and those that\nare `n`-bounded, reject long answers, and have `val* ≤ 1/2` there (`B n`). This file is the\npart that does not depend on how a string is read as a verifier: the two conditions themselves\n(`Verifier.InClassA`, `Verifier.InClassB`), their disjointness, and the two distinguished\nverifiers the criterion needs.\n\nThe rejection clause (`Verifier.RejectsLong`) is what the paper's `V^halt` has by construction\n— Step 6 of its decider is an explicit length check, and the amended proof of\n`lem:dhalt-values` spends it to identify the answer alphabets of `V^halt_n` and `V^compr_n`.\nOver arbitrary strings it has to be asked for: without it the soundness direction of the\ncompressor's obligation cannot raise the answer bound from the one a class is read with to\nthe one `GapCompression.soundness` takes its hypothesis at (`Verifier.valStar_eq_of_rejects`\nis the step, and `valStar_le_of_le` goes the wrong way). `planning/h4-assembly.md` §4 item 4\nhas the argument, and the choice to put the clause in the classes rather than through the\ncriterion.\n\n* `Verifier.InClassA n T`, `Verifier.InClassB n T` and `not_inClassB_of_inClassA`: the classes\n  are disjoint, because a perfect PCC strategy gives `val* = 1`\n  (`Verifier.valStar_eq_one_of_hasPerfectPCC`).\n* `Verifier.hasPerfectPCC_of_accepts_diagonal`: a decider that accepts the constant answer `a₀`\n  on every question pair has a value-`1` PCC strategy there — the paper's \"trivial strategy:\n  for all questions the players return a fixed answer\", which is where `y_yes` comes from.\n  `HasPerfectPCC` lives on the doubled game, so nothing is asked of the decider on the\n  diagonal; `y_yes` still accepts only the empty answers, which keeps it rejecting long ones.\n* `Verifier.valStar_eq_zero_of_rejects_all` and `isSynchronousAt_of_rejects_all`: a decider that\n  accepts nothing at `n` gives `val* = 0`, where `y_no` comes from.\n\nWhat remains for the classes is the reading of a string as a verifier — the wrapper decider\naround the string's own decider — and the two strings realizing these verifiers\n(`planning/formalization-plan.md`, H4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Classes.lean",
+  "source_path": "MIPRE/Foundations/Halting/Classes.lean",
+  "defmat": [
+   "MIPRE.Verifier.InClassA",
+   "MIPRE.Verifier.InClassB"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Verifier.InClassA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     55,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.InClassB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     60,
+     63
+    ]
+   }
+  ],
+  "lines": 108,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Verifier.InClassA": [
+    "/-- The class `A` at level `n`, with answer-length bound `T`: the verifier is `n`-bounded, its",
+    "decider rejects every answer longer than `T` at index `n`, and its `n`-th game has a value-`1`",
+    "PCC strategy. -/"
+   ],
+   "MIPRE.Verifier.InClassB": [
+    "/-- The class `B` at level `n`, with answer-length bound `T`: the verifier is `n`-bounded, its",
+    "decider rejects every answer longer than `T` at index `n`, and its `n`-th game has quantum",
+    "value at most `1/2`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Descriptions",
+  "module": "MIPRE.Foundations.Halting.Descriptions",
+  "module_doc": "/-!\n# Descriptions as bit strings: the postorder serialization of data\n\nBlueprint `rem:compression-abstract`, item 1: the strings of the compressibility criterion are\n*descriptions*, pairs `(λ, decider)` of a parameter and a decider program. This file fixes how\nsuch a pair travels as a bit string.\n\nA pair is data (`cons (encode λ) (encode decider)`), and data is serialized in **postorder**:\n`nil ↦ 0`, `cons a b ↦ a · b · 1` (`Data.toBitsPost`). Postorder, rather than the preorder\n`Data.toBits`, because it is read back by a *stack machine* (`Data.stackStep`): a `0` pushes\n`nil`, a `1` pops two entries and pushes their pair. A loop of the ambient model can run a stack\nmachine on a bit string, whereas a recursive-descent reader would need recursion; the ambient\nprogram is in `Halting/Lists.lean`, this file has the mathematics and the primitive recursive\nversions.\n\n* `Data.toBitsPost`, `Data.stackRun`, `Data.parse`: the serialization, the stack machine and\n  the total reader (the top of the final stack, `nil` for an empty stack), with the round trip\n  `Data.parse_toBitsPost`.\n* `Data.normBin`: a total normalization of the parameter, the identity on canonical binary\n  numerals (`encode n` for `n : ℕ`) and `nil` (`encode 0`) elsewhere; `Data.natOf` reads it.\n  Every string thereby names a parameter and a decider (`descLam`, `descDecD`), and the\n  wrapper decider of `Halting/Wrapper.lean` interprets the raw data the same way, so that no\n  validity condition on strings is needed anywhere.\n\nEach of these is also given in primitive recursive form, `Data.parse` and `Data.natOf` among\nthem, together with `Data.primrec_size`: the level at which the halting reduction runs is\n`2 ^ (K + 1 + esize e)`, so the size of an encoding has to be computable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Descriptions.lean",
+  "source_path": "MIPRE/Foundations/Halting/Descriptions.lean",
+  "defmat": [
+   "MIPRE.Cost.Data.isBit",
+   "MIPRE.Cost.Data.isCanonBin",
+   "MIPRE.Cost.Data.natOf",
+   "MIPRE.Cost.Data.normBin",
+   "MIPRE.Cost.Data.parse",
+   "MIPRE.Cost.Data.stackRun",
+   "MIPRE.Cost.Data.stackStep",
+   "MIPRE.Cost.Data.toBitsPost"
+  ],
+  "embedded": [
+   "MIPRE.Cost.Data.bits_foldr_of_canon",
+   "MIPRE.Cost.Data.bits_getLast",
+   "MIPRE.Cost.Data.isBit_ofBool",
+   "MIPRE.Cost.Data.isCanonBin_encode",
+   "MIPRE.Cost.Data.length_toBitsPost",
+   "MIPRE.Cost.Data.natOf_encode",
+   "MIPRE.Cost.Data.normBin_encode",
+   "MIPRE.Cost.Data.parse_toBitsPost",
+   "MIPRE.Cost.Data.primrec_decode_nat",
+   "MIPRE.Cost.Data.primrec_isCanonBin",
+   "MIPRE.Cost.Data.primrec_natOf",
+   "MIPRE.Cost.Data.primrec_normBin",
+   "MIPRE.Cost.Data.primrec_parse",
+   "MIPRE.Cost.Data.primrec_size",
+   "MIPRE.Cost.Data.primrec_stackStep",
+   "MIPRE.Cost.Data.size_eq_recD",
+   "MIPRE.Cost.Data.stackRun_cons",
+   "MIPRE.Cost.Data.stackRun_nil",
+   "MIPRE.Cost.Data.stackRun_toBitsPost",
+   "MIPRE.Cost.Data.stackStep_false",
+   "MIPRE.Cost.Data.stackStep_true_cons_cons"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Data.bits_foldr_of_canon",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     200,
+     222
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.bits_getLast",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     172,
+     190
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.isBit",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     124,
+     128
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.isBit_ofBool",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     130,
+     130
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.isCanonBin",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     135,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.isCanonBin_encode",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     192,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.length_toBitsPost",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.natOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     228,
+     229
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.natOf_encode",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     234,
+     235
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.normBin",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     224,
+     226
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.normBin_encode",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     231,
+     232
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.parse",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     87,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.parse_toBitsPost",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     90,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_decode_nat",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     352,
+     363
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_isCanonBin",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     332,
+     345
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_natOf",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     365,
+     366
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_normBin",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     347,
+     350
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_parse",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     115,
+     120
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_size",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     376,
+     382
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_stackStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.size_eq_recD",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     370,
+     374
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.stackRun",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     66,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.stackRun_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     71,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.stackRun_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     69,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.stackRun_toBitsPost",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     78,
+     85
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.stackStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.stackStep_false",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     60,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.stackStep_true_cons_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     62,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.toBitsPost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     45
+    ]
+   }
+  ],
+  "lines": 277,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Data.isBit": [
+    "/-- A datum is a bit: `nil` or `cons nil nil`. -/"
+   ],
+   "MIPRE.Cost.Data.isCanonBin": [
+    "/-- A datum is a canonical binary numeral: a list of bits, empty or ending in `true`. -/"
+   ],
+   "MIPRE.Cost.Data.natOf": [
+    "/-- The parameter a datum denotes, after normalization. -/"
+   ],
+   "MIPRE.Cost.Data.normBin": [
+    "/-- Total normalization of a parameter: canonical binary numerals are kept, everything else",
+    "reads as `0`. -/"
+   ],
+   "MIPRE.Cost.Data.parse": [
+    "/-- The total reader: the top of the final stack, `nil` for an empty stack. -/"
+   ],
+   "MIPRE.Cost.Data.stackRun": [
+    "/-- Running the stack machine over a bit string from a stack. -/"
+   ],
+   "MIPRE.Cost.Data.stackStep": [
+    "/-- One step of the stack machine: a `0` pushes `nil`; a `1` pops `b` then `a` and pushes",
+    "`cons a b`, and does nothing on a stack with fewer than two entries. -/"
+   ],
+   "MIPRE.Cost.Data.toBitsPost": [
+    "/-- Postorder serialization of data: `nil ↦ 0`, `cons a b ↦ a · b · 1`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_Cost_Numeric_B",
+  "module": "MIPRE.Foundations.Cost.Numeric",
+  "module_doc": "/-!\n# The closure library, part IV: binary numbers\n\nPrograms on binary numbers presented as bit strings (LSB first, as in `Nat.bits`), used by\nthe bit-query program of the recursive compression argument: the zero test\n(`isZeroProg`) and decrement (`decProg`). Decrement flips the leading `false`s to `true`\nand the first `true` to `false`; it may leave a non-canonical representation (trailing\n`false`s), which is why the specifications are in terms of the *value* `bitsVal` of a bit\nstring rather than `Nat.bits`.\n\nCosts: every list walk is quadratic in this model (the loop state is rebuilt each\niteration, copying the tail), so bounds have the form `(iterations + 1) · (S + c)` with `S`\ndominating the sizes involved.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Numeric.lean",
+  "source_path": "MIPRE/Foundations/Cost/Numeric.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPRE.Cost.Prog.decBody_wellScoped",
+   "MIPRE.Cost.Prog.decProg_wellScoped",
+   "MIPRE.Cost.bitsVal_bits",
+   "MIPRE.Cost.bitsVal_eq_zero_iff",
+   "MIPRE.Cost.bitsVal_replicate_true_append",
+   "MIPRE.Cost.exists_split_of_any",
+   "MIPRE.Cost.size_encode_replicate_false_append",
+   "MIPRE.Cost.size_two_mul_add_one"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Prog.decBody_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     196,
+     197
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.decProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     199,
+     202
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.bitsVal_bits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     77,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.bitsVal_eq_zero_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     79,
+     83
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.bitsVal_replicate_true_append",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     85,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.exists_split_of_any",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     95,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.size_encode_replicate_false_append",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.size_two_mul_add_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     339,
+     340
+    ]
+   }
+  ],
+  "lines": 108,
+  "published_bundle": "MIPRE_Foundations_Cost_Numeric",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Lists",
+  "module": "MIPRE.Foundations.Halting.Lists",
+  "module_doc": "/-!\n# Bounded walks over lists, in the ambient model\n\nThe programs with which the wrapper decider of `Halting/Wrapper.lean` performs the paper's\nformat checks: the questions must be bit strings of the sampler's length, the answers bit\nstrings within the answer-length budget, and equal questions must carry equal answers. All of\nthem walk their input under a *budget*, so that their cost is the budget times the size of the\ninput — the shape `T · (|input| + 1)` of `Decider.TimeBoundAt` — rather than a power of it.\n\n* `Prog.bitWalkProg`: on `cons l u`, walk `l` against the budget `u` (a list, typically a unary\n  numeral), checking that each element passed is a bit; the result is `nil` on a non-bit\n  element, and otherwise the pair of what remains of `l` and of `u` (`Data.bitWalk`). Both\n  format checks read off it: `|l| = |u|` is the result `cons nil nil`, `|l| ≤ |u|` a result\n  `cons nil _`.\n* `Prog.eqBitsProg`: equality of two bit lists (`Data.eqBits`).\n* `Prog.normBinProg`: the normalization `Data.normBin` of a parameter, by a walk recording the\n  last bit seen (`Data.canonWalk`).\n\nEvery walk copies the remainder of the lists at each step, which is what the ambient model\ncharges; the cost bounds are `(budget + 1) · (S + c)` for `S` the size of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Lists.lean",
+  "source_path": "MIPRE/Foundations/Halting/Lists.lean",
+  "defmat": [
+   "MIPRE.Cost.Data.bitOf",
+   "MIPRE.Cost.Data.canonWalk",
+   "MIPRE.Cost.Data.eqBits",
+   "MIPRE.Cost.Data.spine",
+   "MIPRE.Cost.Prog.canonBody",
+   "MIPRE.Cost.Prog.eqBitsBody",
+   "MIPRE.Cost.Prog.eqBitsProg",
+   "MIPRE.Cost.Prog.normBinProg"
+  ],
+  "embedded": [
+   "MIPRE.Cost.Data.bitOf_ofBool",
+   "MIPRE.Cost.Data.eqBits_ofNat",
+   "MIPRE.Cost.Data.spine_cons",
+   "MIPRE.Cost.Data.spine_le_size",
+   "MIPRE.Cost.Data.spine_nil",
+   "MIPRE.Cost.Data.spine_ofNat",
+   "MIPRE.Cost.Prog.eqBitsBody_cons_cons",
+   "MIPRE.Cost.Prog.eqBitsBody_cons_nil",
+   "MIPRE.Cost.Prog.eqBitsBody_nil_cons",
+   "MIPRE.Cost.Prog.eqBitsBody_nil_nil",
+   "MIPRE.Cost.Prog.eqBitsBody_wellScoped",
+   "MIPRE.Cost.Prog.eqBitsProg_runs",
+   "MIPRE.Cost.Prog.eqBitsProg_wellScoped"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Data.bitOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     58,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.bitOf_ofBool",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.canonWalk",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     107,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.eqBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     83,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.eqBits_ofNat",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     89,
+     97
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.spine",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     35,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.spine_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.spine_le_size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     53,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.spine_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     40,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.spine_ofNat",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     48,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.canonBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     483,
+     490
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     353,
+     359
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsBody_cons_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     394,
+     431
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsBody_cons_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     386,
+     392
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsBody_nil_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     378,
+     384
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsBody_nil_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     370,
+     376
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsBody_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     364,
+     365
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     361,
+     362
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsProg_runs",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     433,
+     479
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqBitsProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     367,
+     368
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.normBinProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     492,
+     495
+    ]
+   }
+  ],
+  "lines": 262,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Data.bitOf": [
+    "/-- The bit an element denotes: `nil` is `false`, anything else `true`. -/"
+   ],
+   "MIPRE.Cost.Data.canonWalk": [
+    "/-- The walk of the normalization: `last` records whether the string so far is empty or ends",
+    "in `true`. -/"
+   ],
+   "MIPRE.Cost.Data.eqBits": [
+    "/-- Equality of two bit lists, element by element. -/"
+   ],
+   "MIPRE.Cost.Data.spine": [
+    "/-- The length of the right spine: the length of a list. -/"
+   ],
+   "MIPRE.Cost.Prog.canonBody": [
+    "/-- Body of the canonicity walk, on the state `cons rest last`. -/"
+   ],
+   "MIPRE.Cost.Prog.eqBitsBody": [
+    "/-- Body of `eqBitsProg`, on the state `cons l₁ l₂`. -/"
+   ],
+   "MIPRE.Cost.Prog.eqBitsProg": [
+    "/-- Equality of two bit lists: on `cons l₁ l₂`, compute `encode (eqBits l₁ l₂)`. -/"
+   ],
+   "MIPRE.Cost.Prog.normBinProg": [
+    "/-- `normBinProg` on `d` computes `normBin d`: the input itself if it is a canonical binary",
+    "numeral, `nil` otherwise. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_Growth",
+  "module": "MIPRE.Foundations.Cost.Growth",
+  "module_doc": "/-!\n# Polynomial versus exponential growth\n\nThe arithmetic behind the threshold of the recursive compression argument\n(`planning/compression-track.md`, K3 step 4): for every polynomial `Q` over `ℕ` there is a\nconstant `K` such that `n ≥ 2 ^ (K + 1 + x)` forces `Q (x + log n) ≤ n + 1`\n(`exists_threshold`). The proof is elementary: a polynomial is bounded by its coefficient\nsum times the top power (`polynomial_eval_le_sum_coeff_mul_pow`), and `A · σ ^ D ≤ 2 ^ σ`\nas soon as `σ ≥ A (D + 1) ^ (D + 1)` (`mul_pow_le_two_pow`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Growth.lean",
+  "source_path": "MIPRE/Foundations/Cost/Growth.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPRE.Cost.polynomial_eval_le_sum_coeff_mul_pow",
+   "MIPRE.Cost.two_pow_size_le"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.polynomial_eval_le_sum_coeff_mul_pow",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     36,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.two_pow_size_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     25,
+     34
+    ]
+   }
+  ],
+  "lines": 54,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Arith",
+  "module": "MIPRE.Foundations.Halting.Arith",
+  "module_doc": "/-!\n# Arithmetic in the ambient model: increment, unary conversion, multiplication, polynomials\n\nThe arithmetic the wrapper decider (`Halting/Wrapper.lean`) and the compressor's decider\n(`Halting/Compressor.lean`) need, each with its cost:\n\n* `Prog.incProg`: the successor of a canonical binary numeral (`Data.inc`, with\n  `Data.inc_bits : inc n.bits = (n + 1).bits`), used to enumerate the bit queries;\n* `Prog.toUnaryProg`: a binary numeral to unary (`encode n ↦ ofNat n`), by the fold\n  `k ↦ 2k + b` over the bits from the most significant one, doubling the unary accumulator with\n  `revOntoProg`;\n* `Prog.mulProg`: multiplication of unary numerals, by repeated `addProg`;\n* `Prog.polyProg cs`: the Horner evaluation `c₀ + m (c₁ + m (…))` of a polynomial given by its\n  coefficient list, on a unary input; `hornerCoeffs` and `Data.polyEval_hornerCoeffs` connect it\n  to `Polynomial.eval`, so that the wrapper can compute the paper's `poly(n, λ)` bounds.\n\nCosts are polynomial in the *values* (the unary numerals are as long as the values); the\npolynomial evaluation is bounded by an explicit `Polynomial ℕ` in the argument\n(`Prog.polyProg_runs`), which is what the time accounting downstream composes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Arith.lean",
+  "source_path": "MIPRE/Foundations/Halting/Arith.lean",
+  "defmat": [
+   "MIPRE.Cost.Data.inc",
+   "MIPRE.Cost.Data.incAcc",
+   "MIPRE.Cost.Data.msbFold",
+   "MIPRE.Cost.Data.polyEval",
+   "MIPRE.Cost.Prog.incBody",
+   "MIPRE.Cost.Prog.incProg",
+   "MIPRE.Cost.Prog.toUnaryBody",
+   "MIPRE.Cost.Prog.toUnaryProg",
+   "MIPRE.Cost.hornerCoeffs"
+  ],
+  "embedded": [
+   "MIPRE.Cost.Data.msbFold_append_singleton",
+   "MIPRE.Cost.Data.msbFold_le",
+   "MIPRE.Cost.Data.msbFold_reverse",
+   "MIPRE.Cost.Data.polyEval_hornerCoeffs",
+   "MIPRE.Cost.Data.polyEval_range_map",
+   "MIPRE.Cost.Data.size_encode_append",
+   "MIPRE.Cost.Data.size_encode_reverse",
+   "MIPRE.Cost.Prog.double_runs",
+   "MIPRE.Cost.Prog.toUnaryBody_nil",
+   "MIPRE.Cost.Prog.toUnaryBody_step",
+   "MIPRE.Cost.Prog.toUnaryBody_wellScoped",
+   "MIPRE.Cost.Prog.toUnaryLoop_runs",
+   "MIPRE.Cost.Prog.toUnaryProg_runs",
+   "MIPRE.Cost.Prog.toUnaryProg_wellScoped",
+   "MIPRE.Cost.primrec_polyEval",
+   "MIPRE.Cost.primrec_poly_eval"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Data.inc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     41,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.incAcc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.msbFold",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     143,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.msbFold_append_singleton",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     148,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.msbFold_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     163,
+     166
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.msbFold_reverse",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     154,
+     161
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.polyEval",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     170,
+     173
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.polyEval_hornerCoeffs",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     196,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.polyEval_range_map",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     175,
+     186
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.size_encode_append",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     124,
+     130
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.size_encode_reverse",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     132,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.double_runs",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     387,
+     398
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     218
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     220,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toUnaryBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     360,
+     367
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toUnaryBody_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     379,
+     385
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toUnaryBody_step",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     400,
+     425
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toUnaryBody_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     373,
+     374
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toUnaryLoop_runs",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     427,
+     457
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     369,
+     371
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toUnaryProg_runs",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     459,
+     496
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toUnaryProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     376,
+     377
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.hornerCoeffs",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     190,
+     194
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.primrec_polyEval",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     670,
+     674
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.primrec_poly_eval",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     676,
+     677
+    ]
+   }
+  ],
+  "lines": 335,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Data.inc": [
+    "/-- The successor of a binary numeral, least significant bit first. -/"
+   ],
+   "MIPRE.Cost.Data.incAcc": [
+    "/-- The first phase of the increment: `(rest, acc) ↦ (acc', rest')` with",
+    "`acc'.reverse ++ rest' = acc.reverse ++ inc rest`. -/"
+   ],
+   "MIPRE.Cost.Data.msbFold": [
+    "/-- The fold `k ↦ 2k + b` over bits, most significant first. -/"
+   ],
+   "MIPRE.Cost.Data.polyEval": [
+    "/-- Horner evaluation of a coefficient list: `polyEval [c₀, c₁, …] m = c₀ + m (c₁ + m (…))`. -/"
+   ],
+   "MIPRE.Cost.Prog.incBody": [
+    "/-- Body of the first phase of `incProg`, on the state `cons rest acc`: at the end or at a",
+    "`false` bit, stop with `(true :: acc, rest)`; at a `true` bit, move a `false` onto `acc`. -/"
+   ],
+   "MIPRE.Cost.Prog.incProg": [
+    "/-- `incProg` on the bits of `n` computes the bits of `n + 1`. -/"
+   ],
+   "MIPRE.Cost.Prog.toUnaryBody": [
+    "/-- Body of `toUnaryProg`, on the state `cons rest acc` (`rest` the remaining bits, most",
+    "significant first; `acc` a unary numeral): double `acc` and add the next bit. -/"
+   ],
+   "MIPRE.Cost.Prog.toUnaryProg": [
+    "/-- `toUnaryProg` on `encode n` computes `ofNat n`. -/"
+   ],
+   "MIPRE.Cost.hornerCoeffs": [
+    "/-- The coefficient list of a polynomial over `ℕ`, least significant first and padded to",
+    "`natDegree + 1` entries: the form Horner evaluation consumes (`Data.polyEval`). Mathlib's",
+    "`Polynomial.coeffList` is the big-endian list without the padding. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Wrapper",
+  "module": "MIPRE.Foundations.Halting.Wrapper",
+  "module_doc": "/-!\n# Reading a string as a normal form verifier: the wrapper decider\n\nBlueprint `rem:compression-abstract`, item 1: a string of the compressibility criterion is a\npair `(λ, 𝒟)` of a parameter and a decider program, read as the verifier\n`(S^compr_λ, wrap 𝒟)`. The wrapper is what makes the pair a *normal form* verifier: the one\nstructural requirement of `def:normal-verifier` is `Verifier.accepts_length`, that the decider\naccept only questions of the sampler's dimension — the paper's step 1, \"compute the dimension\n`s(n)` of the sampler and check `|x| = |y| = s(n)`; if not, reject\".\n\nNothing else has to be enforced. Synchronicity at an index and the answer-length bound are\nconditions on *membership in the classes* (`Verifier.InClassA`, `InClassB`), not on\nwell-formedness, so the wrapper leaves them to the class definition; and the paper's timeout\ncounter is likewise not needed here, since a decider that fails to halt simply fails to be\n`n`-bounded, and its string then lies in neither class.\n\n* `Prog.wrapCore univ sampProg dec`: on input `(N, x, y, a, b)`, run `sampProg` on\n  `(N, dimension)` through the universal machine `univ`, convert the dimension to unary, compare\n  it with the lengths of `x` and of `y`, and run `dec` on the whole input through `univ` if both\n  match, rejecting otherwise.\n* The three forward runs (`wrapCore_runs_of_eq`, `wrapCore_runs_of_ne_left`,\n  `wrapCore_runs_of_ne_right`) and the inversion `wrapCore_halts_of`, which is what turns them\n  into the characterization of acceptance.\n* `Decider.wrap`, `Decider.wrap_accepts`, and `Verifier.ofSamplerDeciderD`, the normal form\n  verifier a pair denotes. The decider component is a *datum* run by the universal machine,\n  not a program: a string carries data, a datum that is not the encoding of any program still\n  has to name a verifier, and reading it as a program would need a decoder with a fallback\n  (once `Cost.progNorm`, in a module since removed) that the compressor's decider of\n  obligation O4 would then have to reimplement in the ambient model — its tree-grammar check\n  as a worklist program — only to reproduce a fallback nobody wanted. On the encoding of a program the two\n  readings agree (`wrap_accepts_prog`, by `UniversalMachine.time_le` and `halts_of`), and\n  `Verifier.ofSamplerDecider` is that special case, which the two distinguished strings use.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Wrapper.lean",
+  "source_path": "MIPRE/Foundations/Halting/Wrapper.lean",
+  "defmat": [
+   "MIPRE.Cost.Prog.ProgD.dC",
+   "MIPRE.Cost.Prog.ProgD.dE",
+   "MIPRE.Cost.Prog.ProgD.dK",
+   "MIPRE.Cost.Prog.ProgD.dL",
+   "MIPRE.Cost.Prog.ProgD.dNil",
+   "MIPRE.Cost.Prog.ProgD.dV",
+   "MIPRE.Cost.Prog.ProgD.dWrapCheck",
+   "MIPRE.Cost.Prog.ProgD.dWrapCore",
+   "MIPRE.Cost.Prog.ProgD.dWrapHead",
+   "MIPRE.Cost.Prog.ProgD.dWrapTail",
+   "MIPRE.Cost.Prog.wrapCheck",
+   "MIPRE.Cost.Prog.wrapCheckEnv",
+   "MIPRE.Cost.Prog.wrapCore",
+   "MIPRE.Cost.Prog.wrapHead",
+   "MIPRE.Cost.Prog.wrapPre",
+   "MIPRE.Cost.Prog.wrapPreEnv",
+   "MIPRE.Cost.Prog.wrapTail",
+   "MIPRE.Decider.wrap",
+   "MIPRE.Verifier.ofSamplerDecider",
+   "MIPRE.Verifier.ofSamplerDeciderD"
+  ],
+  "embedded": [
+   "MIPRE.Cost.Prog.ProgD.dWrapCore_eq",
+   "MIPRE.Cost.Prog.ProgD.primrec_dC",
+   "MIPRE.Cost.Prog.ProgD.primrec_dE",
+   "MIPRE.Cost.Prog.ProgD.primrec_dK",
+   "MIPRE.Cost.Prog.ProgD.primrec_dL",
+   "MIPRE.Cost.Prog.ProgD.primrec_dWrapCheck",
+   "MIPRE.Cost.Prog.ProgD.primrec_dWrapCore",
+   "MIPRE.Cost.Prog.ProgD.primrec_dWrapTail",
+   "MIPRE.Cost.Prog.wrapCheck_inv",
+   "MIPRE.Cost.Prog.wrapCheck_runs_of_eq",
+   "MIPRE.Cost.Prog.wrapCheck_runs_of_ne",
+   "MIPRE.Cost.Prog.wrapCheck_wellScoped",
+   "MIPRE.Cost.Prog.wrapCore_halts_inv",
+   "MIPRE.Cost.Prog.wrapCore_runs_of_eq",
+   "MIPRE.Cost.Prog.wrapCore_runs_of_ne_left",
+   "MIPRE.Cost.Prog.wrapCore_runs_of_ne_right",
+   "MIPRE.Cost.Prog.wrapCore_wellScoped",
+   "MIPRE.Cost.Prog.wrapHead_wellScoped",
+   "MIPRE.Cost.Prog.wrapPre_inv",
+   "MIPRE.Cost.Prog.wrapPre_runs",
+   "MIPRE.Cost.Prog.wrapPre_wellScoped",
+   "MIPRE.Cost.Prog.wrapTail_wellScoped",
+   "MIPRE.Decider.wrap_accepts",
+   "MIPRE.Decider.wrap_accepts_length",
+   "MIPRE.Decider.wrap_prog",
+   "MIPRE.Verifier.ofSamplerDeciderD_sampler",
+   "MIPRE.Verifier.ofSamplerDecider_sampler",
+   "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.dim_run",
+   "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.eq_run",
+   "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.input_cons",
+   "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.len_run",
+   "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.toUnary_run"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dC",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     496,
+     496
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dE",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     497,
+     497
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dK",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     499,
+     499
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dL",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     498,
+     498
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dNil",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     495,
+     495
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dV",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     494,
+     494
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dWrapCheck",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     526,
+     529
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dWrapCore",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     538,
+     540
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dWrapCore_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     542,
+     544
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dWrapHead",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     533,
+     536
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.dWrapTail",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     531,
+     531
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.primrec_dC",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     509,
+     511
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.primrec_dE",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     519,
+     522
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.primrec_dK",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     517,
+     517
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.primrec_dL",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     513,
+     515
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.primrec_dWrapCheck",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     547,
+     550
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.primrec_dWrapCore",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     556,
+     569
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.ProgD.primrec_dWrapTail",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     552,
+     554
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCheck",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     54,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCheckEnv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCheck_inv",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     176,
+     207
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCheck_runs_of_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     157,
+     174
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCheck_runs_of_ne",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     138,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCheck_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     90,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCore",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     86,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCore_halts_inv",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     326,
+     347
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCore_runs_of_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     311,
+     324
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCore_runs_of_ne_left",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     296,
+     300
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCore_runs_of_ne_right",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     302,
+     309
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapCore_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     112,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapHead",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     74,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapHead_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     101,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapPre",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapPreEnv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     218,
+     223
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapPre_inv",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     260,
+     292
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapPre_runs",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     240,
+     258
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapPre_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapTail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     68,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.wrapTail_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.Decider.wrap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     361,
+     366
+    ]
+   },
+   {
+    "name": "MIPRE.Decider.wrap_accepts",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     370,
+     391
+    ]
+   },
+   {
+    "name": "MIPRE.Decider.wrap_accepts_length",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     405,
+     409
+    ]
+   },
+   {
+    "name": "MIPRE.Decider.wrap_prog",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     368,
+     368
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.ofSamplerDecider",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     426,
+     430
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.ofSamplerDeciderD",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     417,
+     424
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.ofSamplerDeciderD_sampler",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     434,
+     434
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.ofSamplerDecider_sampler",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     436,
+     436
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.dim_run",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     225,
+     230
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.eq_run",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     131,
+     136
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.input_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     236,
+     238
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.len_run",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     124,
+     129
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Halting.Wrapper.0.MIPRE.Cost.Prog.toUnary_run",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     232,
+     234
+    ]
+   }
+  ],
+  "lines": 589,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Classes",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Prog.ProgD.dC": null,
+   "MIPRE.Cost.Prog.ProgD.dE": null,
+   "MIPRE.Cost.Prog.ProgD.dK": null,
+   "MIPRE.Cost.Prog.ProgD.dL": null,
+   "MIPRE.Cost.Prog.ProgD.dNil": null,
+   "MIPRE.Cost.Prog.ProgD.dV": null,
+   "MIPRE.Cost.Prog.ProgD.dWrapCheck": null,
+   "MIPRE.Cost.Prog.ProgD.dWrapCore": null,
+   "MIPRE.Cost.Prog.ProgD.dWrapHead": null,
+   "MIPRE.Cost.Prog.ProgD.dWrapTail": null,
+   "MIPRE.Cost.Prog.wrapCheck": [
+    "/-- One length check, reusable for both questions: read the length of the bit string at index",
+    "`i`, compare it with the unary numeral at index `j`, and continue with `c` if they agree,",
+    "rejecting otherwise. -/"
+   ],
+   "MIPRE.Cost.Prog.wrapCheckEnv": [
+    "/-- The environment `wrapCheck` hands to its continuation. -/"
+   ],
+   "MIPRE.Cost.Prog.wrapCore": [
+    "/-- The wrapper's program. Input: `encode (N, x, y, a, b)`. -/"
+   ],
+   "MIPRE.Cost.Prog.wrapHead": [
+    "/-- The head: compute the sampler's dimension at the input index, in unary. -/"
+   ],
+   "MIPRE.Cost.Prog.wrapPre": [
+    "/-- The prefix: the head, then the two questions taken apart. -/"
+   ],
+   "MIPRE.Cost.Prog.wrapPreEnv": [
+    "/-- The environment the prefix hands to the first length check. -/"
+   ],
+   "MIPRE.Cost.Prog.wrapTail": [
+    "/-- The last step: run the string's decider — the datum `decD`, which the string carries and",
+    "which need not be the encoding of any program — on the whole input, through `univ`. At this",
+    "point the input sits at index `19`. -/"
+   ],
+   "MIPRE.Decider.wrap": [
+    "/-- The decider a string denotes: the datum `decD` the string carries, run by the universal",
+    "machine, wrapped in the question-length check against the sampler `S`. The datum need not be",
+    "the encoding of a program; when it is, `encode dec`, the run is a run of `dec`",
+    "(`wrap_accepts_prog`). -/"
+   ],
+   "MIPRE.Verifier.ofSamplerDecider": [
+    "/-- The verifier a pair `(S, 𝒟)` of a sampler and a decider *program* denotes:",
+    "`ofSamplerDeciderD` at the program's encoding. -/"
+   ],
+   "MIPRE.Verifier.ofSamplerDeciderD": [
+    "/-- **The verifier a pair `(S, d)` denotes**: the sampler `S`, and the datum `d` — the string's",
+    "decider, run by the universal machine — wrapped in the question-length check. Every pair",
+    "denotes one, well formed or not. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Enumerate",
+  "module": "MIPRE.Foundations.Halting.Enumerate",
+  "module_doc": "/-!\n# Enumerating the questions and the answers of `𝒱_n`\n\nThe tabulation of `𝒱_n` as a game description (blueprint `def:game-description`,\n`rem:compression-abstract`) indexes the questions and the answers by `Fin (nX + 1)` and\n`Fin (nA + 1)`. This file provides the two indexings, explicitly and computably, together with\nthe agreement of the tabulated value with `val*`.\n\n* `Data.bitStrsOfLen k` and `Data.bitStrsLE T`: the bit strings of length exactly `k`, and of\n  length at most `T`, without repetition (`nodup_bitStrsLE`, `mem_bitStrsLE`); the second has\n  `2 ^ (T + 1) - 1` entries.\n* `Verifier.answerList T` and `Verifier.answerEquiv T : Fin (answerList T).length ≃ Answers T`:\n  the answer alphabet, enumerated.\n* `Verifier.questionEquiv s : Fin (2 ^ s) ≃ (Fin s → CL.𝔽₂)`: the question alphabet, from\n  Mathlib's `finFunctionFinEquiv` (`𝔽₂ = ZMod 2` is `Fin 2`).\n* `Verifier.quantumValue_toGame_eq_valStar`: a game description whose distribution and decision\n  predicate match `𝒱_n` along these indexings has `val*(G) = val*(𝒱_n)`. This is the bridge\n  `rem:compression-abstract` needs between the criterion's semidecision procedure, which runs on\n  game descriptions (`lem:value-lower-approx`), and the verifiers of the pipeline.\n\nWhat is still owed is the *computation* of such a description from an `n`-bounded verifier —\nrunning the sampler on every point of `𝔽₂^{s(n)}` to count the question weights, and the decider\nunder its budget to fill in the acceptance table (`planning/formalization-plan.md`, H4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Enumerate.lean",
+  "source_path": "MIPRE/Foundations/Halting/Enumerate.lean",
+  "defmat": [
+   "MIPRE.Cost.Data.bitStrsLE",
+   "MIPRE.Cost.Data.bitStrsOfLen",
+   "MIPRE.Verifier.answerEquiv",
+   "MIPRE.Verifier.answerList",
+   "MIPRE.Verifier.questionEquiv",
+   "MIPRE.Verifier.toAnswer"
+  ],
+  "embedded": [
+   "MIPRE.Cost.Data.length_bitStrsLE_pos",
+   "MIPRE.Cost.Data.length_bitStrsOfLen",
+   "MIPRE.Cost.Data.mem_bitStrsLE",
+   "MIPRE.Cost.Data.mem_bitStrsOfLen",
+   "MIPRE.Cost.Data.nodup_bitStrsLE",
+   "MIPRE.Cost.Data.nodup_bitStrsOfLen",
+   "MIPRE.Cost.Data.primrec_bitStrsLE",
+   "MIPRE.Cost.Data.primrec_bitStrsOfLen",
+   "MIPRE.Verifier.mem_answerList",
+   "MIPRE.Verifier.nodup_answerList",
+   "MIPRE.Verifier.toAnswer_val"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Data.bitStrsLE",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     80,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.bitStrsOfLen",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.length_bitStrsLE_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     123,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.length_bitStrsOfLen",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     72,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.mem_bitStrsLE",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.mem_bitStrsOfLen",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.nodup_bitStrsLE",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.nodup_bitStrsOfLen",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     61,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_bitStrsLE",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     119,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.primrec_bitStrsOfLen",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     99,
+     117
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.answerEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     162,
+     164
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.answerList",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     145,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.mem_answerList",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     148,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.nodup_answerList",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     152,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.questionEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     168,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.toAnswer",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     137,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.toAnswer_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     142,
+     143
+    ]
+   }
+  ],
+  "lines": 246,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Classes",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Wrapper"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Data.bitStrsLE": [
+    "/-- The bit strings of length at most `T`. -/"
+   ],
+   "MIPRE.Cost.Data.bitStrsOfLen": [
+    "/-- The bit strings of length exactly `k`. -/"
+   ],
+   "MIPRE.Verifier.answerEquiv": [
+    "/-- The answer alphabet, indexed. -/"
+   ],
+   "MIPRE.Verifier.answerList": [
+    "/-- The answers of length at most `T`, enumerated. -/"
+   ],
+   "MIPRE.Verifier.questionEquiv": [
+    "/-- The question alphabet `𝔽₂^s`, indexed: `𝔽₂` is `ZMod 2`, which is `Fin 2`. -/"
+   ],
+   "MIPRE.Verifier.toAnswer": [
+    "/-- A bit string as an answer of length at most `T`, by truncation (the identity on the",
+    "strings that already fit). -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ClassMIPStar",
+  "module": "MIPRE.Foundations.ClassMIPStar",
+  "module_doc": "/-!\n# The class `MIP*_{1,1/2}(2,1)` as the paper defines it\n\nBlueprint `def:mipstar`, the paper's form (`games.tex`, Definition \"`def:mipstar`\"): a language\n`L` is in the class if there are two machines, a sampler `𝒮` and a decider `𝒟`, such that for\nevery string `z` there is a finite game `G_z` with\n\n* **efficiency**: `𝒮` on input `z` runs in time `poly(|z|)` and returns a question pair\n  distributed as `μ_z`; `𝒟` on input `(z, x, y, a, b)` runs in time `poly(|z|)` and returns\n  `D_z(x, y, a, b)`, returning `0` whenever `x, y, a, b` are too long (the paper's footnote);\n* **completeness**: `z ∈ L → val*(G_z) = 1`;\n* **soundness**: `z ∉ L → val*(G_z) ≤ 1/2`.\n\n`MIPRE.MIPStarComputable` (`ClassMIPStarComputable.lean`) is the *computable* version of this,\nwith `G_z` an explicit `GameData` computed from `z` with no time bound;\n`planning/polytime-halting.md` has why the two are different and what it takes to prove\n`RE ⊆` the class below. This file is the class itself.\n\n## The reading\n\nA `PolyVerifier` is a closed sampler program, a closed decider program and one polynomial `P`;\nwrite `B z = P.eval |z|`.\n\n* A randomized machine is a deterministic program with an explicit uniform seed of the length\n  of its time bound: the sampler runs on `encode (z, r)` for a seed `r` of length `B z`. The\n  question distribution `μ_z` is the pushforward of the uniform seed.\n* The decider's time is polynomial in the **total** input length `|z| + |x| + |y| + |a| + |b|`,\n  not in `|z|` alone: a program of the ambient model reads a list only by walking it (blueprint,\n  the discussion under `def:decider`), so the paper's \"`poly(|z|)` even for long inputs\" is not\n  expressible here. The paper's own device, the footnote's rejection of overlong messages, is\n  a separate clause (`Efficient.rejects_long`), and the game `G_z` lives on the strings of\n  length at most `B z`, which makes it the paper's finite game.\n* The output of the sampler is read as a pair of strings of length at most `B z`; on an\n  efficient verifier it always is one (`Efficient.sampler_runs`), and the fallback `([], [])`\n  of `PolyVerifier.questions` is never taken. It is there so that `game` is total.\n\n`MIPStar.toComputable` (`ClassMIPStarTab.lean`) is the inclusion in the computable class,\nby tabulation, which gives `MIPStar ⊆ RE` from `MIPStarComputable.isRE`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ClassMIPStar.lean",
+  "source_path": "MIPRE/Foundations/ClassMIPStar.lean",
+  "defmat": [
+   "MIPRE.MIPStar",
+   "MIPRE.PolyVerifier",
+   "MIPRE.PolyVerifier.Accepts",
+   "MIPRE.PolyVerifier.B",
+   "MIPRE.PolyVerifier.Efficient",
+   "MIPRE.PolyVerifier.emptyAnswer",
+   "MIPRE.PolyVerifier.game",
+   "MIPRE.PolyVerifier.questions",
+   "MIPRE.PolyVerifier.sample?",
+   "MIPRE.PolyVerifier.seedCount"
+  ],
+  "embedded": [
+   "MIPRE.PolyVerifier.sum_length_filter_eq"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.MIPStar",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     205,
+     211
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     54,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.Accepts",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     76,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.B",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     72,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.Efficient",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     115,
+     132
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.emptyAnswer",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     103,
+     104
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.game",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     180,
+     194
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.questions",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     106,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.sample?",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     80,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.seedCount",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.sum_length_filter_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     152,
+     178
+    ]
+   }
+  ],
+  "lines": 282,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawInt",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawStrategy",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawSemantics",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawComplete",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawPrimrec",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RE",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Semidecide",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStarComputable",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Classes",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Wrapper",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Enumerate"
+  ],
+  "blueprint": [
+   "def:mipstar"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.MIPStar": [
+    "/-- **`def:mipstar`, the paper's class `MIP*_{1,1/2}(2,1)`.** A language `L` is in it if some",
+    "polynomial-time verifier is efficient on every input, and its game has quantum value `1` on",
+    "the members of `L` and at most `1/2` off them. -/"
+   ],
+   "MIPRE.PolyVerifier": [
+    "/-- **A polynomial-time verifier** (`def:mipstar`, the paper's form): a sampler, a decider and",
+    "one polynomial time bound. -/"
+   ],
+   "MIPRE.PolyVerifier.Accepts": [
+    "/-- The decider **accepts** `(z, x, y, a, b)`: it halts with output `1`. -/"
+   ],
+   "MIPRE.PolyVerifier.B": [
+    "/-- The bound `B z = P(|z|)`: the seed length, the sampler's time on `z`, and the length of the",
+    "questions and answers of `G_z`. -/"
+   ],
+   "MIPRE.PolyVerifier.Efficient": [
+    "/-- **Efficiency** on the input `z` (`def:mipstar`, item 1). -/"
+   ],
+   "MIPRE.PolyVerifier.emptyAnswer": [
+    "/-- The empty answer, in the alphabet of length at most `T`. -/"
+   ],
+   "MIPRE.PolyVerifier.game": [
+    "/-- **The game `G_z`** of the verifier on the input `z`: questions and answers are the strings of",
+    "length at most `B z`, the question pair is the sampler's output on a uniform seed, and the",
+    "decision is the decider's. -/"
+   ],
+   "MIPRE.PolyVerifier.questions": [
+    "/-- The question pair a seed produces: the sampler's output, when it is a pair of strings of",
+    "length at most `B z`, and `([], [])` otherwise. -/"
+   ],
+   "MIPRE.PolyVerifier.sample?": [
+    "/-- The sampler's output on `(z, r)`, if it halts with (the encoding of) a pair of strings. -/"
+   ],
+   "MIPRE.PolyVerifier.seedCount": [
+    "/-- The number of seeds of length `B z` producing the question pair `(x, y)`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_BoundedEval",
+  "module": "MIPRE.Foundations.Cost.BoundedEval",
+  "module_doc": "/-!\n# Running a program under a cost budget, computably\n\n`Machine.evalData` runs a program to completion and is only *partial* recursive; and\n`Cost.evalWithin`, which reads off the result of a run within a budget, is `noncomputable` —\nit picks a witness out of an existential with `Classical.choice`. Neither can be used to\n*compute* anything, and the tabulation of a verifier's game (blueprint\n`rem:compression-abstract`, item 3) has to compute: it runs the decider on every answer tuple\nunder the decider's own time bound and fills in an acceptance table.\n\n`Machine.runForD p x k` is the computable version: iterate the machine's step function\n`3 k` times from the initial configuration and read off the result if the configuration\nreached is final. Three facts make it right:\n\n* a derivation of cost `t` is a machine run of at most `3 t` steps\n  (`Machine.eval_steps_count` — the free steps, entering a loop and returning to a `cons` or\n  `let` frame, are each matched with a paid one), so the budget `3 k` is enough for every run\n  of cost at most `k`;\n* final configurations are fixed by the step function (`Machine.step_final`), so iterating\n  past the end is harmless and no exact step count is needed;\n* the step function is primitive recursive on the encoded configurations\n  (`Machine.primrec_stepData`), so the whole is (`Machine.primrec_runForD`).\n\n`runForD_eq_some` and `runs_of_runForD` are the two directions of its correctness, and\n`runForD_isSome_iff` the decision procedure they add up to: **for a program that halts within\nthe budget on the input, whether it returns a given value is decidable**, which is what\nboundedness buys the tabulation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/BoundedEval.lean",
+  "source_path": "MIPRE/Foundations/Cost/BoundedEval.lean",
+  "defmat": [
+   "MIPRE.Cost.Machine.isFinalB",
+   "MIPRE.Cost.Machine.runForD"
+  ],
+  "embedded": [
+   "MIPRE.Cost.Machine.isFinalB_iff",
+   "MIPRE.Cost.Machine.primrec_isFinalB",
+   "MIPRE.Cost.Machine.primrec_runForD",
+   "MIPRE.Cost.Machine.runForD_eq_some",
+   "MIPRE.Cost.Machine.stepData_iterate"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Machine.isFinalB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Machine.isFinalB_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     45,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Machine.primrec_isFinalB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     48,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Machine.primrec_runForD",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     102,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Machine.runForD",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     52,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Machine.runForD_eq_some",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     64,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Machine.stepData_iterate",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     62
+    ]
+   }
+  ],
+  "lines": 123,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec_B"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Machine.isFinalB": [
+    "/-- Finality of a configuration as a `Bool`, so that the budgeted run is a plain branch. -/"
+   ],
+   "MIPRE.Cost.Machine.runForD": [
+    "/-- **Running `p` on `x` under a cost budget `k`**: iterate the step function `3 k` times and",
+    "read off the result if the configuration reached is final. Total and computable. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_Tabulate",
+  "module": "MIPRE.Foundations.Halting.Tabulate",
+  "module_doc": "/-!\n# Deciding acceptance under a time bound\n\nThe first half of obligation **O2** (blueprint `rem:compression-abstract`, item 3): the\nacceptance table of the tabulated game. Filling it in needs `Decider.Accepts` — a `Σ₁`\nstatement, `∃ t, prog.Runs …` — to be *decided*, and that is exactly what `n`-boundedness\nbuys: the bound supplies a budget within which the decider must halt, so one budgeted run\nsettles the question (`Machine.runForD`).\n\n* `Decider.acceptBudget`: the budget `T · (|d| + 1) ^ k` the bound gives at index `n` on the\n  tuple `(x, y, a, b)`, read off the shape of `Decider.TimeBoundAt`.\n* `Decider.accepts_iff_runForD`: for a decider obeying that bound, acceptance is one budgeted\n  run returning `encode true`.\n* `Decider.decidableAccepts` and `Verifier.decidableAccepts`: the resulting decision\n  procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the\n  bound comes from `Verifier.IsBounded`.\n\nThe other half of the tabulation is the question distribution, and the rest of this file is\nwhat a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same\nkind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a\n`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and\n`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of\n`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the\nnumber of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly\nthe quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of\nlength `s` being the vectors of `𝔽₂^s`.\n\n`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is\nits position among the bit strings of length at most `T`, the enumeration `answerList` being\n`bitStrsLE` mapped by a truncation that is the identity on them.\n\n`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a\npredicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly\nwhat is in it. It takes the two question indexings `fA`, `fB` as parameters, because the\ntabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case\n`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing\ndownstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the\nindex of a question determines it, among the strings of a fixed length — and `tagEquiv` is the\ntagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by\n*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.\n\n`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and\nfive numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,\nbecause a `Verifier` is a structure carrying proofs and so is not the sort of thing a `Primrec`\nstatement can mention; the bridge back to the verifier those parameters came from is in\n`Halting/Instantiation.lean`.\n\nNothing here is efficient and nothing needs to be: the tabulation is a computable map, not a\npolynomial-time one. The budget is not one number: the two sampler runs take theirs as the\nparameters `B`, `k`, so that a caller can pass the sampler's own time bound, while `accOf`\nalone runs at the `n ^ n` that the verifier's `n`-boundedness supplies.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Tabulate.lean",
+  "source_path": "MIPRE/Foundations/Halting/Tabulate.lean",
+  "defmat": [
+   "MIPRE.CL.Sampler.queryUnder",
+   "MIPRE.Decider.acceptBudget",
+   "MIPRE.Halting.accOf",
+   "MIPRE.Halting.dimOf",
+   "MIPRE.Halting.margOf",
+   "MIPRE.Halting.tabOf",
+   "MIPRE.Verifier.accListW",
+   "MIPRE.Verifier.bitsToIdx",
+   "MIPRE.Verifier.tagEquiv",
+   "MIPRE.Verifier.tagIdx",
+   "MIPRE.Verifier.tuples",
+   "MIPRE.Verifier.weightList"
+  ],
+  "embedded": [
+   "MIPRE.CL.Sampler.primrec_encode_marginal",
+   "MIPRE.CL.Sampler.queryUnder_dimension",
+   "MIPRE.CL.Sampler.queryUnder_eq",
+   "MIPRE.Halting.primrec_dimOf",
+   "MIPRE.Halting.primrec_margOf",
+   "MIPRE.Halting.primrec_weightList",
+   "MIPRE.Verifier.accListW_eq_filterMap",
+   "MIPRE.Verifier.bitsToIdx_cons",
+   "MIPRE.Verifier.bitsToIdx_cons_toBits_inj",
+   "MIPRE.Verifier.bitsToIdx_injOn",
+   "MIPRE.Verifier.bitsToIdx_lt",
+   "MIPRE.Verifier.bitsToIdx_nil",
+   "MIPRE.Verifier.bitsToIdx_ofFn",
+   "MIPRE.Verifier.bitsToIdx_toBits_questionEquiv",
+   "MIPRE.Verifier.primrec_accListW",
+   "MIPRE.Verifier.primrec_bitsToIdx",
+   "MIPRE.Verifier.primrec_tagIdxOf",
+   "MIPRE.Verifier.primrec_tuples",
+   "MIPRE.Verifier.questionEquiv_symm_val",
+   "MIPRE.Verifier.tagEquiv_apply",
+   "MIPRE.Verifier.tagIdx_injective",
+   "MIPRE.Verifier.toBits_injective",
+   "_private.MIPRE.Foundations.Halting.Tabulate.0.MIPRE.Verifier.bitsToIdx_ofFn_fin2"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Sampler.primrec_encode_marginal",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     147,
+     159
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.queryUnder",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     117,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.queryUnder_dimension",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     131,
+     134
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.queryUnder_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     123,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.Decider.acceptBudget",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     72,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.accOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     618,
+     627
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.dimOf",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     607,
+     610
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.margOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     612,
+     616
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.primrec_dimOf",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     642,
+     654
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.primrec_margOf",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     656,
+     673
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.primrec_weightList",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     675,
+     687
+    ]
+   },
+   {
+    "name": "MIPRE.Halting.tabOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     629,
+     640
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.accListW",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     496,
+     504
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.accListW_eq_filterMap",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     528,
+     535
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.bitsToIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     167,
+     173
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.bitsToIdx_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     177,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.bitsToIdx_cons_toBits_inj",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     386,
+     393
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.bitsToIdx_injOn",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     355,
+     363
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.bitsToIdx_lt",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     213,
+     217
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.bitsToIdx_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     175,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.bitsToIdx_ofFn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     180,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.bitsToIdx_toBits_questionEquiv",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     207,
+     209
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.primrec_accListW",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     537,
+     560
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.primrec_bitsToIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     219,
+     229
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.primrec_tagIdxOf",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     572,
+     574
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.primrec_tuples",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     470,
+     493
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.questionEquiv_symm_val",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     200,
+     205
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.tagEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     408,
+     412
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.tagEquiv_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     419,
+     420
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.tagIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     399,
+     401
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.tagIdx_injective",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     403,
+     406
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.toBits_injective",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     379,
+     384
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.tuples",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     463,
+     468
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.weightList",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     231,
+     234
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Halting.Tabulate.0.MIPRE.Verifier.bitsToIdx_ofFn_fin2",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     190,
+     198
+    ]
+   }
+  ],
+  "lines": 548,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Semidecide",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Classes",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Wrapper",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Enumerate",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BoundedEval"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.CL.Sampler.queryUnder": [
+    "/-- One query to the sampler, run under the budget its time bound supplies. The sampler is",
+    "required to halt on *every* input of the form `(n, …)`, so this is total wherever the bound",
+    "holds. -/"
+   ],
+   "MIPRE.Decider.acceptBudget": [
+    "/-- The budget the time bound `TimeBoundAt n T k` gives on the tuple `(x, y, a, b)`: the",
+    "decider's input is `cons (encode n) (encode (x, y, a, b))`, and the bound is `T` times the",
+    "`k`-th power of one more than the size of the second component. -/"
+   ],
+   "MIPRE.Halting.accOf": [
+    "/-- Acceptance, from the encoded decider program alone. Unlike the two sampler runs this one",
+    "cannot be re-budgeted off `GapCompression.sampler_time`: the decider of the verifier a string",
+    "denotes is the string's *own*, wrapped, and nothing bounds it unconditionally. So `accOf` keeps",
+    "the budget `n`-boundedness supplies, and `MIPRE.Halting.accOf_iff` keeps its hypothesis.",
+    "",
+    "`decide (… = some …)` rather than `… == some …`: the `BEq` a `==` elaborates to here is not the",
+    "one `Primrec.eq` is stated at, and reconciling them is a long detour for no gain. -/"
+   ],
+   "MIPRE.Halting.dimOf": null,
+   "MIPRE.Halting.margOf": [
+    "/-- Player `w`'s marginal question at the point `z`, under the budget `B * (|q| + 1) ^ k`. -/"
+   ],
+   "MIPRE.Halting.tabOf": [
+    "/-- **The tabulation**, doubled and re-budgeted.  Alice's question index is her marginal's bit",
+    "string with a `false` tag prepended, Bob's with a `true` tag: the two blocks are disjoint and",
+    "the diagonal carries no weight.  The weight list still enumerates `𝔽₂^s` once, so the total",
+    "weight is still `2 ^ s`. -/"
+   ],
+   "MIPRE.Verifier.accListW": null,
+   "MIPRE.Verifier.bitsToIdx": [
+    "/-- The index of a bit string: the number whose binary digits it is, least significant first.",
+    "This is the `ℕ`-level form of `Verifier.questionEquiv`, and it is what the tabulation can",
+    "actually compute with — the question alphabet of a `GameData` is `Fin (nX + 1)`, so every",
+    "question reached by a sampler query has to be turned into a number. -/"
+   ],
+   "MIPRE.Verifier.tagEquiv": [
+    "/-- **The doubled question alphabet.** -/"
+   ],
+   "MIPRE.Verifier.tagIdx": [
+    "/-- The packed index of a tagged question. -/"
+   ],
+   "MIPRE.Verifier.tuples": [
+    "/-- The four-fold product of the two enumerations, as one flat list. -/"
+   ],
+   "MIPRE.Verifier.weightList": [
+    "/-- **The weight list of a tabulation**: one entry of weight `1` for each point of `𝔽₂^s`, at",
+    "the index pair its two marginals land on. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ClassMIPStarTab",
+  "module": "MIPRE.Foundations.ClassMIPStarTab",
+  "module_doc": "/-!\n# The paper's class is contained in the computable one: tabulation\n\nBlueprint `lem:mipstar-poly-sub`: `MIPStar L → MIPStarComputable L`, hence `MIPStar L → IsRE L`\nthrough `MIPStarComputable.isRE`. A polynomial-time verifier is in particular a computable map from\nstrings to explicit games: on the input `z`, run the sampler on every seed of length `B z` and\nthe decider on every tuple of strings of length at most `B z`, each under the budget the\nefficiency clause supplies, and write the result down as a `GameData`.\n\nTwo things about the table, both inherited from `Halting/Tabulate.lean`:\n\n* **The questions are doubled.** A `GameData` is read as a synchronous game, where unequal\n  answers to equal questions lose by fiat, and `G_z` is a general bipartite game; tagging\n  Alice's questions with `false` and Bob's with `true` puts no weight on the diagonal and\n  `quantumValue_doubled` says the value is unchanged (`Foundations/GameDouble.lean`).\n* **Budgeted runs decide everything.** `Machine.runForD` under the bound of\n  `PolyVerifier.Efficient` returns the sampler's pair and the decider's verdict\n  (`Machine.runForD_eq_some_iff`), so the table is primitive recursive in `z` and, on an\n  efficient verifier, correct (`quantumValue_tab`).\n\nThe indexing: questions and answers are both indexed among the strings of length at most `B z`\n(`Data.bitStrsLE`), a tagged question `(tg, x)` at `idxOf x + N · tg` with `N` the number of\nsuch strings (`qIdx`, `qEquiv`), an answer at `idxOf a` (`aEquiv`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ClassMIPStarTab.lean",
+  "source_path": "MIPRE/Foundations/ClassMIPStarTab.lean",
+  "defmat": [
+   "MIPRE.PolyVerifier.N",
+   "MIPRE.PolyVerifier.aEquiv",
+   "MIPRE.PolyVerifier.accC",
+   "MIPRE.PolyVerifier.accListLE",
+   "MIPRE.PolyVerifier.eA",
+   "MIPRE.PolyVerifier.eX",
+   "MIPRE.PolyVerifier.qEquiv",
+   "MIPRE.PolyVerifier.qIdx",
+   "MIPRE.PolyVerifier.sampleC",
+   "MIPRE.PolyVerifier.tab",
+   "MIPRE.PolyVerifier.tabOf",
+   "MIPRE.PolyVerifier.tuplesLE"
+  ],
+  "embedded": [
+   "MIPRE.PolyVerifier.length_answerList_eq",
+   "MIPRE.PolyVerifier.tab_nA",
+   "MIPRE.PolyVerifier.tab_nX"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.PolyVerifier.N",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.aEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     58,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.accC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     118,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.accListLE",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     123,
+     132
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.eA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     355,
+     357
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.eX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     351,
+     353
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.length_answerList_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.qEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.qIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     49,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.sampleC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     111,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.tab",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     333,
+     334
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.tabOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     219,
+     230
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.tab_nA",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     345,
+     349
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.tab_nX",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     339,
+     343
+    ]
+   },
+   {
+    "name": "MIPRE.PolyVerifier.tuplesLE",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     153,
+     158
+    ]
+   }
+  ],
+  "lines": 246,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawInt",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawStrategy",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawSemantics",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawComplete",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawPrimrec",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RE",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Semidecide",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStarComputable",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Freeze",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Classes",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Wrapper",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Enumerate",
+   "import Definitions.Def_MIPRE_Foundations_ClassMIPStar",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BoundedEval",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Tabulate"
+  ],
+  "blueprint": [
+   "lem:mipstar-poly-sub"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.PolyVerifier.N": [
+    "/-- The number of strings of length at most `T`. -/"
+   ],
+   "MIPRE.PolyVerifier.aEquiv": [
+    "/-- The answer alphabet, indexed among the strings of length at most `T`. -/"
+   ],
+   "MIPRE.PolyVerifier.accC": [
+    "/-- The decider's verdict on `(z, x, y, a, b)` under the budget `P(|z| + |x| + |y| + |a| + |b|)`. -/"
+   ],
+   "MIPRE.PolyVerifier.accListLE": [
+    "/-- The acceptance table over four copies of the strings of length at most `T`. -/"
+   ],
+   "MIPRE.PolyVerifier.eA": [
+    "/-- The answer relabeling. -/"
+   ],
+   "MIPRE.PolyVerifier.eX": [
+    "/-- The question relabeling. -/"
+   ],
+   "MIPRE.PolyVerifier.qEquiv": [
+    "/-- The tagged question alphabet, indexed. -/"
+   ],
+   "MIPRE.PolyVerifier.qIdx": [
+    "/-- The index of the tagged question `(tg, x)`. -/"
+   ],
+   "MIPRE.PolyVerifier.sampleC": [
+    "/-- The sampler's pair on `(z, r)` under the budget `T`, read off a budgeted run; `([], [])`",
+    "if the run does not finish or its result is not a pair of strings. -/"
+   ],
+   "MIPRE.PolyVerifier.tab": [
+    "/-- The table of `G_z`. -/"
+   ],
+   "MIPRE.PolyVerifier.tabOf": [
+    "/-- **The table of `G_z`**, from the two programs and the polynomial: doubled questions indexed",
+    "by `qIdx`, one unit of weight per seed, and the acceptance table by budgeted runs. -/"
+   ],
+   "MIPRE.PolyVerifier.tuplesLE": [
+    "/-- The four-fold product of the enumeration, as one flat list. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_Fold",
+  "module": "MIPRE.Foundations.Cost.Fold",
+  "module_doc": "/-!\n# The closure library, part IV: folds over lists\n\nThe generic iteration combinator of the library, `PolyTimeFun.foldl`: a fold of a\npolynomial-time body over a list is polynomial-time provided the accumulator grows by at\nmost an additive polynomial in the element at each step (the Cobham condition\n`esize (F (s, a)) ≤ esize s + B (esize a)`), and from it `cons`, `casesList`, `map`, `zip`,\n`append`, `replicate` and `reverse` (`planning/succinct-cook-levin.md`, S3). Every\ncombinator's `toFun` is the corresponding `List` function, so that a program assembled\nfrom them is *defined* by its mathematical meaning and only its time bound is inherited.\n\nLists of an arbitrary encodable type encode as `cons`-chains of the encodings\n(`instSizedEncodingList`, at low priority so that the existing instances for bit strings\nand gate lists are still found first; they agree definitionally).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Fold.lean",
+  "source_path": "MIPRE/Foundations/Cost/Fold.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyTimeFun.FoldBounded",
+   "MIPRE.Cost.PolyTimeFun.append",
+   "MIPRE.Cost.PolyTimeFun.casesList",
+   "MIPRE.Cost.PolyTimeFun.casesListFun",
+   "MIPRE.Cost.PolyTimeFun.cast",
+   "MIPRE.Cost.PolyTimeFun.congr",
+   "MIPRE.Cost.PolyTimeFun.cons",
+   "MIPRE.Cost.PolyTimeFun.foldStepBound",
+   "MIPRE.Cost.PolyTimeFun.foldl",
+   "MIPRE.Cost.PolyTimeFun.foldlAdd",
+   "MIPRE.Cost.PolyTimeFun.length",
+   "MIPRE.Cost.PolyTimeFun.map",
+   "MIPRE.Cost.PolyTimeFun.mapWith",
+   "MIPRE.Cost.PolyTimeFun.ofEncodeEq",
+   "MIPRE.Cost.PolyTimeFun.replicate",
+   "MIPRE.Cost.PolyTimeFun.reverse",
+   "MIPRE.Cost.PolyTimeFun.step",
+   "MIPRE.Cost.PolyTimeFun.zip",
+   "MIPRE.Cost.PolyTimeFun.zipStepF",
+   "MIPRE.Cost.Prog.foldBody",
+   "MIPRE.Cost.Unary",
+   "MIPRE.Cost.instSizedEncodingList",
+   "MIPRE.Cost.instSizedEncodingUnit",
+   "MIPRE.Cost.unary",
+   "MIPRE.Cost.zipStep"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyTimeFun.append_apply",
+   "MIPRE.Cost.PolyTimeFun.casesList_cons",
+   "MIPRE.Cost.PolyTimeFun.casesList_nil",
+   "MIPRE.Cost.PolyTimeFun.cast_apply",
+   "MIPRE.Cost.PolyTimeFun.congr_apply",
+   "MIPRE.Cost.PolyTimeFun.cons_apply",
+   "MIPRE.Cost.PolyTimeFun.foldBounded_of_additive",
+   "MIPRE.Cost.PolyTimeFun.foldlAdd_apply",
+   "MIPRE.Cost.PolyTimeFun.foldl_apply",
+   "MIPRE.Cost.PolyTimeFun.foldl_esize_le",
+   "MIPRE.Cost.PolyTimeFun.length_apply",
+   "MIPRE.Cost.PolyTimeFun.mapWith_apply",
+   "MIPRE.Cost.PolyTimeFun.map_apply",
+   "MIPRE.Cost.PolyTimeFun.ofEncodeEq_apply",
+   "MIPRE.Cost.PolyTimeFun.replicate_apply",
+   "MIPRE.Cost.PolyTimeFun.reverse_apply",
+   "MIPRE.Cost.PolyTimeFun.zipStepF_apply",
+   "MIPRE.Cost.PolyTimeFun.zip_apply",
+   "MIPRE.Cost.Prog.foldBody_step",
+   "MIPRE.Cost.Prog.foldBody_stop",
+   "MIPRE.Cost.Prog.foldBody_wellScoped",
+   "MIPRE.Cost.encode_list_cons",
+   "MIPRE.Cost.encode_list_eq_list",
+   "MIPRE.Cost.encode_list_nil",
+   "MIPRE.Cost.encode_unary",
+   "MIPRE.Cost.esize_list_append",
+   "MIPRE.Cost.esize_list_cons",
+   "MIPRE.Cost.esize_list_nil",
+   "MIPRE.Cost.esize_mem_le",
+   "MIPRE.Cost.esize_unary",
+   "MIPRE.Cost.foldl_cons_map",
+   "MIPRE.Cost.foldl_cons_reverse",
+   "MIPRE.Cost.foldl_replicate",
+   "MIPRE.Cost.foldl_zipStep",
+   "MIPRE.Cost.foldl_zipStep_nil",
+   "MIPRE.Cost.length_le_esize_list",
+   "MIPRE.Cost.length_unary",
+   "MIPRE.Cost.unary_length"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.FoldBounded",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     153,
+     157
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.append",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     458,
+     469
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.append_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     471,
+     472
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.casesList",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     339,
+     376
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.casesListFun",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     334,
+     337
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.casesList_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     381,
+     382
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.casesList_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     378,
+     379
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.cast",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     280,
+     290
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.cast_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     292,
+     293
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.congr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     256,
+     263
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.congr_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     265,
+     266
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.cons",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     295,
+     307
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.cons_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     309,
+     310
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.foldBounded_of_additive",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     159,
+     174
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.foldStepBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     176,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.foldl",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     180,
+     240
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.foldlAdd",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     245,
+     248
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.foldlAdd_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     250,
+     252
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.foldl_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     242,
+     243
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.foldl_esize_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     133,
+     151
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.length",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     550,
+     556
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.length_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     558,
+     559
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.map",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     442,
+     454
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.mapWith",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     598,
+     609
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.mapWith_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     611,
+     612
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.map_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     456,
+     456
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ofEncodeEq",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     268,
+     275
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ofEncodeEq_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     277,
+     278
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.replicate",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     561,
+     594
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.replicate_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     596,
+     596
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.reverse",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     312,
+     329
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.reverse_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     331,
+     332
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.step",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     130,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.zip",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     486,
+     501
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.zipStepF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     474,
+     481
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.zipStepF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     483,
+     484
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.zip_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     503,
+     504
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.foldBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     84,
+     89
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.foldBody_step",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     104,
+     120
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.foldBody_stop",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.foldBody_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     91,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Unary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     517,
+     518
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.encode_list_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     43,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.encode_list_eq_list",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.encode_list_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.encode_unary",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     525,
+     528
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_list_append",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_list_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_list_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_mem_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_unary",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     530,
+     531
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.foldl_cons_map",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     392,
+     397
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.foldl_cons_reverse",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     399,
+     404
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.foldl_replicate",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     428,
+     434
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.foldl_zipStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     419,
+     426
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.foldl_zipStep_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     413,
+     417
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.instSizedEncodingList",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     30,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.instSizedEncodingUnit",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     510,
+     515
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.length_le_esize_list",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     62,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.length_unary",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     523,
+     523
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.unary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     520,
+     521
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.unary_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     536,
+     539
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.zipStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     406,
+     411
+    ]
+   }
+  ],
+  "lines": 614,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyTimeFun.FoldBounded": [
+    "/-- **The Cobham condition** for folding `F` over a list: along the fold of any list `l` from",
+    "any `s₀`, the accumulator has size at most `B (esize (l, s₀))`. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.append": [
+    "/-- Appending. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.casesList": [
+    "/-- Case analysis on a list component: `casesList N K (a, [])` is `N a` and",
+    "`casesList N K (a, h :: t)` is `K (a, (h, t))`. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.casesListFun": [
+    "/-- Case analysis on a list: the function of `casesList`. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.cast": [
+    "/-- Retyping the output: a function whose values encode as the values of `F` is computed by",
+    "the program of `F`. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.congr": [
+    "/-- Replacing the function of a `PolyTimeFun` by an extensionally equal one. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.cons": [
+    "/-- Consing. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.foldStepBound": [
+    "/-- The per-iteration cost bound of the fold loop, as a polynomial in `esize (l, s₀)`. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.foldl": [
+    "/-- **Folding a polynomial-time body over a list**, under the Cobham condition `FoldBounded F B`:",
+    "`foldl F B hB (l, s₀) = l.foldl (fun s a => F (s, a)) s₀`. The loop state is the input pair",
+    "itself. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.foldlAdd": [
+    "/-- Folding under the additive condition. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.length": [
+    "/-- The length of a list, in unary. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.map": [
+    "/-- Mapping a polynomial-time function over a list. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.mapWith": [
+    "/-- Mapping with a parameter: `mapWith F (l, c) = l.map (fun a => F (a, c))`, by zipping `l`",
+    "with copies of `c`. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.ofEncodeEq": [
+    "/-- A function whose output encodes exactly as its input is computed by `var 0`. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.replicate": [
+    "/-- `replicate (u, b) = List.replicate |u| b`, by a fold over the unary numeral `u` whose state",
+    "carries `b`. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.reverse": [
+    "/-- Reversal. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.step": [
+    "/-- The step function of a fold, as a binary function. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.zip": [
+    "/-- Zipping two lists. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.zipStepF": [
+    "/-- The zip step as a polynomial-time function. -/"
+   ],
+   "MIPRE.Cost.Prog.foldBody": [
+    "/-- The body of the fold loop of `F`: on the state `cons xs acc`, stop with `acc` if `xs` is",
+    "empty; otherwise bind `acc' := F (acc, head xs)` and continue with `cons (tail xs) acc'`. -/"
+   ],
+   "MIPRE.Cost.Unary": [
+    "/-- Unary numerals: lists of units. -/"
+   ],
+   "MIPRE.Cost.instSizedEncodingList": [
+    "/-- Lists encode elementwise, as `cons`-chains. -/"
+   ],
+   "MIPRE.Cost.instSizedEncodingUnit": [
+    "/-- The unit encodes as the atom, so that a list of `n` units is the unary numeral",
+    "`Data.ofNat n`. -/"
+   ],
+   "MIPRE.Cost.unary": [
+    "/-- The unary numeral of `n`. -/"
+   ],
+   "MIPRE.Cost.zipStep": [
+    "/-- The step of the zip fold: on the state `(l₂, acc)` and the element `a`, consume the head",
+    "of `l₂`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_Binary",
+  "module": "MIPRE.Foundations.Cost.Binary",
+  "module_doc": "/-!\n# The closure library, part V: the binary successor, and unary to binary\n\nThe successor on binary numerals (`incBitsProg`, `PolyTimeFun.inc`: flip the leading `1`s and the\nfirst `0`, in two passes as `decProg`), the conversion of a unary numeral to binary\n(`PolyTimeFun.unaryToBin`, a fold of the successor), data as its own encoding, the bits of a\nnumber, and the tagging combinator (`PolyTimeFun.tagged`) for constructors of encoded\ninductive types (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Binary.lean",
+  "source_path": "MIPRE/Foundations/Cost/Binary.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyTimeFun.inc",
+   "MIPRE.Cost.PolyTimeFun.natBits",
+   "MIPRE.Cost.PolyTimeFun.natData",
+   "MIPRE.Cost.PolyTimeFun.progData",
+   "MIPRE.Cost.PolyTimeFun.tagged",
+   "MIPRE.Cost.PolyTimeFun.unaryToBin",
+   "MIPRE.Cost.Prog.incBitsBody",
+   "MIPRE.Cost.Prog.incBitsCont",
+   "MIPRE.Cost.Prog.incBitsProg",
+   "MIPRE.Cost.Prog.incBitsStop1",
+   "MIPRE.Cost.Prog.incBitsStop2",
+   "MIPRE.Cost.incBits",
+   "MIPRE.Cost.incTail",
+   "MIPRE.Cost.instSizedEncodingData"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyTimeFun.inc_apply",
+   "MIPRE.Cost.PolyTimeFun.natBits_apply",
+   "MIPRE.Cost.PolyTimeFun.tagged_apply",
+   "MIPRE.Cost.PolyTimeFun.unaryToBin_apply",
+   "MIPRE.Cost.Prog.incBitsBody_empty",
+   "MIPRE.Cost.Prog.incBitsBody_false",
+   "MIPRE.Cost.Prog.incBitsBody_true",
+   "MIPRE.Cost.Prog.incBitsBody_wellScoped",
+   "MIPRE.Cost.Prog.incBitsLoop_runs",
+   "MIPRE.Cost.Prog.incBitsProg_runs",
+   "MIPRE.Cost.Prog.incBitsProg_wellScoped",
+   "MIPRE.Cost.encode_data",
+   "MIPRE.Cost.esize_bitStr_append",
+   "MIPRE.Cost.esize_bitStr_cons",
+   "MIPRE.Cost.esize_bitStr_nil",
+   "MIPRE.Cost.esize_data",
+   "MIPRE.Cost.esize_false",
+   "MIPRE.Cost.esize_false_cons",
+   "MIPRE.Cost.esize_incBits_le",
+   "MIPRE.Cost.esize_replicate_false",
+   "MIPRE.Cost.esize_replicate_true",
+   "MIPRE.Cost.esize_succ_le",
+   "MIPRE.Cost.esize_true",
+   "MIPRE.Cost.esize_true_cons",
+   "MIPRE.Cost.exists_leading_trues",
+   "MIPRE.Cost.incBits_bits",
+   "MIPRE.Cost.incBits_replicate_true"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.inc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     296,
+     311
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.inc_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     313,
+     313
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.natBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     72,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.natBits_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     76,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.natData",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     78,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.progData",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.tagged",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     341,
+     352
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.tagged_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     354,
+     356
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.unaryToBin",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     320,
+     335
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.unaryToBin_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     337,
+     337
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     158
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsBody_empty",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     163,
+     172
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsBody_false",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     174,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsBody_true",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     189,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsBody_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     160,
+     161
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsCont",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     154,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsLoop_runs",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     205,
+     232
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     234,
+     235
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsProg_runs",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     241,
+     292
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     237,
+     239
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsStop1",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     146,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.incBitsStop2",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     151,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.encode_data",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     31,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_bitStr_append",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     52,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_bitStr_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     37,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_bitStr_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     40,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_data",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     33,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_false",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_false_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_incBits_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_replicate_false",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     67,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_replicate_true",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     62,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_succ_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     315,
+     318
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_true",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_true_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.exists_leading_trues",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     133,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.incBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.incBits_bits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.incBits_replicate_true",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     126,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.incTail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     121,
+     124
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.instSizedEncodingData",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     29
+    ]
+   }
+  ],
+  "lines": 367,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyTimeFun.inc": [
+    "/-- The successor on binary numerals, in polynomial time. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.natBits": [
+    "/-- The bits of a number, as a polynomial-time function: the encoding is the same. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.natData": [
+    "/-- A number as its encoding. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.progData": [
+    "/-- A program as its encoding. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.tagged": [
+    "/-- A constructor whose encoding pairs a unary tag with the encoding of its argument. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.unaryToBin": [
+    "/-- A unary numeral to binary, by a fold of the successor. -/"
+   ],
+   "MIPRE.Cost.Prog.incBitsBody": [
+    "/-- The body of the successor loop. -/"
+   ],
+   "MIPRE.Cost.Prog.incBitsCont": [
+    "/-- The continuation on a head `1`: `(tail, 0 · acc)`. -/"
+   ],
+   "MIPRE.Cost.Prog.incBitsProg": [
+    "/-- The successor of a binary numeral: `incBitsProg` on `encode l` computes `encode (incBits l)`. -/"
+   ],
+   "MIPRE.Cost.Prog.incBitsStop1": [
+    "/-- Body of the successor loop: on `cons xs acc`, if `xs` is empty stop with `(acc, [1])`; if",
+    "its head is `0` stop with `(acc, 1 · tail)`; if its head is `1` continue with",
+    "`(tail, 0 · acc)`. Reversing the first component onto the second then gives the successor. -/"
+   ],
+   "MIPRE.Cost.Prog.incBitsStop2": [
+    "/-- The stop on a head `0`: `(acc, 1 · tail)`. -/"
+   ],
+   "MIPRE.Cost.incBits": [
+    "/-- The successor of a binary numeral (least significant bit first). -/"
+   ],
+   "MIPRE.Cost.incTail": [
+    "/-- The tail of the successor after the leading `1`s: `[]` becomes `[1]`, `0 · r` becomes `1 · r`. -/"
+   ],
+   "MIPRE.Cost.instSizedEncodingData": [
+    "/-- Data encode as themselves. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_Reader",
+  "module": "MIPRE.Foundations.Cost.Reader",
+  "module_doc": "/-!\n# Programs as readers of a shared input\n\nA program built by composition out of `comp`, `pair`, `fst` and `snd` is written point-free,\nand a point-free term for a formula of forty conjuncts is unreadable. This file gives the\napplicative reading instead: a `PolyTimeFun ι α` is a *reader* of the shared input `ι`, and\n`ap₁`, `ap₂`, `ap₃` and `listOf` apply a program to readers. In that style a program\ntranscribes its mathematical definition line for line, and its `toFun` is definitionally the\nfunction it transcribes, so the `congr` that names it closes by `rfl`.\n\nAlso here, because they are the list operations the describer's programs need and they are\ngeneric: `take`, `tail`, `headD` and `nthD` (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Reader.lean",
+  "source_path": "MIPRE/Foundations/Cost/Reader.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyTimeFun.ap₁",
+   "MIPRE.Cost.PolyTimeFun.ap₂",
+   "MIPRE.Cost.PolyTimeFun.ap₂'",
+   "MIPRE.Cost.PolyTimeFun.ap₃",
+   "MIPRE.Cost.PolyTimeFun.drop",
+   "MIPRE.Cost.PolyTimeFun.headD",
+   "MIPRE.Cost.PolyTimeFun.listOf",
+   "MIPRE.Cost.PolyTimeFun.nthD",
+   "MIPRE.Cost.PolyTimeFun.tail",
+   "MIPRE.Cost.PolyTimeFun.tailStep",
+   "MIPRE.Cost.PolyTimeFun.take"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyTimeFun.ap₁_apply",
+   "MIPRE.Cost.PolyTimeFun.ap₂'_apply",
+   "MIPRE.Cost.PolyTimeFun.ap₂_apply",
+   "MIPRE.Cost.PolyTimeFun.ap₃_apply",
+   "MIPRE.Cost.PolyTimeFun.drop_apply",
+   "MIPRE.Cost.PolyTimeFun.esize_foldl_tailStep",
+   "MIPRE.Cost.PolyTimeFun.esize_tail_le",
+   "MIPRE.Cost.PolyTimeFun.foldl_tailStep",
+   "MIPRE.Cost.PolyTimeFun.headD_apply",
+   "MIPRE.Cost.PolyTimeFun.listOf_apply",
+   "MIPRE.Cost.PolyTimeFun.map_fst_zip",
+   "MIPRE.Cost.PolyTimeFun.nthD_apply",
+   "MIPRE.Cost.PolyTimeFun.tailStep_apply",
+   "MIPRE.Cost.PolyTimeFun.tailStep_bounded",
+   "MIPRE.Cost.PolyTimeFun.tail_apply",
+   "MIPRE.Cost.PolyTimeFun.take_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ap₁",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     29,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ap₁_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     32,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ap₂",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     35,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ap₂'",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ap₂'_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ap₂_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     39,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ap₃",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.ap₃_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.drop",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     141,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.drop_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     149,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.esize_foldl_tailStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     121,
+     124
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.esize_tail_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     110,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.foldl_tailStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     133,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.headD",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     99,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.headD_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.listOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.listOf_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     64,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.map_fst_zip",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     71,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.nthD",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.nthD_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     157,
+     165
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.tail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.tailStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     116,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.tailStep_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     118,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.tailStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     126,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.tail_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     97
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.take",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     78,
+     83
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.take_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     85,
+     86
+    ]
+   }
+  ],
+  "lines": 182,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyTimeFun.ap₁": [
+    "/-- Apply a one-argument program to a reader. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.ap₂": [
+    "/-- Apply a two-argument program to two readers. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.ap₂'": [
+    "/-- A two-argument program with its left argument curried away: the reader `f` of the shared",
+    "input supplies it. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.ap₃": [
+    "/-- Apply a three-argument program to three readers. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.drop": [
+    "/-- Dropping a prefix, the length in unary. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.headD": [
+    "/-- The head of a list, or a default. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.listOf": [
+    "/-- A list of readers as a reader of the list of their values. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.nthD": [
+    "/-- The `k`-th entry of a list, or a default. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.tail": [
+    "/-- The tail of a list. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.tailStep": null,
+   "MIPRE.Cost.PolyTimeFun.take": [
+    "/-- Taking a prefix, the length in unary. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_BinaryArithmetic",
+  "module": "MIPRE.Foundations.Cost.BinaryArithmetic",
+  "module_doc": "/-!\n# Canonical binary arithmetic\n\nThe parameter algorithms use binary integers, even when their values are much\nlarger than the available work space. These programs manipulate binary digits\ndirectly. In particular, converting a bit string to a natural number normalizes\nits encoding without expanding its value to unary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/BinaryArithmetic.lean",
+  "source_path": "MIPRE/Foundations/Cost/BinaryArithmetic.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyTimeFun.addUnary",
+   "MIPRE.Cost.PolyTimeFun.bitsValue",
+   "MIPRE.Cost.PolyTimeFun.natBit",
+   "MIPRE.Cost.PolyTimeFun.predBits",
+   "MIPRE.Cost.PolyTimeFun.predN",
+   "MIPRE.Cost.PolyTimeFun.subUnary",
+   "MIPRE.Cost.decBits"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyTimeFun.addUnary_apply",
+   "MIPRE.Cost.PolyTimeFun.bitsValue_apply",
+   "MIPRE.Cost.PolyTimeFun.natBit_apply",
+   "MIPRE.Cost.PolyTimeFun.predBits_apply",
+   "MIPRE.Cost.PolyTimeFun.predN_apply",
+   "MIPRE.Cost.PolyTimeFun.subUnary_apply",
+   "MIPRE.Cost.bitsVal_decBits",
+   "MIPRE.Cost.decBits_split",
+   "MIPRE.Cost.esize_natBit_le",
+   "_private.MIPRE.Foundations.Cost.BinaryArithmetic.0.MIPRE.Cost.fold_addUnary",
+   "_private.MIPRE.Foundations.Cost.BinaryArithmetic.0.MIPRE.Cost.fold_subUnary",
+   "_private.MIPRE.Foundations.Cost.BinaryArithmetic.0.MIPRE.Cost.split_bits_of_ne_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.addUnary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     153
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.addUnary_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     155,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.bitsValue",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     52,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.bitsValue_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.natBit",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     21,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.natBit_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     43,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.predBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     96,
+     132
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.predBits_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     134,
+     134
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.predN",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     136,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.predN_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     140,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.subUnary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     164,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.subUnary_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     180,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.bitsVal_decBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     87,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.decBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     65,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.decBits_split",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     71,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_natBit_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     45,
+     50
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryArithmetic.0.MIPRE.Cost.fold_addUnary",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     142,
+     146
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryArithmetic.0.MIPRE.Cost.fold_subUnary",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     158,
+     162
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryArithmetic.0.MIPRE.Cost.split_bits_of_ne_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     78,
+     85
+    ]
+   }
+  ],
+  "lines": 205,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader"
+  ],
+  "blueprint": [
+   "lem:pcp-padding-programs"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyTimeFun.addUnary": [
+    "/-- Add a unary offset to a binary integer. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.bitsValue": [
+    "/-- Read and normalize an arbitrary little-endian bit string. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.natBit": [
+    "/-- Prepend a digit, suppressing the noncanonical representation of zero. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.predBits": [
+    "/-- The existing borrow machine, with its missing zero case supplied. Its",
+    "output need not be canonical; `bitsValue` subsequently normalizes it. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.predN": [
+    "/-- Saturating predecessor of a binary integer. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.subUnary": [
+    "/-- Subtract a unary offset from a binary integer, saturating at zero. The",
+    "intermediate values are bounded by the initial integer, in binary size. -/"
+   ],
+   "MIPRE.Cost.decBits": [
+    "/-- Binary borrow, used on the nonzero canonical representation. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_BinaryCompare",
+  "module": "MIPRE.Foundations.Cost.BinaryCompare",
+  "module_doc": "/-!\n# Polynomial-time comparison of binary natural numbers\n\nThe comparison scans coefficient bits directly, padding only by the supplied\nbit-string lengths. It never expands a binary number to unary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/BinaryCompare.lean",
+  "source_path": "MIPRE/Foundations/Cost/BinaryCompare.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyTimeFun.leBits",
+   "MIPRE.Cost.PolyTimeFun.leNat",
+   "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compareStep",
+   "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compareStepProg"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyTimeFun.leBits_apply",
+   "MIPRE.Cost.PolyTimeFun.leNat_apply",
+   "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.bitsVal_append_false",
+   "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compareStepProg_apply",
+   "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compare_fold",
+   "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.esize_bool_le"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.leBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     57,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.leBits_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     79,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.leNat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.leNat_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     89
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.bitsVal_append_false",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     39,
+     46
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compareStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     19,
+     20
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compareStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     50,
+     52
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compareStepProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     55
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compare_fold",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     22,
+     37
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.esize_bool_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     48,
+     48
+    ]
+   }
+  ],
+  "lines": 111,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyTimeFun.leBits": [
+    "/-- Compare arbitrary little-endian strings, allowing leading zeroes. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.leNat": [
+    "/-- Binary natural comparison, with a global polynomial cost in the encodings. -/"
+   ],
+   "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compareStep": null,
+   "_private.MIPRE.Foundations.Cost.BinaryCompare.0.MIPRE.Cost.compareStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_ManyOne",
+  "module": "MIPRE.Foundations.Cost.ManyOne",
+  "module_doc": "/-!\n# The many-one reduction of an r.e. language to halting, in polynomial time\n\n`Cost.exists_semidecider` turns an r.e. predicate on strings into a well-scoped program `S`\nhalting on `encode z` exactly on its members. The reduction to halting *on the empty input*\nhard-codes `z` into `S` — the s-m-n theorem — and `hardcode` is linear time, so the map\n`z ↦ M_z` is a `PolyTimeFun`. `Halting.exists_code_halts_of_isRE` is the same reduction on\nMathlib's `Nat.Partrec.Code` through `Code.curry`, with no time tracked; the polynomial-time\nhalting reduction (`planning/polytime-halting.md`) needs this one.\n\n`hardcode p d` runs `p` on `cons d v` where `v` is the input, so on the empty input `nil` it\nruns `p` on `cons d nil`; `Prog.onLeft p` is the program running `p` on the left component of\nits input, and `M_z = hardcode (onLeft S) (encode z)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/ManyOne.lean",
+  "source_path": "MIPRE/Foundations/Cost/ManyOne.lean",
+  "defmat": [
+   "MIPRE.Cost.Prog.onLeft",
+   "MIPRE.Cost.haltingReduction"
+  ],
+  "embedded": [
+   "MIPRE.Cost.haltingReduction_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Prog.onLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     26,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.haltingReduction",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     32,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.haltingReduction_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     37
+    ]
+   }
+  ],
+  "lines": 81,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FromPartrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Partrec_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Semidecide"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Prog.onLeft": [
+    "/-- On the input `cons d v`, run `p` on `d`; on `nil`, halt with `nil`. -/"
+   ],
+   "MIPRE.Cost.haltingReduction": [
+    "/-- The reduction: `z ↦ hardcode (onLeft S) (encode z)`, in linear time. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_SizeProgram",
+  "module": "MIPRE.Foundations.Cost.SizeProgram",
+  "module_doc": "/-! # Encoded size as an ambient polynomial-time program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/SizeProgram.lean",
+  "source_path": "MIPRE/Foundations/Cost/SizeProgram.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyTimeFun.encodedSizeU"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyTimeFun.encodedSizeU_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.encodedSizeU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     14,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.encodedSizeU_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     28,
+     29
+    ]
+   }
+  ],
+  "lines": 48,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyTimeFun.encodedSizeU": [
+    "/-- Count the actual encoded tree size in unary. The output size is linear in",
+    "the supplied encoding, including for arbitrary malformed object-level programs. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Halting_PolyBounded",
+  "module": "MIPRE.Foundations.Halting.PolyBounded",
+  "module_doc": "/-!\n# Polynomially bounded functions\n\nThe time accounting of the instantiation (`Halting/Wrapper.lean`, `Halting/Compressor.lean`)\ncomposes a dozen explicit cost bounds, each a polynomial in the values it depends on. What the\nargument eventually needs is only that the total is bounded by *some* polynomial in the level,\nso that it falls under `2 ^ n` above a threshold. `PolyBounded f` records exactly that —\n`f n ≤ P.eval n` for some `P : Polynomial ℕ` — with the closure properties that let the\nbounds be composed without ever writing the polynomial down:\n\n* constants, the identity, sums, products, powers, `Nat.size`;\n* `PolyBounded.comp`: a polynomially bounded function of a polynomially bounded function;\n* `PolyBounded.eval`: a fixed polynomial evaluated at a polynomially bounded argument;\n* `PolyBounded.mono`: domination by a polynomially bounded function;\n* `PolyBounded.exists_le_two_pow`: the threshold, `f n ≤ 2 ^ n` for all `n` above some `n₀`;\n  `PolyBounded.exists_le_pow`: a single `λ` with `f n ≤ n ^ λ` for *every* `n ≥ 2`, which is the\n  shape `Verifier.IsBounded` asks for.\n\n`PolyCost` and `HasPolyCost` are the same notion for the cost of a program at index `n` on an\ninput `d`: bounded by `C n · (|d| + 1) ^ k` with `C` polynomially bounded and `k` constant —\nexactly what `Decider.TimeBoundAt` asks for, and what the stages of a decider's run compose\ninto (`PolyCost.add`, `mul`, `poly`, the last being the universal machine's overhead).\n\nThe polynomial of a `PolyBounded` function can be extracted (`PolyBounded.choose`) where an\nexplicit `Polynomial ℕ` is required, as in the `timeBound` field of `PolyTimeFun`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/PolyBounded.lean",
+  "source_path": "MIPRE/Foundations/Halting/PolyBounded.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyBounded",
+   "MIPRE.Cost.PolyBounded.poly",
+   "MIPRE.Cost.PolyCost",
+   "MIPRE.Cost.Prog.HasPolyCost"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyBounded.add",
+   "MIPRE.Cost.PolyBounded.add_const",
+   "MIPRE.Cost.PolyBounded.comp",
+   "MIPRE.Cost.PolyBounded.const",
+   "MIPRE.Cost.PolyBounded.const_mul",
+   "MIPRE.Cost.PolyBounded.eval",
+   "MIPRE.Cost.PolyBounded.exists_le_pow",
+   "MIPRE.Cost.PolyBounded.exists_le_two_pow",
+   "MIPRE.Cost.PolyBounded.id",
+   "MIPRE.Cost.PolyBounded.le_poly_eval",
+   "MIPRE.Cost.PolyBounded.mono",
+   "MIPRE.Cost.PolyBounded.mul",
+   "MIPRE.Cost.PolyBounded.pow",
+   "MIPRE.Cost.PolyBounded.size",
+   "MIPRE.Cost.PolyBounded.two_mul_add_one",
+   "MIPRE.Cost.PolyCost.add",
+   "MIPRE.Cost.PolyCost.const",
+   "MIPRE.Cost.PolyCost.mul",
+   "MIPRE.Cost.PolyCost.ofIndex",
+   "MIPRE.Cost.PolyCost.poly",
+   "MIPRE.Cost.PolyCost.size"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyBounded",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     53,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.add_const",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     73,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.comp",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     82,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.const",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     45,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.const_mul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     70,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.eval",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     76,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.exists_le_pow",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     110,
+     122
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.exists_le_two_pow",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     100,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.id",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.le_poly_eval",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.mono",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.mul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     59,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.poly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     94,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.pow",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyBounded.two_mul_add_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     92,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     132,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyCost.add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     152,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyCost.const",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     143,
+     144
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyCost.mul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     172,
+     180
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyCost.ofIndex",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     146,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyCost.poly",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     182,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyCost.size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     149,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.HasPolyCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     207,
+     212
+    ]
+   }
+  ],
+  "lines": 220,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyBounded": [
+    "/-- `f` is bounded by a polynomial. -/"
+   ],
+   "MIPRE.Cost.PolyBounded.poly": [
+    "/-- The polynomial of a polynomially bounded function. -/"
+   ],
+   "MIPRE.Cost.PolyCost": [
+    "/-- A cost function of an index and an input, bounded by `C n · (|d| + 1) ^ k` with `C`",
+    "polynomially bounded and `k` constant. -/"
+   ],
+   "MIPRE.Cost.Prog.HasPolyCost": [
+    "/-- A program whose cost at index `n` on input `d` is polynomially bounded: the hypothesis the",
+    "deciders of the instantiation carry, and (through `hasPolyCost_iff_exists_isBounded`) what",
+    "`λ`-boundedness comes from. -/"
+   ]
+  }
+ }
+]

@@ -367,3 +367,29 @@ closure) are a promotion signal only here, not forced nodes. The session's disk 
 exhausted by Lake's per-module setup files and C output (about 1 GB for the generated trees), so
 the generated files are now checked with `tools/build_tree.py`, which compiles them directly with
 `lake env lean -o` in dependency order and keeps only the oleans.
+
+**Increment 1 generated and validated (2026-10-15).** The 300 generated files (88 bundles, 107
+stubs, 105 solutions; `prove2me/assembly/{Definitions,Theorems,Solutions}`) compile with
+`autoImplicit` off against the platform pin, with exactly one `sorry` per stub. Getting there took
+four generator passes, each fixing a class of scope reconstruction the compression layer had not
+exercised: `section`/`end` frames and `open` lines inside them are modelled as context frames;
+`attribute […] names` commands are replicated with the targets resolved by the reference facts
+(the token `CommutingStrategy` in `attribute [instance] …` names the projection
+`CommutingStrategy.cstarAlgebra`, not the structure); `include G U in` prefixes are reproduced
+(a bare `include G U` in the stub's preamble, verbatim before the solution); the solution is
+declared as `theorem _root_.solution` *inside* the source's namespace, so that names resolve as
+in the source (hoisting to the root made `D` ambiguous between `Game.D` and the local one); and
+attribute commands are replayed at their *source position* in the pasted sequence rather than at
+the top of the file, since `attribute [local irreducible] tab` of `Reduction.lean` sits after the
+lemmas of `Instantiation.lean` whose proofs unfold `tab` (`tab_computable`'s `rfl`), and a local
+attribute is in effect only for the rest of its own module. Validation (`tools/validate.py`,
+`prove2me/assembly/validation.json`): the elaborated type of each of the 89 nodes is identical in
+the source module, in the stub and in the solution; the 16 glue theorems of
+`Background/Pipeline.lean` and `MainTheorem.lean`, whose source modules depend on the vendored
+trees and cannot be elaborated in the workspace, are verbatim textual cuts of the source (checked
+against `git show 70cbf1c:…`) and their solution types equal their stub types; the three
+`Nonempty` leaves have no source declaration and no solution. Every solution depends on
+`propext`, `Classical.choice`, `Quot.sound` and (through the `sorry` stubs it imports) `sorryAx`,
+and on nothing else. Metadata for the 108 theorem items and 88 bundles is drafted from writer
+packets (`tools/meta_packets.py`, `prove2me/assembly/META_WRITER.md`) and merged by
+`tools/merge_meta.py`; the upload waits for the mission's launch.

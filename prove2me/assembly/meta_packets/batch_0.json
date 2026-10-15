@@ -1,0 +1,597 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.PolyVerifier.sampleC_eq",
+  "source_name": "MIPRE.PolyVerifier.sampleC_eq",
+  "formal_statement": "theorem MIPRE.PolyVerifier.sampleC_eq {z : BitStr} (h : V.Efficient z) {r : BitStr} (hr : r.length = V.B z) :\n    sampleC (encode V.sampler) (V.bound.eval (z.length + V.B z)) z r =\n      ((V.questions z r).1.1, (V.questions z r).2.1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.PolyVerifier",
+   "open MIPRE.Cost MIPRE.Verifier",
+   "open HaltingGameValue (GameData)",
+   "variable (V : PolyVerifier)"
+  ],
+  "docstring": "**The budgeted sample is the question pair**, on an efficient input and a seed of the right\nlength.",
+  "module": "MIPRE.Foundations.ClassMIPStarTab",
+  "module_doc": "/-!\n# The paper's class is contained in the computable one: tabulation\n\nBlueprint `lem:mipstar-poly-sub`: `MIPStar L → MIPStarComputable L`, hence `MIPStar L → IsRE L`\nthrough `MIPStarComputable.isRE`. A polynomial-time verifier is in particular a computable map from\nstrings to explicit games: on the input `z`, run the sampler on every seed of length `B z` and\nthe decider on every tuple of strings of length at most `B z`, each under the budget the\nefficiency clause supplies, and write the result down as a `GameData`.\n\nTwo things about the table, both inherited from `Halting/Tabulate.lean`:\n\n* **The questions are doubled.** A `GameData` is read as a synchronous game, where unequal\n  answers to equal questions lose by fiat, and `G_z` is a general bipartite game; tagging\n  Alice's questions with `false` and Bob's with `true` puts no weight on the diagonal and\n  `quantumValue_doubled` says the value is unchanged (`Foundations/GameDouble.lean`).\n* **Budgeted runs decide everything.** `Machine.runForD` under the bound of\n  `PolyVerifier.Efficient` returns the sampler's pair and the decider's verdict\n  (`Machine.runForD_eq_some_iff`), so the table is primitive recursive in `z` and, on an\n  efficient verifier, correct (`quantumValue_tab`).\n\nThe indexing: questions and answers are both indexed among the strings of length at most `B z`\n(`Data.bitStrsLE`), a tagged question `(tg, x)` at `idxOf x + N · tg` with `N` the number of\nsuch strings (`qIdx`, `qEquiv`), an answer at `idxOf a` (`aEquiv`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ClassMIPStarTab.lean#L379-L395",
+  "source_path": "MIPRE/Foundations/ClassMIPStarTab.lean",
+  "lines": [
+   379,
+   395
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.Machine.runs_of_runForD"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.PolyVerifier.mu_clause",
+  "source_name": "MIPRE.PolyVerifier.mu_clause",
+  "formal_statement": "theorem MIPRE.PolyVerifier.mu_clause {z : BitStr} (h : V.Efficient z) (i j : Fin ((V.tab z).nX + 1)) :\n    (V.tab z).game.μ i j = (V.game z).doubled.μ (V.eX z i) (V.eX z j) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.PolyVerifier",
+   "open MIPRE.Cost MIPRE.Verifier",
+   "open HaltingGameValue (GameData)",
+   "variable (V : PolyVerifier)"
+  ],
+  "docstring": "**The `μ` clause, doubled**: the tabulated distribution is `μ_z` on the block\n`(false, ·) × (true, ·)` and zero elsewhere.",
+  "module": "MIPRE.Foundations.ClassMIPStarTab",
+  "module_doc": "/-!\n# The paper's class is contained in the computable one: tabulation\n\nBlueprint `lem:mipstar-poly-sub`: `MIPStar L → MIPStarComputable L`, hence `MIPStar L → IsRE L`\nthrough `MIPStarComputable.isRE`. A polynomial-time verifier is in particular a computable map from\nstrings to explicit games: on the input `z`, run the sampler on every seed of length `B z` and\nthe decider on every tuple of strings of length at most `B z`, each under the budget the\nefficiency clause supplies, and write the result down as a `GameData`.\n\nTwo things about the table, both inherited from `Halting/Tabulate.lean`:\n\n* **The questions are doubled.** A `GameData` is read as a synchronous game, where unequal\n  answers to equal questions lose by fiat, and `G_z` is a general bipartite game; tagging\n  Alice's questions with `false` and Bob's with `true` puts no weight on the diagonal and\n  `quantumValue_doubled` says the value is unchanged (`Foundations/GameDouble.lean`).\n* **Budgeted runs decide everything.** `Machine.runForD` under the bound of\n  `PolyVerifier.Efficient` returns the sampler's pair and the decider's verdict\n  (`Machine.runForD_eq_some_iff`), so the table is primitive recursive in `z` and, on an\n  efficient verifier, correct (`quantumValue_tab`).\n\nThe indexing: questions and answers are both indexed among the strings of length at most `B z`\n(`Data.bitStrsLE`), a tagged question `(tg, x)` at `idxOf x + N · tg` with `N` the number of\nsuch strings (`qIdx`, `qEquiv`), an answer at `idxOf a` (`aEquiv`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ClassMIPStarTab.lean#L417-L473",
+  "source_path": "MIPRE/Foundations/ClassMIPStarTab.lean",
+  "lines": [
+   417,
+   473
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.PolyVerifier.sampleC_eq",
+   "MIPRE.Verifier.sum_filter_length",
+   "MIPRE.Verifier.answerEquiv_symm_val"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.PolyVerifier.acc_mem_iff",
+  "source_name": "MIPRE.PolyVerifier.acc_mem_iff",
+  "formal_statement": "theorem MIPRE.PolyVerifier.acc_mem_iff {z : BitStr} (h : V.Efficient z) (i j : Fin ((V.tab z).nX + 1))\n    (k l : Fin ((V.tab z).nA + 1)) :\n    ((i : ℕ), (j : ℕ), (k : ℕ), (l : ℕ)) ∈ (V.tab z).acc\n      ↔ ((V.eX z i).1 = false ∧ (V.eX z j).1 = true ∧\n          V.Accepts z (V.eX z i).2.1 (V.eX z j).2.1 (V.eA z k).1 (V.eA z l).1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.PolyVerifier",
+   "open MIPRE.Cost MIPRE.Verifier",
+   "open HaltingGameValue (GameData)",
+   "variable (V : PolyVerifier)"
+  ],
+  "docstring": "**The acceptance table read back, doubled.**",
+  "module": "MIPRE.Foundations.ClassMIPStarTab",
+  "module_doc": "/-!\n# The paper's class is contained in the computable one: tabulation\n\nBlueprint `lem:mipstar-poly-sub`: `MIPStar L → MIPStarComputable L`, hence `MIPStar L → IsRE L`\nthrough `MIPStarComputable.isRE`. A polynomial-time verifier is in particular a computable map from\nstrings to explicit games: on the input `z`, run the sampler on every seed of length `B z` and\nthe decider on every tuple of strings of length at most `B z`, each under the budget the\nefficiency clause supplies, and write the result down as a `GameData`.\n\nTwo things about the table, both inherited from `Halting/Tabulate.lean`:\n\n* **The questions are doubled.** A `GameData` is read as a synchronous game, where unequal\n  answers to equal questions lose by fiat, and `G_z` is a general bipartite game; tagging\n  Alice's questions with `false` and Bob's with `true` puts no weight on the diagonal and\n  `quantumValue_doubled` says the value is unchanged (`Foundations/GameDouble.lean`).\n* **Budgeted runs decide everything.** `Machine.runForD` under the bound of\n  `PolyVerifier.Efficient` returns the sampler's pair and the decider's verdict\n  (`Machine.runForD_eq_some_iff`), so the table is primitive recursive in `z` and, on an\n  efficient verifier, correct (`quantumValue_tab`).\n\nThe indexing: questions and answers are both indexed among the strings of length at most `B z`\n(`Data.bitStrsLE`), a tagged question `(tg, x)` at `idxOf x + N · tg` with `N` the number of\nsuch strings (`qIdx`, `qEquiv`), an answer at `idxOf a` (`aEquiv`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ClassMIPStarTab.lean#L475-L500",
+  "source_path": "MIPRE/Foundations/ClassMIPStarTab.lean",
+  "lines": [
+   475,
+   500
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.Machine.runs_of_runForD",
+   "MIPRE.Verifier.answerEquiv_symm_val"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.PolyVerifier.D_clause",
+  "source_name": "MIPRE.PolyVerifier.D_clause",
+  "formal_statement": "theorem MIPRE.PolyVerifier.D_clause {z : BitStr} (h : V.Efficient z) (i j : Fin ((V.tab z).nX + 1))\n    (k l : Fin ((V.tab z).nA + 1)) :\n    (V.tab z).game.D i j k l\n      = (V.game z).doubled.D (V.eX z i) (V.eX z j) (V.eA z k) (V.eA z l) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.PolyVerifier",
+   "open MIPRE.Cost MIPRE.Verifier",
+   "open HaltingGameValue (GameData)",
+   "variable (V : PolyVerifier)"
+  ],
+  "docstring": "**The `D` clause, doubled.**",
+  "module": "MIPRE.Foundations.ClassMIPStarTab",
+  "module_doc": "/-!\n# The paper's class is contained in the computable one: tabulation\n\nBlueprint `lem:mipstar-poly-sub`: `MIPStar L → MIPStarComputable L`, hence `MIPStar L → IsRE L`\nthrough `MIPStarComputable.isRE`. A polynomial-time verifier is in particular a computable map from\nstrings to explicit games: on the input `z`, run the sampler on every seed of length `B z` and\nthe decider on every tuple of strings of length at most `B z`, each under the budget the\nefficiency clause supplies, and write the result down as a `GameData`.\n\nTwo things about the table, both inherited from `Halting/Tabulate.lean`:\n\n* **The questions are doubled.** A `GameData` is read as a synchronous game, where unequal\n  answers to equal questions lose by fiat, and `G_z` is a general bipartite game; tagging\n  Alice's questions with `false` and Bob's with `true` puts no weight on the diagonal and\n  `quantumValue_doubled` says the value is unchanged (`Foundations/GameDouble.lean`).\n* **Budgeted runs decide everything.** `Machine.runForD` under the bound of\n  `PolyVerifier.Efficient` returns the sampler's pair and the decider's verdict\n  (`Machine.runForD_eq_some_iff`), so the table is primitive recursive in `z` and, on an\n  efficient verifier, correct (`quantumValue_tab`).\n\nThe indexing: questions and answers are both indexed among the strings of length at most `B z`\n(`Data.bitStrsLE`), a tagged question `(tg, x)` at `idxOf x + N · tg` with `N` the number of\nsuch strings (`qIdx`, `qEquiv`), an answer at `idxOf a` (`aEquiv`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ClassMIPStarTab.lean#L502-L521",
+  "source_path": "MIPRE/Foundations/ClassMIPStarTab.lean",
+  "lines": [
+   502,
+   521
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.PolyVerifier.acc_mem_iff"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Machine.runs_of_runForD",
+  "source_name": "MIPRE.Cost.Machine.runs_of_runForD",
+  "formal_statement": "theorem MIPRE.Cost.Machine.runs_of_runForD {p : Prog} {x r : Data} {k : ℕ} (h : runForD (encode p) x k = some r) :\n    ∃ t, p.Runs x r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Machine"
+  ],
+  "docstring": "**Soundness.** Whatever is found is a genuine run.",
+  "module": "MIPRE.Foundations.Cost.BoundedEval",
+  "module_doc": "/-!\n# Running a program under a cost budget, computably\n\n`Machine.evalData` runs a program to completion and is only *partial* recursive; and\n`Cost.evalWithin`, which reads off the result of a run within a budget, is `noncomputable` —\nit picks a witness out of an existential with `Classical.choice`. Neither can be used to\n*compute* anything, and the tabulation of a verifier's game (blueprint\n`rem:compression-abstract`, item 3) has to compute: it runs the decider on every answer tuple\nunder the decider's own time bound and fills in an acceptance table.\n\n`Machine.runForD p x k` is the computable version: iterate the machine's step function\n`3 k` times from the initial configuration and read off the result if the configuration\nreached is final. Three facts make it right:\n\n* a derivation of cost `t` is a machine run of at most `3 t` steps\n  (`Machine.eval_steps_count` — the free steps, entering a loop and returning to a `cons` or\n  `let` frame, are each matched with a paid one), so the budget `3 k` is enough for every run\n  of cost at most `k`;\n* final configurations are fixed by the step function (`Machine.step_final`), so iterating\n  past the end is harmless and no exact step count is needed;\n* the step function is primitive recursive on the encoded configurations\n  (`Machine.primrec_stepData`), so the whole is (`Machine.primrec_runForD`).\n\n`runForD_eq_some` and `runs_of_runForD` are the two directions of its correctness, and\n`runForD_isSome_iff` the decision procedure they add up to: **for a program that halts within\nthe budget on the input, whether it returns a given value is decidable**, which is what\nboundedness buys the tabulation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/BoundedEval.lean#L76-L89",
+  "source_path": "MIPRE/Foundations/Cost/BoundedEval.lean",
+  "lines": [
+   76,
+   89
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Machine.halts_iff"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.halts_haltingReduction_iff",
+  "source_name": "MIPRE.Cost.halts_haltingReduction_iff",
+  "formal_statement": "theorem MIPRE.Cost.halts_haltingReduction_iff {S : Prog} (hS : S.WellScoped 1) (z : BitStr) :\n    Halts (haltingReduction S z) .nil ↔ Halts S (encode z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "**The reduction halts on the empty input exactly when `S` halts on `encode z`.**",
+  "module": "MIPRE.Foundations.Cost.ManyOne",
+  "module_doc": "/-!\n# The many-one reduction of an r.e. language to halting, in polynomial time\n\n`Cost.exists_semidecider` turns an r.e. predicate on strings into a well-scoped program `S`\nhalting on `encode z` exactly on its members. The reduction to halting *on the empty input*\nhard-codes `z` into `S` — the s-m-n theorem — and `hardcode` is linear time, so the map\n`z ↦ M_z` is a `PolyTimeFun`. `Halting.exists_code_halts_of_isRE` is the same reduction on\nMathlib's `Nat.Partrec.Code` through `Code.curry`, with no time tracked; the polynomial-time\nhalting reduction (`planning/polytime-halting.md`) needs this one.\n\n`hardcode p d` runs `p` on `cons d v` where `v` is the input, so on the empty input `nil` it\nruns `p` on `cons d nil`; `Prog.onLeft p` is the program running `p` on the left component of\nits input, and `M_z = hardcode (onLeft S) (encode z)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/ManyOne.lean#L43-L64",
+  "source_path": "MIPRE/Foundations/Cost/ManyOne.lean",
+  "lines": [
+   43,
+   64
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.hardcode_time_rev"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.value_relabel_of_support",
+  "source_name": "MIPRE.TensorProductStrategy.value_relabel_of_support",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.value_relabel_of_support {X' Y' : Type*} [Fintype X'] [Fintype Y'] {G : Game X Y A B}\n    (S : TensorProductStrategy G) (G' : Game X' Y' A B) (eX : X' ↪ X) (eY : Y' ↪ Y)\n    (hμ : ∀ x' y', G'.μ x' y' = G.μ (eX x') (eY y'))\n    (hμ0 : ∀ x y, G.μ x y ≠ 0 → (∃ x', eX x' = x) ∧ (∃ y', eY y' = y))\n    (hD : ∀ x' y' a b, G'.D x' y' a b = G.D (eX x') (eY y') a b) :\n    (S.relabel G' eX eY (Equiv.refl A) (Equiv.refl B)).value = S.value := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "Playing a strategy of `G` on the restriction `G'` through the embeddings keeps the value,\nwhen `G`'s distribution is supported on the image.",
+  "module": "MIPRE.Foundations.GameRestrict",
+  "module_doc": "/-!\n# Restricting a game to the support of its question distribution\n\nThe counterpart for questions of `quantumValue_extendAnswers`: a game whose question\ndistribution is supported on the image of embeddings `X' ↪ X`, `Y' ↪ Y` has the same quantum\nvalue as its restriction to `X' × Y'`, with the distribution and the decision predicate pulled\nback (`quantumValue_restrictQuestions`). From the large game to the small one a strategy is\nplayed through the embeddings (`TensorProductStrategy.relabel`, which accepts any question\nmaps); from the small one to the large one it is played through a retraction\n(`Function.invFun`), the questions off the image carrying no weight either way.\n\nThe consumer is the class verifier of the polynomial-time halting reduction\n(`Halting/Paper/ClassMain.lean`): its game has every string of length at most `B` as a\nquestion, while its sampler only ever produces the strings of length `s(C)` — the compressed\nsampler's questions at the fixed level — and the two games have the same value.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameRestrict.lean#L34-L68",
+  "source_path": "MIPRE/Foundations/GameRestrict.lean",
+  "lines": [
+   34,
+   68
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.value_relabel_invFun",
+  "source_name": "MIPRE.TensorProductStrategy.value_relabel_invFun",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.value_relabel_invFun {X' Y' : Type*} [Fintype X'] [Fintype Y'] [Nonempty X']\n    [Nonempty Y'] {G' : Game X' Y' A B} (S' : TensorProductStrategy G') (G : Game X Y A B)\n    (eX : X' ↪ X) (eY : Y' ↪ Y)\n    (hμ : ∀ x' y', G'.μ x' y' = G.μ (eX x') (eY y'))\n    (hμ0 : ∀ x y, G.μ x y ≠ 0 → (∃ x', eX x' = x) ∧ (∃ y', eY y' = y))\n    (hD : ∀ x' y' a b, G'.D x' y' a b = G.D (eX x') (eY y') a b) :\n    (S'.relabel G (Function.invFun eX) (Function.invFun eY) (Equiv.refl A)\n      (Equiv.refl B)).value = S'.value := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "Playing a strategy of the restriction `G'` on `G` through retractions of the embeddings\nkeeps the value, when `G`'s distribution is supported on the image.",
+  "module": "MIPRE.Foundations.GameRestrict",
+  "module_doc": "/-!\n# Restricting a game to the support of its question distribution\n\nThe counterpart for questions of `quantumValue_extendAnswers`: a game whose question\ndistribution is supported on the image of embeddings `X' ↪ X`, `Y' ↪ Y` has the same quantum\nvalue as its restriction to `X' × Y'`, with the distribution and the decision predicate pulled\nback (`quantumValue_restrictQuestions`). From the large game to the small one a strategy is\nplayed through the embeddings (`TensorProductStrategy.relabel`, which accepts any question\nmaps); from the small one to the large one it is played through a retraction\n(`Function.invFun`), the questions off the image carrying no weight either way.\n\nThe consumer is the class verifier of the polynomial-time halting reduction\n(`Halting/Paper/ClassMain.lean`): its game has every string of length at most `B` as a\nquestion, while its sampler only ever produces the strings of length `s(C)` — the compressed\nsampler's questions at the fixed level — and the two games have the same value.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameRestrict.lean#L70-L107",
+  "source_path": "MIPRE/Foundations/GameRestrict.lean",
+  "lines": [
+   70,
+   107
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SyncStrategy.value_const",
+  "source_name": "MIPRE.SyncStrategy.value_const",
+  "formal_statement": "theorem MIPRE.SyncStrategy.value_const (G : SynchronousGame X A) (a₀ : A) :\n    (const G a₀).value = ∑ x, ∑ y, G.μ x y * (if G.D x y a₀ a₀ then 1 else 0) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SyncStrategy",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable [DecidableEq A] {G : SynchronousGame X A}"
+  ],
+  "docstring": "The value of the constant strategy is the acceptance mass of the answer pair `(a₀, a₀)`.",
+  "module": "MIPRE.Foundations.GameTransport",
+  "module_doc": "/-!\n# Transport of games and strategies\n\nBookkeeping lemmas about the quantum value under changes of presentation of a game, used to\nidentify a verifier's game with its tabulation as a game description and to compare the same\ngame under different answer-length bounds (blueprint `rem:compression-abstract`):\n\n* **Relabeling.** `quantumValue_eq_of_equiv`: two games related by equivalences of their four\n  alphabets, with matching distribution and decision predicate, have the same quantum value.\n  Strategies are transported by `TensorProductStrategy.relabel`.\n* **Monotonicity.** `quantumValue_mono`: accepting more answer tuples, on the same alphabets\n  and distribution, can only raise the value.\n* **Answer extension.** `quantumValue_extendAnswers`: enlarging the answer alphabets by\n  answers that are always rejected does not change the value. From the small game to the\n  large one a strategy extends by zero operators (`ProjectiveMeasurement.extend`); from the\n  large game to the small one the new answers are merged into an old one\n  (`ProjectiveMeasurement.merge`), which needs the orthogonality of the outcomes of a\n  projective measurement (`ProjectiveMeasurement.mul_eq_zero_of_ne`) and can only raise the\n  value.\n* The synchronous counterparts for PCC strategies: `SyncStrategy.relabel` plays a strategy\n  through a relabeling of the questions and of the answers, keeping the value\n  (`value_relabel`) and the commutation condition (`isPCC_relabel`), whence\n  `syncValue_eq_of_equiv` by the same two-sided `iSup` argument as `quantumValue_eq_of_equiv`;\n  `SyncStrategy.extend` keeps the value and the PCC property; and the constant strategy\n  `SyncStrategy.const` is PCC with value the acceptance mass of a fixed answer pair.\n\nThe synchronous relabeling is what carries a value-`1` PCC strategy of a verifier's game to a\ntabulation of it as a game description, which is item 1 of blueprint `thm:halting`; the\nconsumer is `MIPRE.Foundations.SyncTransport`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameTransport.lean#L520-L540",
+  "source_path": "MIPRE/Foundations/GameTransport.lean",
+  "lines": [
+   520,
+   540
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.tracialValue_le_one",
+  "source_name": "MIPRE.tracialValue_le_one",
+  "formal_statement": "theorem MIPRE.tracialValue_le_one (G : SynchronousGame X A) (τ : TracialState 𝒜)\n    (P : ProjectiveMeasurement X A 𝒜) : tracialValue G τ P ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open ComplexOrder Kronecker Matrix",
+   "open scoped MatrixOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {𝒜 ℬ : Type*} [Ring 𝒜] [StarRing 𝒜] [Module ℂ 𝒜]",
+   "variable [DecidableEq A]"
+  ],
+  "docstring": "The generic value is at most one: for each question pair the outcome probabilities\n`τ (M^x_a M^y_b)` sum to `τ 1 = 1` over the answers.",
+  "module": "MIPRE.Foundations.Games",
+  "module_doc": "/-!\n# Games, strategies, and values\n\nThis file contains the definitions of blueprint Section 2.1 (\"Games, strategies, and\nvalues\") of the MIP* = RE formalization project: two-player one-round nonlocal games, the\nthree classes of strategies (tensor-product, synchronous, and commuting), the associated\nvalues, and the entanglement requirement.\n\nThe three strategy classes are built on a common skeleton, which this file factors out:\na question-indexed family of projective measurements in a complex star algebra\n(`MIPRE.ProjectiveMeasurement`). Tensor-product strategies instantiate it on two matrix\nalgebras joined by a state vector and the Born rule; synchronous strategies instantiate\nit on one matrix algebra `ℂ^{d×d}`, evaluated against the dimension-normalized trace;\ncommuting strategies are the general case of an abstract unital C*-algebra with a\ntracial state (`MIPRE.TracialState`), evaluated by the generic value\n`MIPRE.tracialValue`. The inclusion of synchronous into commuting strategies is\n`MIPRE.SyncStrategy.toCommutingStrategy`, which preserves the value definitionally; the\ncomparison of values (blueprint `lem:sync-le-valco`) follows.\n\nThe matrix-based definitions (`POVM`, `SynchronousGame`, and the synchronous value)\nagree with those of `MIPRE.HaltingGameValue`, which is kept self-contained. The\nsynchronous strategy is packaged differently there (with `POVM`s in place of a\n`ProjectiveMeasurement`); `MIPRE.SyncStrategy.ofPOVM` and `MIPRE.SyncStrategy.value_eq`\nprovide the correspondence.\n\n## Main definitions\n\n- `MIPRE.Game`: two-player one-round games (blueprint `def:game`).\n- `MIPRE.SynchronousGame`: synchronous games, with the interpretation\n  `MIPRE.SynchronousGame.toGame` (blueprint `def:sync-game`).\n- `MIPRE.ProjectiveMeasurement`: question-indexed projective measurement families in a\n  star ring, the common skeleton of the three strategy classes.\n- `MIPRE.TracialState`: tracial states on a complex star algebra;\n  `MIPRE.normalizedTrace` is the normalized matrix trace `Tr(·)/d`.\n- `MIPRE.tracialValue`: the generic value of a projective measurement family against a\n  tracial state.\n- `MIPRE.POVM`: positive operator-valued measures, following the QuantumLib\n  (Lean-QuantumInfo) definition; the vocabulary of the distance measures\n  (`MIPRE.Foundations.Distances`) and of the correspondence with\n  `MIPRE.HaltingGameValue`.\n- `MIPRE.TensorProductStrategy`: finite-dimensional tensor-product strategies, with\n  projective measurements on both factors (blueprint `def:tensor-strategy`).\n- `MIPRE.quantumValue`: the quantum value `val*` of a game (blueprint `def:q-value`).\n- `MIPRE.SyncStrategy`: synchronous strategies (blueprint `def:sync-strategy`), the\n  instantiation of the skeleton at `ℂ^{d×d}` with the normalized trace.\n- `MIPRE.SyncStrategy.IsPCC`: PCC (projective, consistent, and commuting) strategies\n  (blueprint `def:pcc`).\n- `MIPRE.syncValue`: the synchronous value of a synchronous game (blueprint\n  `def:sync-value`).\n- `MIPRE.CommutingStrate",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Games.lean#L499-L528",
+  "source_path": "MIPRE/Foundations/Games.lean",
+  "lines": [
+   499,
+   528
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.incLoop_runs",
+  "source_name": "MIPRE.Cost.Prog.incLoop_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.incLoop_runs (l acc : BitStr) (env : Env) (S : ℕ)\n    (hS : (encode l : Data).size + (encode acc : Data).size + 3 * l.length ≤ S) :\n    ∃ t ≤ (l.length + 1) * (S + 21),\n      Eval (Data.cons (encode l) (encode acc) :: env) (.loop incBody)\n        (Data.cons (encode (incAcc l acc).1) (encode (incAcc l acc).2)) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open Polynomial",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The first phase of the increment, on `(rest, acc)`.",
+  "module": "MIPRE.Foundations.Halting.Arith",
+  "module_doc": "/-!\n# Arithmetic in the ambient model: increment, unary conversion, multiplication, polynomials\n\nThe arithmetic the wrapper decider (`Halting/Wrapper.lean`) and the compressor's decider\n(`Halting/Compressor.lean`) need, each with its cost:\n\n* `Prog.incProg`: the successor of a canonical binary numeral (`Data.inc`, with\n  `Data.inc_bits : inc n.bits = (n + 1).bits`), used to enumerate the bit queries;\n* `Prog.toUnaryProg`: a binary numeral to unary (`encode n ↦ ofNat n`), by the fold\n  `k ↦ 2k + b` over the bits from the most significant one, doubling the unary accumulator with\n  `revOntoProg`;\n* `Prog.mulProg`: multiplication of unary numerals, by repeated `addProg`;\n* `Prog.polyProg cs`: the Horner evaluation `c₀ + m (c₁ + m (…))` of a polynomial given by its\n  coefficient list, on a unary input; `hornerCoeffs` and `Data.polyEval_hornerCoeffs` connect it\n  to `Polynomial.eval`, so that the wrapper can compute the paper's `poly(n, λ)` bounds.\n\nCosts are polynomial in the *values* (the unary numerals are as long as the values); the\npolynomial evaluation is bounded by an explicit `Polynomial ℕ` in the argument\n(`Prog.polyProg_runs`), which is what the time accounting downstream composes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Arith.lean#L263-L296",
+  "source_path": "MIPRE/Foundations/Halting/Arith.lean",
+  "lines": [
+   263,
+   296
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.incProg_runs",
+  "source_name": "MIPRE.Cost.Prog.incProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.incProg_runs (l : BitStr) :\n    ∃ t ≤ (l.length + 2) * (8 * (encode l : Data).size + 8 * l.length + 60),\n      incProg.Runs (encode l) (encode (inc l)) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open Polynomial",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "`incProg` computes the successor of a binary numeral.",
+  "module": "MIPRE.Foundations.Halting.Arith",
+  "module_doc": "/-!\n# Arithmetic in the ambient model: increment, unary conversion, multiplication, polynomials\n\nThe arithmetic the wrapper decider (`Halting/Wrapper.lean`) and the compressor's decider\n(`Halting/Compressor.lean`) need, each with its cost:\n\n* `Prog.incProg`: the successor of a canonical binary numeral (`Data.inc`, with\n  `Data.inc_bits : inc n.bits = (n + 1).bits`), used to enumerate the bit queries;\n* `Prog.toUnaryProg`: a binary numeral to unary (`encode n ↦ ofNat n`), by the fold\n  `k ↦ 2k + b` over the bits from the most significant one, doubling the unary accumulator with\n  `revOntoProg`;\n* `Prog.mulProg`: multiplication of unary numerals, by repeated `addProg`;\n* `Prog.polyProg cs`: the Horner evaluation `c₀ + m (c₁ + m (…))` of a polynomial given by its\n  coefficient list, on a unary input; `hornerCoeffs` and `Data.polyEval_hornerCoeffs` connect it\n  to `Polynomial.eval`, so that the wrapper can compute the paper's `poly(n, λ)` bounds.\n\nCosts are polynomial in the *values* (the unary numerals are as long as the values); the\npolynomial evaluation is bounded by an explicit `Polynomial ℕ` in the argument\n(`Prog.polyProg_runs`), which is what the time accounting downstream composes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Arith.lean#L298-L346",
+  "source_path": "MIPRE/Foundations/Halting/Arith.lean",
+  "lines": [
+   298,
+   346
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.revOntoProg_runs",
+   "MIPRE.Cost.Prog.incLoop_runs"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 45,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.exists_isBounded_lam",
+  "source_name": "MIPRE.Verifier.exists_isBounded_lam",
+  "formal_statement": "theorem MIPRE.Verifier.exists_isBounded_lam (hdim : PolyBounded V.sampler.dim)\n    (hS : V.sampler.prog.HasPolyCost) (hD : V.decider.prog.HasPolyCost) :\n    ∃ lam, V.IsBounded lam := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier ℓ)"
+  ],
+  "docstring": "**A verifier whose programs have polynomially bounded cost and whose sampler has\npolynomially bounded dimension is `λ`-bounded**, for some `λ`. The three hypotheses are the\nthree clauses of `def:lambda-bounded`; the fourth, `|𝒱| ≤ λ`, is free, the size of a verifier\nbeing a constant.",
+  "module": "MIPRE.Foundations.Halting.Bounded",
+  "module_doc": "/-!\n# From polynomially bounded cost to `λ`-boundedness\n\n`Verifier.IsBounded` (blueprint `def:lambda-bounded`) is the hypothesis every class membership\nof the halting reduction carries, and until this file nothing in the repository inhabited it:\nevery proof of it was conditional on another time bound. This file closes that gap in the\nabstract, leaving exactly one thing to supply — that the two programs of the verifier have\npolynomially bounded cost (`Prog.HasPolyCost`).\n\n* `Verifier.IsBounded.mono`: `λ`-boundedness is monotone in `λ`. The classes `classA n`,\n  `classB n` ask for `IsBounded n` at the level `n` itself, so a verifier bounded at *some* `λ`\n  is in them from `λ` on; this is what the thresholds `n₀` of `MIPRE.Halting.Obligations`\n  absorb.\n* `Decider.timeBoundAt_of_hasPolyCost` and `CL.Sampler.timeBoundAt_of_hasPolyCost`: a cost\n  `C n · (|d| + 1) ^ k` with `C` polynomially bounded fits under `n ^ λ · (|d| + 1) ^ λ` for a\n  single `λ` and every `n ≥ 2` (`PolyBounded.exists_le_pow`). This is the step that the two\n  repairs of `TimeBoundAt` (#57, #61) were about: the bound has to grow with the input, and its\n  degree has to be free, or nothing that calls the universal machine can meet it.\n* `Verifier.exists_isBounded`: the threshold form, `∃ n₀, ∀ n ≥ n₀, V.IsBounded n`, which is\n  what the classes consume.\n\nNothing here knows about wrappers or descriptions; `Halting/WrapperCost.lean` discharges the\n`HasPolyCost` hypotheses for the verifier a string denotes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Bounded.lean#L116-L135",
+  "source_path": "MIPRE/Foundations/Halting/Bounded.lean",
+  "lines": [
+   116,
+   135
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
+  "source_name": "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
+  "formal_statement": "theorem MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal {n T : ℕ} (a₀ : Answers T)\n    (hacc : ∀ x y : V.Questions n, V.decider.Accepts n (CL.toBits x) (CL.toBits y) a₀.1 a₀.1) :\n    V.HasPerfectPCC n T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier ℓ)"
+  ],
+  "docstring": "A decider that accepts the constant answer `a₀` on every question pair at index `n` has a\nvalue-`1` PCC strategy: the players always answer `a₀`. No synchronicity is asked of the\ndecider: `HasPerfectPCC` lives on the doubled game, where the diagonal carries no weight.",
+  "module": "MIPRE.Foundations.Halting.Classes",
+  "module_doc": "/-!\n# The classes of the compressibility criterion, at the level of verifiers\n\nBlueprint `rem:compression-abstract`, item 1: the classes the criterion is instantiated with\nare, at level `n`, the strings whose verifier is `n`-bounded, rejects every answer longer than\nthe answer bound at index `n`, and has a value-`1` PCC strategy there (`A n`), and those that\nare `n`-bounded, reject long answers, and have `val* ≤ 1/2` there (`B n`). This file is the\npart that does not depend on how a string is read as a verifier: the two conditions themselves\n(`Verifier.InClassA`, `Verifier.InClassB`), their disjointness, and the two distinguished\nverifiers the criterion needs.\n\nThe rejection clause (`Verifier.RejectsLong`) is what the paper's `V^halt` has by construction\n— Step 6 of its decider is an explicit length check, and the amended proof of\n`lem:dhalt-values` spends it to identify the answer alphabets of `V^halt_n` and `V^compr_n`.\nOver arbitrary strings it has to be asked for: without it the soundness direction of the\ncompressor's obligation cannot raise the answer bound from the one a class is read with to\nthe one `GapCompression.soundness` takes its hypothesis at (`Verifier.valStar_eq_of_rejects`\nis the step, and `valStar_le_of_le` goes the wrong way). `planning/h4-assembly.md` §4 item 4\nhas the argument, and the choice to put the clause in the classes rather than through the\ncriterion.\n\n* `Verifier.InClassA n T`, `Verifier.InClassB n T` and `not_inClassB_of_inClassA`: the classes\n  are disjoint, because a perfect PCC strategy gives `val* = 1`\n  (`Verifier.valStar_eq_one_of_hasPerfectPCC`).\n* `Verifier.hasPerfectPCC_of_accepts_diagonal`: a decider that accepts the constant answer `a₀`\n  on every question pair has a value-`1` PCC strategy there — the paper's \"trivial strategy:\n  for all questions the players return a fixed answer\", which is where `y_yes` comes from.\n  `HasPerfectPCC` lives on the doubled game, so nothing is asked of the decider on the\n  diagonal; `y_yes` still accepts only the empty answers, which keeps it rejecting long ones.\n* `Verifier.valStar_eq_zero_of_rejects_all` and `isSynchronousAt_of_rejects_all`: a decider that\n  accepts nothing at `n` gives `val* = 0`, where `y_no` comes from.\n\nWhat remains for the classes is the reading of a string as a verifier — the wrapper decider\naround the string's own decider — and the two strings realizing these verifiers\n(`planning/formalization-plan.md`, H4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Classes.lean#L73-L91",
+  "source_path": "MIPRE/Foundations/Halting/Classes.lean",
+  "lines": [
+   73,
+   91
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SyncStrategy.value_const"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.readBody_bit",
+  "source_name": "MIPRE.Cost.Prog.readBody_bit",
+  "formal_statement": "theorem MIPRE.Cost.Prog.readBody_bit (hU : univ.WellScoped 1) {iD acc : Data} {i : ℕ} (hi : iD = encode i) (b : Bool) {t : ℕ}\n    (h : univ.Runs (.cons cD iD) (encode b) t) :\n    ∃ t' ≤ t + 3 * cD.size + 4 * iD.size + acc.size +\n        2 * ((Nat.size i + 2) * (8 * esize i + 8 * Nat.size i + 60)) + 30,\n      Eval [.cons cD (.cons iD acc)] (readBody univ)\n        (.cons (.cons .nil .nil) (.cons cD (.cons (encode (i + 1)) (.cons (encode b) acc)))) t' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data",
+   "variable {univ : Prog} (cD : Data)"
+  ],
+  "docstring": "The body on a bit answer: continue with the next index and the bit pushed.",
+  "module": "MIPRE.Foundations.Halting.Compressor",
+  "module_doc": "/-!\n# The compressor's decider: the program\n\nObligation O4 of blueprint `rem:compression-abstract`, the program half. The compressor of the\nhalting reduction takes a succinct description `(c, n)` of a string `x` and returns a string\ndenoting the compressed verifier of *the verifier of `x` frozen at index `2n + 1`*: its\nparameter is `λ(n)`, and its decider — the datum a string carries — is the program `haltProg`\nbelow with `(c, n, λ(n))` hardcoded. This module is that program and its acceptance\nagreement, `CompressorSpec.accepts_compr`; the accounting is separate.\n\nThe decider is the paper's machine `𝓕` (`recursive.tex`, `fig:halt_f`) with the recursion\nremoved: the paper's `𝓕` hardcodes its own description and compresses the verifier it is the\ndecider of, while here the string to compress is *read* from the description `c` by bit\nqueries — the reading is what the compressibility criterion's succinct descriptions make\npossible — and the verifier compressed is the string's own, frozen. The paper's Step 2, running\n`𝓜` for `n` steps, is the criterion's business and does not appear.\n\nThe program `prepProg G U` does everything but the last step, and always halts on a succinct\ndescription:\n\n1. `readProg U.univ`: read `x` from `c` by bit queries `0, 1, 2, …` through the universal\n   machine, stopping at the out-of-range marker of `bitQueryAnswer`;\n2. `parseProg`, then the two projections and `normBinProg`: the parameter `encode (descLam x)`\n   and the decider datum `descDecD x`;\n3. `G.samplerProg.code`: the encoded sampler program `sampData G x`;\n4. `wrapBuildProg U.univ`: the encoded wrapped decider `decProgData G U x`, which is\n   `encode (Vof G U x).decider.prog`;\n5. `freezeBuildProg` twice at index `2n + 1`: the encoded programs of the frozen verifier;\n6. `G.compress.code` on `((frozen sampler, frozen decider), λ(n))`: the encoded compressed\n   decider.\n\nThen `haltProg G U` runs it through the universal machine on the decider's own input, and\nreturns what the universal machine does. Forward runs of each stage compose to a forward run\nof `haltProg`; the inversion (`haltProg_runs_inv`) is three `cases` and determinism, the\npreparation being a single closed program with an unconditional run, and gives the acceptance\nagreement `haltProg_accepts_iff`.\n\nEvery stage carries an explicit cost, in the sizes of what it is handed, so that the accounting\ncan be done from these lemmas alone.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Compressor.lean#L136-L168",
+  "source_path": "MIPRE/Foundations/Halting/Compressor.lean",
+  "lines": [
+   136,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.incProg_runs"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.readLoop_runs",
+  "source_name": "MIPRE.Cost.Prog.readLoop_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.readLoop_runs (U : UniversalMachine) {c : Prog} {n : ℕ} {x : BitStr}\n    (hsd : IsSuccinctDesc c n x) (env : Env) :\n    ∃ t ≤ (x.length + 1) * (readIter U (esize c) n x.length + 1),\n      Eval (readState (encode c) x 0 :: env) (.loop (readBody U.univ)) (encode x.reverse) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**The reading loop reads the string.** On a succinct description `(c, n)` of `x`, from the\ninitial state, the loop of `readBody U.univ` stops with `encode x.reverse`.",
+  "module": "MIPRE.Foundations.Halting.Compressor",
+  "module_doc": "/-!\n# The compressor's decider: the program\n\nObligation O4 of blueprint `rem:compression-abstract`, the program half. The compressor of the\nhalting reduction takes a succinct description `(c, n)` of a string `x` and returns a string\ndenoting the compressed verifier of *the verifier of `x` frozen at index `2n + 1`*: its\nparameter is `λ(n)`, and its decider — the datum a string carries — is the program `haltProg`\nbelow with `(c, n, λ(n))` hardcoded. This module is that program and its acceptance\nagreement, `CompressorSpec.accepts_compr`; the accounting is separate.\n\nThe decider is the paper's machine `𝓕` (`recursive.tex`, `fig:halt_f`) with the recursion\nremoved: the paper's `𝓕` hardcodes its own description and compresses the verifier it is the\ndecider of, while here the string to compress is *read* from the description `c` by bit\nqueries — the reading is what the compressibility criterion's succinct descriptions make\npossible — and the verifier compressed is the string's own, frozen. The paper's Step 2, running\n`𝓜` for `n` steps, is the criterion's business and does not appear.\n\nThe program `prepProg G U` does everything but the last step, and always halts on a succinct\ndescription:\n\n1. `readProg U.univ`: read `x` from `c` by bit queries `0, 1, 2, …` through the universal\n   machine, stopping at the out-of-range marker of `bitQueryAnswer`;\n2. `parseProg`, then the two projections and `normBinProg`: the parameter `encode (descLam x)`\n   and the decider datum `descDecD x`;\n3. `G.samplerProg.code`: the encoded sampler program `sampData G x`;\n4. `wrapBuildProg U.univ`: the encoded wrapped decider `decProgData G U x`, which is\n   `encode (Vof G U x).decider.prog`;\n5. `freezeBuildProg` twice at index `2n + 1`: the encoded programs of the frozen verifier;\n6. `G.compress.code` on `((frozen sampler, frozen decider), λ(n))`: the encoded compressed\n   decider.\n\nThen `haltProg G U` runs it through the universal machine on the decider's own input, and\nreturns what the universal machine does. Forward runs of each stage compose to a forward run\nof `haltProg`; the inversion (`haltProg_runs_inv`) is three `cases` and determinism, the\npreparation being a single closed program with an unconditional run, and gives the acceptance\nagreement `haltProg_accepts_iff`.\n\nEvery stage carries an explicit cost, in the sizes of what it is handed, so that the accounting\ncan be done from these lemmas alone.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Compressor.lean#L190-L264",
+  "source_path": "MIPRE/Foundations/Halting/Compressor.lean",
+  "lines": [
+   190,
+   264
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.readBody_bit"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 69,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.readProg_runs",
+  "source_name": "MIPRE.Cost.Prog.readProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.readProg_runs (U : UniversalMachine) {c : Prog} {n : ℕ} {x : BitStr}\n    (hsd : IsSuccinctDesc c n x) :\n    ∃ t ≤ (x.length + 1) * (readIter U (esize c) n x.length + 1) +\n        (x.length + 2) * (4 * x.length + 14) + esize c + 7,\n      (readProg U.univ).Runs (encode c) (encode x) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**`readProg` reads the string.** On a succinct description `(c, n)` of `x`, `readProg U.univ`\non `encode c` computes `encode x`.",
+  "module": "MIPRE.Foundations.Halting.Compressor",
+  "module_doc": "/-!\n# The compressor's decider: the program\n\nObligation O4 of blueprint `rem:compression-abstract`, the program half. The compressor of the\nhalting reduction takes a succinct description `(c, n)` of a string `x` and returns a string\ndenoting the compressed verifier of *the verifier of `x` frozen at index `2n + 1`*: its\nparameter is `λ(n)`, and its decider — the datum a string carries — is the program `haltProg`\nbelow with `(c, n, λ(n))` hardcoded. This module is that program and its acceptance\nagreement, `CompressorSpec.accepts_compr`; the accounting is separate.\n\nThe decider is the paper's machine `𝓕` (`recursive.tex`, `fig:halt_f`) with the recursion\nremoved: the paper's `𝓕` hardcodes its own description and compresses the verifier it is the\ndecider of, while here the string to compress is *read* from the description `c` by bit\nqueries — the reading is what the compressibility criterion's succinct descriptions make\npossible — and the verifier compressed is the string's own, frozen. The paper's Step 2, running\n`𝓜` for `n` steps, is the criterion's business and does not appear.\n\nThe program `prepProg G U` does everything but the last step, and always halts on a succinct\ndescription:\n\n1. `readProg U.univ`: read `x` from `c` by bit queries `0, 1, 2, …` through the universal\n   machine, stopping at the out-of-range marker of `bitQueryAnswer`;\n2. `parseProg`, then the two projections and `normBinProg`: the parameter `encode (descLam x)`\n   and the decider datum `descDecD x`;\n3. `G.samplerProg.code`: the encoded sampler program `sampData G x`;\n4. `wrapBuildProg U.univ`: the encoded wrapped decider `decProgData G U x`, which is\n   `encode (Vof G U x).decider.prog`;\n5. `freezeBuildProg` twice at index `2n + 1`: the encoded programs of the frozen verifier;\n6. `G.compress.code` on `((frozen sampler, frozen decider), λ(n))`: the encoded compressed\n   decider.\n\nThen `haltProg G U` runs it through the universal machine on the decider's own input, and\nreturns what the universal machine does. Forward runs of each stage compose to a forward run\nof `haltProg`; the inversion (`haltProg_runs_inv`) is three `cases` and determinism, the\npreparation being a single closed program with an unconditional run, and gives the acceptance\nagreement `haltProg_accepts_iff`.\n\nEvery stage carries an explicit cost, in the sizes of what it is handed, so that the accounting\ncan be done from these lemmas alone.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Compressor.lean#L266-L294",
+  "source_path": "MIPRE/Foundations/Halting/Compressor.lean",
+  "lines": [
+   266,
+   294
+  ],
+  "blueprint": [
+   {
+    "label": "lem:halt-construction",
+    "env": "lemma",
+    "title": "The self-referential decider is well defined",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.readLoop_runs"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.esize_frozen_le",
+  "source_name": "MIPRE.Halting.esize_frozen_le",
+  "formal_statement": "theorem MIPRE.Halting.esize_frozen_le (x : BitStr) (n : ℕ) :\n    esize (frozen G U x n).sampler.prog + esize (frozen G U x n).decider.prog ≤\n      fBound G U x.length n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The two frozen programs fit under `fBound`.**",
+  "module": "MIPRE.Foundations.Halting.Compressor",
+  "module_doc": "/-!\n# The compressor's decider: the program\n\nObligation O4 of blueprint `rem:compression-abstract`, the program half. The compressor of the\nhalting reduction takes a succinct description `(c, n)` of a string `x` and returns a string\ndenoting the compressed verifier of *the verifier of `x` frozen at index `2n + 1`*: its\nparameter is `λ(n)`, and its decider — the datum a string carries — is the program `haltProg`\nbelow with `(c, n, λ(n))` hardcoded. This module is that program and its acceptance\nagreement, `CompressorSpec.accepts_compr`; the accounting is separate.\n\nThe decider is the paper's machine `𝓕` (`recursive.tex`, `fig:halt_f`) with the recursion\nremoved: the paper's `𝓕` hardcodes its own description and compresses the verifier it is the\ndecider of, while here the string to compress is *read* from the description `c` by bit\nqueries — the reading is what the compressibility criterion's succinct descriptions make\npossible — and the verifier compressed is the string's own, frozen. The paper's Step 2, running\n`𝓜` for `n` steps, is the criterion's business and does not appear.\n\nThe program `prepProg G U` does everything but the last step, and always halts on a succinct\ndescription:\n\n1. `readProg U.univ`: read `x` from `c` by bit queries `0, 1, 2, …` through the universal\n   machine, stopping at the out-of-range marker of `bitQueryAnswer`;\n2. `parseProg`, then the two projections and `normBinProg`: the parameter `encode (descLam x)`\n   and the decider datum `descDecD x`;\n3. `G.samplerProg.code`: the encoded sampler program `sampData G x`;\n4. `wrapBuildProg U.univ`: the encoded wrapped decider `decProgData G U x`, which is\n   `encode (Vof G U x).decider.prog`;\n5. `freezeBuildProg` twice at index `2n + 1`: the encoded programs of the frozen verifier;\n6. `G.compress.code` on `((frozen sampler, frozen decider), λ(n))`: the encoded compressed\n   decider.\n\nThen `haltProg G U` runs it through the universal machine on the decider's own input, and\nreturns what the universal machine does. Forward runs of each stage compose to a forward run\nof `haltProg`; the inversion (`haltProg_runs_inv`) is three `cases` and determinism, the\npreparation being a single closed program with an unconditional run, and gives the acceptance\nagreement `haltProg_accepts_iff`.\n\nEvery stage carries an explicit cost, in the sizes of what it is handed, so that the accounting\ncan be done from these lemmas alone.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Compressor.lean#L607-L621",
+  "source_path": "MIPRE/Foundations/Halting/Compressor.lean",
+  "lines": [
+   607,
+   621
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Data.size_sum_stackStep_le",
+   "MIPRE.Cost.Data.encode_natOf"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.prepProg_runs",
+  "source_name": "MIPRE.Halting.prepProg_runs",
+  "formal_statement": "theorem MIPRE.Halting.prepProg_runs {c : Prog} {x : BitStr} {n : ℕ} (hsd : IsSuccinctDesc c n x) (lam : ℕ) :\n    ∃ t ≤ prepBound G U (esize c) n x.length (esize lam),\n      (prepProg G U).Runs (encode (c, n, lam)) (compressedD G U x n lam) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The preparation computes the compressed decider's description**, on a succinct\ndescription `(c, n)` of `x`.",
+  "module": "MIPRE.Foundations.Halting.Compressor",
+  "module_doc": "/-!\n# The compressor's decider: the program\n\nObligation O4 of blueprint `rem:compression-abstract`, the program half. The compressor of the\nhalting reduction takes a succinct description `(c, n)` of a string `x` and returns a string\ndenoting the compressed verifier of *the verifier of `x` frozen at index `2n + 1`*: its\nparameter is `λ(n)`, and its decider — the datum a string carries — is the program `haltProg`\nbelow with `(c, n, λ(n))` hardcoded. This module is that program and its acceptance\nagreement, `CompressorSpec.accepts_compr`; the accounting is separate.\n\nThe decider is the paper's machine `𝓕` (`recursive.tex`, `fig:halt_f`) with the recursion\nremoved: the paper's `𝓕` hardcodes its own description and compresses the verifier it is the\ndecider of, while here the string to compress is *read* from the description `c` by bit\nqueries — the reading is what the compressibility criterion's succinct descriptions make\npossible — and the verifier compressed is the string's own, frozen. The paper's Step 2, running\n`𝓜` for `n` steps, is the criterion's business and does not appear.\n\nThe program `prepProg G U` does everything but the last step, and always halts on a succinct\ndescription:\n\n1. `readProg U.univ`: read `x` from `c` by bit queries `0, 1, 2, …` through the universal\n   machine, stopping at the out-of-range marker of `bitQueryAnswer`;\n2. `parseProg`, then the two projections and `normBinProg`: the parameter `encode (descLam x)`\n   and the decider datum `descDecD x`;\n3. `G.samplerProg.code`: the encoded sampler program `sampData G x`;\n4. `wrapBuildProg U.univ`: the encoded wrapped decider `decProgData G U x`, which is\n   `encode (Vof G U x).decider.prog`;\n5. `freezeBuildProg` twice at index `2n + 1`: the encoded programs of the frozen verifier;\n6. `G.compress.code` on `((frozen sampler, frozen decider), λ(n))`: the encoded compressed\n   decider.\n\nThen `haltProg G U` runs it through the universal machine on the decider's own input, and\nreturns what the universal machine does. Forward runs of each stage compose to a forward run\nof `haltProg`; the inversion (`haltProg_runs_inv`) is three `cases` and determinism, the\npreparation being a single closed program with an unconditional run, and gives the acceptance\nagreement `haltProg_accepts_iff`.\n\nEvery stage carries an explicit cost, in the sizes of what it is handed, so that the accounting\ncan be done from these lemmas alone.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Compressor.lean#L634-L742",
+  "source_path": "MIPRE/Foundations/Halting/Compressor.lean",
+  "lines": [
+   634,
+   742
+  ],
+  "blueprint": [
+   {
+    "label": "lem:halt-construction",
+    "env": "lemma",
+    "title": "The self-referential decider is well defined",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.readProg_runs",
+   "MIPRE.Cost.Data.size_sum_stackStep_le",
+   "MIPRE.Cost.Data.encode_natOf",
+   "MIPRE.Cost.Prog.normBinProg_runs",
+   "MIPRE.Cost.Prog.parseProg_runs"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 104,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.haltProg_runs_inv",
+  "source_name": "MIPRE.Halting.haltProg_runs_inv",
+  "formal_statement": "theorem MIPRE.Halting.haltProg_runs_inv {c : Prog} {x : BitStr} {n : ℕ} (hsd : IsSuccinctDesc c n x) (lam : ℕ)\n    {d r : Data} {t : ℕ} (h : (haltProg G U).Runs (.cons (encode (c, n, lam)) d) r t) :\n    ∃ t', U.univ.Runs (.cons (compressedD G U x n lam) d) r t' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**Inversion.** The decider halts only if the universal machine does on the compressed\ndecider's description and the input, with the same result.",
+  "module": "MIPRE.Foundations.Halting.Compressor",
+  "module_doc": "/-!\n# The compressor's decider: the program\n\nObligation O4 of blueprint `rem:compression-abstract`, the program half. The compressor of the\nhalting reduction takes a succinct description `(c, n)` of a string `x` and returns a string\ndenoting the compressed verifier of *the verifier of `x` frozen at index `2n + 1`*: its\nparameter is `λ(n)`, and its decider — the datum a string carries — is the program `haltProg`\nbelow with `(c, n, λ(n))` hardcoded. This module is that program and its acceptance\nagreement, `CompressorSpec.accepts_compr`; the accounting is separate.\n\nThe decider is the paper's machine `𝓕` (`recursive.tex`, `fig:halt_f`) with the recursion\nremoved: the paper's `𝓕` hardcodes its own description and compresses the verifier it is the\ndecider of, while here the string to compress is *read* from the description `c` by bit\nqueries — the reading is what the compressibility criterion's succinct descriptions make\npossible — and the verifier compressed is the string's own, frozen. The paper's Step 2, running\n`𝓜` for `n` steps, is the criterion's business and does not appear.\n\nThe program `prepProg G U` does everything but the last step, and always halts on a succinct\ndescription:\n\n1. `readProg U.univ`: read `x` from `c` by bit queries `0, 1, 2, …` through the universal\n   machine, stopping at the out-of-range marker of `bitQueryAnswer`;\n2. `parseProg`, then the two projections and `normBinProg`: the parameter `encode (descLam x)`\n   and the decider datum `descDecD x`;\n3. `G.samplerProg.code`: the encoded sampler program `sampData G x`;\n4. `wrapBuildProg U.univ`: the encoded wrapped decider `decProgData G U x`, which is\n   `encode (Vof G U x).decider.prog`;\n5. `freezeBuildProg` twice at index `2n + 1`: the encoded programs of the frozen verifier;\n6. `G.compress.code` on `((frozen sampler, frozen decider), λ(n))`: the encoded compressed\n   decider.\n\nThen `haltProg G U` runs it through the universal machine on the decider's own input, and\nreturns what the universal machine does. Forward runs of each stage compose to a forward run\nof `haltProg`; the inversion (`haltProg_runs_inv`) is three `cases` and determinism, the\npreparation being a single closed program with an unconditional run, and gives the acceptance\nagreement `haltProg_accepts_iff`.\n\nEvery stage carries an explicit cost, in the sizes of what it is handed, so that the accounting\ncan be done from these lemmas alone.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Compressor.lean#L794-L814",
+  "source_path": "MIPRE/Foundations/Halting/Compressor.lean",
+  "lines": [
+   794,
+   814
+  ],
+  "blueprint": [
+   {
+    "label": "lem:halt-construction",
+    "env": "lemma",
+    "title": "The self-referential decider is well defined",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Halting.prepProg_runs"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 16,
+  "is_target": false
+ }
+]

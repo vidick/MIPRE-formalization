@@ -1,0 +1,632 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.acc_mem_iff",
+  "source_name": "MIPRE.Halting.acc_mem_iff",
+  "formal_statement": "theorem MIPRE.Halting.acc_mem_iff (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n)\n    (i j : Fin ((tab G U x n).nX + 1)) (k l : Fin ((tab G U x n).nA + 1)) :\n    ((i : ℕ), (j : ℕ), (k : ℕ), (l : ℕ)) ∈ (tab G U x n).acc\n      ↔ ((eXof G U x n i).1 = false ∧ (eXof G U x n j).1 = true ∧\n          (Vof G U x).decider.Accepts n (CL.toBits (eXof G U x n i).2)\n            (CL.toBits (eXof G U x n j).2) (eAof G U x n k).1 (eAof G U x n l).1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The acceptance table read back, doubled.** A tuple of indices is in the table exactly\nwhen the tags are Alice's and Bob's *and* the verifier's decider accepts.",
+  "module": "MIPRE.Foundations.Halting.Instantiation",
+  "module_doc": "/-!\n# The halting reduction, assembled\n\nBlueprint `thm:halting`: the computable map from machines to game descriptions whose game has\nvalue `1` when the machine halts and value at most `1/2` when it does not. It is proved here\nfrom gap-preserving compression as a hypothesis (`MIPRE.GapCompression`, blueprint\n`thm:compression`) through the per-level compressibility criterion\n(`MIPRE.Cost.compressibility_criterion_levels`, blueprint `lem:compressible-criterion`),\nalong the dictionary of blueprint `rem:compression-abstract`.\n\n## What a string denotes\n\nA string is a *description*, never a game: a pair `(λ, 𝒟)` of a compression parameter and a\ndecider program, serialized by `Data.toBitsPost` and read back by `Data.parse`. Every string\nnames such a pair — `descLam` normalizes the parameter (`Data.natOf`), `descDecD` is the\ndecider as the datum it is — so no validity condition on strings appears anywhere. The\nverifier it denotes is\n\n  `Vof x = (S^compr_{descLam x}, wrap (descDecD x))`   (`Verifier.ofSamplerDeciderD`),\n\nthe compressed sampler at the string's own parameter (which depends on `λ` alone, blueprint\n`lem:compress-sampler-indep`, the field `GapCompression.sampler`) together with the string's\ndecider, run by the universal machine, wrapped in the question-length check of\n`def:normal-verifier` (`Decider.wrap`). That the decider is a datum and not a decoded program\nis deliberate: a datum that is not an encoding still names a verifier, whatever the interpreter\ndoes with it, and the compressor's decider of O4 can copy a datum into a syntax tree where it\ncould not decode one. The\ntwo classes of the criterion are then\n\n  `classA n = {x | Vof x is n-bounded, rejects long answers, and 𝒱_n has a value-1 PCC strategy}`,\n  `classB n = {x | Vof x is n-bounded, rejects long answers, and val*(𝒱_n) ≤ 1/2}`,\n\nwith answers cut at `ansBound x n = bound (n + descLam x)`, the length beyond which a\ncompressed decider with parameter `descLam x` rejects (`GapCompression.output_rejects_long`);\n`Vof x` is not literally an output of `Compress`, so that field does not apply to it directly\n— `ansBound` is the answer alphabet the classes are read with, and relating it to the\ncompressor's output is part of `Obligations.compr_spec`. Tying the boundedness parameter to\nthe level (`n`-bounded at level `n`) is what replaces the paper's choice of `λ` along the\nrecursion (blueprint `rem:compression-abstract`, item 1, and `lem:lambda`).\n\n## Where the assembly is\n\n`halting_reduction`, and the structure `MIPRE.Halting.Obligations` of what it still owes, are\nin `Halting/Reduction.lean`, which sits below this file, `Halting/Strings.lean` and\n`Halting/Semidecider.lean` in the import order, so that the two distinguished strings (O1) and\nthe semidecider (O3) are applied there as theorems rather than assumed as fields. What this\nfile contributes to it, beyond the objects above, is the tabulation:\n\n* **O2** — the tabulation of `𝒱_n` as a game description matching it along relabelings of\n  the",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Instantiation.lean#L537-L578",
+  "source_path": "MIPRE/Foundations/Halting/Instantiation.lean",
+  "lines": [
+   537,
+   578
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.Machine.runs_of_runForD",
+   "MIPRE.Verifier.answerEquiv_symm_val",
+   "MIPRE.Verifier.mem_accListW_iff"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.tab_match",
+  "source_name": "MIPRE.Halting.tab_match",
+  "formal_statement": "theorem MIPRE.Halting.tab_match (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded n) :\n    ∃ (eX : Fin ((tab G U x n).nX + 1) ≃ Bool × (Vof G U x).Questions n)\n      (eA : Fin ((tab G U x n).nA + 1) ≃ Verifier.Answers (ansBound G x n)),\n      (∀ i j, (tab G U x n).game.μ i j\n        = ((Vof G U x).doubledGame n (ansBound G x n)).μ (eX i) (eX j)) ∧\n      (∀ i j k l, (tab G U x n).game.D i j k l\n        = ((Vof G U x).doubledGame n (ansBound G x n)).D (eX i) (eX j) (eA k) (eA l)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**O2, the match — doubled, and with no synchronicity hypothesis.** On an `n`-bounded\nverifier the doubled tabulation matches the *doubled* game of `𝒱_n` along `eXof` and `eAof`.\nThe forced rejections of a `GameData` sit on the diagonal, which the doubled distribution\navoids; and the doubled game rejects off the tag block, which is what the table omits.",
+  "module": "MIPRE.Foundations.Halting.Instantiation",
+  "module_doc": "/-!\n# The halting reduction, assembled\n\nBlueprint `thm:halting`: the computable map from machines to game descriptions whose game has\nvalue `1` when the machine halts and value at most `1/2` when it does not. It is proved here\nfrom gap-preserving compression as a hypothesis (`MIPRE.GapCompression`, blueprint\n`thm:compression`) through the per-level compressibility criterion\n(`MIPRE.Cost.compressibility_criterion_levels`, blueprint `lem:compressible-criterion`),\nalong the dictionary of blueprint `rem:compression-abstract`.\n\n## What a string denotes\n\nA string is a *description*, never a game: a pair `(λ, 𝒟)` of a compression parameter and a\ndecider program, serialized by `Data.toBitsPost` and read back by `Data.parse`. Every string\nnames such a pair — `descLam` normalizes the parameter (`Data.natOf`), `descDecD` is the\ndecider as the datum it is — so no validity condition on strings appears anywhere. The\nverifier it denotes is\n\n  `Vof x = (S^compr_{descLam x}, wrap (descDecD x))`   (`Verifier.ofSamplerDeciderD`),\n\nthe compressed sampler at the string's own parameter (which depends on `λ` alone, blueprint\n`lem:compress-sampler-indep`, the field `GapCompression.sampler`) together with the string's\ndecider, run by the universal machine, wrapped in the question-length check of\n`def:normal-verifier` (`Decider.wrap`). That the decider is a datum and not a decoded program\nis deliberate: a datum that is not an encoding still names a verifier, whatever the interpreter\ndoes with it, and the compressor's decider of O4 can copy a datum into a syntax tree where it\ncould not decode one. The\ntwo classes of the criterion are then\n\n  `classA n = {x | Vof x is n-bounded, rejects long answers, and 𝒱_n has a value-1 PCC strategy}`,\n  `classB n = {x | Vof x is n-bounded, rejects long answers, and val*(𝒱_n) ≤ 1/2}`,\n\nwith answers cut at `ansBound x n = bound (n + descLam x)`, the length beyond which a\ncompressed decider with parameter `descLam x` rejects (`GapCompression.output_rejects_long`);\n`Vof x` is not literally an output of `Compress`, so that field does not apply to it directly\n— `ansBound` is the answer alphabet the classes are read with, and relating it to the\ncompressor's output is part of `Obligations.compr_spec`. Tying the boundedness parameter to\nthe level (`n`-bounded at level `n`) is what replaces the paper's choice of `λ` along the\nrecursion (blueprint `rem:compression-abstract`, item 1, and `lem:lambda`).\n\n## Where the assembly is\n\n`halting_reduction`, and the structure `MIPRE.Halting.Obligations` of what it still owes, are\nin `Halting/Reduction.lean`, which sits below this file, `Halting/Strings.lean` and\n`Halting/Semidecider.lean` in the import order, so that the two distinguished strings (O1) and\nthe semidecider (O3) are applied there as theorems rather than assumed as fields. What this\nfile contributes to it, beyond the objects above, is the tabulation:\n\n* **O2** — the tabulation of `𝒱_n` as a game description matching it along relabelings of\n  the",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Instantiation.lean#L580-L610",
+  "source_path": "MIPRE/Foundations/Halting/Instantiation.lean",
+  "lines": [
+   580,
+   610
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Halting.mu_clause",
+   "MIPRE.Halting.acc_mem_iff"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.canonWalk_iff",
+  "source_name": "MIPRE.Cost.Data.canonWalk_iff",
+  "formal_statement": "theorem MIPRE.Cost.Data.canonWalk_iff (d : Data) (b : Bool) :\n    canonWalk d b = true ↔\n      ∃ l : BitStr, d = encode l ∧ (l = [] → b = true) ∧ (l ≠ [] → l.getLast? = some true) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Halting.Lists",
+  "module_doc": "/-!\n# Bounded walks over lists, in the ambient model\n\nThe programs with which the wrapper decider of `Halting/Wrapper.lean` performs the paper's\nformat checks: the questions must be bit strings of the sampler's length, the answers bit\nstrings within the answer-length budget, and equal questions must carry equal answers. All of\nthem walk their input under a *budget*, so that their cost is the budget times the size of the\ninput — the shape `T · (|input| + 1)` of `Decider.TimeBoundAt` — rather than a power of it.\n\n* `Prog.bitWalkProg`: on `cons l u`, walk `l` against the budget `u` (a list, typically a unary\n  numeral), checking that each element passed is a bit; the result is `nil` on a non-bit\n  element, and otherwise the pair of what remains of `l` and of `u` (`Data.bitWalk`). Both\n  format checks read off it: `|l| = |u|` is the result `cons nil nil`, `|l| ≤ |u|` a result\n  `cons nil _`.\n* `Prog.eqBitsProg`: equality of two bit lists (`Data.eqBits`).\n* `Prog.normBinProg`: the normalization `Data.normBin` of a parameter, by a walk recording the\n  last bit seen (`Data.canonWalk`).\n\nEvery walk copies the remainder of the lists at each step, which is what the ambient model\ncharges; the cost bounds are `(budget + 1) · (S + c)` for `S` the size of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Lists.lean#L115-L183",
+  "source_path": "MIPRE/Foundations/Halting/Lists.lean",
+  "lines": [
+   115,
+   183
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 66,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.canonWalk_eq_isCanonBin",
+  "source_name": "MIPRE.Cost.Data.canonWalk_eq_isCanonBin",
+  "formal_statement": "theorem MIPRE.Cost.Data.canonWalk_eq_isCanonBin (d : Data) : canonWalk d true = isCanonBin d := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The walk computes the normalization test.",
+  "module": "MIPRE.Foundations.Halting.Lists",
+  "module_doc": "/-!\n# Bounded walks over lists, in the ambient model\n\nThe programs with which the wrapper decider of `Halting/Wrapper.lean` performs the paper's\nformat checks: the questions must be bit strings of the sampler's length, the answers bit\nstrings within the answer-length budget, and equal questions must carry equal answers. All of\nthem walk their input under a *budget*, so that their cost is the budget times the size of the\ninput — the shape `T · (|input| + 1)` of `Decider.TimeBoundAt` — rather than a power of it.\n\n* `Prog.bitWalkProg`: on `cons l u`, walk `l` against the budget `u` (a list, typically a unary\n  numeral), checking that each element passed is a bit; the result is `nil` on a non-bit\n  element, and otherwise the pair of what remains of `l` and of `u` (`Data.bitWalk`). Both\n  format checks read off it: `|l| = |u|` is the result `cons nil nil`, `|l| ≤ |u|` a result\n  `cons nil _`.\n* `Prog.eqBitsProg`: equality of two bit lists (`Data.eqBits`).\n* `Prog.normBinProg`: the normalization `Data.normBin` of a parameter, by a walk recording the\n  last bit seen (`Data.canonWalk`).\n\nEvery walk copies the remainder of the lists at each step, which is what the ambient model\ncharges; the cost bounds are `(budget + 1) · (S + c)` for `S` the size of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Lists.lean#L185-L209",
+  "source_path": "MIPRE/Foundations/Halting/Lists.lean",
+  "lines": [
+   185,
+   209
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Data.encode_of_decode_bitStr",
+   "MIPRE.Cost.Data.canonWalk_iff"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.canonLoop_runs",
+  "source_name": "MIPRE.Cost.Prog.canonLoop_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.canonLoop_runs (d : Data) (last : Bool) (env : Env) (S : ℕ) (hS : d.size + 3 ≤ S) :\n    ∃ t ≤ (d.spine + 1) * (S + 21),\n      Eval (Data.cons d (encode last) :: env) (.loop canonBody) (encode (canonWalk d last)) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The canonicity loop computes `canonWalk d last`, in time `(|d| + 1) · (S + 21)`.",
+  "module": "MIPRE.Foundations.Halting.Lists",
+  "module_doc": "/-!\n# Bounded walks over lists, in the ambient model\n\nThe programs with which the wrapper decider of `Halting/Wrapper.lean` performs the paper's\nformat checks: the questions must be bit strings of the sampler's length, the answers bit\nstrings within the answer-length budget, and equal questions must carry equal answers. All of\nthem walk their input under a *budget*, so that their cost is the budget times the size of the\ninput — the shape `T · (|input| + 1)` of `Decider.TimeBoundAt` — rather than a power of it.\n\n* `Prog.bitWalkProg`: on `cons l u`, walk `l` against the budget `u` (a list, typically a unary\n  numeral), checking that each element passed is a bit; the result is `nil` on a non-bit\n  element, and otherwise the pair of what remains of `l` and of `u` (`Data.bitWalk`). Both\n  format checks read off it: `|l| = |u|` is the result `cons nil nil`, `|l| ≤ |u|` a result\n  `cons nil _`.\n* `Prog.eqBitsProg`: equality of two bit lists (`Data.eqBits`).\n* `Prog.normBinProg`: the normalization `Data.normBin` of a parameter, by a walk recording the\n  last bit seen (`Data.canonWalk`).\n\nEvery walk copies the remainder of the lists at each step, which is what the ambient model\ncharges; the cost bounds are `(budget + 1) · (S + c)` for `S` the size of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Lists.lean#L551-L584",
+  "source_path": "MIPRE/Foundations/Halting/Lists.lean",
+  "lines": [
+   551,
+   584
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.normBinProg_runs",
+  "source_name": "MIPRE.Cost.Prog.normBinProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.normBinProg_runs (d : Data) :\n    ∃ t ≤ (d.spine + 2) * (d.size + 25) + 3 * d.size + 10,\n      normBinProg.Runs d (normBin d) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "`normBinProg` computes the normalization, in time `(|d| + 2) · (|d| + 25) + 3 |d| + 10`.",
+  "module": "MIPRE.Foundations.Halting.Lists",
+  "module_doc": "/-!\n# Bounded walks over lists, in the ambient model\n\nThe programs with which the wrapper decider of `Halting/Wrapper.lean` performs the paper's\nformat checks: the questions must be bit strings of the sampler's length, the answers bit\nstrings within the answer-length budget, and equal questions must carry equal answers. All of\nthem walk their input under a *budget*, so that their cost is the budget times the size of the\ninput — the shape `T · (|input| + 1)` of `Decider.TimeBoundAt` — rather than a power of it.\n\n* `Prog.bitWalkProg`: on `cons l u`, walk `l` against the budget `u` (a list, typically a unary\n  numeral), checking that each element passed is a bit; the result is `nil` on a non-bit\n  element, and otherwise the pair of what remains of `l` and of `u` (`Data.bitWalk`). Both\n  format checks read off it: `|l| = |u|` is the result `cons nil nil`, `|l| ≤ |u|` a result\n  `cons nil _`.\n* `Prog.eqBitsProg`: equality of two bit lists (`Data.eqBits`).\n* `Prog.normBinProg`: the normalization `Data.normBin` of a parameter, by a walk recording the\n  last bit seen (`Data.canonWalk`).\n\nEvery walk copies the remainder of the lists at each step, which is what the ambient model\ncharges; the cost bounds are `(budget + 1) · (S + c)` for `S` the size of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Lists.lean#L586-L608",
+  "source_path": "MIPRE/Foundations/Halting/Lists.lean",
+  "lines": [
+   586,
+   608
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.canonLoop_runs",
+   "MIPRE.Cost.Data.canonWalk_eq_isCanonBin"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.exists_cut_ge",
+  "source_name": "MIPRE.Halting.exists_cut_ge",
+  "formal_statement": "theorem MIPRE.Halting.exists_cut_ge : ∃ K, ∀ lam : ℕ,\n    G.bound.eval (C G + lam) ≤ 2 ^ (K + G.bound.natDegree * esize lam) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)"
+  ],
+  "docstring": "**The cutoff dominates the compressor's bound**: for `K` large enough in terms of `G` and\n`C`, `poly(C, λ) ≤ 2 ^ (K + deg · |λ|)` for every `λ`, where `deg` is the degree of\n`G.bound`.",
+  "module": "MIPRE.Foundations.Halting.Paper.Build",
+  "module_doc": "/-!\n# Building the decider `𝒟^halt` from `(M, λ)`, in polynomial time\n\nThe class verifier of the polynomial-time halting reduction runs, on input `z`, the verifier\n`𝒱^halt M λ` of `Paper/Decider.lean` for the machine `M = R z` at the parameter\n`λ = Λ₀ + 4|M|`; so it must compute the description of `dec M λ` from `M` and `λ`. That\ndescription is a fixed tree with `M`'s and `λ`'s encodings at two positions (`Paper/Size.lean`\ncomputed its size): `dec M λ = hardcode K (encode K)` for `K = kleeneProg univ F`, and `F`'s\ncode holds `body`, `M` and `λ` as constants. `decBuild` assembles the tree with `pair` and\n`const` over `Data` (`kleeneData`, `fcodeData`, `fixData` are the three shapes) and is a\n`PolyTimeFun (Prog × ℕ) Prog`. Beside it, `lamF` computes the parameter `Λ₀ + 4|M|` and\n`cutF K D` the answer cutoff `2 ^ (K + D · |λ|)` that the class decider applies before running\n`𝒱^halt`'s decider — a power of two so that it can be computed from `|λ|` in unary\n(`expBits`), and polynomial in `λ` since `2 ^ |λ| ≤ 32 λ ^ 4`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/Build.lean#L170-L190",
+  "source_path": "MIPRE/Foundations/Halting/Paper/Build.lean",
+  "lines": [
+   170,
+   190
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.classV_efficient",
+  "source_name": "MIPRE.Halting.classV_efficient",
+  "formal_statement": "theorem MIPRE.Halting.classV_efficient (z : BitStr) : (classV G U UT Λ₀ K R).Efficient z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.Verifier",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "**The class verifier is efficient on every input.**",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean#L181-L197",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "lines": [
+   181,
+   197
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.decProg_accepts",
+   "MIPRE.Halting.decProg_runs",
+   "MIPRE.Halting.sampProg_runs"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.seedCount_eq",
+  "source_name": "MIPRE.Halting.seedCount_eq",
+  "formal_statement": "theorem MIPRE.Halting.seedCount_eq (z : BitStr) (x y : (Vz G U UT Λ₀ R z).Questions (C G)) :\n    (classV G U UT Λ₀ K R).seedCount z (qEmb G U UT Λ₀ K R z x) (qEmb G U UT Λ₀ K R z y) =\n      (Finset.univ.filter fun v : (Vz G U UT Λ₀ R z).Questions (C G) =>\n        ((Vz G U UT Λ₀ R z).sampler.cl (C G) .alice).eval v = x ∧\n          ((Vz G U UT Λ₀ R z).sampler.cl (C G) .bob).eval v = y).card *\n        2 ^ ((classV G U UT Λ₀ K R).B z - dimz G Λ₀ R z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.Verifier",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "The number of seeds producing a given question pair: a count over `𝔽₂^{s(C)}` times\n`2 ^ (B - s(C))`.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean#L228-L269",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "lines": [
+   228,
+   269
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Halting.classV_efficient",
+   "MIPRE.Halting.sampProg_runs",
+   "MIPRE.Cost.Data.length_filter_flatMap_bits",
+   "MIPRE.Verifier.length_filter_bitStrsOfLen"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.classV_game_mu",
+  "source_name": "MIPRE.Halting.classV_game_μ",
+  "formal_statement": "theorem MIPRE.Halting.classV_game_mu (z : BitStr) (x y : (Vz G U UT Λ₀ R z).Questions (C G)) :\n    ((classV G U UT Λ₀ K R).game z).μ (qEmb G U UT Λ₀ K R z x) (qEmb G U UT Λ₀ K R z y) =\n      ((Vz G U UT Λ₀ R z).game (C G) (cutz G Λ₀ K R z)).μ x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.Verifier",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "The distribution of the class verifier's game, on the embedded questions, is the\ncompressed sampler's.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean#L271-L292",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "lines": [
+   271,
+   292
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Halting.seedCount_eq"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.classV_game_support",
+  "source_name": "MIPRE.Halting.classV_game_support",
+  "formal_statement": "theorem MIPRE.Halting.classV_game_support (z : BitStr) (x' y' : Answers ((classV G U UT Λ₀ K R).B z))\n    (h : ((classV G U UT Λ₀ K R).game z).μ x' y' ≠ 0) :\n    (∃ x, qEmb G U UT Λ₀ K R z x = x') ∧ ∃ y, qEmb G U UT Λ₀ K R z y = y' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.Verifier",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "The distribution of the class verifier's game is supported on the embedded questions.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean#L294-L315",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "lines": [
+   294,
+   315
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Halting.classV_efficient",
+   "MIPRE.Halting.sampProg_runs"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.classV_value",
+  "source_name": "MIPRE.Halting.classV_value",
+  "formal_statement": "theorem MIPRE.Halting.classV_value (z : BitStr) :\n    quantumValue ((classV G U UT Λ₀ K R).game z) =\n      (Vz G U UT Λ₀ R z).valStar (C G) (cutz G Λ₀ K R z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.Verifier",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "**The value of the class verifier's game** is that of `𝒱^halt (R z) λ(z)` at the fixed\nlevel `C`, with the answers cut at `cutz z`.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean#L317-L355",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "lines": [
+   317,
+   355
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.value_relabel_of_support",
+   "MIPRE.TensorProductStrategy.value_relabel_invFun",
+   "MIPRE.Halting.classV_game_μ",
+   "MIPRE.Halting.classV_game_support",
+   "MIPRE.Halting.decProg_accepts"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.classV_values",
+  "source_name": "MIPRE.Halting.classV_values",
+  "formal_statement": "theorem MIPRE.Halting.classV_values\n    (hK : ∀ lam, G.bound.eval (C G + lam) ≤ 2 ^ (K + G.bound.natDegree * esize lam))\n    (z : BitStr) :\n    (Halts (R z) .nil →\n      quantumValue ((classV G U UT (lamThreshold G U UT) K R).game z) = 1) ∧\n    (¬ Halts (R z) .nil →\n      quantumValue ((classV G U UT (lamThreshold G U UT) K R).game z) ≤ 1 / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.Verifier",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "**The values on and off the language**, for the parameter `Λ₀` of `lem:lambda` and a\ncutoff above the compressor's bound.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean#L359-L380",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "lines": [
+   359,
+   380
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.classV_value",
+   "MIPRE.Halting.accepts_iff",
+   "MIPRE.Halting.hasPerfectPCC_of_halts",
+   "MIPRE.Halting.valStar_le_of_not_halts"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.re_subset_mipstar_of",
+  "source_name": "MIPRE.Halting.re_subset_mipstar_of",
+  "formal_statement": "theorem MIPRE.Halting.re_subset_mipstar_of {L : Set BitStr} (hL : IsRE L) : MIPStar L := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.Verifier",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "**`RE ⊆ MIP*_{1,1/2}(2,1)`**, given a compressor and the two universal machines.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean#L382-L390",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "lines": [
+   382,
+   390
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.halts_haltingReduction_iff",
+   "MIPRE.Halting.exists_cut_ge",
+   "MIPRE.Halting.classV_values",
+   "MIPRE.Halting.classV_efficient"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 6,
+  "is_target": true
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.mipstar_eq_re_of",
+  "source_name": "MIPRE.Halting.mipstar_eq_re_of",
+  "formal_statement": "theorem MIPRE.Halting.mipstar_eq_re_of : MIPStar = IsRE := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.Verifier",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "**`MIP*_{1,1/2}(2,1) = RE`** (blueprint `thm:mipstar-eq-re`, the paper's class), given a\ncompressor and the two universal machines.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassMain",
+  "module_doc": "/-!\n# `RE ⊆ MIP*_{1,1/2}(2,1)`, and `MIP*_{1,1/2}(2,1) = RE`\n\nThe class verifier of `Paper/ClassVerifier.lean` is a `PolyVerifier` for the polynomial\n`classP` chosen above its four cost bounds (`sampB`, `dimB`, `decB`, `cutB`, each polynomially\nbounded here), and:\n\n* it is **efficient** on every input (`classV_efficient`): the sampler's cost and the decider's\n  are within the polynomial, the questions have the compressed sampler's dimension at the fixed\n  level, and the decider rejects overlong messages — the answers by its cutoff, the questions\n  by the wrapper's length check;\n* its **game** on `z` has the value of `𝒱^halt (R z) λ(z)` at the fixed level `C` with the\n  answers cut at `cutz z` (`classV_value`): the uniform seed of length `B ≥ s(C)` pushes\n  forward, through its first `s(C)` bits, to the compressed sampler's distribution\n  (`length_filter_take`, `length_filter_bitStrsOfLen`), so the game is the restriction of the\n  verifier's to the questions of length `s(C)` (`quantumValue_restrictQuestions`) with the\n  answers extended by always-rejected ones (`quantumValue_extendAnswers`);\n* that value is `1` on `L` and at most `1/2` off it (`thm:halting` at the fixed level,\n  `halting_paper`): the cutoff is at least the compressor's answer bound, and below it the\n  decider of `𝒱^halt` rejects overlong answers whenever `M` does not halt.\n\nHence `re_subset_mipstar_of` and `mipstar_eq_re_of` (blueprint `thm:mipstar-eq-re`,\nfor the paper's class), given a compressor and the two universal machines; the unconditional\nforms are in `MIPRE/Background/Pipeline.lean` and `MIPRE/MainTheorem.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassMain.lean#L392-L396",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassMain.lean",
+  "lines": [
+   392,
+   396
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.PolyVerifier.mu_clause",
+   "MIPRE.PolyVerifier.D_clause",
+   "MIPRE.Halting.re_subset_mipstar_of"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 1,
+  "is_target": true
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.sampProg_runs",
+  "source_name": "MIPRE.Halting.sampProg_runs",
+  "formal_statement": "theorem MIPRE.Halting.sampProg_runs (z r : BitStr) (hd : dimz G Λ₀ R z ≤ r.length) :\n    ∃ t, t ≤ sampB G U Λ₀ R (z.length + r.length) ∧\n      (sampProg G U Λ₀ R).Runs (encode (z, r))\n        (encode (qOf G Λ₀ R .alice z r, qOf G Λ₀ R .bob z r)) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "**The sampler's run**: on `(z, r)` with `r` at least `dimz z` long, it halts with the\nquestion pair of the seed within `sampB (|z| + |r|)`.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassVerifier",
+  "module_doc": "/-!\n# The class verifier of the polynomial-time halting reduction\n\nThe two programs of the `PolyVerifier` (`def:mipstar`) that puts an r.e. language `L` in the\npaper's class `MIP*_{1,1/2}(2,1)`, for a polynomial-time reduction `R` of `L` to halting on the\nempty input (`Cost.exists_polyTime_reduction`): on input `z` they play the game of\n`𝒱^halt (R z) λ(z)` at the fixed level `C` (`Paper/Main.lean`), with\n`λ(z) = Λ₀ + 4|R z|` the parameter of `lem:lambda`.\n\n* **The sampler** `sampProg`, on `(z, r)`: computes `M = R z`, `λ(z)` and the compressed\n  sampler's program `S = ComputeSampler(λ(z))` (`A1`); asks `S` its dimension `s = s(C)` through\n  the universal machine (`runUK`); converts `s` to unary (`unaryStage`); takes the first `s`\n  bits `r'` of the seed and asks `S` Alice's marginal `L^A(r')` (`A2`, `runUK`); then Bob's\n  (`A3`, `runUK`). Its output is the question pair of `𝒱^halt` at the point `r'`\n  (`sampProg_runs`), so that the uniform seed of length `B ≥ s` pushes forward to the\n  compressed sampler's distribution.\n* **The decider** `decProg`, on `(z, x, y, a, b)`: computes `M`, `λ(z)` and the description of\n  `𝒱^halt`'s decider (`wrapCore` around `dec M λ(z)`, `decBuild`), rejects if `a` or `b` is\n  longer than the cutoff `2 ^ (K + deg · |λ(z)|)` (`cutF`, at least the compressor's answer\n  bound `poly(C, λ(z))` by `exists_cut_ge`), and otherwise runs the description on\n  `(C, x, y, a, b)` through the universal machine (`runU`). It accepts exactly when both\n  answers are within the cutoff and `𝒱^halt`'s decider accepts (`decProg_accepts`).\n\nThe costs are bounded by explicit expressions in the total input length (`sampB`, `decB`),\npolynomially bounded (`polyBounded_sampB`, `polyBounded_decB`); `Paper/ClassMain.lean` chooses\nthe verifier's polynomial above them and proves the game's value.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassVerifier.lean#L184-L351",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassVerifier.lean",
+  "lines": [
+   184,
+   351
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 162,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.D1_apply",
+  "source_name": "MIPRE.Halting.D1_apply",
+  "formal_statement": "theorem MIPRE.Halting.D1_apply (z x y a b : BitStr) :\n    D1 G U UT Λ₀ K R (z, x, y, a, b) =\n      if a.length ≤ cutz G Λ₀ K R z then\n        (if b.length ≤ cutz G Λ₀ K R z then (wdec G U UT Λ₀ R z, encode (C G, x, y, a, b))\n          else (falseProg, Data.nil))\n      else (falseProg, Data.nil) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassVerifier",
+  "module_doc": "/-!\n# The class verifier of the polynomial-time halting reduction\n\nThe two programs of the `PolyVerifier` (`def:mipstar`) that puts an r.e. language `L` in the\npaper's class `MIP*_{1,1/2}(2,1)`, for a polynomial-time reduction `R` of `L` to halting on the\nempty input (`Cost.exists_polyTime_reduction`): on input `z` they play the game of\n`𝒱^halt (R z) λ(z)` at the fixed level `C` (`Paper/Main.lean`), with\n`λ(z) = Λ₀ + 4|R z|` the parameter of `lem:lambda`.\n\n* **The sampler** `sampProg`, on `(z, r)`: computes `M = R z`, `λ(z)` and the compressed\n  sampler's program `S = ComputeSampler(λ(z))` (`A1`); asks `S` its dimension `s = s(C)` through\n  the universal machine (`runUK`); converts `s` to unary (`unaryStage`); takes the first `s`\n  bits `r'` of the seed and asks `S` Alice's marginal `L^A(r')` (`A2`, `runUK`); then Bob's\n  (`A3`, `runUK`). Its output is the question pair of `𝒱^halt` at the point `r'`\n  (`sampProg_runs`), so that the uniform seed of length `B ≥ s` pushes forward to the\n  compressed sampler's distribution.\n* **The decider** `decProg`, on `(z, x, y, a, b)`: computes `M`, `λ(z)` and the description of\n  `𝒱^halt`'s decider (`wrapCore` around `dec M λ(z)`, `decBuild`), rejects if `a` or `b` is\n  longer than the cutoff `2 ^ (K + deg · |λ(z)|)` (`cutF`, at least the compressor's answer\n  bound `poly(C, λ(z))` by `exists_cut_ge`), and otherwise runs the description on\n  `(C, x, y, a, b)` through the universal machine (`runU`). It accepts exactly when both\n  answers are within the cutoff and `𝒱^halt`'s decider accepts (`decProg_accepts`).\n\nThe costs are bounded by explicit expressions in the total input length (`sampB`, `decB`),\npolynomially bounded (`polyBounded_sampB`, `polyBounded_decB`); `Paper/ClassMain.lean` chooses\nthe verifier's polynomial above them and proves the game's value.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassVerifier.lean#L412-L430",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassVerifier.lean",
+  "lines": [
+   412,
+   430
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.decProg_accepts",
+  "source_name": "MIPRE.Halting.decProg_accepts",
+  "formal_statement": "theorem MIPRE.Halting.decProg_accepts (z x y a b : BitStr) :\n    (∃ t, (decProg G U UT Λ₀ K R).Runs (encode (z, x, y, a, b)) (encode true) t) ↔\n      a.length ≤ cutz G Λ₀ K R z ∧ b.length ≤ cutz G Λ₀ K R z ∧\n        (Vpaper G U UT (R z) (lamz Λ₀ R z)).decider.Accepts (C G) x y a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "**Acceptance of the class decider**: both answers within the cutoff, and `𝒱^halt`'s\ndecider accepts at the fixed level.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassVerifier",
+  "module_doc": "/-!\n# The class verifier of the polynomial-time halting reduction\n\nThe two programs of the `PolyVerifier` (`def:mipstar`) that puts an r.e. language `L` in the\npaper's class `MIP*_{1,1/2}(2,1)`, for a polynomial-time reduction `R` of `L` to halting on the\nempty input (`Cost.exists_polyTime_reduction`): on input `z` they play the game of\n`𝒱^halt (R z) λ(z)` at the fixed level `C` (`Paper/Main.lean`), with\n`λ(z) = Λ₀ + 4|R z|` the parameter of `lem:lambda`.\n\n* **The sampler** `sampProg`, on `(z, r)`: computes `M = R z`, `λ(z)` and the compressed\n  sampler's program `S = ComputeSampler(λ(z))` (`A1`); asks `S` its dimension `s = s(C)` through\n  the universal machine (`runUK`); converts `s` to unary (`unaryStage`); takes the first `s`\n  bits `r'` of the seed and asks `S` Alice's marginal `L^A(r')` (`A2`, `runUK`); then Bob's\n  (`A3`, `runUK`). Its output is the question pair of `𝒱^halt` at the point `r'`\n  (`sampProg_runs`), so that the uniform seed of length `B ≥ s` pushes forward to the\n  compressed sampler's distribution.\n* **The decider** `decProg`, on `(z, x, y, a, b)`: computes `M`, `λ(z)` and the description of\n  `𝒱^halt`'s decider (`wrapCore` around `dec M λ(z)`, `decBuild`), rejects if `a` or `b` is\n  longer than the cutoff `2 ^ (K + deg · |λ(z)|)` (`cutF`, at least the compressor's answer\n  bound `poly(C, λ(z))` by `exists_cut_ge`), and otherwise runs the description on\n  `(C, x, y, a, b)` through the universal machine (`runU`). It accepts exactly when both\n  answers are within the cutoff and `𝒱^halt`'s decider accepts (`decProg_accepts`).\n\nThe costs are bounded by explicit expressions in the total input length (`sampB`, `decB`),\npolynomially bounded (`polyBounded_sampB`, `polyBounded_decB`); `Paper/ClassMain.lean` chooses\nthe verifier's polynomial above them and proves the game's value.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassVerifier.lean#L438-L472",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassVerifier.lean",
+  "lines": [
+   438,
+   472
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Halting.D1_apply"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.decProg_runs",
+  "source_name": "MIPRE.Halting.decProg_runs",
+  "formal_statement": "theorem MIPRE.Halting.decProg_runs (z x y a b : BitStr) :\n    ∃ r t, t ≤ decB G U UT Λ₀ K R (z.length + x.length + y.length + a.length + b.length) ∧\n      (decProg G U UT Λ₀ K R).Runs (encode (z, x, y, a, b)) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable (Λ₀ K : ℕ) (R : PolyTimeFun BitStr Prog)"
+  ],
+  "docstring": "**The class decider halts on every input** within `decB (|z| + |x| + |y| + |a| + |b|)`.",
+  "module": "MIPRE.Foundations.Halting.Paper.ClassVerifier",
+  "module_doc": "/-!\n# The class verifier of the polynomial-time halting reduction\n\nThe two programs of the `PolyVerifier` (`def:mipstar`) that puts an r.e. language `L` in the\npaper's class `MIP*_{1,1/2}(2,1)`, for a polynomial-time reduction `R` of `L` to halting on the\nempty input (`Cost.exists_polyTime_reduction`): on input `z` they play the game of\n`𝒱^halt (R z) λ(z)` at the fixed level `C` (`Paper/Main.lean`), with\n`λ(z) = Λ₀ + 4|R z|` the parameter of `lem:lambda`.\n\n* **The sampler** `sampProg`, on `(z, r)`: computes `M = R z`, `λ(z)` and the compressed\n  sampler's program `S = ComputeSampler(λ(z))` (`A1`); asks `S` its dimension `s = s(C)` through\n  the universal machine (`runUK`); converts `s` to unary (`unaryStage`); takes the first `s`\n  bits `r'` of the seed and asks `S` Alice's marginal `L^A(r')` (`A2`, `runUK`); then Bob's\n  (`A3`, `runUK`). Its output is the question pair of `𝒱^halt` at the point `r'`\n  (`sampProg_runs`), so that the uniform seed of length `B ≥ s` pushes forward to the\n  compressed sampler's distribution.\n* **The decider** `decProg`, on `(z, x, y, a, b)`: computes `M`, `λ(z)` and the description of\n  `𝒱^halt`'s decider (`wrapCore` around `dec M λ(z)`, `decBuild`), rejects if `a` or `b` is\n  longer than the cutoff `2 ^ (K + deg · |λ(z)|)` (`cutF`, at least the compressor's answer\n  bound `poly(C, λ(z))` by `exists_cut_ge`), and otherwise runs the description on\n  `(C, x, y, a, b)` through the universal machine (`runU`). It accepts exactly when both\n  answers are within the cutoff and `𝒱^halt`'s decider accepts (`decProg_accepts`).\n\nThe costs are bounded by explicit expressions in the total input length (`sampB`, `decB`),\npolynomially bounded (`polyBounded_sampB`, `polyBounded_decB`); `Paper/ClassMain.lean` chooses\nthe verifier's polynomial above them and proves the game's value.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/ClassVerifier.lean#L484-L546",
+  "source_path": "MIPRE/Foundations/Halting/Paper/ClassVerifier.lean",
+  "lines": [
+   484,
+   546
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.D1_apply"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.length_filter_flatMap_bits",
+  "source_name": "MIPRE.Cost.Data.length_filter_flatMap_bits",
+  "formal_statement": "theorem MIPRE.Cost.Data.length_filter_flatMap_bits (L : List BitStr) (p : BitStr → Bool) :\n    ((L.flatMap fun l => [false :: l, true :: l]).filter p).length =\n      (L.filter fun l => p (false :: l)).length + (L.filter fun l => p (true :: l)).length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "Filtering the strings obtained by prepending a bit to each string of a list.",
+  "module": "MIPRE.Foundations.Halting.Paper.Count",
+  "module_doc": "/-!\n# Counting seeds by their prefix\n\nThe class verifier of the polynomial-time halting reduction reads only the first `d` bits of\nits seed of length `d + e`, so the number of seeds whose prefix satisfies a predicate is the\nnumber of prefixes that do, times `2 ^ e` (`length_filter_take`). Together with\n`length_filter_bitStrsOfLen` this turns the verifier's seed count into the numerator of the\ncompressed sampler's distribution `CL.clDist`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/Count.lean#L23-L37",
+  "source_path": "MIPRE/Foundations/Halting/Paper/Count.lean",
+  "lines": [
+   23,
+   37
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ }
+]

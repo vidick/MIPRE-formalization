@@ -1,0 +1,659 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.esize_wrapCore_le",
+  "source_name": "MIPRE.Halting.esize_wrapCore_le",
+  "formal_statement": "theorem MIPRE.Halting.esize_wrapCore_le (c : Prog) (n : ℕ) :\n    esize (wrapCore U.univ (G.sampler (lamOf n)).prog (encode (outDec G U c n (lamOf n)))) ≤\n      esize c + sizeZ G U (Nat.size n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "The output's decider — the wrapper around `outDec` — has size at most\n`|c| + sizeZ (size n)`.",
+  "module": "MIPRE.Foundations.Halting.CompressorCost",
+  "module_doc": "/-!\n# The compressor's output is bounded: the accounting\n\nObligation O4, the accounting half: the verifier the compressor's output denotes is\n`n`-bounded at every level `n` past a threshold depending on `G` and `U` alone — the field\n`CompressorSpec.isBounded_compr` — and the parameter `λ(n)` it carries satisfies the growth\nconditions `lam_ge` and `ansBound_le`.\n\nThe parameter is `λ(n) = 2 ^ (2 · size n)`, a `1` followed by zeros, so that the compressor can\nwrite it in binary in time polynomial in `log n`; it is at least `(n + 1) ^ 2`, which is what\nfreezing the described verifier at index `2n + 1` needs (`Verifier.freeze_isBounded` through\n`CompressorSpec.lam_ge`).\n\n`Verifier.IsBounded n` has three clauses at every index `m ≥ 2` and a size clause, and each is\nabsorbed by `PolyBounded.absorb` or `PolyBounded.absorb_log` (`Halting/Absorb.lean`) once the\ncost is written as a polynomially bounded function of the largest of the index, the level and\nthe input size:\n\n* the sampler is `G.sampler (λ(n))`, whose dimension and running time at index `m` are\n  `G.bound (m + λ(n))` (`GapCompression.sampler_dim`, `sampler_time`);\n* the decider is the wrapper around `haltProg` with `(c, n, λ(n))` hardcoded, whose cost on an\n  input `d` is `Prog.wrapCoreCost` (`Halting/WrapperCost.lean`) with the inner cost\n  `innerBound`: the preparation (`prepBound`), the universal machine on the compressed decider,\n  and the compressed decider's own time `G.bound (m + λ(n)) · (|d| + 1) ^ G.deg`\n  (`GapCompression.decider_time`);\n* the size is that of the compressed sampler's program, polynomial in `log n`, and of the\n  wrapper's description, which carries `c` — the slack `2|c| ≤ n` of the criterion is what\n  leaves room for it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorCost.lean#L131-L148",
+  "source_path": "MIPRE/Foundations/Halting/CompressorCost.lean",
+  "lines": [
+   131,
+   148
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.outDec_cost",
+  "source_name": "MIPRE.Halting.outDec_cost",
+  "formal_statement": "theorem MIPRE.Halting.outDec_cost {c : Prog} {x : BitStr} {n : ℕ} (hsd : IsSuccinctDesc c n x) (lam m : ℕ)\n    (d : Data) :\n    ∃ r t, t ≤ innerBound G U (esize c) n x.length lam (esize lam) m d.size ∧\n      (outDec G U c n lam).Runs (.cons (encode m) d) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The inner decider's cost.** On a succinct description `(c, n)` of `x`, `outDec` with\n`(c, n, λ)` runs within `innerBound` on every input at every index: the compressed decider's\nown time (`GapCompression.decider_time`), simulated by the universal machine, after the\npreparation.",
+  "module": "MIPRE.Foundations.Halting.CompressorCost",
+  "module_doc": "/-!\n# The compressor's output is bounded: the accounting\n\nObligation O4, the accounting half: the verifier the compressor's output denotes is\n`n`-bounded at every level `n` past a threshold depending on `G` and `U` alone — the field\n`CompressorSpec.isBounded_compr` — and the parameter `λ(n)` it carries satisfies the growth\nconditions `lam_ge` and `ansBound_le`.\n\nThe parameter is `λ(n) = 2 ^ (2 · size n)`, a `1` followed by zeros, so that the compressor can\nwrite it in binary in time polynomial in `log n`; it is at least `(n + 1) ^ 2`, which is what\nfreezing the described verifier at index `2n + 1` needs (`Verifier.freeze_isBounded` through\n`CompressorSpec.lam_ge`).\n\n`Verifier.IsBounded n` has three clauses at every index `m ≥ 2` and a size clause, and each is\nabsorbed by `PolyBounded.absorb` or `PolyBounded.absorb_log` (`Halting/Absorb.lean`) once the\ncost is written as a polynomially bounded function of the largest of the index, the level and\nthe input size:\n\n* the sampler is `G.sampler (λ(n))`, whose dimension and running time at index `m` are\n  `G.bound (m + λ(n))` (`GapCompression.sampler_dim`, `sampler_time`);\n* the decider is the wrapper around `haltProg` with `(c, n, λ(n))` hardcoded, whose cost on an\n  input `d` is `Prog.wrapCoreCost` (`Halting/WrapperCost.lean`) with the inner cost\n  `innerBound`: the preparation (`prepBound`), the universal machine on the compressed decider,\n  and the compressed decider's own time `G.bound (m + λ(n)) · (|d| + 1) ^ G.deg`\n  (`GapCompression.decider_time`);\n* the size is that of the compressed sampler's program, polynomial in `log n`, and of the\n  wrapper's description, which carries `c` — the slack `2|c| ≤ n` of the criterion is what\n  leaves room for it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorCost.lean#L180-L209",
+  "source_path": "MIPRE/Foundations/Halting/CompressorCost.lean",
+  "lines": [
+   180,
+   209
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Halting.esize_frozen_le",
+   "MIPRE.Halting.prepProg_runs"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.wrapCoreCost_le_decZ",
+  "source_name": "MIPRE.Halting.wrapCoreCost_le_decZ",
+  "formal_statement": "theorem MIPRE.Halting.wrapCoreCost_le_decZ {c : Prog} {x : BitStr} {n m t z : ℕ} (hc : esize c ≤ n)\n    (hx : x.length ≤ n + 1) (hm : m ≤ z) (hn : n ≤ z) (ht : t ≤ z) :\n    wrapCoreCost U (G.sampler (lamOf n)) (outDec G U c n (lamOf n))\n        (fun m => G.bound.eval (m + lamOf n)) G.deg m\n        (innerBound G U (esize c) n x.length (lamOf n) (esize (lamOf n)) m t) t ≤ decZ G U z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The output's decider cost is below the master bound** at the largest `z` of the index,\nthe level and the input size.",
+  "module": "MIPRE.Foundations.Halting.CompressorCost",
+  "module_doc": "/-!\n# The compressor's output is bounded: the accounting\n\nObligation O4, the accounting half: the verifier the compressor's output denotes is\n`n`-bounded at every level `n` past a threshold depending on `G` and `U` alone — the field\n`CompressorSpec.isBounded_compr` — and the parameter `λ(n)` it carries satisfies the growth\nconditions `lam_ge` and `ansBound_le`.\n\nThe parameter is `λ(n) = 2 ^ (2 · size n)`, a `1` followed by zeros, so that the compressor can\nwrite it in binary in time polynomial in `log n`; it is at least `(n + 1) ^ 2`, which is what\nfreezing the described verifier at index `2n + 1` needs (`Verifier.freeze_isBounded` through\n`CompressorSpec.lam_ge`).\n\n`Verifier.IsBounded n` has three clauses at every index `m ≥ 2` and a size clause, and each is\nabsorbed by `PolyBounded.absorb` or `PolyBounded.absorb_log` (`Halting/Absorb.lean`) once the\ncost is written as a polynomially bounded function of the largest of the index, the level and\nthe input size:\n\n* the sampler is `G.sampler (λ(n))`, whose dimension and running time at index `m` are\n  `G.bound (m + λ(n))` (`GapCompression.sampler_dim`, `sampler_time`);\n* the decider is the wrapper around `haltProg` with `(c, n, λ(n))` hardcoded, whose cost on an\n  input `d` is `Prog.wrapCoreCost` (`Halting/WrapperCost.lean`) with the inner cost\n  `innerBound`: the preparation (`prepBound`), the universal machine on the compressed decider,\n  and the compressed decider's own time `G.bound (m + λ(n)) · (|d| + 1) ^ G.deg`\n  (`GapCompression.decider_time`);\n* the size is that of the compressed sampler's program, polynomial in `log n`, and of the\n  wrapper's description, which carries `c` — the slack `2|c| ≤ n` of the criterion is what\n  leaves room for it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorCost.lean#L391-L424",
+  "source_path": "MIPRE/Foundations/Halting/CompressorCost.lean",
+  "lines": [
+   391,
+   424
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 10,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.decider_clause",
+  "source_name": "MIPRE.Halting.decider_clause",
+  "formal_statement": "theorem MIPRE.Halting.decider_clause : ∃ n₀, ∀ n, n₀ ≤ n → ∀ (c : Prog) (x : BitStr), 2 * esize c ≤ n →\n    IsSuccinctDesc c n x → x.length ≤ n + 1 → ∀ m, 2 ≤ m →\n    (Vof G U (comprStr G U c n (lamOf n))).decider.TimeBoundAt m (m ^ n) n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The decider clause**: past a threshold, on a succinct description `(c, n)` of a string\nof length at most `n + 1` with `2|c| ≤ n`, the output's decider runs within\n`m ^ n · (|d| + 1) ^ n` at every index `m ≥ 2`.",
+  "module": "MIPRE.Foundations.Halting.CompressorCost",
+  "module_doc": "/-!\n# The compressor's output is bounded: the accounting\n\nObligation O4, the accounting half: the verifier the compressor's output denotes is\n`n`-bounded at every level `n` past a threshold depending on `G` and `U` alone — the field\n`CompressorSpec.isBounded_compr` — and the parameter `λ(n)` it carries satisfies the growth\nconditions `lam_ge` and `ansBound_le`.\n\nThe parameter is `λ(n) = 2 ^ (2 · size n)`, a `1` followed by zeros, so that the compressor can\nwrite it in binary in time polynomial in `log n`; it is at least `(n + 1) ^ 2`, which is what\nfreezing the described verifier at index `2n + 1` needs (`Verifier.freeze_isBounded` through\n`CompressorSpec.lam_ge`).\n\n`Verifier.IsBounded n` has three clauses at every index `m ≥ 2` and a size clause, and each is\nabsorbed by `PolyBounded.absorb` or `PolyBounded.absorb_log` (`Halting/Absorb.lean`) once the\ncost is written as a polynomially bounded function of the largest of the index, the level and\nthe input size:\n\n* the sampler is `G.sampler (λ(n))`, whose dimension and running time at index `m` are\n  `G.bound (m + λ(n))` (`GapCompression.sampler_dim`, `sampler_time`);\n* the decider is the wrapper around `haltProg` with `(c, n, λ(n))` hardcoded, whose cost on an\n  input `d` is `Prog.wrapCoreCost` (`Halting/WrapperCost.lean`) with the inner cost\n  `innerBound`: the preparation (`prepBound`), the universal machine on the compressed decider,\n  and the compressed decider's own time `G.bound (m + λ(n)) · (|d| + 1) ^ G.deg`\n  (`GapCompression.decider_time`);\n* the size is that of the compressed sampler's program, polynomial in `log n`, and of the\n  wrapper's description, which carries `c` — the slack `2|c| ≤ n` of the criterion is what\n  leaves room for it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorCost.lean#L426-L443",
+  "source_path": "MIPRE/Foundations/Halting/CompressorCost.lean",
+  "lines": [
+   426,
+   443
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Halting.wrapCoreCost_le_decZ",
+   "MIPRE.Halting.outDec_cost"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.lamOf_ge",
+  "source_name": "MIPRE.Halting.lamOf_ge",
+  "formal_statement": "theorem MIPRE.Halting.lamOf_ge : ∃ n₀, ∀ n, n₀ ≤ n →\n    (2 * n + 1) ^ (2 * n + 1) + esize (2 * n + 1) + 4 ≤ 2 ^ lamOf n ∧\n    2 * n + 1 + esize (2 * n + 1) + 53 ≤ lamOf n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The field `lam_ge`**: the growth `Verifier.freeze_isBounded` needs of `λ(n)`.",
+  "module": "MIPRE.Foundations.Halting.CompressorCost",
+  "module_doc": "/-!\n# The compressor's output is bounded: the accounting\n\nObligation O4, the accounting half: the verifier the compressor's output denotes is\n`n`-bounded at every level `n` past a threshold depending on `G` and `U` alone — the field\n`CompressorSpec.isBounded_compr` — and the parameter `λ(n)` it carries satisfies the growth\nconditions `lam_ge` and `ansBound_le`.\n\nThe parameter is `λ(n) = 2 ^ (2 · size n)`, a `1` followed by zeros, so that the compressor can\nwrite it in binary in time polynomial in `log n`; it is at least `(n + 1) ^ 2`, which is what\nfreezing the described verifier at index `2n + 1` needs (`Verifier.freeze_isBounded` through\n`CompressorSpec.lam_ge`).\n\n`Verifier.IsBounded n` has three clauses at every index `m ≥ 2` and a size clause, and each is\nabsorbed by `PolyBounded.absorb` or `PolyBounded.absorb_log` (`Halting/Absorb.lean`) once the\ncost is written as a polynomially bounded function of the largest of the index, the level and\nthe input size:\n\n* the sampler is `G.sampler (λ(n))`, whose dimension and running time at index `m` are\n  `G.bound (m + λ(n))` (`GapCompression.sampler_dim`, `sampler_time`);\n* the decider is the wrapper around `haltProg` with `(c, n, λ(n))` hardcoded, whose cost on an\n  input `d` is `Prog.wrapCoreCost` (`Halting/WrapperCost.lean`) with the inner cost\n  `innerBound`: the preparation (`prepBound`), the universal machine on the compressed decider,\n  and the compressed decider's own time `G.bound (m + λ(n)) · (|d| + 1) ^ G.deg`\n  (`GapCompression.decider_time`);\n* the size is that of the compressed sampler's program, polynomial in `log n`, and of the\n  wrapper's description, which carries `c` — the slack `2|c| ≤ n` of the criterion is what\n  leaves room for it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorCost.lean#L470-L495",
+  "source_path": "MIPRE/Foundations/Halting/CompressorCost.lean",
+  "lines": [
+   470,
+   495
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lambda",
+    "env": "lemma",
+    "title": "The parameter of the halting verifier",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.exists_compressorSpec",
+  "source_name": "MIPRE.Halting.exists_compressorSpec",
+  "formal_statement": "theorem MIPRE.Halting.exists_compressorSpec (compr : PolyTimeFun (Prog × ℕ) BitStr)\n    (hcompr : ∀ (c : Prog) (n : ℕ), compr (c, n) = comprStr G U c n (lamOf n)) :\n    ∃ S : CompressorSpec G U, S.compr = compr ∧ S.lam = lamOf := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The compressor meets its specification**, given a polynomial-time program computing\n`comprStr c n (λ(n))` from `(c, n)`. Everything the specification asks is proved here or in\n`Halting/Compressor.lean`; the program itself is the last piece of obligation O4.",
+  "module": "MIPRE.Foundations.Halting.CompressorCost",
+  "module_doc": "/-!\n# The compressor's output is bounded: the accounting\n\nObligation O4, the accounting half: the verifier the compressor's output denotes is\n`n`-bounded at every level `n` past a threshold depending on `G` and `U` alone — the field\n`CompressorSpec.isBounded_compr` — and the parameter `λ(n)` it carries satisfies the growth\nconditions `lam_ge` and `ansBound_le`.\n\nThe parameter is `λ(n) = 2 ^ (2 · size n)`, a `1` followed by zeros, so that the compressor can\nwrite it in binary in time polynomial in `log n`; it is at least `(n + 1) ^ 2`, which is what\nfreezing the described verifier at index `2n + 1` needs (`Verifier.freeze_isBounded` through\n`CompressorSpec.lam_ge`).\n\n`Verifier.IsBounded n` has three clauses at every index `m ≥ 2` and a size clause, and each is\nabsorbed by `PolyBounded.absorb` or `PolyBounded.absorb_log` (`Halting/Absorb.lean`) once the\ncost is written as a polynomially bounded function of the largest of the index, the level and\nthe input size:\n\n* the sampler is `G.sampler (λ(n))`, whose dimension and running time at index `m` are\n  `G.bound (m + λ(n))` (`GapCompression.sampler_dim`, `sampler_time`);\n* the decider is the wrapper around `haltProg` with `(c, n, λ(n))` hardcoded, whose cost on an\n  input `d` is `Prog.wrapCoreCost` (`Halting/WrapperCost.lean`) with the inner cost\n  `innerBound`: the preparation (`prepBound`), the universal machine on the compressed decider,\n  and the compressed decider's own time `G.bound (m + λ(n)) · (|d| + 1) ^ G.deg`\n  (`GapCompression.decider_time`);\n* the size is that of the compressed sampler's program, polynomial in `log n`, and of the\n  wrapper's description, which carries `c` — the slack `2|c| ≤ n` of the criterion is what\n  leaves room for it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorCost.lean#L508-L530",
+  "source_path": "MIPRE/Foundations/Halting/CompressorCost.lean",
+  "lines": [
+   508,
+   530
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lambda",
+    "env": "lemma",
+    "title": "The parameter of the halting verifier",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.hardcode_time_rev",
+   "MIPRE.Halting.prepProg_runs",
+   "MIPRE.Halting.haltProg_runs_inv",
+   "MIPRE.Halting.decider_clause",
+   "MIPRE.Halting.lamOf_ge",
+   "MIPRE.Halting.esize_wrapCore_le",
+   "MIPRE.Halting.exists_ansBound_le"
+  ],
+  "pasted_helpers": 29,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.halting_reduction_both_of",
+  "source_name": "MIPRE.Halting.halting_reduction_both_of",
+  "formal_statement": "theorem MIPRE.Halting.halting_reduction_both_of :\n    ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧\n      ∀ pc : Nat.Partrec.Code,\n        (HaltingGameValue.HaltsOnEmptyInput pc →\n          HaltingGameValue.gameValue (g pc).toGame = 1 ∧ quantumValue (g pc).game = 1) ∧\n        (¬ HaltingGameValue.HaltsOnEmptyInput pc →\n          HaltingGameValue.gameValue (g pc).toGame ≤ 1 / 2 ∧ quantumValue (g pc).game ≤ 1 / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost MIPRE.Cost.Prog",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The headline in both values, conditionally**: from a `GapCompression`, one computable map\nfrom machines to game descriptions whose game has *synchronous* value `1` and quantum value\n`1` when the machine halts on the empty input, and both values at most `1/2` when it does not.\n`halting_reduces_to_gameValue_of` (blueprint `thm:main`) and `halting_reduction_quantum_of`\n(`cor:main-quantum`) are its two halves, on the same map.",
+  "module": "MIPRE.Foundations.Halting.CompressorProgram",
+  "module_doc": "/-!\n# The compressor as a program, and the halting reduction from compression alone\n\nThe last piece of obligation O4: the map `(c, n) ↦ comprStr c n (λ(n))` as a polynomial-time\nfunction of the ambient model (`comprPoly`), which `exists_compressorSpec` turns into a\n`CompressorSpec`, hence into `Obligations`, hence — through `halting_reduction` — into the\nhalting reduction with **no hypothesis but gap-preserving compression**: `halting_reduction_of`\nin `val*`, and `halting_reduces_to_gameValue_of` in the headline's `gameValue`.\n\nThe program writes `λ(n) = 2 ^ (2 · size n)` in binary by walking the bits of `n` twice with\n`lenBody`, prepending a `0` per bit to the numeral `1` (`lamProg`); assembles `(c, n, λ(n))`;\nhardcodes it into `haltProg` with `smnProg`; pairs the parameter with the result; and serializes\nthe pair with `serProg`. Every stage is linear or quadratic in its input, so the whole is\nquadratic in `|c| + |n|`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorProgram.lean#L241-L278",
+  "source_path": "MIPRE/Foundations/Halting/CompressorProgram.lean",
+  "lines": [
+   241,
+   278
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.compressibility_criterion_levels",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.Machine.runs_of_runForD",
+   "MIPRE.Cost.exists_compile",
+   "MIPRE.tracialValue_le_one",
+   "MIPRE.Verifier.exists_isBounded_lam",
+   "MIPRE.Halting.exists_compressorSpec",
+   "MIPRE.Verifier.freeze_hasPerfectPCC",
+   "MIPRE.Halting.tab_match",
+   "MIPRE.Cost.Data.primrec_decode_prod_nat",
+   "MIPRE.Cost.exists_semidecider_of_decode",
+   "MIPRE.Verifier.rePred_not_isBounded",
+   "MIPRE.REPred.of_computable_exists",
+   "MIPRE.Halting.yYes_mem",
+   "MIPRE.Halting.primrec_tabOf",
+   "MIPRE.Cost.Prog.wrapCore_hasPolyCost",
+   "MIPRE.Verifier.hasPerfectPCC_of_accepts_iff"
+  ],
+  "pasted_helpers": 95,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.halting_reduces_to_gameValue_of",
+  "source_name": "MIPRE.Halting.halting_reduces_to_gameValue_of",
+  "formal_statement": "theorem MIPRE.Halting.halting_reduces_to_gameValue_of :\n    ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧\n      ∀ pc : Nat.Partrec.Code,\n        (HaltingGameValue.HaltsOnEmptyInput pc → HaltingGameValue.gameValue (g pc).toGame = 1) ∧\n        (¬ HaltingGameValue.HaltsOnEmptyInput pc →\n          HaltingGameValue.gameValue (g pc).toGame ≤ 1 / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost MIPRE.Cost.Prog",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The headline, conditionally** (blueprint `thm:main` from `thm:compression`): from a\n`GapCompression`, a computable map from machines to game descriptions whose *synchronous* game\nvalue is `1` when the machine halts on the empty input and at most `1/2` when it does not.\nThis is `HaltingGameValue.halting_reduces_to_gameValue` with the compression theorem as a\nhypothesis; `MIPRE/MainTheorem.lean` supplies the compression and proves the unconditional\nstatement.",
+  "module": "MIPRE.Foundations.Halting.CompressorProgram",
+  "module_doc": "/-!\n# The compressor as a program, and the halting reduction from compression alone\n\nThe last piece of obligation O4: the map `(c, n) ↦ comprStr c n (λ(n))` as a polynomial-time\nfunction of the ambient model (`comprPoly`), which `exists_compressorSpec` turns into a\n`CompressorSpec`, hence into `Obligations`, hence — through `halting_reduction` — into the\nhalting reduction with **no hypothesis but gap-preserving compression**: `halting_reduction_of`\nin `val*`, and `halting_reduces_to_gameValue_of` in the headline's `gameValue`.\n\nThe program writes `λ(n) = 2 ^ (2 · size n)` in binary by walking the bits of `n` twice with\n`lenBody`, prepending a `0` per bit to the numeral `1` (`lamProg`); assembles `(c, n, λ(n))`;\nhardcodes it into `haltProg` with `smnProg`; pairs the parameter with the result; and serializes\nthe pair with `serProg`. Every stage is linear or quadratic in its input, so the whole is\nquadratic in `|c| + |n|`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorProgram.lean#L280-L294",
+  "source_path": "MIPRE/Foundations/Halting/CompressorProgram.lean",
+  "lines": [
+   280,
+   294
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduction_both_of"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": true
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.halting_reduction_quantum_of",
+  "source_name": "MIPRE.Halting.halting_reduction_quantum_of",
+  "formal_statement": "theorem MIPRE.Halting.halting_reduction_quantum_of :\n    ∃ g : Nat.Partrec.Code → HaltingGameValue.GameData, Computable g ∧\n      ∀ pc : Nat.Partrec.Code,\n        (HaltingGameValue.HaltsOnEmptyInput pc → quantumValue (g pc).game = 1) ∧\n        (¬ HaltingGameValue.HaltsOnEmptyInput pc → quantumValue (g pc).game ≤ 1 / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost MIPRE.Cost.Prog",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**Halting reduces to the quantum value** (blueprint `cor:main-quantum`), on the same map\nas `thm:main`: the *quantum* value of the game is `1` when the machine halts and at most\n`1/2` when it does not.",
+  "module": "MIPRE.Foundations.Halting.CompressorProgram",
+  "module_doc": "/-!\n# The compressor as a program, and the halting reduction from compression alone\n\nThe last piece of obligation O4: the map `(c, n) ↦ comprStr c n (λ(n))` as a polynomial-time\nfunction of the ambient model (`comprPoly`), which `exists_compressorSpec` turns into a\n`CompressorSpec`, hence into `Obligations`, hence — through `halting_reduction` — into the\nhalting reduction with **no hypothesis but gap-preserving compression**: `halting_reduction_of`\nin `val*`, and `halting_reduces_to_gameValue_of` in the headline's `gameValue`.\n\nThe program writes `λ(n) = 2 ^ (2 · size n)` in binary by walking the bits of `n` twice with\n`lenBody`, prepending a `0` per bit to the numeral `1` (`lamProg`); assembles `(c, n, λ(n))`;\nhardcodes it into `haltProg` with `smnProg`; pairs the parameter with the result; and serializes\nthe pair with `serProg`. Every stage is linear or quadratic in its input, so the whole is\nquadratic in `|c| + |n|`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/CompressorProgram.lean#L296-L306",
+  "source_path": "MIPRE/Foundations/Halting/CompressorProgram.lean",
+  "lines": [
+   296,
+   306
+  ],
+  "blueprint": [
+   {
+    "label": "cor:halting-consequences",
+    "env": "corollary",
+    "title": "The consequences of Chapter~\\ref{ch:main-theorem}, from compression",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduction_both_of"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": true
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.gameValue_uncomputable_of",
+  "source_name": "MIPRE.Halting.gameValue_uncomputable_of",
+  "formal_statement": "theorem MIPRE.Halting.gameValue_uncomputable_of :\n    ¬ ∃ f : GameData → Bool, Computable f ∧\n      (∀ d, HaltingGameValue.gameValue d.toGame = 1 → f d = true) ∧\n      (∀ d, HaltingGameValue.gameValue d.toGame ≤ 1 / 2 → f d = false) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "open Nat.Partrec (Code)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**Uncomputability of the synchronous value** (blueprint `cor:value-uncomputable`),\nconditionally on compression: no computable `f` answers `true` on every description of\nsynchronous value `1` and `false` on every description of synchronous value at most `1/2`.",
+  "module": "MIPRE.Foundations.Halting.Corollaries",
+  "module_doc": "/-!\n# The consequences of the halting reduction, conditionally on compression\n\nBlueprint chapter 7 after `thm:main`, and `thm:halting-undecidable` of chapter 3, each proved\nfrom a `GapCompression` (the hypothesis structure of `thm:compression`) and a universal machine:\n\n* `halting_undecidable`, `halting_re`: Turing's theorem, from Mathlib's\n  `ComputablePred.halting_problem` and `halting_problem_re` at the empty input.\n* `gameValue_uncomputable_of`, `quantumValue_uncomputable_of` (`cor:value-uncomputable`): no\n  computable predicate decides, under the promise that the value is `1` or at most `1/2`, which\n  it is — in either value.\n* `re_subset_mipstarComputable_of` and `mipstarComputable_eq_re_of` (`thm:mipstar-eq-re`):\n  `RE ⊆ MIP*` by reducing membership in an r.e. language to halting on the empty input\n  (`Nat.Partrec.Code.curry`) and composing with the reduction; with `MIPStarComputable.isRE`,\n  `MIP* = RE`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Corollaries.lean#L65-L76",
+  "source_path": "MIPRE/Foundations/Halting/Corollaries.lean",
+  "lines": [
+   65,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "cor:halting-consequences",
+    "env": "corollary",
+    "title": "The consequences of Chapter~\\ref{ch:main-theorem}, from compression",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduces_to_gameValue_of"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 4,
+  "is_target": true
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.quantumValue_uncomputable_of",
+  "source_name": "MIPRE.Halting.quantumValue_uncomputable_of",
+  "formal_statement": "theorem MIPRE.Halting.quantumValue_uncomputable_of :\n    ¬ ∃ f : GameData → Bool, Computable f ∧\n      (∀ d, quantumValue d.game = 1 → f d = true) ∧\n      (∀ d, quantumValue d.game ≤ 1 / 2 → f d = false) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "open Nat.Partrec (Code)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**Uncomputability of the quantum value** (blueprint `cor:value-uncomputable`, second\nclause), conditionally on compression.",
+  "module": "MIPRE.Foundations.Halting.Corollaries",
+  "module_doc": "/-!\n# The consequences of the halting reduction, conditionally on compression\n\nBlueprint chapter 7 after `thm:main`, and `thm:halting-undecidable` of chapter 3, each proved\nfrom a `GapCompression` (the hypothesis structure of `thm:compression`) and a universal machine:\n\n* `halting_undecidable`, `halting_re`: Turing's theorem, from Mathlib's\n  `ComputablePred.halting_problem` and `halting_problem_re` at the empty input.\n* `gameValue_uncomputable_of`, `quantumValue_uncomputable_of` (`cor:value-uncomputable`): no\n  computable predicate decides, under the promise that the value is `1` or at most `1/2`, which\n  it is — in either value.\n* `re_subset_mipstarComputable_of` and `mipstarComputable_eq_re_of` (`thm:mipstar-eq-re`):\n  `RE ⊆ MIP*` by reducing membership in an r.e. language to halting on the empty input\n  (`Nat.Partrec.Code.curry`) and composing with the reduction; with `MIPStarComputable.isRE`,\n  `MIP* = RE`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Corollaries.lean#L78-L88",
+  "source_path": "MIPRE/Foundations/Halting/Corollaries.lean",
+  "lines": [
+   78,
+   88
+  ],
+  "blueprint": [
+   {
+    "label": "cor:halting-consequences",
+    "env": "corollary",
+    "title": "The consequences of Chapter~\\ref{ch:main-theorem}, from compression",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduction_quantum_of"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 4,
+  "is_target": true
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.exists_code_halts_of_isRE",
+  "source_name": "MIPRE.Halting.exists_code_halts_of_isRE",
+  "formal_statement": "theorem MIPRE.Halting.exists_code_halts_of_isRE {L : Set BitStr} (h : IsRE L) :\n    ∃ r : BitStr → Code, Computable r ∧ ∀ x, HaltingGameValue.HaltsOnEmptyInput (r x) ↔ x ∈ L := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "open Nat.Partrec (Code)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**Every r.e. language many-one reduces to the halting problem**: a computable map from\nstrings to codes, halting on the empty input exactly on the members. Mathlib's\n`Nat.Partrec.Code.curry` fixes the string into the code.",
+  "module": "MIPRE.Foundations.Halting.Corollaries",
+  "module_doc": "/-!\n# The consequences of the halting reduction, conditionally on compression\n\nBlueprint chapter 7 after `thm:main`, and `thm:halting-undecidable` of chapter 3, each proved\nfrom a `GapCompression` (the hypothesis structure of `thm:compression`) and a universal machine:\n\n* `halting_undecidable`, `halting_re`: Turing's theorem, from Mathlib's\n  `ComputablePred.halting_problem` and `halting_problem_re` at the empty input.\n* `gameValue_uncomputable_of`, `quantumValue_uncomputable_of` (`cor:value-uncomputable`): no\n  computable predicate decides, under the promise that the value is `1` or at most `1/2`, which\n  it is — in either value.\n* `re_subset_mipstarComputable_of` and `mipstarComputable_eq_re_of` (`thm:mipstar-eq-re`):\n  `RE ⊆ MIP*` by reducing membership in an r.e. language to halting on the empty input\n  (`Nat.Partrec.Code.curry`) and composing with the reduction; with `MIPStarComputable.isRE`,\n  `MIP* = RE`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Corollaries.lean#L92-L110",
+  "source_path": "MIPRE/Foundations/Halting/Corollaries.lean",
+  "lines": [
+   92,
+   110
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting-undecidable",
+    "env": "theorem",
+    "title": "Turing",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.re_subset_mipstarComputable_of",
+  "source_name": "MIPRE.Halting.re_subset_mipstarComputable_of",
+  "formal_statement": "theorem MIPRE.Halting.re_subset_mipstarComputable_of {L : Set BitStr} (h : IsRE L) : MIPStarComputable L := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "open Nat.Partrec (Code)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**`RE ⊆ MIP*`**, conditionally on compression: compose the many-one reduction of an r.e.\nlanguage to the halting problem with the halting reduction of `cor:main-quantum`.",
+  "module": "MIPRE.Foundations.Halting.Corollaries",
+  "module_doc": "/-!\n# The consequences of the halting reduction, conditionally on compression\n\nBlueprint chapter 7 after `thm:main`, and `thm:halting-undecidable` of chapter 3, each proved\nfrom a `GapCompression` (the hypothesis structure of `thm:compression`) and a universal machine:\n\n* `halting_undecidable`, `halting_re`: Turing's theorem, from Mathlib's\n  `ComputablePred.halting_problem` and `halting_problem_re` at the empty input.\n* `gameValue_uncomputable_of`, `quantumValue_uncomputable_of` (`cor:value-uncomputable`): no\n  computable predicate decides, under the promise that the value is `1` or at most `1/2`, which\n  it is — in either value.\n* `re_subset_mipstarComputable_of` and `mipstarComputable_eq_re_of` (`thm:mipstar-eq-re`):\n  `RE ⊆ MIP*` by reducing membership in an r.e. language to halting on the empty input\n  (`Nat.Partrec.Code.curry`) and composing with the reduction; with `MIPStarComputable.isRE`,\n  `MIP* = RE`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Corollaries.lean#L112-L120",
+  "source_path": "MIPRE/Foundations/Halting/Corollaries.lean",
+  "lines": [
+   112,
+   120
+  ],
+  "blueprint": [
+   {
+    "label": "cor:halting-consequences",
+    "env": "corollary",
+    "title": "The consequences of Chapter~\\ref{ch:main-theorem}, from compression",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.halting_reduction_quantum_of",
+   "MIPRE.Halting.exists_code_halts_of_isRE"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": true
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.mipstarComputable_eq_re_of",
+  "source_name": "MIPRE.Halting.mipstarComputable_eq_re_of",
+  "formal_statement": "theorem MIPRE.Halting.mipstarComputable_eq_re_of : MIPStarComputable = IsRE := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "open Nat.Partrec (Code)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**`MIP* = RE`** (blueprint `thm:mipstar-eq-re`), conditionally on compression: the two\nclasses coincide, as predicates on languages.",
+  "module": "MIPRE.Foundations.Halting.Corollaries",
+  "module_doc": "/-!\n# The consequences of the halting reduction, conditionally on compression\n\nBlueprint chapter 7 after `thm:main`, and `thm:halting-undecidable` of chapter 3, each proved\nfrom a `GapCompression` (the hypothesis structure of `thm:compression`) and a universal machine:\n\n* `halting_undecidable`, `halting_re`: Turing's theorem, from Mathlib's\n  `ComputablePred.halting_problem` and `halting_problem_re` at the empty input.\n* `gameValue_uncomputable_of`, `quantumValue_uncomputable_of` (`cor:value-uncomputable`): no\n  computable predicate decides, under the promise that the value is `1` or at most `1/2`, which\n  it is — in either value.\n* `re_subset_mipstarComputable_of` and `mipstarComputable_eq_re_of` (`thm:mipstar-eq-re`):\n  `RE ⊆ MIP*` by reducing membership in an r.e. language to halting on the empty input\n  (`Nat.Partrec.Code.curry`) and composing with the reduction; with `MIPStarComputable.isRE`,\n  `MIP* = RE`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Corollaries.lean#L122-L126",
+  "source_path": "MIPRE/Foundations/Halting/Corollaries.lean",
+  "lines": [
+   122,
+   126
+  ],
+  "blueprint": [
+   {
+    "label": "cor:halting-consequences",
+    "env": "corollary",
+    "title": "The consequences of Chapter~\\ref{ch:main-theorem}, from compression",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Halting.re_subset_mipstarComputable_of"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": true
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.encode_of_decode_bitStr",
+  "source_name": "MIPRE.Cost.Data.encode_of_decode_bitStr",
+  "formal_statement": "theorem MIPRE.Cost.Data.encode_of_decode_bitStr {d : Data} {l : BitStr}\n    (h : (decode d : Option BitStr) = some l) : (encode l : Data) = d := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "Decoding a bit string succeeds only on its encoding.",
+  "module": "MIPRE.Foundations.Halting.Descriptions",
+  "module_doc": "/-!\n# Descriptions as bit strings: the postorder serialization of data\n\nBlueprint `rem:compression-abstract`, item 1: the strings of the compressibility criterion are\n*descriptions*, pairs `(λ, decider)` of a parameter and a decider program. This file fixes how\nsuch a pair travels as a bit string.\n\nA pair is data (`cons (encode λ) (encode decider)`), and data is serialized in **postorder**:\n`nil ↦ 0`, `cons a b ↦ a · b · 1` (`Data.toBitsPost`). Postorder, rather than the preorder\n`Data.toBits`, because it is read back by a *stack machine* (`Data.stackStep`): a `0` pushes\n`nil`, a `1` pops two entries and pushes their pair. A loop of the ambient model can run a stack\nmachine on a bit string, whereas a recursive-descent reader would need recursion; the ambient\nprogram is in `Halting/Lists.lean`, this file has the mathematics and the primitive recursive\nversions.\n\n* `Data.toBitsPost`, `Data.stackRun`, `Data.parse`: the serialization, the stack machine and\n  the total reader (the top of the final stack, `nil` for an empty stack), with the round trip\n  `Data.parse_toBitsPost`.\n* `Data.normBin`: a total normalization of the parameter, the identity on canonical binary\n  numerals (`encode n` for `n : ℕ`) and `nil` (`encode 0`) elsewhere; `Data.natOf` reads it.\n  Every string thereby names a parameter and a decider (`descLam`, `descDecD`), and the\n  wrapper decider of `Halting/Wrapper.lean` interprets the raw data the same way, so that no\n  validity condition on strings is needed anywhere.\n\nEach of these is also given in primitive recursive form, `Data.parse` and `Data.natOf` among\nthem, together with `Data.primrec_size`: the level at which the halting reduction runs is\n`2 ^ (K + 1 + esize e)`, so the size of an encoding has to be computable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Descriptions.lean#L141-L170",
+  "source_path": "MIPRE/Foundations/Halting/Descriptions.lean",
+  "lines": [
+   141,
+   170
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.encode_natOf",
+  "source_name": "MIPRE.Cost.Data.encode_natOf",
+  "formal_statement": "theorem MIPRE.Cost.Data.encode_natOf (d : Data) : (encode (natOf d) : Data) = normBin d := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The normalized parameter is the encoding of the number it denotes.",
+  "module": "MIPRE.Foundations.Halting.Descriptions",
+  "module_doc": "/-!\n# Descriptions as bit strings: the postorder serialization of data\n\nBlueprint `rem:compression-abstract`, item 1: the strings of the compressibility criterion are\n*descriptions*, pairs `(λ, decider)` of a parameter and a decider program. This file fixes how\nsuch a pair travels as a bit string.\n\nA pair is data (`cons (encode λ) (encode decider)`), and data is serialized in **postorder**:\n`nil ↦ 0`, `cons a b ↦ a · b · 1` (`Data.toBitsPost`). Postorder, rather than the preorder\n`Data.toBits`, because it is read back by a *stack machine* (`Data.stackStep`): a `0` pushes\n`nil`, a `1` pops two entries and pushes their pair. A loop of the ambient model can run a stack\nmachine on a bit string, whereas a recursive-descent reader would need recursion; the ambient\nprogram is in `Halting/Lists.lean`, this file has the mathematics and the primitive recursive\nversions.\n\n* `Data.toBitsPost`, `Data.stackRun`, `Data.parse`: the serialization, the stack machine and\n  the total reader (the top of the final stack, `nil` for an empty stack), with the round trip\n  `Data.parse_toBitsPost`.\n* `Data.normBin`: a total normalization of the parameter, the identity on canonical binary\n  numerals (`encode n` for `n : ℕ`) and `nil` (`encode 0`) elsewhere; `Data.natOf` reads it.\n  Every string thereby names a parameter and a decider (`descLam`, `descDecD`), and the\n  wrapper decider of `Halting/Wrapper.lean` interprets the raw data the same way, so that no\n  validity condition on strings is needed anywhere.\n\nEach of these is also given in primitive recursive form, `Data.parse` and `Data.natOf` among\nthem, together with `Data.primrec_size`: the level at which the halting reduction runs is\n`2 ^ (K + 1 + esize e)`, so the size of an encoding has to be computable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Descriptions.lean#L237-L253",
+  "source_path": "MIPRE/Foundations/Halting/Descriptions.lean",
+  "lines": [
+   237,
+   253
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Data.encode_of_decode_bitStr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.size_sum_stackStep_le",
+  "source_name": "MIPRE.Cost.Data.size_sum_stackStep_le",
+  "formal_statement": "theorem MIPRE.Cost.Data.size_sum_stackStep_le (s : List Data) (bit : Bool) :\n    ((stackStep s bit).map size).sum ≤ (s.map size).sum + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "One step of the stack machine adds at most one to the total size on the stack: a `0`\npushes `nil`, and a `1` replaces two entries by one node above them.",
+  "module": "MIPRE.Foundations.Halting.Descriptions",
+  "module_doc": "/-!\n# Descriptions as bit strings: the postorder serialization of data\n\nBlueprint `rem:compression-abstract`, item 1: the strings of the compressibility criterion are\n*descriptions*, pairs `(λ, decider)` of a parameter and a decider program. This file fixes how\nsuch a pair travels as a bit string.\n\nA pair is data (`cons (encode λ) (encode decider)`), and data is serialized in **postorder**:\n`nil ↦ 0`, `cons a b ↦ a · b · 1` (`Data.toBitsPost`). Postorder, rather than the preorder\n`Data.toBits`, because it is read back by a *stack machine* (`Data.stackStep`): a `0` pushes\n`nil`, a `1` pops two entries and pushes their pair. A loop of the ambient model can run a stack\nmachine on a bit string, whereas a recursive-descent reader would need recursion; the ambient\nprogram is in `Halting/Lists.lean`, this file has the mathematics and the primitive recursive\nversions.\n\n* `Data.toBitsPost`, `Data.stackRun`, `Data.parse`: the serialization, the stack machine and\n  the total reader (the top of the final stack, `nil` for an empty stack), with the round trip\n  `Data.parse_toBitsPost`.\n* `Data.normBin`: a total normalization of the parameter, the identity on canonical binary\n  numerals (`encode n` for `n : ℕ`) and `nil` (`encode 0`) elsewhere; `Data.natOf` reads it.\n  Every string thereby names a parameter and a decider (`descLam`, `descDecD`), and the\n  wrapper decider of `Halting/Wrapper.lean` interprets the raw data the same way, so that no\n  validity condition on strings is needed anywhere.\n\nEach of these is also given in primitive recursive form, `Data.parse` and `Data.natOf` among\nthem, together with `Data.primrec_size`: the level at which the halting reduction runs is\n`2 ^ (K + 1 + esize e)`, so the size of an encoding has to be computable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Descriptions.lean#L283-L298",
+  "source_path": "MIPRE/Foundations/Halting/Descriptions.lean",
+  "lines": [
+   283,
+   298
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.freeze_hasPerfectPCC",
+  "source_name": "MIPRE.Verifier.freeze_hasPerfectPCC",
+  "formal_statement": "theorem MIPRE.Verifier.freeze_hasPerfectPCC (k n T : ℕ) :\n    (V.freeze k).HasPerfectPCC n T ↔ V.HasPerfectPCC k T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier ℓ)"
+  ],
+  "docstring": "The frozen verifier has a perfect PCC strategy at any index exactly when `V` has one at\nthe frozen index.",
+  "module": "MIPRE.Foundations.Halting.Freeze",
+  "module_doc": "/-!\n# Freezing a verifier at an index\n\nBlueprint `rem:compression-abstract`, item 2: the recursion of the compressibility criterion\ngoes `n → 2n + 1`, while gap-preserving compression relates the game at index `2 ^ n` to the\noutput at index `n`; the two are reconciled by *freezing* the described verifier at index\n`2n + 1` before compressing it. The frozen verifier answers at every index as the original\ndoes at the frozen index, so its game at index `2 ^ n` is the original's game at level\n`2n + 1`.\n\n* `Cost.Prog.freezeProg k p`: on input `cons N d`, run `p` on `cons (encode k) d`. Its cost\n  is that of `p` plus the cost of copying the input, which is what the reading of the time\n  bounds a polynomial in the size of the input (`Decider.TimeBoundAt`) allows.\n* `CL.Sampler.freeze`, `Decider.freeze`, `Verifier.freeze`: the frozen sampler, decider and\n  verifier, with the transfer of the query clauses, of acceptance (`Decider.freeze_accepts`),\n  of the values and perfect PCC strategies (`Verifier.freeze_valStar`,\n  `Verifier.freeze_hasPerfectPCC`), of the time bounds, and of `λ`-boundedness\n  (`Verifier.freeze_isBounded`): the frozen verifier is `λ`-bounded as soon as the original's\n  dimension, running times and size at the frozen index fit under `2 ^ λ` and `λ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Freeze.lean#L219-L238",
+  "source_path": "MIPRE/Foundations/Halting/Freeze.lean",
+  "lines": [
+   219,
+   238
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.exists_ansBound_le",
+  "source_name": "MIPRE.Halting.exists_ansBound_le",
+  "formal_statement": "theorem MIPRE.Halting.exists_ansBound_le (G : GapCompression) :\n    ∃ lam₀ n₀ : ℕ, ∀ (x : BitStr) (lam n : ℕ), lam₀ ≤ lam → n₀ ≤ n → x.length ≤ n + 1 →\n      ansBound G x (2 * n + 1) ≤ (2 ^ n) ^ lam := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The answer budget of level `2n + 1` fits under the compression theorem's.** For `λ` and\n`n` above thresholds depending only on `G.bound`, a string of length at most `n + 1` has\n`ansBound G x (2n+1) ≤ (2 ^ n) ^ λ` --- the budget at which `GapCompression.completeness`\ntakes its hypothesis. With `Verifier.hasPerfectPCC_of_le` this is what carries a value-`1` PCC\nstrategy from membership in `classA G U (2 * n + 1)` into that clause, and it is why\n`Obligations.compr_spec` carries the length bound: `ansBound` grows with the string's own\nparameter, so without it no pair of thresholds would do.\n\nThe thresholds are `λ ≥ 2 · deg(bound) + 1` and `n ≥ log₂(‖bound‖) + 2 · deg(bound) + 1`,\nwhere `‖bound‖` is the sum of its coefficients; note they are set by the *polynomial* `bound`,\nnot by `G.deg`, which grades running times in the input size instead.",
+  "module": "MIPRE.Foundations.Halting.Instantiation",
+  "module_doc": "/-!\n# The halting reduction, assembled\n\nBlueprint `thm:halting`: the computable map from machines to game descriptions whose game has\nvalue `1` when the machine halts and value at most `1/2` when it does not. It is proved here\nfrom gap-preserving compression as a hypothesis (`MIPRE.GapCompression`, blueprint\n`thm:compression`) through the per-level compressibility criterion\n(`MIPRE.Cost.compressibility_criterion_levels`, blueprint `lem:compressible-criterion`),\nalong the dictionary of blueprint `rem:compression-abstract`.\n\n## What a string denotes\n\nA string is a *description*, never a game: a pair `(λ, 𝒟)` of a compression parameter and a\ndecider program, serialized by `Data.toBitsPost` and read back by `Data.parse`. Every string\nnames such a pair — `descLam` normalizes the parameter (`Data.natOf`), `descDecD` is the\ndecider as the datum it is — so no validity condition on strings appears anywhere. The\nverifier it denotes is\n\n  `Vof x = (S^compr_{descLam x}, wrap (descDecD x))`   (`Verifier.ofSamplerDeciderD`),\n\nthe compressed sampler at the string's own parameter (which depends on `λ` alone, blueprint\n`lem:compress-sampler-indep`, the field `GapCompression.sampler`) together with the string's\ndecider, run by the universal machine, wrapped in the question-length check of\n`def:normal-verifier` (`Decider.wrap`). That the decider is a datum and not a decoded program\nis deliberate: a datum that is not an encoding still names a verifier, whatever the interpreter\ndoes with it, and the compressor's decider of O4 can copy a datum into a syntax tree where it\ncould not decode one. The\ntwo classes of the criterion are then\n\n  `classA n = {x | Vof x is n-bounded, rejects long answers, and 𝒱_n has a value-1 PCC strategy}`,\n  `classB n = {x | Vof x is n-bounded, rejects long answers, and val*(𝒱_n) ≤ 1/2}`,\n\nwith answers cut at `ansBound x n = bound (n + descLam x)`, the length beyond which a\ncompressed decider with parameter `descLam x` rejects (`GapCompression.output_rejects_long`);\n`Vof x` is not literally an output of `Compress`, so that field does not apply to it directly\n— `ansBound` is the answer alphabet the classes are read with, and relating it to the\ncompressor's output is part of `Obligations.compr_spec`. Tying the boundedness parameter to\nthe level (`n`-bounded at level `n`) is what replaces the paper's choice of `λ` along the\nrecursion (blueprint `rem:compression-abstract`, item 1, and `lem:lambda`).\n\n## Where the assembly is\n\n`halting_reduction`, and the structure `MIPRE.Halting.Obligations` of what it still owes, are\nin `Halting/Reduction.lean`, which sits below this file, `Halting/Strings.lean` and\n`Halting/Semidecider.lean` in the import order, so that the two distinguished strings (O1) and\nthe semidecider (O3) are applied there as theorems rather than assumed as fields. What this\nfile contributes to it, beyond the objects above, is the tabulation:\n\n* **O2** — the tabulation of `𝒱_n` as a game description matching it along relabelings of\n  the",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Instantiation.lean#L155-L194",
+  "source_path": "MIPRE/Foundations/Halting/Instantiation.lean",
+  "lines": [
+   155,
+   194
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Data.size_sum_stackStep_le",
+   "MIPRE.Cost.Data.encode_natOf"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.mu_clause",
+  "source_name": "MIPRE.Halting.mu_clause",
+  "formal_statement": "theorem MIPRE.Halting.mu_clause (x : BitStr) (n : ℕ)\n    (i j : Fin ((tab G U x n).nX + 1)) :\n    (tab G U x n).game.μ i j\n      = ((Vof G U x).doubledGame n (ansBound G x n)).μ\n          (eXof G U x n i) (eXof G U x n j) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The `μ` clause, doubled.** The tabulated distribution is the sampler's on the block\n`(false, ·) × (true, ·)` and zero everywhere else — which is exactly the doubled game's.",
+  "module": "MIPRE.Foundations.Halting.Instantiation",
+  "module_doc": "/-!\n# The halting reduction, assembled\n\nBlueprint `thm:halting`: the computable map from machines to game descriptions whose game has\nvalue `1` when the machine halts and value at most `1/2` when it does not. It is proved here\nfrom gap-preserving compression as a hypothesis (`MIPRE.GapCompression`, blueprint\n`thm:compression`) through the per-level compressibility criterion\n(`MIPRE.Cost.compressibility_criterion_levels`, blueprint `lem:compressible-criterion`),\nalong the dictionary of blueprint `rem:compression-abstract`.\n\n## What a string denotes\n\nA string is a *description*, never a game: a pair `(λ, 𝒟)` of a compression parameter and a\ndecider program, serialized by `Data.toBitsPost` and read back by `Data.parse`. Every string\nnames such a pair — `descLam` normalizes the parameter (`Data.natOf`), `descDecD` is the\ndecider as the datum it is — so no validity condition on strings appears anywhere. The\nverifier it denotes is\n\n  `Vof x = (S^compr_{descLam x}, wrap (descDecD x))`   (`Verifier.ofSamplerDeciderD`),\n\nthe compressed sampler at the string's own parameter (which depends on `λ` alone, blueprint\n`lem:compress-sampler-indep`, the field `GapCompression.sampler`) together with the string's\ndecider, run by the universal machine, wrapped in the question-length check of\n`def:normal-verifier` (`Decider.wrap`). That the decider is a datum and not a decoded program\nis deliberate: a datum that is not an encoding still names a verifier, whatever the interpreter\ndoes with it, and the compressor's decider of O4 can copy a datum into a syntax tree where it\ncould not decode one. The\ntwo classes of the criterion are then\n\n  `classA n = {x | Vof x is n-bounded, rejects long answers, and 𝒱_n has a value-1 PCC strategy}`,\n  `classB n = {x | Vof x is n-bounded, rejects long answers, and val*(𝒱_n) ≤ 1/2}`,\n\nwith answers cut at `ansBound x n = bound (n + descLam x)`, the length beyond which a\ncompressed decider with parameter `descLam x` rejects (`GapCompression.output_rejects_long`);\n`Vof x` is not literally an output of `Compress`, so that field does not apply to it directly\n— `ansBound` is the answer alphabet the classes are read with, and relating it to the\ncompressor's output is part of `Obligations.compr_spec`. Tying the boundedness parameter to\nthe level (`n`-bounded at level `n`) is what replaces the paper's choice of `λ` along the\nrecursion (blueprint `rem:compression-abstract`, item 1, and `lem:lambda`).\n\n## Where the assembly is\n\n`halting_reduction`, and the structure `MIPRE.Halting.Obligations` of what it still owes, are\nin `Halting/Reduction.lean`, which sits below this file, `Halting/Strings.lean` and\n`Halting/Semidecider.lean` in the import order, so that the two distinguished strings (O1) and\nthe semidecider (O3) are applied there as theorems rather than assumed as fields. What this\nfile contributes to it, beyond the objects above, is the tabulation:\n\n* **O2** — the tabulation of `𝒱_n` as a game description matching it along relabelings of\n  the",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Instantiation.lean#L449-L535",
+  "source_path": "MIPRE/Foundations/Halting/Instantiation.lean",
+  "lines": [
+   449,
+   535
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Verifier.sum_filter_length",
+   "MIPRE.Verifier.length_filter_bitStrsOfLen"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 80,
+  "is_target": false
+ }
+]

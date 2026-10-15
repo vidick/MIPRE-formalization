@@ -1,0 +1,646 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.body_runs_iff",
+  "source_name": "MIPRE.Halting.body_runs_iff",
+  "formal_statement": "theorem MIPRE.Halting.body_runs_iff (S' : Prog) (P : Prog × (ℕ × Prog)) (n : ℕ) (rest r : Data) :\n    (∃ t, (body G U UT S').Runs (encode (P, (n, rest))) r t) ↔\n      ∃ t, (prep G U UT S' (P, (n, rest))).1.Runs (prep G U UT S' (P, (n, rest))).2 r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD Polynomial",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)"
+  ],
+  "docstring": "A run of `body` on `(P, (n, rest))` is a run of the program `prep` returns on the input it\nreturns.",
+  "module": "MIPRE.Foundations.Halting.Paper.Decider",
+  "module_doc": "/-!\n# The halting verifier along the paper's route: the decider\n\nBlueprint `lem:halt-construction` in the paper's form (`recursive.tex`, `fig:halt_f`), for the\npolynomial-time halting reduction of `planning/polytime-halting.md`. For a machine `M` and a\nparameter `λ`, the verifier is\n\n  `Vhalt M λ = Verifier.ofSamplerDecider U (G.sampler λ) (dec M λ)`,\n\nthe compressed sampler at `λ` together with the decider `dec M λ`, wrapped in the question-length\ncheck of `def:normal-verifier`. The decider is an efficient Kleene fixed point (`Cost.kleeneFix`)\nof the map `d' ↦ hardcode body (encode (M, (λ, d')))`, so that on `(n, x, y, a, b)` it runs\n`body` on the pair of its own description `(M, (λ, dec M λ))` and the input, where `body`:\n\n1. runs `M` on the empty input for the budget `Nat.size n` (the clocked universal machine); if\n   it halts, **accepts**;\n2. otherwise runs the semidecider `S'` of the search branch — \"`val*` at level `C₀` of the\n   verifier this string describes exceeds `1/2`\" (`exists_semL`) — on the description\n   `descOf λ (dec M λ)`, for the budget `Nat.size n`; if it halts, **rejects**;\n3. otherwise computes the compressed decider `Compress ((S^compr_λ, wrap (dec M λ)), λ)` of its\n   own verifier and runs it on the input through the universal machine.\n\nBranch 2 is Lin's search branch, which the criterion route (`Compression.lean`, `decFunV`) has\ntoo: the value form of compression has no base case for soundness, and the search supplies it.\nBranches 1 and 3 are the paper's `F`. The reading of `M`'s and the search's budgets as `Nat.size\nn` rather than `n` is the criterion's, and costs nothing: the levels of the recursion are\n`n, 2 ^ n, …`, along which `Nat.size` grows without bound.\n\n`body` is the program of a polynomial-time function `prep` returning the pair \"program to run,\nits input\" — branch 1 returns the constant-`true` program, branch 2 the constant-`false` one,\nbranch 3 the compressed decider on the input — followed by one call of the universal machine.\nThat is what makes the acceptance characterization (`accepts_iff`, blueprint\n`lem:dhalt-values`) a matter of running `prep` and reading its output, and what keeps the\naccounting (`Paper/Cost.lean`) to `prep`'s time bound plus the universal machine's overhead on\nthe compressed decider.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/Decider.lean#L203-L226",
+  "source_path": "MIPRE/Foundations/Halting/Paper/Decider.lean",
+  "lines": [
+   203,
+   226
+  ],
+  "blueprint": [
+   {
+    "label": "lem:halt-construction",
+    "env": "lemma",
+    "title": "The self-referential decider is well defined",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.dec_runs_iff",
+  "source_name": "MIPRE.Halting.dec_runs_iff",
+  "formal_statement": "theorem MIPRE.Halting.dec_runs_iff (S' M : Prog) (lam : ℕ) (v r : Data) :\n    (∃ t, (dec G U UT S' M lam).Runs v r t) ↔\n      ∃ t, (body G U UT S').Runs (.cons (encode (M, (lam, dec G U UT S' M lam))) v) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD Polynomial",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)"
+  ],
+  "docstring": "A run of the decider on `v` is a run of `body` on its own description and `v`.",
+  "module": "MIPRE.Foundations.Halting.Paper.Decider",
+  "module_doc": "/-!\n# The halting verifier along the paper's route: the decider\n\nBlueprint `lem:halt-construction` in the paper's form (`recursive.tex`, `fig:halt_f`), for the\npolynomial-time halting reduction of `planning/polytime-halting.md`. For a machine `M` and a\nparameter `λ`, the verifier is\n\n  `Vhalt M λ = Verifier.ofSamplerDecider U (G.sampler λ) (dec M λ)`,\n\nthe compressed sampler at `λ` together with the decider `dec M λ`, wrapped in the question-length\ncheck of `def:normal-verifier`. The decider is an efficient Kleene fixed point (`Cost.kleeneFix`)\nof the map `d' ↦ hardcode body (encode (M, (λ, d')))`, so that on `(n, x, y, a, b)` it runs\n`body` on the pair of its own description `(M, (λ, dec M λ))` and the input, where `body`:\n\n1. runs `M` on the empty input for the budget `Nat.size n` (the clocked universal machine); if\n   it halts, **accepts**;\n2. otherwise runs the semidecider `S'` of the search branch — \"`val*` at level `C₀` of the\n   verifier this string describes exceeds `1/2`\" (`exists_semL`) — on the description\n   `descOf λ (dec M λ)`, for the budget `Nat.size n`; if it halts, **rejects**;\n3. otherwise computes the compressed decider `Compress ((S^compr_λ, wrap (dec M λ)), λ)` of its\n   own verifier and runs it on the input through the universal machine.\n\nBranch 2 is Lin's search branch, which the criterion route (`Compression.lean`, `decFunV`) has\ntoo: the value form of compression has no base case for soundness, and the search supplies it.\nBranches 1 and 3 are the paper's `F`. The reading of `M`'s and the search's budgets as `Nat.size\nn` rather than `n` is the criterion's, and costs nothing: the levels of the recursion are\n`n, 2 ^ n, …`, along which `Nat.size` grows without bound.\n\n`body` is the program of a polynomial-time function `prep` returning the pair \"program to run,\nits input\" — branch 1 returns the constant-`true` program, branch 2 the constant-`false` one,\nbranch 3 the compressed decider on the input — followed by one call of the universal machine.\nThat is what makes the acceptance characterization (`accepts_iff`, blueprint\n`lem:dhalt-values`) a matter of running `prep` and reading its output, and what keeps the\naccounting (`Paper/Cost.lean`) to `prep`'s time bound plus the universal machine's overhead on\nthe compressed decider.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/Decider.lean#L228-L242",
+  "source_path": "MIPRE/Foundations/Halting/Paper/Decider.lean",
+  "lines": [
+   228,
+   242
+  ],
+  "blueprint": [
+   {
+    "label": "lem:halt-construction",
+    "env": "lemma",
+    "title": "The self-referential decider is well defined",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.kleeneProg_runs",
+   "MIPRE.Cost.Prog.kleeneProg_halts_of",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.hardcode_time_rev"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.accepts_iff",
+  "source_name": "MIPRE.Halting.accepts_iff",
+  "formal_statement": "theorem MIPRE.Halting.accepts_iff (S' M : Prog) (lam n : ℕ) (x y a b : BitStr) :\n    (Vhalt G U UT S' M lam).decider.Accepts n x y a b ↔\n      x.length = (G.sampler lam).dim n ∧ y.length = (G.sampler lam).dim n ∧\n        (if (evalWithin M .nil (Nat.size n)).isSome then True\n         else if (evalWithin (searchP S' lam (dec G U UT S' M lam)) .nil (Nat.size n)).isSome\n           then False\n         else (G.output ((Vhalt G U UT S' M lam).sampler.prog,\n           (Vhalt G U UT S' M lam).decider.prog) lam).decider.Accepts n x y a b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.Prog.ProgD Polynomial",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)"
+  ],
+  "docstring": "**Acceptance of `𝒱^halt`** (blueprint `lem:dhalt-values`): the two questions have the\nsampler's dimension, and then: everything is accepted if `M` halts within `Nat.size n`; nothing\nis if the search halts within `Nat.size n`; otherwise exactly what the compressed decider of\n`𝒱^halt` itself accepts.",
+  "module": "MIPRE.Foundations.Halting.Paper.Decider",
+  "module_doc": "/-!\n# The halting verifier along the paper's route: the decider\n\nBlueprint `lem:halt-construction` in the paper's form (`recursive.tex`, `fig:halt_f`), for the\npolynomial-time halting reduction of `planning/polytime-halting.md`. For a machine `M` and a\nparameter `λ`, the verifier is\n\n  `Vhalt M λ = Verifier.ofSamplerDecider U (G.sampler λ) (dec M λ)`,\n\nthe compressed sampler at `λ` together with the decider `dec M λ`, wrapped in the question-length\ncheck of `def:normal-verifier`. The decider is an efficient Kleene fixed point (`Cost.kleeneFix`)\nof the map `d' ↦ hardcode body (encode (M, (λ, d')))`, so that on `(n, x, y, a, b)` it runs\n`body` on the pair of its own description `(M, (λ, dec M λ))` and the input, where `body`:\n\n1. runs `M` on the empty input for the budget `Nat.size n` (the clocked universal machine); if\n   it halts, **accepts**;\n2. otherwise runs the semidecider `S'` of the search branch — \"`val*` at level `C₀` of the\n   verifier this string describes exceeds `1/2`\" (`exists_semL`) — on the description\n   `descOf λ (dec M λ)`, for the budget `Nat.size n`; if it halts, **rejects**;\n3. otherwise computes the compressed decider `Compress ((S^compr_λ, wrap (dec M λ)), λ)` of its\n   own verifier and runs it on the input through the universal machine.\n\nBranch 2 is Lin's search branch, which the criterion route (`Compression.lean`, `decFunV`) has\ntoo: the value form of compression has no base case for soundness, and the search supplies it.\nBranches 1 and 3 are the paper's `F`. The reading of `M`'s and the search's budgets as `Nat.size\nn` rather than `n` is the criterion's, and costs nothing: the levels of the recursion are\n`n, 2 ^ n, …`, along which `Nat.size` grows without bound.\n\n`body` is the program of a polynomial-time function `prep` returning the pair \"program to run,\nits input\" — branch 1 returns the constant-`true` program, branch 2 the constant-`false` one,\nbranch 3 the compressed decider on the input — followed by one call of the universal machine.\nThat is what makes the acceptance characterization (`accepts_iff`, blueprint\n`lem:dhalt-values`) a matter of running `prep` and reading its output, and what keeps the\naccounting (`Paper/Cost.lean`) to `prep`'s time bound plus the universal machine's overhead on\nthe compressed decider.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/Decider.lean#L244-L271",
+  "source_path": "MIPRE/Foundations/Halting/Paper/Decider.lean",
+  "lines": [
+   244,
+   271
+  ],
+  "blueprint": [
+   {
+    "label": "lem:dhalt-values",
+    "env": "lemma",
+    "title": "Values of the halting verifier",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Halting.dec_runs_iff",
+   "MIPRE.Halting.body_runs_iff"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.B_below",
+  "source_name": "MIPRE.Halting.B_below",
+  "formal_statement": "theorem MIPRE.Halting.B_below (j₀ : ℕ) (hnot : ¬ branch1 M (lv G j₀))\n    (hfire : branch2 G U UT S' M lam (lv G j₀)) :\n    ∀ i j, j + i = j₀ → B G U UT S' M lam (lv G j) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable {S' : Prog} (hS' : S'.WellScoped 1)"
+  ],
+  "docstring": "Below a level where the search fires while `M` has not halted, every level of the recursion\nis in `B`.",
+  "module": "MIPRE.Foundations.Halting.Paper.Induction",
+  "module_doc": "/-!\n# The halting verifier along the paper's route: the values at level `C`\n\nBlueprint `thm:halting` in the paper's form, at a fixed level, from the decider of\n`Paper/Decider.lean` and gap-preserving compression: for a machine `M` and a parameter `λ`\nsuch that `𝒱^halt_{M,λ}` is `λ`-bounded (the accounting of `Paper/Cost.lean` supplies one),\n\n* if `M` halts on the empty input, `𝒱^halt` has a value-`1` PCC strategy at level `C`;\n* if it does not, `val*(𝒱^halt_C) ≤ 1/2`;\n\nwith `C = max C₀ 2` and answers of length at most `G.bound (C + λ)`.\n\nThe argument is the criterion's (`Cost.compressibility_criterion_levels`) at the fixed level\n`C`, along the levels `C, 2 ^ C, 2 ^ (2 ^ C), …` of the recursion (`lv`): the two classes are\n`A n`, a value-`1` PCC strategy at level `n` with answers of length at most `n ^ λ`, and `B n`,\nvalue at most `1/2` there; `GapCompression.completeness` and `soundness` carry `A (2 ^ n) → A n`\nand `B (2 ^ n) → B n` at every level where neither of the decider's first two branches fires\n(`lem:dhalt-values`, the acceptance agreement with the compressed verifier); branch 1 puts a\nlevel in `A` outright and branch 2 in `B`; and the search halts exactly when the start level\nhas value above `1/2` (`exists_semL`, `tabL_value`), which is what rules the search out below\nthe level where `M` halts, and rules the start level out of `B`'s complement when `M` does not.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/Induction.lean#L261-L283",
+  "source_path": "MIPRE/Foundations/Halting/Paper/Induction.lean",
+  "lines": [
+   261,
+   283
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Halting.accepts_iff"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.hasPerfectPCC_of_halts",
+  "source_name": "MIPRE.Halting.hasPerfectPCC_of_halts",
+  "formal_statement": "theorem MIPRE.Halting.hasPerfectPCC_of_halts (hM : Halts M .nil) :\n    (Vhalt G U UT S' M lam).HasPerfectPCC (C G) (G.bound.eval (C G + lam)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable {S' : Prog} (hS' : S'.WellScoped 1)"
+  ],
+  "docstring": "**The halting case**: `𝒱^halt` has a value-`1` PCC strategy at level `C`.",
+  "module": "MIPRE.Foundations.Halting.Paper.Induction",
+  "module_doc": "/-!\n# The halting verifier along the paper's route: the values at level `C`\n\nBlueprint `thm:halting` in the paper's form, at a fixed level, from the decider of\n`Paper/Decider.lean` and gap-preserving compression: for a machine `M` and a parameter `λ`\nsuch that `𝒱^halt_{M,λ}` is `λ`-bounded (the accounting of `Paper/Cost.lean` supplies one),\n\n* if `M` halts on the empty input, `𝒱^halt` has a value-`1` PCC strategy at level `C`;\n* if it does not, `val*(𝒱^halt_C) ≤ 1/2`;\n\nwith `C = max C₀ 2` and answers of length at most `G.bound (C + λ)`.\n\nThe argument is the criterion's (`Cost.compressibility_criterion_levels`) at the fixed level\n`C`, along the levels `C, 2 ^ C, 2 ^ (2 ^ C), …` of the recursion (`lv`): the two classes are\n`A n`, a value-`1` PCC strategy at level `n` with answers of length at most `n ^ λ`, and `B n`,\nvalue at most `1/2` there; `GapCompression.completeness` and `soundness` carry `A (2 ^ n) → A n`\nand `B (2 ^ n) → B n` at every level where neither of the decider's first two branches fires\n(`lem:dhalt-values`, the acceptance agreement with the compressed verifier); branch 1 puts a\nlevel in `A` outright and branch 2 in `B`; and the search halts exactly when the start level\nhas value above `1/2` (`exists_semL`, `tabL_value`), which is what rules the search out below\nthe level where `M` halts, and rules the start level out of `B`'s complement when `M` does not.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/Induction.lean#L285-L324",
+  "source_path": "MIPRE/Foundations/Halting/Paper/Induction.lean",
+  "lines": [
+   285,
+   324
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.halts_haltingReduction_iff",
+   "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
+   "MIPRE.Halting.accepts_iff",
+   "MIPRE.Halting.B_below",
+   "MIPRE.Halting.tabL_match",
+   "MIPRE.Verifier.hasPerfectPCC_of_accepts_iff"
+  ],
+  "pasted_helpers": 31,
+  "prooflines": 37,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.valStar_le_of_not_halts",
+  "source_name": "MIPRE.Halting.valStar_le_of_not_halts",
+  "formal_statement": "theorem MIPRE.Halting.valStar_le_of_not_halts (hM : ¬ Halts M .nil) :\n    (Vhalt G U UT S' M lam).valStar (C G) (G.bound.eval (C G + lam)) ≤ 1 / 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost MIPRE.Cost.Prog",
+   "variable (G : GapCompression) (U : UniversalMachine) (UT : ClockedUniversalMachine)",
+   "variable {S' : Prog} (hS' : S'.WellScoped 1)"
+  ],
+  "docstring": "**The non-halting case**: `val*(𝒱^halt_C) ≤ 1/2`.",
+  "module": "MIPRE.Foundations.Halting.Paper.Induction",
+  "module_doc": "/-!\n# The halting verifier along the paper's route: the values at level `C`\n\nBlueprint `thm:halting` in the paper's form, at a fixed level, from the decider of\n`Paper/Decider.lean` and gap-preserving compression: for a machine `M` and a parameter `λ`\nsuch that `𝒱^halt_{M,λ}` is `λ`-bounded (the accounting of `Paper/Cost.lean` supplies one),\n\n* if `M` halts on the empty input, `𝒱^halt` has a value-`1` PCC strategy at level `C`;\n* if it does not, `val*(𝒱^halt_C) ≤ 1/2`;\n\nwith `C = max C₀ 2` and answers of length at most `G.bound (C + λ)`.\n\nThe argument is the criterion's (`Cost.compressibility_criterion_levels`) at the fixed level\n`C`, along the levels `C, 2 ^ C, 2 ^ (2 ^ C), …` of the recursion (`lv`): the two classes are\n`A n`, a value-`1` PCC strategy at level `n` with answers of length at most `n ^ λ`, and `B n`,\nvalue at most `1/2` there; `GapCompression.completeness` and `soundness` carry `A (2 ^ n) → A n`\nand `B (2 ^ n) → B n` at every level where neither of the decider's first two branches fires\n(`lem:dhalt-values`, the acceptance agreement with the compressed verifier); branch 1 puts a\nlevel in `A` outright and branch 2 in `B`; and the search halts exactly when the start level\nhas value above `1/2` (`exists_semL`, `tabL_value`), which is what rules the search out below\nthe level where `M` halts, and rules the start level out of `B`'s complement when `M` does not.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/Induction.lean#L326-L349",
+  "source_path": "MIPRE/Foundations/Halting/Paper/Induction.lean",
+  "lines": [
+   326,
+   349
+  ],
+  "blueprint": [
+   {
+    "label": "thm:halting",
+    "env": "theorem",
+    "title": "Halting reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.halts_haltingReduction_iff",
+   "MIPRE.Halting.accepts_iff",
+   "MIPRE.Halting.tabL_match"
+  ],
+  "pasted_helpers": 34,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.mu_clauseL",
+  "source_name": "MIPRE.Halting.mu_clauseL",
+  "formal_statement": "theorem MIPRE.Halting.mu_clauseL (x : BitStr) (n : ℕ)\n    (i j : Fin ((tabL G U x n).nX + 1)) :\n    (tabL G U x n).game.μ i j\n      = ((Vof G U x).doubledGame n (ansBound G x n)).μ\n          (eXofL G U x n i) (eXofL G U x n j) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The `μ` clause, doubled.**",
+  "module": "MIPRE.Foundations.Halting.Paper.TabulateL",
+  "module_doc": "/-!\n# The tabulation of a string's verifier under its own parameter\n\n`Halting.tab G U x n` (`Halting/Instantiation.lean`) tabulates the `n`-th game of the verifier\na string denotes with the decider budget that `n`-boundedness supplies, `n ^ n · (|d| + 1) ^ n`,\nand is correct on `n`-bounded strings. The halting reduction along the paper's route\n(`planning/polytime-halting.md`) runs its verifier at the *fixed* level `C₀` with a parameter\n`λ = poly(|M|)` that is far larger than `C₀`; that verifier is `λ`-bounded and not\n`C₀`-bounded, and its size clause alone rules the old budget out. So the decider is\nre-budgeted from the string's own parameter: `n ^ λ · (|d| + 1) ^ λ` at index `n` with\n`λ = descLam x`, which is exactly what `Verifier.IsBounded λ` supplies at every `n ≥ 2`.\n\nEverything else — the sampler runs under the compressed sampler's own bound, the doubled\nquestion set, the weight list — is `Instantiation.lean`'s, and the correctness proof is its\n`tab_match` with the one budget lemma swapped (`accOfL_iff`). The semidecider for\n\"`val*` at level `C₀` exceeds `1/2`\" on this tabulation (`exists_semL`) is what the search\nbranch of the paper-route decider tests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/TabulateL.lean#L201-L297",
+  "source_path": "MIPRE/Foundations/Halting/Paper/TabulateL.lean",
+  "lines": [
+   201,
+   297
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Verifier.sum_filter_length",
+   "MIPRE.Verifier.length_filter_bitStrsOfLen"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 91,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.accL_mem_iff",
+  "source_name": "MIPRE.Halting.accL_mem_iff",
+  "formal_statement": "theorem MIPRE.Halting.accL_mem_iff (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded (descLam x)) (hn : 2 ≤ n)\n    (i j : Fin ((tabL G U x n).nX + 1)) (k l : Fin ((tabL G U x n).nA + 1)) :\n    ((i : ℕ), (j : ℕ), (k : ℕ), (l : ℕ)) ∈ (tabL G U x n).acc\n      ↔ ((eXofL G U x n i).1 = false ∧ (eXofL G U x n j).1 = true ∧\n          (Vof G U x).decider.Accepts n (CL.toBits (eXofL G U x n i).2)\n            (CL.toBits (eXofL G U x n j).2) (eAofL G U x n k).1 (eAofL G U x n l).1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The acceptance table read back, doubled.**",
+  "module": "MIPRE.Foundations.Halting.Paper.TabulateL",
+  "module_doc": "/-!\n# The tabulation of a string's verifier under its own parameter\n\n`Halting.tab G U x n` (`Halting/Instantiation.lean`) tabulates the `n`-th game of the verifier\na string denotes with the decider budget that `n`-boundedness supplies, `n ^ n · (|d| + 1) ^ n`,\nand is correct on `n`-bounded strings. The halting reduction along the paper's route\n(`planning/polytime-halting.md`) runs its verifier at the *fixed* level `C₀` with a parameter\n`λ = poly(|M|)` that is far larger than `C₀`; that verifier is `λ`-bounded and not\n`C₀`-bounded, and its size clause alone rules the old budget out. So the decider is\nre-budgeted from the string's own parameter: `n ^ λ · (|d| + 1) ^ λ` at index `n` with\n`λ = descLam x`, which is exactly what `Verifier.IsBounded λ` supplies at every `n ≥ 2`.\n\nEverything else — the sampler runs under the compressed sampler's own bound, the doubled\nquestion set, the weight list — is `Instantiation.lean`'s, and the correctness proof is its\n`tab_match` with the one budget lemma swapped (`accOfL_iff`). The semidecider for\n\"`val*` at level `C₀` exceeds `1/2`\" on this tabulation (`exists_semL`) is what the search\nbranch of the paper-route decider tests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/TabulateL.lean#L299-L342",
+  "source_path": "MIPRE/Foundations/Halting/Paper/TabulateL.lean",
+  "lines": [
+   299,
+   342
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.Machine.runs_of_runForD",
+   "MIPRE.Verifier.answerEquiv_symm_val",
+   "MIPRE.Verifier.mem_accListW_iff"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 37,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.tabL_match",
+  "source_name": "MIPRE.Halting.tabL_match",
+  "formal_statement": "theorem MIPRE.Halting.tabL_match (x : BitStr) (n : ℕ) (hb : (Vof G U x).IsBounded (descLam x)) (hn : 2 ≤ n) :\n    ∃ (eX : Fin ((tabL G U x n).nX + 1) ≃ Bool × (Vof G U x).Questions n)\n      (eA : Fin ((tabL G U x n).nA + 1) ≃ Verifier.Answers (ansBound G x n)),\n      (∀ i j, (tabL G U x n).game.μ i j\n        = ((Vof G U x).doubledGame n (ansBound G x n)).μ (eX i) (eX j)) ∧\n      (∀ i j k l, (tabL G U x n).game.D i j k l\n        = ((Vof G U x).doubledGame n (ansBound G x n)).D (eX i) (eX j) (eA k) (eA l)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**The match, doubled.**",
+  "module": "MIPRE.Foundations.Halting.Paper.TabulateL",
+  "module_doc": "/-!\n# The tabulation of a string's verifier under its own parameter\n\n`Halting.tab G U x n` (`Halting/Instantiation.lean`) tabulates the `n`-th game of the verifier\na string denotes with the decider budget that `n`-boundedness supplies, `n ^ n · (|d| + 1) ^ n`,\nand is correct on `n`-bounded strings. The halting reduction along the paper's route\n(`planning/polytime-halting.md`) runs its verifier at the *fixed* level `C₀` with a parameter\n`λ = poly(|M|)` that is far larger than `C₀`; that verifier is `λ`-bounded and not\n`C₀`-bounded, and its size clause alone rules the old budget out. So the decider is\nre-budgeted from the string's own parameter: `n ^ λ · (|d| + 1) ^ λ` at index `n` with\n`λ = descLam x`, which is exactly what `Verifier.IsBounded λ` supplies at every `n ≥ 2`.\n\nEverything else — the sampler runs under the compressed sampler's own bound, the doubled\nquestion set, the weight list — is `Instantiation.lean`'s, and the correctness proof is its\n`tab_match` with the one budget lemma swapped (`accOfL_iff`). The semidecider for\n\"`val*` at level `C₀` exceeds `1/2`\" on this tabulation (`exists_semL`) is what the search\nbranch of the paper-route decider tests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Paper/TabulateL.lean#L344-L371",
+  "source_path": "MIPRE/Foundations/Halting/Paper/TabulateL.lean",
+  "lines": [
+   344,
+   371
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Halting.mu_clauseL",
+   "MIPRE.Halting.accL_mem_iff"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.primrec_decode_prod_nat",
+  "source_name": "MIPRE.Cost.Data.primrec_decode_prod_nat",
+  "formal_statement": "theorem MIPRE.Cost.Data.primrec_decode_prod_nat :\n    Primrec fun d : Data => (decode d : Option (BitStr × ℕ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The decoding of `BitStr × ℕ` out of data is primitive recursive: a pair is a `cons`, and its\ntwo components decode by `Data.primrec_decode_bitStr` and `Data.primrec_decode_nat`.",
+  "module": "MIPRE.Foundations.Halting.Semidecide",
+  "module_doc": "/-!\n# Semideciders on encoded values, not only on bit strings\n\n`MIPRE.Cost.exists_semidecider` turns a recursively enumerable predicate on *bit strings* into\na program of the ambient model halting on `encode x` exactly when the predicate holds. The\nobligation `MIPRE.Halting.Obligations.sem_spec` needs it on *pairs*: a program halting on\n`encode (x, n)` exactly off the class `B` at level `n`. The difference is not cosmetic —\n`encode (x, n)` is `cons (encode x) (encode n)`, which is not the encoding of any bit string —\nand it cannot be arranged by choosing the predicate, since the criterion consumes the\nequivalence in both directions.\n\n`exists_semidecider_of_decode` closes the gap once and for all, for every type whose\n`SizedEncoding` can be decoded primitive recursively: prefix the bit-string semidecider with\n`Prog.serProg`, the program that writes the postorder serialization of its input\n(`Halting/Serial.lean`). Serialization and `Data.parse` invert each other\n(`Data.parse_toBitsPost`), so the composite halts on `encode a` exactly when the bit-string\nsemidecider halts on the serialization of `encode a`, which is where the predicate is read\nback. `exists_semidecider_prod_nat` is the instance the obligation asks for, and\n`primrec_decode_prod_nat` the decoding it needs.\n\nThe route through a serialization rather than a direct encoding is what keeps the\n`ToPartrec` translation of `Cost/Semidecide.lean` untouched: a `ToPartrec` code cannot see\ntrailing zeros of its input list, which is why that file exists in the shape it does, and\nnothing here re-enters that argument.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Semidecide.lean#L46-L71",
+  "source_path": "MIPRE/Foundations/Halting/Semidecide.lean",
+  "lines": [
+   46,
+   71
+  ],
+  "blueprint": [
+   {
+    "label": "lem:semidecide-encoded",
+    "env": "lemma",
+    "title": "Semideciders on encoded values",
+    "file": "04_computability.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.exists_semidecider_of_decode",
+  "source_name": "MIPRE.Cost.exists_semidecider_of_decode",
+  "formal_statement": "theorem MIPRE.Cost.exists_semidecider_of_decode {α : Type*} [SizedEncoding α] [Primcodable α] [Inhabited α]\n    (hdec : Primrec fun d : Data => (decode d : Option α))\n    {p : α → Prop} (hp : REPred p) :\n    ∃ S : Prog, S.WellScoped 1 ∧ ∀ a : α, Halts S (encode a) ↔ p a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "**Recursively enumerable predicates on encoded values are halting sets.** For a type whose\nencoding decodes primitive recursively and an r.e. predicate `p` on it, a well-scoped program\nhalting on `encode a` exactly when `p a`: `Cost.exists_semidecider` with the input serialized\nby `Prog.serProg` first.",
+  "module": "MIPRE.Foundations.Halting.Semidecide",
+  "module_doc": "/-!\n# Semideciders on encoded values, not only on bit strings\n\n`MIPRE.Cost.exists_semidecider` turns a recursively enumerable predicate on *bit strings* into\na program of the ambient model halting on `encode x` exactly when the predicate holds. The\nobligation `MIPRE.Halting.Obligations.sem_spec` needs it on *pairs*: a program halting on\n`encode (x, n)` exactly off the class `B` at level `n`. The difference is not cosmetic —\n`encode (x, n)` is `cons (encode x) (encode n)`, which is not the encoding of any bit string —\nand it cannot be arranged by choosing the predicate, since the criterion consumes the\nequivalence in both directions.\n\n`exists_semidecider_of_decode` closes the gap once and for all, for every type whose\n`SizedEncoding` can be decoded primitive recursively: prefix the bit-string semidecider with\n`Prog.serProg`, the program that writes the postorder serialization of its input\n(`Halting/Serial.lean`). Serialization and `Data.parse` invert each other\n(`Data.parse_toBitsPost`), so the composite halts on `encode a` exactly when the bit-string\nsemidecider halts on the serialization of `encode a`, which is where the predicate is read\nback. `exists_semidecider_prod_nat` is the instance the obligation asks for, and\n`primrec_decode_prod_nat` the decoding it needs.\n\nThe route through a serialization rather than a direct encoding is what keeps the\n`ToPartrec` translation of `Cost/Semidecide.lean` untouched: a `ToPartrec` code cannot see\ntrailing zeros of its input list, which is why that file exists in the shape it does, and\nnothing here re-enters that argument.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Semidecide.lean#L75-L104",
+  "source_path": "MIPRE/Foundations/Halting/Semidecide.lean",
+  "lines": [
+   75,
+   104
+  ],
+  "blueprint": [
+   {
+    "label": "lem:semidecide-encoded",
+    "env": "lemma",
+    "title": "Semideciders on encoded values",
+    "file": "04_computability.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.Eval.of_append_of_wellScoped"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.REPred.of_computable_exists",
+  "source_name": "MIPRE.REPred.of_computable_exists",
+  "formal_statement": "theorem MIPRE.REPred.of_computable_exists {α β : Type*} [Primcodable α] [Primcodable β]\n    [Inhabited β] {test : α → β → Bool} (h : Computable fun q : α × β => test q.1 q.2) :\n    REPred fun a => ∃ b, test a b = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.REPred",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "**A `Σ₁` predicate is r.e.**: an unbounded search for a witness passing a computable test.\n`MIPRE.ValueApprox.REPred.of_primrecRel_exists` is the same statement for a primitive recursive\ntest; the tests here are only computable, the dimension of a compressed sampler being read off\na run of its program.",
+  "module": "MIPRE.Foundations.Halting.Semidecider",
+  "module_doc": "/-!\n# The semidecider of the halting reduction (obligation O3)\n\nObligation O3 of the halting reduction (`Halting/Reduction.lean`) asks for a closed program\nhalting on `encode (x, n)` exactly when the string `x` lies outside the class `B` at level\n`n`. By\n`Verifier.not_inClassB_iff` that is a disjunction of three `Σ₁` statements — the verifier `x`\ndenotes is not `n`-bounded, or its decider accepts some answer longer than the answer bound,\nor its `n`-th game has value more than `1/2` — and the obligation is an *equivalence*, so all\nthree have to be recognized exactly.\n\nThe second disjunct is the tabulation's, and is O2's to supply: with a computable game\ndescription whose value is that of `𝒱_n`, `lem:value-lower-approx`\n(`MIPRE.ValueApprox.rePred_lt_quantumValue`) enumerates the strategies. The first is proved\nhere, and it is the part of O3 that O2 does not contain:\n\n* `Verifier.BoundViolation` is a witness that `λ`-boundedness fails: an index and one input of\n  the sampler or the decider at that index. The index is carried as a *datum*, not a number,\n  so that the encoding `encode m` under which `Decider.TimeBoundAt` reads its input is\n  primitive recursive in the witness (`Data.encode_natOf`); every index arises this way\n  (`Data.natOf_encode`), so nothing is lost.\n* `Verifier.not_isBounded_iff_exists` is the characterization: `λ`-boundedness fails exactly\n  when some witness works. Each clause of `def:lambda-bounded` is a `∀`, over indices and over\n  inputs, so its negation is a search — and what makes the search effective is that\n  `Prog.HaltsWithin` is decidable (`Halting/CostBudget.lean`), which needs the *cost* of a run\n  and not only its length.\n* `Verifier.rePred_not_isBounded`: hence, **for a computably presented family of verifiers\n  (`Verifier.ComputablyPresented`), the boundedness violation is recursively enumerable**.\n* `Verifier.rePred_not_rejectsLong`: the acceptance of a long answer is recursively enumerable\n  too, by the same pattern with a simpler witness — the tuple and a step budget — and one\n  budgeted run of the decider (`Machine.runForD`).\n* `Halting.exists_sem_of_tab` merges the three disjuncts (`REPred.or`, by `Partrec.merge'`) and\n  hands the result to `Cost.exists_semidecider_prod_nat`, which is `Cost.exists_semidecider`\n  on pair-encoded inputs. Out comes `sem`, `sem_closed` and `sem_spec`.\n\n## What was assumed, and what discharged it\n\n`exists_sem_of_tab` takes the tabulation and the presentation of the family as hypotheses.\nBoth are O2's: a `GameData` for `𝒱_n` cannot be computed without the sampler's dimension and\nthe two programs. Stating them rather than proving them keeps the mathematical content here —\nthat the *violation* of a `∀`-clause over an infinite index set is enumerable — independent of\nhow the tabulation is built. Both are now supplied: `Halting.computablyPresented_Vof` at the\nend of this file, and `Halting.tab_value` in `Halting/Instantiation.lean`, so that\n**`Halting.exists_sem` takes no hypotheses**; ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Semidecider.lean#L94-L117",
+  "source_path": "MIPRE/Foundations/Halting/Semidecider.lean",
+  "lines": [
+   94,
+   117
+  ],
+  "blueprint": [
+   {
+    "label": "lem:bounded-violation-re",
+    "env": "lemma",
+    "title": "A violated time bound is enumerable",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.not_isBounded_iff_exists",
+  "source_name": "MIPRE.Verifier.not_isBounded_iff_exists",
+  "formal_statement": "theorem MIPRE.Verifier.not_isBounded_iff_exists (lam : ℕ) :\n    ¬ V.IsBounded lam ↔ ∃ w : Data × Data, V.BoundViolation lam w := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)",
+   "variable {ℓ : ℕ} (V : Verifier ℓ)"
+  ],
+  "docstring": "**`λ`-boundedness fails exactly when some witness works.** Each clause of\n`def:lambda-bounded` is a universal statement — over indices, and over the inputs of the two\nprograms — so its negation is a search, and `BoundViolation` is what the search looks for.",
+  "module": "MIPRE.Foundations.Halting.Semidecider",
+  "module_doc": "/-!\n# The semidecider of the halting reduction (obligation O3)\n\nObligation O3 of the halting reduction (`Halting/Reduction.lean`) asks for a closed program\nhalting on `encode (x, n)` exactly when the string `x` lies outside the class `B` at level\n`n`. By\n`Verifier.not_inClassB_iff` that is a disjunction of three `Σ₁` statements — the verifier `x`\ndenotes is not `n`-bounded, or its decider accepts some answer longer than the answer bound,\nor its `n`-th game has value more than `1/2` — and the obligation is an *equivalence*, so all\nthree have to be recognized exactly.\n\nThe second disjunct is the tabulation's, and is O2's to supply: with a computable game\ndescription whose value is that of `𝒱_n`, `lem:value-lower-approx`\n(`MIPRE.ValueApprox.rePred_lt_quantumValue`) enumerates the strategies. The first is proved\nhere, and it is the part of O3 that O2 does not contain:\n\n* `Verifier.BoundViolation` is a witness that `λ`-boundedness fails: an index and one input of\n  the sampler or the decider at that index. The index is carried as a *datum*, not a number,\n  so that the encoding `encode m` under which `Decider.TimeBoundAt` reads its input is\n  primitive recursive in the witness (`Data.encode_natOf`); every index arises this way\n  (`Data.natOf_encode`), so nothing is lost.\n* `Verifier.not_isBounded_iff_exists` is the characterization: `λ`-boundedness fails exactly\n  when some witness works. Each clause of `def:lambda-bounded` is a `∀`, over indices and over\n  inputs, so its negation is a search — and what makes the search effective is that\n  `Prog.HaltsWithin` is decidable (`Halting/CostBudget.lean`), which needs the *cost* of a run\n  and not only its length.\n* `Verifier.rePred_not_isBounded`: hence, **for a computably presented family of verifiers\n  (`Verifier.ComputablyPresented`), the boundedness violation is recursively enumerable**.\n* `Verifier.rePred_not_rejectsLong`: the acceptance of a long answer is recursively enumerable\n  too, by the same pattern with a simpler witness — the tuple and a step budget — and one\n  budgeted run of the decider (`Machine.runForD`).\n* `Halting.exists_sem_of_tab` merges the three disjuncts (`REPred.or`, by `Partrec.merge'`) and\n  hands the result to `Cost.exists_semidecider_prod_nat`, which is `Cost.exists_semidecider`\n  on pair-encoded inputs. Out comes `sem`, `sem_closed` and `sem_spec`.\n\n## What was assumed, and what discharged it\n\n`exists_sem_of_tab` takes the tabulation and the presentation of the family as hypotheses.\nBoth are O2's: a `GameData` for `𝒱_n` cannot be computed without the sampler's dimension and\nthe two programs. Stating them rather than proving them keeps the mathematical content here —\nthat the *violation* of a `∀`-clause over an infinite index set is enumerable — independent of\nhow the tabulation is built. Both are now supplied: `Halting.computablyPresented_Vof` at the\nend of this file, and `Halting.tab_value` in `Halting/Instantiation.lean`, so that\n**`Halting.exists_sem` takes no hypotheses**; ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Semidecider.lean#L194-L232",
+  "source_path": "MIPRE/Foundations/Halting/Semidecider.lean",
+  "lines": [
+   194,
+   232
+  ],
+  "blueprint": [
+   {
+    "label": "lem:bounded-violation-re",
+    "env": "lemma",
+    "title": "A violated time bound is enumerable",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.rePred_not_isBounded",
+  "source_name": "MIPRE.Verifier.rePred_not_isBounded",
+  "formal_statement": "theorem MIPRE.Verifier.rePred_not_isBounded {α : Type*} [Primcodable α] {ℓ : ℕ} {V : α → Verifier ℓ}\n    (hV : ComputablyPresented V) :\n    REPred fun q : α × ℕ => ¬ (V q.1).IsBounded q.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "**The boundedness violation is recursively enumerable** for a computably presented family:\n`Verifier.not_isBounded_iff_exists` turns it into a search, `Verifier.boundViolationB` runs the\ntest, and `REPred.of_computable_exists` does the searching.",
+  "module": "MIPRE.Foundations.Halting.Semidecider",
+  "module_doc": "/-!\n# The semidecider of the halting reduction (obligation O3)\n\nObligation O3 of the halting reduction (`Halting/Reduction.lean`) asks for a closed program\nhalting on `encode (x, n)` exactly when the string `x` lies outside the class `B` at level\n`n`. By\n`Verifier.not_inClassB_iff` that is a disjunction of three `Σ₁` statements — the verifier `x`\ndenotes is not `n`-bounded, or its decider accepts some answer longer than the answer bound,\nor its `n`-th game has value more than `1/2` — and the obligation is an *equivalence*, so all\nthree have to be recognized exactly.\n\nThe second disjunct is the tabulation's, and is O2's to supply: with a computable game\ndescription whose value is that of `𝒱_n`, `lem:value-lower-approx`\n(`MIPRE.ValueApprox.rePred_lt_quantumValue`) enumerates the strategies. The first is proved\nhere, and it is the part of O3 that O2 does not contain:\n\n* `Verifier.BoundViolation` is a witness that `λ`-boundedness fails: an index and one input of\n  the sampler or the decider at that index. The index is carried as a *datum*, not a number,\n  so that the encoding `encode m` under which `Decider.TimeBoundAt` reads its input is\n  primitive recursive in the witness (`Data.encode_natOf`); every index arises this way\n  (`Data.natOf_encode`), so nothing is lost.\n* `Verifier.not_isBounded_iff_exists` is the characterization: `λ`-boundedness fails exactly\n  when some witness works. Each clause of `def:lambda-bounded` is a `∀`, over indices and over\n  inputs, so its negation is a search — and what makes the search effective is that\n  `Prog.HaltsWithin` is decidable (`Halting/CostBudget.lean`), which needs the *cost* of a run\n  and not only its length.\n* `Verifier.rePred_not_isBounded`: hence, **for a computably presented family of verifiers\n  (`Verifier.ComputablyPresented`), the boundedness violation is recursively enumerable**.\n* `Verifier.rePred_not_rejectsLong`: the acceptance of a long answer is recursively enumerable\n  too, by the same pattern with a simpler witness — the tuple and a step budget — and one\n  budgeted run of the decider (`Machine.runForD`).\n* `Halting.exists_sem_of_tab` merges the three disjuncts (`REPred.or`, by `Partrec.merge'`) and\n  hands the result to `Cost.exists_semidecider_prod_nat`, which is `Cost.exists_semidecider`\n  on pair-encoded inputs. Out comes `sem`, `sem_closed` and `sem_spec`.\n\n## What was assumed, and what discharged it\n\n`exists_sem_of_tab` takes the tabulation and the presentation of the family as hypotheses.\nBoth are O2's: a `GameData` for `𝒱_n` cannot be computed without the sampler's dimension and\nthe two programs. Stating them rather than proving them keeps the mathematical content here —\nthat the *violation* of a `∀`-clause over an infinite index set is enumerable — independent of\nhow the tabulation is built. Both are now supplied: `Halting.computablyPresented_Vof` at the\nend of this file, and `Halting.tab_value` in `Halting/Instantiation.lean`, so that\n**`Halting.exists_sem` takes no hypotheses**; ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Semidecider.lean#L376-L454",
+  "source_path": "MIPRE/Foundations/Halting/Semidecider.lean",
+  "lines": [
+   376,
+   454
+  ],
+  "blueprint": [
+   {
+    "label": "lem:bounded-violation-re",
+    "env": "lemma",
+    "title": "A violated time bound is enumerable",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Data.encode_natOf",
+   "MIPRE.Verifier.not_isBounded_iff_exists",
+   "MIPRE.REPred.of_computable_exists"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 73,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.parseLoop_runs",
+  "source_name": "MIPRE.Cost.Prog.parseLoop_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.parseLoop_runs (x : BitStr) (s : List Data) (env : Env) (S : ℕ)\n    (hS : (encode x : Data).size + (list s).size + 2 * x.length ≤ S) :\n    ∃ t ≤ (x.length + 1) * (S + 21),\n      Eval (Data.cons (encode x) (list s) :: env) (.loop parseBody) ((stackRun x s).headD Data.nil) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The parsing loop computes the top of the final stack, in time `(|x| + 1) · (S + 21)` for\n`S` dominating the sizes along the run.",
+  "module": "MIPRE.Foundations.Halting.Serial",
+  "module_doc": "/-!\n# Reading and writing descriptions, in the ambient model\n\nThe two programs that move between a datum and its postorder serialization\n(`Data.toBitsPost`, `Halting/Descriptions.lean`):\n\n* `Prog.parseProg`: the stack machine `Data.stackRun` on a bit string, returning the top of the\n  final stack (`Data.parse`). The compressor's decider reads the description it was handed with\n  it (`Halting/Compressor.lean`).\n* `Prog.serProg`: the postorder serialization of a datum, by a loop over a list of pending\n  items — a datum still to be written, or a marker for the closing `1` of a pair — accumulating\n  the bits in reverse and reversing at the end. The compressor writes its output with it.\n\nBoth run in time quadratic in the size of their input: each step copies the remainder of the\nwork list and the accumulator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Serial.lean#L169-L198",
+  "source_path": "MIPRE/Foundations/Halting/Serial.lean",
+  "lines": [
+   169,
+   198
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.parseProg_runs",
+  "source_name": "MIPRE.Cost.Prog.parseProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.parseProg_runs (x : BitStr) :\n    ∃ t ≤ (x.length + 2) * ((encode x : Data).size + 2 * x.length + 25),\n      parseProg.Runs (encode x) (parse x) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "`parseProg` reads a serialization back.",
+  "module": "MIPRE.Foundations.Halting.Serial",
+  "module_doc": "/-!\n# Reading and writing descriptions, in the ambient model\n\nThe two programs that move between a datum and its postorder serialization\n(`Data.toBitsPost`, `Halting/Descriptions.lean`):\n\n* `Prog.parseProg`: the stack machine `Data.stackRun` on a bit string, returning the top of the\n  final stack (`Data.parse`). The compressor's decider reads the description it was handed with\n  it (`Halting/Compressor.lean`).\n* `Prog.serProg`: the postorder serialization of a datum, by a loop over a list of pending\n  items — a datum still to be written, or a marker for the closing `1` of a pair — accumulating\n  the bits in reverse and reversing at the end. The compressor writes its output with it.\n\nBoth run in time quadratic in the size of their input: each step copies the remainder of the\nwork list and the accumulator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Serial.lean#L200-L215",
+  "source_path": "MIPRE/Foundations/Halting/Serial.lean",
+  "lines": [
+   200,
+   215
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.parseLoop_runs"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.decYes_halts",
+  "source_name": "MIPRE.Halting.decYes_halts",
+  "formal_statement": "theorem MIPRE.Halting.decYes_halts (v : Data) : ∃ r t, t ≤ 10 ∧ decYes.Runs v r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "`decYes` halts on every input, well formed or not, at constant cost: each of its `elim`s\neither returns `nil` at once or descends one node.",
+  "module": "MIPRE.Foundations.Halting.Strings",
+  "module_doc": "/-!\n# The two distinguished strings\n\nObligation **O1** of the halting reduction (`Halting/Reduction.lean`, which applies `yYes_mem`\nand `yNo_mem` directly): a string whose verifier lies in `classA n` at every level above a\nthreshold, and one whose verifier lies in `classB n`.\n\nBoth are descriptions `descOf 0 𝒟` with the compressed sampler at parameter `0` and a decider\nprogram of three or four nodes:\n\n* `decNo` is the program `nil`. Its result is `nil`, never `encode true`, so the wrapped\n  decider accepts nothing, the verifier is synchronous at every index for want of an accepting\n  tuple, and `val* = 0` (`Verifier.inClassB_of_rejects_all`).\n* `decYes` takes the input `(n, x, y, a, b)` apart and returns `encode true` exactly when both\n  answers are the empty string. The paper's halting case is a decider that accepts\n  *everything*; in the synchronous framework that verifier is not synchronous at all — equal\n  questions with unequal answers must be rejected — so the fixed-answer form is what item 1 of\n  `thm:halting` takes here (`Verifier.inClassA_of_accepts_diagonal`, the paper's trivial\n  strategy).\n\n`λ`-boundedness of both comes from `Verifier.ofSamplerDecider_isBounded`, whose three\nhypotheses are fields of `MIPRE.GapCompression` for the sampler and immediate for these two\nprograms, each of which halts at constant cost.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Strings.lean#L84-L99",
+  "source_path": "MIPRE/Foundations/Halting/Strings.lean",
+  "lines": [
+   84,
+   99
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.decYes_runs_true_iff",
+  "source_name": "MIPRE.Halting.decYes_runs_true_iff",
+  "formal_statement": "theorem MIPRE.Halting.decYes_runs_true_iff (n : ℕ) (x y a b : BitStr) :\n    (∃ t, decYes.Runs (encode (n, x, y, a, b)) (encode true) t) ↔ (a = [] ∧ b = []) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "**What `decYes` accepts**: the empty answer from both players, on every question pair.",
+  "module": "MIPRE.Foundations.Halting.Strings",
+  "module_doc": "/-!\n# The two distinguished strings\n\nObligation **O1** of the halting reduction (`Halting/Reduction.lean`, which applies `yYes_mem`\nand `yNo_mem` directly): a string whose verifier lies in `classA n` at every level above a\nthreshold, and one whose verifier lies in `classB n`.\n\nBoth are descriptions `descOf 0 𝒟` with the compressed sampler at parameter `0` and a decider\nprogram of three or four nodes:\n\n* `decNo` is the program `nil`. Its result is `nil`, never `encode true`, so the wrapped\n  decider accepts nothing, the verifier is synchronous at every index for want of an accepting\n  tuple, and `val* = 0` (`Verifier.inClassB_of_rejects_all`).\n* `decYes` takes the input `(n, x, y, a, b)` apart and returns `encode true` exactly when both\n  answers are the empty string. The paper's halting case is a decider that accepts\n  *everything*; in the synchronous framework that verifier is not synchronous at all — equal\n  questions with unequal answers must be rejected — so the fixed-answer form is what item 1 of\n  `thm:halting` takes here (`Verifier.inClassA_of_accepts_diagonal`, the paper's trivial\n  strategy).\n\n`λ`-boundedness of both comes from `Verifier.ofSamplerDecider_isBounded`, whose three\nhypotheses are fields of `MIPRE.GapCompression` for the sampler and immediate for these two\nprograms, each of which halts at constant cost.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Strings.lean#L105-L125",
+  "source_path": "MIPRE/Foundations/Halting/Strings.lean",
+  "lines": [
+   105,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Halting.yYes_mem",
+  "source_name": "MIPRE.Halting.yYes_mem",
+  "formal_statement": "theorem MIPRE.Halting.yYes_mem : ∃ n₀, ∀ n, n₀ ≤ n → yYes ∈ classA G U n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Halting",
+   "open MIPRE.Cost",
+   "variable (G : GapCompression) (U : UniversalMachine)"
+  ],
+  "docstring": "**O1, the accepting side.** `yYes` lies in the class `A` at every level from some `n₀` on:\nits verifier accepts the empty answer from both players on every question pair and nothing\nelse, so the constant strategy is a value-`1` PCC strategy and every long answer is\nrejected.",
+  "module": "MIPRE.Foundations.Halting.Strings",
+  "module_doc": "/-!\n# The two distinguished strings\n\nObligation **O1** of the halting reduction (`Halting/Reduction.lean`, which applies `yYes_mem`\nand `yNo_mem` directly): a string whose verifier lies in `classA n` at every level above a\nthreshold, and one whose verifier lies in `classB n`.\n\nBoth are descriptions `descOf 0 𝒟` with the compressed sampler at parameter `0` and a decider\nprogram of three or four nodes:\n\n* `decNo` is the program `nil`. Its result is `nil`, never `encode true`, so the wrapped\n  decider accepts nothing, the verifier is synchronous at every index for want of an accepting\n  tuple, and `val* = 0` (`Verifier.inClassB_of_rejects_all`).\n* `decYes` takes the input `(n, x, y, a, b)` apart and returns `encode true` exactly when both\n  answers are the empty string. The paper's halting case is a decider that accepts\n  *everything*; in the synchronous framework that verifier is not synchronous at all — equal\n  questions with unequal answers must be rejected — so the fixed-answer form is what item 1 of\n  `thm:halting` takes here (`Verifier.inClassA_of_accepts_diagonal`, the paper's trivial\n  strategy).\n\n`λ`-boundedness of both comes from `Verifier.ofSamplerDecider_isBounded`, whose three\nhypotheses are fields of `MIPRE.GapCompression` for the sampler and immediate for these two\nprograms, each of which halts at constant cost.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Strings.lean#L169-L188",
+  "source_path": "MIPRE/Foundations/Halting/Strings.lean",
+  "lines": [
+   169,
+   188
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Verifier.exists_isBounded_lam",
+   "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
+   "MIPRE.Halting.decYes_halts",
+   "MIPRE.Halting.decYes_runs_true_iff",
+   "MIPRE.Cost.Prog.wrapCore_hasPolyCost"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.sum_filter_length",
+  "source_name": "MIPRE.Verifier.sum_filter_length",
+  "formal_statement": "theorem MIPRE.Verifier.sum_filter_length {N : ℕ} (fA fB : BitStr → ℕ) (l : List BitStr)\n    (hA : ∀ z ∈ l, fA z < N) (hB : ∀ z ∈ l, fB z < N) :\n    ∑ x : Fin N, ∑ y : Fin N,\n      (l.filter fun z => decide (fA z = x.val ∧ fB z = y.val)).length = l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.Cost",
+   "open HaltingGameValue (GameData)"
+  ],
+  "docstring": "Every point of `𝔽₂^s` is counted once, so the total weight is `2 ^ s`.",
+  "module": "MIPRE.Foundations.Halting.Tabulate",
+  "module_doc": "/-!\n# Deciding acceptance under a time bound\n\nThe first half of obligation **O2** (blueprint `rem:compression-abstract`, item 3): the\nacceptance table of the tabulated game. Filling it in needs `Decider.Accepts` — a `Σ₁`\nstatement, `∃ t, prog.Runs …` — to be *decided*, and that is exactly what `n`-boundedness\nbuys: the bound supplies a budget within which the decider must halt, so one budgeted run\nsettles the question (`Machine.runForD`).\n\n* `Decider.acceptBudget`: the budget `T · (|d| + 1) ^ k` the bound gives at index `n` on the\n  tuple `(x, y, a, b)`, read off the shape of `Decider.TimeBoundAt`.\n* `Decider.accepts_iff_runForD`: for a decider obeying that bound, acceptance is one budgeted\n  run returning `encode true`.\n* `Decider.decidableAccepts` and `Verifier.decidableAccepts`: the resulting decision\n  procedures, and `Verifier.accepts_iff_runForD` for the verifier a string denotes, where the\n  bound comes from `Verifier.IsBounded`.\n\nThe other half of the tabulation is the question distribution, and the rest of this file is\nwhat a `GameData` needs for it. `CL.Sampler.queryUnder` runs one sampler query under the same\nkind of budget; `Verifier.bitsToIdx` turns the bit string a query returns into the number a\n`GameData` names its questions by, and agrees with `Verifier.questionEquiv`; and\n`Verifier.weightList` is the weight list itself — one entry of weight `1` for each point of\n`𝔽₂^{s(n)}`, at the index pair its two marginals land on. Its `questionWeight` is then the\nnumber of points landing on a given pair and its `totalWeight` is `2 ^ s(n)`, which is exactly\nthe quotient `CL.clDist` is: `length_filter_bitStrsOfLen` is the bridge, the bit strings of\nlength `s` being the vectors of `𝔽₂^s`.\n\n`Verifier.answerEquiv_symm_val` is the same service on the answer side: an answer's index is\nits position among the bit strings of length at most `T`, the enumeration `answerList` being\n`bitStrsLE` mapped by a truncation that is the identity on them.\n\n`Verifier.accListW` is then the acceptance table: the index tuples of the answer tuples a\npredicate accepts, enumerated over the two alphabets, with `mem_accListW_iff` saying exactly\nwhat is in it. It takes the two question indexings `fA`, `fB` as parameters, because the\ntabulation tags Alice's question differently from Bob's; `Verifier.accList` is the case\n`fA = fB = bitsToIdx` and is the same list definitionally (`accList_eq_accListW`), so nothing\ndownstream of the old name changed. `bitsToIdx_injOn` is what lets a tuple be read back — the\nindex of a question determines it, among the strings of a fixed length — and `tagEquiv` is the\ntagged alphabet it supports: a tag bit and a point of `𝔽₂^s` packed into one index by\n*prepending* the tag, so that `bitsToIdx_lt` and `bitsToIdx_injOn` apply verbatim at `s + 1`.\n\n`MIPRE.Halting.tabOf` at the end assembles all of it: the `GameData` two encoded programs and\nfive numbers describe, with `primrec_tabOf` its computability. Plain data and not a verifier,\nbecause a `Ver",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Tabulate.lean#L245-L278",
+  "source_path": "MIPRE/Foundations/Halting/Tabulate.lean",
+  "lines": [
+   245,
+   278
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 29,
+  "is_target": false
+ }
+]

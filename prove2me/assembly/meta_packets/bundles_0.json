@@ -1,0 +1,5105 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Register",
+  "module": "MIPRE.Foundations.CL.Register",
+  "module_doc": "/-!\n# Register subspaces\n\nThe linear spaces of the conditionally linear machinery (blueprint `sec:ps-cl`, paper\n`linear.tex`) are `V = F^ι` for a finite index type `ι`, and the subspaces that occur in it are\n*register subspaces*: spans of subsets of the standard basis, hence determined by a set\n`S : Finset ι` of coordinates (paper `preliminaries.tex`, \"Register subspace\"). This file fixes\nthe two pieces of vocabulary in which everything else is written.\n\n* `MIPRE.CL.proj S : (ι → F) →ₗ[F] (ι → F)` is the coordinate projection onto `V_S` along the\n  complementary register subspace `V_{Sᶜ}`: the paper's `x ↦ x^{V_S}`.\n* `MIPRE.CL.RegLinear F S` is a linear map \"on `V_S`\", presented as an endomorphism `L` of the\n  ambient space with `proj S ∘ L ∘ proj S = L`: it reads only the coordinates in `S` and writes\n  only there. This is how the paper's `L₁ : V₁ → V₁` and `L_{k,u} : V_{k,u} → V_{k,u}` are\n  handled, and it makes the paper's shorthand `x^{L} = L(x^{V_S})` literally `L x`\n  (`RegLinear.apply_proj`).\n\nEverything here is elementary; the point is to fix names and `simp` lemmas.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Register.lean",
+  "source_path": "MIPRE/Foundations/CL/Register.lean",
+  "defmat": [
+   "MIPRE.CL.RegLinear",
+   "MIPRE.CL.RegLinear.castLE",
+   "MIPRE.CL.RegLinear.directSum",
+   "MIPRE.CL.RegLinear.id",
+   "MIPRE.CL.RegLinear.instFunLikeForall",
+   "MIPRE.CL.RegLinear.instZero",
+   "MIPRE.CL.RegLinear.ofLinearMap",
+   "MIPRE.CL.proj"
+  ],
+  "embedded": [
+   "MIPRE.CL.RegLinear.apply_proj",
+   "MIPRE.CL.RegLinear.apply_proj_of_subset",
+   "MIPRE.CL.RegLinear.castLE_apply",
+   "MIPRE.CL.RegLinear.coe_toLinearMap",
+   "MIPRE.CL.RegLinear.directSum_apply",
+   "MIPRE.CL.RegLinear.ext",
+   "MIPRE.CL.RegLinear.id_apply",
+   "MIPRE.CL.RegLinear.instLinearMapClassForall",
+   "MIPRE.CL.RegLinear.ofLinearMap_apply",
+   "MIPRE.CL.RegLinear.proj_apply",
+   "MIPRE.CL.RegLinear.proj_apply_of_subset",
+   "MIPRE.CL.RegLinear.proj_comp_proj",
+   "MIPRE.CL.RegLinear.toLinearMap_apply",
+   "MIPRE.CL.RegLinear.zero_apply",
+   "MIPRE.CL.proj_apply",
+   "MIPRE.CL.proj_empty",
+   "MIPRE.CL.proj_proj",
+   "MIPRE.CL.proj_proj_of_subset",
+   "MIPRE.CL.proj_proj_of_subset'",
+   "MIPRE.CL.proj_proj_self",
+   "MIPRE.CL.proj_univ"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.RegLinear",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     122,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.apply_proj",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     161,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.apply_proj_of_subset",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     165,
+     167
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.castLE",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     205,
+     208
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.castLE_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     210,
+     211
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.coe_toLinearMap",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     149,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.directSum",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     213,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.directSum_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     223,
+     224
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.ext",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     187,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.id",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     193,
+     194
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.id_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     196,
+     196
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.instFunLikeForall",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     137,
+     143
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.instLinearMapClassForall",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     145,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.instZero",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     189,
+     189
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.ofLinearMap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     198,
+     200
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.ofLinearMap_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     202,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.proj_apply",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     156,
+     159
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.proj_apply_of_subset",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     169,
+     171
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.proj_comp_proj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     153,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.toLinearMap_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     151,
+     151
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.zero_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     191,
+     191
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     34,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj_empty",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj_proj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj_proj_of_subset",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     61,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj_proj_of_subset'",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj_proj_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj_univ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     59
+    ]
+   }
+  ],
+  "lines": 159,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.CL.RegLinear": [
+    "/-- A linear map on the register subspace `V_S`, presented as an endomorphism `L` of the",
+    "ambient space with `proj S ∘ L ∘ proj S = L`: it depends only on the coordinates in `S`, and its",
+    "values lie in `V_S`. This is the paper's `L₁ : V₁ → V₁`; the paper's shorthand",
+    "`x^{L₁} = L₁(x^{V₁})` is then just `L₁ x` (`RegLinear.apply_proj`). -/"
+   ],
+   "MIPRE.CL.RegLinear.castLE": [
+    "/-- A map on `V_S` is a map on `V_T` whenever `S ⊆ T`. -/"
+   ],
+   "MIPRE.CL.RegLinear.directSum": [
+    "/-- The sum of a map on `V_S` and a map on `V_T`, as a map on `V_{S ∪ T}`: their direct sum",
+    "when `S` and `T` are disjoint. -/"
+   ],
+   "MIPRE.CL.RegLinear.id": [
+    "/-- The identity of `V_S`, which is `proj S` on the ambient space. -/"
+   ],
+   "MIPRE.CL.RegLinear.instFunLikeForall": null,
+   "MIPRE.CL.RegLinear.instZero": null,
+   "MIPRE.CL.RegLinear.ofLinearMap": [
+    "/-- Compress an endomorphism of the ambient space to a map on `V_S`: `proj S ∘ L ∘ proj S`. -/"
+   ],
+   "MIPRE.CL.proj": [
+    "/-- The coordinate projection onto the register subspace `V_S`: it keeps the coordinates in",
+    "`S` and zeroes the others (the paper's `x ↦ x^{V_S}`, the projection onto `V_S` parallel to",
+    "`V_{Sᶜ}`). -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Basic",
+  "module": "MIPRE.Foundations.CL.Basic",
+  "module_doc": "/-!\n# Conditionally linear functions\n\nBlueprint `def:cl-function` (paper `linear.tex`, Definition `def:cl-func`; ledger node\n`1.1.2`). The question distribution of every game in the pipeline is *conditionally linear*:\nlinear maps applied in stages to complementary register subspaces of `V = F^ι`, the register\nsubspace and the linear map of each stage being allowed to depend on the outputs of the\nprevious stages.\n\n## Presentations and functions\n\nThe paper defines the *set* of `ℓ`-level CL functions on `V` inductively: the `0`-level one is\nthe zero function, and an `ℓ`-level one is any `L` of the form\n`L(x) = L₁(x^{V₁}) + L_{>1, L₁(x^{V₁})}(x^{V_{>1}})` for complementary register subspaces\n`V₁ ⊕ V_{>1} = V`, a linear map `L₁` on `V₁`, and `(ℓ-1)`-level CL functions `L_{>1,v}` on\n`V_{>1}`, one for each value `v` of `L₁`. Everything downstream — the structure lemma\n`lem:cl-kth`, the query interface of a sampler, the hiding tests of introspection — works with\nthe *decomposition data*, which the function does not determine. So the Lean object is the\ndata:\n\n* `MIPRE.CL.CLFun F ι ℓ` is the type of `ℓ`-level **presentations** on the ambient space\n  `ι → F`. A presentation of level `ℓ + 1` is `cons S L₁ next`: the coordinates `S : Finset ι`\n  of the first register subspace `V₁ = V_S`, the first linear map `L₁ : RegLinear F S`, and the\n  continuation `next : (ι → F) → CLFun F ι ℓ`, indexed by the value of `L₁`.\n* `CLFun.eval` is the function presented:\n  `eval (cons S L₁ next) x = L₁ x + eval (next (L₁ x)) (x^{V_{Sᶜ}})`.\n* `CLFun.SupportedOn P T` says that `P` is a presentation *on `V_T`* in the paper's sense:\n  `S ⊆ T`, and every continuation is on `V_{T \\ S}`. The paper's `V_{>1}` is `V_{T \\ S}`; it is\n  not stored, because the level-`0` presentation `zero` is \"the zero function on `V_{T'}`\" for\n  every `T'` (exactly as in the paper), and this keeps every construction free of\n  dependent-type transport.\n* `MIPRE.CL.IsCLFun ℓ T f` is the paper's notion itself: some `ℓ`-level presentation on `V_T`\n  evaluates to `f`.\n\nTwo departures from the letter of the paper, both harmless: continuations are indexed by *all*\nvectors rather than by the values of `L₁` (the others are never evaluated), and there is one\nambient space `F^ι` throughout, register subspaces of it playing the role of the paper's\n`V_{>1}`, `U ⊕ V`, and so on.\n\n## The structure lemma (`lem:cl-kth`)\n\n`lem:cl-kth` attaches to an `ℓ`-level CL function its marginals `L_{≤k}`, factor spaces\n`V_{k,u}` and stage maps `L_{k,u}`, `u` being the prefix `L_{<k}(x)`. Here:\n\n* `CLFun.truncate k P` presents the `k`-th marginal (`P.truncate ℓ = P`, `truncate_self`),\n  padded with trivial levels when `k` exceeds the level (`CLFun.lift`, the paper's\n  `rk:higher-level`);\n* `CLFun.factorAt P k x` and `CLFun.mapAt P k x` are the register subspace and the linear map\n  applied at stage `k + 1` on the input `x`. They depend on `x` only through the prefix\n  `L_{≤k}(x)`: `CLFun.factorOfPrefix` and `CLFun.mapOfPrefix` compute them from that prefix\n  alone (`SupportedOn.factorOfPrefix_eval`, `SupportedOn.mapOfPrefix_eval`), which is what the\n  `factor` and `linear` queries of a sampler answer;\n* `SupportedOn.eval_truncate_eq_sum` is the decomposition `L_{≤k}(x) = ∑_{i ≤ k} x^{L_i}`, and\n  `SupportedOn.disjoint_factorAt`, `SupportedOn.factorAt_subset` say that the factor spaces\n  along a run are disjoint register subspaces of `V_T`. `CLFun.ExactlyOn P T` is the\n  strengthening under which they partition `T` (`ExactlyOn.biUnion_factorAt`) — item (2) of\n  `lem:cl-kth`, which samplers are required to satisfy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Basic.lean",
+  "source_path": "MIPRE/Foundations/CL/Basic.lean",
+  "defmat": [
+   "MIPRE.CL.CLFun",
+   "MIPRE.CL.CLFun.ExactlyOn",
+   "MIPRE.CL.CLFun.SupportedOn",
+   "MIPRE.CL.CLFun.eval",
+   "MIPRE.CL.CLFun.factorAt",
+   "MIPRE.CL.CLFun.factorOfPrefix",
+   "MIPRE.CL.CLFun.lift",
+   "MIPRE.CL.CLFun.liftN",
+   "MIPRE.CL.CLFun.mapAt",
+   "MIPRE.CL.CLFun.mapOfPrefix",
+   "MIPRE.CL.CLFun.truncate"
+  ],
+  "embedded": [
+   "MIPRE.CL.CLFun.eq_zero",
+   "MIPRE.CL.CLFun.eval_cons",
+   "MIPRE.CL.CLFun.eval_lift",
+   "MIPRE.CL.CLFun.eval_liftN",
+   "MIPRE.CL.CLFun.eval_truncate_zero",
+   "MIPRE.CL.CLFun.eval_zero",
+   "MIPRE.CL.CLFun.eval_zero_vec",
+   "MIPRE.CL.CLFun.exactlyOn_cons",
+   "MIPRE.CL.CLFun.exactlyOn_zero",
+   "MIPRE.CL.CLFun.factorAt_cons_succ",
+   "MIPRE.CL.CLFun.factorAt_cons_zero",
+   "MIPRE.CL.CLFun.factorAt_zero",
+   "MIPRE.CL.CLFun.factorOfPrefix_cons_succ",
+   "MIPRE.CL.CLFun.factorOfPrefix_cons_zero",
+   "MIPRE.CL.CLFun.factorOfPrefix_zero",
+   "MIPRE.CL.CLFun.mapAt_cons_succ",
+   "MIPRE.CL.CLFun.mapAt_cons_zero",
+   "MIPRE.CL.CLFun.mapAt_zero",
+   "MIPRE.CL.CLFun.mapOfPrefix_cons_succ",
+   "MIPRE.CL.CLFun.mapOfPrefix_cons_zero",
+   "MIPRE.CL.CLFun.mapOfPrefix_zero",
+   "MIPRE.CL.CLFun.supportedOn_cons",
+   "MIPRE.CL.CLFun.supportedOn_zero",
+   "MIPRE.CL.CLFun.truncate_self",
+   "MIPRE.CL.CLFun.truncate_succ_cons",
+   "MIPRE.CL.CLFun.truncate_succ_zero",
+   "MIPRE.CL.CLFun.truncate_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.CLFun",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     72,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.ExactlyOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     176,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.SupportedOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eq_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     86,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     215
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     219,
+     220
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_lift",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     269,
+     273
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_liftN",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     275,
+     279
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_truncate_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     281,
+     286
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     217,
+     217
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_zero_vec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     222,
+     225
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.exactlyOn_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     186,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.exactlyOn_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     183,
+     184
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     290,
+     295
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorAt_cons_succ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     310,
+     312
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorAt_cons_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     307,
+     308
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorAt_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     305,
+     305
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorOfPrefix",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     393,
+     400
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorOfPrefix_cons_succ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     415,
+     418
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorOfPrefix_cons_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     412,
+     413
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorOfPrefix_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     409,
+     410
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.lift",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.liftN",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     126,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     297,
+     303
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapAt_cons_succ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     320,
+     322
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapAt_cons_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     316,
+     318
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapAt_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     314,
+     314
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapOfPrefix",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     402,
+     407
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapOfPrefix_cons_succ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     427,
+     430
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapOfPrefix_cons_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     423,
+     425
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapOfPrefix_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     420,
+     421
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.supportedOn_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.supportedOn_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.truncate",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     137,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.truncate_self",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     154,
+     160
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.truncate_succ_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     147,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.truncate_succ_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     151,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.truncate_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     144,
+     145
+    ]
+   }
+  ],
+  "lines": 282,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register"
+  ],
+  "blueprint": [
+   "def:cl-function",
+   "lem:cl-structure"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.CLFun": [
+    "/-- Presentations of `ℓ`-level conditionally linear functions on the ambient space `ι → F`",
+    "(blueprint `def:cl-function`). `cons S L₁ next` presents `x ↦ L₁ x + next (L₁ x) (x^{V_{Sᶜ}})`. -/"
+   ],
+   "MIPRE.CL.CLFun.ExactlyOn": [
+    "/-- `P.ExactlyOn T`: `P` is a presentation on `V_T` whose last level leaves nothing over, so",
+    "that the factor spaces along every run partition `T` (`ExactlyOn.biUnion_factorAt`). This is",
+    "item (2) of `lem:cl-kth`, `V = ⊕ᵢ V_{i, L_{<i}(x)}`. -/"
+   ],
+   "MIPRE.CL.CLFun.SupportedOn": [
+    "/-- `P.SupportedOn T`: `P` is a presentation on `V_T` — its first register subspace lies inside",
+    "`T`, and every continuation is a presentation on the complementary `V_{T \\ S}`. -/"
+   ],
+   "MIPRE.CL.CLFun.eval": [
+    "/-- The function presented: `L(x) = x^{L₁} + L_{>1, x^{L₁}}(x^{V_{>1}})`. -/"
+   ],
+   "MIPRE.CL.CLFun.factorAt": [
+    "/-- The register subspace acted on at stage `k + 1` on the input `x`: the factor space",
+    "`V_{k+1,u}` of `lem:cl-kth`, `u = L_{≤k}(x)` the prefix. Beyond the level of `P` it is empty. -/"
+   ],
+   "MIPRE.CL.CLFun.factorOfPrefix": [
+    "/-- The factor space at stage `k + 1`, read off the prefix `u = L_{≤k}(x)` rather than the",
+    "input `x`: the paper's `V_{k+1,u}`. The prefix determines the branch taken at each earlier",
+    "stage — its `V_S`-component is the value of that stage's map — and this is how a sampler's",
+    "`factor` query is answered. -/"
+   ],
+   "MIPRE.CL.CLFun.lift": [
+    "/-- One more level at the bottom, acting on the register subspace `V_T` by the zero map: the",
+    "paper's `rk:higher-level`, every `ℓ`-level CL function being `(ℓ + 1)`-level. Padding with",
+    "`T = ∅` preserves every support; padding with the coordinates not yet used preserves exactness",
+    "(`ExactlyOn.lift`). -/"
+   ],
+   "MIPRE.CL.CLFun.liftN": [
+    "/-- `n` trivial levels at the bottom. -/"
+   ],
+   "MIPRE.CL.CLFun.mapAt": [
+    "/-- The linear map applied at stage `k + 1` on the input `x`: the map `L_{k+1,u}` of",
+    "`lem:cl-kth`, `u = L_{≤k}(x)` the prefix, as an endomorphism of the ambient space. Beyond the",
+    "level of `P` it is zero. -/"
+   ],
+   "MIPRE.CL.CLFun.mapOfPrefix": [
+    "/-- The linear map at stage `k + 1`, read off the prefix `u = L_{≤k}(x)`: the paper's",
+    "`L_{k+1,u}`; how a sampler's `linear` query is answered. -/"
+   ],
+   "MIPRE.CL.CLFun.truncate": [
+    "/-- The first `k` levels of `P`: the `k`-th marginal `L_{≤k}` of `lem:cl-kth`. When `k` exceeds",
+    "the level of `P`, the missing levels are trivial. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Closure",
+  "module": "MIPRE.Foundations.CL.Closure",
+  "module_doc": "/-!\n# Closure properties of conditionally linear functions, and CL distributions\n\nPaper `linear.tex`: concatenation (`lem:cl-concat`) and direct sums (`lem:cl-func-prod`) of\nconditionally linear functions, and the conditionally linear distribution of a pair of CL\nfunctions (`def:cl-dist`); blueprint `def:cl-function` and `lem:cl-closure`, ledger node\n`1.1.2`.\n\nBoth constructions are on presentations (`MIPRE.CL.CLFun`) and are hypothesis-free; the\nhypotheses of the paper's lemmas — the pieces live on disjoint register subspaces — enter only\nin the evaluation lemmas (`SupportedOn.eval_concat`, `SupportedOn.eval_directSum`), which say\nthat the constructions present the functions the paper writes down, and in the support\nlemmas. The paper's statements about *functions* follow as `IsCLFun.concat` and\n`IsCLFun.directSum`.\n\n* `CLFun.concat L R`: run `L` (level `k`), then the `R_u` (level `ℓ`) selected by its output;\n  level `ℓ + k` — the paper's `T(x) = L(x^U) + R_{L(x^U)}(x^V)` on `U ⊕ V`, here for `L` on\n  `V_U`, the `R_u` on `V_W`, `U` and `W` disjoint.\n* `CLFun.directSum P Q`: stage by stage, the register subspaces are joined and the two\n  continuations run side by side, each selected by its own component of the joint output;\n  the paper's `⊕ⱼ L⁽ʲ⁾`, two summands at a time (`liftN` pads to a common level, the paper's\n  `ℓ = maxⱼ ℓⱼ`).\n* `MIPRE.CL.clDist L R`: the law of `(L x, R x)` for `x` uniform, as a real-valued probability\n  mass function on pairs, the format of `MIPRE.Game`.\n\nThe paper's third closure property, downsizing to `𝔽₂` (`lem:cl-downsize`), needs the self-dual\nbases of blueprint `lem:self-dual-basis` and is not here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Closure.lean",
+  "source_path": "MIPRE/Foundations/CL/Closure.lean",
+  "defmat": [
+   "MIPRE.CL.CLFun.concat",
+   "MIPRE.CL.CLFun.directSum",
+   "MIPRE.CL.clDist"
+  ],
+  "embedded": [
+   "MIPRE.CL.CLFun.concat_cons",
+   "MIPRE.CL.CLFun.concat_zero",
+   "MIPRE.CL.CLFun.directSum_cons",
+   "MIPRE.CL.CLFun.directSum_zero",
+   "MIPRE.CL.clDist_nonneg",
+   "MIPRE.CL.sum_clDist"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.CLFun.concat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     51,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.concat_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     61,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.concat_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.directSum",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     94,
+     100
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.directSum_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     104,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.directSum_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     102,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.CL.clDist",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     260,
+     264
+    ]
+   },
+   {
+    "name": "MIPRE.CL.clDist_nonneg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     266,
+     267
+    ]
+   },
+   {
+    "name": "MIPRE.CL.sum_clDist",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     269,
+     283
+    ]
+   }
+  ],
+  "lines": 135,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic"
+  ],
+  "blueprint": [
+   "def:cl-function",
+   "lem:cl-closure"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.CLFun.concat": [
+    "/-- The concatenation of `L` (level `k`) with the family `R` (level `ℓ`): run `L`, then the",
+    "`R_u` selected by its output `u`. The paper's `T(x) = L(x^U) + R_{L(x^U)}(x^V)`; here `U` and",
+    "`V` are the supports of the two sides (`SupportedOn.eval_concat`). -/"
+   ],
+   "MIPRE.CL.CLFun.directSum": [
+    "/-- The direct sum of two presentations of the same level (`lem:cl-func-prod`, two summands;",
+    "`liftN` pads to a common level): stage by stage, the register subspaces are joined and the",
+    "continuations run side by side, each selected by its own component of the joint output. -/"
+   ],
+   "MIPRE.CL.clDist": [
+    "/-- The conditionally linear distribution of a pair of functions (`def:cl-dist`): the law of",
+    "`(L x, R x)` for `x` uniform in `F^ι`, as a real-valued probability mass function on pairs, the",
+    "format of the question distribution of a `MIPRE.Game`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_Cost_Basic_B",
+  "module": "MIPRE.Foundations.Cost.Basic",
+  "module_doc": "/-!\n# The ambient cost model\n\nThis file fixes the cost model in which **every** polynomial-time statement of the\nproject is made: the transformations of the compression pipeline (introspection,\noracularization, answer reduction, parallel repetition), the `Compress` map, the\nefficient computability toolkit (universal machine, s-m-n, Kleene fixed point;\nblueprint Section `sec:rr-computability`), and the recursive compression lemma\n(blueprint `lem:recursive-compression`, [MNY] Lemma 5.1).\n\n## The model\n\nData are binary trees (`Data`: `nil` and `cons`), the S-expressions in which bit\nstrings, numbers, pairs and programs are all encoded (`Cost.Encoding`). `Data.size`\ncounts nodes; it is the bit-length of the preorder serialization `Data.toBits`, so\nsizes are additive under pairing (R4 below).\n\nPrograms (`Prog`) form a minimal first-order language with de Bruijn variables over an\nenvironment of `Data` values: `var i` reads a variable, `nil`, `const d` and `cons h t`\nbuild values, `elim i n c` inspects the `i`-th variable (binding the two components of\na `cons`), `let_ e b` binds, and `loop b` iterates `b` on the state held in variable `0`\nuntil it signals stop. The timed big-step semantics `Eval env p r t` charges one unit\nper rule, except that reading a variable or a literal costs the size of the value:\n**values are copied when read and inspected in place by `elim`**. Consequently a run\nof cost `t` produces a result of size at most `t` (`Eval.size_le`), so every value\noccurring in a computation is polynomially bounded by the running time — which is what\nmakes the unit costs honest under a pointer-machine, and then Turing-machine, simulation\nwith polynomial overhead (meta-remark below).\n\n## Why this model (decision record)\n\nThe choice is driven by the requirements extracted from the JNVWY pipeline:\n\n* **R1 (programmability)**: deciders perform real algorithms (linear algebra over\n  `𝔽₂`/`𝔽_{2^k}`, low-degree evaluations, simulations); their polynomial time bounds\n  must be provable via a compositional closure library.\n* **R2 (self-reference)**: efficient universal machine, s-m-n, and Kleene fixed\n  point, with explicit polynomial overheads (the recursion in [MNY, Lemma 5.1] and\n  the λ-boundedness bookkeeping of [JNVWY, §12] need them).\n* **R3 (arithmetizable tableaux)**: answer reduction needs bounded computations of\n  *this* model to have succinct, formula-uniform 3SAT tableaux (blueprint\n  `thm:succinct-sat`). This is discharged through a single gateway theorem whose\n  proof compiles the model to the machine model of `MIPRE/TM` (planned Milestone H1\n  of `planning/tm-infrastructure.md`). The low-level machine appears in no statement\n  outside that proof.\n* **R4 (binary-length sizes)**: indices `n` enter in binary; \"succinct\" means\n  `poly(log)` of the described object.\n\nThree natural alternatives fail:\n\n* `Nat.Partrec.Code` (with any cost semantics) is **not** a viable carrier of\n  polynomial time: its primitives reach large values only through `succ`-chains,\n  value-indexed `prec` recursion, or `rfind` search, so even `n ↦ 2n` on binary\n  representations has no `polylog(n)`-cost program — the induced \"P\" would not\n  contain binary addition. Its numeric pairing (`Nat.pair`, quadratic) also\n  distorts lengths exponentially under nesting. It remains the model of the *final*\n  computability statements (`MIPRE.HaltingGameValue`), reached via a one-time\n  compilation (`Foundations/Compression.lean`).\n* Mathlib's `Turing.ToPartrec.Code`, the model used until 2026-09-08, cannot rebuild\n  lists in polynomial time. Its primitives act only on the front of a single `List ℕ`\n  value (prepend, drop or replace the first cell), and the value is passed by value; so\n  every output has the form `p ++ v.drop k`, and the input suffix can only be discarded\n  by first dropping everything built in front of it, which retains a program-size-bounded\n  number of cells of polynomially bounded value — `O(log t)` bits of information. Hence\n  `List.reverse`, `",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Basic.lean",
+  "source_path": "MIPRE/Foundations/Cost/Basic.lean",
+  "defmat": [
+   "MIPRE.Cost.HaltsWithin"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.HaltsWithin",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     518,
+     519
+    ]
+   }
+  ],
+  "lines": 134,
+  "published_bundle": "MIPRE_Foundations_Cost_Basic",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.HaltsWithin": [
+    "/-- `p` halts on `x` within cost `t`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_Cost_Encoding_B",
+  "module": "MIPRE.Foundations.Cost.Encoding",
+  "module_doc": "/-!\n# Size-aware encodings\n\nInterface between ordinary types and the ambient model: a `SizedEncoding α` renders\n`a : α` as a value `encode a : Data`, and `esize a` is its size (the length of its\npreorder serialization `Data.toBits`), an honest bit-length up to a constant factor.\nAll polynomial-time statements (`Cost.PolyTime`) are relative to these encodings.\n\nConventions:\n\n* bits are `false ↦ nil` and `true ↦ cons nil nil`;\n* lists are `cons`-chains ending in `nil`, so a bit string of length `n` has size between\n  `2n + 1` and `4n + 1`;\n* natural numbers are encoded in **binary** (LSB first, `Nat.bits`), so\n  `esize n ≤ 4 · Nat.size n + 1`;\n* pairs are `cons`: `esize (a, b) = esize a + esize b + 1` — length-additive pairing, with\n  no separators;\n* programs are their tree encoding `Prog.toData`, a length-faithful serialization (this,\n  not any numeric Gödel numbering, is how programs occur as *data*).\n\nThis deliberately does **not** reuse Mathlib's `Encodable`/`Primcodable`: those encode into\n`ℕ` via the quadratic pairing `Nat.pair`, whose iterated use distorts lengths exponentially.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Encoding.lean",
+  "source_path": "MIPRE/Foundations/Cost/Encoding.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPRE.Cost.Data.size_ofBool",
+   "MIPRE.Cost.Data.size_ofList_le",
+   "MIPRE.Cost.Prog.esize_eq_size_toData",
+   "MIPRE.Cost.Prog.two_le_esize",
+   "MIPRE.Cost.encode_prod",
+   "MIPRE.Cost.esize_bitStr_le",
+   "MIPRE.Cost.esize_nat_le",
+   "MIPRE.Cost.esize_pos"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Data.size_ofBool",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     75,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Data.size_ofList_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     96,
+     103
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.esize_eq_size_toData",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     222,
+     222
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.two_le_esize",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     224,
+     231
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.encode_prod",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     175,
+     176
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_bitStr_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     127,
+     128
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_nat_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     147,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.esize_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     49
+    ]
+   }
+  ],
+  "lines": 89,
+  "published_bundle": "MIPRE_Foundations_Cost_Encoding",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Sampler",
+  "module": "MIPRE.Foundations.CL.Sampler",
+  "module_doc": "/-!\n# Samplers\n\nBlueprint `def:sampler` (paper `linear.tex`, Definition `def:sampler`; ledger node `1.1.3`\nwith `def:normal-verifier`). A sampler is the half of a normal form verifier that produces the\nquestions: a program of the ambient model (`MIPRE.Cost`) that, on an index `n`, presents two\nconditionally linear functions `L^𝖠, L^𝖡` on `𝔽₂^{s(n)}` — one per player — through a fixed\n*query interface*, so that the question distribution of the game at index `n` is the CL\ndistribution `(L^𝖠 x, L^𝖡 x)`, `x` uniform. The interface is what every transformation of the\npipeline (introspection, oracularization, answer reduction) is written against, which is why the\nblueprint fixes it once and for all. It is the paper's, restricted to field size `2` as the\nblueprint's normal form verifiers are:\n\n* `(n, dimension) ↦ s(n)`;\n* `(n, w, marginal, j, z) ↦ L^w_{≤ j}(z)`, the `j`-th marginal (`CLFun.truncate`);\n* `(n, w, linear, j, u, y) ↦ L^w_{j,u}(y)`, the `j`-th linear map with prefix `u`\n  (`CLFun.mapOfPrefix`);\n* `(n, w, factor, j, u) ↦ V^w_{j,u}`, the `j`-th factor space with prefix `u`, as an indicator\n  vector (`CLFun.factorOfPrefix`),\n\nfor `1 ≤ j ≤ ℓ`, `z, y` of length `s(n)`, and — for the last two — `u` in the image of\n`L^w_{< j}`, exactly as the paper quantifies (`CLFun.SupportedOn.factorOfPrefix_eval` is what\nmakes the answers well defined there). The sampler must moreover halt on *every* input of the\nform `(n, …)`; the paper's bounded format checks are what make its running time on index `n`,\nthe supremum over all such inputs, finite. `Sampler.TimeBoundAt n T k` is that supremum\nbounded by `T`, read as halting within cost `T · (|d| + 1)^k` on every input `(n, d)`: the\nambient model has no cursor into its input, and a bound uniform over all inputs is not\nsatisfiable by any program that walks a list of unbounded length (see the module docstring of\n`MIPRE.Foundations.Verifier`, which also says why the degree `k` is needed).\nVectors and register subspaces of `𝔽₂^s` travel as bit strings of length `s` (`toBits`,\n`ofBits`, `indicatorBits`); the paper's binary representation over `𝔽_{2^k}` through a\nself-dual basis is not needed at field size `2`.\n\nThe CL functions of a sampler are required to be *exactly* on the whole space\n(`CLFun.ExactlyOn`): their factor spaces partition the coordinates, item (2) of `lem:cl-kth`,\nwhich the paper's definition demands of them.\n\n## Conventions\n\nThe input of the program is the one value `encode (n, q)` for `q : Sampler.Query`, with a query\nencoded as the tuple `(kind, w, j, u, y)`, missing arguments empty (`Sampler.Query.toTuple`).\nPlayers are `MIPRE.Player`, Alice first.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Sampler.lean",
+  "source_path": "MIPRE/Foundations/CL/Sampler.lean",
+  "defmat": [
+   "MIPRE.CL.Sampler",
+   "MIPRE.CL.Sampler.Query",
+   "MIPRE.CL.Sampler.Query.instSizedEncoding",
+   "MIPRE.CL.Sampler.Query.ofTuple",
+   "MIPRE.CL.Sampler.Query.toTuple",
+   "MIPRE.CL.Sampler.TimeBoundAt",
+   "MIPRE.CL.Sampler.dist",
+   "MIPRE.CL.Sampler.size",
+   "MIPRE.CL.indicatorBits",
+   "MIPRE.CL.ofBits",
+   "MIPRE.CL.toBits",
+   "MIPRE.CL.𝔽₂",
+   "MIPRE.Player",
+   "MIPRE.Player.instSizedEncoding",
+   "MIPRE.Player.ofBool",
+   "MIPRE.Player.toBool"
+  ],
+  "embedded": [
+   "MIPRE.CL.Sampler.Query.ofTuple_toTuple",
+   "MIPRE.CL.Sampler.TimeBoundAt.mono",
+   "MIPRE.CL.Sampler.dist_nonneg",
+   "MIPRE.CL.Sampler.sum_dist",
+   "MIPRE.CL.length_indicatorBits",
+   "MIPRE.CL.length_toBits",
+   "MIPRE.CL.ofBits_toBits",
+   "MIPRE.CL.toBits_ofBits",
+   "MIPRE.Player.ofBool_toBool",
+   "_private.MIPRE.Foundations.CL.Sampler.0.MIPRE.CL.ite_decide_eq_one"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Sampler",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     173,
+     210
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.Query",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     131,
+     143
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.Query.instSizedEncoding",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     165,
+     169
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.Query.ofTuple",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     154,
+     160
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.Query.ofTuple_toTuple",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     162,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.Query.toTuple",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     147,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.TimeBoundAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     216,
+     220
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.TimeBoundAt.mono",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     225,
+     229
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.dist",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     239,
+     242
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.dist_nonneg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     244,
+     245
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.size",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     231,
+     232
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Sampler.sum_dist",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     247,
+     248
+    ]
+   },
+   {
+    "name": "MIPRE.CL.indicatorBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     104
+    ]
+   },
+   {
+    "name": "MIPRE.CL.length_indicatorBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     109,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.CL.length_toBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     106,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.CL.ofBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     98,
+     100
+    ]
+   },
+   {
+    "name": "MIPRE.CL.ofBits_toBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     117,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.CL.toBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     95,
+     96
+    ]
+   },
+   {
+    "name": "MIPRE.CL.toBits_ofBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     123,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.CL.𝔽₂",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.Player",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     56,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.Player.instSizedEncoding",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     78,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.Player.ofBool",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     71,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.Player.ofBool_toBool",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     76,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.Player.toBool",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     66,
+     69
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.Sampler.0.MIPRE.CL.ite_decide_eq_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     113,
+     115
+    ]
+   }
+  ],
+  "lines": 270,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime"
+  ],
+  "blueprint": [
+   "def:sampler"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.Sampler": [
+    "/-- Blueprint `def:sampler`: an `ℓ`-level sampler (field size `2`). A program of the ambient",
+    "model which, on index `n`, presents an `ℓ`-level CL function on `𝔽₂^{s(n)}` for each player",
+    "through the query interface — dimension, marginals, stage maps and factor spaces (the data of",
+    "`lem:cl-kth`) — and halts on every input of the form `(n, …)`. The correctness clauses are",
+    "imposed exactly where the paper imposes them: well-formed vectors, levels `1 ≤ j ≤ ℓ`, and",
+    "prefixes `u` in the image of `L^w_{< j}`. -/"
+   ],
+   "MIPRE.CL.Sampler.Query": [
+    "/-- The queries a sampler answers (`def:sampler`): the paper's `6`-input Turing machine, whose",
+    "inputs after the index `n` are a player label `w`, a query kind, a level `j` and up to two",
+    "vectors. -/"
+   ],
+   "MIPRE.CL.Sampler.Query.instSizedEncoding": [
+    "/-- Queries are data: their tuple, encoded. -/"
+   ],
+   "MIPRE.CL.Sampler.Query.ofTuple": [
+    "/-- Reading a query back from its tuple. -/"
+   ],
+   "MIPRE.CL.Sampler.Query.toTuple": [
+    "/-- A query as the tuple `(kind, w, j, u, y)`, missing arguments empty. -/"
+   ],
+   "MIPRE.CL.Sampler.TimeBoundAt": [
+    "/-- `TIME_𝒮(n) ≤ T`: the sampler halts within cost `T · (|d| + 1)^k` on every input `(n, d)`,",
+    "well formed or not — the supremum of `def:sampler` at index `n`, bounded by a polynomial in",
+    "the size of the input with coefficient `T` and degree `k`. -/"
+   ],
+   "MIPRE.CL.Sampler.dist": [
+    "/-- The distribution of the sampler on index `n` (paper `def:sampler-sample`): the CL",
+    "distribution of its two CL functions, `(L^𝖠 x, L^𝖡 x)` for `x` uniform in `𝔽₂^{s(n)}`. -/"
+   ],
+   "MIPRE.CL.Sampler.size": [
+    "/-- The description length `|𝒮|` of the sampler. -/"
+   ],
+   "MIPRE.CL.indicatorBits": [
+    "/-- The indicator bit string of a set of coordinates: the paper's representation of a register",
+    "subspace of `𝔽₂^s` as a vector in `{0,1}^s`. -/"
+   ],
+   "MIPRE.CL.ofBits": [
+    "/-- The vector in `𝔽₂^s` read off a bit string; missing bits read as `0`, bits beyond `s` are",
+    "ignored. -/"
+   ],
+   "MIPRE.CL.toBits": [
+    "/-- The bit string of a vector in `𝔽₂^s`: its list of coordinates. -/"
+   ],
+   "MIPRE.CL.𝔽₂": [
+    "/-- The binary field `𝔽₂`: the field size of every sampler of a normal form verifier (blueprint",
+    "`def:sampler`). -/"
+   ],
+   "MIPRE.Player": [
+    "/-- The two players of a nonlocal game. -/"
+   ],
+   "MIPRE.Player.instSizedEncoding": null,
+   "MIPRE.Player.ofBool": [
+    "/-- The player of a bit. -/"
+   ],
+   "MIPRE.Player.toBool": [
+    "/-- Players as bits: Alice is `false`, Bob is `true`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_RawInt",
+  "module": "MIPRE.Foundations.ValueApprox.RawInt",
+  "module_doc": "/-!\n# Integers and Gaussian integers as pairs of naturals\n\nMathlib's `Primrec` has no arithmetic on `ℤ` (and no `Primcodable ℤ`), so the enumeration behind\n`lem:value-lower-approx` carries its integers as pairs of naturals: `PInt := ℕ × ℕ` denotes\n`a - b`, and `GInt := PInt × PInt` denotes the Gaussian integer `m + n i`. Equality and order are\nthe semantic ones (`PInt.Eq'`, `PInt.Lt'`, `GInt.Eq'`), decidable and primitive recursive;\n`PInt.toInt` and `GInt.toC` read the values off and commute with the operations provided. Every\nfunction here is primitive recursive, with the proof next to the definition.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/RawInt.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/RawInt.lean",
+  "defmat": [
+   "MIPRE.ValueApprox.GInt",
+   "MIPRE.ValueApprox.GInt.Eq'",
+   "MIPRE.ValueApprox.GInt.add",
+   "MIPRE.ValueApprox.GInt.conj",
+   "MIPRE.ValueApprox.GInt.instDecidableRelEq'",
+   "MIPRE.ValueApprox.GInt.mul",
+   "MIPRE.ValueApprox.GInt.ofInt",
+   "MIPRE.ValueApprox.GInt.ofNat",
+   "MIPRE.ValueApprox.GInt.sum",
+   "MIPRE.ValueApprox.GInt.toC",
+   "MIPRE.ValueApprox.GInt.zero",
+   "MIPRE.ValueApprox.PInt",
+   "MIPRE.ValueApprox.PInt.Eq'",
+   "MIPRE.ValueApprox.PInt.Lt'",
+   "MIPRE.ValueApprox.PInt.add",
+   "MIPRE.ValueApprox.PInt.instDecidableRelEq'",
+   "MIPRE.ValueApprox.PInt.instDecidableRelLt'",
+   "MIPRE.ValueApprox.PInt.mul",
+   "MIPRE.ValueApprox.PInt.neg",
+   "MIPRE.ValueApprox.PInt.ofInt",
+   "MIPRE.ValueApprox.PInt.ofNat",
+   "MIPRE.ValueApprox.PInt.sum",
+   "MIPRE.ValueApprox.PInt.toInt",
+   "MIPRE.ValueApprox.PInt.zero"
+  ],
+  "embedded": [
+   "MIPRE.ValueApprox.GInt.eq'_iff",
+   "MIPRE.ValueApprox.GInt.im_toC",
+   "MIPRE.ValueApprox.GInt.primrecRel_eq'",
+   "MIPRE.ValueApprox.GInt.primrec_add",
+   "MIPRE.ValueApprox.GInt.primrec_conj",
+   "MIPRE.ValueApprox.GInt.primrec_mul",
+   "MIPRE.ValueApprox.GInt.primrec_ofNat",
+   "MIPRE.ValueApprox.GInt.primrec_sum",
+   "MIPRE.ValueApprox.GInt.re_toC",
+   "MIPRE.ValueApprox.GInt.toC_add",
+   "MIPRE.ValueApprox.GInt.toC_conj",
+   "MIPRE.ValueApprox.GInt.toC_mul",
+   "MIPRE.ValueApprox.GInt.toC_ofInt",
+   "MIPRE.ValueApprox.GInt.toC_ofNat",
+   "MIPRE.ValueApprox.GInt.toC_sum",
+   "MIPRE.ValueApprox.GInt.toC_zero",
+   "MIPRE.ValueApprox.PInt.eq'_iff",
+   "MIPRE.ValueApprox.PInt.lt'_iff",
+   "MIPRE.ValueApprox.PInt.primrecRel_eq'",
+   "MIPRE.ValueApprox.PInt.primrecRel_lt'",
+   "MIPRE.ValueApprox.PInt.primrec_add",
+   "MIPRE.ValueApprox.PInt.primrec_mul",
+   "MIPRE.ValueApprox.PInt.primrec_neg",
+   "MIPRE.ValueApprox.PInt.primrec_ofNat",
+   "MIPRE.ValueApprox.PInt.primrec_sum",
+   "MIPRE.ValueApprox.PInt.toInt_add",
+   "MIPRE.ValueApprox.PInt.toInt_mul",
+   "MIPRE.ValueApprox.PInt.toInt_neg",
+   "MIPRE.ValueApprox.PInt.toInt_ofInt",
+   "MIPRE.ValueApprox.PInt.toInt_ofNat",
+   "MIPRE.ValueApprox.PInt.toInt_sum",
+   "MIPRE.ValueApprox.PInt.toInt_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ValueApprox.GInt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.Eq'",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     115,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.add",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     108,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.conj",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     112,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.eq'_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     140,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.im_toC",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     122,
+     122
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.instDecidableRelEq'",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     118,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.mul",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     109,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.ofInt",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     107,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.ofNat",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     106,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.primrecRel_eq'",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     161,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.primrec_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     145,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.primrec_conj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     157,
+     157
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.primrec_mul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     148,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.primrec_ofNat",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     144,
+     144
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.primrec_sum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     158,
+     160
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.re_toC",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     121,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.sum",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     113,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.toC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     103
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.toC_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     127,
+     128
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.toC_conj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     132,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.toC_mul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     129,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.toC_ofInt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     125,
+     126
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.toC_ofNat",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     124,
+     124
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.toC_sum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     134,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.toC_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     123,
+     123
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GInt.zero",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     105,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     24,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.Eq'",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.Lt'",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     43,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.add",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     35,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.eq'_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     64,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.instDecidableRelEq'",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     46,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.instDecidableRelLt'",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     47,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.lt'_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     66,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.mul",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     37,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.neg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     36,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.ofInt",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     34,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.ofNat",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     33,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.primrecRel_eq'",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     85,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.primrecRel_lt'",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     88,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.primrec_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     70,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.primrec_mul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     74,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.primrec_neg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     73,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.primrec_ofNat",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     69,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.primrec_sum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     82,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.sum",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     38,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.toInt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     29,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.toInt_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     53,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.toInt_mul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.toInt_neg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.toInt_ofInt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.toInt_ofNat",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     50,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.toInt_sum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.toInt_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.PInt.zero",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     32,
+     32
+    ]
+   }
+  ],
+  "lines": 169,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.ValueApprox.GInt": [
+    "/-- A Gaussian integer `m + n i`, as a pair of `PInt`s. -/"
+   ],
+   "MIPRE.ValueApprox.GInt.Eq'": [
+    "/-- Semantic equality of the denoted Gaussian integers. -/"
+   ],
+   "MIPRE.ValueApprox.GInt.add": null,
+   "MIPRE.ValueApprox.GInt.conj": null,
+   "MIPRE.ValueApprox.GInt.instDecidableRelEq'": null,
+   "MIPRE.ValueApprox.GInt.mul": null,
+   "MIPRE.ValueApprox.GInt.ofInt": null,
+   "MIPRE.ValueApprox.GInt.ofNat": null,
+   "MIPRE.ValueApprox.GInt.sum": null,
+   "MIPRE.ValueApprox.GInt.toC": [
+    "/-- The complex number denoted. -/"
+   ],
+   "MIPRE.ValueApprox.GInt.zero": null,
+   "MIPRE.ValueApprox.PInt": [
+    "/-- An integer `a - b`, as the pair `(a, b)` of naturals. -/"
+   ],
+   "MIPRE.ValueApprox.PInt.Eq'": [
+    "/-- Semantic equality of the denoted integers. -/"
+   ],
+   "MIPRE.ValueApprox.PInt.Lt'": [
+    "/-- Semantic strict order of the denoted integers. -/"
+   ],
+   "MIPRE.ValueApprox.PInt.add": null,
+   "MIPRE.ValueApprox.PInt.instDecidableRelEq'": null,
+   "MIPRE.ValueApprox.PInt.instDecidableRelLt'": null,
+   "MIPRE.ValueApprox.PInt.mul": null,
+   "MIPRE.ValueApprox.PInt.neg": null,
+   "MIPRE.ValueApprox.PInt.ofInt": null,
+   "MIPRE.ValueApprox.PInt.ofNat": null,
+   "MIPRE.ValueApprox.PInt.sum": null,
+   "MIPRE.ValueApprox.PInt.toInt": [
+    "/-- The integer denoted. -/"
+   ],
+   "MIPRE.ValueApprox.PInt.zero": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Games",
+  "module": "MIPRE.Foundations.Games",
+  "module_doc": "/-!\n# Games, strategies, and values\n\nThis file contains the definitions of blueprint Section 2.1 (\"Games, strategies, and\nvalues\") of the MIP* = RE formalization project: two-player one-round nonlocal games, the\nthree classes of strategies (tensor-product, synchronous, and commuting), the associated\nvalues, and the entanglement requirement.\n\nThe three strategy classes are built on a common skeleton, which this file factors out:\na question-indexed family of projective measurements in a complex star algebra\n(`MIPRE.ProjectiveMeasurement`). Tensor-product strategies instantiate it on two matrix\nalgebras joined by a state vector and the Born rule; synchronous strategies instantiate\nit on one matrix algebra `ℂ^{d×d}`, evaluated against the dimension-normalized trace;\ncommuting strategies are the general case of an abstract unital C*-algebra with a\ntracial state (`MIPRE.TracialState`), evaluated by the generic value\n`MIPRE.tracialValue`. The inclusion of synchronous into commuting strategies is\n`MIPRE.SyncStrategy.toCommutingStrategy`, which preserves the value definitionally; the\ncomparison of values (blueprint `lem:sync-le-valco`) follows.\n\nThe matrix-based definitions (`POVM`, `SynchronousGame`, and the synchronous value)\nagree with those of `MIPRE.HaltingGameValue`, which is kept self-contained. The\nsynchronous strategy is packaged differently there (with `POVM`s in place of a\n`ProjectiveMeasurement`); `MIPRE.SyncStrategy.ofPOVM` and `MIPRE.SyncStrategy.value_eq`\nprovide the correspondence.\n\n## Main definitions\n\n- `MIPRE.Game`: two-player one-round games (blueprint `def:game`).\n- `MIPRE.SynchronousGame`: synchronous games, with the interpretation\n  `MIPRE.SynchronousGame.toGame` (blueprint `def:sync-game`).\n- `MIPRE.ProjectiveMeasurement`: question-indexed projective measurement families in a\n  star ring, the common skeleton of the three strategy classes.\n- `MIPRE.TracialState`: tracial states on a complex star algebra;\n  `MIPRE.normalizedTrace` is the normalized matrix trace `Tr(·)/d`.\n- `MIPRE.tracialValue`: the generic value of a projective measurement family against a\n  tracial state.\n- `MIPRE.POVM`: positive operator-valued measures, following the QuantumLib\n  (Lean-QuantumInfo) definition; the vocabulary of the distance measures\n  (`MIPRE.Foundations.Distances`) and of the correspondence with\n  `MIPRE.HaltingGameValue`.\n- `MIPRE.TensorProductStrategy`: finite-dimensional tensor-product strategies, with\n  projective measurements on both factors (blueprint `def:tensor-strategy`).\n- `MIPRE.quantumValue`: the quantum value `val*` of a game (blueprint `def:q-value`).\n- `MIPRE.SyncStrategy`: synchronous strategies (blueprint `def:sync-strategy`), the\n  instantiation of the skeleton at `ℂ^{d×d}` with the normalized trace.\n- `MIPRE.SyncStrategy.IsPCC`: PCC (projective, consistent, and commuting) strategies\n  (blueprint `def:pcc`).\n- `MIPRE.syncValue`: the synchronous value of a synchronous game (blueprint\n  `def:sync-value`).\n- `MIPRE.CommutingStrategy`: commuting strategies, given by a unital C*-algebra with a\n  tracial state (blueprint `def:commuting-strategy`).\n- `MIPRE.commValue`: the commuting value of a synchronous game (blueprint\n  `def:commuting-value`).\n- `MIPRE.SyncStrategy.toCommutingStrategy`: a synchronous strategy is a commuting\n  strategy, with the same value (`MIPRE.SyncStrategy.value_toCommutingStrategy`).\n- `MIPRE.entRequirement`: the entanglement requirement `Ent(G, ν)` (blueprint `def:ent`).\n\n## Main statements\n\n- `MIPRE.tracialValue_nonneg` and `MIPRE.tracialValue_le_one`: the generic value lies in\n  `[0, 1]`; the synchronous and commuting values inherit both bounds.\n- `MIPRE.ProjectiveMeasurement.consistency`: against a tracial state, a projective\n  family answers equal questions with equal answers (probability zero for `a ≠ b`).\n- `MIPRE.syncValue_le_quantumValue`: the synchronous value lower-bounds the quantum value\n  (blueprint `lem:sync-le-valstar`).\n- `MIPRE.syncValue_le_commValue`: the synchronous value",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Games.lean",
+  "source_path": "MIPRE/Foundations/Games.lean",
+  "defmat": [
+   "MIPRE.CommutingStrategy",
+   "MIPRE.CommutingStrategy.value",
+   "MIPRE.Game",
+   "MIPRE.POVM",
+   "MIPRE.ProjectiveMeasurement",
+   "MIPRE.ProjectiveMeasurement.map",
+   "MIPRE.SyncStrategy",
+   "MIPRE.SyncStrategy.IsPCC",
+   "MIPRE.SyncStrategy.povm",
+   "MIPRE.SyncStrategy.toCommutingStrategy",
+   "MIPRE.SyncStrategy.toTensorProductStrategy",
+   "MIPRE.SyncStrategy.value",
+   "MIPRE.SynchronousGame",
+   "MIPRE.SynchronousGame.toGame",
+   "MIPRE.TensorProductStrategy",
+   "MIPRE.TensorProductStrategy.value",
+   "MIPRE.TracialState",
+   "MIPRE.TracialState.comp",
+   "MIPRE.TracialState.instFunLikeComplex",
+   "MIPRE.maxEntangled",
+   "MIPRE.normalizedTrace",
+   "MIPRE.quantumValue",
+   "MIPRE.syncValue",
+   "MIPRE.tracialValue"
+  ],
+  "embedded": [
+   "MIPRE.ProjectiveMeasurement.map_M",
+   "MIPRE.SyncStrategy.value_eq",
+   "MIPRE.SyncStrategy.value_toCommutingStrategy",
+   "MIPRE.SyncStrategy.value_toTensorProductStrategy",
+   "MIPRE.TensorProductStrategy.bddAbove_range_value",
+   "MIPRE.TensorProductStrategy.re_dotProduct_nonneg",
+   "MIPRE.TensorProductStrategy.sum_dotProduct_kronecker",
+   "MIPRE.TensorProductStrategy.value_le_one",
+   "MIPRE.TensorProductStrategy.value_nonneg",
+   "MIPRE.TracialState.coe_mk",
+   "MIPRE.TracialState.coe_toLinearMap",
+   "MIPRE.TracialState.comp_apply",
+   "MIPRE.TracialState.instLinearMapClassComplex",
+   "MIPRE.TracialState.map_mul_comm",
+   "MIPRE.TracialState.map_one",
+   "MIPRE.TracialState.star_mul_self_nonneg",
+   "MIPRE.dotProduct_kronecker_maxEntangled",
+   "MIPRE.dotProduct_maxEntangled_self",
+   "MIPRE.kronecker_mulVec_maxEntangled",
+   "MIPRE.normalizedTrace_apply",
+   "MIPRE.ofReal_invSqrt_mul_self",
+   "MIPRE.posSemidef_kronecker",
+   "MIPRE.quantumValue_nonneg"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CommutingStrategy",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     652,
+     667
+    ]
+   },
+   {
+    "name": "MIPRE.CommutingStrategy.value",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     675,
+     679
+    ]
+   },
+   {
+    "name": "MIPRE.Game",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     133,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.POVM",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     319,
+     336
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     181,
+     195
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.map",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     280,
+     286
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.map_M",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     288,
+     290
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     557,
+     570
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.IsPCC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     634,
+     641
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.povm",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     605,
+     616
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.toCommutingStrategy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     709,
+     721
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.toTensorProductStrategy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     790,
+     809
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.value",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     576,
+     580
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.value_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     582,
+     595
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.value_toCommutingStrategy",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     723,
+     726
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.value_toTensorProductStrategy",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     811,
+     824
+    ]
+   },
+   {
+    "name": "MIPRE.SynchronousGame",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     147,
+     161
+    ]
+   },
+   {
+    "name": "MIPRE.SynchronousGame.toGame",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     165,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     340,
+     362
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.bddAbove_range_value",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     460,
+     465
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.re_dotProduct_nonneg",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     407,
+     413
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.sum_dotProduct_kronecker",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     422,
+     436
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.value",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     364,
+     373
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.value_le_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     438,
+     458
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.value_nonneg",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     415,
+     420
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     197,
+     208
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.coe_mk",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     226,
+     227
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.coe_toLinearMap",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     224,
+     224
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.comp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     256,
+     271
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.comp_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     273,
+     274
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.instFunLikeComplex",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     215,
+     218
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.instLinearMapClassComplex",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     220,
+     222
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.map_mul_comm",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     236,
+     238
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.map_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     233,
+     234
+    ]
+   },
+   {
+    "name": "MIPRE.TracialState.star_mul_self_nonneg",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     229,
+     231
+    ]
+   },
+   {
+    "name": "MIPRE.dotProduct_kronecker_maxEntangled",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     778,
+     786
+    ]
+   },
+   {
+    "name": "MIPRE.dotProduct_maxEntangled_self",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     758,
+     767
+    ]
+   },
+   {
+    "name": "MIPRE.kronecker_mulVec_maxEntangled",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     769,
+     776
+    ]
+   },
+   {
+    "name": "MIPRE.maxEntangled",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     747,
+     750
+    ]
+   },
+   {
+    "name": "MIPRE.normalizedTrace",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     530,
+     549
+    ]
+   },
+   {
+    "name": "MIPRE.normalizedTrace_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     551,
+     553
+    ]
+   },
+   {
+    "name": "MIPRE.ofReal_invSqrt_mul_self",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     752,
+     756
+    ]
+   },
+   {
+    "name": "MIPRE.posSemidef_kronecker",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     391,
+     401
+    ]
+   },
+   {
+    "name": "MIPRE.quantumValue",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     375,
+     378
+    ]
+   },
+   {
+    "name": "MIPRE.quantumValue_nonneg",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     469,
+     471
+    ]
+   },
+   {
+    "name": "MIPRE.syncValue",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     645,
+     648
+    ]
+   },
+   {
+    "name": "MIPRE.tracialValue",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     477,
+     486
+    ]
+   }
+  ],
+  "lines": 693,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [
+   "def:commuting-strategy",
+   "def:commuting-value",
+   "def:game",
+   "def:pcc",
+   "def:q-value",
+   "def:sync-game",
+   "def:sync-strategy",
+   "def:sync-value",
+   "def:tensor-strategy"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CommutingStrategy": [
+    "/-- A commuting strategy for a synchronous game (blueprint `def:commuting-strategy`): a",
+    "unital C*-algebra `alg` with a tracial state `τ`, together with a question-indexed",
+    "projective measurement family in `alg`. Outcome probabilities are computed with `τ` (see",
+    "`CommutingStrategy.value`).",
+    "",
+    "The algebra lives in universe `0`; by the GNS representation this loses no generality",
+    "(see the module docstring). -/"
+   ],
+   "MIPRE.CommutingStrategy.value": [
+    "/-- The value of a commuting strategy in `G` (blueprint `def:commuting-value`): the",
+    "generic tracial value; the players answer questions `(x, y)` with `(a, b)` with",
+    "probability `τ(M^x_a M^y_b)`. -/"
+   ],
+   "MIPRE.Game": [
+    "/-- A two-player one-round game (blueprint `def:game`): finite question alphabets `X`,",
+    "`Y`, finite answer alphabets `A`, `B`, a probability distribution `μ` on `X × Y`, and a",
+    "decision predicate `D` (`true` = accept). -/"
+   ],
+   "MIPRE.POVM": [
+    "/-- A POVM is a (finite) collection of PSD matrices on the same Hilbert space that sum",
+    "to the identity. Here `X` indexes the matrices, and `d` is the space dimension.",
+    "",
+    "This is the QuantumLib (Lean-QuantumInfo) definition of `POVM`, with",
+    "`selfAdjoint (Matrix d d ℂ)` spelled out for its definitionally equal",
+    "`HermitianMat d ℂ`; `0 ≤ mats x` is the Loewner order, i.e. positive semidefiniteness.",
+    "",
+    "General POVMs are not part of the strategy definitions (strategies are projective, via",
+    "`ProjectiveMeasurement`); they are the vocabulary of the distance measures",
+    "(`MIPRE.Foundations.Distances`) and of the correspondence with",
+    "`MIPRE.HaltingGameValue` (`SyncStrategy.povm`, `SyncStrategy.ofPOVM`). -/"
+   ],
+   "MIPRE.ProjectiveMeasurement": [
+    "/-- A question-indexed family of projective measurements with outcomes in a star ring",
+    "`𝒜`: for each question `x`, the operators `M x a` are self-adjoint idempotents (i.e.",
+    "orthogonal projections) that sum to one. This is the common skeleton of the strategy",
+    "classes: tensor-product strategies (`TensorProductStrategy`) and synchronous strategies",
+    "(`SyncStrategy`) instantiate it at matrix algebras, commuting strategies",
+    "(`CommutingStrategy`) at an abstract unital C*-algebra. -/"
+   ],
+   "MIPRE.ProjectiveMeasurement.map": [
+    "/-- Transport a projective measurement family along a star-algebra equivalence. -/"
+   ],
+   "MIPRE.SyncStrategy": [
+    "/-- A synchronous strategy for a synchronous game (blueprint `def:sync-strategy`): a",
+    "question-indexed projective measurement family on `ℂ^d` (`d > 0`). Measurements for",
+    "different questions need not commute. There is no state vector: outcome probabilities",
+    "are computed with the dimension-normalized trace `τ(M) = Tr(M)/d` (see",
+    "`SyncStrategy.value`). This is the instantiation of the commuting framework at the full",
+    "matrix algebra with its canonical tracial state, see",
+    "`SyncStrategy.toCommutingStrategy`. -/"
+   ],
+   "MIPRE.SyncStrategy.IsPCC": [
+    "/-- A synchronous strategy is *PCC* (*projective, consistent, and commuting*, following",
+    "JNVWY Section 5.2; blueprint `def:pcc`) if the measurement operators associated with any",
+    "pair of questions asked with positive probability commute. Projectivity is part of",
+    "`SyncStrategy`, and consistency is automatic for synchronous strategies",
+    "(`ProjectiveMeasurement.consistency`), so only the commutation condition remains. -/"
+   ],
+   "MIPRE.SyncStrategy.povm": [
+    "/-- The measurements of a synchronous strategy, packaged as POVMs (positivity follows",
+    "from projectivity). This is the interface to the QuantumLib-compatible `POVM` layer. -/"
+   ],
+   "MIPRE.SyncStrategy.toCommutingStrategy": [
+    "/-- A synchronous strategy is a commuting strategy (the content of blueprint",
+    "`lem:sync-le-valco`): take the algebra of `d × d` complex matrices with the normalized",
+    "trace. The algebra is realized as `CStarMatrix (Fin d) (Fin d) ℂ` — mathlib's type",
+    "synonym of `Matrix` carrying the operator-norm `CStarAlgebra` instance — and the",
+    "measurements and the state are transported along the definitionally trivial",
+    "star-algebra equivalence `CStarMatrix.ofMatrixStarAlgEquiv`. The value is preserved:",
+    "`SyncStrategy.value_toCommutingStrategy`. -/"
+   ],
+   "MIPRE.SyncStrategy.toTensorProductStrategy": [
+    "/-- A synchronous strategy `{M^x_a}` on `ℂ^d` as a tensor-product strategy for the same",
+    "game (the content of blueprint `lem:sync-le-valstar`): `A^x_a = M^x_a`, `B^y_b = (M^y_b)ᵀ`,",
+    "and the maximally entangled state. Transposing preserves self-adjointness and",
+    "projectivity, and reverses products, so the transposed family is again a projective",
+    "measurement. -/"
+   ],
+   "MIPRE.SyncStrategy.value": [
+    "/-- The value of a synchronous strategy in `G` (blueprint `def:sync-value`): the generic",
+    "tracial value against the normalized trace `τ(M) = Tr(M)/d`. See `SyncStrategy.value_eq`",
+    "for the explicit form. -/"
+   ],
+   "MIPRE.SynchronousGame": [
+    "/-- A synchronous game (blueprint `def:sync-game`): both players receive questions from",
+    "the same alphabet and answer from the same alphabet; on equal questions, unequal answers",
+    "always lose. -/"
+   ],
+   "MIPRE.SynchronousGame.toGame": [
+    "/-- A synchronous game is in particular a game, with `Y = X` and `B = A`. -/"
+   ],
+   "MIPRE.TensorProductStrategy": [
+    "/-- A tensor-product strategy for a game `G` (blueprint `def:tensor-strategy`):",
+    "finite-dimensional Hilbert spaces `ℂ^dA` and `ℂ^dB`, a unit vector `ψ` in their tensor",
+    "product — realized as `Fin dA × Fin dB → ℂ` — and projective measurements `{A^x_a}` on",
+    "`ℂ^dA` and `{B^y_b}` on `ℂ^dB`, packaged as `ProjectiveMeasurement` families on the two",
+    "matrix algebras. Restricting to projective measurements follows JNVWY; by Naimark",
+    "dilation this loses no generality. Outcome probabilities are computed using the Born",
+    "rule (see `TensorProductStrategy.value`). -/"
+   ],
+   "MIPRE.TensorProductStrategy.value": [
+    "/-- The value of a tensor-product strategy in `G` (blueprint `def:q-value`): the players",
+    "answer questions `(x, y)` with `(a, b)` with the Born-rule probability",
+    "`⟨ψ| A^x_a ⊗ B^y_b |ψ⟩`, the tensor product being realized by the Kronecker product.",
+    "The probability is a nonnegative real; we take the real part so that the definition",
+    "typechecks with no proof obligations. -/"
+   ],
+   "MIPRE.TracialState": [
+    "/-- A tracial state on a complex star algebra `𝒜`: a linear functional that is positive",
+    "(`0 ≤ τ (star m * m)`, in the order of `ℂ`), unital (`τ 1 = 1`), and tracial",
+    "(`τ (m * n) = τ (n * m)`). On a unital C*-algebra this is the standard notion of tracial",
+    "state (blueprint `def:commuting-strategy`). -/"
+   ],
+   "MIPRE.TracialState.comp": [
+    "/-- Pull back a tracial state along a star-algebra equivalence. -/"
+   ],
+   "MIPRE.TracialState.instFunLikeComplex": null,
+   "MIPRE.maxEntangled": [
+    "/-- The maximally entangled state `d^{-1/2} ∑ᵢ |i⟩|i⟩` on `ℂ^d ⊗ ℂ^d`, realized as a",
+    "vector on `Fin d × Fin d`. -/"
+   ],
+   "MIPRE.normalizedTrace": [
+    "/-- The dimension-normalized trace `τ(m) = Tr(m)/n` is a tracial state on the matrix",
+    "algebra `ℂ^{n×n}` (in fact its unique tracial state, though we do not prove this). -/"
+   ],
+   "MIPRE.quantumValue": [
+    "/-- The quantum value `val*(G)` of a game (blueprint `def:q-value`): the supremum of",
+    "strategy values over all tensor-product strategies. -/"
+   ],
+   "MIPRE.syncValue": [
+    "/-- The synchronous value of a synchronous game (blueprint `def:sync-value`): the",
+    "supremum of strategy values over all synchronous strategies. -/"
+   ],
+   "MIPRE.tracialValue": [
+    "/-- The value of a projective measurement family `P` against a tracial state `τ` in a",
+    "synchronous game `G`: the players answer questions `(x, y)` with `(a, b)` with",
+    "probability `τ (M^x_a M^y_b)`, a nonnegative real by `TracialState.nonneg_mul`; we take",
+    "the real part so that the definition carries no proof obligations. The synchronous value",
+    "(blueprint `def:sync-value`) and the commuting value (blueprint `def:commuting-value`)",
+    "are instantiations. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox",
+  "module": "MIPRE.Foundations.ValueApprox",
+  "module_doc": "/-!\n# Approximating the quantum value from below\n\nGroundwork for `lem:value-lower-approx`, the `MIP* ⊆ RE` direction: a machine that,\ngiven a game `G` and a rational `t`, halts if and only if `val*(G) > t`. It enumerates\ncandidate strategies with Gaussian-rational entries, computes their values exactly, and\nhalts on a certificate; `val*` is by definition a supremum over finite-dimensional\ntensor-product strategies (`MIPRE.quantumValue`), so no infinite-dimensional truncation\nand no semidefinite programming enter.\n\nThe decomposition followed here is the one validated in the adversarial campaign\nrecorded in `vidick/mipre-proof` (ledger nodes `1.1.7.2.1` to `1.1.7.2.6`); see\n`planning/ledger-informed-plan.md`. This file carries the part of node `1.1.7.2.1`\nthat makes the candidate set decidable: an operator-norm constraint on a Hermitian\nmatrix is equivalent to two positive-semidefiniteness tests, and positive\nsemidefiniteness of a Gaussian-rational Hermitian matrix is decidable.\n\nEverything is stated through the quadratic form `⟨x| M |x⟩` rather than a matrix norm.\nThat is faithful — for Hermitian `M` the operator norm *is* the supremum of\n`|⟨x| M |x⟩|` over unit `x` — and it keeps the statements independent of which of\nMathlib's several matrix-norm instances is in scope.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
+   "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
+   "MIPRE.ValueApprox.kronecker_sub_kronecker"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ValueApprox.dotProduct_kronecker_perturb",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     127,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.dotProduct_mulVec_perturb",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     116,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.kronecker_sub_kronecker",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     108,
+     114
+    ]
+   }
+  ],
+  "lines": 86,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games"
+  ],
+  "blueprint": [
+   "lem:perturbation-split"
+  ],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_Cayley",
+  "module": "MIPRE.Foundations.ValueApprox.Cayley",
+  "module_doc": "/-!\n# The Cayley transform\n\n`cayley S = (1 - S) * (1 + S)⁻¹` maps skew-Hermitian matrices to unitaries, and every\nunitary `U` for which `1 + U` is invertible is `cayley S` for the skew-Hermitian\n`S = (1 - U) * (1 + U)⁻¹`; multiplying `U` by a suitable unit scalar `z` always makes\n`1 + z • U` invertible, and `(z • U) P (z • U)ᴴ = U P Uᴴ`, so up to a phase every unitary is a\nCayley transform. This is the parametrization of unitaries by which the enumeration of\n`lem:value-lower-approx` reaches exact unitaries with Gaussian-rational entries: the Cayley\ntransform of a skew-Hermitian matrix with Gaussian-rational entries has Gaussian-rational\nentries, and the transform is `2`-Lipschitz (`MIPRE.Foundations.ValueApprox.Norms`), so\nrounding `S` entrywise approximates `U`.\n\nThe one analytic input is `IsSkewHermitian.mulVec_one_add_eq_zero`: for skew-Hermitian\n`S`, `⟨v, S v⟩` is purely imaginary, so `(1 + S) v = 0` forces `v = 0`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/Cayley.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/Cayley.lean",
+  "defmat": [
+   "MIPRE.ValueApprox.IsSkewHermitian",
+   "MIPRE.ValueApprox.cayley"
+  ],
+  "embedded": [
+   "MIPRE.ValueApprox.IsSkewHermitian.isUnit_one_add",
+   "MIPRE.ValueApprox.IsSkewHermitian.isUnit_one_sub",
+   "MIPRE.ValueApprox.IsSkewHermitian.mulVec_one_add_eq_zero",
+   "MIPRE.ValueApprox.IsSkewHermitian.neg",
+   "MIPRE.ValueApprox.IsSkewHermitian.re_dotProduct_mulVec",
+   "MIPRE.ValueApprox.cayley_eq",
+   "MIPRE.ValueApprox.cayley_mem_unitaryGroup",
+   "MIPRE.ValueApprox.exists_isSkewHermitian_cayley_eq",
+   "MIPRE.ValueApprox.exists_norm_eq_one_isUnit_one_add_smul",
+   "MIPRE.ValueApprox.infinite_setOf_norm_eq_one",
+   "MIPRE.ValueApprox.smul_mem_unitaryGroup",
+   "MIPRE.ValueApprox.smul_mul_mul_conjTranspose_smul"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     36,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian.isUnit_one_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian.isUnit_one_sub",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     90,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian.mulVec_one_add_eq_zero",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     70,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian.neg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     43,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian.re_dotProduct_mulVec",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     57,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.cayley",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     98,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.cayley_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     101,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.cayley_mem_unitaryGroup",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     110,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.exists_isSkewHermitian_cayley_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     131,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.exists_norm_eq_one_isUnit_one_add_smul",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     223,
+     245
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.infinite_setOf_norm_eq_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     199,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.smul_mem_unitaryGroup",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     183,
+     189
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.smul_mul_mul_conjTranspose_smul",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     191,
+     197
+    ]
+   }
+  ],
+  "lines": 241,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [
+   "lem:rational-pvm-dense"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.ValueApprox.IsSkewHermitian": [
+    "/-- Skew-Hermitian matrices: `Sᴴ = -S`. -/"
+   ],
+   "MIPRE.ValueApprox.cayley": [
+    "/-- The Cayley transform `(1 - S) * (1 + S)⁻¹`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_Projective",
+  "module": "MIPRE.Foundations.ValueApprox.Projective",
+  "module_doc": "/-!\n# Projective measurements on `ℂ^n` are coordinate patterns in a unitary frame\n\nThe measurement operators `{M a}` of one question of a projective measurement on `ℂ^n`\n(`MIPRE.ProjectiveMeasurement` on `Matrix n n ℂ`) are commuting orthogonal projections\nsumming to the identity. This file proves the structure theorem behind the enumeration of\n`lem:value-lower-approx`: there are a unitary `U` and an outcome pattern `r : n → A` with\n\n  `M a = U * diagonal (fun i => if r i = a then 1 else 0) * Uᴴ`\n\nfor every outcome `a` (`IsPVM.exists_unitary_pattern`). So a projective measurement is\nexactly \"a unitary and a pattern\", and enumerating unitaries with Gaussian-rational entries\ntogether with patterns enumerates *exact* projective measurements — the route to\napproximating the quantum value from below without approximate POVMs, matrix square roots\nor Naimark dilation.\n\nThe proof diagonalizes the single Hermitian matrix `H = ∑ a, w a • M a` for distinct real\nweights `w`: an eigenvector `u` of `H` with eigenvalue `λ` satisfies\n`(w a - λ) • M a u = 0`, so `M a u = 0` unless `λ = w a`, and `∑ a, M a u = u ≠ 0` forces\n`λ = w a` for exactly one `a`, which is the pattern at `u`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/Projective.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/Projective.lean",
+  "defmat": [
+   "MIPRE.ValueApprox.IsPVM",
+   "MIPRE.ValueApprox.patternProj"
+  ],
+  "embedded": [
+   "MIPRE.ProjectiveMeasurement.isPVM",
+   "MIPRE.ValueApprox.IsPVM.conj",
+   "MIPRE.ValueApprox.IsPVM.exists_unitary_pattern",
+   "MIPRE.ValueApprox.IsPVM.mul_eq_zero",
+   "MIPRE.ValueApprox.dotProduct_conjTranspose_mul_self",
+   "MIPRE.ValueApprox.isPVM_patternProj"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ProjectiveMeasurement.isPVM",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     53,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsPVM",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     43,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsPVM.conj",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     64,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsPVM.exists_unitary_pattern",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     152,
+     244
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsPVM.mul_eq_zero",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     83,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.dotProduct_conjTranspose_mul_self",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     36,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.isPVM_patternProj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     127,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.patternProj",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     122,
+     125
+    ]
+   }
+  ],
+  "lines": 251,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games"
+  ],
+  "blueprint": [
+   "lem:rational-pvm-dense"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.ValueApprox.IsPVM": [
+    "/-- The measurement operators of one question of a projective measurement on `ℂ^n`:",
+    "self-adjoint idempotents summing to the identity. -/"
+   ],
+   "MIPRE.ValueApprox.patternProj": [
+    "/-- The coordinate pattern projections of `r : n → A`: `patternProj r a` projects onto the",
+    "coordinates `i` with `r i = a`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_Gaussian",
+  "module": "MIPRE.Foundations.ValueApprox.Gaussian",
+  "module_doc": "/-!\n# Gaussian rationals, and matrices with entries in a subfield\n\nThe enumeration of `lem:value-lower-approx` ranges over strategies whose matrices and state\nhave entries in the Gaussian rationals `ℚ(i)`. This file provides\n\n* `GaussianRat`, the subfield of `ℂ` of numbers with rational real and imaginary parts, closed\n  under complex conjugation (`GaussianRat.star_mem`) and dense (`GaussianRat.exists_norm_sub_le`);\n* `EntriesIn K M`, \"all entries of `M` lie in the subfield `K`\", with its closure under the ring\n  operations, conjugate transposition, Kronecker products, determinants, adjugates, inverses and\n  hence the Cayley transform (`EntriesIn.cayley`) — which is how the enumeration reaches exact\n  unitaries;\n* entrywise rounding to Gaussian rationals, for matrices (`exists_entriesIn_norm_sub_le`), vectors\n  (`exists_forall_mem_norm_sub_le`) and, preserving skew-Hermiticity by re-symmetrizing the\n  rounded matrix, for skew-Hermitian matrices (`IsSkewHermitian.exists_entriesIn_norm_sub_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/Gaussian.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/Gaussian.lean",
+  "defmat": [
+   "MIPRE.ValueApprox.EntriesIn",
+   "MIPRE.ValueApprox.GaussianRat"
+  ],
+  "embedded": [
+   "MIPRE.ValueApprox.EntriesIn.add",
+   "MIPRE.ValueApprox.EntriesIn.adjugate",
+   "MIPRE.ValueApprox.EntriesIn.cayley",
+   "MIPRE.ValueApprox.EntriesIn.conjTranspose",
+   "MIPRE.ValueApprox.EntriesIn.det_mem",
+   "MIPRE.ValueApprox.EntriesIn.inv",
+   "MIPRE.ValueApprox.EntriesIn.mul",
+   "MIPRE.ValueApprox.EntriesIn.one",
+   "MIPRE.ValueApprox.EntriesIn.patternProj",
+   "MIPRE.ValueApprox.EntriesIn.smul",
+   "MIPRE.ValueApprox.EntriesIn.sub",
+   "MIPRE.ValueApprox.GaussianRat.I_mem",
+   "MIPRE.ValueApprox.GaussianRat.exists_norm_sub_le",
+   "MIPRE.ValueApprox.GaussianRat.mem_iff_exists_eq",
+   "MIPRE.ValueApprox.GaussianRat.ratCast_mem",
+   "MIPRE.ValueApprox.GaussianRat.star_mem",
+   "MIPRE.ValueApprox.IsSkewHermitian.exists_entriesIn_norm_sub_le",
+   "MIPRE.ValueApprox.exists_entriesIn_norm_sub_le",
+   "MIPRE.ValueApprox.exists_forall_mem_norm_sub_le"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     103,
+     104
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     114,
+     115
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.adjugate",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     164,
+     173
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.cayley",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     179,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.conjTranspose",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     130,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.det_mem",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     160,
+     162
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.inv",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     175,
+     177
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.mul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     133,
+     136
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     138,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.patternProj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     148,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     122,
+     123
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.EntriesIn.sub",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     119,
+     120
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GaussianRat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     34,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GaussianRat.I_mem",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GaussianRat.exists_norm_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     81,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GaussianRat.mem_iff_exists_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     74,
+     79
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GaussianRat.ratCast_mem",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     66,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GaussianRat.star_mem",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     70,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian.exists_entriesIn_norm_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     201,
+     236
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.exists_entriesIn_norm_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     189,
+     193
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.exists_forall_mem_norm_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     195,
+     199
+    ]
+   }
+  ],
+  "lines": 234,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective"
+  ],
+  "blueprint": [
+   "lem:rational-pvm-dense"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.ValueApprox.EntriesIn": [
+    "/-- All entries of `M` lie in the subfield `K`. -/"
+   ],
+   "MIPRE.ValueApprox.GaussianRat": [
+    "/-- The Gaussian rationals `ℚ(i)`, as a subfield of `ℂ`: the numbers whose real and imaginary",
+    "parts are rational. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_Norms",
+  "module": "MIPRE.Foundations.ValueApprox.Norms",
+  "module_doc": "/-!\n# Operator-norm estimates for the enumeration of strategies\n\nThe analytic input of `lem:value-lower-approx`, in the L2 operator norm on matrices\n(`Matrix.Norms.L2Operator`), with vectors `x : n → ℂ` measured in `ℂ^n` as `toLp 2 x`:\n\n* `IsSkewHermitian.norm_inv_one_add_le`: `‖(1 + S)⁻¹‖ ≤ 1` for skew-Hermitian `S`;\n* `norm_cayley_sub_cayley_le`: the Cayley transform is `2`-Lipschitz on skew-Hermitian\n  matrices;\n* `l2_opNorm_le_card_mul_of_entry_le`: an entrywise bound `δ` gives `‖E‖ ≤ n δ`, which is what\n  rounding a matrix entrywise costs;\n* unitaries and projections have norm at most `1` (`norm_le_one_of_mem_unitaryGroup`,\n  `norm_le_one_of_isProj`), and so do the subset sums of a projective measurement\n  (`IsPVM.norm_sum_le_one`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/Norms.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/Norms.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPRE.ValueApprox.IsPVM.norm_le_one",
+   "MIPRE.ValueApprox.IsSkewHermitian.norm_inv_one_add_le",
+   "MIPRE.ValueApprox.IsSkewHermitian.norm_toLp_le_norm_toLp_one_add_mulVec",
+   "MIPRE.ValueApprox.cayley_sub_cayley",
+   "MIPRE.ValueApprox.dotProduct_star_self_eq_ofReal",
+   "MIPRE.ValueApprox.inner_toLp_toLp",
+   "MIPRE.ValueApprox.kronecker_one_mulVec",
+   "MIPRE.ValueApprox.l2_opNorm_le_card_mul_of_entry_le",
+   "MIPRE.ValueApprox.l2_opNorm_le_of_forall",
+   "MIPRE.ValueApprox.norm_cayley_sub_cayley_le",
+   "MIPRE.ValueApprox.norm_dotProduct_mulVec_le",
+   "MIPRE.ValueApprox.norm_kronecker_le",
+   "MIPRE.ValueApprox.norm_kronecker_one_le",
+   "MIPRE.ValueApprox.norm_le_one_of_isProj",
+   "MIPRE.ValueApprox.norm_le_one_of_mem_unitaryGroup",
+   "MIPRE.ValueApprox.norm_mul_mul_conjTranspose_sub_le",
+   "MIPRE.ValueApprox.norm_one_kronecker_le",
+   "MIPRE.ValueApprox.norm_sq_toLp",
+   "MIPRE.ValueApprox.norm_toLp_eq_one_of_dotProduct",
+   "MIPRE.ValueApprox.norm_toLp_le_card_mul_of_forall_norm_le",
+   "MIPRE.ValueApprox.norm_toLp_mulVec_eq_of_mem_unitaryGroup",
+   "MIPRE.ValueApprox.norm_toLp_mulVec_le",
+   "MIPRE.ValueApprox.norm_toLp_normalize_sub_le",
+   "MIPRE.ValueApprox.one_kronecker_mulVec"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ValueApprox.IsPVM.norm_le_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     372,
+     373
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian.norm_inv_one_add_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     109,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSkewHermitian.norm_toLp_le_norm_toLp_one_add_mulVec",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     98,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.cayley_sub_cayley",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     123,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.dotProduct_star_self_eq_ofReal",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     47,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.inner_toLp_toLp",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.kronecker_one_mulVec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     234,
+     238
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.l2_opNorm_le_card_mul_of_entry_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     153,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.l2_opNorm_le_of_forall",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     81,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_cayley_sub_cayley_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     135,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_dotProduct_mulVec_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     68,
+     79
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_kronecker_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     287,
+     296
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_kronecker_one_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     247,
+     265
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_le_one_of_isProj",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     334,
+     346
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_le_one_of_mem_unitaryGroup",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     329,
+     332
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_mul_mul_conjTranspose_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     302,
+     316
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_one_kronecker_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     267,
+     285
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_sq_toLp",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_toLp_eq_one_of_dotProduct",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_toLp_le_card_mul_of_forall_norm_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     179,
+     192
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_toLp_mulVec_eq_of_mem_unitaryGroup",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     320,
+     327
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_toLp_mulVec_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.norm_toLp_normalize_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     194,
+     224
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.one_kronecker_mulVec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     240,
+     245
+    ]
+   }
+  ],
+  "lines": 371,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective"
+  ],
+  "blueprint": [
+   "lem:rational-pvm-dense"
+  ],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_Dense",
+  "module": "MIPRE.Foundations.ValueApprox.Dense",
+  "module_doc": "/-!\n# Gaussian-rational unitaries and projective measurements are dense\n\n* `exists_unitary_entriesIn_norm_smul_sub_le`: up to a unit phase, every unitary is within `η`\n  (in operator norm) of a unitary with Gaussian-rational entries — the Cayley transform of an\n  entrywise rounding of the skew-Hermitian Cayley preimage;\n* `IsPVM.exists_entriesIn_norm_sub_le`: every projective measurement is within `η`, element by\n  element, of a projective measurement with Gaussian-rational entries — conjugate the coordinate\n  pattern of `IsPVM.exists_unitary_pattern` by the approximating unitary.\n\nThis is the density half of `lem:value-lower-approx`, and the point where the Lean route departs\nfrom the paper's: the paper rounds the measurement operators themselves and repairs the result\ninto a POVM (its Claims \"Stability\" and \"Density\"); here the rounding happens at the level of the\nskew-Hermitian generator, so that the rounded object is an exact projective measurement and no\nrepair is needed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/Dense.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/Dense.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPRE.ValueApprox.IsPVM.exists_entriesIn_norm_sub_le",
+   "MIPRE.ValueApprox.exists_unitary_entriesIn_norm_smul_sub_le"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ValueApprox.IsPVM.exists_entriesIn_norm_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     59,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.exists_unitary_entriesIn_norm_smul_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     33,
+     55
+    ]
+   }
+  ],
+  "lines": 100,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms"
+  ],
+  "blueprint": [
+   "lem:rational-pvm-dense"
+  ],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_Strategy",
+  "module": "MIPRE.Foundations.ValueApprox.Strategy",
+  "module_doc": "/-!\n# Exact strategies, and the quantum value from below\n\nThe mathematical core of `lem:value-lower-approx` (`MIP* ⊆ RE`): the quantum value of a game\nexceeds a threshold `t` if and only if some *exact strategy* with Gaussian-rational entries has\nvalue exceeding `t` (`MIPRE.ValueApprox.lt_quantumValue_iff`). Exact strategies\n(`MIPRE.ValueApprox.ExactStrategy`) are the raw data of a tensor-product strategy with an\nunnormalized state — dimensions, measurement operators, a state vector — with validity\n(`ExactStrategy.IsValid`: projective measurements, nonzero state) a separate predicate, so that\nthe data can be enumerated and validity checked; their value (`ExactStrategy.value`) is the\nBorn-rule sum divided by `‖u‖²`, a rational function of the entries. The computability layer\nenumerates the Gaussian-rational ones.\n\n* Soundness (`ExactStrategy.value_le_quantumValue`): valid data describes a tensor-product\n  strategy (`ExactStrategy.toStrategy`, normalizing the state) of the same value.\n* Density (`exists_exactStrategy_value_gt`): every tensor-product strategy is approximated in\n  value by valid Gaussian-rational exact strategies. The measurement operators are approximated\n  by exact Gaussian-rational projective measurements (`IsPVM.exists_entriesIn_norm_sub_le`) and\n  the state is rounded entrywise; the value is Lipschitz in the data (`abs_bornValue_sub_le`),\n  with the crude but sufficient constant `4 |A| |B|`.\n\nThis departs from the paper's proof of statement (S) in `cor:mip-re`, which enumerates\n*approximate* candidates — Gaussian-rational tuples satisfying relaxed POVM constraints — and\nrepairs each into an exact POVM by `T ↦ T^{-1/2}` conjugation (its Claims \"Stability\" and\n\"Density\", with the explicit slack `Δ(d, k)`). Rounding at the level of the skew-Hermitian Cayley\ngenerator (`MIPRE.Foundations.ValueApprox.Dense`) makes every candidate exact, so no repair, no\nslack and no positive-semidefiniteness test are needed; the biconditional is then sharp.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/Strategy.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/Strategy.lean",
+  "defmat": [
+   "MIPRE.ValueApprox.ExactStrategy",
+   "MIPRE.ValueApprox.ExactStrategy.EntriesIn",
+   "MIPRE.ValueApprox.ExactStrategy.IsValid",
+   "MIPRE.ValueApprox.ExactStrategy.toStrategy",
+   "MIPRE.ValueApprox.ExactStrategy.value",
+   "MIPRE.ValueApprox.ExactStrategy.ψ",
+   "MIPRE.ValueApprox.bornValue",
+   "MIPRE.ValueApprox.pointMeasurement"
+  ],
+  "embedded": [
+   "MIPRE.TensorProductStrategy.value_eq_bornValue",
+   "MIPRE.ValueApprox.ExactStrategy.norm_toLp_ψ",
+   "MIPRE.ValueApprox.ExactStrategy.star_ofReal_inv_mul_self",
+   "MIPRE.ValueApprox.ExactStrategy.star_smul_dotProduct_mulVec_smul",
+   "MIPRE.ValueApprox.ExactStrategy.value_eq_bornValue_ψ",
+   "MIPRE.ValueApprox.ExactStrategy.value_le_quantumValue",
+   "MIPRE.ValueApprox.ExactStrategy.value_toStrategy",
+   "MIPRE.ValueApprox.ExactStrategy.ψ_unit",
+   "MIPRE.ValueApprox.abs_bornValue_sub_le",
+   "MIPRE.ValueApprox.abs_re_dotProduct_kronecker_sub_le",
+   "MIPRE.ValueApprox.abs_sum_sub_sum_le",
+   "MIPRE.ValueApprox.exists_exactStrategy_value_gt",
+   "MIPRE.ValueApprox.lt_quantumValue_iff",
+   "MIPRE.ValueApprox.nonempty_tensorProductStrategy"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TensorProductStrategy.value_eq_bornValue",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     185,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.EntriesIn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     210,
+     213
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.IsValid",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     204,
+     208
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.norm_toLp_ψ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     245,
+     248
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.star_ofReal_inv_mul_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     229,
+     233
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.star_smul_dotProduct_mulVec_smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     224,
+     227
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.toStrategy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     250,
+     263
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.value",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     215,
+     218
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.value_eq_bornValue_ψ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     279,
+     281
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.value_le_quantumValue",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     283,
+     287
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.value_toStrategy",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     265,
+     277
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.ψ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     220,
+     222
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ExactStrategy.ψ_unit",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     235,
+     243
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.abs_bornValue_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     156,
+     179
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.abs_re_dotProduct_kronecker_sub_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     61,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.abs_sum_sub_sum_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     107,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.bornValue",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     51,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.exists_exactStrategy_value_gt",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     293,
+     354
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.lt_quantumValue_iff",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     377,
+     393
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.nonempty_tensorProductStrategy",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     366,
+     375
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.pointMeasurement",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     358,
+     364
+    ]
+   }
+  ],
+  "lines": 415,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense"
+  ],
+  "blueprint": [
+   "lem:rational-strategies-suffice"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.ValueApprox.ExactStrategy": [
+    "/-- The raw data of a tensor-product strategy with an unnormalized state: dimensions,",
+    "measurement operators, and a state vector. Whether the data describes a strategy is the separate",
+    "predicate `ExactStrategy.IsValid`, so that the data can be enumerated and validity checked. -/"
+   ],
+   "MIPRE.ValueApprox.ExactStrategy.EntriesIn": [
+    "/-- All entries of the data lie in the subfield `K`. -/"
+   ],
+   "MIPRE.ValueApprox.ExactStrategy.IsValid": [
+    "/-- The data describes a strategy: projective measurements and a nonzero state. -/"
+   ],
+   "MIPRE.ValueApprox.ExactStrategy.toStrategy": [
+    "/-- The tensor-product strategy described by valid data: normalize the state. -/"
+   ],
+   "MIPRE.ValueApprox.ExactStrategy.value": [
+    "/-- The value of the data in `G`: the Born-rule sum for the unnormalized state, divided by",
+    "`‖u‖²`. A rational function of the entries. -/"
+   ],
+   "MIPRE.ValueApprox.ExactStrategy.ψ": [
+    "/-- The normalized state `u / ‖u‖`. -/"
+   ],
+   "MIPRE.ValueApprox.bornValue": [
+    "/-- The value in `G` of the strategy data `(P, Q, ψ)` — `TensorProductStrategy.value` on",
+    "unbundled data; the state need not be normalized. -/"
+   ],
+   "MIPRE.ValueApprox.pointMeasurement": [
+    "/-- The projective measurement on `ℂ¹` that always answers `a₀`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_GameTransport",
+  "module": "MIPRE.Foundations.GameTransport",
+  "module_doc": "/-!\n# Transport of games and strategies\n\nBookkeeping lemmas about the quantum value under changes of presentation of a game, used to\nidentify a verifier's game with its tabulation as a game description and to compare the same\ngame under different answer-length bounds (blueprint `rem:compression-abstract`):\n\n* **Relabeling.** `quantumValue_eq_of_equiv`: two games related by equivalences of their four\n  alphabets, with matching distribution and decision predicate, have the same quantum value.\n  Strategies are transported by `TensorProductStrategy.relabel`.\n* **Monotonicity.** `quantumValue_mono`: accepting more answer tuples, on the same alphabets\n  and distribution, can only raise the value.\n* **Answer extension.** `quantumValue_extendAnswers`: enlarging the answer alphabets by\n  answers that are always rejected does not change the value. From the small game to the\n  large one a strategy extends by zero operators (`ProjectiveMeasurement.extend`); from the\n  large game to the small one the new answers are merged into an old one\n  (`ProjectiveMeasurement.merge`), which needs the orthogonality of the outcomes of a\n  projective measurement (`ProjectiveMeasurement.mul_eq_zero_of_ne`) and can only raise the\n  value.\n* The synchronous counterparts for PCC strategies: `SyncStrategy.relabel` plays a strategy\n  through a relabeling of the questions and of the answers, keeping the value\n  (`value_relabel`) and the commutation condition (`isPCC_relabel`), whence\n  `syncValue_eq_of_equiv` by the same two-sided `iSup` argument as `quantumValue_eq_of_equiv`;\n  `SyncStrategy.extend` keeps the value and the PCC property; and the constant strategy\n  `SyncStrategy.const` is PCC with value the acceptance mass of a fixed answer pair.\n\nThe synchronous relabeling is what carries a value-`1` PCC strategy of a verifier's game to a\ntabulation of it as a game description, which is item 1 of blueprint `thm:halting`; the\nconsumer is `MIPRE.Foundations.SyncTransport`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameTransport.lean",
+  "source_path": "MIPRE/Foundations/GameTransport.lean",
+  "defmat": [
+   "MIPRE.ProjectiveMeasurement.extend",
+   "MIPRE.ProjectiveMeasurement.merge",
+   "MIPRE.ProjectiveMeasurement.reindex",
+   "MIPRE.SyncStrategy.const",
+   "MIPRE.SyncStrategy.copy",
+   "MIPRE.SyncStrategy.extend",
+   "MIPRE.SyncStrategy.relabel",
+   "MIPRE.TensorProductStrategy.copy",
+   "MIPRE.TensorProductStrategy.extendAnswers",
+   "MIPRE.TensorProductStrategy.mergeAnswers",
+   "MIPRE.TensorProductStrategy.relabel"
+  ],
+  "embedded": [
+   "MIPRE.ProjectiveMeasurement.extend_M_apply",
+   "MIPRE.ProjectiveMeasurement.extend_M_of_not_mem",
+   "MIPRE.ProjectiveMeasurement.merge_M",
+   "MIPRE.ProjectiveMeasurement.mul_eq_zero_of_ne",
+   "MIPRE.ProjectiveMeasurement.reindex_M",
+   "MIPRE.SyncStrategy.isPCC_extend",
+   "MIPRE.SyncStrategy.relabel_P_M",
+   "MIPRE.SyncStrategy.relabel_d",
+   "MIPRE.SyncStrategy.value_extend",
+   "MIPRE.TensorProductStrategy.value_extendAnswers",
+   "MIPRE.TensorProductStrategy.value_le_mergeAnswers",
+   "MIPRE.quantumValue_extendAnswers"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ProjectiveMeasurement.extend",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.extend_M_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     90,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.extend_M_of_not_mem",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     96
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.merge",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     132,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.merge_M",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     151,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.mul_eq_zero_of_ne",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     98,
+     130
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.reindex",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.reindex_M",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.const",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     503,
+     511
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.copy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     386,
+     388
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.extend",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     406,
+     409
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.isPCC_extend",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     439,
+     453
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.relabel",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     455,
+     459
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.relabel_P_M",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     465,
+     467
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.relabel_d",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     461,
+     463
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.value_extend",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     411,
+     437
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.copy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     166,
+     168
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.extendAnswers",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     211,
+     214
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.mergeAnswers",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     247,
+     251
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.relabel",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     185,
+     190
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.value_extendAnswers",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     216,
+     245
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.value_le_mergeAnswers",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     253,
+     312
+    ]
+   },
+   {
+    "name": "MIPRE.quantumValue_extendAnswers",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     357,
+     378
+    ]
+   }
+  ],
+  "lines": 401,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.ProjectiveMeasurement.extend": [
+    "/-- Extend the answer alphabet along an embedding, with the zero operator on the new",
+    "answers. -/"
+   ],
+   "MIPRE.ProjectiveMeasurement.merge": [
+    "/-- Merge the outcomes of a projective measurement along a map `r` of the answers: the",
+    "outcome `a` is the sum of the outcomes `a'` with `r a' = a`. -/"
+   ],
+   "MIPRE.ProjectiveMeasurement.reindex": [
+    "/-- Relabel the questions along a function and the answers along an equivalence. -/"
+   ],
+   "MIPRE.SyncStrategy.const": [
+    "/-- The constant strategy: one-dimensional, always answering `a₀`. -/"
+   ],
+   "MIPRE.SyncStrategy.copy": [
+    "/-- The same data, as a strategy for another synchronous game on the same alphabets. -/"
+   ],
+   "MIPRE.SyncStrategy.extend": [
+    "/-- Extend the answer alphabet along an embedding, with zero operators on the new answers. -/"
+   ],
+   "MIPRE.SyncStrategy.relabel": [
+    "/-- Play `S` on `G'` through relabelings of the questions (any map) and of the answers",
+    "(an equivalence). The synchronous counterpart of `TensorProductStrategy.relabel`. -/"
+   ],
+   "MIPRE.TensorProductStrategy.copy": [
+    "/-- The same data, as a strategy for another game on the same alphabets. -/"
+   ],
+   "MIPRE.TensorProductStrategy.extendAnswers": [
+    "/-- Extend the answer alphabets along embeddings, with zero operators on the new answers. -/"
+   ],
+   "MIPRE.TensorProductStrategy.mergeAnswers": [
+    "/-- Merge the answers along maps back to smaller alphabets. -/"
+   ],
+   "MIPRE.TensorProductStrategy.relabel": [
+    "/-- Play `S` on `G'` through relabelings of the questions (any maps) and of the answers",
+    "(equivalences). -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_GameDescription",
+  "module": "MIPRE.Foundations.GameDescription",
+  "module_doc": "/-!\n# Game descriptions, read as games of the foundations\n\n`HaltingGameValue.GameData` (blueprint `def:game-description`) is the codable, first-order\ndescription of a synchronous game, and `HaltingGameValue.GameData.toGame` interprets it in the\nself-contained vocabulary of `MIPRE.HaltingGameValue`. The foundations\n(`MIPRE.Foundations.Games`) have their own `MIPRE.SynchronousGame` and `MIPRE.Game`, with the\nsame fields; this file reads a description in that vocabulary, which is where the quantum value\n`MIPRE.quantumValue` lives. The two structures agree field by field, so the two readings\n`GameData.syncGame` and `GameData.game` are definitions, with nothing to prove about them.\n\nThe two *values* are a different matter: `HaltingGameValue.gameValue` and `MIPRE.syncValue` are\nsuprema over two parallel structures of synchronous strategies — `HaltingGameValue.SyncStrategy`\ncarries a question-indexed family of `POVM`s with a projectivity certificate, while\n`MIPRE.SyncStrategy` carries a `MIPRE.ProjectiveMeasurement`. `GameData.toSyncStrategy` and\n`GameData.ofSyncStrategy` repackage one as the other, in both directions and with the same\ndimension and the same operators, so that\n\n  `GameData.gameValue_eq_syncValue : gameValue g.toGame = MIPRE.syncValue g.syncGame`\n\nidentifies the two suprema. Both `MIPRE.SyncStrategy.value_eq` and\n`HaltingGameValue.strategyValue` spell the value as\n`∑ x y a b, μ x y ⬝ [D x y a b] ⬝ Tr(M^x_a M^y_b).re / d`, so the two strategy values agree by\ndefinitional unfolding.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameDescription.lean",
+  "source_path": "MIPRE/Foundations/GameDescription.lean",
+  "defmat": [
+   "HaltingGameValue.GameData.game",
+   "HaltingGameValue.GameData.ofSyncStrategy",
+   "HaltingGameValue.GameData.syncGame",
+   "HaltingGameValue.GameData.toSyncStrategy"
+  ],
+  "embedded": [
+   "HaltingGameValue.GameData.game_D",
+   "HaltingGameValue.GameData.game_μ",
+   "HaltingGameValue.GameData.syncGame_D",
+   "HaltingGameValue.GameData.syncGame_μ"
+  ],
+  "kept": [
+   {
+    "name": "HaltingGameValue.GameData.game",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     47,
+     50
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.game_D",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     58
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.game_μ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     52,
+     54
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.ofSyncStrategy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     100
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.syncGame",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     37,
+     45
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.syncGame_D",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     64
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.syncGame_μ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     60,
+     61
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.toSyncStrategy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     87
+    ]
+   }
+  ],
+  "lines": 111,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue"
+  ],
+  "blueprint": [
+   "def:game-description"
+  ],
+  "defmat_docstrings": {
+   "HaltingGameValue.GameData.game": [
+    "/-- The game described by `g`, as a two-player game of the foundations. -/"
+   ],
+   "HaltingGameValue.GameData.ofSyncStrategy": [
+    "/-- A synchronous strategy of the foundations, read in the self-contained vocabulary: the same",
+    "dimension, and the operators of the projective measurement as the POVM elements (positivity",
+    "follows from projectivity, `MIPRE.SyncStrategy.povm`). -/"
+   ],
+   "HaltingGameValue.GameData.syncGame": [
+    "/-- The synchronous game described by `g`, as a `MIPRE.SynchronousGame`: the same distribution and",
+    "predicate as `toGame`. -/"
+   ],
+   "HaltingGameValue.GameData.toSyncStrategy": [
+    "/-- A synchronous strategy in the self-contained vocabulary of `MIPRE.HaltingGameValue`, read as",
+    "a synchronous strategy of the foundations: the same dimension, and the POVM elements as the",
+    "operators of the projective measurement (self-adjointness and normalization are the POVM's own,",
+    "projectivity its certificate). -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_RawStrategy",
+  "module": "MIPRE.Foundations.ValueApprox.RawStrategy",
+  "module_doc": "/-!\n# Raw candidates and the certificate check\n\nThe enumeration behind `lem:value-lower-approx` ranges over *raw candidates*\n(`MIPRE.ValueApprox.RawStrategy`): a common denominator `k`, two dimensions, the Gaussian-integer\nnumerators of the measurement operators as lists of list matrices, and the numerators of the\nstate. A raw candidate denotes an exact strategy (`RawStrategy.interp`), with entries in\n`(1/k) ℤ[i]`; the predicate `Check g p q r` says, in exact integer arithmetic, that the candidate\nis a valid strategy for the game described by `g` and that its value exceeds `p / q`:\n\n* `IsPVMRaw`: each family of operators is Hermitian, idempotent (`M² = k M`) and sums to `k·1`;\n* the state is nonzero;\n* `ValueTest`: `p · W · k² · ⟨v, v⟩ < q · numer`, where `numer` is `∑ wt(x,y) ∑ D re ⟨v, (A ⊗ B) v⟩`\n  and `W` the total weight (the point mass on `(0,0)` when the weights vanish, as in\n  `GameData.toGame`); for `q = 0`, where `p / q = 0`, the test is `0 < numer`.\n\nAll of it is primitive recursive (`MIPRE.Foundations.ValueApprox.RawPrimrec`), and\n`MIPRE.Foundations.ValueApprox.RawSemantics` proves that `Check g p q r` holds iff `interp r` is\nvalid with value above `p / q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/RawStrategy.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/RawStrategy.lean",
+  "defmat": [
+   "MIPRE.ValueApprox.Check",
+   "MIPRE.ValueApprox.Draw",
+   "MIPRE.ValueApprox.GMat",
+   "MIPRE.ValueApprox.IsHermRaw",
+   "MIPRE.ValueApprox.IsIdemRaw",
+   "MIPRE.ValueApprox.IsPVMRaw",
+   "MIPRE.ValueApprox.IsSumRaw",
+   "MIPRE.ValueApprox.RawStrategy",
+   "MIPRE.ValueApprox.RawStrategy.equivTuple",
+   "MIPRE.ValueApprox.RawStrategy.instPrimcodable",
+   "MIPRE.ValueApprox.RawStrategy.interp",
+   "MIPRE.ValueApprox.RawStrategy.matA",
+   "MIPRE.ValueApprox.RawStrategy.matB",
+   "MIPRE.ValueApprox.ValueTest",
+   "MIPRE.ValueApprox.W",
+   "MIPRE.ValueApprox.entry",
+   "MIPRE.ValueApprox.gsum",
+   "MIPRE.ValueApprox.instDecidableCheck",
+   "MIPRE.ValueApprox.instDecidableIsHermRaw",
+   "MIPRE.ValueApprox.instDecidableIsIdemRaw",
+   "MIPRE.ValueApprox.instDecidableIsPVMRaw",
+   "MIPRE.ValueApprox.instDecidableIsSumRaw",
+   "MIPRE.ValueApprox.instDecidableValueTest",
+   "MIPRE.ValueApprox.normRaw",
+   "MIPRE.ValueApprox.numer",
+   "MIPRE.ValueApprox.psum",
+   "MIPRE.ValueApprox.quadRaw",
+   "MIPRE.ValueApprox.vget",
+   "MIPRE.ValueApprox.wt"
+  ],
+  "embedded": [
+   "MIPRE.ValueApprox.RawStrategy.primrec_QA",
+   "MIPRE.ValueApprox.RawStrategy.primrec_QB",
+   "MIPRE.ValueApprox.RawStrategy.primrec_dA",
+   "MIPRE.ValueApprox.RawStrategy.primrec_dB",
+   "MIPRE.ValueApprox.RawStrategy.primrec_equivTuple",
+   "MIPRE.ValueApprox.RawStrategy.primrec_k",
+   "MIPRE.ValueApprox.RawStrategy.primrec_v",
+   "MIPRE.ValueApprox.toC_gsum",
+   "MIPRE.ValueApprox.toInt_psum"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ValueApprox.Check",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     182,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.Draw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     165,
+     167
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.GMat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     37,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsHermRaw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     128,
+     130
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsIdemRaw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     132,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsPVMRaw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     142,
+     144
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.IsSumRaw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     137,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     72,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.equivTuple",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     85,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.instPrimcodable",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     92,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.interp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     114,
+     122
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.matA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     108,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.matB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     111,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.primrec_QA",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     99,
+     100
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.primrec_QB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     101,
+     103
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.primrec_dA",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     96,
+     96
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.primrec_dB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.primrec_equivTuple",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.primrec_k",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.RawStrategy.primrec_v",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     104,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.ValueTest",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     175,
+     180
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.W",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     162,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.entry",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.gsum",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     46,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.instDecidableCheck",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     197,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.instDecidableIsHermRaw",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     189,
+     189
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.instDecidableIsIdemRaw",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     190,
+     190
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.instDecidableIsPVMRaw",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     193,
+     194
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.instDecidableIsSumRaw",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     191,
+     192
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.instDecidableValueTest",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     195,
+     196
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.normRaw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.numer",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     169,
+     173
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.psum",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     49,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.quadRaw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     146,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.toC_gsum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     52,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.toInt_psum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     61,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.vget",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     43,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.wt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     160
+    ]
+   }
+  ],
+  "lines": 227,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawInt",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription"
+  ],
+  "blueprint": [
+   "lem:value-lower-approx"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.ValueApprox.Check": [
+    "/-- The candidate `r` certifies `p / q < val*(G_g)`: positive denominator, projective",
+    "measurements on both sides, a nonzero state, and the value test. -/"
+   ],
+   "MIPRE.ValueApprox.Draw": [
+    "/-- The decision predicate of the description, on naturals. -/"
+   ],
+   "MIPRE.ValueApprox.GMat": [
+    "/-- A matrix as a list of rows; missing entries read as `0`. -/"
+   ],
+   "MIPRE.ValueApprox.IsHermRaw": [
+    "/-- The `d × d` matrix `M` is Hermitian. -/"
+   ],
+   "MIPRE.ValueApprox.IsIdemRaw": [
+    "/-- `M² = k M`, i.e. `M / k` is idempotent. -/"
+   ],
+   "MIPRE.ValueApprox.IsPVMRaw": [
+    "/-- `(Mₐ / k)_{a ≤ nA}` is a projective measurement on `ℂ^d`. -/"
+   ],
+   "MIPRE.ValueApprox.IsSumRaw": [
+    "/-- `∑_{a ≤ nA} Mₐ = k · 1`. -/"
+   ],
+   "MIPRE.ValueApprox.RawStrategy": [
+    "/-- The raw data of a candidate: a common denominator `k`, the two dimensions, the numerators of",
+    "the first and second players' operators (indexed by question, then answer), and the numerators of",
+    "the state, in row-major order `(i, j) ↦ i * dB + j`. -/"
+   ],
+   "MIPRE.ValueApprox.RawStrategy.equivTuple": [
+    "/-- Raw candidates are tuples. -/"
+   ],
+   "MIPRE.ValueApprox.RawStrategy.instPrimcodable": null,
+   "MIPRE.ValueApprox.RawStrategy.interp": [
+    "/-- The exact strategy denoted by raw data, for question alphabet `Fin (nX + 1)` and answer",
+    "alphabet `Fin (nA + 1)`: every numerator divided by `k`. -/"
+   ],
+   "MIPRE.ValueApprox.RawStrategy.matA": [
+    "/-- The numerator matrix of the first player's operator for question `x` and answer `a`. -/"
+   ],
+   "MIPRE.ValueApprox.RawStrategy.matB": [
+    "/-- The numerator matrix of the second player's operator for question `y` and answer `b`. -/"
+   ],
+   "MIPRE.ValueApprox.ValueTest": [
+    "/-- `p / q < value`, cleared of denominators: `p · W · k² · ⟨v, v⟩ < q · numer`; for `q = 0`,",
+    "where `p / q = 0`, the test is `0 < numer`. -/"
+   ],
+   "MIPRE.ValueApprox.W": [
+    "/-- The normalizing weight: `1` when the total weight vanishes. -/"
+   ],
+   "MIPRE.ValueApprox.entry": [
+    "/-- The `(i, j)` entry of a list matrix, `0` when missing. -/"
+   ],
+   "MIPRE.ValueApprox.gsum": [
+    "/-- `∑_{l < n} f l` in `GInt`. -/"
+   ],
+   "MIPRE.ValueApprox.instDecidableCheck": null,
+   "MIPRE.ValueApprox.instDecidableIsHermRaw": null,
+   "MIPRE.ValueApprox.instDecidableIsIdemRaw": null,
+   "MIPRE.ValueApprox.instDecidableIsPVMRaw": null,
+   "MIPRE.ValueApprox.instDecidableIsSumRaw": null,
+   "MIPRE.ValueApprox.instDecidableValueTest": null,
+   "MIPRE.ValueApprox.normRaw": [
+    "/-- The real part of `⟨v, v⟩` for `v` of length `dA * dB` in row-major order. -/"
+   ],
+   "MIPRE.ValueApprox.numer": [
+    "/-- `∑_{x, y} wt(x, y) ∑_{a, b} D(x, y, a, b) · re ⟨v, (A^x_a ⊗ B^y_b) v⟩`. -/"
+   ],
+   "MIPRE.ValueApprox.psum": [
+    "/-- `∑_{l < n} f l` in `PInt`. -/"
+   ],
+   "MIPRE.ValueApprox.quadRaw": [
+    "/-- The Born numerator `⟨v, (A ⊗ B) v⟩` for `v` of length `dA * dB` in row-major order. -/"
+   ],
+   "MIPRE.ValueApprox.vget": [
+    "/-- The `i`-th entry of a list vector, `0` when missing. -/"
+   ],
+   "MIPRE.ValueApprox.wt": [
+    "/-- The unnormalized question weight of the description on `(x, y)`, with the point mass on",
+    "`(0, 0)` when the total weight vanishes, as in `GameData.toGame`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_RawSemantics",
+  "module": "MIPRE.Foundations.ValueApprox.RawSemantics",
+  "module_doc": "/-!\n# The certificate check is correct\n\n`MIPRE.ValueApprox.check_iff_interp`: `Check g p q r` holds iff the exact strategy `interp r`\ndenoted by the raw candidate is valid for the game `g.game` and has value greater than `p / q`.\nTogether with the soundness and density of exact strategies\n(`MIPRE.Foundations.ValueApprox.Strategy`) this gives `exists_check_iff`: some raw candidate passes\nthe check iff `p / q < val*(G_g)` — the semantic content of the semidecision procedure of\n`lem:value-lower-approx`.\n\nThe proof reads each clause of `Check` as the corresponding statement about `interp r`, with\n`k ≠ 0`: the Hermitian, idempotence and completeness tests as the projective-measurement axioms of\n`mat M d k = (M i j / k)`, the state test as `u ≠ 0`, and the value test as `p / q < value`, the\nvalue being `numer / (W · k² · ⟨v, v⟩)`. The converse direction of `exists_check_iff` needs a raw\ncandidate denoting a given valid Gaussian-rational exact strategy, which\n`exists_rawStrategy_interp_eq` builds from a common denominator of its entries.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/RawSemantics.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/RawSemantics.lean",
+  "defmat": [
+   "MIPRE.ValueApprox.mat",
+   "MIPRE.ValueApprox.vec"
+  ],
+  "embedded": [
+   "HaltingGameValue.GameData.game_D_eq",
+   "HaltingGameValue.GameData.game_μ_eq",
+   "HaltingGameValue.GameData.one_le_W",
+   "MIPRE.ValueApprox.check_iff_interp",
+   "MIPRE.ValueApprox.div_sq_eq_div_iff",
+   "MIPRE.ValueApprox.dotProduct_kronecker_vec",
+   "MIPRE.ValueApprox.dotProduct_vec_self",
+   "MIPRE.ValueApprox.interp_bornValue",
+   "MIPRE.ValueApprox.interp_value",
+   "MIPRE.ValueApprox.isHermRaw_iff",
+   "MIPRE.ValueApprox.isIdemRaw_iff",
+   "MIPRE.ValueApprox.isPVMRaw_iff",
+   "MIPRE.ValueApprox.isSumRaw_iff",
+   "MIPRE.ValueApprox.mat_mul_mat_apply",
+   "MIPRE.ValueApprox.normRaw_pos",
+   "MIPRE.ValueApprox.re_dotProduct_kronecker_vec",
+   "MIPRE.ValueApprox.re_dotProduct_vec_self",
+   "MIPRE.ValueApprox.toC_gsum_fin",
+   "MIPRE.ValueApprox.toInt_numer",
+   "MIPRE.ValueApprox.toInt_psum_fin",
+   "MIPRE.ValueApprox.valueTest_iff",
+   "MIPRE.ValueApprox.vec_ne_zero_iff"
+  ],
+  "kept": [
+   {
+    "name": "HaltingGameValue.GameData.game_D_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     233,
+     236
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.game_μ_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     224,
+     231
+    ]
+   },
+   {
+    "name": "HaltingGameValue.GameData.one_le_W",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     218,
+     222
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.check_iff_interp",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     347,
+     365
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.div_sq_eq_div_iff",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     62,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.dotProduct_kronecker_vec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     171,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.dotProduct_vec_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     148,
+     157
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.interp_bornValue",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     265,
+     279
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.interp_value",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     281,
+     293
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.isHermRaw_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     48,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.isIdemRaw_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     80,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.isPVMRaw_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     117,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.isSumRaw_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     115
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.mat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.mat_mul_mat_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     73,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.normRaw_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     295,
+     309
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.re_dotProduct_kronecker_vec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     183,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.re_dotProduct_vec_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     159,
+     169
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.toC_gsum_fin",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     34,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.toInt_numer",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     248,
+     263
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.toInt_psum_fin",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     37,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.valueTest_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     311,
+     343
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.vec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     133,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.vec_ne_zero_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     137,
+     146
+    ]
+   }
+  ],
+  "lines": 389,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawInt",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawStrategy"
+  ],
+  "blueprint": [
+   "lem:value-lower-approx"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.ValueApprox.mat": [
+    "/-- The `d × d` complex matrix with entries `M i j / k`. -/"
+   ],
+   "MIPRE.ValueApprox.vec": [
+    "/-- The state denoted by `v`, `(i, j) ↦ v (i * dB + j) / k`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_ValueApprox_RawComplete",
+  "module": "MIPRE.Foundations.ValueApprox.RawComplete",
+  "module_doc": "/-!\n# Every Gaussian-rational exact strategy is a raw candidate\n\n`MIPRE.ValueApprox.exists_rawStrategy_interp_eq`: an exact strategy whose entries lie in `ℚ(i)`\nis `interp r` for some raw candidate `r` — clear a common denominator `k` of the finitely many\nentries (`exists_common_den`) and list the numerators. With the correctness of the check\n(`check_iff_interp`) and the density and soundness of exact strategies (`lt_quantumValue_iff`),\nthis gives `exists_check_iff`: some raw candidate passes `Check g p q` iff `p / q < val*(G_g)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/ValueApprox/RawComplete.lean",
+  "source_path": "MIPRE/Foundations/ValueApprox/RawComplete.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPRE.ValueApprox.exists_check_iff",
+   "MIPRE.ValueApprox.exists_common_den",
+   "MIPRE.ValueApprox.exists_rawStrategy_interp_eq",
+   "MIPRE.ValueApprox.getD_ofFn",
+   "MIPRE.ValueApprox.natCast_mul_ratCast_den"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ValueApprox.exists_check_iff",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     158,
+     171
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.exists_common_den",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     32,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.exists_rawStrategy_interp_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     67,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.getD_ofFn",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     58,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.ValueApprox.natCast_mul_ratCast_den",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     26,
+     30
+    ]
+   }
+  ],
+  "lines": 204,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawInt",
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Cayley",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Projective",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Gaussian",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Norms",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Dense",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_HaltingGameValue",
+   "import Definitions.Def_MIPRE_Foundations_GameDescription",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawStrategy",
+   "import Definitions.Def_MIPRE_Foundations_ValueApprox_RawSemantics"
+  ],
+  "blueprint": [
+   "lem:value-lower-approx"
+  ],
+  "defmat_docstrings": {}
+ }
+]
