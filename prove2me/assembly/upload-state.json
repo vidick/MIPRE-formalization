@@ -2268,10 +2268,10 @@
    "error_message": ""
   },
   "MIPRE.Halting.halting_reduction_quantum": {
-   "submitted_at": 1792103338.5274968,
+   "submitted_at": 1792103512.136312,
    "http": 200,
-   "submission_id": "bffc56c8-f647-42a9-8299-b1c5e4f825fc",
-   "status": "ERROR",
+   "submission_id": "73a0cd29-ac00-4913-ad3b-87f6e8d19397",
+   "status": "PENDING",
    "error_message": "Failed to record the decomposition edge for import 'MIPRE_Foundations_Pipeline_Introspection': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
   }
  },
