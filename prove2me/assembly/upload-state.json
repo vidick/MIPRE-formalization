@@ -2049,7 +2049,15 @@
    "submitted_at": 1792098997.5552804,
    "http": 200,
    "submission_id": "1c654066-fe5e-42dc-b21d-937f50f7b5f9",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.decProg_runs": {
+   "submitted_at": 1792099089.6520472,
+   "http": 200,
+   "submission_id": "a90e596b-ca01-4dc8-8706-4fc9adcd96c0",
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   }
  },
  "log": []
