@@ -347,3 +347,23 @@ platform's `0df444a`; the platform offers no newer environment); the build and e
 the `p2m` workspace, which needs the modules of each increment added from `git show 70cbf1c:…`;
 the session's disk allowance (about 400 MB free on 2026-10-15 before clearing re-downloadable
 caches) bounds how much can be built at once, so increments are built one at a time.
+
+**Increment 1 in progress (2026-10-15).** The 103-module closure at `70cbf1c` is in the `p2m`
+workspace and builds against Mathlib `0df444a` in six minutes (3,153 Lake jobs, no errors); Stage 1
+and Stage 2 ran over it (4,393 constants, 2,673 declaration units). The planner and generator now
+take a configuration (`prove2me/assembly/config.json`, written by `make_config.py`) and know the
+published content: the 60 compression theorems are imported nodes, the 22 compression bundles and
+the mission's `MIPRE_HaltingGameValue` bundle are imported, and a module whose published bundle lacks
+a declaration the new layer needs gets a *delta bundle* (`…_B`). Result: 88 bundles (74 new, 14
+delta), 89 theorem nodes, 423 inline helpers, 968 theorems embedded in bundles (the proof fields of
+proof-carrying definitions such as `GapCompression.ofPipeline` and the `PolyTimeFun`s), 55 published
+nodes and 313 published declarations reused; `glue.py` adds the 3 `Nonempty` leaves, the 8
+conditional theorems of `Background/Pipeline.lean` and the 8 unconditional ones of `MainTheorem.lean`
+(the goal's stub is the published one). Three more cost macros (`cost_omega`, `cost_omega'`,
+`cost_omega₂` of `Halting/{Lists,Arith,Serial}.lean`) are expanded like `size_omega`; `private`
+modifiers are dropped in the generated copies, since `private` is per file; the one non-ASCII node
+name (`classV_game_μ`) is renamed `classV_game_mu` in the uploaded copy. Blueprint names (379 in the
+closure) are a promotion signal only here, not forced nodes. The session's disk allowance was
+exhausted by Lake's per-module setup files and C output (about 1 GB for the generated trees), so
+the generated files are now checked with `tools/build_tree.py`, which compiles them directly with
+`lake env lean -o` in dependency order and keeps only the oleans.
