@@ -2271,8 +2271,42 @@
    "submitted_at": 1792103512.136312,
    "http": 200,
    "submission_id": "73a0cd29-ac00-4913-ad3b-87f6e8d19397",
-   "status": "PENDING",
-   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Foundations_Pipeline_Introspection': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.gameValue_uncomputable": {
+   "submitted_at": 1792103601.3936374,
+   "http": 200,
+   "submission_id": "7146836b-51a3-47f8-90b3-d7b3b6a1b00f",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.quantumValue_uncomputable": {
+   "submitted_at": 1792103722.6986067,
+   "http": 200,
+   "submission_id": "28c47eea-5613-4298-bd16-4543d387a067",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.re_subset_mipstarComputable": {
+   "submitted_at": 1792103834.270229,
+   "http": 200,
+   "submission_id": "1c6fe76f-23f8-4f42-b896-47e3dc461e50",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.mipstarComputable_eq_re": {
+   "submitted_at": 1792103950.3313692,
+   "http": 200,
+   "submission_id": "9d6dcfc8-35e0-4961-b505-899854a8ee1b",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.re_subset_mipstar": {
+   "submitted_at": 1792104074.687903,
+   "http": 200,
+   "submission_id": "9f4dad41-8491-438d-bb41-32f1e9e16278",
+   "status": "PENDING"
   }
  },
  "log": []
