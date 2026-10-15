@@ -132,8 +132,12 @@ increments fill the leaves.
 
 The same pipeline runs with `P2M_CONFIG=prove2me/assembly/config.json`; the generated files are
 compiled with `tools/build_tree.py` (direct `lake env lean -o`, dependency order) rather than
-`lake build`, whose per-module setup files exhausted the session's disk allowance. The upload is
-`python3 scripts/p2m_upload.py --tree prove2me/assembly`, after the launch.
+`lake build`, whose per-module setup files exhausted the session's disk allowance. The upload,
+`python3 scripts/p2m_upload.py --tree prove2me/assembly`, ran on 2026-10-15 after the launch: 88
+definitions and 108 statements published, 89 theorems Proved, 16 accepted sketches resting on the
+3 Open leaves; the twelve milestones were then linked with `scripts/p2m_mission.py --milestones`.
+The uploader resumes from `upload-state.json` and treats the platform's transient failures (a
+dropped database connection, a security-checkpoint page in place of the API) as retries.
 
 ## Reproducing
 

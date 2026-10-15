@@ -416,3 +416,38 @@ theorem's, a paraphrase stronger than the Lean (to repair in the blueprint, not 
 `scripts/p2m_upload.py --tree prove2me/assembly --dry-run` walks the whole tree (88 definitions in
 import order, 107 statements, 105 solutions leaves-first, the goal's solution against the published
 stub) without sending or writing anything; a dry run no longer writes `upload-state.json`.
+
+**Launch and upload (2026-10-15).** The moderators approved the proposal (status `Reviewed`,
+public; live mission `6ff9eecb-d880-4866-b56a-aafcd2c60a92`). The upload ran from this session
+(`python3 scripts/p2m_upload.py --tree prove2me/assembly`, 18:03 to 22:45 UTC, five passes):
+88 definitions published in import order (about 50 minutes), 108 statements published (106 on the
+first pass; two failed on a platform-side `DB error looking up import … ConnectionTerminated` and
+went through on resubmission), 105 solutions verified leaves-first: the 89 own-code nodes are
+**Proved**, the 16 glue theorems are accepted sketches (`SKETCH_ACCEPTED`, platform status Open)
+resting on the three `Nonempty` leaves, which are Open by design. The goal
+`HaltingGameValue.halting_reduces_to_gameValue` (`7f0a0737-…`) is therefore an accepted sketch
+whose open frontier is exactly `Nonempty (Introspection 7)`, `Nonempty (AnswerReduction 5)` and
+`Nonempty (Repetition 7)`. The platform was unstable through the evening: besides the two
+statement failures, three solutions came back `ERROR … The proof verified but its reduction
+could not be recorded — please resubmit`, and for about half an hour the host answered requests
+with a "Vercel Security Checkpoint" page (HTTP 403 with an HTML body) in place of the API, which
+the uploader first mistook for a rejection and then crashed on at the token refresh. The uploader
+now treats all of these as transient: statements failing that way are resubmitted for up to three
+extra rounds, solutions up to three times each, 60 s apart; a 403/502/503/504 with a non-JSON body
+and network errors are retried with exponential backoff (up to about half an hour), in the token
+refresh as well; each pass resumes from `upload-state.json`. Every item resolved on resubmission;
+nothing was rejected on its content. Then `python3 scripts/p2m_mission.py --milestones
+prove2me/assembly/milestones.json` (after a `--dry-run`, now supported for milestones) linked the
+compression milestone to `recursive_compression` and created the eleven others
+(`prove2me/assembly/milestones/`), each pointing at its uploaded theorem except
+`thm:compression-target`, which no single platform theorem carries yet; the platform marks a
+milestone completed when its theorem is Proved, so the compression, universal-machine, s-m-n,
+Kleene and `thm:halting` milestones are completed and the stage and headline milestones wait on
+the leaves. Records: `prove2me/assembly/upload-state.json` (job and theorem ids of every item),
+`prove2me/mission-state.json` (proposal, items, milestone ids).
+
+**What comes next.** The three leaves are the open frontier: increment 2 (repetition, own-code
+part), increment 3 (introspection and answer reduction, own-code parts), and then the vendored
+and `MIPStarRE`-dependent material, which needs the platform to accept larger import closures or
+a decomposition of the vendored proofs into platform-sized pieces. Each increment is the same
+pipeline with a new `config.json`; the uploader and the mission script need no change.

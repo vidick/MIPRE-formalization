@@ -313,7 +313,9 @@ def link_milestones(sp, st, path, dry=False):
             note(st, f"milestone {ms['title']!r}: created ({d.get('id')}), theorem {tid}")
     code, d = up.request("GET", f"/missions/{mid}/milestones")
     for m in first_list(d) if code == 200 else []:
-        print(f"  {m.get('sort_order')}: {m.get('title')}  theorem {m.get('theorem_id')}")
+        th = m.get("theorem") or {}   # the listing nests the linked theorem
+        print(f"  {m.get('sort_order')}: {m.get('title')}  completed={m.get('completed')}  "
+              f"theorem {th.get('id') or m.get('theorem_id')} {th.get('theorem_name') or ''} {th.get('status') or ''}")
 
 
 def status(sp, st):
