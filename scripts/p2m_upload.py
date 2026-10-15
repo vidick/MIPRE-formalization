@@ -151,7 +151,12 @@ def load_state():
     return {"definitions": {}, "theorems": {}, "solutions": {}, "log": []}
 
 
+DRY = False   # --dry-run: nothing is sent and nothing is written
+
+
 def save_state(st):
+    if DRY:
+        return
     tmp = STATE_PATH + ".tmp"
     json.dump(st, open(tmp, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     os.replace(tmp, STATE_PATH)
@@ -357,6 +362,7 @@ def leaves_first(tree):
 
 def upload_solutions(tree, meta, st, args):
     mn = {n["theorem_name"]: n for n in meta["nodes"]}
+    dry_handled = set()   # a dry run walks the whole order, treating each logged node as handled
     for n in leaves_first(tree):
         name = n["theorem_name"]
         rec = st["solutions"].setdefault(name, {})
@@ -366,25 +372,25 @@ def upload_solutions(tree, meta, st, args):
             rec["status"] = "LEAF_OPEN"   # an Open leaf: statement only, by design
             save_state(st)
             continue
-        tid = st["theorems"].get(name, {}).get("theorem_id")
-        if not tid:
-            if args.dry_run:
-                log(f"[dry-run] verify {name} (theorem id unknown until the theorems phase has run)")
-                continue
-            sys.exit(f"no theorem_id recorded for {name}; run the theorems phase first")
         # every child must already be handled: Proved (here or before this tree), a sketch, or an
         # Open leaf by design; the parent then resolves to Proved or to an accepted sketch
         for c in n["imported_nodes"]:
-            if c in PUBLISHED:
+            if c in PUBLISHED or c in dry_handled:
                 continue
             if st["solutions"].get(c, {}).get("status") not in ("ACCEPTED", "SKETCH_ACCEPTED", "LEAF_OPEN"):
                 sys.exit(f"child {c} of {name} is not handled yet; aborting to keep the leaves-first order")
+        tid = st["theorems"].get(name, {}).get("theorem_id")
+        if args.dry_run:
+            log(f"[dry-run] verify {name} -> theorem {tid or '(id unknown until the theorems phase has run)'}"
+                f" ({len(open(os.path.join(P2M, n['solution_file']), 'rb').read())} bytes, "
+                f"{len(n['imported_nodes'])} imported)")
+            dry_handled.add(name)
+            continue
+        if not tid:
+            sys.exit(f"no theorem_id recorded for {name}; run the theorems phase first")
         if rec.get("submission_id") and rec.get("status") in (None, "PENDING", "SUBMITTED"):
             res = poll_submission(rec["submission_id"], name)
         else:
-            if args.dry_run:
-                log(f"[dry-run] verify {name} -> theorem {tid}")
-                continue
             sol = open(os.path.join(P2M, n["solution_file"]), "rb").read()
             fields = {"theorem_id": tid, "proof_type": "prove",
                       "file": (f"Sol_{n['slug']}.lean", sol),
@@ -451,6 +457,7 @@ def release(tree, st, yes):
 
 
 def main():
+    global DRY
     global AUTH
     ap = argparse.ArgumentParser()
     ap.add_argument("--release", action="store_true", help="make the uploaded private tree public (asks for --yes)")
@@ -462,6 +469,7 @@ def main():
     ap.add_argument("--max-inflight", type=int, default=10)
     ap.add_argument("--tree", default="prove2me", help="tree directory relative to the repository root")
     args = ap.parse_args()
+    DRY = args.dry_run
     set_tree_dir(args.tree)
     ucfg = os.path.join(P2M, "upload-config.json")
     if os.path.exists(ucfg):

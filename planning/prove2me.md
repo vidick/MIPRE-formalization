@@ -393,3 +393,26 @@ against `git show 70cbf1c:…`) and their solution types equal their stub types;
 and on nothing else. Metadata for the 108 theorem items and 88 bundles is drafted from writer
 packets (`tools/meta_packets.py`, `prove2me/assembly/META_WRITER.md`) and merged by
 `tools/merge_meta.py`; the upload waits for the mission's launch.
+
+**Increment 1 metadata (2026-10-15).** Eleven writers, one per packet (six theorem packets of 20,
+20, 20, 20, 20 and 8 items; five bundle packets of 20, 20, 20, 20 and 8), each with
+`META_WRITER.md`, the packet and read-only access to the source at `70cbf1c`. Merged by
+`tools/merge_meta.py --tree prove2me/assembly` into `prove2me/assembly/metadata.json`: 108 theorem
+records and 88 bundle records, every statement between 1,237 and 2,496 characters with one display
+block and a `**Formalization Note**`, every explanation between 168 and 1,237 characters, 2 to 5
+tags each from the fixed list, no forbidden adjective, no first person; the merge script now also
+bounds statement and title lengths and requires the note on bundles. One defect was found and
+fixed by hand (an unclosed code span that left a stray `$` in the `ValueApprox/RawInt` bundle
+record). The glue records say, each in its own words, that the platform holds the three `Nonempty`
+leaves as statements only and the sixteen glue theorems as sketches resting on them, while the
+repository proves all of them. Three observations from the writers, none a defect of the upload:
+the packets truncate long module docstrings at 3,000 (theorem packets) or 4,000 (bundle packets)
+characters and show only the first line of a multi-line `variable` block, so the writers read the
+source for those (the stubs themselves carry the full blocks and validated identical to the
+source); the extractor reports `structure`s as `inductive`; and the blueprint's
+`cor:main-quantum` says "with $g$ as in Theorem `thm:main`" where the Lean
+`halting_reduction_quantum` is its own existential and does not identify its map with the main
+theorem's, a paraphrase stronger than the Lean (to repair in the blueprint, not in the Lean).
+`scripts/p2m_upload.py --tree prove2me/assembly --dry-run` walks the whole tree (88 definitions in
+import order, 107 statements, 105 solutions leaves-first, the goal's solution against the published
+stub) without sending or writing anything; a dry run no longer writes `upload-state.json`.
