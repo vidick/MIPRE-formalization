@@ -635,11 +635,96 @@
   "MIPRE_Foundations_Halting_Paper_Main": {
    "submitted_at": 1792091784.2226298,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "a53070b3-88d5-4922-8ee0-ef14701fe99e"
+   "status": "PUBLISHED",
+   "job_id": "a53070b3-88d5-4922-8ee0-ef14701fe99e",
+   "theorem_id": "9789cd8a-936d-4700-804f-92a4ef63afa7",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Paper_ClassVerifier": {
+   "submitted_at": 1792091856.2410192,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "436cecc4-6ea6-4db5-bca9-3bef89794433",
+   "theorem_id": "ac747939-f7c6-4287-8983-f4c16299ab7f",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Paper_ClassMain": {
+   "submitted_at": 1792091941.2374759,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "15d0e5d8-8ea5-4474-840a-61540a005a0c",
+   "theorem_id": "d79c298a-78c6-4e1f-96b1-922232fd6429",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Pipeline_Budget": {
+   "submitted_at": 1792092029.4590662,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "5ebe0b81-128c-4b4f-9911-97573ee63bd5",
+   "theorem_id": "33a57e09-86cd-40c2-8bf2-fe3c69a9fa17",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Pipeline_AnswerReduction": {
+   "submitted_at": 1792092048.003623,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "dcda3f14-4c02-4ce0-b643-46f479c17d55",
+   "theorem_id": "2cd0ee05-c504-4c82-a870-f9a177bed92a",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Pipeline_Introspection": {
+   "submitted_at": 1792092070.8827682,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "0ea2b7e2-8353-4857-a13e-f29862e85033",
+   "theorem_id": "2c01b115-4325-4ed9-bfae-409c83f7f37f",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Pipeline_Repetition": {
+   "submitted_at": 1792092119.877369,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "26180ed8-dddd-4089-a9d9-99a47212cabc",
+   "theorem_id": "05f3ce85-5aa2-4294-8b2e-250157542db5",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Pipeline_Margin": {
+   "submitted_at": 1792092137.912828,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "942bb3a5-7733-486d-a1f1-aa8541f15343",
+   "theorem_id": "849ed237-28b5-419a-8287-4c514d5dca52",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Pipeline_Compress": {
+   "submitted_at": 1792092173.7005312,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "a7984b93-7597-4082-b3e3-69d64c285cab",
+   "theorem_id": "3ddb4a01-5cd5-4591-97b5-6807a2b66834",
+   "error_message": ""
   }
  },
- "theorems": {},
+ "theorems": {
+  "MIPRE.PolyVerifier.sampleC_eq": {
+   "submitted_at": 1792092272.0512493,
+   "http": 202,
+   "job_id": "13437d92-965e-4ef9-9bc8-24d0d5e30a47",
+   "status": "QUEUED"
+  },
+  "MIPRE.PolyVerifier.mu_clause": {
+   "submitted_at": 1792092272.5373533,
+   "http": 202,
+   "job_id": "b44300cb-7045-4527-a639-76556fa3a491",
+   "status": "QUEUED"
+  },
+  "MIPRE.PolyVerifier.acc_mem_iff": {
+   "submitted_at": 1792092272.941483,
+   "http": 202,
+   "job_id": "8054b951-ee0e-46ec-836a-f6358a02bee0",
+   "status": "QUEUED"
+  }
+ },
  "solutions": {},
  "log": []
 }
