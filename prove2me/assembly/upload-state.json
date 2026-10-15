@@ -726,60 +726,220 @@
    "submitted_at": 1792092272.941483,
    "http": 202,
    "job_id": "8054b951-ee0e-46ec-836a-f6358a02bee0",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "13c4477e-2c60-40de-a0ac-5377964779b1",
+   "error_message": ""
   },
   "MIPRE.PolyVerifier.D_clause": {
    "submitted_at": 1792092309.3148503,
    "http": 202,
    "job_id": "7c0c9415-be7d-4c89-8deb-b4353a132af5",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "8db08db4-a42f-46e9-878f-edab55d98b1f",
+   "error_message": ""
   },
   "MIPRE.Cost.Machine.runs_of_runForD": {
    "submitted_at": 1792092309.8899488,
    "http": 202,
    "job_id": "7c836efa-425c-42ca-83d9-c10b84de8a1c",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "23953d5b-bfd2-43d1-9189-5f2e9f9795d4",
+   "error_message": ""
   },
   "MIPRE.Cost.halts_haltingReduction_iff": {
    "submitted_at": 1792092310.5269902,
    "http": 202,
    "job_id": "0af70a6a-d03f-4ea7-9b36-d289aeaba373",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "a8395bfb-9fe7-4d32-9309-c41dd5dc3705",
+   "error_message": ""
   },
   "MIPRE.TensorProductStrategy.value_relabel_of_support": {
    "submitted_at": 1792092311.1288574,
    "http": 202,
    "job_id": "3c92f22d-8246-4344-9291-78036d6f57cb",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "84e20e2a-9d00-496d-8dab-48838c0ff13b",
+   "error_message": ""
   },
   "MIPRE.TensorProductStrategy.value_relabel_invFun": {
    "submitted_at": 1792092311.687368,
    "http": 202,
    "job_id": "69b0a512-fa91-48f1-b894-0dde49e70d10",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "043f03db-81fa-4be8-bbf6-7fa844f0c2a1",
+   "error_message": ""
   },
   "MIPRE.SyncStrategy.value_const": {
    "submitted_at": 1792092312.5406451,
    "http": 202,
    "job_id": "5b9168f0-29de-476e-b3b5-839a5fff0a47",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "ccf3cfe4-fb2d-4930-8c12-da92ebbf1c40",
+   "error_message": ""
   },
   "MIPRE.tracialValue_le_one": {
    "submitted_at": 1792092313.2647142,
    "http": 202,
    "job_id": "54c281f4-6127-41f0-8b91-86763a0f7dbc",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "0bb209a7-1750-4095-b40c-0a16d06ec44f",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.incLoop_runs": {
    "submitted_at": 1792092314.0400093,
    "http": 202,
    "job_id": "959cef72-0f97-4f90-9e74-f638f3060759",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "55182ebc-fa7b-4058-9a06-aaffa69ef736",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.incProg_runs": {
    "submitted_at": 1792092350.0857832,
    "http": 202,
    "job_id": "9ed60b06-4b55-4445-9ea5-8defa41d6009",
+   "status": "PUBLISHED",
+   "theorem_id": "d1ee96c1-7358-4c26-ad0f-cd879026254b",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.exists_isBounded_lam": {
+   "submitted_at": 1792092404.0523105,
+   "http": 202,
+   "job_id": "a9257e6e-f846-4b25-a635-4d068e2ae864",
+   "status": "PUBLISHED",
+   "theorem_id": "6fcba47c-86c1-4a84-a757-53397e0c02a8",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal": {
+   "submitted_at": 1792092404.942588,
+   "http": 202,
+   "job_id": "ae10f078-a12b-4edb-a7a8-3adc724acffe",
+   "status": "PUBLISHED",
+   "theorem_id": "d3f889a5-41c2-4793-a787-041418409606",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.readBody_bit": {
+   "submitted_at": 1792092405.8014493,
+   "http": 202,
+   "job_id": "71344b61-edf3-4c67-af6d-2ff93ca90085",
+   "status": "PUBLISHED",
+   "theorem_id": "1075f26d-aed0-42d5-bbba-4adf11a39173",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.readLoop_runs": {
+   "submitted_at": 1792092406.7141016,
+   "http": 202,
+   "job_id": "0079e54c-35a9-4fc6-99bd-33f6a561691c",
+   "status": "PUBLISHED",
+   "theorem_id": "6f149afc-00ce-4c68-a07e-3cbe7d071126",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.readProg_runs": {
+   "submitted_at": 1792092407.8572035,
+   "http": 202,
+   "job_id": "3741c5d7-b2ec-453a-a7ea-4b8b7faff2cc",
+   "status": "PUBLISHED",
+   "theorem_id": "164ef996-522d-4b5c-8b23-ff4d22298804",
+   "error_message": ""
+  },
+  "MIPRE.Halting.esize_frozen_le": {
+   "submitted_at": 1792092408.806167,
+   "http": 202,
+   "job_id": "229ca122-367c-4134-9a93-6c55f3c6a342",
+   "status": "PUBLISHED",
+   "theorem_id": "a452bb3e-44df-4b92-aebf-525589fcd2d3",
+   "error_message": ""
+  },
+  "MIPRE.Halting.prepProg_runs": {
+   "submitted_at": 1792092409.9622948,
+   "http": 202,
+   "job_id": "9c641013-8aa5-4941-b5c7-ced5fb09985c",
+   "status": "PUBLISHED",
+   "theorem_id": "1505518d-a650-4dc3-9eb0-c7eba3425b7d",
+   "error_message": ""
+  },
+  "MIPRE.Halting.haltProg_runs_inv": {
+   "submitted_at": 1792092411.195192,
+   "http": 202,
+   "job_id": "01127bfe-3fb0-46bd-bf13-73201664c9c8",
+   "status": "PUBLISHED",
+   "theorem_id": "db56632d-bd88-4172-9388-40b9e81e02b4",
+   "error_message": ""
+  },
+  "MIPRE.Halting.esize_wrapCore_le": {
+   "submitted_at": 1792092447.2370002,
+   "http": 202,
+   "job_id": "17ed30da-9d2c-4a72-92f4-f136c54fa952",
+   "status": "PUBLISHED",
+   "theorem_id": "26b501b5-3432-4adc-8168-fef327811db5",
+   "error_message": ""
+  },
+  "MIPRE.Halting.outDec_cost": {
+   "submitted_at": 1792092448.0375974,
+   "http": 202,
+   "job_id": "953dcb1d-021e-4aaf-bb25-02540c116abc",
+   "status": "FAILED",
+   "theorem_id": null,
+   "error_message": "formal statement does not compile: DB error looking up import 'Definitions.Def_MIPRE_Foundations_Verifier': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+  },
+  "MIPRE.Halting.wrapCoreCost_le_decZ": {
+   "submitted_at": 1792092484.320568,
+   "http": 202,
+   "job_id": "390d7bcf-bbe8-4884-b879-ccb9af114b7b",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.decider_clause": {
+   "submitted_at": 1792092520.5083008,
+   "http": 202,
+   "job_id": "31d5d374-63da-4469-b908-34677c6dfaf9",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.lamOf_ge": {
+   "submitted_at": 1792092521.146443,
+   "http": 202,
+   "job_id": "e08fa7c3-191b-4bcb-a540-c5a018fb5b25",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.exists_compressorSpec": {
+   "submitted_at": 1792092527.8510308,
+   "http": 202,
+   "job_id": "925ac1d1-84ef-489c-ae2d-c8efb6c96cd0",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.halting_reduction_both_of": {
+   "submitted_at": 1792092528.6514883,
+   "http": 202,
+   "job_id": "ec9547cd-a3d5-4372-8af0-61c4a92e51b1",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.halting_reduces_to_gameValue_of": {
+   "submitted_at": 1792092529.3447962,
+   "http": 202,
+   "job_id": "373ce54f-41bf-4f37-a431-1451338d9fbe",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.halting_reduction_quantum_of": {
+   "submitted_at": 1792092535.2085686,
+   "http": 202,
+   "job_id": "675988f8-f9af-4c28-a790-335a18a8d126",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.gameValue_uncomputable_of": {
+   "submitted_at": 1792092535.839422,
+   "http": 202,
+   "job_id": "97182eca-da98-4b77-ba46-dc5a216734d3",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.quantumValue_uncomputable_of": {
+   "submitted_at": 1792092536.4684322,
+   "http": 202,
+   "job_id": "ccb87dfc-0620-4808-8b1b-501600a4d10d",
+   "status": "QUEUED"
+  },
+  "MIPRE.Halting.exists_code_halts_of_isRE": {
+   "submitted_at": 1792092537.0584815,
+   "http": 202,
+   "job_id": "8e00e720-a5e8-45d4-b5e2-941ca71ad8e3",
    "status": "QUEUED"
   }
  },
