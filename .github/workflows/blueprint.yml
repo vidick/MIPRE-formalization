@@ -78,6 +78,16 @@ jobs:
           use-github-cache: false
           use-mathlib-cache: true
 
+      # doc-gen4 imports each module at Lean's private olean level, five files per module
+      # (`.olean`, `.olean.server`, `.olean.private`, `.ir.sig`, `.ir`), and the root module's
+      # closure is 13,095 modules with Mathlib: more memory mappings than a Linux process may
+      # hold by default (vm.max_map_count, 65,530), at which Lean dies with "INTERNAL PANIC:
+      # out of memory" with memory to spare. The deploy's own `lake exe checkdecls` imports at
+      # the exported level, three files per module, and does not need this; doc-gen4 offers no
+      # such choice. See scripts/CheckBlueprintDecls.lean.
+      - name: Raise the per-process memory-map limit for doc-gen4
+        run: sudo sysctl -w vm.max_map_count=1048576
+
       # Builds the blueprint (pdf + web), the doc-gen4 API documentation and
       # the Jekyll home page from website/, then deploys everything to Pages:
       # site root = home page, /blueprint = blueprint, /docs = API docs.

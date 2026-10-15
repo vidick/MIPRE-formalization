@@ -162,6 +162,20 @@ Two things to know about reading it:
   that LaTeX or a package provides live in `scripts/latex-allowed-commands.txt`; `scripts/ledger-sync.py` checks the ledger correspondence. CI
   runs both before the Lean build. Tags and `\uses` lists wrap across lines here, so
   never check them with a per-line grep: that silently skips the continuations.
+- **`lake exe checkdecls` is the project's own executable** (`scripts/CheckBlueprintDecls.lean`,
+  declared in `lakefile.toml`), and the deploy's first step after `leanblueprint web` runs it on
+  `main`. It is not the `PatrickMassot/checkdecls` program, which imports every library root
+  at once and so fails on the Palomar `Challenge` and `Solution` roots, which declare the same
+  names; and the `MIPStarRE` dependency ships a `checkdecls` of its own, which `lake exe`
+  resolves to unless the root package defines one, since Lake searches the root first. Those
+  two kept the deploy red, and the published blueprint stale, for fifteen days in October
+  2026, because nothing on a pull request ran the step. `Build project` now runs it, on the
+  `blueprint/lean_decls` that `scripts/blueprint-colours.py --lean-decls` writes. A tool that
+  imports the whole library must do so at `OLeanLevel.exported`, as that executable does: at
+  the default private level Lean maps five files per module, and the closure's 13,095 modules
+  exceed the 65,530 memory mappings a Linux process may hold (`vm.max_map_count`), so the
+  importer dies with `INTERNAL PANIC: out of memory` with memory to spare. doc-gen4 imports
+  privately and offers no choice, so the deploy raises the limit before running it.
 - **`\leanok` is two marks, not one**: inside the environment it claims the
   *statement* is formalized, inside `\begin{proof}` that the *proof* is. The second is now
   mechanical: every declaration under a proof-level `\leanok` must be named in an axiom-guard

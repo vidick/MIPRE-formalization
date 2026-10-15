@@ -100,7 +100,7 @@ The audit surface for "what was proved" moves from MIPStarRE's definitions to ou
    | `relaxedAutoImplicit` | `false` | `false` |
    | `maxSynthPendingDepth` | `3` | unset |
    | `weak.linter.mathlibStandardSet` | `true` | unset |
-   | `checkdecls` | local `lean_exe` in `scripts/` | dependency `PatrickMassot/checkdecls` |
+   | `checkdecls` | local `lean_exe` in `scripts/` | was the dependency `PatrickMassot/checkdecls`; a local `lean_exe` in `scripts/` too since 2026-10-14, because `lake exe checkdecls` resolved to MIPStarRE's once it was required (`lakefile.toml`) |
    | doc-gen4 | `docbuild/` subproject | direct `require` |
 
    Five files use `import Mathlib` (full). Top-level `set_option` in sources: only

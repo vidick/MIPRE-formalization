@@ -29,9 +29,13 @@ all: plasTeX skips an `\input` it cannot resolve with a warning, and the checks 
 then pass on what is left.
 
 Usage (needs `pip install leanblueprint`, which is what the blueprint deploy installs):
-  scripts/blueprint-colours.py            report
-  scripts/blueprint-colours.py --check    exit 1 on any finding
-  scripts/blueprint-colours.py --verbose  also show plasTeX's own log
+  scripts/blueprint-colours.py                     report
+  scripts/blueprint-colours.py --check             exit 1 on any finding
+  scripts/blueprint-colours.py --verbose           also show plasTeX's own log
+  scripts/blueprint-colours.py --lean-decls PATH   also write the `lean_decls` list, the
+      `\lean{}` names of the blueprint one per line, as `leanblueprint web` writes it next to
+      the source directory, for `lake exe checkdecls PATH` (the deploy's check, which the
+      `Build project` workflow runs on `blueprint/lean_decls` after the build)
 """
 import collections
 import contextlib
@@ -45,9 +49,10 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "blueprint" / "src"
 
 
-def parse_blueprint(src, verbose=False):
+def parse_blueprint(src, verbose=False, lean_decls=None):
     """The plasTeX document of the blueprint at `src`, after leanblueprint's post-parse
-    callbacks (which compute the colouring data), and the number of warnings plasTeX logged."""
+    callbacks (which compute the colouring data), and the number of warnings plasTeX logged.
+    With `lean_decls`, the `lean_decls` file leanblueprint writes is copied to that path."""
     from plasTeX.Compile import parse
     from plasTeX.Config import defaultConfig
     from plasTeX.TeX import TeX
@@ -86,6 +91,9 @@ def parse_blueprint(src, verbose=False):
             print(log.read_text(encoding="utf-8", errors="replace")[-4000:])
             raise
         text = log.read_text(encoding="utf-8", errors="replace")
+        if lean_decls is not None:
+            # written by leanblueprint's post-parse callback, next to the source directory
+            shutil.copyfile(work.parent / "lean_decls", lean_decls)
     if verbose:
         print(text)
     # plasTeX skips an \input it cannot read with a warning: the parse would then pass
@@ -177,8 +185,15 @@ def main(argv):
     except ImportError:
         sys.exit("blueprint-colours: needs leanblueprint (pip install leanblueprint)")
     sys.setrecursionlimit(10000)
+    lean_decls = None
+    if "--lean-decls" in argv:
+        at = argv.index("--lean-decls")
+        if at + 1 >= len(argv):
+            sys.exit("blueprint-colours: --lean-decls needs a path")
+        lean_decls = pathlib.Path(argv[at + 1])
     try:
-        doc, warnings, unread = parse_blueprint(SRC, verbose="--verbose" in argv)
+        doc, warnings, unread = parse_blueprint(SRC, verbose="--verbose" in argv,
+                                                lean_decls=lean_decls)
     except RecursionError:
         print("blueprint-colours: the \\uses graph has a cycle, on which leanblueprint recurses "
               "forever (as the deploy would); scripts/blueprint-edges.py names it")
