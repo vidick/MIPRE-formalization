@@ -2,8 +2,8 @@
  "proposal": {
   "id": "4939b1d4-c604-4734-8109-f0aef34ecc4c",
   "name": "MIP* = RE",
-  "status": "Draft",
-  "visibility": "private"
+  "status": "Reviewed",
+  "visibility": "public"
  },
  "items": {
   "Def_MIPRE_HaltingGameValue": {
