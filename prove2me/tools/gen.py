@@ -152,7 +152,7 @@ for m in modules:
                 ATTRS[m].append({"start": c["start"]["offset"], "end": c["end"]["offset"], "attr": mm.group(1), "names": names})
         elif k == "open":
             (stack[-1] if stack else root)["opens"].append(t)
-        elif k == "variable":
+        elif k in ("variable", "include", "omit"):
             (stack[-1] if stack else root)["vars"].append(t)
         elif k in ("declaration", "in"):
             frames = [root] + stack
@@ -399,6 +399,23 @@ def pasted_block(uid):
         body.append(f"end {ns}")
     return "\n".join(body) + "\n"
 
+DECL_KW = re.compile(r"^(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|nonrec|partial|unsafe)\s+)*"
+                     r"(?:theorem|lemma|def|abbrev|instance|structure|class|inductive|opaque|axiom)\b", re.M)
+
+def in_prefix(uid):
+    """The `<cmd> in` prefixes of a declaration (`include G U in`, `omit [h] in`, `open X in`), as the
+    verbatim prefix text and as the list of bare commands."""
+    u = U[uid]
+    d = u["decl"]
+    a = d["declStart"]["offset"]
+    b = d["docstring"]["start"]["offset"] if d["docstring"] else u["bind"]["start"]["offset"]
+    head = txt(u["module"], a, b)
+    if not d["docstring"]:
+        km = DECL_KW.search(head)
+        head = head[:km.start()] if km else ""
+    cmds = [c.strip() for c in re.findall(r"(\S.*?)\s+in(?=\s)", head, re.S)]
+    return head.strip(), cmds
+
 def docstring_text(uid):
     u = U[uid]
     ds = u["decl"]["docstring"]
@@ -419,8 +436,9 @@ for uid in nodes:
     if u["decl"]["valKind"] != "simple":
         print("note: non-simple value kind for node", u["name"], u["decl"]["valKind"])
     formal = expand_macros(f"theorem {u['name']}{rest} := by sorry")
+    prefix_text, prefix_cmds = in_prefix(uid)
     pre_lines = ([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=True)
-                 + [""] + hoisted_context(uid))
+                 + [""] + hoisted_context(uid) + prefix_cmds)   # `include G U in` becomes a bare `include G U`
     preamble = "\n".join(pre_lines)
     stub = HEADER + gen_note(m, f"statement stub of {u['name']}") + preamble + "\n\n" + formal + "\n"
     stub = expand_macros(stub)
@@ -445,17 +463,22 @@ for uid in nodes:
                     attr_after[tu].append(f"attribute {at['attr']} {tconst}")
     if attr_top:
         sol_parts.append("/-! Attribute commands of the source modules, for the declarations imported here. -/")
-        sol_parts += attr_top
+        sol_parts += list(dict.fromkeys(attr_top))
         sol_parts.append("")
     if pasted:
         sol_parts.append("/-! Helper declarations, pasted verbatim from the source modules with their\n"
                          "namespace and `open` context; each is used only by proofs. -/")
         for v in pasted:
             sol_parts.append(pasted_block(v))
-            for line in attr_after.get(v, []):
+            for line in dict.fromkeys(attr_after.get(v, [])):
                 sol_parts.append(line + "\n")
-    sol_parts.append("/-! The uploaded declaration, hoisted to the top level as `solution`. -/")
-    sol_parts.append("\n".join(hoisted_context(uid)))
+    sol_parts.append("/-! The uploaded declaration as `solution` (a root name declared inside the source's\n"
+                     "namespace, so that names resolve as they do in the source). -/")
+    sctx = unit_ctx(uid)
+    sol_ns = ".".join(u["name"].split(".")[:-1])
+    if sol_ns:
+        sol_parts.append(f"namespace {sol_ns}")
+    sol_parts += sctx["opens"] + sctx["vars"]
     body = head_rest(uid, 'end').rstrip()
     # a structurally recursive theorem refers to itself inside its own body; those occurrences
     # elaborate as local variables (no ref facts), so the hoisted copy renames them textually
@@ -466,14 +489,18 @@ for uid in nodes:
     if re.search(r"(?<![A-Za-z0-9_.'])" + re.escape(short) + r"(?![A-Za-z0-9_'])", val_part):
         val_part = re.sub(r"(?<![A-Za-z0-9_.'])" + re.escape(short) + r"(?![A-Za-z0-9_'])", "solution", val_part)
         print("note: renamed self-references in recursive node", u["name"])
-    sol_parts.append(f"theorem solution{stmt_part}{val_part}\n")
+    if prefix_text:
+        sol_parts.append(prefix_text)
+    sol_parts.append(f"theorem _root_.solution{stmt_part}{val_part}" if sol_ns else f"theorem solution{stmt_part}{val_part}")
+    if sol_ns:
+        sol_parts.append(f"end {sol_ns}\n")
     sol = expand_macros("\n".join(sol_parts))
     emit(f"Solutions/Sol_{slug}.lean", sol)
     node_meta[uid] = {
         "theorem_name": RENAMES.get(u["name"], u["name"]), "source_name": u["name"], "slug": slug, "module": m, "source_path": module_path(m),
         "lines": [u["decl"]["declStart"]["line"], u["decl"]["declEnd"]["line"]],
         "prooflines": u["prooflines"], "docstring": docstring_text(uid),
-        "formal_statement": formal, "preamble": preamble,
+        "formal_statement": formal, "preamble": preamble, "in_prefix": prefix_cmds,
         "imported_nodes": [U[v]["name"] for v in c["imported_nodes"]],
         "imported_published_nodes": [U[v]["name"] for v in c["imported_nodes"] if U[v]["cls"] == "pubnode"],
         "pasted": [U[v]["name"] for v in pasted],

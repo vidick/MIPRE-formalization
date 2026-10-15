@@ -155,8 +155,9 @@ for name, head, body, a, b, ns in cond:
     assert body2 != body, name
     sol_imports = import_lines(STMT_CONSTS + BODY_CONSTS,
                                [tslug, slug("MIPRE.Introspection.nonempty_seven"), slug("MIPRE.Repetition.nonempty_seven")])
-    sol = (HEADER + note(f"sketch of {full}", "MIPRE/Background/Pipeline.lean") + "\n".join(sol_imports) + "\n\n" + OPENS
-           + f"\ntheorem solution (A : MIPRE.AnswerReduction 5){head} :=\n  {body2}\n")
+    sol = (HEADER + note(f"sketch of {full}", "MIPRE/Background/Pipeline.lean") + "\n".join(sol_imports) + "\n\n"
+           + "namespace MIPRE.Halting\nopen Cost\n"
+           + f"\ntheorem _root_.solution (A : MIPRE.AnswerReduction 5){head} :=\n  {body2}\n\nend MIPRE.Halting\n")
     emit(f"Solutions/Sol_{slug(full)}.lean", sol)
     items.append({"theorem_name": full, "slug": slug(full), "kind": "conditional", "formal_statement": formal,
                   "preamble": "\n".join(pre), "stub_file": f"Theorems/Thm_{slug(full)}.lean",
@@ -183,8 +184,10 @@ for name, head, body, a, b, ns in uncond:
         emit(f"Theorems/Thm_{slug(full)}.lean", HEADER + note(f"statement stub of {full}", "MIPRE/MainTheorem.lean")
              + "\n".join(pre) + "\n\n" + formal + "\n")
     sol_imports = import_lines(STMT_CONSTS + BODY_CONSTS, [slug(c) for c in used] + [slug("MIPRE.AnswerReduction.nonempty_five")])
-    sol = (HEADER + note(f"sketch of {full}", "MIPRE/MainTheorem.lean") + "\n".join(sol_imports) + "\n\n" + opens
-           + f"\ntheorem solution{head} :=\n  {body2}\n")
+    inner_open = "open Cost\n" if ns == "MIPRE.Halting" else ""
+    sol = (HEADER + note(f"sketch of {full}", "MIPRE/MainTheorem.lean") + "\n".join(sol_imports) + "\n\n"
+           + f"namespace {ns}\n{inner_open}"
+           + f"\ntheorem _root_.solution{head} :=\n  {body2}\n\nend {ns}\n")
     emit(f"Solutions/Sol_{slug(full)}.lean", sol)
     items.append({"theorem_name": full, "slug": slug(full), "kind": "unconditional", "formal_statement": formal,
                   "preamble": "\n".join(pre), "stub_file": None if published_stub else f"Theorems/Thm_{slug(full)}.lean",
