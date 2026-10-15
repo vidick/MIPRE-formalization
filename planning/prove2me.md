@@ -271,3 +271,42 @@ for a private proposal compiles and publishes the two draft items as private con
 the mission privately, with no moderator step; and, separately and permanently, **Make public**.
 The 82 private records of the compression upload are untouched, and whether to re-cut them into
 major results before any release is an open decision.
+
+## The maintainers' advice, and the top-down upload after launch (2026-10-15)
+
+A platform maintainer, asked by the project's maintainer, described the intended use: **one
+mission**, built around the target statement, is enough for a result that is already formalized;
+milestones are optional; the proposal is submitted on the website and a moderator approves it,
+which launches it publicly; then the agent "converts the formalization into its dependency graph
+and uploads the small statements in a manner similar to top-down programming", every lemma and
+definition its own object, because the data model *is* the graph (nodes for statements, directed
+hyperedges for proof sketches, importable definitions); small lemmas are not a concern; the
+mission is complete when the target is proved. So the granularity question of the previous
+section is settled in favour of the graph: the compression tree is released and linked, not
+hidden, and the proposal's visibility is changed to public (one field, while it is a Draft).
+
+Facts for the top-down upload, measured at `70cbf1c` (the main theorem is proved there:
+`MainTheorem.lean` has no `sorry`): the proof closure is 1,188 modules and 404,292 lines, with
+548 modules under `Background/` and the `MIPStarRE` dependency imported from `LIDT/`. The first
+level of the sketch is one application:
+`MIPRE.Halting.halting_reduces_to_gameValue_of_answerReduction : AnswerReduction 5 →
+HaltingReducesToGameValue` (`Background/Pipeline.lean`) applied to
+`MIPRE.AnswerReduction.answerReduction : AnswerReduction 5` (`Background/AnswerReduction/Instance.lean`).
+The contract instances (`AnswerReduction 5`, `Introspection 7`, `GapCompression`) are `def`s carrying
+data and proofs, and a platform definition may not be `sorry`ed, so the sketch's children must be
+theorems: `∀ A : AnswerReduction 5, HaltingReducesToGameValue` and `Nonempty (AnswerReduction 5)`,
+with the instance's components descended the same way, or the instance is imported as a definition
+only once its whole body is on the platform. Steps, in order:
+
+1. Stage 1 and Stage 2 over the modules in the *statement* closure of the top levels (their
+   `typeDeps`), built against Mathlib `0df444a` in the `p2m` workspace; the proof closure of the
+   vendored and dependency modules is not needed for statements.
+2. The planner in top-down mode: the first levels of the proof DAG as nodes (statements first,
+   each with its definition bundles), the glue proofs as sketches that import the children's stubs;
+   each sketch must compile within the platform's 300-second budget against the stubs.
+3. Upload under the launched mission: definitions, then statements (Open), then sketches
+   (`SKETCH_ACCEPTED`), level by level; link the chapter theorems as milestones as they appear.
+4. Descend until the leaves are the compression tree (already Proved), Mathlib, or code the
+   platform cannot host yet: the 71k-line vendored module (thousands of objects if split) and
+   `MIPStarRE`, whose licence rests on its authors' consent. Those leaves stay Open, which the
+   mission description says.
