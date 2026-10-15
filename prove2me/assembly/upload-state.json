@@ -1692,7 +1692,8 @@
    "submitted_at": 1792094578.048422,
    "http": 200,
    "submission_id": "36135673-8b9f-4503-a6ae-48afa34a8714",
-   "status": "PENDING"
+   "status": "ERROR",
+   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Foundations_Cost_FromPartrec': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
   }
  },
  "log": []

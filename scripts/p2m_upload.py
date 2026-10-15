@@ -29,6 +29,14 @@ P2M = os.path.join(ROOT, "prove2me")            # the tree directory; --tree cha
 STATE_PATH = os.path.join(P2M, "upload-state.json")
 PROJECT_TAG = "mipre-formalization"
 PUBLISHED = set()   # theorem names already on the platform (Proved), imported but not uploaded by this tree
+# platform-side failures that are not about the file: a dropped database connection while an
+# import is looked up or a reduction edge recorded, an explicit "please resubmit"
+TRANSIENT = ("ConnectionTerminated", "DB error", "please resubmit", "could not be recorded",
+             "ConnectionReset", "timed out", "Connection refused", "temporarily unavailable")
+
+
+def is_transient(msg):
+    return any(pat in (msg or "") for pat in TRANSIENT)
 
 
 def set_tree_dir(rel):
@@ -262,7 +270,7 @@ def upload_definitions(tree, meta, st, args):
             sys.exit(f"definition {name} did not publish ({rec['status']}); later content imports it, stopping")
 
 
-def upload_theorems(tree, meta, st, args):
+def upload_theorems(tree, meta, st, args, rounds=0):
     mn = {n["theorem_name"]: n for n in meta["nodes"]}
     pending = []
     for n in tree["nodes"]:
@@ -320,6 +328,12 @@ def upload_theorems(tree, meta, st, args):
     while pending:
         pending = drain(pending, st, "theorems", len(pending))
     failed = [k for k, v in st["theorems"].items() if v.get("status") != "PUBLISHED"]
+    transient = [k for k in failed if is_transient(st["theorems"][k].get("error_message"))]
+    if transient and rounds < 3 and not args.dry_run:
+        log(f"{len(transient)} statement(s) failed on a transient platform error "
+            f"({', '.join(transient)[:300]}); resubmitting in 60 s (round {rounds + 1} of 3)")
+        time.sleep(60)
+        return upload_theorems(tree, meta, st, args, rounds + 1)
     if failed and not args.dry_run:
         sys.exit(f"{len(failed)} theorem(s) did not publish: {failed[:10]}")
 
@@ -388,30 +402,36 @@ def upload_solutions(tree, meta, st, args):
             continue
         if not tid:
             sys.exit(f"no theorem_id recorded for {name}; run the theorems phase first")
-        if rec.get("submission_id") and rec.get("status") in (None, "PENDING", "SUBMITTED"):
-            res = poll_submission(rec["submission_id"], name)
-        else:
-            sol = open(os.path.join(P2M, n["solution_file"]), "rb").read()
-            fields = {"theorem_id": tid, "proof_type": "prove",
-                      "file": (f"Sol_{n['slug']}.lean", sol),
-                      "explanation": mn[name].get("explanation", "")}
-            code, d = request("POST", "/verify", multipart=fields)
-            rec.update({"submitted_at": time.time(), "http": code})
-            if code not in (200, 201, 202) or not d.get("submission_id"):
-                rec["error"] = d
-                rec["status"] = "REJECTED"
+        for attempt in range(4):   # a transient platform error gets up to three resubmissions
+            if rec.get("submission_id") and rec.get("status") in (None, "PENDING", "SUBMITTED"):
+                res = poll_submission(rec["submission_id"], name)
+            else:
+                sol = open(os.path.join(P2M, n["solution_file"]), "rb").read()
+                fields = {"theorem_id": tid, "proof_type": "prove",
+                          "file": (f"Sol_{n['slug']}.lean", sol),
+                          "explanation": mn[name].get("explanation", "")}
+                code, d = request("POST", "/verify", multipart=fields)
+                rec.update({"submitted_at": time.time(), "http": code})
+                if code not in (200, 201, 202) or not d.get("submission_id"):
+                    rec["error"] = d
+                    rec["status"] = "REJECTED"
+                    save_state(st)
+                    sys.exit(f"verify {name}: HTTP {code} {json.dumps(d)[:800]}")
+                rec["submission_id"] = d["submission_id"]
+                rec["status"] = "PENDING"
                 save_state(st)
-                sys.exit(f"verify {name}: HTTP {code} {json.dumps(d)[:800]}")
-            rec["submission_id"] = d["submission_id"]
-            rec["status"] = "PENDING"
+                log(f"verify {name}: submission {d['submission_id']}")
+                res = poll_submission(d["submission_id"], name)
+            rec["status"] = res.get("status")
+            rec["error_message"] = res.get("error_message", "")
             save_state(st)
-            log(f"verify {name}: submission {d['submission_id']}")
-            res = poll_submission(d["submission_id"], name)
-        rec["status"] = res.get("status")
-        rec["error_message"] = res.get("error_message", "")
-        save_state(st)
-        log(f"solution {name}: {rec['status']} {rec['error_message'][:400]}")
-        if rec["status"] not in ("ACCEPTED", "SKETCH_ACCEPTED"):
+            log(f"solution {name}: {rec['status']} {rec['error_message'][:400]}")
+            if rec["status"] in ("ACCEPTED", "SKETCH_ACCEPTED"):
+                break
+            if attempt < 3 and is_transient(rec["error_message"]):
+                log(f"solution {name}: transient platform error; resubmitting in 60 s (attempt {attempt + 2} of 4)")
+                time.sleep(60)
+                continue
             sys.exit(f"solution of {name} ended {rec['status']}: {rec['error_message'][:1500]}")
 
 
