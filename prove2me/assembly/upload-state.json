@@ -1916,6 +1916,55 @@
    "submitted_at": 1792097171.7047052,
    "http": 200,
    "submission_id": "a51acc80-4cf3-4ad0-9e27-395843f75a81",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.decYes_halts": {
+   "submitted_at": 1792097271.3419871,
+   "http": 200,
+   "submission_id": "d85281a6-a231-4d79-8fd1-c3b847d5ae4a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.decYes_runs_true_iff": {
+   "submitted_at": 1792097367.039274,
+   "http": 200,
+   "submission_id": "eed889df-b2e4-46aa-9f96-9c1f64cebcad",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.polyBounded_wrapHeadZ": {
+   "submitted_at": 1792097518.8122475,
+   "http": 200,
+   "submission_id": "5964fa30-7565-4d25-bc4a-2dd79aa8b27b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.wrapCore_hasPolyCost": {
+   "submitted_at": 1792097595.274835,
+   "http": 200,
+   "submission_id": "4bd40b4f-e944-4107-bfc7-830e66c272c8",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.yYes_mem": {
+   "submitted_at": 1792097674.7205353,
+   "http": 200,
+   "submission_id": "69202b38-1e2a-46a1-a9f8-9575843c993e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.primrec_accOf": {
+   "submitted_at": 1792097765.273016,
+   "http": 200,
+   "submission_id": "5fd0d30d-51a0-4f87-82e8-e8384a890fa1",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.primrec_tabOf": {
+   "submitted_at": 1792097829.998542,
+   "http": 200,
+   "submission_id": "800712d6-3416-4626-a112-91c9b069cbd3",
    "status": "PENDING"
   }
  },
