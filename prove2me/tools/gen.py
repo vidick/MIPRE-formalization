@@ -5,14 +5,30 @@ Definitions bundles by skeleton subtraction, Thm_ stubs and Sol_ files by contex
 reconstruction.  All positions are byte offsets from the Stage 2 facts; the only text
 this script parses itself is the import header and the one-line `namespace`/`open`/
 `variable` commands whose spans Stage 2 reports.
+
+Configuration: ``P2M_CONFIG`` names the same JSON file plan.py used (``plan`` = its output,
+``tree_out`` = where to write tree.json, ``manifest`` = the list of files this run generated,
+``wipe`` = whether to empty the three output directories first).  Without it the script
+regenerates the recursive-compression tree of 2026-10-12.  With published content in the plan,
+nothing already on the platform is regenerated: published nodes are imported as
+``Theorems.Thm_<slug>``, published bundles as ``Definitions.Def_<name>``, and a module whose
+published bundle lacks a needed declaration gets a delta bundle ``Def_<name>_B`` holding just
+the missing declarations.
 """
 import os, json, re, sys, collections, shutil
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
-E, WS = f"{S}/extract", f"{S}/ws"
+WS = f"{S}/ws"
 REPO = "vidick/MIPRE-formalization"
 COMMIT = "70cbf1c"
-COMMIT_FULL = None  # filled from git
+
+CFG = {"extract_dir": f"{S}/extract", "plan": f"{S}/plan.json", "tree_out": f"{S}/tree.json",
+       "manifest": None, "wipe": True}
+if os.environ.get("P2M_CONFIG"):
+    c = json.load(open(os.environ["P2M_CONFIG"], encoding="utf-8"))
+    CFG.update({k: v for k, v in c.items() if k in CFG})
+    CFG["plan"] = c.get("out", CFG["plan"])
+E = CFG["extract_dir"]
 
 META_CMDS = {"macro", "macro_rules", "syntax", "elab", "elab_rules", "notation", "notation3", "declare_syntax_cat"}
 # `size_omega` (Cost/Interpreter.lean) is the closure's one macro; every generated file spells
@@ -30,10 +46,13 @@ def expand_macros(text):
         text = re.sub(r"(?<![A-Za-z0-9_.'])" + re.escape(name) + r"(?![A-Za-z0-9_'])", body, text)
     return text
 
-plan = json.load(open(f"{S}/plan.json"))
+plan = json.load(open(CFG["plan"], encoding="utf-8"))
 U = plan["units"]
 modules = plan["modules"]
 bundles = set(plan["bundles"])
+new_bundles = set(plan.get("new_bundles", plan["bundles"]))
+delta_bundles = plan.get("delta_bundles", {})          # module -> definition_name (…_B)
+published_bundles = plan.get("published_bundles", {})  # module -> definition_name
 nodes = plan["nodes"]
 comp = plan["composition"]
 slugs = plan["slugs"]
@@ -47,9 +66,11 @@ def mslug(m):
 # ---------- facts ----------
 F = {}
 for m in modules:
-    base = m.split(".")[-1]
+    fn = f"{E}/sketch_info.{m}.jsonl"
+    if not os.path.exists(fn):
+        fn = f"{E}/sketch_info.{m.split('.')[-1]}.jsonl"
     d = collections.defaultdict(list)
-    for l in open(f"{E}/sketch_info.{base}.jsonl", encoding="utf-8"):
+    for l in open(fn, encoding="utf-8"):
         if l.strip():
             o = json.loads(l)
             d[o["kind"]].append(o)
@@ -152,9 +173,20 @@ def ext_imports(m):
         s |= set(imports[d]["ext"])
     return sorted(s)
 
-def bundle_imports(m, include_self):
+def bundle_names(d, exclude_delta_of=None):
+    """Platform bundle modules that carry module d's declarations, in import order."""
+    out = []
+    if d in published_bundles:
+        out.append(f"Definitions.Def_{published_bundles[d]}")
+    if d in delta_bundles and d != exclude_delta_of:
+        out.append(f"Definitions.Def_{delta_bundles[d]}")
+    if d in new_bundles:
+        out.append(f"Definitions.Def_{mslug(d)}")
+    return out
+
+def bundle_imports(m, include_self, exclude_delta_of=None):
     mods = set(mod_closure[m]) | ({m} if include_self else set())
-    return [f"import Definitions.Def_{mslug(d)}" for d in TOPO if d in mods and d in bundles]
+    return [f"import {b}" for d in TOPO if d in mods for b in bundle_names(d, exclude_delta_of)]
 
 HEADER = txt(modules[0], 0, F[modules[0]]["B"].find(b"\nimport ")).strip() + "\n"
 
@@ -162,22 +194,38 @@ def gen_note(m, what):
     return (f"/- Generated for Prove2Me from {REPO}@{COMMIT}, {module_path(m)} ({what});\n"
             f"   produced mechanically by prove2me/tools/gen.py, never edited by hand. -/\n")
 
-# ---------- Definitions bundles ----------
-os.makedirs(f"{WS}/Definitions", exist_ok=True)
-os.makedirs(f"{WS}/Theorems", exist_ok=True)
-os.makedirs(f"{WS}/Solutions", exist_ok=True)
+# ---------- output directories ----------
 for d in ("Definitions", "Theorems", "Solutions"):
-    for f in os.listdir(f"{WS}/{d}"):
-        os.remove(f"{WS}/{d}/{f}")
+    os.makedirs(f"{WS}/{d}", exist_ok=True)
+if CFG["wipe"]:
+    for d in ("Definitions", "Theorems", "Solutions"):
+        for f in os.listdir(f"{WS}/{d}"):
+            os.remove(f"{WS}/{d}/{f}")
+elif CFG["manifest"] and os.path.exists(CFG["manifest"]):
+    # remove what the previous run of this plan generated, and nothing else
+    for f in json.load(open(CFG["manifest"], encoding="utf-8")):
+        p = f"{WS}/{f}"
+        if os.path.exists(p):
+            os.remove(p)
+generated = []
+
+def emit(rel, text):
+    fn = f"{WS}/{rel}"
+    if not CFG["wipe"] and os.path.exists(fn):
+        raise RuntimeError(f"refusing to overwrite an existing file not generated by this plan: {rel}")
+    open(fn, "w", encoding="utf-8").write(text)
+    generated.append(rel)
 
 def collapse(s):
     s = re.sub(r"\n[ \t]*\n[ \t]*\n+", "\n\n", s)
     return s.strip("\n") + "\n"
 
+# ---------- Definitions bundles ----------
 bundle_meta = {}
 for m in TOPO:
     if m not in bundles:
         continue
+    is_delta = m in delta_bundles
     B = F[m]["B"]
     cmds = F[m]["cmds"]
     body_start = cmds[0]["start"]["offset"]  # first command after the import header
@@ -217,12 +265,15 @@ for m in TOPO:
         pos = b
     pieces.append(B[pos:body_end])
     body = b"".join(pieces).decode("utf-8")
-    header = HEADER + gen_note(m, "definition bundle: declarations the uploaded statements rest on")
-    imps = ext_imports(m) and "\n".join(f"import {x}" for x in ext_imports(m))
-    imps = "\n".join([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=False))
+    what = ("delta bundle: declarations the new statements need that the published bundle "
+            f"Def_{published_bundles[m]} does not carry" if is_delta
+            else "definition bundle: declarations the uploaded statements rest on")
+    header = HEADER + gen_note(m, what)
+    imps = "\n".join([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=is_delta, exclude_delta_of=m))
     out = expand_macros(header + imps + "\n\n" + collapse(body))
-    fn = f"{WS}/Definitions/Def_{mslug(m)}.lean"
-    open(fn, "w", encoding="utf-8").write(out)
+    name = delta_bundles[m] if is_delta else mslug(m)
+    rel = f"Definitions/Def_{name}.lean"
+    emit(rel, out)
     # module docstring for metadata
     mdoc = ""
     for c in cmds:
@@ -230,12 +281,13 @@ for m in TOPO:
             mdoc = txt(m, c["start"]["offset"], c["end"]["offset"])
             break
     bundle_meta[m] = {
-        "definition_name": mslug(m), "file": f"Definitions/Def_{mslug(m)}.lean", "module": m,
+        "definition_name": name, "kind": "delta" if is_delta else "new", "file": rel, "module": m,
         "lines": out.count("\n"), "kept": sorted(U[u]["name"] for u in kept_units),
         "defmat": sorted(U[u]["name"] for u in kept_units if U[u]["cls"] == "defmat"),
         "embedded": sorted(U[u]["name"] for u in kept_units if U[u]["cls"] == "embedded"),
-        "imports": bundle_imports(m, include_self=False), "moduleDoc": mdoc,
+        "imports": bundle_imports(m, include_self=is_delta, exclude_delta_of=m), "moduleDoc": mdoc,
         "source_path": module_path(m),
+        "published_bundle": published_bundles.get(m),
     }
 
 # ---------- helpers for hoisted context ----------
@@ -308,7 +360,7 @@ for uid in nodes:
     preamble = "\n".join(pre_lines)
     stub = HEADER + gen_note(m, f"statement stub of {u['name']}") + preamble + "\n\n" + formal + "\n"
     stub = expand_macros(stub)
-    open(f"{WS}/Theorems/Thm_{slug}.lean", "w", encoding="utf-8").write(stub)
+    emit(f"Theorems/Thm_{slug}.lean", stub)
 
     # solution
     c = comp[uid]
@@ -335,19 +387,25 @@ for uid in nodes:
         print("note: renamed self-references in recursive node", u["name"])
     sol_parts.append(f"theorem solution{stmt_part}{val_part}\n")
     sol = expand_macros("\n".join(sol_parts))
-    open(f"{WS}/Solutions/Sol_{slug}.lean", "w", encoding="utf-8").write(sol)
+    emit(f"Solutions/Sol_{slug}.lean", sol)
     node_meta[uid] = {
         "theorem_name": u["name"], "slug": slug, "module": m, "source_path": module_path(m),
         "lines": [u["decl"]["declStart"]["line"], u["decl"]["declEnd"]["line"]],
         "prooflines": u["prooflines"], "docstring": docstring_text(uid),
         "formal_statement": formal, "preamble": preamble,
         "imported_nodes": [U[v]["name"] for v in c["imported_nodes"]],
+        "imported_published_nodes": [U[v]["name"] for v in c["imported_nodes"] if U[v]["cls"] == "pubnode"],
         "pasted": [U[v]["name"] for v in pasted],
         "stub_file": f"Theorems/Thm_{slug}.lean", "solution_file": f"Solutions/Sol_{slug}.lean",
         "is_target": u["name"] in plan["targets"],
     }
 
-json.dump({"bundles": [bundle_meta[m] for m in TOPO if m in bundle_meta],
-           "nodes": [node_meta[uid] for uid in nodes], "topo_modules": TOPO},
-          open(f"{S}/tree.json", "w"), indent=1)
-print(f"wrote {len(bundle_meta)} bundles, {len(nodes)} stubs and solutions; tree.json")
+tree = {"bundles": [bundle_meta[m] for m in TOPO if m in bundle_meta],
+        "nodes": [node_meta[uid] for uid in nodes], "topo_modules": TOPO,
+        "published_bundles": published_bundles,
+        "published_nodes": sorted({slugs[uid] for uid, u in U.items() if u["cls"] == "pubnode"})}
+json.dump(tree, open(CFG["tree_out"], "w"), indent=1)
+if CFG["manifest"]:
+    json.dump(generated, open(CFG["manifest"], "w"), indent=1)
+print(f"wrote {len(bundle_meta)} bundles ({sum(1 for b in bundle_meta.values() if b['kind'] == 'delta')} delta), "
+      f"{len(nodes)} stubs and solutions; {CFG['tree_out']}")

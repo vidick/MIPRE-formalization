@@ -1,42 +1,66 @@
 #!/usr/bin/env python3
 """Phase 2 of the Prove2Me full-project upload: plan the node set.
 
-Reads Stage 1 (decl_graph.jsonl) and Stage 2 (sketch_info.<Base>.jsonl) facts of the
-recursive-compression closure and writes plan.json.  Every position fact comes from the
-two Lean extractors; this script never parses Lean code beyond the import header lines.
+Reads Stage 1 (decl_graph.jsonl) and Stage 2 (sketch_info.<Base>.jsonl) facts of a closure and
+writes plan.json.  Every position fact comes from the two Lean extractors; this script never
+parses Lean code beyond the import header lines.
+
+Configuration: ``P2M_CONFIG`` names a JSON file (see ``prove2me/assembly/config.json``); without
+it the script plans the recursive-compression closure exactly as on 2026-10-12.  A configuration
+may also name content that is *already published* (an earlier tree.json and extra bundles): its
+theorems are forced to be nodes that the new solutions import, and its bundles' declarations are
+available by import, so a module whose published bundle lacks a declaration the new statements
+need gets a *delta bundle* with just the missing declarations.
 """
 import os, json, re, sys, collections
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
-E = f"{S}/extract"
 WS = f"{S}/ws"
-OUT = f"{S}/plan.json"
 
-TARGETS = [
-    "MIPRE.Cost.recursive_compression",
-    "MIPRE.Cost.recursive_compression_halting",
-    "MIPRE.Cost.compressibility_criterion",
-    "MIPRE.Cost.compressibility_criterion_levels",
-    "MIPRE.Cost.compressibility_criterion_nested",
-    "MIPRE.Cost.compressibility_criterion_halting",
-    "MIPRE.Cost.exists_efficient_universal",
-    "MIPRE.Cost.exists_clocked_universal",
-    "MIPRE.Cost.efficient_fixed_point",
-    "MIPRE.Cost.PolyTimeFun.smn",
-    "MIPRE.Cost.IsSuccinctDesc",
-]
-# declarations the blueprint names with \lean{} (promotion signal: "named in the source")
-BLUEPRINT_NAMES = {
-    "MIPRE.Cost.IsSuccinctDesc", "MIPRE.Cost.bitQueryAnswer", "MIPRE.Cost.compressibility_criterion",
-    "MIPRE.Cost.compressibility_criterion_levels", "MIPRE.Cost.compressibility_criterion_nested",
-    "MIPRE.Cost.compressibility_criterion_halting", "MIPRE.Cost.recursive_compression_halting",
-    "MIPRE.Cost.efficient_fixed_point", "MIPRE.Cost.exists_clocked_universal",
-    "MIPRE.Cost.exists_efficient_universal", "MIPRE.Cost.hardcode_size", "MIPRE.Cost.hardcode_time",
-    "MIPRE.Cost.hardcode_time_rev", "MIPRE.Cost.kleeneFix", "MIPRE.Cost.kleeneFix_runs_of",
-    "MIPRE.Cost.recursive_compression", "MIPRE.Cost.smn_polyTime", "MIPRE.Cost.PolyTimeFun.smn",
+DEFAULT_CFG = {
+    "extract_dir": f"{S}/extract",
+    "out": f"{S}/plan.json",
+    "targets": [
+        "MIPRE.Cost.recursive_compression",
+        "MIPRE.Cost.recursive_compression_halting",
+        "MIPRE.Cost.compressibility_criterion",
+        "MIPRE.Cost.compressibility_criterion_levels",
+        "MIPRE.Cost.compressibility_criterion_nested",
+        "MIPRE.Cost.compressibility_criterion_halting",
+        "MIPRE.Cost.exists_efficient_universal",
+        "MIPRE.Cost.exists_clocked_universal",
+        "MIPRE.Cost.efficient_fixed_point",
+        "MIPRE.Cost.PolyTimeFun.smn",
+        "MIPRE.Cost.IsSuccinctDesc",
+    ],
+    # declarations the blueprint names with \lean{} (promotion signal: "named in the source")
+    "blueprint_names": [
+        "MIPRE.Cost.IsSuccinctDesc", "MIPRE.Cost.bitQueryAnswer", "MIPRE.Cost.compressibility_criterion",
+        "MIPRE.Cost.compressibility_criterion_levels", "MIPRE.Cost.compressibility_criterion_nested",
+        "MIPRE.Cost.compressibility_criterion_halting", "MIPRE.Cost.recursive_compression_halting",
+        "MIPRE.Cost.efficient_fixed_point", "MIPRE.Cost.exists_clocked_universal",
+        "MIPRE.Cost.exists_efficient_universal", "MIPRE.Cost.hardcode_size", "MIPRE.Cost.hardcode_time",
+        "MIPRE.Cost.hardcode_time_rev", "MIPRE.Cost.kleeneFix", "MIPRE.Cost.kleeneFix_runs_of",
+        "MIPRE.Cost.recursive_compression", "MIPRE.Cost.smn_polyTime", "MIPRE.Cost.PolyTimeFun.smn",
+    ],
+    # definitions that must be definition material (data the glue sketches apply), even when no
+    # uploaded statement mentions them
+    "defmat_targets": [],
+    # already published content: an earlier tree.json (its nodes and bundles) and extra bundles
+    "published_tree": None,
+    "published_bundles": [],   # [{"module": ..., "definition_name": ..., "kept": "all" | [names]}]
 }
+CFG = dict(DEFAULT_CFG)
+if os.environ.get("P2M_CONFIG"):
+    CFG.update(json.load(open(os.environ["P2M_CONFIG"], encoding="utf-8")))
+E = CFG["extract_dir"]
+OUT = CFG["out"]
+TARGETS = list(CFG["targets"])
+BLUEPRINT_NAMES = set(CFG["blueprint_names"])
+DEFMAT_TARGETS = list(CFG["defmat_targets"])
 NODE_MIN = 40      # proof lines strictly above this -> node
 INLINE_MAX = 10    # proof lines at most this -> inline (unless the statement needs it)
+
 
 def module_path(m):
     return m.replace(".", "/") + ".lean"
@@ -48,9 +72,12 @@ def load_rows():
 def load_facts(modules):
     facts = {}
     for m in modules:
-        base = m.split(".")[-1]
+        # Stage 2 fact files are named by the full module name; the 2026-10-12 run used base names
+        fn = f"{E}/sketch_info.{m}.jsonl"
+        if not os.path.exists(fn):
+            fn = f"{E}/sketch_info.{m.split('.')[-1]}.jsonl"
         decls, cmds, refs = [], [], []
-        for l in open(f"{E}/sketch_info.{base}.jsonl", encoding="utf-8"):
+        for l in open(fn, encoding="utf-8"):
             if not l.strip():
                 continue
             o = json.loads(l)
@@ -70,11 +97,27 @@ def header_imports(text):
         (proj if mm.group(1).startswith("MIPRE.") else ext).append(mm.group(1))
     return proj, ext
 
+def load_published():
+    """Published nodes {name: slug} and bundles {module: {"definition_name", "kept": set|None}}
+    (kept None = every declaration of the module)."""
+    nodes, bundles = {}, {}
+    if CFG.get("published_tree"):
+        t = json.load(open(CFG["published_tree"], encoding="utf-8"))
+        for n in t["nodes"]:
+            nodes[n["theorem_name"]] = n["slug"]
+        for b in t["bundles"]:
+            bundles[b["module"]] = {"definition_name": b["definition_name"], "kept": set(b["kept"])}
+    for b in CFG.get("published_bundles", []):
+        bundles[b["module"]] = {"definition_name": b["definition_name"],
+                               "kept": None if b.get("kept", "all") == "all" else set(b["kept"])}
+    return nodes, bundles
+
 def main():
     rows = load_rows()
     modules = sorted({r["module"] for r in rows})
     facts = load_facts(modules)
     by_name = {r["name"]: r for r in rows}
+    pub_nodes, pub_bundles = load_published()
 
     # ---- units: one per Stage 2 decl fact; rows joined by line containment ----
     units = {}
@@ -138,14 +181,23 @@ def main():
         u["has_attr"] = bool(u["attr_text"])
     unitless_decls = [u["id"] for u in units.values() if not u["rows"]]
 
+    # ---- published content, per unit ----
+    pubnode_units, avail_units = set(), set()
+    for uid, u in units.items():
+        if u["name"] in pub_nodes:
+            pubnode_units.add(uid)
+        pb = pub_bundles.get(u["module"])
+        if pb and (pb["kept"] is None or any(r["name"] in pb["kept"] for r in u["rows"]) or (u["name"] in pb["kept"] if pb["kept"] else False)):
+            avail_units.add(uid)
+
     # ---- reachability ----
     def rows_of_unit(uid):
         return [r["name"] for r in units[uid]["rows"]]
     extra = sorted(n for n in BLUEPRINT_NAMES if n in by_name and n not in TARGETS)
-    print("blueprint-named declarations added as targets:", extra)
+    print("blueprint-named declarations added as targets:", len(extra))
     TARGETS.extend(extra)
-    seeds = list(TARGETS) + [r["name"] for r in rows if r["isInstance"]]
-    missing_targets = [t for t in TARGETS if t not in by_name]
+    seeds = list(TARGETS) + list(DEFMAT_TARGETS) + [r["name"] for r in rows if r["isInstance"]]
+    missing_targets = [t for t in TARGETS + DEFMAT_TARGETS if t not in by_name]
     reach = set()
     work = list(seeds)
     while work:
@@ -212,27 +264,44 @@ def main():
         units[uid]["stmt_deps"] = unit_deps(uid, "typeDeps") | units[uid].get("stmt_refs", set())
         units[uid]["body_deps"] = unit_deps(uid, "valueDeps") | units[uid].get("body_refs", set())
 
-    # close reachability under the ref-based dependencies (dsimp lemmas named in proofs)
+    # close reachability under the ref-based dependencies (dsimp lemmas named in proofs); published
+    # content is a boundary: what lies behind a published node or bundle declaration is theirs
+    def frontier(uid):
+        if uid in pubnode_units or uid in avail_units:
+            return set()
+        return units[uid]["stmt_deps"] | units[uid]["body_deps"]
     changed = True
     while changed:
         changed = False
         for uid in list(reach_units):
-            for v in units[uid]["stmt_deps"] | units[uid]["body_deps"]:
+            for v in frontier(uid):
                 if v not in reach_units:
                     reach_units.add(v); changed = True
     # ---- classification ----
     defmat, embedded = set(), set()
     for uid in reach_units:
         u = units[uid]
+        if uid in avail_units or uid in pubnode_units:
+            continue
         if not u["is_thm"] and (u["kind"] in ("inductive",) or u["is_instance"]):
+            defmat.add(uid)
+    for t in DEFMAT_TARGETS:
+        uid = unit_of_row.get(t)
+        if uid and uid not in avail_units:
             defmat.add(uid)
     # anything referenced by a statement must be importable
     for uid in reach_units:
+        if uid in avail_units or uid in pubnode_units:
+            continue
         for v in units[uid]["stmt_deps"]:
+            if v in avail_units or v in pubnode_units:
+                continue
             (embedded if units[v]["is_thm"] else defmat).add(v)
     # simp lemmas with short proofs stay with the definitions (dsimp leaves no trace in proof terms)
     for uid in units:
         u = units[uid]
+        if uid in avail_units or uid in pubnode_units:
+            continue
         if u["is_thm"] and u["has_attr"] and u["prooflines"] <= INLINE_MAX and not u["is_private"]:
             embedded.add(uid)
     reach_units |= embedded
@@ -242,15 +311,22 @@ def main():
         changed = False
         for uid in list(defmat | embedded):
             for v in units[uid]["body_deps"] | units[uid]["stmt_deps"]:
+                if v in avail_units:
+                    continue
+                if v in pubnode_units:
+                    raise RuntimeError(f"bundle content {units[uid]['name']} depends on the published node {units[v]['name']}: "
+                                       "a bundle may not import a theorem stub; classify by hand")
                 if units[v]["is_thm"]:
                     if v not in embedded:
                         embedded.add(v); changed = True
                 else:
                     if v not in defmat:
                         defmat.add(v); changed = True
+    reach_units |= defmat | embedded
     bundle_units = defmat | embedded
     # theorems: node / inline
-    thm_units = [uid for uid in reach_units if units[uid]["is_thm"] and uid not in embedded]
+    thm_units = [uid for uid in reach_units if units[uid]["is_thm"] and uid not in embedded
+                 and uid not in avail_units and uid not in pubnode_units]
     nodes = set(uid for uid in thm_units if units[uid]["name"] in TARGETS)
     for uid in thm_units:
         u = units[uid]
@@ -278,31 +354,34 @@ def main():
             if signal:
                 nodes.add(uid); changed = True
     inline = set(uid for uid in thm_units if uid not in nodes)
-    proofdefs = set(uid for uid in reach_units if not units[uid]["is_thm"] and uid not in defmat)
+    proofdefs = set(uid for uid in reach_units if not units[uid]["is_thm"] and uid not in defmat
+                    and uid not in avail_units)
     dead = set(units) - reach_units
+    reach_pub_nodes = reach_units & pubnode_units
+    reach_avail = reach_units & avail_units
 
     # ---- solution composition (what each node's solution pastes and imports) ----
     comp = {}
     for n in nodes:
-        pasted, imported_nodes, stack, seen = [], set(), [n], {n}
-        # dependencies of the node itself
+        pasted, imported_nodes, seen = [], set(), {n}
         def deps(uid):
             return units[uid]["body_deps"] | units[uid]["stmt_deps"]
-        frontier = list(deps(n))
-        while frontier:
-            v = frontier.pop()
+        frontier_ = list(deps(n))
+        while frontier_:
+            v = frontier_.pop()
             if v in seen:
                 continue
             seen.add(v)
-            if v in nodes:
+            if v in avail_units:
+                pass  # available through the published bundle's import
+            elif v in pubnode_units or v in nodes:
                 imported_nodes.add(v)
             elif v in bundle_units:
                 pass
             elif v in inline or v in proofdefs:
                 pasted.append(v)
-                frontier.extend(deps(v))
+                frontier_.extend(deps(v))
             else:
-                # unreachable from targets but reachable from this node?  impossible by construction
                 raise RuntimeError(f"{units[v]['name']} reached from node {units[n]['name']} but unclassified")
         comp[n] = {"pasted": pasted, "imported_nodes": sorted(imported_nodes)}
 
@@ -320,7 +399,11 @@ def main():
                     out.add(y); work.append(y)
         return out
     mod_closure = {m: sorted(closure(m)) for m in modules}
-    bundles = sorted({units[uid]["module"] for uid in bundle_units})
+    bundle_modules = sorted({units[uid]["module"] for uid in bundle_units})
+    delta_bundles = {m: pub_bundles[m]["definition_name"] + "_B" for m in bundle_modules if m in pub_bundles}
+    new_bundles = [m for m in bundle_modules if m not in pub_bundles]
+    # every published bundle whose module is in the closure is importable content
+    published_bundles = {m: pub_bundles[m]["definition_name"] for m in modules if m in pub_bundles}
 
     def slug(name):
         return name.replace(".", "_")
@@ -335,13 +418,15 @@ def main():
     if missing_targets:
         print("  MISSING TARGETS:", missing_targets)
     print(f"reachable units {len(reach_units)} of {len(units)}; dead {len(dead)}")
+    print(f"published nodes reached {len(reach_pub_nodes)}, published bundle declarations reached {len(reach_avail)}")
     print(f"def-material {len(defmat)}, embedded theorems {len(embedded)}, nodes {len(nodes)}, inline {len(inline)}, proof-side defs {len(proofdefs)}")
-    print("bundles (modules with def-material/embedded):", len(bundles))
-    for m in bundles:
+    print(f"bundles: new {len(new_bundles)}, delta {len(delta_bundles)} (modules with a published bundle that lacks something needed)")
+    for m in bundle_modules:
         us = [uid for uid in bundle_units if units[uid]["module"] == m]
         lines = sum(units[uid]["span_lines"] for uid in us)
         emb = [nm(uid) for uid in us if uid in embedded and units[uid]["prooflines"] > INLINE_MAX]
-        print(f"  {m.split('.')[-1]:14s} units {len(us):3d} lines {lines:5d}  long embedded theorems: {emb}")
+        tag = "DELTA" if m in delta_bundles else "new"
+        print(f"  {tag:5} {m.split('.')[-1]:22s} units {len(us):3d} lines {lines:5d}  long embedded theorems: {emb[:6]}{'…' if len(emb) > 6 else ''}")
     print("nodes by module:")
     for m in modules:
         ns = sorted((uid for uid in nodes if units[uid]["module"] == m), key=lambda uid: units[uid]["decl"]["declStart"]["offset"])
@@ -354,30 +439,42 @@ def main():
         sizes.append((units[n]["prooflines"] + pl, units[n]["prooflines"], pl, len(comp[n]["pasted"]), len(comp[n]["imported_nodes"]), nm(n)))
     for s in sorted(sizes, reverse=True)[:15]:
         print(f"  {s[0]:5d} = proof {s[1]:4d} + pasted {s[2]:4d} ({s[3]} units); imports {s[4]} nodes  {s[5]}")
-    print("proof-side defs (pasted into solutions):", [nm(u) for u in proofdefs])
+    print("proof-side defs (pasted into solutions):", [nm(u) for u in proofdefs][:20])
     print("private units reachable:", [nm(u) for u in reach_units if units[u]["is_private"]])
     print("node names needing renames:", bad_names)
     print("nodes with attributes:", [(nm(u), units[u]["attr_text"]) for u in nodes if units[u]["has_attr"]])
-    print("theorems in statements (embedded via stmt_deps):", sorted({nm(v) for uid in reach_units for v in units[uid]['stmt_deps'] if units[v]['is_thm']}))
 
+    def cls(uid):
+        if uid in avail_units and uid in reach_units: return "avail"
+        if uid in pubnode_units and uid in reach_units: return "pubnode"
+        if uid in nodes: return "node"
+        if uid in inline: return "inline"
+        if uid in defmat: return "defmat"
+        if uid in embedded: return "embedded"
+        if uid in proofdefs: return "proofdef"
+        return "dead"
     plan = {
         "targets": TARGETS,
+        "defmat_targets": DEFMAT_TARGETS,
         "modules": modules,
         "mod_closure": mod_closure,
         "imports": imports,
-        "bundles": bundles,
+        "bundles": bundle_modules,
+        "new_bundles": new_bundles,
+        "delta_bundles": delta_bundles,
+        "published_bundles": published_bundles,
+        "published_nodes": {uid: pub_nodes[units[uid]["name"]] for uid in reach_pub_nodes},
         "units": {uid: {
             "id": uid, "module": u["module"], "name": u["name"], "kind": u["kind"], "is_thm": u["is_thm"],
             "is_instance": u["is_instance"], "is_private": u["is_private"], "prooflines": u["prooflines"],
             "span_lines": u["span_lines"], "has_doc": u["has_doc"], "has_attr": u["has_attr"], "attr_text": u["attr_text"],
             "decl": u["decl"], "bind": u["bind"], "rows": [r["name"] for r in u["rows"]],
             "stmt_deps": sorted(u["stmt_deps"]), "body_deps": sorted(u["body_deps"]),
-            "cls": ("node" if uid in nodes else "inline" if uid in inline else "defmat" if uid in defmat
-                    else "embedded" if uid in embedded else "proofdef" if uid in proofdefs else "dead"),
+            "cls": cls(uid),
         } for uid, u in units.items()},
         "nodes": sorted(nodes, key=lambda uid: (units[uid]["module"], units[uid]["decl"]["declStart"]["offset"])),
         "composition": comp,
-        "slugs": {uid: slug(units[uid]["name"]) for uid in nodes},
+        "slugs": {**{uid: slug(units[uid]["name"]) for uid in nodes}, **{uid: pub_nodes[units[uid]["name"]] for uid in reach_pub_nodes}},
     }
     json.dump(plan, open(OUT, "w"), indent=1)
     print("wrote", OUT)

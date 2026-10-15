@@ -6,7 +6,10 @@ import os, json, subprocess, sys, re
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
 WS = f"{S}/ws"
 TOOLCHAIN = f"{S}/toolchain/bin"
-tree = json.load(open(f"{S}/tree.json"))
+CFG = json.load(open(os.environ["P2M_CONFIG"], encoding="utf-8")) if os.environ.get("P2M_CONFIG") else {}
+TREE = CFG.get("tree_out", f"{S}/tree.json")
+VOUT = os.path.join(os.path.dirname(TREE), "validation.json")
+tree = json.load(open(TREE))
 nodes = tree["nodes"]
 os.makedirs(f"{WS}/Check", exist_ok=True)
 env = dict(os.environ, PATH=TOOLCHAIN + ":" + os.environ["PATH"])
@@ -74,4 +77,4 @@ print("solution types identical to the stub:", len(nodes) - sol_bad, "of", len(n
 print("axioms:")
 for k, v in axioms.items():
     print(f"  {k}: {v}")
-json.dump({"orig": orig, "stubs": stubs, "axioms": axioms}, open(f"{S}/validation.json", "w"), indent=1)
+json.dump({"orig": orig, "stubs": stubs, "axioms": axioms}, open(VOUT, "w"), indent=1)
