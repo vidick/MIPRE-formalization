@@ -1573,6 +1573,48 @@
    "submitted_at": 1792093523.4132082,
    "http": 200,
    "submission_id": "57723c34-2aad-42e4-829a-3de759025b3e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.PolyVerifier.sampleC_eq": {
+   "submitted_at": 1792093591.6903286,
+   "http": 200,
+   "submission_id": "fc978c20-5aa3-42e6-a2d3-ec8a43b05e5e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.sum_filter_length": {
+   "submitted_at": 1792093672.9191608,
+   "http": 200,
+   "submission_id": "4f23f76f-a9f9-41f2-9c7c-ab599f08f708",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.idxOf_map_of_injOn": {
+   "submitted_at": 1792093733.198863,
+   "http": 200,
+   "submission_id": "edfd5b43-69fc-470c-9f91-3588d0f6c774",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.answerEquiv_symm_val": {
+   "submitted_at": 1792093793.185556,
+   "http": 200,
+   "submission_id": "5cd2e24e-5ea8-40e4-b0e2-b7e6e81dc5cd",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.PolyVerifier.mu_clause": {
+   "submitted_at": 1792093869.4008756,
+   "http": 200,
+   "submission_id": "853e33b9-93e9-43d8-95fd-f61f41c23a5f",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.PolyVerifier.acc_mem_iff": {
+   "submitted_at": 1792093954.3723998,
+   "http": 200,
+   "submission_id": "ccfd139c-290b-496a-b1c8-3bcbdf8b3572",
    "status": "PENDING"
   }
  },
