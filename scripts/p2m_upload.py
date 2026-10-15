@@ -79,10 +79,27 @@ class Auth:
     def token(self):
         if self._token is None or time.time() > self._exp - 300:
             body = json.dumps({"api_key": self._key}).encode()
-            req = urllib.request.Request(f"{API}/agent/refresh", data=body,
-                                         headers={"Content-Type": "application/json"}, method="POST")
-            with urllib.request.urlopen(req, timeout=60) as r:
-                d = json.loads(r.read().decode())
+            for attempt in range(8):   # the host's security checkpoint and outages: wait them out
+                req = urllib.request.Request(f"{API}/agent/refresh", data=body,
+                                             headers={"Content-Type": "application/json"}, method="POST")
+                try:
+                    with urllib.request.urlopen(req, timeout=60) as r:
+                        d = json.loads(r.read().decode())
+                    break
+                except urllib.error.HTTPError as e:
+                    if e.code in (403, 429, 502, 503, 504) and attempt < 7:
+                        wait = min(30 * 2 ** attempt, 600)
+                        log(f"token refresh: HTTP {e.code} (security checkpoint or outage); retrying in {wait}s")
+                        time.sleep(wait)
+                        continue
+                    raise
+                except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+                    if attempt < 7:
+                        wait = min(5 * 2 ** attempt, 300)
+                        log(f"token refresh: network error ({e.__class__.__name__}); retrying in {wait}s")
+                        time.sleep(wait)
+                        continue
+                    raise
             self._token = d["access_token"]
             self._exp = d.get("expires_at", time.time() + 3600)
             log(f"token refreshed (platform version {d.get('version')})")
