@@ -2122,6 +2122,48 @@
    "submitted_at": 1792100949.466602,
    "http": 200,
    "submission_id": "8ef2302b-6fc8-4dfb-92d7-7d5bba65dd59",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.accepts_iff": {
+   "submitted_at": 1792101143.0417304,
+   "http": 200,
+   "submission_id": "5de837a2-e541-42ee-a465-ea6e50ab20d1",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.B_below": {
+   "submitted_at": 1792101236.5105016,
+   "http": 200,
+   "submission_id": "c10b473a-460b-4113-b0a4-2b376184c009",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.mu_clauseL": {
+   "submitted_at": 1792101369.112202,
+   "http": 200,
+   "submission_id": "a452aa0f-9964-435b-a9cd-0cca3476b93e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.accL_mem_iff": {
+   "submitted_at": 1792101473.19548,
+   "http": 200,
+   "submission_id": "26ee214b-6ecd-483b-a81a-271999e9b22f",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.tabL_match": {
+   "submitted_at": 1792101565.429938,
+   "http": 200,
+   "submission_id": "d9358082-670d-442d-958d-deda7bae18f9",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.hasPerfectPCC_of_halts": {
+   "submitted_at": 1792101671.5510046,
+   "http": 200,
+   "submission_id": "e2a8dd34-edda-44ee-bb7a-0bbb28cb7bbc",
    "status": "PENDING"
   }
  },
