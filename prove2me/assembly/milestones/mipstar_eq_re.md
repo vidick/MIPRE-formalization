@@ -1,0 +1,1 @@
+$\mathrm{MIP}^*_{1, 1/2}(2, 1) = \mathrm{RE}$: a language has a two-prover one-round interactive proof with entangled provers, a polynomial-time verifier, completeness $1$ and soundness $\tfrac12$ if and only if it is recursively enumerable. Blueprint `thm:mipstar-eq-re`, for the paper's class; the computable class gives the same equality (`mipstarComputable_eq_re`).

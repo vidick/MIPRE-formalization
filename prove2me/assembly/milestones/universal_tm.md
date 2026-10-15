@@ -1,0 +1,1 @@
+There is a program $u$ and a polynomial $p$ such that $\phi_u(e, x) = \phi_e(x)$ for all programs $e$ and inputs $x$, and the running time of $u$ on $(e, x)$ is at most $p(|e|, |x|, \mathrm{runtime}(e, x))$. Blueprint `lem:universal-tm`; the simulator is the self-interpreter of the cost model, and the statement is the existence form proved in the repository.

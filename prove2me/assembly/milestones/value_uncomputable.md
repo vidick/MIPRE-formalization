@@ -1,0 +1,1 @@
+There is no computable function of game descriptions that answers true on every description whose synchronous value is $1$ and false on every description whose synchronous value is at most $\tfrac12$. Blueprint `cor:value-uncomputable`; the same holds for the entangled value (`quantumValue_uncomputable`).

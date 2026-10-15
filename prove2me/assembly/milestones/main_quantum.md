@@ -1,0 +1,1 @@
+With the same map $g$ as in the main theorem: if $\mathcal{M}$ halts on the empty input then the entangled (tensor-product) value of the game of $g(\mathcal{M})$ is $1$, and if it does not halt the entangled value is at most $\tfrac12$. Blueprint `cor:main-quantum`.

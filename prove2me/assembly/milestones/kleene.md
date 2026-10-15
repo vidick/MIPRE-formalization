@@ -1,0 +1,1 @@
+For every polynomial-time computable $f$ on bit strings there is a program $e$ with $\phi_e = \phi_{f(e)}$ whose running time is polynomially bounded in terms of that of $f(e)$. Blueprint `lem:kleene`; this is the one-directional form that the recursive compression lemma uses.

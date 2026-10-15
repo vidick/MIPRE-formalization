@@ -1,0 +1,1 @@
+There is a polynomial-time computable map $s$ with $\phi_{s(e, x)}(y) = \phi_e(x, y)$ for all $e$, $x$, $y$, the running time of $s(e, x)$ polynomially bounded in terms of that of $e$. Blueprint `lem:smn`.

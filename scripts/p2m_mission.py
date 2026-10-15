@@ -5,6 +5,8 @@
     python3 scripts/p2m_mission.py --status     # read the proposal back as the platform stores it
     python3 scripts/p2m_mission.py --dry-run    # print what would be sent; needs no key
     python3 scripts/p2m_mission.py --fields quantum-information,complexity-theory
+    python3 scripts/p2m_mission.py --milestones prove2me/assembly/milestones.json
+                                                # after launch: link theorems as milestones of the live mission
                                                 # choose the mission's fields by slug (else: proposal.json's
                                                 # preference list against the platform's catalog)
 
@@ -252,6 +254,63 @@ def ensure_milestones(sp, st, pid):
         note(st, f"milestone {ms['item']!r}: {'updated' if code == 200 else 'created'}")
 
 
+def find_mission(sp, st):
+    """The live mission launched from the proposal, by name; its id is recorded in the state."""
+    if st.get("mission", {}).get("id"):
+        return st["mission"]["id"]
+    code, d = up.request("GET", "/missions", params={"q": sp["name"], "limit": 50, "offset": 0})
+    if code != 200:
+        sys.exit(f"GET /missions: {code} {str(d)[:300]}")
+    for m in first_list(d):
+        if m.get("name") == sp["name"]:
+            st["mission"] = {"id": m["id"], "name": m["name"], "visibility": m.get("visibility"),
+                             "main_theorem": (m.get("main_theorem") or {}).get("theorem_id")}
+            save_state(st)
+            return m["id"]
+    sys.exit(f"no live mission named {sp['name']!r} is visible to this account (not launched yet?)")
+
+
+def link_milestones(sp, st, path):
+    """Create or update the live mission's milestones from a JSON list of
+    {title, description_file, theorem_name, state_file (upload-state.json holding the theorem id)}."""
+    spec_ = json.load(open(path, encoding="utf-8"))
+    base = os.path.dirname(os.path.abspath(path))
+    mid = find_mission(sp, st)
+    code, d = up.request("GET", f"/missions/{mid}/milestones")
+    existing = {m.get("title"): m for m in first_list(d)} if code == 200 else {}
+    for i, ms in enumerate(spec_):
+        desc = open(os.path.join(base, ms["description_file"]), encoding="utf-8").read().strip()
+        tid = None
+        if ms.get("theorem_name"):
+            stf = json.load(open(os.path.join(ROOT, ms["state_file"]), encoding="utf-8"))
+            tid = stf["theorems"].get(ms["theorem_name"], {}).get("theorem_id")
+            if not tid:
+                tid = up.find_theorem_id(ms["theorem_name"])
+            if not tid:
+                sys.exit(f"milestone {ms['title']!r}: theorem {ms['theorem_name']} has no id on the platform yet")
+        body = {"title": ms["title"], "milestone_description": desc, "sort_order": i}
+        if tid:
+            body["theorem_id"] = tid
+        if ms["title"] in existing:
+            e = existing[ms["title"]]
+            patch = {k: v for k, v in body.items() if k != "sort_order" and e.get(k) != v}
+            if "theorem_id" in patch:
+                patch["reason"] = ms.get("reason", "linking the uploaded formalization of this milestone")
+            if patch:
+                code, d = up.request("PATCH", f"/milestones/{e['id']}", body=patch)
+                note(st, f"milestone {ms['title']!r}: PATCH {code}")
+            else:
+                log(f"milestone {ms['title']!r}: unchanged")
+        else:
+            code, d = up.request("POST", f"/missions/{mid}/milestones", body=body)
+            if code not in (200, 201):
+                sys.exit(f"milestone {ms['title']!r}: {code} {str(d)[:400]}")
+            note(st, f"milestone {ms['title']!r}: created ({d.get('id')}), theorem {tid}")
+    code, d = up.request("GET", f"/missions/{mid}/milestones")
+    for m in first_list(d) if code == 200 else []:
+        print(f"  {m.get('sort_order')}: {m.get('title')}  theorem {m.get('theorem_id')}")
+
+
 def status(sp, st):
     pid = st["proposal"].get("id")
     if not pid:
@@ -302,6 +361,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--fields", help="comma-separated field slugs")
     ap.add_argument("--name", help="override the mission name")
+    ap.add_argument("--milestones", help="JSON list of milestones to create/update on the LIVE mission")
     a = ap.parse_args()
     sp = spec()
     if a.name:
@@ -315,6 +375,9 @@ def main():
     log(f"account {me.get('username')}" if code == 200 else f"GET /me: {code}")
     if a.status:
         status(sp, st)
+        return
+    if a.milestones:
+        link_milestones(sp, st, a.milestones)
         return
     field_ids = choose_fields(sp, st, a.fields)
     pid = ensure_proposal(sp, st, field_ids)
