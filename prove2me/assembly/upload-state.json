@@ -1615,6 +1615,83 @@
    "submitted_at": 1792093954.3723998,
    "http": 200,
    "submission_id": "ccfd139c-290b-496a-b1c8-3bcbdf8b3572",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.PolyVerifier.D_clause": {
+   "submitted_at": 1792094060.4461844,
+   "http": 200,
+   "submission_id": "48d89810-5734-4afd-83d6-854d2a9a2f08",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.halts_haltingReduction_iff": {
+   "submitted_at": 1792094152.3437696,
+   "http": 200,
+   "submission_id": "ac6ba32d-6eaa-4d95-be46-3b2e84adec22",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.TensorProductStrategy.value_relabel_of_support": {
+   "submitted_at": 1792094202.4222827,
+   "http": 200,
+   "submission_id": "23e1a596-4817-4889-af2d-113bf848136a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.TensorProductStrategy.value_relabel_invFun": {
+   "submitted_at": 1792094235.887901,
+   "http": 200,
+   "submission_id": "f71f4bf7-cb3c-4428-a3e9-662a6fe89047",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.SyncStrategy.value_const": {
+   "submitted_at": 1792094274.2843473,
+   "http": 200,
+   "submission_id": "07e1eff4-8e8d-4fdf-92c4-11bffed0c6df",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.tracialValue_le_one": {
+   "submitted_at": 1792094307.775913,
+   "http": 200,
+   "submission_id": "74a956fe-e8be-4056-84a6-609ea93d5b49",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.incLoop_runs": {
+   "submitted_at": 1792094340.7822325,
+   "http": 200,
+   "submission_id": "7873f044-2217-4b48-9e64-8aa6c1121efc",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.incProg_runs": {
+   "submitted_at": 1792094423.4985893,
+   "http": 200,
+   "submission_id": "8caae84f-c836-4e4d-a979-fa7183095ff9",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.exists_isBounded_lam": {
+   "submitted_at": 1792094473.4428205,
+   "http": 200,
+   "submission_id": "067007e4-0c93-4fed-b58e-ab0c1731fb53",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal": {
+   "submitted_at": 1792094528.7136722,
+   "http": 200,
+   "submission_id": "55ab3cb0-13b7-4646-9082-945318dd6459",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.readBody_bit": {
+   "submitted_at": 1792094578.048422,
+   "http": 200,
+   "submission_id": "36135673-8b9f-4503-a6ae-48afa34a8714",
    "status": "PENDING"
   }
  },
