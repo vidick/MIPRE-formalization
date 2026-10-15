@@ -18,14 +18,45 @@ Usage (from the repository root):
     python3 scripts/p2m_upload.py [--public] [--only definitions|theorems|solutions]
                                   [--dry-run] [--max-inflight N]
     python3 scripts/p2m_upload.py --status       # re-read every node's status and summarize
+    python3 scripts/p2m_upload.py --tree prove2me/assembly   # another tree directory (tree.json, optional
+                                                 # glue.json, metadata.json, upload-config.json, the files)
 """
 import argparse, json, os, sys, time, urllib.request, urllib.parse, urllib.error, uuid, io
 
 API = "https://prove2.me/api/v1"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-P2M = os.path.join(ROOT, "prove2me")
+P2M = os.path.join(ROOT, "prove2me")            # the tree directory; --tree changes it
 STATE_PATH = os.path.join(P2M, "upload-state.json")
 PROJECT_TAG = "mipre-formalization"
+PUBLISHED = set()   # theorem names already on the platform (Proved), imported but not uploaded by this tree
+
+
+def set_tree_dir(rel):
+    global P2M, STATE_PATH
+    P2M = os.path.join(ROOT, rel)
+    STATE_PATH = os.path.join(P2M, "upload-state.json")
+
+
+def load_tree():
+    """tree.json, with the glue items of glue.json (if any) merged in as nodes."""
+    tree = json.load(open(os.path.join(P2M, "tree.json"), encoding="utf-8"))
+    gp = os.path.join(P2M, "glue.json")
+    if os.path.exists(gp):
+        for g in json.load(open(gp, encoding="utf-8"))["items"]:
+            tree["nodes"].append({
+                "theorem_name": g["theorem_name"], "slug": g["slug"], "formal_statement": g["formal_statement"],
+                "preamble": g["preamble"], "imported_nodes": g["imported_nodes"],
+                "stub_file": g.get("stub_file"), "solution_file": g.get("solution_file"),
+                "stub_published": bool(g.get("stub_published")), "glue_kind": g["kind"],
+            })
+    names = {n["theorem_name"] for n in tree["nodes"]}
+    # published nodes: named by slug in tree.json; recover the names from the imports
+    pub_slugs = set(tree.get("published_nodes", []))
+    for n in tree["nodes"]:
+        for c in n["imported_nodes"]:
+            if c not in names:
+                PUBLISHED.add(c)
+    return tree
 
 
 # ----------------------------------------------------------------------------- auth
@@ -234,6 +265,14 @@ def upload_theorems(tree, meta, st, args):
         rec = st["theorems"].setdefault(name, {})
         if rec.get("status") == "PUBLISHED" and rec.get("theorem_id"):
             continue
+        if n.get("stub_published"):
+            tid = find_theorem_id(name)
+            if not tid:
+                sys.exit(f"{name} is recorded as already published but the platform has no theorem of that name")
+            rec.update({"status": "PUBLISHED", "theorem_id": tid, "note": "published before this tree"})
+            save_state(st)
+            log(f"theorem {name}: already on the platform, {tid}")
+            continue
         if rec.get("job_id") and rec.get("status") not in ("FAILED", "ERROR"):
             pending.append((name, rec["job_id"]))
             continue
@@ -305,7 +344,7 @@ def leaves_first(tree):
     order, seen = [], set()
 
     def visit(name):
-        if name in seen:
+        if name in seen or name not in by:   # imported published nodes are not this tree's
             return
         seen.add(name)
         for c in by[name]["imported_nodes"]:
@@ -321,7 +360,11 @@ def upload_solutions(tree, meta, st, args):
     for n in leaves_first(tree):
         name = n["theorem_name"]
         rec = st["solutions"].setdefault(name, {})
-        if rec.get("status") in ("ACCEPTED",):
+        if rec.get("status") in ("ACCEPTED", "SKETCH_ACCEPTED"):
+            continue
+        if not n.get("solution_file"):
+            rec["status"] = "LEAF_OPEN"   # an Open leaf: statement only, by design
+            save_state(st)
             continue
         tid = st["theorems"].get(name, {}).get("theorem_id")
         if not tid:
@@ -329,10 +372,13 @@ def upload_solutions(tree, meta, st, args):
                 log(f"[dry-run] verify {name} (theorem id unknown until the theorems phase has run)")
                 continue
             sys.exit(f"no theorem_id recorded for {name}; run the theorems phase first")
-        # every child must already be Proved for the parent to resolve straight to Proved
+        # every child must already be handled: Proved (here or before this tree), a sketch, or an
+        # Open leaf by design; the parent then resolves to Proved or to an accepted sketch
         for c in n["imported_nodes"]:
-            if st["solutions"].get(c, {}).get("status") != "ACCEPTED":
-                sys.exit(f"child {c} of {name} is not ACCEPTED yet; aborting to keep the leaves-first order")
+            if c in PUBLISHED:
+                continue
+            if st["solutions"].get(c, {}).get("status") not in ("ACCEPTED", "SKETCH_ACCEPTED", "LEAF_OPEN"):
+                sys.exit(f"child {c} of {name} is not handled yet; aborting to keep the leaves-first order")
         if rec.get("submission_id") and rec.get("status") in (None, "PENDING", "SUBMITTED"):
             res = poll_submission(rec["submission_id"], name)
         else:
@@ -359,7 +405,7 @@ def upload_solutions(tree, meta, st, args):
         rec["error_message"] = res.get("error_message", "")
         save_state(st)
         log(f"solution {name}: {rec['status']} {rec['error_message'][:400]}")
-        if rec["status"] not in ("ACCEPTED",):
+        if rec["status"] not in ("ACCEPTED", "SKETCH_ACCEPTED"):
             sys.exit(f"solution of {name} ended {rec['status']}: {rec['error_message'][:1500]}")
 
 
@@ -414,11 +460,21 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--status", action="store_true")
     ap.add_argument("--max-inflight", type=int, default=10)
+    ap.add_argument("--tree", default="prove2me", help="tree directory relative to the repository root")
     args = ap.parse_args()
+    set_tree_dir(args.tree)
+    ucfg = os.path.join(P2M, "upload-config.json")
+    if os.path.exists(ucfg):
+        c = json.load(open(ucfg, encoding="utf-8"))
+        if c.get("public"):
+            args.public = True   # a tree that imports public content must itself be public
     AUTH = Auth()
-    tree = json.load(open(os.path.join(P2M, "tree.json"), encoding="utf-8"))
+    tree = load_tree()
     meta = json.load(open(os.path.join(P2M, "metadata.json"), encoding="utf-8"))
     st = load_state()
+    log(f"tree {args.tree}: {len(tree['bundles'])} bundles, {len(tree['nodes'])} nodes "
+        f"({sum(1 for n in tree['nodes'] if not n.get('solution_file'))} Open leaves, "
+        f"{len(PUBLISHED)} imported published theorems); visibility {'public' if args.public else 'private'}")
     code, me = request("GET", "/me")
     if code == 200:
         lic = (me.get("licensing") or {}).get("status")

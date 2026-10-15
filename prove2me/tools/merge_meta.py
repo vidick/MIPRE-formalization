@@ -3,11 +3,21 @@
 import json, re, sys, os, glob
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
-OUT = sys.argv[1] if len(sys.argv) > 1 else f"{S}/metadata.json"
-tree = json.load(open(f"{S}/tree.json"))
+# with P2M_CONFIG: the tree directory's tree.json (+ glue.json items) and meta_out_* packets
+CFG = json.load(open(os.environ["P2M_CONFIG"], encoding="utf-8")) if os.environ.get("P2M_CONFIG") else None
+A = os.path.dirname(CFG["tree_out"]) if CFG else S
+OUT = sys.argv[1] if len(sys.argv) > 1 else f"{A}/metadata.json"
+tree = json.load(open(CFG["tree_out"] if CFG else f"{S}/tree.json", encoding="utf-8"))
+if CFG and os.path.exists(f"{A}/glue.json"):
+    for g in json.load(open(f"{A}/glue.json", encoding="utf-8"))["items"]:
+        tree["nodes"].append({"theorem_name": g["theorem_name"]})
 TAGS = {"computability", "complexity-theory", "turing-machines", "polynomial-time", "undecidability",
         "recursive-compression", "universal-machine", "kleene-recursion", "smn-theorem", "cost-model",
-        "self-interpreter", "succinct-descriptions", "mip-re"}
+        "self-interpreter", "succinct-descriptions", "mip-re",
+        # the assembly layer
+        "nonlocal-games", "quantum-information", "interactive-proofs", "halting-problem", "verifiers",
+        "gap-compression", "game-value", "synchronous-games", "entangled-strategies", "bit-strings",
+        "list-programs", "binary-arithmetic", "semidecidability", "tabulation", "pcc-strategies"}
 
 def check_text(label, t, minlen=120):
     probs = []
@@ -26,7 +36,7 @@ def check_text(label, t, minlen=120):
 
 nodes_out, problems = [], []
 by_name = {}
-for f in sorted(glob.glob(f"{S}/meta_out_[0-9].json")):
+for f in sorted(glob.glob(f"{A}/meta_out_[0-9]*.json")):
     for o in json.load(open(f, encoding="utf-8")):
         by_name[o["theorem_name"]] = o
 for n in tree["nodes"]:
@@ -60,7 +70,10 @@ for n in tree["nodes"]:
                       "source": o["source"], "tags": sorted(set(o["tags"])), "explanation": o["explanation"]})
 
 bundles_out = []
-bb = {o["definition_name"]: o for o in json.load(open(f"{S}/meta_out_bundles.json", encoding="utf-8"))}
+bb = {}
+for f in sorted(glob.glob(f"{A}/meta_out_bundles*.json")):
+    for o in json.load(open(f, encoding="utf-8")):
+        bb[o["definition_name"]] = o
 for b in tree["bundles"]:
     name = b["definition_name"]
     o = bb.get(name)

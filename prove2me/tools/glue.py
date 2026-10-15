@@ -149,7 +149,7 @@ for name, head, body, a, b, ns in cond:
     pre = import_lines(STMT_CONSTS, []) + ["", OPENS.strip()]
     emit(f"Theorems/Thm_{slug(full)}.lean", HEADER + note(f"statement stub of {full}, binder A made explicit", "MIPRE/Background/Pipeline.lean")
          + "\n".join(pre) + "\n\n" + formal + "\n")
-    body2 = body.replace("GapCompression.ofAnswerReduction A", OF_PIPELINE)
+    body2 = body.replace("(GapCompression.ofAnswerReduction A)", OF_PIPELINE).replace("GapCompression.ofAnswerReduction A", OF_PIPELINE)
     assert body2 != body, name
     sol_imports = import_lines(STMT_CONSTS + BODY_CONSTS,
                                [tslug, slug("MIPRE.Introspection.nonempty_seven"), slug("MIPRE.Repetition.nonempty_seven")])

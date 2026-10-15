@@ -39,14 +39,21 @@ MACRO_EXPANSIONS = {
                   "MIPRE.Cost.Machine.Ctrl.toData, MIPRE.Cost.Machine.evD, MIPRE.Cost.Machine.retD, "
                   "MIPRE.Cost.Prog.toData, MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, "
                   "List.map_cons, List.map_nil] at *); all_goals omega)",
+    # the three cost macros of Halting/{Lists,Arith,Serial}.lean (namespace MIPRE.Cost.Prog, open Data)
+    "cost_omega": "((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.encode_bool, MIPRE.Cost.Data.ofBool]) <;> omega)",
+    "cost_omega'": "((try simp only [MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.Data.size_ofNat, MIPRE.Cost.encode_bool, MIPRE.Cost.Data.ofBool, MIPRE.Cost.encode_bitStr_nil, Bool.toNat_false, Bool.toNat_true]) <;> omega)",
+    "cost_omega\u2082": "((try simp only [MIPRE.Cost.Data.list_cons, MIPRE.Cost.Data.list_nil, MIPRE.Cost.Data.size_cons, MIPRE.Cost.Data.size_nil, MIPRE.Cost.encode_bool, MIPRE.Cost.Data.ofBool]) <;> omega)",
 }
 
 def expand_macros(text):
-    for name, body in MACRO_EXPANSIONS.items():
-        text = re.sub(r"(?<![A-Za-z0-9_.'])" + re.escape(name) + r"(?![A-Za-z0-9_'])", body, text)
+    for name in sorted(MACRO_EXPANSIONS, key=len, reverse=True):   # longest first: cost_omega₂ before cost_omega
+        text = re.sub(r"(?<![\w.'])" + re.escape(name) + r"(?![\w'])", MACRO_EXPANSIONS[name], text)
     for old, new in RENAMES.items():
         for o, n in ((old, new), (old.split(".")[-1], new.split(".")[-1])):
             text = re.sub(r"(?<![\w.'])" + re.escape(o) + r"(?![\w'])", n, text)
+    # `private` is per file: a private declaration copied into a bundle or pasted into a solution
+    # would be invisible to the other generated files that use it, so the copies drop the modifier
+    text = re.sub(r"^(\s*(?:@\[[^\]]*\]\s*)?)private\s+", r"\1", text, flags=re.M)
     return text
 
 plan = json.load(open(CFG["plan"], encoding="utf-8"))
