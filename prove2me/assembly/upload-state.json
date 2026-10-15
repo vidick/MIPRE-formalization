@@ -2007,6 +2007,48 @@
    "submitted_at": 1792098417.8778536,
    "http": 200,
    "submission_id": "897b6220-c11b-43f2-bccd-3a90c815acb6",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.exists_code_halts_of_isRE": {
+   "submitted_at": 1792098515.0398946,
+   "http": 200,
+   "submission_id": "fb24c96b-6ecf-4300-be32-80d741850b3f",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.re_subset_mipstarComputable_of": {
+   "submitted_at": 1792098590.4754908,
+   "http": 200,
+   "submission_id": "57d5e3b9-57f9-448b-ad8c-9a7ee689c4da",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.mipstarComputable_eq_re_of": {
+   "submitted_at": 1792098704.4465566,
+   "http": 200,
+   "submission_id": "20dfa89d-5229-4bd3-9435-6af24f300498",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.exists_cut_ge": {
+   "submitted_at": 1792098801.883974,
+   "http": 200,
+   "submission_id": "1254e01c-aa08-43e2-aef9-74a6cc5330e1",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.D1_apply": {
+   "submitted_at": 1792098915.934892,
+   "http": 200,
+   "submission_id": "1b34a464-f65c-4064-9a45-c7c889231e44",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Halting.decProg_accepts": {
+   "submitted_at": 1792098997.5552804,
+   "http": 200,
+   "submission_id": "1c654066-fe5e-42dc-b21d-937f50f7b5f9",
    "status": "PENDING"
   }
  },
