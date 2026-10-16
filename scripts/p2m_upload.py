@@ -29,6 +29,7 @@ P2M = os.path.join(ROOT, "prove2me")            # the tree directory; --tree cha
 STATE_PATH = os.path.join(P2M, "upload-state.json")
 PROJECT_TAG = "mipre-formalization"
 PUBLISHED = set()   # theorem names already on the platform (Proved), imported but not uploaded by this tree
+DRY_DONE = {"definitions": set(), "solutions": set()}   # what a dry run has walked, across the waves
 # platform-side failures that are not about the file: a dropped database connection while an
 # import is looked up or a reduction edge recorded, an explicit "please resubmit"
 TRANSIENT = ("ConnectionTerminated", "DB error", "please resubmit", "could not be recorded",
@@ -265,7 +266,7 @@ def upload_definitions(tree, meta, st, args):
     by = {b["definition_name"]: b for b in tree["bundles"]}
     names = set(by)
     pending = [b["definition_name"] for b in tree["bundles"] if st["definitions"].get(b["definition_name"], {}).get("status") != "PUBLISHED"]
-    inflight, attempts, retry_at, dry_done = {}, collections.defaultdict(int), {}, set()
+    inflight, attempts, retry_at, dry_done = {}, collections.defaultdict(int), {}, DRY_DONE["definitions"]
 
     def published(n):
         return n not in names or n in dry_done or st["definitions"].get(n, {}).get("status") == "PUBLISHED"
@@ -541,7 +542,7 @@ def upload_solutions(tree, meta, st, args):
     mn = {n["theorem_name"]: n for n in meta["nodes"]}
     order = leaves_first(tree)
     by = {n["theorem_name"]: n for n in order}
-    inflight, attempts, retry_at, dry_done = {}, collections.defaultdict(int), {}, set()
+    inflight, attempts, retry_at, dry_done = {}, collections.defaultdict(int), {}, DRY_DONE["solutions"]
 
     def handled(c):
         return (c in PUBLISHED or c in dry_done
