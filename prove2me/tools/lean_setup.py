@@ -14,7 +14,7 @@ MIPRE modules and the generated trees.
 As a script: `python3 lean_setup.py <file.lean>` prints the setup path.  The import graph is cached
 in <P2M_DIR>/import_graph.json and refreshed for files whose mtime changed.
 """
-import glob, json, os, re, sys, time
+import glob, json, os, re, sys, threading, time
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
 WS = f"{S}/ws"
@@ -85,11 +85,16 @@ def olean_of(mod):
     return None
 
 _graph = None
+_lock = threading.RLock()   # the drivers call setup_for from several threads
 def graph():
     global _graph
-    if _graph is None:
-        _graph = json.load(open(CACHE, encoding="utf-8")) if os.path.exists(CACHE) else {}
-    return _graph
+    with _lock:
+        if _graph is None:
+            try:
+                _graph = json.load(open(CACHE, encoding="utf-8")) if os.path.exists(CACHE) else {}
+            except (OSError, ValueError):
+                _graph = {}
+        return _graph
 
 def imports_of(mod):
     """Direct imports of a module, from its source (cached by mtime)."""
@@ -107,10 +112,11 @@ def imports_of(mod):
     return imps
 
 def save_graph():
-    if _graph is not None:
-        tmp = CACHE + ".tmp"
-        json.dump(_graph, open(tmp, "w", encoding="utf-8"))
-        os.replace(tmp, CACHE)
+    with _lock:
+        if _graph is not None:
+            tmp = f"{CACHE}.{os.getpid()}.{threading.get_ident()}.tmp"
+            json.dump(dict(_graph), open(tmp, "w", encoding="utf-8"))
+            os.replace(tmp, CACHE)
 
 def closure(mods):
     seen, stack = set(), list(mods)
@@ -134,6 +140,10 @@ def module_name_of(path):
 
 def setup_for(path, out_dir=None):
     """Write the setup JSON for compiling `path`; return its path."""
+    with _lock:
+        return _setup_for(path, out_dir)
+
+def _setup_for(path, out_dir=None):
     path = os.path.abspath(path)
     text = open(path, encoding="utf-8", errors="replace").read()
     direct = header_imports(text)
