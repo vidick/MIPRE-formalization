@@ -477,3 +477,27 @@ toolchain takes 2.4 GB and the 3,278-module Mathlib closure about 1.5 GB). The 2
 `import Mathlib` lines of the vendored modules are rewritten in the workspace copies to the Mathlib
 modules their constants use (computed from the compiled oleans in the main repository, module
 names mapped to this pin) plus `Mathlib.Tactic`; the uploaded files carry those explicit imports.
+
+Three more, from the repetition build on 2026-10-16. (4) *The explicit import lists must come from
+the proof terms, read with `ConstantInfo.value? (allowOpaque := true)`.* The first lists were
+computed with `value?` alone, which is `none` for every theorem, so they covered the statements and
+the definition bodies only; the own-code modules compiled anyway because their proofs stay inside
+the modules their statements need, and the first vendored part failed with 25 unknown identifiers
+(`integrableOn_add_rpow_Ioi_of_lt`, `MeasureTheory.Integrable.of_eval`, …). Under the module system
+the exported part of an olean turns theorems into axioms, so the proof terms are read from the
+`.olean.private` part (`readModuleDataParts`; `tools/min_imports.lean`, run in the main repository,
+its lists applied to the workspace copies by `tools/ws_rewrite_imports.py`); the lists grew from
+97 to 156 modules per vendored part to 170 to 366, and the Mathlib closure by 199 modules. Module
+names are the repository Mathlib's (`c55e6e7`, Lean `v4.35.0-rc3`) and are mapped to the platform
+pin by hand (fourteen `Mathlib.Basic.*` and `Topology.Algebra.Group.ContinuousDiv` renames); a
+module the platform pin lacks whose constants the source never names (`RingTheory.Coalgebra.IsFrobenius`,
+an instance the newer typeclass search found) is dropped. (5) *The Mathlib cache does ship the
+`.olean.private` and `.olean.server` parts.* The belief that it did not came from the fetch script
+itself, which deleted them after each batch; the 3,314-module recompile of the parts from source
+(about three hours on four cores) was unnecessary, and the fetch script, now
+`tools/ws_fetch_closure.sh`, deletes only the `.ilean` index. The workspace is extended by
+`tools/ws_extend.py` (the closure of a root at `70cbf1c`, from `git cat-file`), and all three take
+the scratch directory from `P2M_DIR` like the other drivers. (6) *`module` may carry a trailing comment* (`module  -- shake: keep-all` in eight Mathlib
+headers, `Mathlib.Init` and `Mathlib.Tactic` among them); a bare-line test classified them as
+legacy, so their parts were never regenerated and a plain legacy importer of `Mathlib.Tactic`
+failed on `Tactic.olean.server`.
