@@ -104,11 +104,52 @@ VENDORED = [  # (module prefix, provenance sentence): third-party code the repos
      "(Sirui Lu and the MIPStarRE contributors, Apache 2.0; commit and upstream path in the file header) by `scripts/vendor-lidt.py`."),
 ]
 
+OWN_HOLDERS = {"MIPRE contributors", "Thomas Vidick"}   # this repository's own copyright lines
+_HEADERS = {}
+
+def source_header(module):
+    """The leading comment of the module's source at the commit (its copyright header)."""
+    if module not in _HEADERS:
+        import subprocess
+        repo = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        r = subprocess.run(["git", "show", f"{args.commit}:{module.replace('.', '/')}.lean"], cwd=repo,
+                           capture_output=True, text=True)
+        text, blocks = r.stdout if r.returncode == 0 else "", []
+        while True:   # every leading comment block: CSLib's copies add a second one, on the vendoring
+            m = re.match(r"\s*(/-(?![!-]).*?-/)", text, re.S)
+            if not m:
+                break
+            blocks.append(m.group(1)); text = text[m.end():]
+        _HEADERS[module] = "\n".join(blocks)
+    return _HEADERS[module]
+
 def provenance(module):
+    """The sentence crediting code this repository did not write: the vendored trees by path, and any
+    other module whose copyright header names someone else, from the header itself (CSLib's files
+    name their authors; the LCS development is Sean Perazzolo's)."""
     for prefix, sentence in VENDORED:
         if (module or "").startswith(prefix):
             return sentence
-    return ""
+    if not module:
+        return ""
+    h = source_header(module)
+    m = re.search(r"Copyright \(c\) (\d+) (.+?)\. All rights reserved", h)
+    if not m or m.group(2) in OWN_HOLDERS:
+        return ""
+    holder = m.group(2)
+    authors = re.search(r"Authors?: (.+)", h)
+    authors = authors.group(1).strip() if authors else holder
+    if "Vendored from CSLib" in h:
+        up = re.search(r"upstream file\s+(\S+)", h)
+        return (f"The module is vendored from [CSLib](https://github.com/leanprover/cslib) (commit `3aa9d441`, 2026-08-03; "
+                f"Apache 2.0): upstream file `{up.group(1) if up else '?'}`, by {authors}; the file header lists the adaptations. "
+                "The declarations, statements and proofs are upstream's, not this repository's.")
+    if holder == "Sean Perazzolo":
+        return ("The module belongs to the linear constraint system games development contributed by Sean Perazzolo, "
+                "vendored with permission from [sean-prz/LCS_In_Lean](https://github.com/sean-prz/LCS_In_Lean) and adapted "
+                "to this repository (Apache 2.0; the author is named in the file header).")
+    print(f"warning: {module} has the copyright holder {holder!r} and no provenance sentence")
+    return f"The module's copyright holder is {holder} (Apache 2.0; see the file header of the source)."
 
 def lean_block(formal, opens):
     stmt = re.sub(r"\s*:=\s*by\s+sorry\s*$", "", formal.strip())

@@ -72,7 +72,7 @@
     ]
    }
   ],
-  "lines": 115,
+  "lines": 114,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
@@ -148,7 +148,7 @@
     ]
    }
   ],
-  "lines": 80,
+  "lines": 79,
   "published_bundle": "MIPRE_Foundations_LowDegree_BinaryCirculantProg",
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
@@ -360,7 +360,7 @@
     ]
    }
   ],
-  "lines": 145,
+  "lines": 144,
   "published_bundle": "MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
@@ -470,7 +470,7 @@
     ]
    }
   ],
-  "lines": 97,
+  "lines": 96,
   "published_bundle": "MIPRE_Foundations_LowDegree_BinaryComponents",
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
@@ -629,7 +629,7 @@
     ]
    }
   ],
-  "lines": 161,
+  "lines": 160,
   "published_bundle": "MIPRE_Foundations_LowDegree_BinaryComponentsProg",
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
@@ -720,7 +720,7 @@
     ]
    }
   ],
-  "lines": 183,
+  "lines": 182,
   "published_bundle": "MIPRE_Foundations_SAT_FieldTrace",
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -884,7 +884,7 @@
     ]
    }
   ],
-  "lines": 198,
+  "lines": 197,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1166,7 +1166,7 @@
     ]
    }
   ],
-  "lines": 202,
+  "lines": 201,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1315,7 +1315,7 @@
     ]
    }
   ],
-  "lines": 186,
+  "lines": 185,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1582,7 +1582,7 @@
     ]
    }
   ],
-  "lines": 324,
+  "lines": 323,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1754,7 +1754,7 @@
     ]
    }
   ],
-  "lines": 184,
+  "lines": 183,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1940,7 +1940,7 @@
     ]
    }
   ],
-  "lines": 218,
+  "lines": 217,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -2153,7 +2153,7 @@
     ]
    }
   ],
-  "lines": 222,
+  "lines": 221,
   "published_bundle": "MIPRE_Foundations_SAT_NormalElementProg",
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -2319,7 +2319,7 @@
     ]
    }
   ],
-  "lines": 183,
+  "lines": 182,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -2517,7 +2517,7 @@
     ]
    }
   ],
-  "lines": 242,
+  "lines": 241,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -2686,7 +2686,7 @@
     ]
    }
   ],
-  "lines": 204,
+  "lines": 203,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -2874,7 +2874,7 @@
     ]
    }
   ],
-  "lines": 214,
+  "lines": 213,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -3040,7 +3040,7 @@
     ]
    }
   ],
-  "lines": 200,
+  "lines": 199,
   "published_bundle": "MIPRE_Foundations_Introspection_BinaryBlockProg",
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",

@@ -56,7 +56,6 @@
   "formal_statement": "theorem MIPRE.POVM.sub_mul_self_le_one {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d]\n    (M : POVM A d) (p q : A) :\n    (((M.mats p).val - (M.mats q).val) * ((M.mats p).val - (M.mats q).val))\n      ≤ (1 : Matrix d d ℂ) := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.POVM",
    "open Finset Matrix Kronecker",
    "open scoped ComplexOrder MatrixOrder"
   ],
@@ -143,7 +142,6 @@
   "formal_statement": "theorem MIPRE.IsPVM.posSemidef (h : IsPVM P) (a : Λ) : (P a).PosSemidef := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.IsPVM",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",

@@ -111,7 +111,6 @@
   "formal_statement": "theorem MIPRE.Introspection.retained_fibre_dist (ψ : N → ℂ) (M T : Y × A → Matrix N N ℂ)\n    (P R : Y → Matrix N N ℂ) (hM : IsPVM M) (hR : IsPVM R)\n    (hPR : ∀ y, P y *ᵥ ψ = R y *ᵥ ψ)\n    (hMR : ∀ y a, M (y, a) * R y = R y * M (y, a))\n    (hTR : ∀ y a, T (y, a) * R y = R y * T (y, a)) :\n    (∑ p : Y × A, snorm ψ (M p - T p * P p.1) ^ 2) ≤\n      2 * (∑ y, snorm ψ ((∑ a, M (y, a)) - P y) ^ 2) +\n      2 * (∑ p : Y × A, snorm ψ (M p - T p) ^ 2) := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.Introspection",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {N Y A : Type*} [Fintype N] [DecidableEq N]"
@@ -407,7 +406,6 @@
    "open MIPRE",
    "open MIPRE.CL",
    "open MIPRE.CL.CLFun",
-   "open MIPRE.CL.CLFun.ExactlyOn",
    "open Finset",
    "variable {F ι : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
   ],

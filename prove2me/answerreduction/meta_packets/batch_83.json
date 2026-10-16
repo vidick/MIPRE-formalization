@@ -8,7 +8,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "`elim` when the value is a pair: push its components, evaluate `cc`.",
@@ -42,7 +42,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -74,7 +74,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -106,7 +106,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "From the dispatcher, a return to a frame reaches its case program with the head of `C`\non the value and the head of `K` on the second tag bit.",
@@ -137,7 +137,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -172,7 +172,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -205,7 +205,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -240,7 +240,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -275,7 +275,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -311,7 +311,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -350,7 +350,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "The final check on `ret v` with an empty stack: accept iff `v = encode true`.",
@@ -379,7 +379,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "**One step of the machine**, when the budget covers its cost: from the dispatcher\nrepresenting `m`, `U` reaches the dispatcher representing `step m` with the cost charged.",
@@ -426,7 +426,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "**One step of the machine**, when the budget is short: `U` halts silently.",

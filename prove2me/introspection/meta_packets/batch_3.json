@@ -8,7 +8,7 @@
    "open MIPRE",
    "open MIPRE.Introspection",
    "open MIPRE.Introspection.RestrictedSoundness",
-   "open Matrix Finset Classical",
+   "open Finset Classical",
    "open scoped Kronecker",
    "variable {F : Type} [Field F] [Fintype F] [DecidableEq F]"
   ],
@@ -391,7 +391,6 @@
   "formal_statement": "theorem Orthogonalization.IsometryData.q_mul_w (hw : IsometryData a q w) (i : ι) : q i * w i = w i := by sorry",
   "preamble_opens": [
    "open Orthogonalization",
-   "open Orthogonalization.IsometryData",
    "open scoped ComplexOrder BigOperators",
    "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]",
    "variable {ι : Type*} [Fintype ι] [DecidableEq ι] {a q w : ι → H →L[ℂ] H}"
@@ -588,8 +587,6 @@
   "source_name": "Orthogonalization.FinDim.exists_isometry_completion",
   "formal_statement": "theorem Orthogonalization.FinDim.exists_isometry_completion (T : H →L[ℂ] K) (s : H →L[ℂ] H)\n    (hs : IsSelfAdjoint s) (hs0 : 0 ≤ s) (hT : adjoint T ∘L T = s ∘L s)\n    (L : Submodule ℂ K) (hTL : LinearMap.range (T : H →ₗ[ℂ] K) ≤ L) (hL : finrank ℂ L = finrank ℂ H) :\n    ∃ u : H →L[ℂ] K, adjoint u ∘L u = 1 ∧ u ∘L adjoint u = L.starProjection ∧\n      u ∘L s = T := by sorry",
   "preamble_opens": [
-   "open Orthogonalization",
-   "open Orthogonalization.FinDim",
    "open scoped InnerProductSpace ComplexOrder",
    "open Module ContinuousLinearMap",
    "variable {H K : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]"

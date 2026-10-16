@@ -423,7 +423,6 @@
    "open MIPRE",
    "open MIPRE.LowDegree",
    "open MIPRE.LowDegree.BinaryLinear",
-   "open MIPRE.LowDegree.BinaryLinear.IsPivotBasis",
    "variable {n t : ℕ}"
   ],
   "docstring": "A reduced nonzero row can be appended at any of its nonzero coordinates.",
@@ -602,9 +601,6 @@
   "source_name": "MIPRE.LowDegree.BinaryFiniteField.mem_range_iff_pow_card",
   "formal_statement": "theorem MIPRE.LowDegree.BinaryFiniteField.mem_range_iff_pow_card {K L : Type*} [Field K] [Field L] [Finite K]\n    [Algebra K L] (x : L) :\n    x ∈ (algebraMap K L).range ↔ x ^ Nat.card K = x := by sorry",
   "preamble_opens": [
-   "open MIPRE",
-   "open MIPRE.LowDegree",
-   "open MIPRE.LowDegree.BinaryFiniteField",
    "open Polynomial"
   ],
   "docstring": "The fixed points of the base field's cardinality power are exactly that field.",
@@ -628,9 +624,6 @@
   "source_name": "MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_of_not_mem_range",
   "formal_statement": "theorem MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_of_not_mem_range {K L : Type*} [Field K] [Field L]\n    [Finite K] [Algebra K L] [Algebra (ZMod 2) L] [FiniteDimensional (ZMod 2) L]\n    (t : ℕ) (hK : Nat.card K = 2 ^ (2 ^ t))\n    (hL : Module.finrank (ZMod 2) L = 2 ^ (t + 1)) (x : L)\n    (hx : x ∉ (algebraMap K L).range) :\n    (minpoly (ZMod 2) x).natDegree = 2 ^ (t + 1) := by sorry",
   "preamble_opens": [
-   "open MIPRE",
-   "open MIPRE.LowDegree",
-   "open MIPRE.LowDegree.BinaryFiniteField",
    "open Polynomial"
   ],
   "docstring": "In a binary extension of degree `2^(t+1)`, every element outside the\nindex-two subfield has the full extension degree.",

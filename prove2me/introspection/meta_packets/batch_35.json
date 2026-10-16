@@ -6,7 +6,6 @@
   "formal_statement": "theorem MIPRE.Introspection.commutator_product_bound (ψ : N → ℂ) (M : A → Matrix N N ℂ)\n    (hM : ∑ a, (M a)ᴴ * M a ≤ (1 : Matrix N N ℂ))\n    (U V W : Matrix N N ℂ) (hU : Uᴴ * U = 1) (hW : Wᴴ * W = 1)\n    (hWU : W * U = U * W) (hWM : ∀ a, W * M a = M a * W) :\n    (∑ a, snorm ψ (M a * (U * V) - (U * V) * M a) ^ 2) ≤\n      4 * (∑ a, snorm ψ (M a * U - U * M a) ^ 2) +\n      4 * (∑ a, snorm ψ (M a * V - V * M a) ^ 2) +\n      8 * snorm ψ (V - W) ^ 2 := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.Introspection",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {N A : Type*} [Fintype N] [DecidableEq N] [Fintype A]"
@@ -42,7 +41,6 @@
   "formal_statement": "theorem MIPRE.Introspection.two_sided_commutation_avg {X I J : Type*} [Fintype X] [Fintype I] [Fintype J]\n    (D : X → ℝ) (hD : ∀ x, 0 ≤ D x)\n    (μ : X → I → ℝ) (ν : X → J → ℝ)\n    (hμ0 : ∀ x i, 0 ≤ μ x i) (hν0 : ∀ x j, 0 ≤ ν x j)\n    (hμ1 : ∀ x, ∑ i, μ x i = 1) (hν1 : ∀ x, ∑ j, ν x j = 1)\n    (ψ : dA × dB → ℂ) (M : X → POVM A dA)\n    (U : X → I → Matrix dA dA ℂ) (V : X → J → Matrix dA dA ℂ)\n    (W : X → J → Matrix dB dB ℂ)\n    (hU : ∀ x i, (U x i)ᴴ * U x i = 1) (hW : ∀ x j, (W x j)ᴴ * W x j = 1) :\n    (∑ x, D x * ∑ i, μ x i * ∑ j, ν x j * ∑ a,\n      stateSqNorm ψ (((M x).mats a).val * (U x i * V x j) -\n        (U x i * V x j) * ((M x).mats a).val)) ≤\n      4 * (∑ x, D x * ∑ i, μ x i * ∑ a,\n        stateSqNorm ψ (((M x).mats a).val * U x i - U x i * ((M x).mats a).val)) +\n      4 * (∑ x, D x * ∑ j, ν x j * ∑ a,\n        stateSqNorm ψ (((M x).mats a).val * V x j - V x j * ((M x).mats a).val)) +\n      8 * (∑ x, D x * ∑ j, ν x j * xSqNorm ψ (V x j) (W x j)) := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.Introspection",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {N A : Type*} [Fintype N] [DecidableEq N] [Fintype A]",
@@ -230,7 +228,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Introspection",
-   "open MIPRE.Introspection.TypedExtraction",
    "open Finset Matrix Classical",
    "open scoped Kronecker",
    "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
@@ -258,7 +255,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Introspection",
-   "open MIPRE.Introspection.TypedExtraction",
    "open Finset Matrix Classical",
    "open scoped Kronecker",
    "variable {PauliType PauliAnswer F ι κ A H K : Type*}",
@@ -296,7 +292,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Introspection",
-   "open MIPRE.Introspection.TypedExtraction",
    "open Finset Matrix Classical",
    "open scoped Kronecker",
    "variable {PauliType PauliAnswer F ι κ A H K : Type*}",

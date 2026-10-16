@@ -263,7 +263,7 @@
    "open MIPRE.Introspection",
    "open MIPRE.Introspection.AuxiliaryHiding",
    "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.Introspection.CLChecks MIPRE.Introspection.AuxiliaryScan MIPRE.LowDegree.BinaryLinear",
-   "open MIPRE.Introspection.AuxiliaryProgram (andCheck andCheck_iff)"
+   "open MIPRE.Introspection.AuxiliaryProgram (andCheck)"
   ],
   "docstring": "",
   "module": "MIPRE.Foundations.Introspection.AuxiliaryHidingNextProgram",
@@ -576,7 +576,7 @@
    "open MIPRE.Introspection",
    "open MIPRE.Introspection.AuxiliaryProgram",
    "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping MIPRE.CL.Detyping.Program",
-   "open MIPRE.Introspection.SourceCompiler (GuardInput inputIndex inputQ inputR inputDim inputLeft inputRight"
+   "open MIPRE.Introspection.SourceCompiler (GuardInput inputIndex inputQ inputR inputDim inputLeft inputRight leftParts rightParts)"
   ],
   "docstring": "The actual program accepts precisely the full-Q sampling relation for the\nsame-depth padded source CL, on the original answer cutoff. No restriction is\nplaced on the Sample seed's spectator coordinates.",
   "module": "MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect",
@@ -621,7 +621,7 @@
    "open MIPRE.Introspection",
    "open MIPRE.Introspection.AuxiliaryProgram",
    "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
-   "open MIPRE.Introspection.SourceCompiler (GuardInput inputIndex inputQ inputR inputDim inputLeft inputRight"
+   "open MIPRE.Introspection.SourceCompiler (GuardInput inputIndex inputQ inputR inputDim inputLeft inputRight leftParts rightParts readInput)"
   ],
   "docstring": "",
   "module": "MIPRE.Foundations.Introspection.AuxiliarySamplingProgram",

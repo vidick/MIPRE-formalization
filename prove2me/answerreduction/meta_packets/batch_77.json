@@ -67,7 +67,6 @@
    "open MIPRE.TM",
    "open MIPRE.TM.CookLevin",
    "open MIPRE.TM.CookLevin.Desc",
-   "open MIPRE.TM.CookLevin.Desc.InputsLt",
    "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
    "variable (ℓ r T : ℕ)"
   ],

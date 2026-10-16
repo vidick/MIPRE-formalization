@@ -33,7 +33,6 @@
    "open MIPStarRE",
    "open MIPStarRE.LDT",
    "open MIPStarRE.LDT.QuantumState",
-   "open MIPStarRE.LDT.QuantumState.IsNormalized",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "A normalized state has a nonempty carrier: if the carrier were empty, the\ntrace would vanish and `normalizedTrace = 0 / 0 = 0`, contradicting `= 1`.",

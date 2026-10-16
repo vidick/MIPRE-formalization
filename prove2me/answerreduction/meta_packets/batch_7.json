@@ -358,7 +358,7 @@
    "open MIPRE",
    "open MIPRE.LIDT",
    "open MIPRE.LIDT.Bridge",
-   "open MIPStarRE.LDT (QuantumState ev opTensor qBipartiteConsDefect bipartiteConsError",
+   "open MIPStarRE.LDT (QuantumState ev opTensor qBipartiteConsDefect bipartiteConsError uniformDistribution SubMeas IdxSubMeas)",
    "open Matrix",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
   ],
@@ -436,7 +436,7 @@
    "open MIPRE",
    "open MIPRE.LIDT",
    "open MIPRE.LIDT.Line",
-   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine",
+   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine AxisLinePolynomial DiagonalLinePolynomial AxisParallelMeasurementReparamInvariant DiagonalMeasurementReparamInvariant decodeScalar encodeScalar zeroCoord)",
    "open scoped MatrixOrder ComplexOrder",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}"
   ],
@@ -464,7 +464,7 @@
    "open MIPRE",
    "open MIPRE.LIDT",
    "open MIPRE.LIDT.Line",
-   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine",
+   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine AxisLinePolynomial DiagonalLinePolynomial AxisParallelMeasurementReparamInvariant DiagonalMeasurementReparamInvariant decodeScalar encodeScalar zeroCoord)",
    "open scoped MatrixOrder ComplexOrder",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}"
   ],
@@ -492,7 +492,7 @@
    "open MIPRE",
    "open MIPRE.LIDT",
    "open MIPRE.LIDT.Bridge",
-   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine",
+   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine AxisLinePolynomial DiagonalLinePolynomial AxisParallelMeasurementReparamInvariant DiagonalMeasurementReparamInvariant decodeScalar encodeScalar zeroCoord)",
    "open scoped MatrixOrder ComplexOrder",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
    "variable {n : Type*} [Fintype n] [DecidableEq n]"
@@ -523,7 +523,7 @@
    "open MIPRE",
    "open MIPRE.LIDT",
    "open MIPRE.LIDT.Bridge",
-   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine",
+   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine AxisLinePolynomial DiagonalLinePolynomial AxisParallelMeasurementReparamInvariant DiagonalMeasurementReparamInvariant decodeScalar encodeScalar zeroCoord)",
    "open scoped MatrixOrder ComplexOrder",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
    "variable {n : Type*} [Fintype n] [DecidableEq n]"
@@ -554,7 +554,7 @@
    "open MIPRE",
    "open MIPRE.LIDT",
    "open MIPRE.LIDT.Bridge",
-   "open MIPStarRE.LDT (ProjStrat QuantumState ev opTensor qBipartiteConsDefect bipartiteConsError",
+   "open MIPStarRE.LDT (ProjStrat QuantumState ev opTensor qBipartiteConsDefect bipartiteConsError uniformDistribution avgOver Distribution SubMeas postprocess IdxSubMeas ProjMeas Fq zeroCoord AxisParallelLine DiagonalLine)",
    "open scoped Kronecker",
    "open Matrix",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"

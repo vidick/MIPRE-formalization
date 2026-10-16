@@ -59,7 +59,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.LowDegree",
-   "open MIPRE.LowDegree.BinaryPolynomial",
    "open MIPRE.Cost"
   ],
   "docstring": "Remove trailing zero coefficients and separate the leading monic coefficient.",
@@ -174,7 +173,6 @@
    "open MIPRE",
    "open MIPRE.LowDegree",
    "open MIPRE.LowDegree.BinaryLinear",
-   "open MIPRE.LowDegree.BinaryLinear.IsPivotBasis",
    "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
    "variable {n t : ℕ}"
   ],
@@ -289,7 +287,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.LowDegree",
-   "open MIPRE.LowDegree.PrimitiveBinaryComponent",
    "variable {R : Type*} [CommRing R] [Finite R]"
   ],
   "docstring": "Every nonzero element supported on a primitive component has an inverse in that component.",
@@ -324,7 +321,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.LowDegree",
-   "open MIPRE.LowDegree.ComponentFamily",
    "variable {R : Type*} [CommRing R] [DecidableEq R]"
   ],
   "docstring": "",
@@ -378,7 +374,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.LowDegree",
-   "open MIPRE.LowDegree.ComponentFamily",
    "variable {R : Type*} [CommRing R] [DecidableEq R]",
    "variable [Algebra (ZMod 2) R]"
   ],

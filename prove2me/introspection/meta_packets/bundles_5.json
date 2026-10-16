@@ -21,7 +21,7 @@
     ]
    }
   ],
-  "lines": 309,
+  "lines": 308,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -271,7 +271,7 @@
     ]
    }
   ],
-  "lines": 336,
+  "lines": 334,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -671,7 +671,7 @@
     ]
    }
   ],
-  "lines": 124,
+  "lines": 123,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
@@ -752,7 +752,7 @@
     ]
    }
   ],
-  "lines": 42,
+  "lines": 41,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_CL_Register",
@@ -787,7 +787,7 @@
     ]
    }
   ],
-  "lines": 44,
+  "lines": 43,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -848,7 +848,7 @@
     ]
    }
   ],
-  "lines": 64,
+  "lines": 63,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_CL_Register",
@@ -891,7 +891,7 @@
     ]
    }
   ],
-  "lines": 81,
+  "lines": 80,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -970,7 +970,7 @@
     ]
    }
   ],
-  "lines": 67,
+  "lines": 66,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_CL_Register",
@@ -1069,7 +1069,7 @@
     ]
    }
   ],
-  "lines": 111,
+  "lines": 110,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1114,7 +1114,7 @@
     ]
    }
   ],
-  "lines": 67,
+  "lines": 66,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1166,7 +1166,7 @@
     ]
    }
   ],
-  "lines": 100,
+  "lines": 99,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1250,7 +1250,7 @@
     ]
    }
   ],
-  "lines": 107,
+  "lines": 106,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1434,7 +1434,7 @@
     ]
    }
   ],
-  "lines": 148,
+  "lines": 147,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1578,7 +1578,7 @@
     ]
    }
   ],
-  "lines": 127,
+  "lines": 126,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1681,7 +1681,7 @@
     ]
    }
   ],
-  "lines": 121,
+  "lines": 120,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1808,7 +1808,7 @@
     ]
    }
   ],
-  "lines": 144,
+  "lines": 143,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1954,7 +1954,7 @@
     ]
    }
   ],
-  "lines": 153,
+  "lines": 152,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -2080,7 +2080,7 @@
     ]
    }
   ],
-  "lines": 164,
+  "lines": 163,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -2261,7 +2261,7 @@
     ]
    }
   ],
-  "lines": 226,
+  "lines": 225,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -2833,7 +2833,7 @@
     ]
    }
   ],
-  "lines": 502,
+  "lines": 501,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",

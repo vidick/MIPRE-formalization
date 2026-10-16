@@ -276,7 +276,6 @@
   "preamble_opens": [
    "open MIPStarRE",
    "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.ConsRel",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Monotonicity of `ConsRel` in the allowed error parameter.",

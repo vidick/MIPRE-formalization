@@ -8,7 +8,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -36,7 +36,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -64,7 +64,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -94,7 +94,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -122,7 +122,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -150,7 +150,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -180,7 +180,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -208,7 +208,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -236,7 +236,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -264,7 +264,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -294,7 +294,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -329,7 +329,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -359,7 +359,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -394,7 +394,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -428,7 +428,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -455,7 +455,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "One round of `evDispatch`: two moves and a branch on the bit two cells right.",
@@ -482,7 +482,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "From the dispatcher, a control `ev p` reaches its case program with the head of `C` on the\nfinal `0` of the tag.",
@@ -512,7 +512,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "",
@@ -546,7 +546,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "The common tail of `evCons` and `evLet`: after the frame is pushed, rebuild the control\nfrom the scratch tape and charge. Stated inline in each case.",
@@ -578,7 +578,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open Turing MultiInputTM Phase MIPRE.Cost MIPRE.Cost.Machine",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "`elim` when the value is `nil`: evaluate `n`.",

@@ -688,7 +688,6 @@
   "formal_statement": "theorem MIPRE.Introspection.hiding_chain_average (ψ : H × K → ℂ) (D : J → ℝ) (hD : ∀ j, 0 ≤ D j)\n    (P : ℕ → J → C → Matrix H H ℂ) (n : ℕ) (δ : ℕ → ℝ)\n    (hstep : ∀ i < n, (∑ j, D j * ∑ z, stateSqNorm ψ (P i j z - P (i + 1) j z)) ≤ δ i) :\n    (∑ j, D j * ∑ z, stateSqNorm ψ (P 0 j z - P n j z)) ≤\n      (n : ℝ) * ∑ i ∈ Finset.range n, δ i := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.Introspection",
    "open Finset Matrix Classical",
    "variable {X Y A B C J H K : Type*}"
   ],

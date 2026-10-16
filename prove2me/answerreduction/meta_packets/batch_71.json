@@ -36,7 +36,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Pipeline",
-   "open MIPRE.Pipeline.PRuns",
    "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic",
    "variable {W X K : ℕ}"
   ],
@@ -66,7 +65,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Pipeline",
-   "open MIPRE.Pipeline.PRuns",
    "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic",
    "variable {W X K : ℕ}"
   ],

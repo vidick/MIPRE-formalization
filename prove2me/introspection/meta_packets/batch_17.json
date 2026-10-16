@@ -274,7 +274,7 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
    "open scoped Kronecker ComplexOrder MatrixOrder",
    "variable {F : Type} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
    "variable [Algebra (ZMod 2) F] [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA]"
@@ -310,7 +310,7 @@
    "open MIPRE",
    "open MIPRE.QLD",
    "open MIPRE.QLD.MirrorSimul",
-   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
    "open scoped Kronecker ComplexOrder MatrixOrder",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
    "variable (M : MirrorSimul ψ MA MB δ)"
@@ -363,7 +363,7 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
    "open scoped Kronecker ComplexOrder MatrixOrder",
    "variable {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
   ],
@@ -402,7 +402,7 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
    "open scoped Kronecker ComplexOrder MatrixOrder",
    "variable {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
   ],
@@ -447,7 +447,7 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
    "open scoped Kronecker ComplexOrder MatrixOrder"
   ],
   "docstring": "**`thm:qld`: soundness of the Pauli basis test** (the paper's `thm:pauli-appendix`). There are\nuniversal constants `a ≥ 1` and `0 < b < 1` such that for every admissible `(q, m, d)` (a field of\ncharacteristic two with `m | q`, and `d ≥ 1`) and **every** POVM strategy `(ψ, M_A, M_B)` of the\nPauli basis test that fails with probability at most `ε`, there are local isometries\n`V_A : C^{d_A} → (C^q)^M ⊗ H_A`, `V_B : C^{d_B} → (C^q)^M ⊗ H_B` (the register first) and a unit\nstate `|aux>` on `H_A ⊗ H_B` such that, with `δ = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`,\n\n1. `‖(V_A ⊗ V_B) |ψ> - |EPR_q>^M ⊗ |aux>‖ ≤ δ`, and\n2. for each basis `W ∈ {X, Z}`, the strategy's own `(Pauli, W)` measurement, read as cube data\n   and conjugated by the party's isometry, is `δ`-close to the honest Pauli basis measurement\n   `tau^W_h` on that party's register, in the summed squared state-dependent distance relative\n   to `|EPR_q>^M ⊗ |aux>` --- for Alice and for Bob, with the one `|aux>`.\n\nThe constants are those of `exists_qldErr_le`, fixed before anything else. The failure bound is\ntaken at `min ε 1`, which is still a failure bound because a value is nonnegative\n(`povmValue_nonneg`), and the rest is `exists_le_qldErr`.",

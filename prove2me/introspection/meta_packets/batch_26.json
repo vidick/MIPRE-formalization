@@ -590,7 +590,6 @@
   "formal_statement": "theorem MIPRE.Introspection.submeasurement_agreement_dist (ψ : N → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (P C : I → Matrix N N ℂ) (hP : IsPVM P)\n    (hC0 : ∀ i, 0 ≤ C i) (hCsum : ∑ i, C i ≤ 1) :\n    (∑ i, snorm ψ (P i - C i) ^ 2) ≤\n      2 * (1 - ∑ i, qform ψ (P i * C i)) := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.Introspection",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder Kronecker",
    "variable {N I : Type*} [Fintype N] [DecidableEq N] [Fintype I]"

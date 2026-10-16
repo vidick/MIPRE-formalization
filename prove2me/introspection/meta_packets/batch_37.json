@@ -121,7 +121,6 @@
    "open MIPRE",
    "open MIPRE.LowDegree",
    "open MIPRE.LowDegree.BinaryLinear",
-   "open MIPRE.LowDegree.BinaryLinear.IsPivotBasis",
    "variable {n t : ℕ}"
   ],
   "docstring": "Triangular pivots certify linear independence of the stored vectors.",

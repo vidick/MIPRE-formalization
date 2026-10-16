@@ -57,7 +57,6 @@
   "source_name": "Matrix.mul_conjTranspose_eq_one_of_orthonormal_rows",
   "formal_statement": "theorem Matrix.mul_conjTranspose_eq_one_of_orthonormal_rows\n    {𝕜 : Type*} [RCLike 𝕜]\n    {m n : Type*} [DecidableEq m] [Fintype n]\n    (row : m → EuclideanSpace 𝕜 n)\n    (hrow : Orthonormal 𝕜 row) :\n    (Matrix.of fun i j => row i j) * (Matrix.of fun i j => row i j)ᴴ =\n      (1 : Matrix m m 𝕜) := by sorry",
   "preamble_opens": [
-   "open Matrix",
    "open Module"
   ],
   "docstring": "A matrix whose rows form an orthonormal family is a coisometry.",

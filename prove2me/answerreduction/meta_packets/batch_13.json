@@ -457,7 +457,6 @@
   "preamble_opens": [
    "open MIPStarRE",
    "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.ProjSubMeas",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Projective submeasurement outcomes are Hermitian (PSD from idempotence).",
@@ -485,7 +484,6 @@
   "preamble_opens": [
    "open MIPStarRE",
    "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.ProjSubMeas",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Each projective outcome is absorbed by the total operator.",
@@ -516,7 +514,6 @@
   "preamble_opens": [
    "open MIPStarRE",
    "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.ProjSubMeas",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Distinct outcomes of a projective submeasurement are orthogonal.",

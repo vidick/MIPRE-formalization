@@ -8,7 +8,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "Phase `p3`: over the bits `l` held on `p₀ … p₀ + |l| - 1`, from the last, to `p₀ - 1`.",
@@ -35,7 +35,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "Phase `p4`: over the bits `l`, from the last, to `p₀ - 1`, then one right to `p₀` at `p5`.",
@@ -62,7 +62,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "Phase `p5`: copy the bits `l` under the head of `E` to `X`, to the `#` after them.",
@@ -89,7 +89,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "Phases `p8`/`p9`: the head of `E` right to the first blank.",
@@ -116,7 +116,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "Phases `p6`/`p7`: consume the index `S(ofNat j)` on `C`, then write `nil` on `X` and move\n`E` one right, at `p9`.",
@@ -143,8 +143,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open MIPRE.TM.Interp.EnvTape",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "Cells of a suffix of the environment: for `env' = v :: rest` a prefix of `env`, `S v` sits\nat `|envRepr rest|`, followed by `#`, and preceded by `#` or the blank before the tape.",
@@ -171,7 +170,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "The walk from phase `p1`: at the separator of the last element of the suffix `env'` of\n`env` (or before the tape if `env'` is empty), with the index `S(ofNat j)` on `C`.",
@@ -205,7 +204,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "**`getEnv`**: with `S(ofNat i)` under the head of `C` and the environment on `E` with\nits head at the end, write `S(env.get i)` at the head of `X`.",
@@ -234,7 +233,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -262,7 +261,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -290,7 +289,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -318,7 +317,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -398,7 +397,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -426,7 +425,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -454,7 +453,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -484,7 +483,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -512,7 +511,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],
@@ -540,7 +539,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open Turing MultiInputTM Phase",
    "open MultiTapeTM (moveInputPos)",
    "variable {input : Fin 7 → List Sym}"
   ],

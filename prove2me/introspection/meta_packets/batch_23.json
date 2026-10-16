@@ -497,7 +497,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Introspection",
-   "open MIPRE.Introspection.IntroPrefixInvariant",
    "open Finset Matrix Classical",
    "open scoped Kronecker",
    "variable {F ι A H : Type*} [Field F] [Fintype F] [DecidableEq F]",
@@ -528,7 +527,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Introspection",
-   "open MIPRE.Introspection.IntroPrefixInvariant",
    "open Finset Matrix Classical",
    "open scoped Kronecker",
    "variable {F ι A H : Type*} [Field F] [Fintype F] [DecidableEq F]",

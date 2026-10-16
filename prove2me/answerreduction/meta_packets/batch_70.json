@@ -297,7 +297,6 @@
   "formal_statement": "theorem MIPRE.POVM.sum_val {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d] (M : POVM A d) :\n    ∑ a, ((M.mats a).val) = (1 : Matrix d d ℂ) := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.POVM",
    "open Finset Matrix Kronecker",
    "open scoped ComplexOrder MatrixOrder"
   ],
@@ -323,7 +322,6 @@
   "formal_statement": "theorem MIPRE.POVM.posSemidef {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d] (M : POVM A d)\n    (a : A) : ((M.mats a).val).PosSemidef := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.POVM",
    "open Finset Matrix Kronecker",
    "open scoped ComplexOrder MatrixOrder"
   ],
@@ -378,7 +376,6 @@
   "formal_statement": "theorem MIPRE.IsPVM.nonneg (h : IsPVM P) (a : Λ) : (0 : Matrix n n ℂ) ≤ P a := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.IsPVM",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",
@@ -406,7 +403,6 @@
   "formal_statement": "theorem MIPRE.IsPVM.orthogonal (h : IsPVM P) {a b : Λ} (hab : a ≠ b) : P a * P b = 0 := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.IsPVM",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",
@@ -434,7 +430,6 @@
   "formal_statement": "theorem MIPRE.IsPVM.coarse {Λ' : Type*} [Fintype Λ'] [DecidableEq Λ'] (h : IsPVM P) (f : Λ → Λ') :\n    IsPVM (fun c => ∑ a ∈ univ.filter fun a => f a = c, P a) := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.IsPVM",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",
@@ -533,7 +528,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Pipeline",
-   "open MIPRE.Pipeline.PDom",
    "open MIPRE.Cost",
    "variable {W X K : ℕ}"
   ],
@@ -560,7 +554,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Pipeline",
-   "open MIPRE.Pipeline.PDom",
    "open MIPRE.Cost",
    "variable {W X K : ℕ}"
   ],
@@ -587,7 +580,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Pipeline",
-   "open MIPRE.Pipeline.PDom",
    "open MIPRE.Cost",
    "variable {W X K : ℕ}"
   ],

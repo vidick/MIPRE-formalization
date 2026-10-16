@@ -36,7 +36,6 @@
    "open MIPStarRE",
    "open MIPStarRE.LDT",
    "open MIPStarRE.LDT.MakingMeasurementsProjective",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "**Paper source:** `references/ldt-paper/orthonormalization.tex:540-553`\n(`\\label{lem:projective-low-rank-sum}`).\n\nA rank-reduction witness can be viewed on the canonical sigma-range auxiliary\nspace attached to the same projective family.  This is a Lean-only transport\nfrom an arbitrary auxiliary model of the projective family to the finite\nenumeration of its range bases; the mathematical hypotheses are exactly the\nrank-reduction witness fields.\n\n**Faithful encoding:** The theorem changes only the auxiliary-space model used\nto present the same projective family `Q_a`; it is not an additional\nmathematical assumption or proof obligation.",
@@ -60,10 +59,6 @@
   "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.exists_large_subset_ordered",
   "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.exists_large_subset_ordered {α : Type*} [Fintype α] [DecidableEq α]\n    (f : α → ℝ) {d : ℕ} (hd : d ≤ Fintype.card α) :\n    ∃ L : Finset α, L.card = d ∧\n      ∀ s ∈ (Lᶜ : Finset α), ∀ l ∈ L, f s ≤ f l := by sorry",
   "preamble_opens": [
-   "open MIPStarRE",
-   "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Truncation",
    "open scoped BigOperators"
   ],
   "docstring": "Choose `d` elements with the largest values of `f`, breaking ties\narbitrarily. The resulting `Large` set has the paper's ordering property:\nevery element outside `Large` has value at most every element of `Large`.",
@@ -87,10 +82,6 @@
   "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_mul_sum_small_le",
   "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_mul_sum_small_le {α : Type*} {L S : Finset α}\n    {f : α → ℝ} (hf : ∀ s ∈ S, ∀ l ∈ L, f s ≤ f l) :\n    (L.card : ℝ) * (∑ s ∈ S, f s) ≤ (S.card : ℝ) * (∑ l ∈ L, f l) := by sorry",
   "preamble_opens": [
-   "open MIPStarRE",
-   "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Truncation",
    "open scoped BigOperators"
   ],
   "docstring": "**Pairwise ordered double-counting.**\n\nIf every element of `S` has value at most every element of `L`, the sum over `S`\nscaled by `|L|` is dominated by the sum over `L` scaled by `|S|`. Matches the\npaper's inequality `∑_{Small} o ≤ (|Small|/r) · ∑ o` when `L ∪ S` exhausts the\nindex set.",
@@ -114,10 +105,6 @@
   "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_univ_mul_sum_compl_le",
   "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_univ_mul_sum_compl_le {α : Type*} [Fintype α] [DecidableEq α]\n    (L : Finset α) {f : α → ℝ}\n    (hf : ∀ s ∈ (Lᶜ : Finset α), ∀ l ∈ L, f s ≤ f l) :\n    (Fintype.card α : ℝ) * (∑ s ∈ (Lᶜ : Finset α), f s) ≤\n      (Lᶜ.card : ℝ) * (∑ x, f x) := by sorry",
   "preamble_opens": [
-   "open MIPStarRE",
-   "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Truncation",
    "open scoped BigOperators"
   ],
   "docstring": "**Partition-total form of the pairwise bound.**\n\nIf `S = Lᶜ`, the paper's `r · ∑_{Small} o ≤ |Small| · ∑ o` follows from\n`card_mul_sum_small_le` after splitting `∑ x, f x = ∑_L f + ∑_{Lᶜ} f`.",
@@ -143,10 +130,6 @@
   "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.sum_small_le_four_sqrt",
   "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.sum_small_le_four_sqrt {α : Type*} [Fintype α] [DecidableEq α]\n    (L : Finset α)\n    {f : α → ℝ}\n    {d : ℕ} {ζ : ℝ}\n    (hL_card : L.card = d)\n    (hcard_gt : d < Fintype.card α)\n    (hr_bound : (Fintype.card α : ℝ) ≤ (1 + 2 * Real.sqrt ζ) * d)\n    (hf_ordering : ∀ s ∈ (Lᶜ : Finset α), ∀ l ∈ L, f s ≤ f l)\n    (htotal : (∑ x, f x) ≤ 1 + 2 * Real.sqrt ζ)\n    (hζ_nonneg : 0 ≤ ζ)\n    (hζ_le : ζ ≤ 1 / 4) :\n    (∑ s ∈ (Lᶜ : Finset α), f s) ≤ 4 * Real.sqrt ζ := by sorry",
   "preamble_opens": [
-   "open MIPStarRE",
-   "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Truncation",
    "open scoped BigOperators"
   ],
   "docstring": "**Small-overlap sum bound.**\n\nAssuming the paper's inputs:\n\n* `L.card = d` with `d < |α|`,\n* `|α| ≤ (1 + 2√ζ) · d`,\n* every `Small = Lᶜ` entry has value at most every `Large = L` entry,\n* `∑ x, f x ≤ 1 + 2√ζ`,\n* `0 ≤ ζ ≤ 1/4`,\n\nthis yields `∑_{Small} f ≤ 4√ζ`, matching `eq:small-overlaps` in the paper. The\nLean statement is slightly stronger than the paper's: it does not need `f ≥ 0`,\nsince the ordering hypothesis and partition-total estimate already suffice.\nSee `docs/paper-gaps/truncation-combinatorics-f-nonneg.tex`.",

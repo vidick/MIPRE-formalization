@@ -398,7 +398,6 @@
   "formal_statement": "theorem MIPRE.Introspection.submeasurement_completion_mass (ψ : N → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (B C : A → Matrix N N ℂ) (hB : ∀ a, 0 ≤ B a) (hC : ∀ a, 0 ≤ C a)\n    (hCsum : ∑ a, C a = 1) (hBC : ∀ a, B a ≤ C a) :\n    (∑ a, snorm ψ (B a - C a) ^ 2) ≤ 1 - ∑ a, qform ψ (B a) := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.Introspection",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {N A : Type*} [Fintype N] [DecidableEq N] [Fintype A] [DecidableEq A]"
@@ -432,7 +431,6 @@
   "formal_statement": "theorem MIPRE.Introspection.submeasurement_completion_dist_avg {X : Type*} [Fintype X]\n    (D : X → ℝ) (hD0 : ∀ x, 0 ≤ D x) (hD1 : ∑ x, D x = 1)\n    (ψ : N → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (P B C : X → A → Matrix N N ℂ) (hP : ∀ x, IsPVM (P x))\n    (hB : ∀ x a, 0 ≤ B x a) (hC : ∀ x a, 0 ≤ C x a)\n    (hCsum : ∀ x, ∑ a, C x a = 1) (hBC : ∀ x a, B x a ≤ C x a)\n    {δ : ℝ} (hclose : ∑ x, D x * ∑ a, snorm ψ (P x a - B x a) ^ 2 ≤ δ) :\n    (∑ x, D x * ∑ a, snorm ψ (P x a - C x a) ^ 2) ≤\n      2 * δ + 4 * Real.sqrt δ := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.Introspection",
    "open Finset Matrix",
    "open scoped ComplexOrder MatrixOrder",
    "variable {N A : Type*} [Fintype N] [DecidableEq N] [Fintype A] [DecidableEq A]"
@@ -576,7 +574,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.Introspection",
-   "open MIPRE.Introspection.TypedExtraction",
    "open Finset Matrix Classical",
    "open scoped Kronecker",
    "variable {PauliType PauliAnswer F ι κ A H K : Type*}"

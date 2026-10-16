@@ -31,7 +31,7 @@
     ]
    }
   ],
-  "lines": 549,
+  "lines": 548,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -505,7 +505,7 @@
     ]
    }
   ],
-  "lines": 552,
+  "lines": 551,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -957,7 +957,7 @@
     ]
    }
   ],
-  "lines": 130,
+  "lines": 129,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
@@ -1670,7 +1670,7 @@
     ]
    }
   ],
-  "lines": 166,
+  "lines": 198,
   "published_bundle": null,
   "imports": [],
   "blueprint": [],
@@ -1725,7 +1725,7 @@
     ]
    }
   ],
-  "lines": 166,
+  "lines": 197,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity"
@@ -1762,7 +1762,7 @@
     ]
    }
   ],
-  "lines": 79,
+  "lines": 99,
   "published_bundle": null,
   "imports": [],
   "blueprint": [],
@@ -1796,7 +1796,7 @@
     ]
    }
   ],
-  "lines": 173,
+  "lines": 208,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
@@ -2034,7 +2034,7 @@
     ]
    }
   ],
-  "lines": 301,
+  "lines": 324,
   "published_bundle": null,
   "imports": [],
   "blueprint": [],
@@ -2130,7 +2130,7 @@
     ]
    }
   ],
-  "lines": 101,
+  "lines": 112,
   "published_bundle": null,
   "imports": [],
   "blueprint": [],
@@ -2185,7 +2185,7 @@
     ]
    }
   ],
-  "lines": 322,
+  "lines": 344,
   "published_bundle": null,
   "imports": [
    "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",

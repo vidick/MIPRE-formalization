@@ -345,7 +345,6 @@
    "open MIPStarRE",
    "open MIPStarRE.LDT",
    "open MIPStarRE.LDT.SelfImprovement",
-   "open MIPStarRE.LDT.SelfImprovement.MatrixSdpCanonicalOptimalPair",
    "open MIPStarRE.LDT.ExpansionHypercubeGraph",
    "open MIPStarRE.LDT.GlobalVariance",
    "open MIPStarRE.LDT.MakingMeasurementsProjective",

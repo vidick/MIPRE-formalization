@@ -335,7 +335,6 @@
    "open MIPRE",
    "open MIPRE.CL",
    "open MIPRE.CL.CLFun",
-   "open MIPRE.CL.CLFun.SupportedOn",
    "variable {F : Type u} [Semiring F] {ι : Type v} [DecidableEq ι] {ℓ : ℕ}",
    "variable [Fintype ι]"
   ],
@@ -363,7 +362,6 @@
    "open MIPRE",
    "open MIPRE.CL",
    "open MIPRE.CL.CLFun",
-   "open MIPRE.CL.CLFun.SupportedOn",
    "variable {F : Type u} [Semiring F] {ι : Type v} [DecidableEq ι] {ℓ : ℕ}",
    "variable [Fintype ι]"
   ],
@@ -400,7 +398,6 @@
    "open MIPRE",
    "open MIPRE.CL",
    "open MIPRE.CL.CLFun",
-   "open MIPRE.CL.CLFun.SupportedOn",
    "variable {F : Type u} [Semiring F] {ι : Type v} [DecidableEq ι] {k ℓ : ℕ}",
    "variable [Fintype ι]"
   ],

@@ -104,7 +104,7 @@
    "open MIPRE.TM",
    "open MIPRE.TM.CookLevin",
    "open Turing MIPRE.SAT MultiInputTM",
-   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero)",
    "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]"
   ],
   "docstring": "",
@@ -132,7 +132,7 @@
    "open MIPRE.TM",
    "open MIPRE.TM.CookLevin",
    "open Turing MIPRE.SAT MultiInputTM",
-   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero)",
    "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
    "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
   ],
@@ -161,7 +161,7 @@
    "open MIPRE.TM",
    "open MIPRE.TM.CookLevin",
    "open Turing MIPRE.SAT MultiInputTM",
-   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero)",
    "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
    "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
   ],
@@ -192,7 +192,7 @@
    "open MIPRE.TM",
    "open MIPRE.TM.CookLevin",
    "open Turing MIPRE.SAT MultiInputTM",
-   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero)",
    "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
    "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
   ],
@@ -220,9 +220,8 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.CookLevin",
-   "open MIPRE.TM.CookLevin.HeadsIn",
    "open Turing MIPRE.SAT MultiInputTM",
-   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero)",
    "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
    "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
   ],
@@ -251,7 +250,7 @@
    "open MIPRE.TM",
    "open MIPRE.TM.CookLevin",
    "open Turing MIPRE.SAT MultiInputTM",
-   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero)",
    "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
    "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
   ],
@@ -339,7 +338,6 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.CookLevin",
-   "open MIPRE.TM.CookLevin.FreeFacts",
    "open Turing MIPRE.SAT MultiInputTM",
    "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
    "variable (s₀ s₁ : Symbol)",
@@ -624,7 +622,7 @@
    "open MIPRE",
    "open MIPRE.TM",
    "open MIPRE.TM.Interp",
-   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open Turing MultiInputTM Phase MIPRE.Cost",
    "variable {input : Fin 7 → List Sym}"
   ],
   "docstring": "The scan of `copyTree src (some t) false` over `S(v)` from `d ≥ 1` pending subtrees.",

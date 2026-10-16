@@ -8,7 +8,6 @@
    "open MIPStarRE",
    "open MIPStarRE.LDT",
    "open MIPStarRE.LDT.MainInductionStep",
-   "open MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement",
    "open scoped MatrixOrder",
    "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
   ],
@@ -538,8 +537,6 @@
    "open MIPStarRE",
    "open MIPStarRE.LDT",
    "open MIPStarRE.LDT.MakingMeasurementsProjective",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Completing a submeasurement by a fresh failure outcome preserves bipartite\nstrong self-consistency up to the paper's factor `2`: the original diagonal gap\ncontrols the original outcomes, and the same gap controls the residual `none`\noutcome after applying permutation invariance.",
@@ -577,8 +574,6 @@
    "open MIPStarRE",
    "open MIPStarRE.LDT",
    "open MIPStarRE.LDT.MakingMeasurementsProjective",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Discarding the extra `none` outcome from the option-completed measurement can\nonly decrease the `qSDD` sum: one simply drops a nonnegative summand.",
@@ -607,8 +602,6 @@
    "open MIPStarRE",
    "open MIPStarRE.LDT",
    "open MIPStarRE.LDT.MakingMeasurementsProjective",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
-   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Bookkeeping for the submeasurement version of the orthonormalization theorem:\nafter completing `A` by a fresh outcome, the local measurement lemma returns the\nerror `84·(2ζ)^{1/4}`, which is bounded by the paper's `100·ζ^{1/4}`.",

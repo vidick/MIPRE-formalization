@@ -73,8 +73,7 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.SAT",
-   "open MIPRE.SAT.Circuit",
-   "open MIPRE.SAT.Circuit.DescribesDecider"
+   "open MIPRE.SAT.Circuit"
   ],
   "docstring": "A circuit implementing the padded clause set still describes the same decider,\nincluding the entire answer tapes and their blank tails.",
   "module": "MIPRE.Foundations.SAT.Padding",

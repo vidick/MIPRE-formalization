@@ -7,7 +7,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open MIPRE.QLD.SimulPair",
    "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl MvPolynomial",
    "open scoped Kronecker ComplexOrder MatrixOrder",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
@@ -55,7 +54,6 @@
   "formal_statement": "theorem MIPRE.QLD.nonMultilinear_mass_le {S T : G → ℝ} {ML : Finset G} {c eta : ℝ}\n    (hS : ∀ g, 0 ≤ S g) (hsum : ∑ g, S g = 1) (hT : ∀ g, T g ≤ S g)\n    (hoff : ∀ g ∉ ML, T g ≤ c * S g) (hc : 0 ≤ c) (hlow : 1 - eta ≤ ∑ g, T g) :\n    ∑ g ∈ univ \\ ML, S g ≤ eta + c := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.QLD",
    "open Finset MvPolynomial MIPRE.LowDegree",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
    "variable {G : Type*} [Fintype G] [DecidableEq G]"
@@ -89,7 +87,6 @@
   "formal_statement": "theorem MIPRE.QLD.sum_sub_le_of_eq_on {A B S : G → ℝ} {ML : Finset G}\n    (hon : ∀ g ∈ ML, A g = B g) (hA : ∀ g, |A g| ≤ S g) (hB : ∀ g, |B g| ≤ S g) :\n    |∑ g, A g - ∑ g, B g| ≤ 2 * ∑ g ∈ univ \\ ML, S g := by sorry",
   "preamble_opens": [
    "open MIPRE",
-   "open MIPRE.QLD",
    "open Finset MvPolynomial MIPRE.LowDegree",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
    "variable {G : Type*} [Fintype G] [DecidableEq G]"
@@ -550,7 +547,7 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.Adapter",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.Adapter",
    "open scoped Kronecker ComplexOrder MatrixOrder",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
    "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",

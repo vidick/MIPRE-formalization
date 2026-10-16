@@ -8,7 +8,7 @@
    "open MIPRE",
    "open MIPRE.Introspection",
    "open MIPRE.Introspection.BinaryBlock",
-   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial MIPRE.SAT MIPRE.LowDegree.BinaryLinear MIPRE.Introspection.BasisProgram"
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial MIPRE.SAT MIPRE.LowDegree.BinaryLinear"
   ],
   "docstring": "",
   "module": "MIPRE.Foundations.Introspection.BinaryBlockProg",

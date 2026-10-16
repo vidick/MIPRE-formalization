@@ -88,7 +88,6 @@
   "preamble_opens": [
    "open MIPStarRE",
    "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.AxisParallelMeasurementReparamInvariant",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Direct axis-parallel outcome covariance implies transport-level covariance.",
@@ -116,7 +115,6 @@
   "preamble_opens": [
    "open MIPStarRE",
    "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.DiagonalMeasurementReparamInvariant",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "Direct diagonal outcome covariance implies transport-level covariance.",
@@ -144,7 +142,6 @@
   "preamble_opens": [
    "open MIPStarRE",
    "open MIPStarRE.LDT",
-   "open MIPStarRE.LDT.AxisParallelCovariantMeasurement",
    "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
   ],
   "docstring": "A covariant wrapper automatically satisfies the older evaluation-level\nrebasing invariant.",

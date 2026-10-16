@@ -426,7 +426,6 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open MIPRE.QLD.ErrSmall",
    "open MIPRE.LIDT",
    "variable {f g h : ℝ → ℕ → ℕ → ℕ → ℝ}"
   ],
