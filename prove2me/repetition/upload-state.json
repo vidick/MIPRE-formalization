@@ -1,0 +1,187 @@
+{
+ "definitions": {
+  "MIPRE_Background_Repetition_Direct": {
+   "submitted_at": 1792161425.5001948,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "9d3d997a-ab8f-4e06-9d1d-f87263d2f7e9",
+   "theorem_id": "370ff774-d2b8-4dbd-b01f-27881900fa8a",
+   "error_message": ""
+  },
+  "MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part01": {
+   "submitted_at": 1792161426.3558438,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "eca03d06-ccac-46fb-8846-93ad828d14f6",
+   "theorem_id": "48c35a5c-9c83-42eb-a2ed-0b386020be4a",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Dilation": {
+   "submitted_at": 1792161426.8305376,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "f296686b-81a4-40fd-b67b-cbef9b71254d",
+   "theorem_id": "98263b98-8ed6-4e8a-8d1e-af2ce3433c2e",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_TensorFamily": {
+   "submitted_at": 1792161427.400032,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "3ed40e5e-b6fc-4600-8cce-09d2ee20b8e5",
+   "theorem_id": "6a2737b9-b085-4940-b1a6-d63105351d57",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Halting_Lists_B": {
+   "submitted_at": 1792161427.9618049,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "2574ff1c-e2c0-488d-880d-0d4c4a985ffd",
+   "theorem_id": "8f7fbd9c-f873-4201-a364-51856028f052",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Repeat": {
+   "submitted_at": 1792161428.403973,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "c93d13d9-b639-435a-9668-6503786cd309",
+   "theorem_id": "e049706d-0349-4110-a4b3-985cd0b089ec",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_Dom": {
+   "submitted_at": 1792161428.9574547,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "8512245b-6ecd-478a-8c70-91db0aa7f025",
+   "theorem_id": "fb6d2f61-821b-441d-bc7a-650fafa828e1",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_Prims": {
+   "submitted_at": 1792161446.6858816,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "88d56d80-0854-4e61-b7a3-398d463da251",
+   "theorem_id": "4fd99059-c859-457a-ad49-a297fb8cce7f",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_MapLoop": {
+   "submitted_at": 1792161465.2127147,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "95ac302b-6d99-4d0e-a259-6e4c9d1a1ff5",
+   "theorem_id": "278709fe-e1ed-4979-be25-82d1a7e0e829",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_Bits": {
+   "submitted_at": 1792161467.3809114,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "22adac51-837e-4e96-a067-6c8ac5251c2f",
+   "theorem_id": "7f2c840c-8e6a-48a8-8882-cd86fd057573",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_Sampler": {
+   "submitted_at": 1792161486.6332064,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "687e4839-7592-4312-9836-c38fc1e47248",
+   "theorem_id": "062cb9d5-5836-4f83-ab6d-bcde0894cf29",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_DecLoop": {
+   "submitted_at": 1792161487.2119315,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "89e78b25-aa0d-4b08-aefa-6db87488f2f3",
+   "theorem_id": "50f1bf58-f47f-43ab-8e08-0b88cbfc1d1e",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_DecMain": {
+   "submitted_at": 1792161515.195872,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "e06644ed-0cde-419c-8c12-f3d83ee05768",
+   "theorem_id": "4b497b7f-e74c-4735-94b5-c43fd35a5f5c",
+   "error_message": ""
+  }
+ },
+ "theorems": {
+  "QuantumParallelRepetition.Strategy.winProbability_le_one": {
+   "submitted_at": 1792161559.294706,
+   "http": 202,
+   "error": {
+    "jobs": [],
+    "errors": [
+     "A theorem with theorem_name \"QuantumParallelRepetition.Strategy.winProbability_le_one\" already exists"
+    ],
+    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
+    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
+   },
+   "status": "PUBLISHED",
+   "theorem_id": "ed9848db-566d-432a-a456-b04828146c9d",
+   "note": "pre-existing"
+  },
+  "QuantumParallelRepetition.quadraticExpectation_sub_le": {
+   "submitted_at": 1792161560.134595,
+   "http": 202,
+   "job_id": "935d0463-3014-4e42-aa4f-01ebcd64b2d3",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.weighted_real_cauchy": {
+   "submitted_at": 1792161560.6016624,
+   "http": 202,
+   "job_id": "63f03c0a-57e8-4d1b-aefb-4c37a83f6ccd",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.convexMixtureStrategy_winProbability": {
+   "submitted_at": 1792161561.169521,
+   "http": 202,
+   "job_id": "263992b5-8220-4b11-a9d2-870d30938665",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.pureDensityMatrix_trace_mul": {
+   "submitted_at": 1792161561.6685615,
+   "http": 202,
+   "job_id": "457a396a-5d23-41e8-b0f3-75bd52bb096b",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.FiniteEventLaw.exists_greedy_stopping": {
+   "submitted_at": 1792161562.279067,
+   "http": 202,
+   "job_id": "8edd2f1e-b271-4305-8de2-5624d3651612",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.repeatedStrategy_exists_greedy_conditioning": {
+   "submitted_at": 1792161562.7065296,
+   "http": 202,
+   "job_id": "3712187e-7904-4028-8cf5-57b322fd2fc6",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg": {
+   "submitted_at": 1792161563.1871207,
+   "http": 202,
+   "job_id": "373cc510-95e9-470c-9456-877229a70779",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg": {
+   "submitted_at": 1792161563.6494803,
+   "http": 202,
+   "job_id": "e8b26432-eb93-48ff-aacd-701fa20221e4",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.conditionedAliceEffect_positive": {
+   "submitted_at": 1792161564.0895498,
+   "http": 202,
+   "job_id": "f6daf3fc-ecde-46c8-9ca5-63fba39c14e7",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.conditionedBobEffect_positive": {
+   "submitted_at": 1792161564.565591,
+   "http": 202,
+   "job_id": "8f27c08c-1856-436a-80f3-fc9746202f1d",
+   "status": "QUEUED"
+  }
+ },
+ "solutions": {},
+ "log": []
+}
