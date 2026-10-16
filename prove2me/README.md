@@ -142,20 +142,31 @@ dropped database connection, a security-checkpoint page in place of the API) as 
 ## Reproducing
 
 The build workspace is a Lake project pinned to the platform environment (toolchain
-`leanprover/lean4:v4.33.1`, Mathlib `0df444a…`, `autoImplicit = false`) containing the 23
-closure modules of `70cbf1c` under `MIPRE/`, with `lean_lib`s `MIPRE`, `Definitions`,
-`Theorems`, `Solutions` (the last three with `globs = ["<Name>.+"]`). `docs/lean-cloud.md` and
-`planning/prove2me.md` describe how it was set up in a cloud session. With `P2M_DIR` pointing at
-a directory holding `ws/` (the workspace), `toolchain/` and `extract/`:
+`leanprover/lean4:v4.33.1`, Mathlib `0df444a…`, `autoImplicit = false`) holding the closure modules
+of `70cbf1c` under `MIPRE/`, with `lean_lib`s `MIPRE`, `Definitions`, `Theorems`, `Solutions` (the
+last three with `globs = ["<Name>.+"]`). `docs/lean-cloud.md` and `planning/prove2me.md` describe how
+it was set up in a cloud session and what not to do in it (never `lake build` there). With `P2M_DIR`
+pointing at a directory holding `ws/` (the workspace) and `toolchain/`, an increment is:
 
 ```
-lake env lean extract_decl_graph.lean                      # in ws/, writes decl_graph.jsonl
-lake env lean --run extract_sketch_info_plus.lean <file> MIPRE > extract/sketch_info.<Base>.jsonl
-python3 tools/plan.py && python3 tools/gen.py              # plan.json, tree.json, the three trees
-lake build Definitions Theorems Solutions                  # in ws/
-python3 tools/validate.py                                  # type diff and axioms
-PROVE2ME_API_KEY=… python3 scripts/p2m_upload.py           # from the repository root
+python3 tools/ws_extend.py <root module>               # the root's closure at 70cbf1c into ws/
+lake env lean --run tools/min_imports.lean <vendored modules> > mi.out   # in the main repository
+python3 tools/ws_rewrite_imports.py --from-lean mi.out && python3 tools/ws_rewrite_imports.py
+tools/ws_fetch_closure.sh <list of Mathlib files>      # oleans the cache has, in batches
+python3 tools/compile_modules.py --parts <roots>       # the rest, with lean --setup, in import order
+lake env lean tools/extract_decl_graph.lean            # in ws/: decl_graph.jsonl (Stage 1)
+lake env lean --run tools/extract_sketch_info_plus.lean <file> MIPRE,QuantumParallelRepetition  # Stage 2, per module
+python3 <tree>/make_config.py                          # config.json: targets, published trees, glue leaves
+P2M_CONFIG=<tree>/config.json python3 tools/plan.py    # plan.json: bundles, nodes, inline helpers, waves' edges
+P2M_CONFIG=… python3 tools/gen.py && python3 tools/glue_leaves.py     # the generated files, tree.json, glue.json
+P2M_CONFIG=… python3 tools/build_tree.py --jobs 3      # compiles them directly with lean --setup
+P2M_CONFIG=… python3 tools/validate.py --jobs 3        # type diff original/stub/solution, axioms
+P2M_CONFIG=… python3 tools/meta_packets.py && python3 tools/auto_meta.py --packets … --out <tree>
+python3 tools/merge_meta.py --tree <tree>              # metadata.json (writer records override)
+PROVE2ME_API_KEY=… python3 scripts/p2m_upload.py --tree <tree> --dry-run   # then without --dry-run
 ```
 
-The uploader needs only Python 3 and network access to `prove2.me`; the API key is read from
-the environment and never printed or stored.
+The uploader publishes in waves (a bundle that imports a theorem of the same tree goes one wave
+after that theorem, once the platform shows it Proved), resumes from `upload-state.json`, needs only
+Python 3 and network access to `prove2.me`, and reads the API key from the environment without
+printing or storing it.
