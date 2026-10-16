@@ -209,6 +209,33 @@ def node_attr_lines(uids):
             out.append(f"attribute [{', '.join(attrs)}] {u['name']}")
     return out
 
+# ---------- private declarations whose names collide once the copies drop `private` ----------
+# Lean keeps a private name apart per file; the generated copies are public (other generated files
+# use them), so two modules' `private def isEmptyProg` in one namespace (BinaryGCD, BinaryExactDivision,
+# BinaryNonresidueLoop) would declare the same constant in bundles that import each other.  Each such
+# declaration is renamed after its module, in the text that module contributes (its references to
+# the private name are all bare, and resolve to its own copy).
+def _user_of(name):
+    mm = re.match(r"_private\.(?:[^.]+\.)*?\d+\.(.*)$", name)
+    return mm.group(1) if mm else name
+_AUX = re.compile(r"\.(match_\d+|eq_\d+|splitter|_sparseCasesOn_\d+|proof_\d+|eq_def|induct)(\.|$)|\._")
+_by_user = collections.defaultdict(set)
+for _uid, _u in U.items():
+    if _u.get("is_private") and _u.get("name") and not _AUX.search(_user_of(_u["name"])):
+        _by_user[_user_of(_u["name"])].add(_u["module"])
+_public = {_u["name"] for _u in U.values() if _u.get("name") and not _u.get("is_private")}
+PRIVATE_RENAMES = collections.defaultdict(dict)   # module -> {short name: short name after the module}
+for _un, _ms in _by_user.items():
+    if len(_ms) > 1 or _un in _public:
+        _short = _un.split(".")[-1]
+        for _mod in _ms:
+            PRIVATE_RENAMES[_mod][_short] = f"{_short}_{_mod.split('.')[-1]}"
+
+def mod_rename(m, text):
+    for o, n in PRIVATE_RENAMES.get(m, {}).items():
+        text = re.sub(r"(?<![\w.'])" + re.escape(o) + r"(?![\w'])", lambda _m, n=n: n, text)
+    return text
+
 def filter_vars(m, var_texts, avail):
     """The `variable`/`include`/`omit` lines of a scope without the binders over declarations the file
     cannot see: a declaration left out of every bundle (no kept declaration needs it, so none uses such
@@ -579,7 +606,7 @@ for m in TOPO:
         pieces.append(repl.get(a, b""))
         pos = b
     pieces.append(B[pos:body_end])
-    body = b"".join(pieces).decode("utf-8")
+    body = mod_rename(m, b"".join(pieces).decode("utf-8"))
     what = ("delta bundle: declarations the new statements need that the published bundle "
             f"Def_{published_bundles[m]} does not carry" if is_delta
             else "definition bundle: declarations the uploaded statements rest on")
@@ -615,7 +642,7 @@ for m in TOPO:
 # ---------- helpers for hoisted context ----------
 def unit_text(uid):
     u = U[uid]
-    return txt(u["module"], u["decl"]["declStart"]["offset"], u["decl"]["declEnd"]["offset"])
+    return mod_rename(u["module"], txt(u["module"], u["decl"]["declStart"]["offset"], u["decl"]["declEnd"]["offset"]))
 
 def head_rest(uid, upto):
     """Text from after the binding name up to `upto` ('val' = valStart, 'end' = declEnd)."""
@@ -623,7 +650,7 @@ def head_rest(uid, upto):
     assert u["bind"], u["name"]
     a = u["bind"]["end"]["offset"]
     b = u["decl"]["valStart"]["offset"] if upto == "val" else u["decl"]["declEnd"]["offset"]
-    return txt(u["module"], a, b)
+    return mod_rename(u["module"], txt(u["module"], a, b))
 
 def hoisted_context(uid):
     """Top-level `open`/`variable` lines reproducing the resolution scope of a declaration."""
