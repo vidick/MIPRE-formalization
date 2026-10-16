@@ -20,6 +20,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("modules", nargs="+")
 ap.add_argument("--jobs", type=int, default=3)
 ap.add_argument("--all", action="store_true")
+ap.add_argument("--parts", action="store_true",
+                help="also recompile module-system modules whose .olean.private part is missing (Mathlib's cache ships none)")
 args = ap.parse_args()
 
 imp_re = re.compile(r"^\s*(?:public\s+)?import\s+([A-Za-z0-9_.]+)", re.M)
@@ -34,20 +36,26 @@ def olean(m):
 deps, order = {}, []
 def visit(m):
     if m in deps or not os.path.exists(src(m)): return
-    imps = imp_re.findall(open(src(m), encoding="utf-8").read())
-    # Mathlib modules with an olean from the cache are leaves; a missing one is compiled from source
-    deps[m] = [i for i in imps if os.path.exists(src(i)) and not (i.startswith("Mathlib") and os.path.exists(olean(i)))]
+    imps = lean_setup.header_imports(open(src(m), encoding="utf-8", errors="replace").read())
+    # every import with a source orders the compile (an importer never runs while an import is being
+    # rewritten); what is actually recompiled is decided by stale() below
+    deps[m] = [i for i in imps if os.path.exists(src(i))]
     for d in deps[m]: visit(d)
     order.append(m)
 for m in args.modules: visit(m)
+def is_module_system(m):
+    return lean_setup.is_module_file(src(m))
 def stale(m):
-    return args.all or not os.path.exists(olean(m)) or os.path.getmtime(olean(m)) < os.path.getmtime(src(m))
+    if args.all or not os.path.exists(olean(m)) or os.path.getmtime(olean(m)) < os.path.getmtime(src(m)):
+        return True
+    return args.parts and is_module_system(m) and not os.path.exists(olean(m) + ".private")
 todo = {m for m in order if stale(m)}
-changed = True
-while changed:
-    changed = False
-    for m in order:
-        if m not in todo and any(d in todo for d in deps[m]): todo.add(m); changed = True
+if not args.parts:   # a changed source rebuilds its dependents; a parts-only pass leaves them alone
+    changed = True
+    while changed:
+        changed = False
+        for m in order:
+            if m not in todo and any(d in todo for d in deps[m]): todo.add(m); changed = True
 print(f"{len(order)} modules in closure, {len(todo)} to compile ({args.jobs} jobs)", flush=True)
 os.makedirs(f"{S}/compile-diag", exist_ok=True)
 times = open(f"{S}/compile-times.jsonl", "a")
