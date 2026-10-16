@@ -129,7 +129,7 @@ with ThreadPoolExecutor(max_workers=args.jobs) as ex:
             for k, ds in deps.items():
                 if m in ds and k in todo:
                     todo.discard(k); failed[k] = ["dependency failed: " + m]
-print(f"compiled {len(done) - sum(1 for m in mods if not stale(mods[m]) and m in done and m not in failed)} ok, {len(failed)} failed", flush=True)
+print(f"compiled {len(todo) - len(failed)} ok, {len(failed)} failed", flush=True)   # todo was fixed before compiling; stale() is false afterwards
 for m, errs in sorted(failed.items())[:40]:
     print(" ", mods[m], errs[0][:200] if errs else "")
 json.dump({"failed": {mods[m]: errs for m, errs in failed.items()}}, open(f"{A}/build-tree.json", "w"), indent=1)
