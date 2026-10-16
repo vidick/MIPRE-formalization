@@ -721,7 +721,8 @@ def upload_pipelined(tree, meta, st, args, siblings):
     names_b, names_n = set(by_b), set(by_n)
     wb, wn = compute_waves(tree)
     b_defs = {b: sorted(set(DEF_IMPORT.findall("\n".join(by_b[b].get("imports", []))))) for b in by_b}
-    b_nodes = {b: sorted(set(by_b[b].get("imported_nodes", [])) | set(by_b[b].get("imported_published_nodes", [])))
+    # (a bundle's imported_published_nodes are slugs; the generator records their names apart)
+    b_nodes = {b: sorted(set(by_b[b].get("imported_nodes", [])) | set(by_b[b].get("imported_published_node_names", [])))
                for b in by_b}
     t_defs = {n: sorted(set(DEF_IMPORT.findall(by_n[n].get("preamble") or ""))) for n in by_n}
     s_defs = {n: sorted(set(DEF_IMPORT.findall(read(by_n[n]["solution_file"]))))

@@ -81,6 +81,22 @@ delta_bundles = plan.get("delta_bundles", {})          # module -> definition_na
 published_bundles = plan.get("published_bundles", {})  # module -> definition_name
 bundle_node_imports = plan.get("bundle_imported_nodes", {})  # module -> [slugs of published nodes]
 bundle_node_deps = plan.get("bundle_node_deps", {})          # module -> [uids of this tree's nodes its bundle imports]
+
+# platform names: a node renamed for the platform (an ASCII name) is imported under that name, and the
+# uploader orders the uploads by these records, so they name every imported node as the platform does:
+# this tree's renames, and the renames and slugs of the trees published before, from their records
+PNAME, SLUG_NAME = dict(RENAMES), {}
+for _tp in (json.load(open(os.environ["P2M_CONFIG"], encoding="utf-8")).get("published_trees", [])
+            if os.environ.get("P2M_CONFIG") else []):
+    _t = json.load(open(_tp, encoding="utf-8"))
+    _gp = os.path.join(os.path.dirname(_tp), "glue.json")
+    for _n in _t["nodes"] + (json.load(open(_gp, encoding="utf-8"))["items"] if os.path.exists(_gp) else []):
+        SLUG_NAME[_n["slug"]] = _n["theorem_name"]
+        if _n.get("source_name") and _n["source_name"] != _n["theorem_name"]:
+            PNAME[_n["source_name"]] = _n["theorem_name"]
+
+def pname(v):
+    return PNAME.get(U[v]["name"], U[v]["name"])
 nodes = plan["nodes"]
 comp = plan["composition"]
 slugs = plan["slugs"]
@@ -312,6 +328,10 @@ def filter_open(m, text, avail):
     rest = [x for x in out if x not in ("scoped",)]
     return (head + " " + " ".join(out)) if rest else None
 ATTRS = {}  # module -> [attribute commands: {"start", "end", "attr", "names": [(token, uid|None)]}]
+LOCAL_INST = re.compile(r"(?:/--.*?-/\s*)?(?:@\[(?:[^\]]*,\s*)?local\s+instance(?:\s+(\w+))?\s*(?:,[^\]]*)?\]\s*.*"
+                        r"|(?:@\[[^\]]*\]\s*)?(?:noncomputable\s+)?local\s+instance\b(?:\s*\(\s*priority\s*:=\s*([^)]*?)\s*\))?)", re.S)
+DECL_AT = {(uu["module"], uu["decl"]["declStart"]["offset"]): x for x, uu in U.items()
+           if uu.get("decl") and uu["decl"].get("declStart")}
 const_unit = {}
 for uid, u in U.items():
     for r in u["rows"]:
@@ -396,6 +416,17 @@ for m in modules:
                 "nc": any(f.get("nc") for f in stack),   # inside a `noncomputable section`
                 "attrs": [a for f in frames for a in f["attrs"]],
             }
+            # a `local instance` declaration (`noncomputable local instance : DecidableEq d :=
+            # Classical.decEq d` opening MIPStarRE/Quantum/FiniteMatrix/Order.lean) is in effect for the
+            # rest of its section, like an `attribute [local instance]` command: the declarations after
+            # it get the attribute, so that each generated block activates it again in its own section
+            lm = LOCAL_INST.match(t)
+            luid = DECL_AT.get((m, c["start"]["offset"]))
+            if lm and luid is not None and U[luid].get("name"):
+                prio = lm.group(1) or lm.group(2)
+                n_ = U[luid]["name"]
+                (stack[-1] if stack else root)["attrs"].append(
+                    {"attr": f"[local instance {prio}]" if prio else "[local instance]", "names": [(n_, luid, n_)]})
         # moduleDoc, macro, export, eoi: no scope effect
     # a file may end inside a section or namespace (a file-level `noncomputable section` is often left
     # open), which Lean closes at the end of the file; only an `end` without a scope would be wrong
@@ -775,7 +806,8 @@ for m in TOPO:
         "embedded": sorted(U[u]["name"] for u in kept_units if U[u]["cls"] == "embedded"),
         "imports": bundle_imports(m, include_self=is_delta, exclude_delta_of=m),
         "imported_published_nodes": bundle_node_imports.get(m, []), "moduleDoc": mdoc,
-        "imported_nodes": sorted(U[v]["name"] for v in bundle_node_deps.get(m, [])),
+        "imported_published_node_names": sorted(SLUG_NAME.get(sl, sl) for sl in bundle_node_imports.get(m, [])),
+        "imported_nodes": sorted(pname(v) for v in bundle_node_deps.get(m, [])),
         "source_path": module_path(m),
         "published_bundle": published_bundles.get(m),
     }
@@ -1002,8 +1034,8 @@ for uid in nodes:
         "lines": [u["decl"]["declStart"]["line"], u["decl"]["declEnd"]["line"]],
         "prooflines": u["prooflines"], "docstring": docstring_text(uid),
         "formal_statement": formal, "preamble": preamble, "in_prefix": prefix_cmds,
-        "imported_nodes": [U[v]["name"] for v in c["imported_nodes"]],
-        "imported_published_nodes": [U[v]["name"] for v in c["imported_nodes"] if U[v]["cls"] == "pubnode"],
+        "imported_nodes": [pname(v) for v in c["imported_nodes"]],
+        "imported_published_nodes": [pname(v) for v in c["imported_nodes"] if U[v]["cls"] == "pubnode"],
         "pasted": [U[v]["name"] for v in pasted],
         "stub_file": f"Theorems/Thm_{slug}.lean", "solution_file": f"Solutions/Sol_{slug}.lean",
         "is_target": u["name"] in plan["targets"],
