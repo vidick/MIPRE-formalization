@@ -21,7 +21,7 @@ Usage (from the repository root):
     python3 scripts/p2m_upload.py --tree prove2me/assembly   # another tree directory (tree.json, optional
                                                  # glue.json, metadata.json, upload-config.json, the files)
 """
-import argparse, collections, json, os, sys, time, urllib.request, urllib.parse, urllib.error, uuid, io
+import argparse, collections, io, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request, uuid
 
 API = "https://prove2.me/api/v1"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
