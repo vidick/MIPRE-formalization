@@ -84,6 +84,32 @@ def module_sentence(module, module_doc):
         para = para[:600].rsplit(" ", 1)[0] + "…"
     return para
 
+VENDORED = [  # (module prefix, provenance sentence): third-party code the repository vendors read-only
+    ("MIPRE.Background.Repetition.TenProofs.",
+     "The module is one of the eight parts into which the repository splits `QuantumParallelRepetition.lean` of "
+     "[openai/ten-proofs](https://github.com/openai/ten-proofs) (commit `94bc0feb`, 2026-08-01, Apache 2.0), the Lean proof of "
+     "*exponential parallel repetition for all two-player entangled games* (Chapter 6 of OpenAI's *Ten Advances in Mathematics "
+     "and Theoretical Computer Science*, 2026); it is vendored read-only by `scripts/vendor-repetition.py`, which also records its "
+     "toolchain compile fixes, and the uploaded copy replaces upstream's wholesale `import Mathlib` by the Mathlib modules the "
+     "proofs use. Statement and proof are upstream's, not this repository's."),
+    ("MIPRE.Background.Repetition.CommutingRepetition.",
+     "The module is vendored read-only from [vidick/commuting-repetition](https://github.com/vidick/commuting-repetition) "
+     "(Apache 2.0; commit and upstream path in the file header) by `scripts/vendor-repetition.py`."),
+    ("MIPRE.Background.Orthonormalization.Orthogonalization.",
+     "The module is vendored read-only from the `orthogonalization` development of "
+     "[vidick/commuting-repetition](https://github.com/vidick/commuting-repetition) (Apache 2.0; commit and upstream path in the "
+     "file header) by `scripts/vendor-repetition.py`."),
+    ("MIPRE.Background.LIDT.MIPStarRE.",
+     "The module is vendored read-only, with the authors' permission, from [LionSR/MIPStarRE](https://github.com/LionSR/MIPStarRE) "
+     "(Sirui Lu and the MIPStarRE contributors, Apache 2.0; commit and upstream path in the file header) by `scripts/vendor-lidt.py`."),
+]
+
+def provenance(module):
+    for prefix, sentence in VENDORED:
+        if (module or "").startswith(prefix):
+            return sentence
+    return ""
+
 def lean_block(formal, opens):
     stmt = re.sub(r"\s*:=\s*by\s+sorry\s*$", "", formal.strip())
     ctx = "\n".join(l for l in opens if l.strip()) if opens else ""
@@ -106,6 +132,8 @@ def theorem_record(it):
     if module:
         parts.append(f"A statement of the module `{module}` of the MIP\\* = RE formalization (commit `{args.commit}` of "
                      f"vidick/MIPRE-formalization). " + module_sentence(module, it.get("module_doc", "")))
+        if provenance(module):
+            parts.append(provenance(module))
     else:
         parts.append(f"A statement of the MIP\\* = RE formalization (commit `{args.commit}` of vidick/MIPRE-formalization), "
                      f"declared in {where}.")
@@ -151,6 +179,8 @@ def bundle_record(b):
     defs = b.get("defmat", []); emb = b.get("embedded", [])
     docs = b.get("defmat_docstrings") or {}
     parts = [f"The definitions of the module `{module}` of the MIP\\* = RE formalization (commit `{args.commit}` of vidick/MIPRE-formalization). " + md]
+    if provenance(module):
+        parts.append(provenance(module))
     if b.get("published_bundle"):
         parts.append(f"This bundle **adds** the declarations below to the already published bundle `{b['published_bundle']}` of the same module, "
                      "which the new statements of this upload need and the earlier bundle left out.")
