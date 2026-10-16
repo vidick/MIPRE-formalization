@@ -426,10 +426,12 @@ def attr_lines(uid, available):
             out.append(f"attribute {at['attr']} " + " ".join(dict.fromkeys(names)))
     return out
 
-def pasted_block(uid):
+def pasted_block(uid, available):
     """A helper declaration with its scope: namespace, then a section (noncomputable when the source
     declares it inside one, so that a pasted definition compiles as in the source) holding the `open`,
-    `set_option`/`universe` and `variable` lines, so that none of them leaks into the next block."""
+    `set_option`/`universe` and `variable` lines and the attribute commands in effect (a `local instance`
+    of the source's section must not reach a helper from a section without it: the instance found for
+    a statement would differ from the source's), so that none of them leaks into the next block."""
     ctx = unit_ctx(uid)
     ns = ns_of_chain(ctx["ns"])
     body = []
@@ -439,6 +441,7 @@ def pasted_block(uid):
     body += ctx["opens"]
     body += ctx["opts"]
     body += ctx["vars"]
+    body += attr_lines(uid, available)
     body.append(unit_text(uid).rstrip())
     body.append("end")
     if ns:
@@ -498,22 +501,22 @@ for uid in nodes:
     imp_lines = ([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=True)
                  + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(c["imported_nodes"], key=lambda v: slugs[v])])
     sol_parts = [HEADER + gen_note(m, f"solution of {u['name']}"), "\n".join(imp_lines), ""]
-    # The attribute commands of the source modules are replayed at their source position, in the
-    # same (module, offset) order as the pasted helpers: a `local` attribute (`[local irreducible]
-    # tab` in Reduction.lean, after the lemmas whose proofs unfold `tab`) is in effect only for the
-    # rest of its own module, and a global one only from its position on.  Commands after the
-    # uploaded declaration, and local commands nothing pasted follows, are not in effect for any
-    # proof reproduced here and are dropped.
+    # The global attribute commands of the source modules are replayed at their source position, in
+    # the same (module, offset) order as the pasted helpers, so that each is in effect only from its
+    # position on; commands after the uploaded declaration are dropped.  A `local`/`scoped` attribute
+    # (`[local irreducible] tab` in Reduction.lean after the lemmas whose proofs unfold `tab`;
+    # `[local instance] Classical.propDecidable` opening every section of the vendored parts) is in
+    # effect only inside its section, and is reproduced inside the blocks of the helpers declared
+    # under it instead (replayed globally it made a helper's statement pick `Classical.propDecidable`
+    # where the source had `FinEnum.decEq`).
     main_off = u["decl"]["declStart"]["offset"]
     events = [("unit", TOPO_IDX[U[v]["module"]], U[v]["decl"]["declStart"]["offset"], v) for v in pasted]
     for am in sorted({m} | {U[v]["module"] for v in pasted}, key=lambda x: TOPO_IDX[x]):
-        last_pasted = max([U[v]["decl"]["declStart"]["offset"] for v in pasted if U[v]["module"] == am], default=-1)
         for at in ATTRS[am]:
             if am == m and at["start"] >= main_off:
                 continue
-            is_local = re.match(r"\[\s*(local|scoped)\b", at["attr"]) is not None
-            if is_local and am != m and at["start"] > last_pasted:
-                continue
+            if re.match(r"\[\s*(local|scoped)\b", at["attr"]) is not None:
+                continue   # scoped to its section: emitted inside the blocks it applies to
             events.append(("attr", TOPO_IDX[am], at["start"], at))
     events.sort(key=lambda e: (e[1], e[2]))
     if events:
@@ -521,9 +524,12 @@ for uid in nodes:
                          "namespace and `open` context, each used only by proofs, interleaved with the\n"
                          "attribute commands of those modules at their source positions. -/")
     emitted = set()
+    def available(tu):
+        return (U[tu]["cls"] in ("defmat", "embedded", "avail", "pubnode") or tu in emitted
+                or tu in c["imported_nodes"])
     for e in events:
         if e[0] == "unit":
-            sol_parts.append(pasted_block(e[3]))
+            sol_parts.append(pasted_block(e[3], available))
             emitted.add(e[3])
         else:
             at = e[3]
@@ -548,6 +554,7 @@ for uid in nodes:
     if sol_ns:
         sol_parts.append(f"namespace {sol_ns}")
     sol_parts += sctx["opens"] + sctx["opts"] + sctx["vars"]
+    sol_parts += attr_lines(uid, available)
     if extra_open:
         sol_parts.append(f"open {extra_open}")
     body = head_rest(uid, 'end').rstrip()
