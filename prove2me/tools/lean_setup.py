@@ -129,8 +129,10 @@ def closure(mods):
     return seen
 
 def is_module_file(path):
+    """Does the file use the module system? The header keyword may carry a trailing line comment
+    (Mathlib writes `module  -- shake: keep-all`), so the test is for the keyword, not the bare line."""
     text = open(path, encoding="utf-8", errors="replace").read(4000)
-    return re.search(r"^module\s*$", text, re.M) is not None
+    return re.search(r"^module\b(?:\s*--.*)?$", text, re.M) is not None
 
 def module_name_of(path):
     for src, _ in ROOTS:
