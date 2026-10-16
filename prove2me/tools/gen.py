@@ -110,16 +110,16 @@ for uid, u in U.items():
     for r in u["rows"]:
         const_unit[r] = uid
 for m in modules:
-    stack = []  # frames: {"name" (None for a section), "opens", "vars"}
-    root = {"name": None, "opens": [], "vars": []}
+    stack = []  # frames: {"name" (None for a section), "opens", "vars", "opts"}
+    root = {"name": None, "opens": [], "vars": [], "opts": []}
     ATTRS[m] = []
     for c in F[m]["cmds"]:
         k = c["syntaxKind"].split(".")[-1]
         t = txt(m, c["start"]["offset"], c["end"]["offset"]).strip()
         if k == "namespace":
-            stack.append({"name": t.split()[1], "opens": [], "vars": []})
+            stack.append({"name": t.split()[1], "opens": [], "vars": [], "opts": []})
         elif k in ("section", "noncomputableSection"):
-            stack.append({"name": None, "opens": [], "vars": []})
+            stack.append({"name": None, "opens": [], "vars": [], "opts": [], "nc": k == "noncomputableSection"})
         elif k == "end":
             if stack:
                 stack.pop()
@@ -154,15 +154,32 @@ for m in modules:
             (stack[-1] if stack else root)["opens"].append(t)
         elif k in ("variable", "include", "omit"):
             (stack[-1] if stack else root)["vars"].append(t)
+        elif k in ("set_option", "universe"):
+            # a top-level `set_option` (the vendored parts set `autoImplicit`, `maxHeartbeats`,
+            # `maxRecDepth` and `backward.isDefEq.respectTransparency` this way, hundreds of times)
+            # and a `universe` declaration are in effect for the rest of their section
+            (stack[-1] if stack else root)["opts"].append(t)
         elif k in ("declaration", "in"):
             frames = [root] + stack
             CTX[(m, c["start"]["offset"])] = {
                 "ns": [f["name"] for f in stack if f["name"]],
                 "opens": [o for f in frames for o in f["opens"]],
                 "vars": [v for f in frames for v in f["vars"]],
+                "opts": effective_opts([o for f in frames for o in f["opts"]]),
+                "nc": any(f.get("nc") for f in stack),   # inside a `noncomputable section`
             }
         # moduleDoc, macro, export, eoi: no scope effect
     assert not stack, (m, stack)
+
+def effective_opts(lines):
+    """The `set_option`/`universe` lines in effect: the last assignment of each option wins, universe
+    declarations are kept once, source order otherwise."""
+    last = {}
+    for i, l in enumerate(lines):
+        mm = re.match(r"set_option\s+(\S+)", l)
+        last[("opt", mm.group(1)) if mm else ("univ", l)] = i
+    keep = set(last.values())
+    return [l for i, l in enumerate(lines) if i in keep]
 
 def unit_ctx(uid):
     u = U[uid]
@@ -383,18 +400,25 @@ def hoisted_context(uid):
         r = resolve_open(o, chain)
         if r not in lines:
             lines.append(r)
+    lines += ctx["opts"]
     lines += ctx["vars"]
     return lines
 
 def pasted_block(uid):
+    """A helper declaration with its scope: namespace, then a section (noncomputable when the source
+    declares it inside one, so that a pasted definition compiles as in the source) holding the `open`,
+    `set_option`/`universe` and `variable` lines, so that none of them leaks into the next block."""
     ctx = unit_ctx(uid)
     ns = ns_of_chain(ctx["ns"])
     body = []
     if ns:
         body.append(f"namespace {ns}")
+    body.append("noncomputable section" if ctx.get("nc") else "section")
     body += ctx["opens"]
+    body += ctx["opts"]
     body += ctx["vars"]
     body.append(unit_text(uid).rstrip())
+    body.append("end")
     if ns:
         body.append(f"end {ns}")
     return "\n".join(body) + "\n"
@@ -490,7 +514,7 @@ for uid in nodes:
     sol_ns = ".".join(u["name"].split(".")[:-1])
     if sol_ns:
         sol_parts.append(f"namespace {sol_ns}")
-    sol_parts += sctx["opens"] + sctx["vars"]
+    sol_parts += sctx["opens"] + sctx["opts"] + sctx["vars"]
     body = head_rest(uid, 'end').rstrip()
     # a structurally recursive theorem refers to itself inside its own body; those occurrences
     # elaborate as local variables (no ref facts), so the hoisted copy renames them textually
