@@ -107,14 +107,50 @@
   "MIPRE_Background_Repetition_Soundness": {
    "submitted_at": 1792165114.9125893,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "305e0679-bec0-4bc9-b979-7b906dc648ba"
+   "status": "PUBLISHED",
+   "job_id": "305e0679-bec0-4bc9-b979-7b906dc648ba",
+   "theorem_id": "9417c9ff-1f83-434d-b7d7-46b93577ab64",
+   "error_message": ""
   },
   "MIPRE_Background_Repetition_TensorPower": {
    "submitted_at": 1792165115.4279296,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "327f1a1a-1ce5-41dc-878f-527fe3df81f4"
+   "status": "PUBLISHED",
+   "job_id": "327f1a1a-1ce5-41dc-878f-527fe3df81f4",
+   "theorem_id": "1523e4bc-e689-4ad8-a152-12556dc9e862",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_RepSampler": {
+   "submitted_at": 1792165151.1685581,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "9acf50e8-b768-4051-ab85-c8cec8dec103",
+   "theorem_id": "62976784-c55d-4ea0-a623-42b54841f4d5",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_SamplerCost": {
+   "submitted_at": 1792165205.3914802,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "c1907b39-d418-4f0b-ac6b-25ff56b5b1f7",
+   "theorem_id": "8e4235cb-2570-4174-b0e4-26aa6734bdbd",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_RepDecider": {
+   "submitted_at": 1792165205.8170888,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "cd4b9f19-c3a3-474b-b288-906facf21924",
+   "theorem_id": "a430ad4f-350a-42d8-b633-0c9438f69eab",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Repeat_DeciderCost": {
+   "submitted_at": 1792165274.0907958,
+   "http": 202,
+   "status": "FAILED",
+   "job_id": "f8e14529-0f76-4684-b6c0-0b59c702af8c",
+   "theorem_id": null,
+   "error_message": "definition does not compile: DB error looking up import 'Theorems.Thm_MIPRE_Cost_Prog_coreDispatch_lock': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   }
  },
  "theorems": {
