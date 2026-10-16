@@ -20,7 +20,8 @@ S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e
 WS = f"{S}/ws"
 TOOLCHAIN = f"{S}/toolchain"
 CACHE = f"{S}/import_graph.json"
-IMP_RE = re.compile(r"^\s*(?:public\s+)?import\s+(?:all\s+)?([A-Za-z0-9_.«»]+)", re.M)
+# `import X`, `public import X`, `meta import X`, `public meta import X`, `import all X`
+IMP_RE = re.compile(r"^\s*(?:public\s+|private\s+)?(?:meta\s+)?import\s+(?:all\s+)?([A-Za-z0-9_.«»]+)", re.M)
 
 def header_imports(text):
     """The imports of a file's header: `prelude`/`module`/`import` lines and comments only, so an
@@ -39,7 +40,7 @@ def header_imports(text):
                 elif text.startswith("-/", i): depth -= 1; i += 2
                 else: i += 1
             continue
-        m = re.match(r"(prelude|module|public\s+import|import)\b", text[i:])
+        m = re.match(r"(prelude|module|(?:public\s+|private\s+)?(?:meta\s+)?import)\b", text[i:])
         if not m:
             break
         if m.group(1) in ("prelude", "module"):
