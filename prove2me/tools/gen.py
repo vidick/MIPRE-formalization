@@ -128,6 +128,114 @@ def effective_opts(lines):
 # ---------- scope map: context of every declaration command ----------
 CTX = {}  # (module, declStart.offset) -> {"ns": [...], "opens": [...], "vars": [...]}
 OPEN_NAMES = {}  # (module, open command text) -> {name as written: unit or None}
+VAR_GROUPS = {}  # (module, variable command text) -> [(binder group text, {units it references}, [names it binds])]
+BRACKETS = {"(": ")", "{": "}", "[": "]", "⦃": "⦄"}
+
+def binder_groups(m, c):
+    """The binder groups of a `variable` command, each with the project units its text references
+    (by the reference facts inside it) and the names it binds."""
+    a0, b0 = c["start"]["offset"], c["end"]["offset"]
+    raw = F[m]["B"][a0:b0].decode("utf-8")
+    lead = len(raw) - len(raw.lstrip())
+    s = raw.strip()
+    i = s.index("variable") + len("variable")
+    groups = []
+    while i < len(s):
+        ch = s[i]
+        if ch in BRACKETS:
+            close, depth, j = BRACKETS[ch], 0, i
+            while j < len(s):
+                if s[j] == ch: depth += 1
+                elif s[j] == close:
+                    depth -= 1
+                    if depth == 0: break
+                j += 1
+            gtext = s[i:j + 1]
+            ga = a0 + len(raw[:lead].encode("utf-8")) + len(s[:i].encode("utf-8"))
+            gb = ga + len(gtext.encode("utf-8"))
+            units = {const_unit[rf["const"]] for rf in F[m]["refs"]
+                     if ga <= rf["start"]["offset"] and rf["end"]["offset"] <= gb and rf["const"] in const_unit}
+            inner = gtext[1:-1]
+            names = inner.split(":", 1)[0].split() if ":" in inner else []
+            groups.append((gtext, units, names))
+            i = j + 1
+        else:
+            i += 1
+    return groups
+
+REDUCIBILITY = {"reducible", "semireducible", "irreducible", "instance_reducible", "implicit_reducible"}
+
+def replayable(attr):
+    """The attribute list of a replayed command without its global reducibility attributes: Lean sets
+    those only in the file that declares the constant (`attribute [instance_reducible, instance]
+    FieldModel.instField` of the vendored test), and the bundle declaring it carries them to every
+    importer already.  A `local` reducibility attribute is allowed anywhere and stays."""
+    inner, parts, depth, cur = attr.strip()[1:-1], [], 0, ""
+    for ch in inner:
+        if ch in "([{": depth += 1
+        elif ch in ")]}": depth -= 1
+        if ch == "," and depth == 0:
+            parts.append(cur.strip()); cur = ""
+        else:
+            cur += ch
+    parts.append(cur.strip())
+    keep = [q for q in parts if q and q.split()[0] not in REDUCIBILITY]
+    return "[" + ", ".join(keep) + "]" if keep else None
+
+# attributes that cannot be set outside the declaring file, or that generate declarations
+NO_REPLAY = REDUCIBILITY | {"deprecated", "inherit_doc", "to_additive", "simps", "nolint", "irreducible_def"}
+
+def node_attr_lines(uids):
+    """`attribute [a] X` for each imported node X the source declares with attributes (`@[simp]
+    theorem AxisParallelLine.appendAtHeight_rebaseAt`, `@[ext] theorem ProjMeas.ext`): a node's stub
+    declares it without them, so a file importing it lost the simp or ext lemma the source's proofs
+    rely on (`simp` made no progress in the MainInductionStep bundle)."""
+    out = []
+    for v in sorted(uids, key=lambda v: U[v]["name"]):
+        u = U[v]
+        if not u.get("has_attr"):
+            continue
+        attrs = []
+        for a in u.get("attr_text") or []:
+            inner = a.strip()
+            if inner.startswith("@[") and inner.endswith("]"):
+                inner = inner[2:-1]
+            got = replayable("[" + inner + "]")
+            for q in (got[1:-1].split(",") if got else []):
+                q = q.strip()
+                if q and q.split()[0] not in NO_REPLAY:
+                    attrs.append(q)
+        if attrs:
+            out.append(f"attribute [{', '.join(attrs)}] {u['name']}")
+    return out
+
+def filter_vars(m, var_texts, avail):
+    """The `variable`/`include`/`omit` lines of a scope without the binders over declarations the file
+    cannot see: a declaration left out of every bundle (no kept declaration needs it, so none uses such
+    a binder) is still named by its section's `variable (I : Index)`.  An `include`/`omit` loses the
+    names of dropped binders; a line left empty goes."""
+    out, dropped = [], set()
+    for v in var_texts:
+        groups = VAR_GROUPS.get((m, v.strip()))
+        if groups is not None:
+            kept = [g for g in groups if all(avail(x) for x in g[1])]
+            for g in groups:
+                if g not in kept:
+                    dropped.update(g[2])
+            if len(kept) == len(groups):
+                out.append(v)
+            elif kept:
+                out.append("variable " + " ".join(g[0] for g in kept))
+            continue
+        mm = re.match(r"\s*(include|omit)\b(.*)$", v, re.S)
+        if mm and dropped:
+            toks = re.findall(r"\[[^\]]*\]|\S+", mm.group(2))
+            kept = [x for x in toks if x.strip("[]") not in dropped and x not in dropped]
+            if kept:
+                out.append(mm.group(1) + " " + " ".join(kept))
+            continue
+        out.append(v)
+    return out
 
 def filter_open(m, text, avail):
     """`open X (a b)` keeping only the named declarations the file can see at that point (`avail` on
@@ -218,6 +326,8 @@ for m in modules:
                 OPEN_NAMES[(m, t)] = found
         elif k in ("variable", "include", "omit"):
             (stack[-1] if stack else root)["vars"].append(t)
+            if k == "variable":
+                VAR_GROUPS[(m, t)] = binder_groups(m, c)
         elif k in ("set_option", "universe"):
             # a top-level `set_option` (the vendored parts set `autoImplicit`, `maxHeartbeats`,
             # `maxRecDepth` and `backward.isDefEq.respectTransparency` this way, hundreds of times)
@@ -421,6 +531,36 @@ for m in TOPO:
                         b += 1
                     dele.append((a, b))
                     repl[a] = (nt + "\n").encode("utf-8") if nt else b""
+    bundle_dropped = set()
+    for c in cmds:
+        k = c["syntaxKind"].split(".")[-1]
+        if k not in ("variable", "include", "omit"):
+            continue
+        a, b = c["start"]["offset"], c["end"]["offset"]
+        vt = txt(m, a, b).strip()
+        if k == "variable":
+            groups = VAR_GROUPS.get((m, vt), [])
+            kept = [g for g in groups if all(x in visible for x in g[1])]
+            if len(kept) == len(groups):
+                continue
+            for g in groups:
+                if g not in kept:
+                    bundle_dropped.update(g[2])
+            nt = ("variable " + " ".join(g[0] for g in kept)) if kept else None
+        else:
+            if not bundle_dropped:
+                continue
+            toks = re.findall(r"\[[^\]]*\]|\S+", vt[len(k):])
+            kept_t = [x for x in toks if x.strip("[]") not in bundle_dropped and x not in bundle_dropped]
+            if len(kept_t) == len(toks):
+                continue
+            nt = (k + " " + " ".join(kept_t)) if kept_t else None
+        while b < len(B) and B[b:b+1] in (b" ", b"\t"):
+            b += 1
+        if B[b:b+1] == b"\n":
+            b += 1
+        dele.append((a, b))
+        repl[a] = (nt + "\n").encode("utf-8") if nt else b""
     for at in ATTRS[m]:
         keep = [tok if uid is None else const for tok, uid, const in at["names"] if uid is None or uid in visible]
         a, b = at["start"], at["end"]
@@ -447,6 +587,9 @@ for m in TOPO:
     imps = "\n".join([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=is_delta, exclude_delta_of=m)
                      + [f"import Theorems.Thm_{sl}" for sl in bundle_node_imports.get(m, [])]
                      + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(bundle_node_deps.get(m, []), key=lambda v: slugs[v])])
+    nattr = node_attr_lines(set(bundle_node_deps.get(m, [])) | {uid for uid, uu in U.items() if uu["cls"] == "pubnode" and slugs.get(uid) in pub_imp})
+    if nattr:
+        imps += "\n\n" + "\n".join(nattr)
     out = expand_macros(header + imps + "\n\n" + collapse(body))
     name = delta_bundles[m] if is_delta else mslug(m)
     rel = f"Definitions/Def_{name}.lean"
@@ -502,27 +645,8 @@ def hoisted_context(uid):
         if r not in lines:
             lines.append(r)
     lines += ctx["opts"]
-    lines += ctx["vars"]
+    lines += filter_vars(u["module"], ctx["vars"], lambda v: U[v]["cls"] in ("defmat", "embedded", "avail"))
     return lines
-
-REDUCIBILITY = {"reducible", "semireducible", "irreducible", "instance_reducible", "implicit_reducible"}
-
-def replayable(attr):
-    """The attribute list of a replayed command without its global reducibility attributes: Lean sets
-    those only in the file that declares the constant (`attribute [instance_reducible, instance]
-    FieldModel.instField` of the vendored test), and the bundle declaring it carries them to every
-    importer already.  A `local` reducibility attribute is allowed anywhere and stays."""
-    inner, parts, depth, cur = attr.strip()[1:-1], [], 0, ""
-    for ch in inner:
-        if ch in "([{": depth += 1
-        elif ch in ")]}": depth -= 1
-        if ch == "," and depth == 0:
-            parts.append(cur.strip()); cur = ""
-        else:
-            cur += ch
-    parts.append(cur.strip())
-    keep = [q for q in parts if q and q.split()[0] not in REDUCIBILITY]
-    return "[" + ", ".join(keep) + "]" if keep else None
 
 def attr_lines(uid, available):
     """The attribute commands in effect at a declaration, restricted to targets the file can see."""
@@ -548,7 +672,7 @@ def pasted_block(uid, available):
     body.append("noncomputable section" if ctx.get("nc") else "section")
     body += [o for o in (filter_open(U[uid]["module"], o, available) for o in ctx["opens"]) if o is not None]
     body += ctx["opts"]
-    body += ctx["vars"]
+    body += filter_vars(U[uid]["module"], ctx["vars"], available)
     body += attr_lines(uid, available)
     body.append(unit_text(uid).rstrip())
     body.append("end")
@@ -609,6 +733,9 @@ for uid in nodes:
     imp_lines = ([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=True)
                  + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(c["imported_nodes"], key=lambda v: slugs[v])])
     sol_parts = [HEADER + gen_note(m, f"solution of {u['name']}"), "\n".join(imp_lines), ""]
+    nattr = node_attr_lines(c["imported_nodes"])
+    if nattr:
+        sol_parts += nattr + [""]
     # The global attribute commands of the source modules are replayed at their source position, in
     # the same (module, offset) order as the pasted helpers, so that each is in effect only from its
     # position on; commands after the uploaded declaration are dropped.  A `local`/`scoped` attribute
@@ -669,7 +796,7 @@ for uid in nodes:
     if sol_ns:
         sol_parts.append(f"namespace {sol_ns}")
     sol_parts += [o for o in (filter_open(u["module"], o, available) for o in sctx["opens"]) if o is not None]
-    sol_parts += sctx["opts"] + sctx["vars"]
+    sol_parts += sctx["opts"] + filter_vars(u["module"], sctx["vars"], available)
     sol_parts += attr_lines(uid, available)
     if extra_open:
         sol_parts.append(f"open {extra_open}")
