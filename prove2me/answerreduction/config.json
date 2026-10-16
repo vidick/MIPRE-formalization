@@ -4049,7 +4049,17 @@
  "published_nodes_extra": {},
  "blueprint_seeds": false,
  "force_blueprint_nodes": false,
- "renames": {},
+ "renames": {
+  "MIPRE.AnswerReduction.rd_eq_of_typedPred'": "MIPRE.AnswerReduction.rd_eq_of_typedPred_prime",
+  "MIPRE.LIDT.Adapter.hD_axis'": "MIPRE.LIDT.Adapter.hD_axis_prime",
+  "MIPRE.LIDT.Adapter.hD_diag'": "MIPRE.LIDT.Adapter.hD_diag_prime",
+  "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples": "MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples",
+  "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits": "MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits",
+  "MIPRE.POVM.ext'": "MIPRE.POVM.ext_prime",
+  "MIPRE.sum_ite_bornProb_le_condFail'": "MIPRE.sum_ite_bornProb_le_condFail_prime",
+  "MIPRE.sum_ite_bornProb_one_le'": "MIPRE.sum_ite_bornProb_one_le_prime",
+  "MIPStarRE.LDT.Pasting.fromHToG_sum₂_avgOver₂": "MIPStarRE.LDT.Pasting.fromHToG_sum2_avgOver2"
+ },
  "token_renames": {},
  "glue_leaves": [
   {
