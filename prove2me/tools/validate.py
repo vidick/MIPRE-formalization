@@ -3,6 +3,9 @@
 the stub tree and in its solution, and diff.  Also records the axioms of every solution.
 
     P2M_CONFIG=prove2me/assembly/config.json python3 prove2me/tools/validate.py [--jobs 4]
+    P2M_CONFIG=… python3 prove2me/tools/validate.py --phase orig        # needs the source oleans
+    P2M_CONFIG=… python3 prove2me/tools/validate.py --phase stubs       # needs the stub oleans
+    P2M_CONFIG=… python3 prove2me/tools/validate.py --phase solutions --compile [--jobs 3]
 
 The original type is read from the node's source module (the workspace holds the source closure),
 under the declaration's source name (one node is renamed for the platform: `classV_game_μ`).  Glue
@@ -11,9 +14,20 @@ its source statement, so all three types must agree; a leaf (`Nonempty (MIPRE.In
 has no source declaration and no solution, so only its stub is recorded.  Every solution may
 depend on `sorryAx` locally, since the stubs it imports are `sorry`; any axiom outside
 `propext`, `Classical.choice`, `Quot.sound` and `sorryAx` is reported.
+
+The phases cache their results in <tree dir>/validation-orig.json, validation-stubs.json and
+validation-solutions.jsonl, so that a large tree is checked in steps that fit the session's disk:
+the source types are read while the source closure's oleans exist (they can be archived afterwards),
+and with --compile each solution is compiled to the RAM disk (/dev/shm), checked there and deleted,
+so no solution olean is ever written to disk (nothing imports a solution).  A rerun of the solutions
+phase skips the solutions already recorded as identical (--redo checks them again).  validation.json,
+the summary every tree has, is written once the three are complete.  `--phase all` (the default)
+runs the three in order from scratch, as before.
 """
-import argparse, os, json, subprocess, re
+import argparse, os, json, subprocess, re, sys, time
 from concurrent.futures import ThreadPoolExecutor
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import lean_setup   # module-setup files for the --compile path
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
 WS = f"{S}/ws"
@@ -22,9 +36,20 @@ CFG = json.load(open(os.environ["P2M_CONFIG"], encoding="utf-8")) if os.environ.
 TREE = CFG.get("tree_out", f"{S}/tree.json")
 A = os.path.dirname(TREE)
 VOUT = os.path.join(A, "validation.json")
+ORIG_OUT = os.path.join(A, "validation-orig.json")
+STUB_OUT = os.path.join(A, "validation-stubs.json")
+SOL_OUT = os.path.join(A, "validation-solutions.jsonl")
+SHM = "/dev/shm/p2m_sol"
 ap = argparse.ArgumentParser()
 ap.add_argument("--jobs", type=int, default=4)
+ap.add_argument("--phase", choices=["all", "orig", "stubs", "solutions"], default="all")
+ap.add_argument("--compile", action="store_true",
+                help="solutions: compile each solution to the RAM disk first, check it there, delete the olean")
+ap.add_argument("--redo", action="store_true", help="solutions: check again the solutions already recorded")
 args = ap.parse_args()
+if args.compile:
+    # a solution's olean lives on the RAM disk while it is checked: the module-setup files find it there
+    lean_setup.ROOTS.append((WS, SHM))
 
 tree = json.load(open(TREE, encoding="utf-8"))
 glue = json.load(open(os.path.join(A, "glue.json"), encoding="utf-8"))["items"] if os.path.exists(os.path.join(A, "glue.json")) else []
@@ -88,18 +113,21 @@ def parse(out):
 # statements are verbatim textual cuts of the source (glue.py), and are checked as text below.
 def in_workspace(module):
     return os.path.exists(f"{WS}/.lake/build/lib/lean/{module.replace('.', '/')}.olean")
-with_src = [it for it in items if it["source_name"] and in_workspace(it["module"])]
-textual = [it for it in items if it["source_name"] and not in_workspace(it["module"])]
-p = write_check("Orig", sorted({it["module"] for it in with_src}), [(it["source_name"], it["name"]) for it in with_src])
-rc, out = run_lean(p)
-orig = parse(out)
-# a field another project published under a different name is renamed in the generated copies
-# (config `token_renames`); the source's types are read with the same renaming
-for o, n in CFG.get("token_renames", {}).items():
-    orig = {k: re.sub(r"(?<![\w'])" + re.escape(o) + r"(?![\w'])", n, v) for k, v in orig.items()}
-print("original tree:", rc, len(orig), "types of", len(with_src))
-if rc != 0:
-    print(out[:3000])
+
+def phase_orig():
+  with_src = [it for it in items if it["source_name"] and in_workspace(it["module"])]
+  textual = [it for it in items if it["source_name"] and not in_workspace(it["module"])]
+  p = write_check("Orig", sorted({it["module"] for it in with_src}), [(it["source_name"], it["name"]) for it in with_src])
+  rc, out = run_lean(p)
+  orig = parse(out)
+  # a field another project published under a different name is renamed in the generated copies
+  # (config `token_renames`); the source's types are read with the same renaming
+  for o, n in CFG.get("token_renames", {}).items():
+      orig = {k: re.sub(r"(?<![\w'])" + re.escape(o) + r"(?![\w'])", n, v) for k, v in orig.items()}
+  print("original tree:", rc, len(orig), "types of", len(with_src))
+  if rc != 0:
+      print(out[:3000])
+  return phase_orig_rest(orig, with_src, textual, rc)
 # textual check of the glue statements against the source at the pinned commit
 COMMIT = "70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed"
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -108,8 +136,10 @@ def source_head(path, short):
     m = re.search(r"^theorem " + re.escape(short) + r"\b(.*?):=", src, re.S | re.M)
     return re.sub(r"\s+", " ", m.group(1)).strip() if m else None
 glue_by_name = {g["theorem_name"]: g for g in glue}
-text_bad = 0
-for it in textual:
+
+def textual_checks(textual):
+  text_bad = 0
+  for it in textual:
     g = glue_by_name[it["name"]]
     head = source_head(g["source"]["file"], it["name"].split(".")[-1])
     stub_head = re.sub(r"\s+", " ", g["formal_statement"].split(":= by sorry")[0]).strip()
@@ -119,33 +149,49 @@ for it in textual:
     if not ok:
         print("  source:", head)
         print("  stub  :", stub_head)
-# stub tree
-p = write_check("Stubs", [f"Theorems.Thm_{it['slug']}" for it in items], [(it["name"], it["name"]) for it in items])
-rc, out = run_lean(p)
-stubs = parse(out)
-print("stub tree:", rc, len(stubs), "types of", len(items))
-if rc != 0:
-    print(out[:3000])
-bad = 0
-for it in with_src:
-    if orig.get(it["name"]) != stubs.get(it["name"]):
-        bad += 1
-        print("STUB TYPE DIFFERS:", it["name"])
-        print("  orig:", orig.get(it["name"]))
-        print("  stub:", stubs.get(it["name"]))
-print("stub types identical to the original:", len(with_src) - bad, "of", len(with_src))
-for it in items:
-    if not it["source_name"]:
-        print("leaf (no source declaration):", it["name"], "::", stubs.get(it["name"]))
+  return text_bad
+
+def phase_orig_rest(orig, with_src, textual, rc):
+  res = {"orig": orig, "with_src": [it["name"] for it in with_src], "textual_checked": [it["name"] for it in textual],
+         "textual_mismatch": textual_checks(textual), "rc": rc}
+  json.dump(res, open(ORIG_OUT, "w", encoding="utf-8"), indent=1)
+  return res
+
+def load(path, phase):
+  if not os.path.exists(path):
+    sys.exit(f"{path} is missing: run --phase {phase} first")
+  return json.load(open(path, encoding="utf-8"))
+
+def phase_stubs(o):
+  # stub tree
+  p = write_check("Stubs", [f"Theorems.Thm_{it['slug']}" for it in items], [(it["name"], it["name"]) for it in items])
+  rc, out = run_lean(p)
+  stubs = parse(out)
+  print("stub tree:", rc, len(stubs), "types of", len(items))
+  if rc != 0:
+      print(out[:3000])
+  bad = 0
+  for name in o["with_src"]:
+      if o["orig"].get(name) != stubs.get(name):
+          bad += 1
+          print("STUB TYPE DIFFERS:", name)
+          print("  orig:", o["orig"].get(name))
+          print("  stub:", stubs.get(name))
+  print("stub types identical to the original:", len(o["with_src"]) - bad, "of", len(o["with_src"]))
+  for it in items:
+      if not it["source_name"]:
+          print("leaf (no source declaration):", it["name"], "::", stubs.get(it["name"]))
+  res = {"stubs": stubs, "stub_mismatch": bad, "rc": rc}
+  json.dump(res, open(STUB_OUT, "w", encoding="utf-8"), indent=1)
+  return res
 
 # solutions: one run each (every solution declares `solution`)
-def check_solution(it):
-    body = (f"import Solutions.Sol_{it['slug']}\n" + PP +
+def check_body(it):
+    return (f"import Solutions.Sol_{it['slug']}\n" + PP +
             '\nrun_meta do\n  IO.println s!"T :: {← ppType `solution}"\n'
             '#print axioms solution\n')
-    path = f"Check/Sol_{it['slug']}.lean"
-    open(f"{WS}/{path}", "w", encoding="utf-8").write(body)
-    rc, out = run_lean(path)
+
+def parse_check(out):
     t = list(parse("\n".join(l for l in out.splitlines() if l.startswith("T :: ") or l.startswith(" "))).values())
     ax = re.search(r"'solution' depends on axioms: \[([^\]]*)\]", out)
     if ax:
@@ -154,23 +200,100 @@ def check_solution(it):
         axs = ""
     else:
         axs = out.strip()[-300:]   # the check itself failed: reported as an unexpected "axiom"
-    return it, rc, t[0] if t else None, axs, out
+    return (t[0] if t else None), axs
 
-sol_items = [it for it in items if it["solution"]]
-sol_bad, axioms, extra = 0, {}, []
-with ThreadPoolExecutor(max_workers=args.jobs) as ex:
-    for it, rc, t, ax, out in ex.map(check_solution, sol_items):
-        axioms[it["name"]] = ax
-        if rc != 0 or t is None or t != stubs.get(it["name"]):
-            sol_bad += 1
-            print("SOLUTION TYPE DIFFERS / FAILED:", it["name"], rc)
-            print("  stub:", stubs.get(it["name"]))
-            print("  sol :", t if t else out[:500])
+def check_solution(it):
+    path = f"Check/Sol_{it['slug']}.lean"
+    open(f"{WS}/{path}", "w", encoding="utf-8").write(check_body(it))
+    rc, out = run_lean(path)
+    t, axs = parse_check(out)
+    return it, rc, t, axs, out
+
+def remove(p):
+    try:
+        os.remove(p)
+    except OSError:
+        pass
+
+def compile_and_check(it):
+    """Compile the solution to the RAM disk with the platform's options, check it there, delete it."""
+    rel = f"Solutions/Sol_{it['slug']}.lean"
+    o = f"{SHM}/{rel[:-5]}.olean"
+    os.makedirs(os.path.dirname(o), exist_ok=True)
+    os.makedirs(f"{A}/diag", exist_ok=True)
+    try:
+        setup = lean_setup.setup_for(f"{WS}/{rel}")
+    except FileNotFoundError as e:
+        return it, 1, None, f"compile failed: {e}", str(e)
+    r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-DautoImplicit=false", "-DrelaxedAutoImplicit=false",
+                        "-o", o, rel], cwd=WS, env=env, capture_output=True, text=True)
+    remove(setup)
+    out = r.stdout + r.stderr
+    open(f"{A}/diag/Solutions.Sol_{it['slug']}.txt", "w", encoding="utf-8").write(out)
+    if r.returncode != 0:
+        remove(o)
+        errs = [l for l in out.splitlines() if ": error" in l]
+        return it, r.returncode, None, "compile failed: " + (errs[0][:300] if errs else out.strip()[-300:]), out
+    path = f"Check/Sol_{it['slug']}.lean"
+    try:
+        open(f"{WS}/{path}", "w", encoding="utf-8").write(check_body(it))
+        csetup = lean_setup.setup_for(f"{WS}/{path}")
+        r2 = subprocess.run(["lake", "env", "lean", f"--setup={csetup}", path], cwd=WS, env=env, capture_output=True, text=True)
+        remove(csetup)
+        rc2, out2 = r2.returncode, r2.stdout + r2.stderr
+    finally:
+        remove(o); remove(f"{WS}/{path}")
+    t, axs = parse_check(out2)
+    return it, rc2, t, axs, out2
+
+def phase_solutions(s):
+    stubs = s["stubs"]
+    sol_items = [it for it in items if it["solution"]]
+    rec = {}
+    if args.phase == "all" or args.redo:
+        open(SOL_OUT, "w").close()
+    elif os.path.exists(SOL_OUT):
+        for l in open(SOL_OUT, encoding="utf-8"):
+            if l.strip():
+                r = json.loads(l); rec[r["name"]] = r
+    todo = [it for it in sol_items if not rec.get(it["name"], {}).get("ok")]
+    print(f"solutions: {len(sol_items)}, {len(sol_items) - len(todo)} already checked, {len(todo)} to check"
+          + (" (compiled on the RAM disk)" if args.compile else ""), flush=True)
+    fn = compile_and_check if args.compile else check_solution
+    t0 = time.time()
+    with ThreadPoolExecutor(max_workers=args.jobs) as ex, open(SOL_OUT, "a", encoding="utf-8") as fo:
+        for k, (it, rc, t, ax, out) in enumerate(ex.map(fn, todo), 1):
+            ok = rc == 0 and t is not None and t == stubs.get(it["name"])
+            r = {"name": it["name"], "rc": rc, "type": t, "axioms": ax, "ok": ok}
+            rec[it["name"]] = r
+            fo.write(json.dumps(r, ensure_ascii=False) + "\n"); fo.flush()
+            if not ok:
+                print("SOLUTION TYPE DIFFERS / FAILED:", it["name"], rc)
+                print("  stub:", stubs.get(it["name"]))
+                print("  sol :", t if t else (ax if ax.startswith("compile failed") else out[:500]))
+            if args.compile and k % 25 == 0:
+                print(f"  {k}/{len(todo)} checked, {time.time() - t0:.0f}s", flush=True)
+    sol_bad = sum(1 for it in sol_items if not rec.get(it["name"], {}).get("ok"))
+    axioms = {it["name"]: rec[it["name"]]["axioms"] for it in sol_items if it["name"] in rec}
+    extra = []
+    for name, ax in axioms.items():
         used = {a.strip() for a in ax.split(",") if a.strip()}
         if not used <= OK_AXIOMS:
-            extra.append((it["name"], sorted(used - OK_AXIOMS)))
-print("solution types identical to the stub:", len(sol_items) - sol_bad, "of", len(sol_items))
-print("axioms outside {propext, Classical.choice, Quot.sound, sorryAx}:", extra or "none")
-json.dump({"orig": orig, "stubs": stubs, "axioms": axioms, "stub_mismatch": bad, "solution_mismatch": sol_bad,
-           "textual_mismatch": text_bad, "textual_checked": [it["name"] for it in textual],
-           "extra_axioms": extra}, open(VOUT, "w", encoding="utf-8"), indent=1)
+            extra.append((name, sorted(used - OK_AXIOMS)))
+    print("solution types identical to the stub:", len(sol_items) - sol_bad, "of", len(sol_items))
+    print("axioms outside {propext, Classical.choice, Quot.sound, sorryAx}:", extra or "none")
+    return axioms, sol_bad, extra, all(it["name"] in rec for it in sol_items)
+
+o = phase_orig() if args.phase in ("all", "orig") else load(ORIG_OUT, "orig")
+if args.phase in ("all", "stubs"):
+    s = phase_stubs(o)
+elif args.phase == "solutions":
+    s = load(STUB_OUT, "stubs")
+if args.phase in ("all", "solutions"):
+    axioms, sol_bad, extra, complete = phase_solutions(s)
+    if complete:
+        json.dump({"orig": o["orig"], "stubs": s["stubs"], "axioms": axioms, "stub_mismatch": s["stub_mismatch"],
+                   "solution_mismatch": sol_bad, "textual_mismatch": o["textual_mismatch"],
+                   "textual_checked": o["textual_checked"], "extra_axioms": extra},
+                  open(VOUT, "w", encoding="utf-8"), indent=1)
+        print("validation.json written")

@@ -11,7 +11,9 @@ This driver compiles the files named in the manifests, four at a time, placing t
 
 Files whose olean is newer than the source are skipped unless --all is given.  Exit status 1 if
 any file failed; the log is <tree dir>/build-tree.log and the per-file diagnostics are kept in
-<tree dir>/diag/.
+<tree dir>/diag/.  With --no-solutions only the bundles and stubs are compiled: nothing imports a
+solution, so a large tree's solutions are compiled one by one on the RAM disk by
+`validate.py --phase solutions --compile`, which checks and deletes each olean.
 """
 import argparse, json, os, re, subprocess, sys, time
 from concurrent.futures import ThreadPoolExecutor
@@ -28,6 +30,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--jobs", type=int, default=4)
 ap.add_argument("--all", action="store_true", help="recompile every file, not only the stale ones")
 ap.add_argument("--files", nargs="*", help="only these files (relative to the workspace)")
+ap.add_argument("--no-solutions", action="store_true", help="skip Solutions/ (see validate.py --compile)")
 args = ap.parse_args()
 
 files = json.load(open(CFG["manifest"], encoding="utf-8"))
@@ -36,6 +39,8 @@ if os.path.exists(gp):
     files += json.load(open(gp, encoding="utf-8"))["generated"]
 if args.files:
     files = args.files
+if args.no_solutions:
+    files = [f for f in files if not f.startswith("Solutions/")]
 files = sorted(set(files))
 
 def module_of(rel):
