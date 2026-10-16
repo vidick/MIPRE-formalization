@@ -435,6 +435,12 @@ mod_closure = {m: set(v) for m, v in plan["mod_closure"].items()}
 # from the innermost enclosing namespace out, among the namespaces of the module's own environment
 # (its import closure), not of the whole closure: `open Cost` inside `namespace MIPRE.CL` is
 # `MIPRE.Cost`, and registering an empty `MIPRE.CL.Cost` instead shadowed it (2026-10-16).
+# the namespaces of the external environment (Mathlib, core) the generated files import, from
+# tools/ext_namespaces.lean: a namespace the project shares with Mathlib (`Matrix`, `Finset`) exists in
+# every generated file whatever project declarations it sees, and its scoped notation (`ᴴ`) is needed
+EXT_NS_FILE = CFG.get("ext_namespaces") or os.path.join(os.path.dirname(E.rstrip("/")), "ext_namespaces.txt")
+EXT_NS = set(l.strip() for l in open(EXT_NS_FILE, encoding="utf-8") if l.strip())
+
 def _prefixes(name):
     parts = name.split(".")
     return [".".join(parts[:i]) for i in range(1, len(parts))]
@@ -492,7 +498,7 @@ def prune_open(m, text, chain, env_ns, absolute=False):
         k = 1 if toks and toks[0] == "scoped" else 0
         if k < len(toks):
             r = resolve_src(m, toks[k], chain)
-            if r is not None and r not in env_ns:
+            if r is not None and r not in env_ns and r not in EXT_NS:
                 return None
             if absolute and r is not None:
                 toks[k] = r
@@ -506,7 +512,7 @@ def prune_open(m, text, chain, env_ns, absolute=False):
         if tk == "scoped":
             out.append(tk); drop_group = False; continue
         r = resolve_src(m, tk, chain)
-        if r is not None and r not in env_ns:
+        if r is not None and r not in env_ns and r not in EXT_NS:
             drop_group = True
             continue
         drop_group = False
@@ -789,7 +795,7 @@ def hoisted_context(uid):
     parts = full_ns.split(".") if full_ns else []
     for i in range(1, len(parts) + 1):
         p = ".".join(parts[:i])
-        if p in env:
+        if p in env or p in EXT_NS:
             lines.append(f"open {p}")
     for o in ctx["opens"]:
         o = filter_open(u["module"], o, lambda v: U[v]["cls"] in ("defmat", "embedded", "avail"))
@@ -963,7 +969,7 @@ for uid in nodes:
             sol_parts.append(o)
     sol_parts += sctx["opts"] + filter_vars(u["module"], sctx["vars"], available)
     sol_parts += attr_lines(uid, available)
-    if extra_open and extra_open in env:
+    if extra_open and (extra_open in env or extra_open in EXT_NS):
         sol_parts.append(f"open {extra_open}")
     body = head_rest(uid, 'end').rstrip()
     # a structurally recursive theorem refers to itself inside its own body; those occurrences
