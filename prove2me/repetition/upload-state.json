@@ -125,60 +125,367 @@
    "submitted_at": 1792161560.134595,
    "http": 202,
    "job_id": "935d0463-3014-4e42-aa4f-01ebcd64b2d3",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "7a505b1b-5748-4f13-a993-8f47976a10e1",
+   "error_message": ""
   },
   "QuantumParallelRepetition.weighted_real_cauchy": {
    "submitted_at": 1792161560.6016624,
    "http": 202,
    "job_id": "63f03c0a-57e8-4d1b-aefb-4c37a83f6ccd",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "3ca06d46-a24c-4ac4-9083-ef216fda7de3",
+   "error_message": ""
   },
   "QuantumParallelRepetition.convexMixtureStrategy_winProbability": {
    "submitted_at": 1792161561.169521,
    "http": 202,
    "job_id": "263992b5-8220-4b11-a9d2-870d30938665",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "8b09b2a0-ecb5-4af7-93c7-17d974f80692",
+   "error_message": ""
   },
   "QuantumParallelRepetition.pureDensityMatrix_trace_mul": {
    "submitted_at": 1792161561.6685615,
    "http": 202,
    "job_id": "457a396a-5d23-41e8-b0f3-75bd52bb096b",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "31b696d3-e97e-4e6e-97a2-ad4b932738f3",
+   "error_message": ""
   },
   "QuantumParallelRepetition.FiniteEventLaw.exists_greedy_stopping": {
    "submitted_at": 1792161562.279067,
    "http": 202,
    "job_id": "8edd2f1e-b271-4305-8de2-5624d3651612",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "024463b9-8d23-4c5d-b7b6-4d628fe05dba",
+   "error_message": ""
   },
   "QuantumParallelRepetition.repeatedStrategy_exists_greedy_conditioning": {
    "submitted_at": 1792161562.7065296,
    "http": 202,
    "job_id": "3712187e-7904-4028-8cf5-57b322fd2fc6",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "865fb658-0e39-4539-8029-52a2dc8afd91",
+   "error_message": ""
   },
   "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg": {
    "submitted_at": 1792161563.1871207,
    "http": 202,
    "job_id": "373cc510-95e9-470c-9456-877229a70779",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "c3f930fc-325c-427d-bb79-40233e0cb5a8",
+   "error_message": ""
   },
   "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg": {
    "submitted_at": 1792161563.6494803,
    "http": 202,
    "job_id": "e8b26432-eb93-48ff-aacd-701fa20221e4",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "d8609555-b8d2-41f5-b0c3-572636f9be81",
+   "error_message": ""
   },
   "QuantumParallelRepetition.conditionedAliceEffect_positive": {
    "submitted_at": 1792161564.0895498,
    "http": 202,
    "job_id": "f6daf3fc-ecde-46c8-9ca5-63fba39c14e7",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "b10f2cd6-3ad7-4efd-8506-60575f1c346b",
+   "error_message": ""
   },
   "QuantumParallelRepetition.conditionedBobEffect_positive": {
    "submitted_at": 1792161564.565591,
    "http": 202,
    "job_id": "8f27c08c-1856-436a-80f3-fc9746202f1d",
+   "status": "PUBLISHED",
+   "theorem_id": "8548954d-57af-4bb9-abfb-894b5d7c4a0c",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.conditionedAliceEffect_complement_positive": {
+   "submitted_at": 1792161596.2380805,
+   "http": 202,
+   "job_id": "fd459c37-5f0e-4157-a352-de048d4432c8",
+   "status": "PUBLISHED",
+   "theorem_id": "28025465-8de8-481e-b49b-8490fa8b5b27",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.conditionedBobEffect_complement_positive": {
+   "submitted_at": 1792161597.0633569,
+   "http": 202,
+   "job_id": "d130d932-674d-4594-ad97-113d959ef785",
+   "status": "PUBLISHED",
+   "theorem_id": "3834673f-ee55-49d5-9e51-452046c148c6",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.spectralSupportSqrt_sq": {
+   "submitted_at": 1792161598.112825,
+   "http": 202,
+   "job_id": "b777ccec-0c9a-436f-9485-175156fe5a54",
+   "status": "PUBLISHED",
+   "theorem_id": "0098a604-5be1-4106-af74-fc6eae6f56d8",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.fullHistoryWeight_mul_hidden": {
+   "submitted_at": 1792161599.2288187,
+   "http": 202,
+   "job_id": "f45a9d3d-b8c1-4dae-8c2d-b1427a0d854a",
+   "status": "PUBLISHED",
+   "theorem_id": "f450f1af-712f-4ef6-b2c9-e67e372e9989",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.conditionedEffects_born_expansion": {
+   "submitted_at": 1792161600.289627,
+   "http": 202,
+   "job_id": "9f32b8c3-24e4-42a2-a0ed-29f4c22eca4d",
+   "status": "PUBLISHED",
+   "theorem_id": "8910b3d0-b77b-4b2a-8cc4-b295bb6485ff",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.finite_sum_four_swap": {
+   "submitted_at": 1792161601.6060877,
+   "http": 202,
+   "job_id": "e32ea934-f6ce-4a1f-8180-255947b3eb1a",
+   "status": "PUBLISHED",
+   "theorem_id": "6e1f2852-ce2d-46b3-ad51-a9bd74dc0299",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection": {
+   "submitted_at": 1792161603.01872,
+   "http": 202,
+   "error": {
+    "jobs": [],
+    "errors": [
+     "A theorem with theorem_name \"QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection\" already exists"
+    ],
+    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
+    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
+   },
+   "status": "PUBLISHED",
+   "theorem_id": "1763bb6d-6181-4b7b-bf79-38a2f85be3c4",
+   "note": "pre-existing"
+  },
+  "QuantumParallelRepetition.spectralPurificationFilter_mul_shift": {
+   "submitted_at": 1792161604.2030265,
+   "http": 202,
+   "job_id": "e12279a3-1eb1-487c-887a-fd1903385683",
+   "status": "PUBLISHED",
+   "theorem_id": "22ef6863-5489-4710-90e0-e09f900fe53b",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.spectralPurificationFilter_square_contraction": {
+   "submitted_at": 1792161605.1860325,
+   "http": 202,
+   "job_id": "c8647a75-4179-4a24-9f03-8314173d1f55",
+   "status": "PUBLISHED",
+   "theorem_id": "a22a4312-5f68-4df1-bdbe-d4a6152792d9",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen": {
+   "submitted_at": 1792161606.0993385,
+   "http": 202,
+   "job_id": "ee50af2b-c928-4ea4-807c-2e372a8f12be",
+   "status": "PUBLISHED",
+   "theorem_id": "eb60de69-5c21-4b1d-8eb3-d8a271ad80da",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.scalarResolventFilter_memLp_two": {
+   "submitted_at": 1792161607.1329913,
+   "http": 202,
+   "error": {
+    "jobs": [],
+    "errors": [
+     "A theorem with theorem_name \"QuantumParallelRepetition.scalarResolventFilter_memLp_two\" already exists"
+    ],
+    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
+    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
+   },
+   "status": "PUBLISHED",
+   "theorem_id": "fa419794-61b6-4a40-b7b3-95a11148bbe7",
+   "note": "pre-existing"
+  },
+  "QuantumParallelRepetition.spectralPurificationFilter_memLp_two": {
+   "submitted_at": 1792161607.8920422,
+   "http": 202,
+   "error": {
+    "jobs": [],
+    "errors": [
+     "A theorem with theorem_name \"QuantumParallelRepetition.spectralPurificationFilter_memLp_two\" already exists"
+    ],
+    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
+    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
+   },
+   "status": "PUBLISHED",
+   "theorem_id": "3d9d887c-ccf8-47f6-b3a5-97e6a45fda2e",
+   "note": "pre-existing"
+  },
+  "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse": {
+   "submitted_at": 1792161609.1120129,
+   "http": 202,
+   "job_id": "e0ae1030-bc07-44b1-b9bc-c48e7c45f4c5",
+   "status": "PUBLISHED",
+   "theorem_id": "ac9617b0-96fe-47c1-a23c-da278122edde",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.scalar_entropy_resolvent_integral": {
+   "submitted_at": 1792161610.1250627,
+   "http": 202,
+   "job_id": "20f2a1da-b628-4547-8c90-50b2a97b0198",
+   "status": "PUBLISHED",
+   "theorem_id": "488561cc-b4be-4620-bf22-21f1e311554e",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen": {
+   "submitted_at": 1792161637.8089182,
+   "http": 202,
+   "job_id": "c2e4b689-4cf6-4382-973c-3ba5f9a3f745",
+   "status": "PUBLISHED",
+   "theorem_id": "f9be2505-f851-49d4-81e2-2bc7045bd4a9",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef": {
+   "submitted_at": 1792161638.8880267,
+   "http": 202,
+   "job_id": "a780ab24-772b-4ba2-9e48-28b3e9ba3c38",
+   "status": "PUBLISHED",
+   "theorem_id": "8b3b5996-d6db-4062-b62c-60fe58aae0ca",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef": {
+   "submitted_at": 1792161639.8778937,
+   "http": 202,
+   "job_id": "421ea779-2b1a-4d5e-b727-4b3430c54917",
+   "status": "PUBLISHED",
+   "theorem_id": "b4f3406f-a1c3-4a6a-83cf-74c12c206e12",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction": {
+   "submitted_at": 1792161640.734297,
+   "http": 202,
+   "job_id": "01b78e43-d69f-435f-b8c4-958a03eaeb5f",
+   "status": "PUBLISHED",
+   "theorem_id": "e7f42b12-d44d-4fd7-a4e9-4d7a51f1f1ab",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left": {
+   "submitted_at": 1792161641.6380153,
+   "http": 202,
+   "job_id": "4f1f02bd-a34a-4aed-9e9c-8a66d89ad22a",
+   "status": "PUBLISHED",
+   "theorem_id": "046b408c-fa4c-47db-b6ca-27f49fdfb541",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right": {
+   "submitted_at": 1792161642.5705388,
+   "http": 202,
+   "job_id": "30352a99-70cd-4cf6-8df5-4586b2a18e2b",
+   "status": "PUBLISHED",
+   "theorem_id": "5034beaf-84db-4630-a46f-5a46aeb56b1c",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos": {
+   "submitted_at": 1792161643.57006,
+   "http": 202,
+   "job_id": "32b59af9-9f36-406a-bca1-676cea7fb68c",
+   "status": "PUBLISHED",
+   "theorem_id": "8b670915-49b6-4200-8c5b-c914bf090632",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.positiveMatrix_cfc_spectral_sum": {
+   "submitted_at": 1792161644.3765697,
+   "http": 202,
+   "job_id": "44e9c973-8d3d-471d-8db6-27f7705ff56b",
+   "status": "PUBLISHED",
+   "theorem_id": "7c153b02-f47d-448a-a95b-fd723c70f282",
+   "error_message": ""
+  },
+  "QuantumParallelRepetition.bornTracePairing_one_le_one": {
+   "submitted_at": 1792161645.1936517,
+   "http": 202,
+   "job_id": "225b1c32-eead-4570-bdac-ce8a45b4aea3",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.matrixLogEntropy_born_lower_bound_left": {
+   "submitted_at": 1792161645.9501717,
+   "http": 202,
+   "error": {
+    "jobs": [],
+    "errors": [
+     "A theorem with theorem_name \"QuantumParallelRepetition.matrixLogEntropy_born_lower_bound_left\" already exists"
+    ],
+    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
+    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
+   },
+   "status": "PUBLISHED",
+   "theorem_id": "4cf0d6f1-51cf-46f0-8918-f60134faab0e",
+   "note": "pre-existing"
+  },
+  "QuantumParallelRepetition.embezzlementState_norm": {
+   "submitted_at": 1792161646.8835332,
+   "http": 202,
+   "error": {
+    "jobs": [],
+    "errors": [
+     "A theorem with theorem_name \"QuantumParallelRepetition.embezzlementState_norm\" already exists"
+    ],
+    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
+    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
+   },
+   "status": "PUBLISHED",
+   "theorem_id": "55a9282c-041c-4ee7-a258-95d473c1600a",
+   "note": "pre-existing"
+  },
+  "QuantumParallelRepetition.coherentBinaryJointOutcome_norm_sq": {
+   "submitted_at": 1792161648.087091,
+   "http": 202,
+   "job_id": "cc6f6682-5ea7-461c-a84c-80ff96c2ea3e",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.finiteTensorVector_norm_sq": {
+   "submitted_at": 1792161675.7036505,
+   "http": 202,
+   "job_id": "2cd5ecc1-066e-4c1a-b4a6-556de52642bf",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.spectralAtomOverlap_sum_right": {
+   "submitted_at": 1792161676.6821153,
+   "http": 202,
+   "job_id": "de6e0029-c18e-468b-95b1-b831d526b638",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.spectralAtomOverlap_sum_left": {
+   "submitted_at": 1792161677.515383,
+   "http": 202,
+   "job_id": "7d58f8a0-4452-419e-961e-ace226aa903b",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.positiveDensity_eigenvalues_sum": {
+   "submitted_at": 1792161678.3766906,
+   "http": 202,
+   "job_id": "4b58dc69-f5e5-45aa-82a0-679f6198e277",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.spectralAtomOverlap_schmidtMass_le_one": {
+   "submitted_at": 1792161679.2324972,
+   "http": 202,
+   "job_id": "7930762b-27fa-417f-8254-da38813b2d50",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.sharedThresholdResourceRaw_norm_sq": {
+   "submitted_at": 1792161680.0035408,
+   "http": 202,
+   "job_id": "58759f66-53fe-4aac-a161-c4c13f7b596b",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.sharedThresholdResource_block_action_norm_sq": {
+   "submitted_at": 1792161681.119702,
+   "http": 202,
+   "job_id": "a5f5fa84-6739-4e08-b4be-2faa76e5ad71",
+   "status": "QUEUED"
+  },
+  "QuantumParallelRepetition.doublyStochasticSchmidtMass_le_one": {
+   "submitted_at": 1792161682.2710128,
+   "http": 202,
+   "job_id": "24e70c28-51e2-42a1-9593-a0f6b756e4f2",
    "status": "QUEUED"
   }
  },
