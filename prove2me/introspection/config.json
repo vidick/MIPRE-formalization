@@ -4050,7 +4050,12 @@
  "published_nodes_extra": {},
  "blueprint_seeds": false,
  "force_blueprint_nodes": false,
- "renames": {},
+ "renames": {
+  "MIPRE.LowDegree.card_filter_ker_mul'": "MIPRE.LowDegree.card_filter_ker_mul_prime",
+  "MIPRE.POVM.sum_mats_map_prod'": "MIPRE.POVM.sum_mats_map_prod_prime",
+  "MIPRE.fourierOf_pair_mul'": "MIPRE.fourierOf_pair_mul_prime",
+  "MIPRE.one_sub_sum_bornProb_pasteJ_le'": "MIPRE.one_sub_sum_bornProb_pasteJ_le_prime"
+ },
  "token_renames": {},
  "glue_leaves": [
   {
