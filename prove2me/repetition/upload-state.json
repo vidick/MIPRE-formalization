@@ -155,8 +155,10 @@
   "MIPRE_Background_Repetition_Verifier": {
    "submitted_at": 1792166294.0909069,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "38ce25ce-f6e0-46fa-ab5d-69388268dc1e"
+   "status": "PUBLISHED",
+   "job_id": "38ce25ce-f6e0-46fa-ab5d-69388268dc1e",
+   "theorem_id": "a1d74092-703e-47b0-a4ae-44339192e8f4",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -911,6 +913,11 @@
    "status": "PUBLISHED",
    "theorem_id": "ae221fbc-0ff4-4059-bd32-4c08cf825908",
    "error_message": ""
+  },
+  "MIPRE.Repetition.nonempty_seven": {
+   "status": "PUBLISHED",
+   "theorem_id": "3a2d03dc-4d4e-4266-a43d-b6e64873e04b",
+   "note": "published before this tree"
   }
  },
  "solutions": {
@@ -1571,6 +1578,12 @@
    "submission_id": "50d2b85d-8ecf-4077-97b0-a77a5d1554b0",
    "status": "ACCEPTED",
    "error_message": ""
+  },
+  "MIPRE.Repetition.nonempty_seven": {
+   "submitted_at": 1792166365.1891098,
+   "http": 200,
+   "submission_id": "c7484b0e-3d24-4160-8bff-18ba5de467b6",
+   "status": "PENDING"
   }
  },
  "log": []
