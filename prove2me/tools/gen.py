@@ -65,6 +65,7 @@ new_bundles = set(plan.get("new_bundles", plan["bundles"]))
 delta_bundles = plan.get("delta_bundles", {})          # module -> definition_name (…_B)
 published_bundles = plan.get("published_bundles", {})  # module -> definition_name
 bundle_node_imports = plan.get("bundle_imported_nodes", {})  # module -> [slugs of published nodes]
+bundle_node_deps = plan.get("bundle_node_deps", {})          # module -> [uids of this tree's nodes its bundle imports]
 nodes = plan["nodes"]
 comp = plan["composition"]
 slugs = plan["slugs"]
@@ -349,7 +350,8 @@ for m in TOPO:
             else "definition bundle: declarations the uploaded statements rest on")
     header = HEADER + gen_note(m, what)
     imps = "\n".join([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=is_delta, exclude_delta_of=m)
-                     + [f"import Theorems.Thm_{sl}" for sl in bundle_node_imports.get(m, [])])
+                     + [f"import Theorems.Thm_{sl}" for sl in bundle_node_imports.get(m, [])]
+                     + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(bundle_node_deps.get(m, []), key=lambda v: slugs[v])])
     out = expand_macros(header + imps + "\n\n" + collapse(body))
     name = delta_bundles[m] if is_delta else mslug(m)
     rel = f"Definitions/Def_{name}.lean"
@@ -367,6 +369,7 @@ for m in TOPO:
         "embedded": sorted(U[u]["name"] for u in kept_units if U[u]["cls"] == "embedded"),
         "imports": bundle_imports(m, include_self=is_delta, exclude_delta_of=m),
         "imported_published_nodes": bundle_node_imports.get(m, []), "moduleDoc": mdoc,
+        "imported_nodes": sorted(U[v]["name"] for v in bundle_node_deps.get(m, [])),
         "source_path": module_path(m),
         "published_bundle": published_bundles.get(m),
     }

@@ -345,12 +345,46 @@ def main():
                     if v not in defmat:
                         defmat.add(v); changed = True
     reach_units |= defmat | embedded
+    # ---- lifting: a theorem reachable only through definition bodies leaves the bundles unless the
+    # bundle needs it.  A stage whose target is a proof-carrying definition (the repetition verifier:
+    # 2,099 theorems reachable through its body) would otherwise enter the graph as 27 definition
+    # bundles and no statement at all.  What a bundle must keep: the same-module theorem closure of its
+    # definitions, of the theorems statements name, of the short attribute lemmas (dsimp leaves no
+    # trace in proof terms) and of the private theorems (never nodes).  Everything else reachable is a
+    # theorem unit again: a node when another bundle's kept content needs it (the platform lets a
+    # definition import a theorem once it is Proved -- private probe, 2026-10-16 -- so the uploader
+    # publishes such bundles in a later wave), otherwise node or inline by the usual rules.
+    rev = collections.defaultdict(set)
+    for uid in reach_units:
+        for v in units[uid]["body_deps"] | units[uid]["stmt_deps"]:
+            rev[v].add(uid)
+    stmt_needed = {v for uid in reach_units if uid not in avail_units and uid not in pubnode_units
+                   for v in units[uid]["stmt_deps"]}
+    must = {uid for uid in embedded if uid in stmt_needed or units[uid]["is_private"]
+            or (units[uid]["has_attr"] and units[uid]["prooflines"] <= INLINE_MAX)}
+    stack = list(defmat) + list(must)
+    while stack:
+        c = stack.pop()
+        for v in units[c]["body_deps"] | units[c]["stmt_deps"]:
+            if v in embedded and v not in must and units[v]["module"] == units[c]["module"]:
+                must.add(v); stack.append(v)
+    liftable = embedded - must
+    cross_needed = set()
+    for c in defmat | must:
+        for v in units[c]["body_deps"] | units[c]["stmt_deps"]:
+            if v in liftable:
+                assert units[v]["module"] != units[c]["module"], (units[c]["name"], units[v]["name"])
+                cross_needed.add(v)
+    embedded = must
+    print(f"lifted out of the bundles: {len(liftable)} theorems ({len(cross_needed)} of them needed by other bundles, hence nodes); "
+          f"{len(embedded)} stay embedded")
+    lifted = cross_needed
     bundle_units = defmat | embedded
     # theorems: node / inline
     thm_units = [uid for uid in reach_units if units[uid]["is_thm"] and uid not in embedded
                  and uid not in avail_units and uid not in pubnode_units]
     forced = set(TARGETS) | (BLUEPRINT_NAMES if CFG["force_blueprint_nodes"] else set())
-    nodes = set(uid for uid in thm_units if units[uid]["name"] in forced)
+    nodes = set(uid for uid in thm_units if units[uid]["name"] in forced) | lifted
     for uid in thm_units:
         u = units[uid]
         if u["is_private"]:
@@ -377,6 +411,16 @@ def main():
             if signal:
                 nodes.add(uid); changed = True
     inline = set(uid for uid in thm_units if uid not in nodes)
+    # the nodes each bundle's content depends on (same tree): imported as Proved theorems, after their
+    # solutions are accepted; the lifting above guarantees they are in other, earlier modules
+    bundle_node_deps = collections.defaultdict(set)
+    for uid in defmat | embedded:
+        for v in units[uid]["body_deps"] | units[uid]["stmt_deps"]:
+            if v in nodes:
+                bundle_node_deps[units[uid]["module"]].add(v)
+    for m, vs in bundle_node_deps.items():
+        assert all(units[v]["module"] != m for v in vs), (m, [units[v]["name"] for v in vs if units[v]["module"] == m])
+    print(f"bundles importing same-tree nodes: {len(bundle_node_deps)} ({sum(len(v) for v in bundle_node_deps.values())} imports)")
     proofdefs = set(uid for uid in reach_units if not units[uid]["is_thm"] and uid not in defmat
                     and uid not in avail_units)
     dead = set(units) - reach_units
@@ -410,14 +454,21 @@ def main():
 
     # ---- module import closure ----
     imports = {}
+    def imports_of_module(x):
+        # a module without declarations (the vendored proof's re-export module, which only imports
+        # its eight parts) has no fact file: its header is read from the workspace source
+        if x not in imports:
+            text = facts[x]["text"] if x in facts else open(f"{WS}/{module_path(x)}", encoding="utf-8").read()
+            proj, ext = header_imports(text)
+            imports[x] = {"proj": proj, "ext": ext}
+        return imports[x]
     for m in modules:
-        proj, ext = header_imports(facts[m]["text"])
-        imports[m] = {"proj": proj, "ext": ext}
+        imports_of_module(m)
     def closure(m):
         out, work = set(), [m]
         while work:
             x = work.pop()
-            for y in imports[x]["proj"]:
+            for y in imports_of_module(x)["proj"]:
                 if y not in out:
                     out.add(y); work.append(y)
         return out
@@ -501,4 +552,12 @@ def main():
         } for uid, u in units.items()},
         "nodes": sorted(nodes, key=lambda uid: (units[uid]["module"], units[uid]["decl"]["declStart"]["offset"])),
         "composition": comp,
-        "slugs": {**{uid: slug(units[uid
+        "bundle_node_deps": {m: sorted(vs) for m, vs in bundle_node_deps.items()},
+        "slugs": {**{uid: slug(units[uid]["name"]) for uid in nodes}, **{uid: pub_nodes[units[uid]["name"]] for uid in reach_pub_nodes}},
+        "renames": RENAMES,
+    }
+    json.dump(plan, open(OUT, "w"), indent=1)
+    print("wrote", OUT)
+
+if __name__ == "__main__":
+    main()

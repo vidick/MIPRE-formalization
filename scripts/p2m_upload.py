@@ -440,6 +440,83 @@ def drain(pending, st, kind, n):
     return rest
 
 
+def node_bundle_deps(n, names):
+    """Same-tree bundles a node's stub and solution import (their `import Definitions.Def_<name>` lines)."""
+    out = set()
+    texts = [n.get("preamble") or ""]
+    if n.get("solution_file") and os.path.exists(os.path.join(P2M, n["solution_file"])):
+        texts.append(read(n["solution_file"]))
+    for t in texts:
+        for m in re.finditer(r"^\s*import\s+Definitions\.Def_(\S+)", t, re.M):
+            if m.group(1) in names:
+                out.add(m.group(1))
+    return sorted(out)
+
+
+def compute_waves(tree):
+    """Upload waves.  A bundle may import a same-tree theorem only once that theorem is Proved on the
+    platform, so a bundle goes one wave after the nodes it imports; a node goes with the latest bundle
+    its stub or solution imports, and no earlier than the nodes its solution imports.  Returns the
+    wave of every bundle (by definition name) and node (by theorem name)."""
+    sys.setrecursionlimit(max(sys.getrecursionlimit(), 50000))
+    by_b = {b["definition_name"]: b for b in tree["bundles"]}
+    by_n = {n["theorem_name"]: n for n in tree["nodes"]}
+    names_b = set(by_b)
+    wb, wn = {}, {}
+
+    def bundle_wave(name):
+        if name not in wb:
+            wb[name] = -1   # cycle guard
+            w = 0
+            for d in bundle_deps(by_b[name], names_b):
+                w = max(w, bundle_wave(d))
+            for t in by_b[name].get("imported_nodes", []):
+                if t in by_n:
+                    w = max(w, node_wave(t) + 1)
+            wb[name] = w
+        if wb[name] < 0:
+            sys.exit(f"import cycle through bundle {name}")
+        return wb[name]
+
+    def node_wave(name):
+        if name not in wn:
+            wn[name] = -1
+            w = 0
+            for d in node_bundle_deps(by_n[name], names_b):
+                w = max(w, bundle_wave(d))
+            for t in by_n[name]["imported_nodes"]:
+                if t in by_n:
+                    w = max(w, node_wave(t))
+            wn[name] = w
+        if wn[name] < 0:
+            sys.exit(f"import cycle through node {name}")
+        return wn[name]
+
+    for b in tree["bundles"]:
+        bundle_wave(b["definition_name"])
+    for n in tree["nodes"]:
+        node_wave(n["theorem_name"])
+    return wb, wn
+
+
+def ensure_proved(names, st, limit=3600):
+    """Wait until the platform marks each theorem Proved (the solutions are accepted; the status
+    follows once the platform has recorded the reduction)."""
+    t0 = time.time()
+    for name in names:
+        tid = st["theorems"].get(name, {}).get("theorem_id")
+        if not tid:
+            sys.exit(f"{name} has no theorem id in the state; it must be published before the bundles that import it")
+        while True:
+            code, t = request("GET", f"/theorems/{tid}")
+            if code == 200 and t.get("status") == "Proved":
+                break
+            if time.time() - t0 > limit:
+                sys.exit(f"{name} is {t.get('status') if code == 200 else code} after {limit} s; the next wave's bundles import it as Proved")
+            log(f"  waiting for {name} to be Proved (now {t.get('status') if code == 200 else code})")
+            time.sleep(15)
+
+
 def leaves_first(tree):
     """Nodes ordered so that every imported node comes first."""
     by = {n["theorem_name"]: n for n in tree["nodes"]}
@@ -628,12 +705,25 @@ def main():
     if args.release:
         release(tree, st, args.yes)
         return
-    if args.only in (None, "definitions"):
-        upload_definitions(tree, meta, st, args)
-    if args.only in (None, "theorems"):
-        upload_theorems(tree, meta, st, args)
-    if args.only in (None, "solutions"):
-        upload_solutions(tree, meta, st, args)
+    if args.only:
+        {"definitions": upload_definitions, "theorems": upload_theorems, "solutions": upload_solutions}[args.only](tree, meta, st, args)
+    else:
+        wb, wn = compute_waves(tree)
+        last = max([0] + list(wb.values()) + list(wn.values()))
+        log(f"{last + 1} wave(s): " + "; ".join(
+            f"wave {k}: {sum(1 for v in wb.values() if v == k)} bundles, {sum(1 for v in wn.values() if v == k)} nodes" for k in range(last + 1)))
+        for k in range(last + 1):
+            sub = dict(tree, bundles=[b for b in tree["bundles"] if wb[b["definition_name"]] == k],
+                       nodes=[n for n in tree["nodes"] if wn[n["theorem_name"]] == k])
+            log(f"=== wave {k}: {len(sub['bundles'])} bundles, {len(sub['nodes'])} nodes")
+            upload_definitions(sub, meta, st, args)
+            upload_theorems(sub, meta, st, args)
+            upload_solutions(sub, meta, st, args)
+            needed = sorted({t for b in tree["bundles"] if wb[b["definition_name"]] == k + 1
+                             for t in b.get("imported_nodes", []) if t in wn})
+            if needed and not args.dry_run:
+                log(f"wave {k + 1} bundles import {len(needed)} node(s) of earlier waves; checking they are Proved")
+                ensure_proved(needed, st)
     if not args.dry_run:
         status(tree, st)
 

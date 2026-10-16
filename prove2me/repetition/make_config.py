@@ -45,7 +45,7 @@ cfg = {
     ],
     "blueprint_seeds": False,
     "force_blueprint_nodes": False,
-    "renames": {},
+    "renames": {"MIPRE.Cost.Data.length_le_size_list'": "MIPRE.Cost.Data.length_le_size_list_prime"},   # the platform wants ASCII identifiers
     "glue_leaves": [
         {"theorem_name": "MIPRE.Repetition.nonempty_seven", "statement": "Nonempty (MIPRE.Repetition 7)",
          "proof": "⟨MIPRE.repetition 7⟩", "constants": ["MIPRE.repetition", "MIPRE.Repetition"],
