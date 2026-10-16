@@ -103,6 +103,14 @@
    "job_id": "e06644ed-0cde-419c-8c12-f3d83ee05768",
    "theorem_id": "4b497b7f-e74c-4735-94b5-c43fd35a5f5c",
    "error_message": ""
+  },
+  "MIPRE_Background_Repetition_Entangled": {
+   "submitted_at": 1792164084.290171,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "4868ac2f-29ff-4a38-a913-8e8b757a9a1b",
+   "theorem_id": "f63b7858-9049-46f3-bf41-5642a8e5dad3",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -486,6 +494,162 @@
    "submitted_at": 1792161682.2710128,
    "http": 202,
    "job_id": "24e70c28-51e2-42a1-9593-a0f6b756e4f2",
+   "status": "QUEUED"
+  },
+  "MIPRE.Repetition.ofTensorProductStrategy_winProbability": {
+   "submitted_at": 1792164109.5350814,
+   "http": 202,
+   "job_id": "886830a1-30dd-418a-ad07-4722728dcfa5",
+   "status": "PUBLISHED",
+   "theorem_id": "9a8f02d1-cb1b-4fa0-817c-e53e5111463b",
+   "error_message": ""
+  },
+  "MIPRE.Repetition.exists_purification": {
+   "submitted_at": 1792164110.0383184,
+   "http": 202,
+   "job_id": "c7d4c950-1e58-484e-b495-c4a85d4f41a9",
+   "status": "PUBLISHED",
+   "theorem_id": "04d9aad5-78d0-4ecf-9c95-789638e634fd",
+   "error_message": ""
+  },
+  "MIPRE.Repetition.projective_value_le_quantumValue": {
+   "submitted_at": 1792164110.4975455,
+   "http": 202,
+   "job_id": "09375e16-0735-410b-acac-5d16d35f383a",
+   "status": "PUBLISHED",
+   "theorem_id": "00bc3ef1-0933-4414-9be8-fc92643e1fdc",
+   "error_message": ""
+  },
+  "MIPRE.Repetition.exists_purification_bipartite": {
+   "submitted_at": 1792164111.2512345,
+   "http": 202,
+   "job_id": "6516c22a-5109-45d1-86ac-74229cb94150",
+   "status": "PUBLISHED",
+   "theorem_id": "1cc3c5fe-5e44-4d96-b8cd-065250f0b53f",
+   "error_message": ""
+  },
+  "MIPRE.Repetition.entangledValue_le_quantumValue": {
+   "submitted_at": 1792164111.9338882,
+   "http": 202,
+   "job_id": "3bc96a65-1f5a-410d-81bb-fd0b4a3fb648",
+   "status": "PUBLISHED",
+   "theorem_id": "d910c6c9-7e1b-4d17-b036-c1182518da67",
+   "error_message": ""
+  },
+  "MIPRE.Repetition.quantumValue_repeat_le": {
+   "submitted_at": 1792164112.3862789,
+   "http": 202,
+   "job_id": "52b91974-dc6a-4b65-a581-f37008b1f815",
+   "status": "PUBLISHED",
+   "theorem_id": "634579d7-fb20-45fd-b376-7b024721d054",
+   "error_message": ""
+  },
+  "MIPRE.CL.CLFun.exactlyOn_famSum": {
+   "submitted_at": 1792164113.0245633,
+   "http": 202,
+   "job_id": "70727655-1f25-417b-9668-26aa4687581f",
+   "status": "PUBLISHED",
+   "theorem_id": "a7b99e40-3b91-4dd8-b845-80b6583fbc9d",
+   "error_message": ""
+  },
+  "MIPRE.CL.CLFun.eval_truncate_famSum": {
+   "submitted_at": 1792164113.7088208,
+   "http": 202,
+   "job_id": "a2acde4b-072c-4afc-acfc-3de14f76df77",
+   "status": "PUBLISHED",
+   "theorem_id": "baaf88b3-83fe-47b2-9b6e-c997f76c3201",
+   "error_message": ""
+  },
+  "MIPRE.CL.CLFun.factorOfPrefix_famSum": {
+   "submitted_at": 1792164114.0960236,
+   "http": 202,
+   "job_id": "fe50419a-46b8-456a-9695-263c147982fe",
+   "status": "PUBLISHED",
+   "theorem_id": "a0d08e27-f9b5-479a-b8e2-593886c98461",
+   "error_message": ""
+  },
+  "MIPRE.CL.CLFun.mapOfPrefix_famSum": {
+   "submitted_at": 1792164114.490922,
+   "http": 202,
+   "job_id": "9011fbab-b1d6-452a-b61d-be166c5b25b4",
+   "status": "PUBLISHED",
+   "theorem_id": "1e3e3497-a5e5-47a8-9256-0a34c2055def",
+   "error_message": ""
+  },
+  "MIPRE.CL.clDist_famSum": {
+   "submitted_at": 1792164128.383307,
+   "http": 202,
+   "job_id": "6bfe3ce2-f37b-4999-96ad-0291dc0e8350",
+   "status": "PUBLISHED",
+   "theorem_id": "e95790f8-94bf-4eea-b9a2-4b3fb718e5f0",
+   "error_message": ""
+  },
+  "MIPRE.Cost.encode_injective": {
+   "submitted_at": 1792164137.949122,
+   "http": 202,
+   "job_id": "5baf0a5c-e013-43f1-b8a1-dfc2fa62434c",
+   "status": "PUBLISHED",
+   "theorem_id": "d7a83abd-7acb-4010-8d55-171ec7850324",
+   "error_message": ""
+  },
+  "MIPRE.Cost.hardcode_wellScoped": {
+   "submitted_at": 1792164143.6467998,
+   "http": 202,
+   "job_id": "1b5ca053-5b2b-402d-b95b-ad2b1e580a99",
+   "status": "QUEUED"
+  },
+  "MIPRE.exists_isometry_of_povm": {
+   "submitted_at": 1792164144.5981553,
+   "http": 202,
+   "job_id": "01e03d4c-2826-4e6c-9bc1-b1abbd99c45b",
+   "status": "QUEUED"
+  },
+  "MIPRE.exists_unitary_extending": {
+   "submitted_at": 1792164145.439196,
+   "http": 202,
+   "job_id": "99d65800-5714-4e9b-94ac-1f24bc545040",
+   "status": "QUEUED"
+  },
+  "MIPRE.exists_projective_dilation": {
+   "submitted_at": 1792164146.2147605,
+   "http": 202,
+   "job_id": "098efcd1-7d5b-40c9-9f38-b609180d5807",
+   "status": "QUEUED"
+  },
+  "MIPRE.quantumValue_eq_of_equiv": {
+   "submitted_at": 1792164146.988023,
+   "http": 202,
+   "job_id": "1cedfcd5-8897-4cf3-bd79-8432de8049b3",
+   "status": "QUEUED"
+  },
+  "MIPRE.SyncStrategy.value_relabel": {
+   "submitted_at": 1792164147.8938541,
+   "http": 202,
+   "job_id": "5457faff-04e6-49b1-8a82-250378d0107b",
+   "status": "QUEUED"
+  },
+  "MIPRE.SyncStrategy.isPCC_relabel": {
+   "submitted_at": 1792164148.75088,
+   "http": 202,
+   "job_id": "bff40b3c-9b52-4327-8ddb-044d9fee70ac",
+   "status": "QUEUED"
+  },
+  "MIPRE.Cost.Prog.bitWalkProg_runs": {
+   "submitted_at": 1792164149.423279,
+   "http": 202,
+   "job_id": "bfa121ae-c3ad-4933-b45f-43e099ac351d",
+   "status": "QUEUED"
+  },
+  "MIPRE.CL.toBits_join": {
+   "submitted_at": 1792164150.1321924,
+   "http": 202,
+   "job_id": "cda0a685-6a2f-42a7-9dcd-c13f6d9ca908",
+   "status": "QUEUED"
+  },
+  "MIPRE.CL.indicatorBits_blockSet": {
+   "submitted_at": 1792164151.0418503,
+   "http": 202,
+   "job_id": "26ce7875-6d0e-4334-b605-185c708ea2d1",
    "status": "QUEUED"
   }
  },
