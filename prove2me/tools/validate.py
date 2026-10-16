@@ -58,9 +58,13 @@ def run_lean(path):
     return r.returncode, r.stdout + r.stderr
 
 def write_check(name, imports, pairs):
-    body = "\n".join(f"import {i}" for i in imports) + "\n" + PP + "\nrun_meta do\n"
-    for (n, lab) in pairs:
-        body += f'  IO.println s!"{lab} :: {{← ppType `{n}}}"\n'
+    # one `run_meta` block per 40 names: a single block of 500 statements exceeds the elaborator's
+    # recursion depth (the repetition tree has 515 nodes)
+    body = "\n".join(f"import {i}" for i in imports) + "\n" + PP
+    for k in range(0, len(pairs), 40):
+        body += "\nrun_meta do\n"
+        for (n, lab) in pairs[k:k + 40]:
+            body += f'  IO.println s!"{lab} :: {{← ppType `{n}}}"\n'
     open(f"{WS}/Check/{name}.lean", "w", encoding="utf-8").write(body)
     return f"Check/{name}.lean"
 
@@ -129,7 +133,13 @@ def check_solution(it):
     rc, out = run_lean(path)
     t = [l.split(" :: ", 1)[1] for l in out.splitlines() if l.startswith("T :: ")]
     ax = re.search(r"'solution' depends on axioms: \[([^\]]*)\]", out)
-    return it, rc, t[0] if t else None, (ax.group(1) if ax else out.strip()[-300:]), out
+    if ax:
+        axs = ax.group(1)
+    elif "'solution' does not depend on any axioms" in out:
+        axs = ""
+    else:
+        axs = out.strip()[-300:]   # the check itself failed: reported as an unexpected "axiom"
+    return it, rc, t[0] if t else None, axs, out
 
 sol_items = [it for it in items if it["solution"]]
 sol_bad, axioms, extra = 0, {}, []
