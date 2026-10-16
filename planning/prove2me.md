@@ -550,7 +550,7 @@ own decomposition: 221 theorem nodes, among them the root `distributionUniformEx
 definition bundles (`quantum_parallel_repetition_game`, the Mathlib-only statement file
 `ComparatorChallenges/G_QuantumParallelRepetition.lean`, and `qpr_core_00` to `qpr_core_28`, 815
 declarations), each item present in two environments (`mathlib_rev` `0df444a` and `c5ea0035`). The
-upload was stopped after 13 bundles and 35 statements (`prove2me/repetition/orphans.json`): the own
+upload was stopped after 13 bundles and 39 statements (`prove2me/repetition/orphans.json`): the own
 code's repetition layer reaches the vendored code only through 9 definitions of their game bundle
 (`Game`, `Game.repeat`, `Strategy`, `Strategy.winProbability`, `Strategy.outcomeProbability`,
 `POVM`, `DensityMatrix`, `entangledValue`, `repeatedEntangledValue`; the proof file's
@@ -569,8 +569,27 @@ theorem's proof pulled the whole development back in) and seeds instances and sh
 only from the modules the tree generates content for. The tree is then the own-code layer alone:
 19 new and 1 delta bundle, 94 theorem nodes, 159 inline helpers, 66 embedded theorems, 116
 definitions, and the leaf closure, with Entangled's bundle importing the five platform theorems.
-The 35 published vendored statements (Open, no solution) and the Part01 bundle are duplicates of
+The 39 published vendored statements (Open, no solution) and the Part01 bundle are duplicates of
 nothing in the new tree; one statement was deprecated during the probe (`PATCH /theorems/<id>`
 with `deprecated: true`, which the platform honoured), and the session's permission policy stops
 the agent from deprecating the rest unasked: that is the maintainer's call, and `orphans.json`
 lists them.
+
+**The upload of the re-planned tree (2026-10-16, 15:28 to 16:01 UTC).** Three waves: 13 bundles and
+74 nodes; 6 bundles and 20 nodes, once the 32 nodes they import were Proved; the Verifier bundle and
+the leaf closure, once 16 more were. Outcome: 20 bundles published, 95 statements published, 95
+solutions accepted, and the read-back of every `GET /theorems/<id>` shows `Proved` for all 95
+(`mathlib_rev 0df444a`), `MIPRE.Repetition.nonempty_seven` among them. The platform's connection
+failed 30 times during the 33 minutes (SSL EOF, connection reset) and three items came back with
+transient errors ("Import parser timed out after 5s" on a statement and a solution, a terminated
+database connection while a definition's imports were looked up); the uploader's retries and
+resubmissions absorbed all of it and nothing was redone by hand. One solution was reported
+`SKETCH_ACCEPTED` rather than `ACCEPTED` (`MIPRE.Cost.Prog.pairTakeProg_runs`, whose imported
+node's status had not yet propagated); its theorem reads Proved. The goal
+`HaltingGameValue.halting_reduces_to_gameValue` stays Open with a frontier of two,
+`MIPRE.Introspection.nonempty_seven` and `MIPRE.AnswerReduction.nonempty_five`; the mission and
+milestone endpoints answer 405 to GET, so whether the repetition milestone closed on its own is
+unverified from the API. Two lessons for the remaining increments: list what the platform hosts
+before uploading vendored or third-party code (`GET /theorems?tags=<tag>` lists a tag,
+`/search?q=` finds definitions as well), and import it rather than duplicate it, with the type
+matched to the platform's statement file rather than the proof file (`token_renames`).

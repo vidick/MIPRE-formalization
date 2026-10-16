@@ -142,13 +142,15 @@ dropped database connection, a security-checkpoint page in place of the API) as 
 ## The repetition stage (`repetition/`)
 
 The second increment: the closure of the repetition stage instance `MIPRE.repetition 7`
-(`MIPRE/Background/Repetition/Verifier.lean`) at `70cbf1c`, 60 modules of which 28 are new to the
-platform: the own-code repetition layer (`Foundations/Repeat/*`, `CL/Repeat`, `TensorFamily`,
-`Dilation`, `Background/Repetition/{Direct,TensorPower,Entangled,Soundness,Verifier}`) and the
+(`MIPRE/Background/Repetition/Verifier.lean`) at `70cbf1c`, 60 modules of which 20 are new to the
+platform, all own code: the repetition layer (`Foundations/Repeat/*`, `CL/Repeat`, `TensorFamily`,
+`Dilation`, `Background/Repetition/{Direct,TensorPower,Entangled,Soundness,Verifier}`). The
 vendored parallel repetition proof of openai/ten-proofs (`Background/Repetition/TenProofs/`, eight
-parts of about 9,000 lines, Apache 2.0; upstream's wholesale `import Mathlib` replaced by the
-Mathlib modules its proofs use). It closes the leaf `Nonempty (MIPRE.Repetition 7)` with the
-solution `⟨MIPRE.repetition 7⟩`.
+parts of about 9,000 lines) is not uploaded: the platform has hosted that development since
+2026-08-09 (tag `openai-ten-proofs`, public, Proved, the same upstream commit), so the tree imports
+its game bundle (`quantum_parallel_repetition_game`, nine definitions) and five of its theorems
+instead (`planning/prove2me.md`, "The platform already holds the vendored proof"). It closes the
+leaf `Nonempty (MIPRE.Repetition 7)` with the solution `⟨MIPRE.repetition 7⟩`.
 
 The stage's target is a definition, so the planner's increment-1 rule would have made every one of
 the 2,099 theorems reachable through its body an embedded lemma of a definition bundle and the
@@ -161,16 +163,21 @@ waves (`planning/prove2me.md`, "Increment 2").
 
 | path | what |
 |---|---|
-| `repetition/config.json` (`make_config.py`) | definition-material target `MIPRE.repetition`, the compression and assembly trees as the published registry, the leaf closure, one rename (`length_le_size_list'`). |
-| `repetition/Definitions/`, `Theorems/`, `Solutions/` | 28 bundles (27 new, 1 delta; 934 definitions and 274 embedded theorems; the largest, Part04, 3,066 lines), 514 stubs and 514 solutions (1,366 inline helpers pasted where used), and the leaf-closure solution. |
-| `repetition/tree.json`, `glue.json`, `plan.json` | the manifest (bundles record the same-tree nodes they import), the leaf closure, the classification of the 5,743 units of the closure. |
-| `repetition/validation.json` | 514 statements with identical types in the source module, the stub and the solution; the leaf closure's solution type equals its published stub; no axiom beyond `propext`, `Classical.choice`, `Quot.sound` and the stubs' `sorryAx`. |
-| `repetition/metadata.json`, `META_WRITER.md`, `meta_packets/` | templated records for every item (`tools/auto_meta.py`, with the vendored provenance), writer records for the 12 blueprint-named theorems and the 7 blueprint-named bundles. |
-| `repetition/upload-config.json` | `{"public": true}`. |
+| `repetition/config.json` (`make_config.py`) | definition-material target `MIPRE.repetition`; the published registry: the compression and assembly trees, the platform's ten-proofs game bundle (nine definitions, as the published bundle of `Part01`) and its five theorems (`published_nodes_extra`); the leaf closure; one rename (`length_le_size_list'`) and one token rename (`effect` → `operator`, the field name of the platform's statement file). |
+| `repetition/Definitions/`, `Theorems/`, `Solutions/` | 20 bundles (19 new, 1 delta; 114 definitions, 2 inductive types and 66 embedded theorems; the largest, Verifier, 905 lines), 94 stubs and 94 solutions (159 inline helpers pasted where used, 386 copies; median proof 14 lines), and the leaf-closure solution. |
+| `repetition/tree.json`, `glue.json`, `plan.json` | the manifest (bundles record the same-tree nodes and the platform theorems they import: 5 bundles import 47 same-tree nodes, Entangled's imports the five ten-proofs theorems), the leaf closure, the classification of the 5,743 units of the closure. |
+| `repetition/validation.json` | 94 statements with identical types in the source module, the stub and the solution; the leaf closure's solution type equals its published stub; no axiom beyond `propext`, `Classical.choice`, `Quot.sound` and the stubs' `sorryAx`. |
+| `repetition/metadata.json`, `META_WRITER.md`, `meta_packets/` | templated records for every item (`tools/auto_meta.py`), writer records for the 12 blueprint-named theorems and the 7 blueprint-named bundles. |
+| `repetition/platform-records.json`, `platform-imports.json` | the platform's records of the six ten-proofs items the tree imports, and the import lines they resolve to (`tools/ws_standins.py` writes local stand-ins of them for the build; they are never uploaded). |
+| `repetition/orphans.json` | what a first upload attempt published before the platform's ten-proofs content was found: 39 statements of vendored lemmas (Open, no solution; one deprecated) and one definition bundle, none used by the tree; the rest await the maintainer's decision. |
+| `repetition/upload-state.json`, `upload-config.json` | the upload's record (every item's id, publish job and submission), and `{"public": true}`. |
 
-The upload, `python3 scripts/p2m_upload.py --tree prove2me/repetition`, runs in seven waves
-(13 bundles and 138 nodes; 6 and 72; 1 and 59; 4 and 223; 2 and 20; 1 and 2; the Verifier bundle
-and the leaf closure), each wave's bundles published after the nodes they import are Proved.
+The upload, `python3 scripts/p2m_upload.py --tree prove2me/repetition`, ran on 2026-10-16 in three
+waves (13 bundles and 74 nodes; 6 and 20; the Verifier bundle and the leaf closure), each wave's
+bundles published after the nodes they import were Proved, 33 minutes in all: 20 bundles and 95
+statements published, 95 solutions accepted, and the platform shows all 95 theorems Proved,
+`MIPRE.Repetition.nonempty_seven` among them. The goal theorem's frontier is now the two remaining
+leaves, `MIPRE.Introspection.nonempty_seven` and `MIPRE.AnswerReduction.nonempty_five`.
 
 ## Reproducing
 
