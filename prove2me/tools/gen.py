@@ -51,6 +51,12 @@ def expand_macros(text):
     for old, new in RENAMES.items():
         for o, n in ((old, new), (old.split(".")[-1], new.split(".")[-1])):
             text = re.sub(r"(?<![\w.'])" + re.escape(o) + r"(?![\w'])", n, text)
+    # a field or method of a structure another project published under a different name (the ten-proofs
+    # statement file's `POVM.operator` is the proof file's `POVM.effect`): every occurrence of the
+    # token, in field notation (`P.effect a`) and in structure instances (`{ effect := … }`); the
+    # config lists such a rename only after checking the token has no other use in the tree's modules
+    for o, n in TOKEN_RENAMES.items():
+        text = re.sub(r"(?<![\w'])" + re.escape(o) + r"(?![\w'])", n, text)
     # `private` is per file: a private declaration copied into a bundle or pasted into a solution
     # would be invisible to the other generated files that use it, so the copies drop the modifier
     text = re.sub(r"^(\s*(?:@\[[^\]]*\]\s*)?)private\s+", r"\1", text, flags=re.M)
@@ -58,6 +64,7 @@ def expand_macros(text):
 
 plan = json.load(open(CFG["plan"], encoding="utf-8"))
 RENAMES = plan.get("renames", {})
+TOKEN_RENAMES = CFG.get("token_renames", {})
 U = plan["units"]
 modules = plan["modules"]
 bundles = set(plan["bundles"])

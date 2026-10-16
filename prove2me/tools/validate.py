@@ -93,6 +93,10 @@ textual = [it for it in items if it["source_name"] and not in_workspace(it["modu
 p = write_check("Orig", sorted({it["module"] for it in with_src}), [(it["source_name"], it["name"]) for it in with_src])
 rc, out = run_lean(p)
 orig = parse(out)
+# a field another project published under a different name is renamed in the generated copies
+# (config `token_renames`); the source's types are read with the same renaming
+for o, n in CFG.get("token_renames", {}).items():
+    orig = {k: re.sub(r"(?<![\w'])" + re.escape(o) + r"(?![\w'])", n, v) for k, v in orig.items()}
 print("original tree:", rc, len(orig), "types of", len(with_src))
 if rc != 0:
     print(out[:3000])

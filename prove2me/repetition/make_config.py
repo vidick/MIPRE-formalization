@@ -58,6 +58,10 @@ cfg = {
     "blueprint_seeds": False,
     "force_blueprint_nodes": False,
     "renames": {"MIPRE.Cost.Data.length_le_size_list'": "MIPRE.Cost.Data.length_le_size_list_prime"},   # the platform wants ASCII identifiers
+    # the statement file behind the platform's game bundle names the POVM field `operator` where the
+    # proof file (and so Entangled.lean) says `effect`; the token has no other use in the own-code
+    # closure (checked 2026-10-16: eight occurrences, all in Entangled.lean, all this field)
+    "token_renames": {"effect": "operator"},
     "glue_leaves": [
         {"theorem_name": "MIPRE.Repetition.nonempty_seven", "statement": "Nonempty (MIPRE.Repetition 7)",
          "proof": "⟨MIPRE.repetition 7⟩", "constants": ["MIPRE.repetition", "MIPRE.Repetition"],
