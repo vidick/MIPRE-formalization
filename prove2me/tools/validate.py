@@ -18,8 +18,8 @@ depend on `sorryAx` locally, since the stubs it imports are `sorry`; any axiom o
 The phases cache their results in <tree dir>/validation-orig.json, validation-stubs.json and
 validation-solutions.jsonl, so that a large tree is checked in steps that fit the session's disk:
 the source types are read while the source closure's oleans exist (they can be archived afterwards),
-and with --compile each solution is compiled to the RAM disk (/dev/shm), checked there and deleted,
-so no solution olean is ever written to disk (nothing imports a solution).  A rerun of the solutions
+and with --compile each solution is compiled from a copy with the check appended, which is deleted
+afterwards, so no solution olean is ever written (nothing imports a solution).  A rerun of the solutions
 phase skips the solutions already recorded as identical (--redo checks them again).  validation.json,
 the summary every tree has, is written once the three are complete.  `--phase all` (the default)
 runs the three in order from scratch, as before.
@@ -39,12 +39,11 @@ VOUT = os.path.join(A, "validation.json")
 ORIG_OUT = os.path.join(A, "validation-orig.json")
 STUB_OUT = os.path.join(A, "validation-stubs.json")
 SOL_OUT = os.path.join(A, "validation-solutions.jsonl")
-SHM = "/dev/shm/p2m_sol"
 ap = argparse.ArgumentParser()
 ap.add_argument("--jobs", type=int, default=4)
 ap.add_argument("--phase", choices=["all", "orig", "stubs", "solutions"], default="all")
 ap.add_argument("--compile", action="store_true",
-                help="solutions: compile each solution to the RAM disk first, check it there, delete the olean")
+                help="solutions: compile a copy of each solution with the check appended (no olean is written)")
 ap.add_argument("--redo", action="store_true", help="solutions: check again the solutions already recorded")
 ap.add_argument("--wave-order", default=None,
                 help="solutions: check them in the upload's wave order, read from this staged tree directory "
@@ -53,9 +52,6 @@ ap.add_argument("--orig-from", default=None,
                 help="orig: read the source types from this dump (tools/orig_types.lean) instead of elaborating "
                      "the source modules, so the phase needs no source olean")
 args = ap.parse_args()
-if args.compile:
-    # a solution's olean lives on the RAM disk while it is checked: the module-setup files find it there
-    lean_setup.ROOTS.append((WS, SHM))
 
 tree = json.load(open(TREE, encoding="utf-8"))
 glue = json.load(open(os.path.join(A, "glue.json"), encoding="utf-8"))["items"] if os.path.exists(os.path.join(A, "glue.json")) else []
@@ -229,36 +225,37 @@ def remove(p):
     except OSError:
         pass
 
+CHECK_TAIL = PP + '\nrun_meta do\n  IO.println s!"T :: {← ppType `solution}"\n#print axioms solution\n'
+
 def compile_and_check(it):
-    """Compile the solution to the RAM disk with the platform's options, check it there, delete it."""
+    """Compile a copy of the solution with the check appended, with the platform's options, and
+    delete the copy: one Lean process per solution and no olean written.  Every solution declares
+    `_root_.solution` inside a namespace block it closes before the end of the file, so the appended
+    check runs in the root scope with no `open` in effect and prints the type exactly as a separate
+    check file importing the solution does (that was the first version: a compile to the RAM disk,
+    then a check run, at the cost of loading the imports twice)."""
     rel = f"Solutions/Sol_{it['slug']}.lean"
-    o = f"{SHM}/{rel[:-5]}.olean"
-    os.makedirs(os.path.dirname(o), exist_ok=True)
+    path = f"Check/Sol_{it['slug']}.lean"
     os.makedirs(f"{A}/diag", exist_ok=True)
+    text = open(f"{WS}/{rel}", encoding="utf-8").read()
+    open(f"{WS}/{path}", "w", encoding="utf-8").write(text.rstrip("\n") + "\n" + CHECK_TAIL)
     try:
-        setup = lean_setup.setup_for(f"{WS}/{rel}")
-    except FileNotFoundError as e:
-        return it, 1, None, f"compile failed: {e}", str(e)
-    r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-DautoImplicit=false", "-DrelaxedAutoImplicit=false",
-                        "-o", o, rel], cwd=WS, env=env, capture_output=True, text=True)
-    remove(setup)
+        try:
+            setup = lean_setup.setup_for(f"{WS}/{path}")
+        except FileNotFoundError as e:
+            return it, 1, None, f"compile failed: {e}", str(e)
+        r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-DautoImplicit=false", "-DrelaxedAutoImplicit=false",
+                            path], cwd=WS, env=env, capture_output=True, text=True)
+        remove(setup)
+    finally:
+        remove(f"{WS}/{path}")
     out = r.stdout + r.stderr
     open(f"{A}/diag/Solutions.Sol_{it['slug']}.txt", "w", encoding="utf-8").write(out)
     if r.returncode != 0:
-        remove(o)
         errs = [l for l in out.splitlines() if ": error" in l]
         return it, r.returncode, None, "compile failed: " + (errs[0][:300] if errs else out.strip()[-300:]), out
-    path = f"Check/Sol_{it['slug']}.lean"
-    try:
-        open(f"{WS}/{path}", "w", encoding="utf-8").write(check_body(it))
-        csetup = lean_setup.setup_for(f"{WS}/{path}")
-        r2 = subprocess.run(["lake", "env", "lean", f"--setup={csetup}", path], cwd=WS, env=env, capture_output=True, text=True)
-        remove(csetup)
-        rc2, out2 = r2.returncode, r2.stdout + r2.stderr
-    finally:
-        remove(o); remove(f"{WS}/{path}")
-    t, axs = parse_check(out2)
-    return it, rc2, t, axs, out2
+    t, axs = parse_check(out)
+    return it, r.returncode, t, axs, out
 
 def phase_solutions(s):
     stubs = s["stubs"]
@@ -278,7 +275,7 @@ def phase_solutions(s):
         _, wn = p2m_upload.compute_waves(p2m_upload.load_tree())
         todo.sort(key=lambda it: wn.get(it["name"], 1 << 30))   # stable: within a wave, the tree's order
     print(f"solutions: {len(sol_items)}, {len(sol_items) - len(todo)} already checked, {len(todo)} to check"
-          + (" (compiled on the RAM disk)" if args.compile else ""), flush=True)
+          + (" (compiled with the check appended)" if args.compile else ""), flush=True)
     fn = compile_and_check if args.compile else check_solution
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=args.jobs) as ex, open(SOL_OUT, "a", encoding="utf-8") as fo:

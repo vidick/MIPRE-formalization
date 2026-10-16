@@ -31,6 +31,9 @@ if os.environ.get("P2M_CONFIG"):
 E = CFG["extract_dir"]
 
 META_CMDS = {"macro", "macro_rules", "syntax", "elab", "elab_rules", "notation", "notation3", "declare_syntax_cat"}
+# checks of the source module, not content: an axiom guard (`#guard_msgs in #print axioms` in
+# LowDegree/Shoup.lean) fails in a bundle, whose definitions rest on sorry stubs of the nodes it imports
+CHECK_CMDS = {"guardMsgsCmd", "check", "eval", "reduce", "print", "printAxioms", "synth"}
 # `size_omega` (Cost/Interpreter.lean) is the closure's one macro; every generated file spells
 # out its expansion, with the names the macro pre-resolved at its definition site
 MACRO_EXPANSIONS = {
@@ -613,7 +616,7 @@ for m in TOPO:
     # the platform rejects metaprogramming ("custom syntax/elaborator registration ... not
     # supported in submissions"): drop such commands from the bundle; their uses are expanded below
     for c in cmds:
-        if c["syntaxKind"].split(".")[-1] in META_CMDS:
+        if c["syntaxKind"].split(".")[-1] in META_CMDS | CHECK_CMDS:
             a, b = c["start"]["offset"], c["end"]["offset"]
             while b < len(B) and B[b:b+1] in (b" ", b"\t"):
                 b += 1
