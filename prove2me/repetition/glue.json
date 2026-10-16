@@ -1,0 +1,23 @@
+{
+ "items": [
+  {
+   "theorem_name": "MIPRE.Repetition.nonempty_seven",
+   "slug": "MIPRE_Repetition_nonempty_seven",
+   "kind": "leaf-closure",
+   "formal_statement": "theorem MIPRE.Repetition.nonempty_seven : Nonempty (MIPRE.Repetition 7) := by sorry",
+   "preamble": "import Definitions.Def_MIPRE_Background_Repetition_Verifier\nimport Definitions.Def_MIPRE_Foundations_Pipeline_Repetition",
+   "stub_file": null,
+   "stub_published": true,
+   "solution_file": "Solutions/Sol_MIPRE_Repetition_nonempty_seven.lean",
+   "imported_nodes": [],
+   "source": {
+    "file": "MIPRE/Background/Repetition/Verifier.lean",
+    "commit": "70cbf1c"
+   },
+   "witness": "\u27e8MIPRE.repetition 7\u27e9"
+  }
+ ],
+ "generated": [
+  "Solutions/Sol_MIPRE_Repetition_nonempty_seven.lean"
+ ]
+}
