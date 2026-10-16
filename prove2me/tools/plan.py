@@ -107,12 +107,22 @@ def load_published():
     """Published nodes {name: slug} and bundles {module: {"definition_name", "kept": set|None}}
     (kept None = every declaration of the module)."""
     nodes, bundles = {}, {}
-    if CFG.get("published_tree"):
-        t = json.load(open(CFG["published_tree"], encoding="utf-8"))
+    trees = ([CFG["published_tree"]] if CFG.get("published_tree") else []) + list(CFG.get("published_trees", []))
+    for path in trees:   # every tree uploaded before this one, in upload order
+        t = json.load(open(path, encoding="utf-8"))
         for n in t["nodes"]:
             nodes[n["theorem_name"]] = n["slug"]
+        gp = os.path.join(os.path.dirname(path), "glue.json")
+        if os.path.exists(gp):   # glue items (leaves, sketches, leaf closures) are published theorems too
+            for g in json.load(open(gp, encoding="utf-8"))["items"]:
+                nodes[g["theorem_name"]] = g["slug"]
         for b in t["bundles"]:
-            bundles[b["module"]] = {"definition_name": b["definition_name"], "kept": set(b["kept"])}
+            prev = bundles.get(b["module"])
+            kept = set(b["kept"]) | (prev["kept"] if prev and prev["kept"] is not None else set())
+            # a later delta bundle (`…_B`) adds declarations to the module's published material; the
+            # planner only needs to know which declarations are available by import
+            bundles[b["module"]] = {"definition_name": b["definition_name"], "kept": kept,
+                                    "delta_of": prev["definition_name"] if prev else b.get("published_bundle")}
     for b in CFG.get("published_bundles", []):
         bundles[b["module"]] = {"definition_name": b["definition_name"],
                                "kept": None if b.get("kept", "all") == "all" else set(b["kept"])}
@@ -491,11 +501,4 @@ def main():
         } for uid, u in units.items()},
         "nodes": sorted(nodes, key=lambda uid: (units[uid]["module"], units[uid]["decl"]["declStart"]["offset"])),
         "composition": comp,
-        "slugs": {**{uid: slug(units[uid]["name"]) for uid in nodes}, **{uid: pub_nodes[units[uid]["name"]] for uid in reach_pub_nodes}},
-        "renames": RENAMES,
-    }
-    json.dump(plan, open(OUT, "w"), indent=1)
-    print("wrote", OUT)
-
-if __name__ == "__main__":
-    main()
+        "slugs": {**{uid: slug(units[uid

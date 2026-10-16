@@ -16,7 +16,9 @@ tree = json.load(open(f"{A}/tree.json", encoding="utf-8"))
 if os.path.exists(f"{A}/glue.json"):
     for g in json.load(open(f"{A}/glue.json", encoding="utf-8"))["items"]:
         tree["nodes"].append({"theorem_name": g["theorem_name"]})
-TAGS = {"computability", "complexity-theory", "turing-machines", "polynomial-time", "undecidability",
+TAGS = {"parallel-repetition", "operator-algebras", "linear-algebra", "pauli-basis-test", "low-degree-test",
+        "introspection", "answer-reduction", "pcp", "cook-levin",   # the later increments
+        "computability", "complexity-theory", "turing-machines", "polynomial-time", "undecidability",
         "recursive-compression", "universal-machine", "kleene-recursion", "smn-theorem", "cost-model",
         "self-interpreter", "succinct-descriptions", "mip-re",
         # the assembly layer
@@ -43,8 +45,8 @@ def check_text(label, t, minlen=120, maxlen=2500):
 
 nodes_out, problems = [], []
 by_name = {}
-for f in sorted(glob.glob(f"{A}/meta_out_[0-9]*.json")):
-    for o in json.load(open(f, encoding="utf-8")):
+for f in sorted(glob.glob(f"{A}/meta_out_auto*.json")) + sorted(glob.glob(f"{A}/meta_out_[0-9]*.json")):
+    for o in json.load(open(f, encoding="utf-8")):   # templated records first; a writer's record replaces it
         by_name[o["theorem_name"]] = o
 for n in tree["nodes"]:
     name = n["theorem_name"]
@@ -57,11 +59,12 @@ for n in tree["nodes"]:
             problems.append(f"{name}: missing {k}")
     if len(o.get("theorem_title", "")) > 200 or len(o.get("theorem_title", "")) < 10:
         problems.append(f"{name}: title length {len(o.get('theorem_title',''))}")
-    problems += check_text(f"{name}.statement", o.get("natural_language_statement", ""))
+    auto = bool(o.get("auto"))
+    problems += check_text(f"{name}.statement", o.get("natural_language_statement", ""), 120, 8000 if auto else 2500)
     problems += check_text(f"{name}.explanation", o.get("explanation", ""), 80, 50000)
     if "**Formalization Note**" not in o.get("natural_language_statement", ""):
         problems.append(f"{name}: no Formalization Note")
-    if "$$" not in o.get("natural_language_statement", ""):
+    if "$$" not in o.get("natural_language_statement", "") and not (auto and "```lean" in o.get("natural_language_statement", "")):
         problems.append(f"{name}: no display-math block")
     bad = [t for t in o.get("tags", []) if t not in TAGS]
     if bad or not o.get("tags"):
@@ -78,7 +81,7 @@ for n in tree["nodes"]:
 
 bundles_out = []
 bb = {}
-for f in sorted(glob.glob(f"{A}/meta_out_bundles*.json")):
+for f in sorted(glob.glob(f"{A}/meta_out_bundles_auto*.json")) + sorted(f for f in glob.glob(f"{A}/meta_out_bundles*.json") if "auto" not in f):
     for o in json.load(open(f, encoding="utf-8")):
         bb[o["definition_name"]] = o
 for b in tree["bundles"]:
@@ -90,7 +93,7 @@ for b in tree["bundles"]:
     for k in ("definition_title", "natural_language_statement", "source", "tags"):
         if k not in o:
             problems.append(f"{name}: missing {k}")
-    problems += check_text(f"{name}.statement", o.get("natural_language_statement", ""))
+    problems += check_text(f"{name}.statement", o.get("natural_language_statement", ""), 120, 8000 if o.get("auto") else 2500)
     if len(o.get("definition_title", "")) > 200 or len(o.get("definition_title", "")) < 10:
         problems.append(f"{name}: title length {len(o.get('definition_title',''))}")
     if "**Formalization Note**" not in o.get("natural_language_statement", "").replace("**Formalization Note.**", "**Formalization Note**"):
