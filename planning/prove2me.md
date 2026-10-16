@@ -501,3 +501,30 @@ the scratch directory from `P2M_DIR` like the other drivers. (6) *`module` may c
 headers, `Mathlib.Init` and `Mathlib.Tactic` among them); a bare-line test classified them as
 legacy, so their parts were never regenerated and a plain legacy importer of `Mathlib.Tactic`
 failed on `Tactic.olean.server`.
+
+**Increment 2, the repetition stage (2026-10-16): a design change.** The stage's target is the
+proof-carrying definition `MIPRE.repetition` (`Repetition 7` is a structure whose fields are the
+verifier and its completeness and soundness proofs), so under the increment-1 rule -- every theorem
+reachable through a definition body is an embedded lemma of that module's bundle -- the planner
+produced 27 definition bundles, eight of them the whole 8,000-line vendored parts, and **no theorem
+node at all**: the parallel repetition theorem and its 2,000 lemmas would have entered the platform
+hidden inside definitions, and the same would have held for the introspection and answer-reduction
+stages (their targets are definitions too), that is for the remaining 14,000 theorems. A private
+probe settled what the platform allows: a definition may import a platform theorem, but only one
+that is already **Proved** ("Imported platform theorems must be Proved at submission time"; an Open
+import fails the definition). So the planner now keeps in a bundle only what the bundle needs -- the
+same-module theorem closure of its definitions, the theorems statements name, the short attribute
+lemmas and the private theorems -- and every other reachable theorem is a theorem unit again: a
+**node** when another bundle's content needs it (that bundle imports the node and is published one
+*wave* later, after the node's solution is accepted and the platform shows it Proved), otherwise a
+node or an inline helper by the usual size and promotion rules. For the repetition closure: 934
+definitions and 274 embedded theorems in 27 new and 1 delta bundles (the largest, Part04, 3,066
+lines), 514 theorem nodes (median proof 33 lines), 1,366 inline helpers pasted into the solutions
+that use them (2,148 copies, median 2 per solution), 9 bundles importing 97 same-tree nodes, and
+the leaf-closure solution `⟨MIPRE.repetition 7⟩` for `Nonempty (MIPRE.Repetition 7)`. The
+uploader computes the waves from the import lines (`scripts/p2m_upload.py compute_waves`) and
+runs its three phases per wave, checking `GET /theorems/<id>` for `Proved` before the bundles of
+the next wave. Two more generator gaps the vendored code exposed: top-level `set_option` (428 of
+them: `autoImplicit`, `maxHeartbeats`, `maxRecDepth`, `backward.isDefEq.respectTransparency`) and
+`universe` commands are now scope, reproduced for each declaration with the last assignment per
+option, and pasted helpers sit in their own `section` (`noncomputable` when the source's is).

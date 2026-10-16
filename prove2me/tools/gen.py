@@ -103,6 +103,16 @@ for r in rows:
     for i in range(1, len(parts)):
         NS.add(".".join(parts[:i]))
 
+def effective_opts(lines):
+    """The `set_option`/`universe` lines in effect: the last assignment of each option wins, universe
+    declarations are kept once, source order otherwise."""
+    last = {}
+    for i, l in enumerate(lines):
+        mm = re.match(r"set_option\s+(\S+)", l)
+        last[("opt", mm.group(1)) if mm else ("univ", l)] = i
+    keep = set(last.values())
+    return [l for i, l in enumerate(lines) if i in keep]
+
 # ---------- scope map: context of every declaration command ----------
 CTX = {}  # (module, declStart.offset) -> {"ns": [...], "opens": [...], "vars": [...]}
 ATTRS = {}  # module -> [attribute commands: {"start", "end", "attr", "names": [(token, uid|None)]}]
@@ -171,16 +181,6 @@ for m in modules:
             }
         # moduleDoc, macro, export, eoi: no scope effect
     assert not stack, (m, stack)
-
-def effective_opts(lines):
-    """The `set_option`/`universe` lines in effect: the last assignment of each option wins, universe
-    declarations are kept once, source order otherwise."""
-    last = {}
-    for i, l in enumerate(lines):
-        mm = re.match(r"set_option\s+(\S+)", l)
-        last[("opt", mm.group(1)) if mm else ("univ", l)] = i
-    keep = set(last.values())
-    return [l for i, l in enumerate(lines) if i in keep]
 
 def unit_ctx(uid):
     u = U[uid]
