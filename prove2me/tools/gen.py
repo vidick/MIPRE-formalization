@@ -419,28 +419,98 @@ def resolve_open(open_text, chain):
         out.append(tk if tk.startswith("(") else resolve_ns(tk, chain))
     return "open " + " ".join(out)
 
-def ns_registrations(ctx, own_ns=None):
-    """`namespace N end N` lines, at the top level, for the declaration's own namespace and each project
-    namespace its `open` lines name.  `open N` fails when no declaration of the file's environment lives
-    in N, which happens once all of N's declarations have become nodes or helpers the file does not
-    import (`open MIPRE.CL.CLFun.ExactlyOn` for `theorem ExactlyOn.concat`); an empty `namespace N end N`
-    registers N and adds nothing to it."""
-    chain = ctx["ns"]
-    names = [own_ns] if own_ns else []
-    for o in ctx["opens"]:
-        for tk in re.findall(r"\([^)]*\)|\S+", o[len("open"):].strip()):
-            if tk in ("hiding", "renaming"):
-                break          # what follows names declarations, not namespaces
-            if tk.startswith("(") or tk in ("scoped", "in"):
-                continue
-            r = resolve_ns(tk, chain)
-            if r in NS:
-                names.append(r)
-    return [f"namespace {n} end {n}" for n in dict.fromkeys(names)]
-
 # ---------- imports ----------
 imports = plan["imports"]
 mod_closure = {m: set(v) for m, v in plan["mod_closure"].items()}
+
+# ---------- `open` lines: namespaces as the source resolved them, pruned to the file's environment ----------
+# An `open N` of a project namespace no declaration of a generated file's environment lives in fails
+# ("unknown namespace"), and would open nothing: that happens once all of N's declarations became
+# nodes or helpers the file does not import (`open MIPRE.CL.CLFun.ExactlyOn` for `theorem
+# ExactlyOn.concat`, `open GCommStability.Scalar` in a vendored bundle).  Such a namespace is dropped
+# from the line.  The namespace a name denotes is the one Lean found in the source: the first match
+# from the innermost enclosing namespace out, among the namespaces of the module's own environment
+# (its import closure), not of the whole closure: `open Cost` inside `namespace MIPRE.CL` is
+# `MIPRE.Cost`, and registering an empty `MIPRE.CL.Cost` instead shadowed it (2026-10-16).
+def _prefixes(name):
+    parts = name.split(".")
+    return [".".join(parts[:i]) for i in range(1, len(parts))]
+
+_MOD_NS = collections.defaultdict(set)    # module -> namespaces its declarations live in
+for _uid, _u in U.items():
+    if _u.get("name"):
+        _MOD_NS[_u["module"]].update(_prefixes(_user_of(_u["name"])))
+_SRC_NS = {}
+def src_ns(m):
+    """The project namespaces of module m's environment in the source: its own and its imports'."""
+    if m not in _SRC_NS:
+        s = set(_MOD_NS.get(m, ()))
+        for x in mod_closure.get(m, ()):
+            s |= _MOD_NS.get(x, set())
+        _SRC_NS[m] = s
+    return _SRC_NS[m]
+
+def resolve_src(m, tk, chain):
+    """The project namespace `open tk` denoted in module m inside `chain`; None for any other (Mathlib, core)."""
+    nsset = src_ns(m)
+    full = ns_of_chain(chain)
+    parts = full.split(".") if full else []
+    for i in range(len(parts), 0, -1):
+        cand = ".".join(parts[:i]) + "." + tk
+        if cand in nsset:
+            return cand
+    return tk if tk in nsset else None
+
+def env_ns_of(units):
+    """The namespaces the declarations of these units live in."""
+    s = set()
+    for v in units:
+        n = U[v].get("name")
+        if n:
+            s.update(_prefixes(_user_of(n)))
+    return s
+
+_STUB_ENV = {}
+def stub_env_ns(m):
+    """Namespaces of a stub's or solution's bundles: the definition material and embedded theorems of
+    the module's closure, and the published bundles' declarations."""
+    if m not in _STUB_ENV:
+        mods = set(mod_closure.get(m, ())) | {m}
+        _STUB_ENV[m] = env_ns_of(v for v, uu in U.items()
+                                 if uu["module"] in mods and uu["cls"] in ("defmat", "embedded", "avail"))
+    return _STUB_ENV[m]
+
+def prune_open(m, text, chain, env_ns, absolute=False):
+    """The `open` line without the project namespaces absent from the file's environment (None if
+    nothing is left); with absolute, each kept project namespace is written in full, as the source
+    resolved it, for a line moved to the top level."""
+    toks = re.findall(r"\([^)]*\)|\S+", text.strip()[len("open"):].strip())
+    if any(tk in ("hiding", "renaming") for tk in toks):
+        k = 1 if toks and toks[0] == "scoped" else 0
+        if k < len(toks):
+            r = resolve_src(m, toks[k], chain)
+            if r is not None and r not in env_ns:
+                return None
+            if absolute and r is not None:
+                toks[k] = r
+        return "open " + " ".join(toks)
+    out, drop_group = [], False
+    for tk in toks:
+        if tk.startswith("("):
+            if not drop_group:
+                out.append(tk)
+            continue
+        if tk == "scoped":
+            out.append(tk); drop_group = False; continue
+        r = resolve_src(m, tk, chain)
+        if r is not None and r not in env_ns:
+            drop_group = True
+            continue
+        drop_group = False
+        out.append(r if (absolute and r is not None) else tk)
+    if not [x for x in out if x != "scoped" and not x.startswith("(")]:
+        return None
+    return "open " + " ".join(out)
 
 def topo_modules():
     order, seen = [], set()
@@ -558,6 +628,7 @@ for m in TOPO:
     visible |= set(bundle_node_deps.get(m, []))   # this tree's nodes the bundle imports
     pub_imp = set(bundle_node_imports.get(m, []))   # and the published nodes it imports
     visible |= {uid for uid, u in U.items() if u["cls"] == "pubnode" and slugs.get(uid) in pub_imp}
+    bundle_env = env_ns_of(visible)
     for c in cmds:
         if c["syntaxKind"].endswith(".open"):
             a, b = c["start"]["offset"], c["end"]["offset"]
@@ -565,18 +636,16 @@ for m in TOPO:
             nt = filter_open(m, ot, lambda v: v in visible) if (m, ot) in OPEN_NAMES else ot
             # a project namespace no declaration of the bundle's environment lives in makes `open`
             # fail (`open GCommStability.Scalar` inside `namespace MIPStarRE.LDT.Commutativity`, all of
-            # whose declarations became nodes): an empty `namespace N end N` just before the command,
-            # in the same scope, registers the namespace the name resolves to there
-            chain = OPEN_CHAIN.get((m, a), [])
-            regs = [f"namespace {tk} end {tk}" for tk in (open_ns_tokens(nt) if nt else [])
-                    if resolve_ns(tk, chain) in NS]
-            if nt != ot or regs:
+            # whose declarations became nodes); opening it would make nothing visible, so it is dropped
+            # (registering it instead created namespaces that shadowed the ones the source opened)
+            nt = prune_open(m, nt, OPEN_CHAIN.get((m, a), []), bundle_env) if nt is not None else None
+            if nt != ot:
                 while b < len(B) and B[b:b+1] in (b" ", b"\t"):
                     b += 1
                 if B[b:b+1] == b"\n":
                     b += 1
                 dele.append((a, b))
-                repl[a] = ("\n".join(regs + ([nt] if nt else [])) + "\n").encode("utf-8") if (nt or regs) else b""
+                repl[a] = (nt + "\n").encode("utf-8") if nt else b""
     bundle_dropped = set()
     for c in cmds:
         k = c["syntaxKind"].split(".")[-1]
@@ -677,18 +746,17 @@ def hoisted_context(uid):
     ctx = unit_ctx(uid)
     chain = ctx["ns"]
     full_ns = ".".join(u["name"].split(".")[:-1])
-    lines = ns_registrations(ctx, full_ns)
+    env = stub_env_ns(u["module"])
+    lines = []
     parts = full_ns.split(".") if full_ns else []
     for i in range(1, len(parts) + 1):
         p = ".".join(parts[:i])
-        if p in NS:
+        if p in env:
             lines.append(f"open {p}")
     for o in ctx["opens"]:
         o = filter_open(u["module"], o, lambda v: U[v]["cls"] in ("defmat", "embedded", "avail"))
-        if o is None:
-            continue
-        r = resolve_open(o, chain)
-        if r not in lines:
+        r = prune_open(u["module"], o, chain, env, absolute=True) if o is not None else None
+        if r is not None and r not in lines:
             lines.append(r)
     lines += ctx["opts"]
     lines += filter_vars(u["module"], ctx["vars"], lambda v: U[v]["cls"] in ("defmat", "embedded", "avail"))
@@ -704,7 +772,7 @@ def attr_lines(uid, available):
             out.append(f"attribute {attr} " + " ".join(dict.fromkeys(names)))
     return out
 
-def pasted_block(uid, available):
+def pasted_block(uid, available, env_ns):
     """A helper declaration with its scope: namespace, then a section (noncomputable when the source
     declares it inside one, so that a pasted definition compiles as in the source) holding the `open`,
     `set_option`/`universe` and `variable` lines and the attribute commands in effect (a `local instance`
@@ -712,11 +780,16 @@ def pasted_block(uid, available):
     a statement would differ from the source's), so that none of them leaks into the next block."""
     ctx = unit_ctx(uid)
     ns = ns_of_chain(ctx["ns"])
-    body = ns_registrations(ctx)
+    body = []
     if ns:
         body.append(f"namespace {ns}")
     body.append("noncomputable section" if ctx.get("nc") else "section")
-    body += [o for o in (filter_open(U[uid]["module"], o, available) for o in ctx["opens"]) if o is not None]
+    env = env_ns
+    for o in ctx["opens"]:
+        o = filter_open(U[uid]["module"], o, available)
+        o = prune_open(U[uid]["module"], o, ctx["ns"], env) if o is not None else None
+        if o is not None:
+            body.append(o)
     body += ctx["opts"]
     body += filter_vars(U[uid]["module"], ctx["vars"], available)
     body += attr_lines(uid, available)
@@ -779,6 +852,8 @@ for uid in nodes:
     imp_lines = ([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=True)
                  + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(c["imported_nodes"], key=lambda v: slugs[v])])
     sol_parts = [HEADER + gen_note(m, f"solution of {u['name']}"), "\n".join(imp_lines), ""]
+    # the namespaces of the solution's imports: the stub's bundles and the imported nodes' theorems
+    sol_env = stub_env_ns(m) | env_ns_of(c["imported_nodes"])
     nattr = node_attr_lines(c["imported_nodes"])
     if nattr:
         sol_parts += nattr + [""]
@@ -810,7 +885,7 @@ for uid in nodes:
                 or tu in c["imported_nodes"])
     for e in events:
         if e[0] == "unit":
-            sol_parts.append(pasted_block(e[3], available))
+            sol_parts.append(pasted_block(e[3], available, sol_env | env_ns_of(emitted)))
             emitted.add(e[3])
         else:
             at = e[3]
@@ -838,13 +913,17 @@ for uid in nodes:
         sol_ns, extra_open = name_ns, None
     else:
         sol_ns, extra_open = chain_ns, name_ns
-    sol_parts += ns_registrations(sctx, name_ns)
+    env = sol_env | env_ns_of(emitted)
     if sol_ns:
         sol_parts.append(f"namespace {sol_ns}")
-    sol_parts += [o for o in (filter_open(u["module"], o, available) for o in sctx["opens"]) if o is not None]
+    for o in sctx["opens"]:
+        o = filter_open(u["module"], o, available)
+        o = prune_open(u["module"], o, sctx["ns"], env) if o is not None else None
+        if o is not None:
+            sol_parts.append(o)
     sol_parts += sctx["opts"] + filter_vars(u["module"], sctx["vars"], available)
     sol_parts += attr_lines(uid, available)
-    if extra_open:
+    if extra_open and extra_open in env:
         sol_parts.append(f"open {extra_open}")
     body = head_rest(uid, 'end').rstrip()
     # a structurally recursive theorem refers to itself inside its own body; those occurrences

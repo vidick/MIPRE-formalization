@@ -104,7 +104,9 @@ def compile_one(m):
 with ThreadPoolExecutor(max_workers=args.jobs) as ex:
     futures = {}
     while todo or futures:
-        ready = [m for m in todo if all(d in done for d in deps[m]) and m not in futures]
+        # bundles first: their errors block the most files, so they should surface early
+        ready = sorted((m for m in todo if all(d in done for d in deps[m]) and m not in futures),
+                       key=lambda m: (not m.startswith("Definitions."), m))
         for m in ready[: max(0, args.jobs - len(futures))]:
             futures[m] = ex.submit(compile_one, m)
             todo.discard(m)
