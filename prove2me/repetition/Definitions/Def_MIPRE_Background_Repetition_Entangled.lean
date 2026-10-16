@@ -458,15 +458,13 @@ import Mathlib.Topology.UniformSpace.Pi
 import Mathlib.Topology.UniformSpace.Real
 import Definitions.Def_MIPRE_Foundations_Games
 import Definitions.Def_MIPRE_Background_Repetition_Direct
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part01
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part02
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part03
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part04
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part05
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part06
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part07
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part08
+import Definitions.Def_quantum_parallel_repetition_game
 import Definitions.Def_MIPRE_Foundations_Dilation
+import Theorems.Thm_QuantumParallelRepetition_Strategy_winProbability_le_one
+import Theorems.Thm_QuantumParallelRepetition_Strategy_winProbability_nonneg
+import Theorems.Thm_QuantumParallelRepetition_distributionUniformExponential
+import Theorems.Thm_QuantumParallelRepetition_entangledValue_nonneg
+import Theorems.Thm_QuantumParallelRepetition_winProbabilities_bddAbove
 
 /-!
 # Direct parallel repetition for entangled strategies
@@ -543,12 +541,12 @@ noncomputable def ofTensorProductStrategy {G : Game X Y A B}
         rw [Matrix.trace_vecMulVec, dotProduct_comm]
         exact S.ψ_unit }
   aliceMeasurement x :=
-    { effect := S.PA.M x
+    { operator := S.PA.M x
       positive := fun a =>
         posSemidef_of_selfAdjoint_idem (S.PA.selfAdjoint x a) (S.PA.projective x a)
       complete := S.PA.normalized x }
   bobMeasurement y :=
-    { effect := S.PB.M y
+    { operator := S.PB.M y
       positive := fun b =>
         posSemidef_of_selfAdjoint_idem (S.PB.selfAdjoint y b) (S.PB.projective y b)
       complete := S.PB.normalized y }

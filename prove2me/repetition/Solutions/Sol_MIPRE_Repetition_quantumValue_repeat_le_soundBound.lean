@@ -466,14 +466,7 @@ import Mathlib.Topology.UniformSpace.Pi
 import Mathlib.Topology.UniformSpace.Real
 import Definitions.Def_MIPRE_Foundations_Games
 import Definitions.Def_MIPRE_Background_Repetition_Direct
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part01
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part02
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part03
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part04
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part05
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part06
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part07
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part08
+import Definitions.Def_quantum_parallel_repetition_game
 import Definitions.Def_MIPRE_Foundations_Dilation
 import Definitions.Def_MIPRE_Background_Repetition_Entangled
 import Definitions.Def_MIPRE_Foundations_CL_Register
@@ -493,30 +486,11 @@ import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition
 import Definitions.Def_MIPRE_Background_Repetition_Soundness
 import Theorems.Thm_MIPRE_Repetition_ofTensorProductStrategy_winProbability
 import Theorems.Thm_MIPRE_Repetition_quantumValue_repeat_le
+import Theorems.Thm_QuantumParallelRepetition_Strategy_winProbability_nonneg
 
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
-
-namespace QuantumParallelRepetition.Strategy
-section
-open scoped BigOperators ComplexOrder Kronecker MatrixOrder
-open Matrix
-set_option autoImplicit true
-variable {X Y A B : Type*}
-variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
-variable {G : Game X Y A B}
-attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
-theorem winProbability_nonneg (S : Strategy G) : 0 ≤ S.winProbability := by
-  unfold winProbability
-  refine Finset.sum_nonneg fun x _ => Finset.sum_nonneg fun y _ => ?_
-  apply mul_nonneg (G.weight_nonneg x y)
-  exact Finset.sum_nonneg fun a _ => Finset.sum_nonneg fun b _ => by
-    split <;> simp [S.outcomeProbability_nonneg]
-end
-end QuantumParallelRepetition.Strategy
-
 namespace MIPRE.Repetition
 section
 open Matrix

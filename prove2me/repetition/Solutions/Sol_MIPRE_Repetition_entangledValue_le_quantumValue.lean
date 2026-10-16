@@ -459,44 +459,18 @@ import Mathlib.Topology.UniformSpace.Pi
 import Mathlib.Topology.UniformSpace.Real
 import Definitions.Def_MIPRE_Foundations_Games
 import Definitions.Def_MIPRE_Background_Repetition_Direct
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part01
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part02
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part03
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part04
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part05
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part06
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part07
-import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part08
+import Definitions.Def_quantum_parallel_repetition_game
 import Definitions.Def_MIPRE_Foundations_Dilation
 import Definitions.Def_MIPRE_Background_Repetition_Entangled
 import Theorems.Thm_MIPRE_Repetition_exists_purification_bipartite
 import Theorems.Thm_MIPRE_Repetition_ofTensorProductStrategy_winProbability
 import Theorems.Thm_MIPRE_Repetition_projective_value_le_quantumValue
 import Theorems.Thm_MIPRE_exists_projective_dilation
+import Theorems.Thm_QuantumParallelRepetition_Strategy_winProbability_nonneg
 
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
-
-namespace QuantumParallelRepetition.Strategy
-section
-open scoped BigOperators ComplexOrder Kronecker MatrixOrder
-open Matrix
-set_option autoImplicit true
-variable {X Y A B : Type*}
-variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
-variable {G : Game X Y A B}
-attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
-theorem winProbability_nonneg (S : Strategy G) : 0 ≤ S.winProbability := by
-  unfold winProbability
-  refine Finset.sum_nonneg fun x _ => Finset.sum_nonneg fun y _ => ?_
-  apply mul_nonneg (G.weight_nonneg x y)
-  exact Finset.sum_nonneg fun a _ => Finset.sum_nonneg fun b _ => by
-    split <;> simp [S.outcomeProbability_nonneg]
-end
-end QuantumParallelRepetition.Strategy
-
 namespace MIPRE
 section
 open Matrix
@@ -608,15 +582,15 @@ theorem _root_.solution (G : Game X Y A B) :
     exists_purification_bipartite S.state.positive S.state.trace_one
   -- Bob's POVMs, acting on his enlarged space `Bob × R`
   have hFpos : ∀ (y : Y) (b : B),
-      (((S.bobMeasurement y).effect b) ⊗ₖ
+      (((S.bobMeasurement y).operator b) ⊗ₖ
         (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ)).PosSemidef :=
     fun y b => ((S.bobMeasurement y).positive b).kronecker Matrix.PosSemidef.one
-  have hFsum : ∀ y : Y, ∑ b : B, ((S.bobMeasurement y).effect b ⊗ₖ
+  have hFsum : ∀ y : Y, ∑ b : B, ((S.bobMeasurement y).operator b ⊗ₖ
       (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ)) = 1 := by
     intro y
-    have h : ∑ b : B, ((S.bobMeasurement y).effect b ⊗ₖ
+    have h : ∑ b : B, ((S.bobMeasurement y).operator b ⊗ₖ
           (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ))
-        = (∑ b : B, (S.bobMeasurement y).effect b) ⊗ₖ
+        = (∑ b : B, (S.bobMeasurement y).operator b) ⊗ₖ
           (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ) := by
       ext p q
       simp [Matrix.sum_apply, Matrix.kroneckerMap_apply, Finset.sum_mul]
@@ -647,13 +621,13 @@ theorem _root_.solution (G : Game X Y A B) :
   have hborn2 : ∀ (x : X) (y : Y) (a : A) (b : B),
       star ψ₂ ⬝ᵥ ((PA x a ⊗ₖ PB y b) *ᵥ ψ₂)
         = Matrix.trace (S.state.matrix *
-            ((S.aliceMeasurement x).effect a ⊗ₖ (S.bobMeasurement y).effect b)) := by
+            ((S.aliceMeasurement x).operator a ⊗ₖ (S.bobMeasurement y).operator b)) := by
     intro x y a b
     rw [hψ₂, dotProduct_mulVec_conj]
     have hc : (ancillaEmbed S.Alice a₀ ⊗ₖ ancillaEmbed (S.Bob × (S.Alice × S.Bob)) b₀)ᴴ *
           ((PA x a ⊗ₖ PB y b) *
             (ancillaEmbed S.Alice a₀ ⊗ₖ ancillaEmbed (S.Bob × (S.Alice × S.Bob)) b₀))
-        = (S.aliceMeasurement x).effect a ⊗ₖ ((S.bobMeasurement y).effect b ⊗ₖ
+        = (S.aliceMeasurement x).operator a ⊗ₖ ((S.bobMeasurement y).operator b ⊗ₖ
             (1 : Matrix (S.Alice × S.Bob) (S.Alice × S.Bob) ℂ)) := by
       rw [Matrix.conjTranspose_kronecker, ← Matrix.mul_kronecker_mul, ← Matrix.mul_kronecker_mul,
         hPAcomp, hPBcomp]
