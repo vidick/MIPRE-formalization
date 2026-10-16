@@ -1,0 +1,573 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.stepProg_inv",
+  "source_name": "MIPRE.Cost.Prog.stepProg_inv",
+  "formal_statement": "theorem MIPRE.Cost.Prog.stepProg_inv {univ : Prog} (hU : univ.WellScoped 1) (inp : Data) {out : Data} {t : ℕ}\n    (h : Eval [inp] (stepProg univ) out t) :\n    ∃ p t₀, Eval [inp] preProg p t₀ ∧\n      ((p = .nil ∧ out = .cons .nil .nil) ∨\n        ∃ q st' r, p = .cons q st' ∧ (∃ tr, Eval [q] univ r tr) ∧ out = stepResult st' r) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**Inversion of the step.** A run of `stepProg` is a run of `preProg`, then, when it returns a\nquery, a run of `univ` on it deciding the result.",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L507-L561",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "lines": [
+   507,
+   561
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 48,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coordBody_stop",
+  "source_name": "MIPRE.Cost.Prog.coordBody_stop",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coordBody_stop (univ : Prog) (remX remY remA remB : List Data) (ctx : Data) :\n    ∃ t ≤ (list remX).size + (list remY).size + (list remA).size + (list remB).size + ctx.size + 24,\n      Eval [decState (ofNat 0) remX remY remA remB ctx] (coordBody univ)\n        (.cons .nil (ofBool (decide (remA = [] ∧ remB = [])))) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L578-L594",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "lines": [
+   578,
+   594
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.finalProg_runs"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coordBody_step",
+  "source_name": "MIPRE.Cost.Prog.coordBody_step",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coordBody_step {univ : Prog} (hU : univ.WellScoped 1) (k : ℕ)\n    (remX remY remA remB : List Data) (ctx : Data)\n    {out : Data} {t : ℕ}\n    (h : Eval [decState (ofNat k) remX remY remA remB ctx] (stepProg univ) out t) :\n    Eval [decState (ofNat (k + 1)) remX remY remA remB ctx] (coordBody univ) out\n      (t + 2 * (decState (ofNat k) remX remY remA remB ctx).size + 7) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L596-L613",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "lines": [
+   596,
+   613
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coordBody_inv",
+  "source_name": "MIPRE.Cost.Prog.coordBody_inv",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coordBody_inv {univ : Prog} (hU : univ.WellScoped 1) (k : ℕ)\n    (remX remY remA remB : List Data) (ctx : Data) {out : Data} {t : ℕ}\n    (h : Eval [decState (ofNat k) remX remY remA remB ctx] (coordBody univ) out t) :\n    (k = 0 ∧ out = .cons .nil (ofBool (decide (remA = [] ∧ remB = [])))) ∨\n      ∃ k', k = k' + 1 ∧\n        ∃ t', Eval [decState (ofNat k') remX remY remA remB ctx] (stepProg univ) out t' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**Inversion of the body.** On the exhausted counter, the body stops with the verdict of\n`finalProg`; otherwise it is a run of the step on the decremented state.",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L615-L647",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "lines": [
+   615,
+   647
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.Prog.coordBody_stop"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coordLoop_of_acc",
+  "source_name": "MIPRE.Cost.Prog.coordLoop_of_acc",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coordLoop_of_acc {univ : Prog} (hU : univ.WellScoped 1) (dD nD : Data) (s B : ℕ) :\n    ∀ (k : ℕ) (remX remY remA remB : List Data) (env : Env),\n      DecAcc univ dD nD s B k remX remY remA remB →\n      ∃ t, Eval (decState (ofNat k) remX remY remA remB (decCtx dD nD s B) :: env)\n        (.loop (coordBody univ)) (.cons .nil .nil) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**The loop accepts on `DecAcc`.**",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L665-L689",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "lines": [
+   665,
+   689
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.preProg_runs",
+   "MIPRE.Cost.Prog.stepProg_runs_call",
+   "MIPRE.Cost.Prog.coordBody_stop",
+   "MIPRE.Cost.Prog.coordBody_step"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coordLoop_inv",
+  "source_name": "MIPRE.Cost.Prog.coordLoop_inv",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coordLoop_inv {univ : Prog} (hU : univ.WellScoped 1) (dD nD : Data) (s B : ℕ) :\n    ∀ (k : ℕ) (remX remY remA remB : List Data) (env : Env) {t : ℕ},\n      Eval (decState (ofNat k) remX remY remA remB (decCtx dD nD s B) :: env)\n        (.loop (coordBody univ)) (.cons .nil .nil) t →\n      DecAcc univ dD nD s B k remX remY remA remB := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**The loop accepts only on `DecAcc`.**",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L691-L759",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "lines": [
+   691,
+   759
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.Eval.of_append_of_wellScoped",
+   "MIPRE.Cost.Prog.preProg_runs_nilB",
+   "MIPRE.Cost.Prog.preProg_runs",
+   "MIPRE.Cost.Prog.stepProg_inv",
+   "MIPRE.Cost.Prog.coordBody_inv"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coordLoop_runs_bounded",
+  "source_name": "MIPRE.Cost.Prog.coordLoop_runs_bounded",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coordLoop_runs_bounded {univ : Prog} (hU : univ.WellScoped 1) (dD nD : Data) (s B : ℕ)\n    (fq : Data → Data) (Tu Z : ℕ) :\n    ∀ (k : ℕ) (remX remY remA remB : List Data) (env : Env),\n      (∀ q ∈ decQueries dD nD s k remX remY remA remB, ∃ t ≤ Tu, Eval [q] univ (fq q) t) →\n      s + B + (list remX).size + (list remY).size + (list remA).size + (list remB).size +\n        (decCtx dD nD s B).size + (ofNat k).size + 10 ≤ Z →\n      ∃ r t, t ≤ (k + 1) * coordIter Z Tu ∧\n        Eval (decState (ofNat k) remX remY remA remB (decCtx dD nD s B) :: env)\n          (.loop (coordBody univ)) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**The loop halts within `(k + 1) · coordIter Z Tu`** when `univ` answers every potential\nquery within `Tu` and the sizes in play are bounded by `Z`.",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L792-L891",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "lines": [
+   792,
+   891
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.preProg_runs_nilB",
+   "MIPRE.Cost.Prog.preProg_runs",
+   "MIPRE.Cost.Prog.stepProg_runs_call",
+   "MIPRE.Cost.Prog.coordBody_stop",
+   "MIPRE.Cost.Prog.coordBody_step",
+   "MIPRE.Cost.Prog.pairTakeCost_le"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 89,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.bitsProg_runs",
+  "source_name": "MIPRE.Cost.Prog.bitsProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.bitsProg_runs (l : List Data) :\n    ∃ t ≤ (l.length + 2) * ((list l).size + 2 * l.length + 15) + (l.length + 2) * (4 * l.length + 20),\n      bitsProg.Runs (list l) (encode (bitsOf l)) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The sanitizer computes `encode (bitsOf l)` on `list l`.",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean#L110-L142",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "lines": [
+   110,
+   142
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.prepProg_prefix",
+  "source_name": "MIPRE.Cost.Prog.prepProg_prefix",
+  "formal_statement": "theorem MIPRE.Cost.Prog.prepProg_prefix {univ : Prog} (hU : univ.WellScoped 1) (sP dP : Data)\n    (lam tau beta n s : ℕ) (xD yD aD bD : Data) {td : ℕ}\n    (hdim : Eval [Data.cons sP (.cons (encode n) (encode CL.Sampler.Query.dimension))] univ (encode s) td)\n    {r : Data} {t : ℕ}\n    (hc : Eval (prepEnv univ sP dP lam tau beta n s xD yD aD bD) (.let_ (andExpr 11 8 4 0) (.let_ (.cons (.var 49) (.cons (.var 41) (.cons (.var 32) (.var 19)))) (.elim 1 .nil (.cons (.var 27) (.cons (.var 21) (.cons (.var 20) (.cons (.var 11) (.cons (.var 7) (.var 2))))))))) r t) :\n    ∃ t' ≤ t + prepPreCost sP dP lam tau beta n s xD yD aD bD td,\n      Eval [decInput sP dP (encode lam) (encode tau) (encode beta) (encode n) xD yD aD bD] (prepProg univ) r t' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean#L227-L313",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "lines": [
+   227,
+   313
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.parseProg_runs",
+   "MIPRE.Cost.Data.encode_nat_eq_list",
+   "MIPRE.Cost.Prog.bitsProg_runs",
+   "MIPRE.Cost.Prog.powLoop_runs",
+   "MIPRE.Cost.Prog.dblLoop_runs"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 80,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.prepProg_runs",
+  "source_name": "MIPRE.Cost.Prog.prepProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.prepProg_runs {univ : Prog} (hU : univ.WellScoped 1) (sP dP : Data)\n    (lam tau beta n s : ℕ) (xD yD aD bD : Data) {td : ℕ}\n    (hdim : Eval [Data.cons sP (.cons (encode n) (encode CL.Sampler.Query.dimension))] univ\n      (encode s) td) :\n    ∃ t ≤ prepCost sP dP lam tau beta n s xD yD aD bD td,\n      Eval [decInput sP dP (encode lam) (encode tau) (encode beta) (encode n) xD yD aD bD]\n        (prepProg univ)\n        (prepResult dP lam tau beta n s (bitsOf (toList xD)) (bitsOf (toList yD))\n          (bitsOf (toList aD)) (bitsOf (toList bD))) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**`prepProg` computes `prepResult`**, on every input of the right shape.",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean#L349-L415",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "lines": [
+   349,
+   415
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Data.size_sum_stackStep_le",
+   "MIPRE.Cost.Prog.prepProg_prefix"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 57,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.decMain_inv",
+  "source_name": "MIPRE.Cost.Prog.decMain_inv",
+  "formal_statement": "theorem MIPRE.Cost.Prog.decMain_inv {univ : Prog} (hU : univ.WellScoped 1) (inp : Data) {out : Data} {t : ℕ}\n    (h : Eval [inp] (decMain univ) out t) :\n    ∃ p t₀, Eval [inp] (prepProg univ) p t₀ ∧\n      ((p = .nil ∧ out = .nil) ∨\n        ∃ st₀ st₁, p = .cons st₀ st₁ ∧ ∃ t₁, Eval [Data.cons st₀ st₁] (.loop (coordBody univ)) out t₁) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**Inversion of the main program.**",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean#L456-L477",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "lines": [
+   456,
+   477
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 8,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.repDecCore_wellScoped",
+  "source_name": "MIPRE.Cost.Prog.repDecCore_wellScoped",
+  "formal_statement": "theorem MIPRE.Cost.Prog.repDecCore_wellScoped {univ : Prog} (hU : univ.WellScoped 1) :\n    (repDecCore univ).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean#L492-L498",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "lines": [
+   492,
+   498
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 16,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.repDecCore_runs",
+  "source_name": "MIPRE.Cost.Prog.repDecCore_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.repDecCore_runs {univ : Prog} (hU : univ.WellScoped 1) (sP dP lamD tauD betaD nD xD yD aD bD : Data)\n    {r : Data} {t : ℕ}\n    (h : Eval [decInput sP dP lamD tauD betaD nD xD yD aD bD] (decMain univ) r t) :\n    Eval [Data.cons (decParams sP dP lamD tauD betaD) (.cons nD (.cons xD (.cons yD (.cons aD bD))))]\n      (repDecCore univ) r\n      (t + 2 * (sP.size + dP.size + lamD.size + tauD.size + betaD.size + nD.size + xD.size +\n        yD.size + aD.size + bD.size) + 40) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean#L507-L542",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "lines": [
+   507,
+   542
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 16,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.repDecCore_inv",
+  "source_name": "MIPRE.Cost.Prog.repDecCore_inv",
+  "formal_statement": "theorem MIPRE.Cost.Prog.repDecCore_inv {univ : Prog} (hU : univ.WellScoped 1) (sP dP lamD tauD betaD nD xD yD aD bD : Data)\n    {r : Data} {t : ℕ}\n    (h : Eval [Data.cons (decParams sP dP lamD tauD betaD) (.cons nD (.cons xD (.cons yD (.cons aD bD))))]\n      (repDecCore univ) r t) :\n    ∃ t', Eval [decInput sP dP lamD tauD betaD nD xD yD aD bD] (decMain univ) r t' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "**Inversion of the core** on an input of the right shape.",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean#L544-L610",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "lines": [
+   544,
+   610
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.repDecCore_runs_malformed",
+  "source_name": "MIPRE.Cost.Prog.repDecCore_runs_malformed",
+  "formal_statement": "theorem MIPRE.Cost.Prog.repDecCore_runs_malformed (univ : Prog) (sP dP lamD tauD betaD nD d : Data)\n    (hd : d = .nil ∨ (∃ xD, d = .cons xD .nil) ∨ ∃ xD yD, d = .cons xD (.cons yD .nil)) :\n    ∃ t ≤ 10, Eval [Data.cons (decParams sP dP lamD tauD betaD) (.cons nD d)] (repDecCore univ) .nil t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The core on a malformed `(n, d)`: `nil`.",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean#L612-L636",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "lines": [
+   612,
+   636
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.mem_decQueries",
+  "source_name": "MIPRE.Repeat.mem_decQueries",
+  "formal_statement": "theorem MIPRE.Repeat.mem_decQueries {dD nD : Data} {s : ℕ} :\n    ∀ (k : ℕ) (remX remY remA remB : List Data) (q : Data),\n      q ∈ decQueries dD nD s k remX remY remA remB →\n      ∃ xi yi ai bi, q = decQuery dD nD xi yi ai bi ∧ xi.size ≤ (list remX).size ∧\n        yi.size ≤ (list remY).size ∧ ai.size ≤ (list remA).size ∧ bi.size ≤ (list remB).size := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL"
+  ],
+  "docstring": "Every query of the loop has the shape `(D̄, (n, xᵢ, yᵢ, aᵢ, bᵢ))` with each component no\nlarger than the list it is cut from.",
+  "module": "MIPRE.Foundations.Repeat.DeciderCost",
+  "module_doc": "/-!\n# The running time of the repeated decider\n\n`repDecider_timeBound`: when the input sampler and decider run within `R.S (|d| + 1)^{R.k}`\nand `R.D (|d| + 1)^{R.k}` at index `n`, the repeated decider on `(λ, τ, β)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything and\n`W` any number dominating the parameters (`DecDom`). The cost is the explicit one of\n`prepProg_runs` and `coordLoop_runs_bounded`, dominated piece by piece as in\n`SamplerCost.lean`; the one point of care is that the sanitized inputs of the loop are no larger\nthan the raw ones (`size_encode_bitsOf_le`, `size_parse_bitsOf_le`), so that the input decider\nis called on data of size below `|d|` and its bound needs no factor `c^{R.k}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DeciderCost.lean#L69-L91",
+  "source_path": "MIPRE/Foundations/Repeat/DeciderCost.lean",
+  "lines": [
+   69,
+   91
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.dom_prepCost",
+  "source_name": "MIPRE.Repeat.dom_prepCost",
+  "formal_statement": "theorem MIPRE.Repeat.dom_prepCost (cd md ed : ℕ) : ∃ c m e, ∀ (W X K : ℕ) {sP dP : Data}\n    {lam tau beta n s : ℕ} {xD yD aD bD : Data} {td : ℕ}, 1 ≤ X → 1 ≤ W →\n    Dom W X K cd md ed td → sP.size ≤ W → dP.size ≤ W → lam ≤ W → tau ≤ W → beta ≤ W → n ≤ W →\n    s ≤ W → 2 ^ (tau * (Nat.size lam + Nat.size n)) ≤ W →\n    2 ^ (beta * (Nat.size lam + Nat.size n)) ≤ W → xD.size + yD.size + aD.size + bD.size + 3 ≤ X →\n    Dom W X K c m e (prepCost sP dP lam tau beta n s xD yD aD bD td) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL",
+   "variable {W X K : ℕ}"
+  ],
+  "docstring": "The cost of the preparation, `prepCost`, dominated.",
+  "module": "MIPRE.Foundations.Repeat.DeciderCost",
+  "module_doc": "/-!\n# The running time of the repeated decider\n\n`repDecider_timeBound`: when the input sampler and decider run within `R.S (|d| + 1)^{R.k}`\nand `R.D (|d| + 1)^{R.k}` at index `n`, the repeated decider on `(λ, τ, β)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything and\n`W` any number dominating the parameters (`DecDom`). The cost is the explicit one of\n`prepProg_runs` and `coordLoop_runs_bounded`, dominated piece by piece as in\n`SamplerCost.lean`; the one point of care is that the sanitized inputs of the loop are no larger\nthan the raw ones (`size_encode_bitsOf_le`, `size_parse_bitsOf_le`), so that the input decider\nis called on data of size below `|d|` and its bound needs no factor `c^{R.k}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DeciderCost.lean#L159-L260",
+  "source_path": "MIPRE/Foundations/Repeat/DeciderCost.lean",
+  "lines": [
+   159,
+   260
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Data.size_sum_stackStep_le",
+   "MIPRE.Cost.Data.length_le_size_list'"
+  ],
+  "pasted_helpers": 28,
+  "prooflines": 95,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.loop_calls_time",
+  "source_name": "MIPRE.Repeat.loop_calls_time",
+  "formal_statement": "theorem MIPRE.Repeat.loop_calls_time (D : Decider) (n : ℕ) (R : Budget) (hD : D.TimeBoundAt n R.D R.k)\n    (s k : ℕ) (remX remY remA remB : List Data) :\n    ∃ fq : Data → Data, ∀ q ∈ decQueries (encode D.prog) (encode n) s k remX remY remA remB,\n      ∃ t ≤ selfUniversal.bound.eval (esize D.prog +\n        (esize n + ((list remX).size + (list remY).size + (list remA).size + (list remB).size + 3)\n          + 1) +\n        R.D * ((list remX).size + (list remY).size + (list remA).size + (list remB).size + 3 + 1)\n          ^ R.k),\n        Eval [q] selfUniversal.univ (fq q) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL"
+  ],
+  "docstring": "The calls of the coordinate loop to the input decider, through the universal machine,\nwithin a uniform bound: `M` bounds the size of the data each is called on.",
+  "module": "MIPRE.Foundations.Repeat.DeciderCost",
+  "module_doc": "/-!\n# The running time of the repeated decider\n\n`repDecider_timeBound`: when the input sampler and decider run within `R.S (|d| + 1)^{R.k}`\nand `R.D (|d| + 1)^{R.k}` at index `n`, the repeated decider on `(λ, τ, β)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything and\n`W` any number dominating the parameters (`DecDom`). The cost is the explicit one of\n`prepProg_runs` and `coordLoop_runs_bounded`, dominated piece by piece as in\n`SamplerCost.lean`; the one point of care is that the sanitized inputs of the loop are no larger\nthan the raw ones (`size_encode_bitsOf_le`, `size_parse_bitsOf_le`), so that the input decider\nis called on data of size below `|d|` and its bound needs no factor `c^{R.k}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DeciderCost.lean#L275-L310",
+  "source_path": "MIPRE/Foundations/Repeat/DeciderCost.lean",
+  "lines": [
+   275,
+   310
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Repeat.mem_decQueries"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.decMalformed_time",
+  "source_name": "MIPRE.Repeat.decMalformed_time",
+  "formal_statement": "theorem MIPRE.Repeat.decMalformed_time : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (D : Decider)\n    (lam tau beta n : ℕ) (R : Budget) (W : ℕ) (d : Data), DecDom S D lam tau beta n R W →\n    (d = .nil ∨ (∃ xD, d = .cons xD .nil) ∨ ∃ xD yD, d = .cons xD (.cons yD .nil)) →\n    ∃ r t, t ≤ c * (W + 1) ^ m * (d.size + 1) ^ (e * (R.k + 1)) ∧\n      (repDeciderProg S.prog D.prog lam tau beta).Runs (.cons (encode n) d) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL"
+  ],
+  "docstring": "On a malformed input (fewer than three components), the repeated decider rejects at once.",
+  "module": "MIPRE.Foundations.Repeat.DeciderCost",
+  "module_doc": "/-!\n# The running time of the repeated decider\n\n`repDecider_timeBound`: when the input sampler and decider run within `R.S (|d| + 1)^{R.k}`\nand `R.D (|d| + 1)^{R.k}` at index `n`, the repeated decider on `(λ, τ, β)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything and\n`W` any number dominating the parameters (`DecDom`). The cost is the explicit one of\n`prepProg_runs` and `coordLoop_runs_bounded`, dominated piece by piece as in\n`SamplerCost.lean`; the one point of care is that the sanitized inputs of the loop are no larger\nthan the raw ones (`size_encode_bitsOf_le`, `size_parse_bitsOf_le`), so that the input decider\nis called on data of size below `|d|` and its bound needs no factor `c^{R.k}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DeciderCost.lean#L346-L365",
+  "source_path": "MIPRE/Foundations/Repeat/DeciderCost.lean",
+  "lines": [
+   346,
+   365
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.Prog.repDecCore_wellScoped",
+   "MIPRE.Cost.Prog.repDecCore_runs_malformed"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.decWellformed_time",
+  "source_name": "MIPRE.Repeat.decWellformed_time",
+  "formal_statement": "theorem MIPRE.Repeat.decWellformed_time : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (D : Decider)\n    (lam tau beta n : ℕ) (R : Budget) (W : ℕ) (xD yD aD bD : Data), DecDom S D lam tau beta n R W →\n    S.TimeBoundAt n R.S R.k → D.TimeBoundAt n R.D R.k →\n    ∃ r t, t ≤ c * (W + 1) ^ m *\n        ((Data.cons xD (.cons yD (.cons aD bD))).size + 1) ^ (e * (R.k + 1)) ∧\n      (repDeciderProg S.prog D.prog lam tau beta).Runs\n        (.cons (encode n) (.cons xD (.cons yD (.cons aD bD)))) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL"
+  ],
+  "docstring": "On a well-formed input `(x, y, a, b)` (any four data), the repeated decider halts within\na dominated time.",
+  "module": "MIPRE.Foundations.Repeat.DeciderCost",
+  "module_doc": "/-!\n# The running time of the repeated decider\n\n`repDecider_timeBound`: when the input sampler and decider run within `R.S (|d| + 1)^{R.k}`\nand `R.D (|d| + 1)^{R.k}` at index `n`, the repeated decider on `(λ, τ, β)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything and\n`W` any number dominating the parameters (`DecDom`). The cost is the explicit one of\n`prepProg_runs` and `coordLoop_runs_bounded`, dominated piece by piece as in\n`SamplerCost.lean`; the one point of care is that the sanitized inputs of the loop are no larger\nthan the raw ones (`size_encode_bitsOf_le`, `size_parse_bitsOf_le`), so that the input decider\nis called on data of size below `|d|` and its bound needs no factor `c^{R.k}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DeciderCost.lean#L367-L488",
+  "source_path": "MIPRE/Foundations/Repeat/DeciderCost.lean",
+  "lines": [
+   367,
+   488
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.Data.size_sum_stackStep_le",
+   "MIPRE.Cost.Prog.coordLoop_runs_bounded",
+   "MIPRE.Cost.Prog.prepProg_runs",
+   "MIPRE.Cost.Prog.repDecCore_wellScoped",
+   "MIPRE.Cost.Prog.repDecCore_runs",
+   "MIPRE.Repeat.loop_calls_time",
+   "MIPRE.Repeat.dom_prepCost",
+   "MIPRE.Cost.Data.length_le_size_list'"
+  ],
+  "pasted_helpers": 41,
+  "prooflines": 113,
+  "is_target": false
+ }
+]

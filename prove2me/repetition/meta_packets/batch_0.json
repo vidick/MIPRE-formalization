@@ -1,0 +1,592 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repetition.ofTensorProductStrategy_winProbability",
+  "source_name": "MIPRE.Repetition.ofTensorProductStrategy_winProbability",
+  "formal_statement": "theorem MIPRE.Repetition.ofTensorProductStrategy_winProbability {G : Game X Y A B}\n    (S : TensorProductStrategy G) :\n    (ofTensorProductStrategy S).winProbability = S.value := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repetition",
+   "open Matrix",
+   "open scoped ComplexOrder Kronecker MatrixOrder",
+   "variable {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "The embedding preserves the value.",
+  "module": "MIPRE.Background.Repetition.Entangled",
+  "module_doc": "/-!\n# Direct parallel repetition for entangled strategies\n\nThe uniform exponential parallel repetition theorem for finite-dimensional tensor-product\nstrategies (blueprint `thm:direct-repetition-q`), in the vocabulary of this repository,\ntransferred from the vendored module `MIPRE/Background/Repetition/TenProofs/`\n(OpenAI, *Ten advances in mathematics and theoretical computer science*, 2026,\nChapter 6): there is a universal `c > 0` such that for every game `G` with nonempty answer\nalphabets and `ε = 1 - val*(G) > 0`, and every `n ≥ 1`,\n`val*(G^{⊗n}) ≤ exp(-c·n·ε¹³/(ε + log(|A||B|)))`.\n\nA game of this repository is literally a game of the vendored module (same question\nweights, same `Bool` predicate), and so is its direct repetition. The values differ in\ntheir strategy classes: `MIPRE.quantumValue` ranges over pure states and projective\nmeasurements on `ℂ^dA ⊗ ℂ^dB`, the vendored `entangledValue` over density matrices and\nPOVMs on arbitrary finite-dimensional spaces. That they agree (purification and Naimark\ndilation) is `quantumValue_eq_entangledValue` (blueprint `lem:povm-value-eq`), the one\nstatement here whose proof is still open.\n\nThe Naimark dilation itself, and the Born-rule transport lemmas that go with it, used to be\nwritten out in this file; they now live in `MIPRE/Foundations/Dilation.lean`. They are generic\nmatrix mathematics that reach none of the vendored trees, and a second consumer appeared\n(blueprint `lem:ms-direct-anticomm`, in `MIPRE/LCS/`, which may not import\n`MIPRE/Background/`) for which being behind this file's 71k-line vendored import made them\nunusable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Entangled.lean#L107-L128",
+  "source_path": "MIPRE/Background/Repetition/Entangled.lean",
+  "lines": [
+   107,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repetition.exists_purification",
+  "source_name": "MIPRE.Repetition.exists_purification",
+  "formal_statement": "theorem MIPRE.Repetition.exists_purification {d : Type} [Fintype d] [DecidableEq d]\n    {ρ : Matrix d d ℂ} (hρ : ρ.PosSemidef) (htr : Matrix.trace ρ = 1) :\n    ∃ ψ : d × d → ℂ, star ψ ⬝ᵥ ψ = 1 ∧\n      ∀ M : Matrix d d ℂ,\n        star ψ ⬝ᵥ ((M ⊗ₖ (1 : Matrix d d ℂ)) *ᵥ ψ) = Matrix.trace (ρ * M) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repetition",
+   "open Matrix",
+   "open scoped ComplexOrder Kronecker MatrixOrder",
+   "variable {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "**Purification**, the first of the two inputs to the dilation direction. A density\nmatrix `ρ` on `d` is the reduced state of a unit vector on `d × d`: factoring `ρ = K * Kᴴ`,\nthe vector `ψ (i, r) = K i r` satisfies `⟨ψ| M ⊗ 1 |ψ⟩ = tr(ρ M)` for every `M`, the second\nfactor being the reference system. Neither a matrix square root nor the spectral theorem is\nneeded, only the factorization of a positive semidefinite matrix. (General-purpose: it\nbelongs in `MIPRE/Mathlib/` once the dilation direction lands.)",
+  "module": "MIPRE.Background.Repetition.Entangled",
+  "module_doc": "/-!\n# Direct parallel repetition for entangled strategies\n\nThe uniform exponential parallel repetition theorem for finite-dimensional tensor-product\nstrategies (blueprint `thm:direct-repetition-q`), in the vocabulary of this repository,\ntransferred from the vendored module `MIPRE/Background/Repetition/TenProofs/`\n(OpenAI, *Ten advances in mathematics and theoretical computer science*, 2026,\nChapter 6): there is a universal `c > 0` such that for every game `G` with nonempty answer\nalphabets and `ε = 1 - val*(G) > 0`, and every `n ≥ 1`,\n`val*(G^{⊗n}) ≤ exp(-c·n·ε¹³/(ε + log(|A||B|)))`.\n\nA game of this repository is literally a game of the vendored module (same question\nweights, same `Bool` predicate), and so is its direct repetition. The values differ in\ntheir strategy classes: `MIPRE.quantumValue` ranges over pure states and projective\nmeasurements on `ℂ^dA ⊗ ℂ^dB`, the vendored `entangledValue` over density matrices and\nPOVMs on arbitrary finite-dimensional spaces. That they agree (purification and Naimark\ndilation) is `quantumValue_eq_entangledValue` (blueprint `lem:povm-value-eq`), the one\nstatement here whose proof is still open.\n\nThe Naimark dilation itself, and the Born-rule transport lemmas that go with it, used to be\nwritten out in this file; they now live in `MIPRE/Foundations/Dilation.lean`. They are generic\nmatrix mathematics that reach none of the vendored trees, and a second consumer appeared\n(blueprint `lem:ms-direct-anticomm`, in `MIPRE/LCS/`, which may not import\n`MIPRE/Background/`) for which being behind this file's 71k-line vendored import made them\nunusable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Entangled.lean#L164-L195",
+  "source_path": "MIPRE/Background/Repetition/Entangled.lean",
+  "lines": [
+   164,
+   195
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repetition.projective_value_le_quantumValue",
+  "source_name": "MIPRE.Repetition.projective_value_le_quantumValue",
+  "formal_statement": "theorem MIPRE.Repetition.projective_value_le_quantumValue {HA HB : Type} [Fintype HA] [DecidableEq HA]\n    [Fintype HB] [DecidableEq HB] {G : Game X Y A B} (ψ : HA × HB → ℂ)\n    (hψ : star ψ ⬝ᵥ ψ = 1)\n    (PA : ProjectiveMeasurement X A (Matrix HA HA ℂ))\n    (PB : ProjectiveMeasurement Y B (Matrix HB HB ℂ)) :\n    ∑ x, ∑ y, ∑ a, ∑ b, G.μ x y * (if G.D x y a b then 1 else 0) *\n        (star ψ ⬝ᵥ ((PA.M x a ⊗ₖ PB.M y b) *ᵥ ψ)).re ≤ quantumValue G := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repetition",
+   "open Matrix",
+   "open scoped ComplexOrder Kronecker MatrixOrder",
+   "variable {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "A pure state together with two projective families on *arbitrary* finite local spaces\nalready bounds `val*(G)` from below: reindexing the two spaces by `Fintype.equivFin` turns\nthem into a `TensorProductStrategy`, and a bijective reindexing changes no outcome\nprobability. This is what lets the dilation steps above work with the natural index types\n(`Alice × A`, `(Bob × R) × B`) and only convert to `Fin d` at the end.",
+  "module": "MIPRE.Background.Repetition.Entangled",
+  "module_doc": "/-!\n# Direct parallel repetition for entangled strategies\n\nThe uniform exponential parallel repetition theorem for finite-dimensional tensor-product\nstrategies (blueprint `thm:direct-repetition-q`), in the vocabulary of this repository,\ntransferred from the vendored module `MIPRE/Background/Repetition/TenProofs/`\n(OpenAI, *Ten advances in mathematics and theoretical computer science*, 2026,\nChapter 6): there is a universal `c > 0` such that for every game `G` with nonempty answer\nalphabets and `ε = 1 - val*(G) > 0`, and every `n ≥ 1`,\n`val*(G^{⊗n}) ≤ exp(-c·n·ε¹³/(ε + log(|A||B|)))`.\n\nA game of this repository is literally a game of the vendored module (same question\nweights, same `Bool` predicate), and so is its direct repetition. The values differ in\ntheir strategy classes: `MIPRE.quantumValue` ranges over pure states and projective\nmeasurements on `ℂ^dA ⊗ ℂ^dB`, the vendored `entangledValue` over density matrices and\nPOVMs on arbitrary finite-dimensional spaces. That they agree (purification and Naimark\ndilation) is `quantumValue_eq_entangledValue` (blueprint `lem:povm-value-eq`), the one\nstatement here whose proof is still open.\n\nThe Naimark dilation itself, and the Born-rule transport lemmas that go with it, used to be\nwritten out in this file; they now live in `MIPRE/Foundations/Dilation.lean`. They are generic\nmatrix mathematics that reach none of the vendored trees, and a second consumer appeared\n(blueprint `lem:ms-direct-anticomm`, in `MIPRE/LCS/`, which may not import\n`MIPRE/Background/`) for which being behind this file's 71k-line vendored import made them\nunusable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Entangled.lean#L199-L273",
+  "source_path": "MIPRE/Background/Repetition/Entangled.lean",
+  "lines": [
+   199,
+   273
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Repetition.ofTensorProductStrategy_winProbability",
+   "QuantumParallelRepetition.Strategy.winProbability_le_one"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repetition.exists_purification_bipartite",
+  "source_name": "MIPRE.Repetition.exists_purification_bipartite",
+  "formal_statement": "theorem MIPRE.Repetition.exists_purification_bipartite {dA dB : Type} [Fintype dA] [DecidableEq dA]\n    [Fintype dB] [DecidableEq dB] {ρ : Matrix (dA × dB) (dA × dB) ℂ} (hρ : ρ.PosSemidef)\n    (htr : Matrix.trace ρ = 1) :\n    ∃ ψ : dA × (dB × (dA × dB)) → ℂ, star ψ ⬝ᵥ ψ = 1 ∧\n      ∀ (E : Matrix dA dA ℂ) (F : Matrix dB dB ℂ),\n        star ψ ⬝ᵥ ((E ⊗ₖ (F ⊗ₖ (1 : Matrix (dA × dB) (dA × dB) ℂ))) *ᵥ ψ)\n          = Matrix.trace (ρ * (E ⊗ₖ F)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repetition",
+   "open Matrix",
+   "open scoped ComplexOrder Kronecker MatrixOrder",
+   "variable {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "Purification with the reference system placed on Bob's side. A density matrix `ρ` on\n`dA × dB` is the reduced state of a pure state on `dA × (dB × R)` with `R = dA × dB`, against\nwhich Alice's operators act as `E ⊗ 1` and Bob's as `F ⊗ 1_R`; so the purification keeps the\nbipartite structure, at the cost of enlarging Bob's space.",
+  "module": "MIPRE.Background.Repetition.Entangled",
+  "module_doc": "/-!\n# Direct parallel repetition for entangled strategies\n\nThe uniform exponential parallel repetition theorem for finite-dimensional tensor-product\nstrategies (blueprint `thm:direct-repetition-q`), in the vocabulary of this repository,\ntransferred from the vendored module `MIPRE/Background/Repetition/TenProofs/`\n(OpenAI, *Ten advances in mathematics and theoretical computer science*, 2026,\nChapter 6): there is a universal `c > 0` such that for every game `G` with nonempty answer\nalphabets and `ε = 1 - val*(G) > 0`, and every `n ≥ 1`,\n`val*(G^{⊗n}) ≤ exp(-c·n·ε¹³/(ε + log(|A||B|)))`.\n\nA game of this repository is literally a game of the vendored module (same question\nweights, same `Bool` predicate), and so is its direct repetition. The values differ in\ntheir strategy classes: `MIPRE.quantumValue` ranges over pure states and projective\nmeasurements on `ℂ^dA ⊗ ℂ^dB`, the vendored `entangledValue` over density matrices and\nPOVMs on arbitrary finite-dimensional spaces. That they agree (purification and Naimark\ndilation) is `quantumValue_eq_entangledValue` (blueprint `lem:povm-value-eq`), the one\nstatement here whose proof is still open.\n\nThe Naimark dilation itself, and the Born-rule transport lemmas that go with it, used to be\nwritten out in this file; they now live in `MIPRE/Foundations/Dilation.lean`. They are generic\nmatrix mathematics that reach none of the vendored trees, and a second consumer appeared\n(blueprint `lem:ms-direct-anticomm`, in `MIPRE/LCS/`, which may not import\n`MIPRE/Background/`) for which being behind this file's 71k-line vendored import made them\nunusable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Entangled.lean#L275-L296",
+  "source_path": "MIPRE/Background/Repetition/Entangled.lean",
+  "lines": [
+   275,
+   296
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Repetition.exists_purification"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repetition.entangledValue_le_quantumValue",
+  "source_name": "MIPRE.Repetition.entangledValue_le_quantumValue",
+  "formal_statement": "theorem MIPRE.Repetition.entangledValue_le_quantumValue (G : Game X Y A B) :\n    QuantumParallelRepetition.entangledValue (toTP G) ≤ quantumValue G := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repetition",
+   "open Matrix",
+   "open scoped ComplexOrder Kronecker MatrixOrder",
+   "variable {X Y A B : Type} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "**The dilation direction of `lem:povm-value-eq`**: mixed states and POVMs do not help.\nGiven a vendored strategy — a density matrix `ρ` on `Alice × Bob` and POVMs `{E^x_a}`,\n`{F^y_b}` — purify `ρ` into a pure state on `Alice × (Bob × R)`, dilate each POVM family to a\nprojective family on one extra register (`exists_projective_dilation`, whose compressing\nisometry is the same for every question), and reindex the two local spaces to `Fin` types\n(`projective_value_le_quantumValue`). No outcome probability changes along the way, so the\nwinning probability is the value of a tensor-product strategy.",
+  "module": "MIPRE.Background.Repetition.Entangled",
+  "module_doc": "/-!\n# Direct parallel repetition for entangled strategies\n\nThe uniform exponential parallel repetition theorem for finite-dimensional tensor-product\nstrategies (blueprint `thm:direct-repetition-q`), in the vocabulary of this repository,\ntransferred from the vendored module `MIPRE/Background/Repetition/TenProofs/`\n(OpenAI, *Ten advances in mathematics and theoretical computer science*, 2026,\nChapter 6): there is a universal `c > 0` such that for every game `G` with nonempty answer\nalphabets and `ε = 1 - val*(G) > 0`, and every `n ≥ 1`,\n`val*(G^{⊗n}) ≤ exp(-c·n·ε¹³/(ε + log(|A||B|)))`.\n\nA game of this repository is literally a game of the vendored module (same question\nweights, same `Bool` predicate), and so is its direct repetition. The values differ in\ntheir strategy classes: `MIPRE.quantumValue` ranges over pure states and projective\nmeasurements on `ℂ^dA ⊗ ℂ^dB`, the vendored `entangledValue` over density matrices and\nPOVMs on arbitrary finite-dimensional spaces. That they agree (purification and Naimark\ndilation) is `quantumValue_eq_entangledValue` (blueprint `lem:povm-value-eq`), the one\nstatement here whose proof is still open.\n\nThe Naimark dilation itself, and the Born-rule transport lemmas that go with it, used to be\nwritten out in this file; they now live in `MIPRE/Foundations/Dilation.lean`. They are generic\nmatrix mathematics that reach none of the vendored trees, and a second consumer appeared\n(blueprint `lem:ms-direct-anticomm`, in `MIPRE/LCS/`, which may not import\n`MIPRE/Background/`) for which being behind this file's 71k-line vendored import made them\nunusable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Entangled.lean#L298-L424",
+  "source_path": "MIPRE/Background/Repetition/Entangled.lean",
+  "lines": [
+   298,
+   424
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Repetition.exists_purification_bipartite",
+   "MIPRE.Repetition.ofTensorProductStrategy_winProbability",
+   "MIPRE.Repetition.projective_value_le_quantumValue",
+   "MIPRE.exists_projective_dilation"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 118,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repetition.quantumValue_repeat_le",
+  "source_name": "MIPRE.Repetition.quantumValue_repeat_le",
+  "formal_statement": "theorem MIPRE.Repetition.quantumValue_repeat_le :\n    ∃ c : ℝ, 0 < c ∧\n      ∀ (X Y A B : Type) [Fintype X] [Fintype Y] [Fintype A] [Fintype B]\n        (G : Game X Y A B), Nonempty A → Nonempty B →\n        0 < 1 - quantumValue G →\n        ∀ n : ℕ, 0 < n →\n          quantumValue (G.repeat n) ≤\n            Real.exp\n              (-(c * ((1 - quantumValue G) ^ 13 /\n                ((1 - quantumValue G) +\n                  Real.log ((Fintype.card A : ℝ) * (Fintype.card B : ℝ)))))\n                * (n : ℝ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repetition",
+   "open Matrix",
+   "open scoped ComplexOrder Kronecker MatrixOrder"
+  ],
+  "docstring": "**Uniform exponential parallel repetition for entangled strategies** (blueprint\n`thm:direct-repetition-q`; OpenAI 2026, Chapter 6, via the vendored root\n`QuantumParallelRepetition.distributionUniformExponential`): there is a universal constant\n`c > 0` such that for every game `G` with nonempty answer alphabets and\n`ε = 1 - val*(G) > 0`, and every `n ≥ 1`,\n`val*(G^{⊗n}) ≤ exp(-c·n·ε¹³/(ε + log(|A||B|)))`.",
+  "module": "MIPRE.Background.Repetition.Entangled",
+  "module_doc": "/-!\n# Direct parallel repetition for entangled strategies\n\nThe uniform exponential parallel repetition theorem for finite-dimensional tensor-product\nstrategies (blueprint `thm:direct-repetition-q`), in the vocabulary of this repository,\ntransferred from the vendored module `MIPRE/Background/Repetition/TenProofs/`\n(OpenAI, *Ten advances in mathematics and theoretical computer science*, 2026,\nChapter 6): there is a universal `c > 0` such that for every game `G` with nonempty answer\nalphabets and `ε = 1 - val*(G) > 0`, and every `n ≥ 1`,\n`val*(G^{⊗n}) ≤ exp(-c·n·ε¹³/(ε + log(|A||B|)))`.\n\nA game of this repository is literally a game of the vendored module (same question\nweights, same `Bool` predicate), and so is its direct repetition. The values differ in\ntheir strategy classes: `MIPRE.quantumValue` ranges over pure states and projective\nmeasurements on `ℂ^dA ⊗ ℂ^dB`, the vendored `entangledValue` over density matrices and\nPOVMs on arbitrary finite-dimensional spaces. That they agree (purification and Naimark\ndilation) is `quantumValue_eq_entangledValue` (blueprint `lem:povm-value-eq`), the one\nstatement here whose proof is still open.\n\nThe Naimark dilation itself, and the Born-rule transport lemmas that go with it, used to be\nwritten out in this file; they now live in `MIPRE/Foundations/Dilation.lean`. They are generic\nmatrix mathematics that reach none of the vendored trees, and a second consumer appeared\n(blueprint `lem:ms-direct-anticomm`, in `MIPRE/LCS/`, which may not import\n`MIPRE/Background/`) for which being behind this file's 71k-line vendored import made them\nunusable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Entangled.lean#L436-L459",
+  "source_path": "MIPRE/Background/Repetition/Entangled.lean",
+  "lines": [
+   436,
+   459
+  ],
+  "blueprint": [
+   {
+    "label": "thm:direct-repetition-q",
+    "env": "theorem",
+    "title": "Direct parallel repetition for entangled strategies",
+    "file": "05_parallel_repetition.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Repetition.entangledValue_le_quantumValue",
+   "MIPRE.Repetition.ofTensorProductStrategy_winProbability",
+   "QuantumParallelRepetition.embezzlementState_norm",
+   "QuantumParallelRepetition.finiteTensorVector_norm_sq",
+   "QuantumParallelRepetition.Strategy.winProbability_le_one",
+   "QuantumParallelRepetition.ePRState_norm",
+   "QuantumParallelRepetition.dSVUniformDensityMixedProtocolLocalAction_norm",
+   "QuantumParallelRepetition.dSVUniformDensityCorrectedMatchedSigmaWeightedResidual_distance_sq",
+   "QuantumParallelRepetition.dSVDensityRationalPhysicalDiagonalBornSuccess_eq",
+   "QuantumParallelRepetition.dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le",
+   "QuantumParallelRepetition.martingaleRate_nonneg",
+   "QuantumParallelRepetition.exactGlobalHistoryLocalIndex_card_pos",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_nonneg",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_sum",
+   "QuantumParallelRepetition.exactSourceStateDistanceBound_of_positive",
+   "QuantumParallelRepetition.dSVDensityRationalHeterogeneousPhysicalDiagonalSurvival_budget",
+   "QuantumParallelRepetition.dSVDensityRationalHeterogeneousStoppedCommonPrefixFailureVector_norm_sq",
+   "QuantumParallelRepetition.unconditionalPrefactor_largeVerifier_twelfthRoot_le",
+   "QuantumParallelRepetition.unconditionalMixedConjugateCanonicalAcceptedTarget_sum",
+   "QuantumParallelRepetition.unconditionalSourcePhysicalCleanedStoppingFixedSource_norm",
+   "QuantumParallelRepetition.unconditionalFairPhysicalFlaggedStoppingTransfer",
+   "QuantumParallelRepetition.unconditionalSmallSourcePhysicalLoss",
+   "QuantumParallelRepetition.pdf_distributionUniformExponential_of_uniform_source_rounding",
+   "QuantumParallelRepetition.unconditionalActualFairSourcePhysicalStopBornWitness",
+   "QuantumParallelRepetition.unconditionalActualFairSourceRoundingContext_cleanBound",
+   "QuantumParallelRepetition.unconditionalActualFairSourceRoundingContext_analyticLedger",
+   "QuantumParallelRepetition.unconditionalActualFairSourceRoundingContext_verifierLedger"
+  ],
+  "pasted_helpers": 66,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repetition.repConst_pos",
+  "source_name": "MIPRE.Repetition.repConst_pos",
+  "formal_statement": "theorem MIPRE.Repetition.repConst_pos : 0 < repConst := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repetition",
+   "open MIPRE.Verifier"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.Soundness",
+  "module_doc": "/-!\n# The repetition bound in the form the pipeline consumes\n\nThe soundness half of `thm:parallel-repetition` at the level of games. The vendored theorem\n`MIPRE.Repetition.quantumValue_repeat_le` (`thm:direct-repetition-q`) bounds\n`val*(G^{⊗k})` by `exp(-c ε^{13} k / (ε + log(|𝒜||ℬ|)))` with `ε = 1 - val*(G)`. The structure\n`MIPRE.Repetition` asks for `exp(-c' ε^{13} k / (B + 1))` for answer alphabets of strings of\nlength at most `B` (`Verifier.Answers B`) and a hypothesis `val*(G) ≤ 1 - ε` that need not be\ntight:\n\n* `|Answers B| ≤ 3^{B+1}` (`card_answers_le`, by `Answers.getElem?_injective`), so\n  `log(|𝒜||ℬ|) ≤ 2(B + 1) log 3`, and `ε ≤ 1 ≤ B + 1`, so the denominator is at most\n  `(B + 1)(1 + 2 log 3)`; `c' = c / (1 + 2 log 3)` (`repConst`).\n* The exponent is monotone in the gap, so `1 - val*(G) ≥ ε` suffices.\n\n`quantumValue_repeat_le_soundBound` is the statement the assembly of `Repetition ℓ` uses.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Soundness.lean#L52-L53",
+  "source_path": "MIPRE/Background/Repetition/Soundness.lean",
+  "lines": [
+   52,
+   53
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Repetition.quantumValue_repeat_le"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repetition.quantumValue_repeat_le_soundBound",
+  "source_name": "MIPRE.Repetition.quantumValue_repeat_le_soundBound",
+  "formal_statement": "theorem MIPRE.Repetition.quantumValue_repeat_le_soundBound {X : Type} [Fintype X] {B : ℕ}\n    (G : Game X X (Answers B) (Answers B)) {ε : ℝ} (hε : 0 < ε)\n    (hG : quantumValue G ≤ 1 - ε) {k : ℕ} (hk : 0 < k) :\n    quantumValue (G.repeat k) ≤ Repetition.soundBound repConst ε k B := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repetition",
+   "open MIPRE.Verifier"
+  ],
+  "docstring": "**Game-level soundness of direct repetition**, in the form of `Repetition.soundness`: for a\ngame with answers of length at most `B`, `val*(G) ≤ 1 - ε` gives\n`val*(G^{⊗k}) ≤ exp(-c' ε^{13} k / (B + 1))`.",
+  "module": "MIPRE.Background.Repetition.Soundness",
+  "module_doc": "/-!\n# The repetition bound in the form the pipeline consumes\n\nThe soundness half of `thm:parallel-repetition` at the level of games. The vendored theorem\n`MIPRE.Repetition.quantumValue_repeat_le` (`thm:direct-repetition-q`) bounds\n`val*(G^{⊗k})` by `exp(-c ε^{13} k / (ε + log(|𝒜||ℬ|)))` with `ε = 1 - val*(G)`. The structure\n`MIPRE.Repetition` asks for `exp(-c' ε^{13} k / (B + 1))` for answer alphabets of strings of\nlength at most `B` (`Verifier.Answers B`) and a hypothesis `val*(G) ≤ 1 - ε` that need not be\ntight:\n\n* `|Answers B| ≤ 3^{B+1}` (`card_answers_le`, by `Answers.getElem?_injective`), so\n  `log(|𝒜||ℬ|) ≤ 2(B + 1) log 3`, and `ε ≤ 1 ≤ B + 1`, so the denominator is at most\n  `(B + 1)(1 + 2 log 3)`; `c' = c / (1 + 2 log 3)` (`repConst`).\n* The exponent is monotone in the gap, so `1 - val*(G) ≥ ε` suffices.\n\n`quantumValue_repeat_le_soundBound` is the statement the assembly of `Repetition ℓ` uses.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Soundness.lean#L73-L119",
+  "source_path": "MIPRE/Background/Repetition/Soundness.lean",
+  "lines": [
+   73,
+   119
+  ],
+  "blueprint": [
+   {
+    "label": "lem:repetition-sound-bound",
+    "env": "lemma",
+    "title": "The repetition bound for answers of bounded length",
+    "file": "05_parallel_repetition.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Repetition.quantumValue_repeat_le",
+   "MIPRE.Repetition.ofTensorProductStrategy_winProbability"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.Strategy.winProbability_le_one",
+  "source_name": "QuantumParallelRepetition.Strategy.winProbability_le_one",
+  "formal_statement": "theorem QuantumParallelRepetition.Strategy.winProbability_le_one (S : Strategy G) : S.winProbability ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open QuantumParallelRepetition.Strategy",
+   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder",
+   "open Matrix",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {G : Game X Y A B}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L562-L590",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   562,
+   590
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.quadraticExpectation_sub_le",
+  "source_name": "QuantumParallelRepetition.quadraticExpectation_sub_le",
+  "formal_statement": "theorem QuantumParallelRepetition.quadraticExpectation_sub_le\n    (W : H →L[ℂ] H) (hW : ‖W‖ ≤ 1) (z w : H) :\n    |quadraticExpectation W z - quadraticExpectation W w| ≤\n      (‖z‖ + ‖w‖) * ‖z - w‖ := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators ComplexConjugate InnerProductSpace",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L667-L692",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   667,
+   692
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.weighted_real_cauchy",
+  "source_name": "QuantumParallelRepetition.weighted_real_cauchy",
+  "formal_statement": "theorem QuantumParallelRepetition.weighted_real_cauchy\n    {ι : Type*} [Fintype ι]\n    (weight f g : ι → ℝ)\n    (h_weight : ∀ i, 0 ≤ weight i) :\n    (∑ i : ι, weight i * f i * g i) ≤\n      Real.sqrt (∑ i : ι, weight i * f i ^ 2) *\n        Real.sqrt (∑ i : ι, weight i * g i ^ 2) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators ComplexConjugate InnerProductSpace",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L694-L730",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   694,
+   730
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.convexMixtureStrategy_winProbability",
+  "source_name": "QuantumParallelRepetition.convexMixtureStrategy_winProbability",
+  "formal_statement": "theorem QuantumParallelRepetition.convexMixtureStrategy_winProbability\n    (p : J → ℝ) (hp : ∀ j, 0 ≤ p j)\n    (h_normalized : (∑ j : J, p j) = 1)\n    (S : J → Strategy G) :\n    (convexMixtureStrategy p hp h_normalized S).winProbability =\n      ∑ j : J, p j * (S j).winProbability := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder",
+   "open Matrix",
+   "variable {X Y A B : Type*} {J : Type}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable [Fintype J] [DecidableEq J]",
+   "variable {G : Game X Y A B}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L1054-L1118",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   1054,
+   1118
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.pureDensityMatrix_trace_mul",
+  "source_name": "QuantumParallelRepetition.pureDensityMatrix_trace_mul",
+  "formal_statement": "theorem QuantumParallelRepetition.pureDensityMatrix_trace_mul\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (z : EuclideanSpace ℂ d) (hz : ‖z‖ = 1)\n    (E : Matrix d d ℂ) :\n    (Matrix.trace ((pureDensityMatrix z hz).matrix * E)).re =\n      quadraticExpectation\n        (Matrix.toEuclideanCLM (n := d) (𝕜 := ℂ) E) z := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder Matrix.Norms.L2Operator InnerProductSpace"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L1139-L1159",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   1139,
+   1159
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.FiniteEventLaw.exists_greedy_stopping",
+  "source_name": "QuantumParallelRepetition.FiniteEventLaw.exists_greedy_stopping",
+  "formal_statement": "theorem QuantumParallelRepetition.FiniteEventLaw.exists_greedy_stopping [Fintype ι] [DecidableEq ι]\n    (mass : Finset ι → ℝ) {θ η : ℝ} {T : ℕ}\n    (_hθ : 0 < θ)\n    (_hη : 0 < η)\n    (hη_one : η ≤ 1)\n    (hT : T ≤ Fintype.card ι)\n    (hempty : mass ∅ = 1)\n    (hfloor : ∀ D : Finset ι, θ ≤ mass D)\n    (h_terminal : (1 - η) ^ T < θ) :\n    ∃ D : Finset ι,\n      D.card < T ∧\n      θ ≤ mass D ∧\n      (∑ i ∈ Finset.univ \\ D,\n        (mass D - mass (insert i D)))\n        < ((Finset.univ \\ D).card : ℝ) * (η * mass D) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open QuantumParallelRepetition.FiniteEventLaw",
+   "open scoped BigOperators",
+   "variable {Ω ι : Type*} [Fintype Ω]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L1292-L1367",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   1292,
+   1367
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.repeatedStrategy_exists_greedy_conditioning",
+  "source_name": "QuantumParallelRepetition.repeatedStrategy_exists_greedy_conditioning",
+  "formal_statement": "theorem QuantumParallelRepetition.repeatedStrategy_exists_greedy_conditioning\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    {θ η : ℝ} {T : ℕ}\n    (hθ : 0 < θ)\n    (hη : 0 < η)\n    (hη_one : η ≤ 1)\n    (hT : T ≤ n)\n    (hwin : θ ≤ S.winProbability)\n    (h_terminal : (1 - η) ^ T < θ) :\n    ∃ D : Finset (Fin n),\n      D.card < T ∧\n      θ ≤ (strategyEventLaw (G.repeat n) S).eventMass\n        (FiniteEventLaw.winEvent\n          (repeatedCoordinateWin G n) D) ∧\n      (∑ i ∈ Finset.univ \\ D,\n        FiniteEventLaw.failureMass\n          (strategyEventLaw (G.repeat n) S)\n          (repeatedCoordinateWin G n) D i)\n        <\n      ((Finset.univ \\ D).card : ℝ) *\n        (η * (strategyEventLaw (G.repeat n) S).eventMass\n          (FiniteEventLaw.winEvent\n            (repeatedCoordinateWin G n) D)) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L1510-L1546",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   1510,
+   1546
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.FiniteEventLaw.exists_greedy_stopping"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg",
+  "source_name": "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg",
+  "formal_statement": "theorem QuantumParallelRepetition.Game.conditionalYGivenX_nonneg\n    (G : Game X Y A B) (x : X) (y : Y) :\n    0 ≤ G.conditionalYGivenX x y := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open QuantumParallelRepetition.Game",
+   "open scoped BigOperators Kronecker",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2144-L2148",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   2144,
+   2148
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg",
+  "source_name": "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg",
+  "formal_statement": "theorem QuantumParallelRepetition.Game.conditionalXGivenY_nonneg\n    (G : Game X Y A B) (y : Y) (x : X) :\n    0 ≤ G.conditionalXGivenY y x := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open QuantumParallelRepetition.Game",
+   "open scoped BigOperators Kronecker",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2150-L2154",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   2150,
+   2154
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.conditionedAliceEffect_positive",
+  "source_name": "QuantumParallelRepetition.conditionedAliceEffect_positive",
+  "formal_statement": "theorem QuantumParallelRepetition.conditionedAliceEffect_positive\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (α : {i : Fin n // i ∈ D} → A)\n    (xs : Fin n → X) :\n    (conditionedAliceEffect G n S D α xs).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2341-L2354",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   2341,
+   2354
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.conditionedBobEffect_positive",
+  "source_name": "QuantumParallelRepetition.conditionedBobEffect_positive",
+  "formal_statement": "theorem QuantumParallelRepetition.conditionedBobEffect_positive\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (β : {i : Fin n // i ∈ D} → B)\n    (ys : Fin n → Y) :\n    (conditionedBobEffect G n S D β ys).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2356-L2369",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   2356,
+   2369
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.conditionedAliceEffect_complement_positive",
+  "source_name": "QuantumParallelRepetition.conditionedAliceEffect_complement_positive",
+  "formal_statement": "theorem QuantumParallelRepetition.conditionedAliceEffect_complement_positive\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (α : {i : Fin n // i ∈ D} → A)\n    (xs : Fin n → X) :\n    (1 - conditionedAliceEffect G n S D α xs).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2371-L2397",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   2371,
+   2397
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ }
+]

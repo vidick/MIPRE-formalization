@@ -1,0 +1,650 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactReverseBob_history_of_marked_context",
+  "source_name": "QuantumParallelRepetition.exactReverseBob_history_of_marked_context",
+  "formal_statement": "theorem QuantumParallelRepetition.exactReverseBob_history_of_marked_context\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n)) (default : X)\n    (seed : ExactRemainingSeed D)\n    (outcome outcome' : ExactOutcome X Y A B n)\n    (same_context :\n      exactReverseBobMarkedHistoryContext\n          G n S D default seed outcome =\n        exactReverseBobMarkedHistoryContext\n          G n S D default seed outcome') :\n    outcome.2.1 seed.coordinate.val =\n        outcome'.2.1 seed.coordinate.val ∧\n      exactHistoryCode D (seed, outcome) =\n        exactHistoryCode D (seed, outcome') := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L5292-L5465",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   5292,
+   5465
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.exactOrderedSidePrefix_mem_iff",
+   "QuantumParallelRepetition.exactReverseBobContext_prefix_before_marked"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 160,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactReverseAliceMarkedPosteriorConditional_eq_sourceFiber",
+  "source_name": "QuantumParallelRepetition.exactReverseAliceMarkedPosteriorConditional_eq_sourceFiber",
+  "formal_statement": "theorem QuantumParallelRepetition.exactReverseAliceMarkedPosteriorConditional_eq_sourceFiber\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n)) (default : Y)\n    (seed : ExactRemainingSeed D)\n    (reference : ExactOutcome X Y A B n) :\n    jointConditional\n        (groupedMass\n          (fun outcome : ExactOutcome X Y A B n =>\n            (exactReverseAliceMarkedHistoryContext\n              G n S D default seed outcome,\n              outcome.2.1 seed.coordinate.val))\n          (repeatedConditionedOutcomeLaw G n S D))\n        (exactReverseAliceMarkedHistoryContext\n          G n S D default seed reference) =\n      jointConditional\n        (groupedMass\n          (fun outcome : ExactOutcome X Y A B n =>\n            ((outcome.1 seed.coordinate.val,\n              exactHistoryCode D (seed, outcome)),\n              outcome.2.1 seed.coordinate.val))\n          (repeatedConditionedOutcomeLaw G n S D))\n        (reference.1 seed.coordinate.val,\n          exactHistoryCode D (seed, reference)) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L5517-L5556",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   5517,
+   5556
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.jointConditional_groupedMass_eq_of_fiber",
+   "QuantumParallelRepetition.exactReverseAliceMarkedHistoryContext_eq_of_history",
+   "QuantumParallelRepetition.exactReverseAlice_history_of_marked_context"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactReverseBobMarkedPosteriorConditional_eq_sourceFiber",
+  "source_name": "QuantumParallelRepetition.exactReverseBobMarkedPosteriorConditional_eq_sourceFiber",
+  "formal_statement": "theorem QuantumParallelRepetition.exactReverseBobMarkedPosteriorConditional_eq_sourceFiber\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n)) (default : X)\n    (seed : ExactRemainingSeed D)\n    (reference : ExactOutcome X Y A B n) :\n    jointConditional\n        (groupedMass\n          (fun outcome : ExactOutcome X Y A B n =>\n            (exactReverseBobMarkedHistoryContext\n              G n S D default seed outcome,\n              outcome.1 seed.coordinate.val))\n          (repeatedConditionedOutcomeLaw G n S D))\n        (exactReverseBobMarkedHistoryContext\n          G n S D default seed reference) =\n      jointConditional\n        (groupedMass\n          (fun outcome : ExactOutcome X Y A B n =>\n            ((outcome.2.1 seed.coordinate.val,\n              exactHistoryCode D (seed, outcome)),\n              outcome.1 seed.coordinate.val))\n          (repeatedConditionedOutcomeLaw G n S D))\n        (reference.2.1 seed.coordinate.val,\n          exactHistoryCode D (seed, reference)) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L5558-L5597",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   5558,
+   5597
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.jointConditional_groupedMass_eq_of_fiber",
+   "QuantumParallelRepetition.exactReverseBobMarkedHistoryContext_eq_of_history",
+   "QuantumParallelRepetition.exactReverseBob_history_of_marked_context"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.reweightedSeedPrefixPrior_as_flagged_pushforward",
+  "source_name": "QuantumParallelRepetition.reweightedSeedPrefixPrior_as_flagged_pushforward",
+  "formal_statement": "theorem QuantumParallelRepetition.reweightedSeedPrefixPrior_as_flagged_pushforward\n    {K Ω V : Type*} [Fintype K] [Fintype Ω] [Fintype V]\n    {h : ℕ}\n    (seedLaw : FiniteEventLaw K)\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (projection : K × ExactOutcome X Y A B n →\n      Ω × (Fin h → V))\n    (t : (Ω × ConditionedAnswerFlag A B D) ×\n      (Fin h → V)) :\n    reweightedSeedPrefixPrior\n        seedLaw G n S D projection t =\n      groupedMass\n        (fun q : ConditionedAnswerFlag A B D ×\n            (K × ExactOutcome X Y A B n) =>\n          (((projection q.2).1, q.1), (projection q.2).2))\n        (fun q : ConditionedAnswerFlag A B D ×\n            (K × ExactOutcome X Y A B n) =>\n          finiteUniformWeight\n              (ConditionedAnswerFlag A B D) *\n            (reweightedSeedPriorEventLaw\n              seedLaw G n S).weight q.2)\n        t := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L5617-L5723",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   5617,
+   5723
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 84,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.reweightedSeedPrefixPrior_next_flagged_pushforward",
+  "source_name": "QuantumParallelRepetition.reweightedSeedPrefixPrior_next_flagged_pushforward",
+  "formal_statement": "theorem QuantumParallelRepetition.reweightedSeedPrefixPrior_next_flagged_pushforward\n    {K Ω V : Type*} [Fintype K] [Fintype Ω] [Fintype V]\n    {h : ℕ}\n    (seedLaw : FiniteEventLaw K)\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (projection : K × ExactOutcome X Y A B n →\n      Ω × (Fin h → V))\n    (default : V) (k : Fin h)\n    (target :\n      ((Ω × ConditionedAnswerFlag A B D) ×\n        (Fin h → V)) × V) :\n    groupedMass (exactPrefixNextCode default k)\n        (reweightedSeedPrefixPrior\n          seedLaw G n S D projection) target =\n      groupedMass\n        (fun q : ConditionedAnswerFlag A B D ×\n            (K × ExactOutcome X Y A B n) =>\n          exactPrefixNextCode default k\n            (((projection q.2).1, q.1), (projection q.2).2))\n        (fun q : ConditionedAnswerFlag A B D ×\n            (K × ExactOutcome X Y A B n) =>\n          finiteUniformWeight\n              (ConditionedAnswerFlag A B D) *\n            (reweightedSeedPriorEventLaw\n              seedLaw G n S).weight q.2)\n        target := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L5725-L5777",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   5725,
+   5777
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.reweightedSeedPrefixPrior_as_flagged_pushforward"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.finiteGroupedExpectation_eq_atom_sum",
+  "source_name": "QuantumParallelRepetition.finiteGroupedExpectation_eq_atom_sum",
+  "formal_statement": "theorem QuantumParallelRepetition.finiteGroupedExpectation_eq_atom_sum\n    {Ω C : Type*} [Fintype Ω] [Fintype C] [DecidableEq C]\n    (code : Ω → C) (mass : Ω → ℝ) (value : C → ℝ) :\n    (∑ target : C, groupedMass code mass target * value target) =\n      ∑ outcome : Ω, mass outcome * value (code outcome) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L5794-L5821",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   5794,
+   5821
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.jointFirstMarginal_groupedContextNext",
+  "source_name": "QuantumParallelRepetition.jointFirstMarginal_groupedContextNext",
+  "formal_statement": "theorem QuantumParallelRepetition.jointFirstMarginal_groupedContextNext\n    {Ω C V : Type*} [Fintype Ω] [Fintype C] [Fintype V]\n    [DecidableEq C] [DecidableEq (C × V)]\n    (context : Ω → C) (next : Ω → V)\n    (mass : Ω → ℝ) (target : C) :\n    jointFirstMarginal\n        (groupedMass\n          (fun outcome => (context outcome, next outcome)) mass)\n        target =\n      groupedMass context mass target := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L5823-L5858",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   5823,
+   5858
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.finiteNestedNextInformation_eq_atom_sum",
+  "source_name": "QuantumParallelRepetition.finiteNestedNextInformation_eq_atom_sum",
+  "formal_statement": "theorem QuantumParallelRepetition.finiteNestedNextInformation_eq_atom_sum\n    {I R V : Type*} [Fintype I] [Fintype R] [Fintype V]\n    (mass : I × (R × V) → ℝ)\n    (nonnegative : ∀ point, 0 ≤ mass point)\n    (reference : I → V → ℝ) :\n    (∑ index : I,\n      jointFirstMarginal mass index *\n        (∑ history : R,\n          jointFirstMarginal\n              (jointConditional mass index) history *\n            finiteRelativeEntropy\n              (jointConditional\n                (jointConditional mass index) history)\n              (reference index))) =\n      ∑ point : I × (R × V),\n        mass point *\n          finiteRelativeEntropy\n            (jointConditional\n              (fun atom : (I × R) × V =>\n                mass (atom.1.1, (atom.1.2, atom.2)))\n              (point.1, point.2.1))\n            (reference point.1) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L5964-L6028",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   5964,
+   6028
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.finiteGroupedExpectation_eq_atom_sum"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.reweightedSeedPrefixJoint_as_actual_flagged_pushforward",
+  "source_name": "QuantumParallelRepetition.reweightedSeedPrefixJoint_as_actual_flagged_pushforward",
+  "formal_statement": "theorem QuantumParallelRepetition.reweightedSeedPrefixJoint_as_actual_flagged_pushforward\n    {K Ω V : Type*} [Fintype K] [Fintype Ω] [Fintype V]\n    {h : ℕ}\n    (seedLaw : FiniteEventLaw K)\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (projection : K × ExactOutcome X Y A B n →\n      Ω × (Fin h → V))\n    (target : (Ω × ConditionedAnswerFlag A B D) ×\n      (Fin h → V)) :\n    reweightedSeedPrefixJoint\n        seedLaw G n S D projection target =\n      groupedMass\n        (fun point : K × ExactOutcome X Y A B n =>\n          (((projection point).1,\n            repeatedConditionedAnswerFlag G n S D point.2),\n            (projection point).2))\n        (reweightedSeedPosterior seedLaw G n S D)\n        target := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L6033-L6112",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   6033,
+   6112
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactAliceSourceConditionalInformation_eq_atom_sum",
+  "source_name": "QuantumParallelRepetition.exactAliceSourceConditionalInformation_eq_atom_sum",
+  "formal_statement": "theorem QuantumParallelRepetition.exactAliceSourceConditionalInformation_eq_atom_sum\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (remaining : 0 < (Finset.univ \\ D).card)\n    (positive : 0 < repeatedPostselectionMass G n S D)\n    (base : ExactHistoryFlag X Y A B D) :\n    exactAliceSourceConditionalInformation G n S D base =\n      ∑ point : (SourceRemainingCoordinate D × X) ×\n          (ExactHistoryFlag X Y A B D × Y),\n        exactAliceInformationPosterior G n S D point *\n          finiteRelativeEntropy\n            (jointConditional\n              (fun atom :\n                ((SourceRemainingCoordinate D × X) ×\n                    ExactHistoryFlag X Y A B D) × Y =>\n                exactAliceInformationPosterior G n S D\n                  (atom.1.1, (atom.1.2, atom.2)))\n              (point.1, point.2.1))\n            (G.conditionalYGivenX point.1.2) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L6114-L6165",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   6114,
+   6165
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.exactAliceInformationReference_firstMarginal",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_absolute_continuous_JA",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_nonneg",
+   "QuantumParallelRepetition.finiteConditionalHistoryRelativeEntropy_eq",
+   "QuantumParallelRepetition.finiteNestedNextInformation_eq_atom_sum"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactBobSourceConditionalInformation_eq_atom_sum",
+  "source_name": "QuantumParallelRepetition.exactBobSourceConditionalInformation_eq_atom_sum",
+  "formal_statement": "theorem QuantumParallelRepetition.exactBobSourceConditionalInformation_eq_atom_sum\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (remaining : 0 < (Finset.univ \\ D).card)\n    (positive : 0 < repeatedPostselectionMass G n S D)\n    (base : ExactHistoryFlag X Y A B D) :\n    exactBobSourceConditionalInformation G n S D base =\n      ∑ point : (SourceRemainingCoordinate D × Y) ×\n          (ExactHistoryFlag X Y A B D × X),\n        exactBobInformationPosterior G n S D point *\n          finiteRelativeEntropy\n            (jointConditional\n              (fun atom :\n                ((SourceRemainingCoordinate D × Y) ×\n                    ExactHistoryFlag X Y A B D) × X =>\n                exactBobInformationPosterior G n S D\n                  (atom.1.1, (atom.1.2, atom.2)))\n              (point.1, point.2.1))\n            (G.conditionalXGivenY point.1.2) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L6167-L6218",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   6167,
+   6218
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.exactBobInformationReference_firstMarginal",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_absolute_continuous_JB",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_nonneg",
+   "QuantumParallelRepetition.finiteConditionalHistoryRelativeEntropy_eq",
+   "QuantumParallelRepetition.finiteNestedNextInformation_eq_atom_sum"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactSourceAliceSampleTuple_expectation",
+  "source_name": "QuantumParallelRepetition.exactSourceAliceSampleTuple_expectation",
+  "formal_statement": "theorem QuantumParallelRepetition.exactSourceAliceSampleTuple_expectation\n    (G : Game X Y A B) (n : ℕ) (D : Finset (Fin n))\n    (denominator : ℕ)\n    (numerator : ExactLocalSamplerIndex X Y D →\n      ExactHistoryFlag X Y A B D → ℕ)\n    (normalized : ∀ k, (∑ r, numerator k r) = denominator)\n    (nonempty : ∀ k,\n      (rationalMarked denominator (numerator k)).Nonempty)\n    (value : ExactLocallySampleableTuple X Y A B D → ℝ) :\n    (∑ outcome :\n      ExactSourceSharedFlag X Y A B D denominator × (X × Y),\n      flaggedQuestionWeight G\n        (exactSourceSharedFlagWeight D denominator) outcome *\n          value (exactSourceAliceSampleTuple\n            D denominator numerator nonempty outcome)) =\n      ∑ history : ExactLocallySampleableTuple X Y A B D,\n        exactLocallySampleableJARounded\n          G n D denominator numerator history * value history := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalSampling",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L6326-L6434",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   6326,
+   6434
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.ClassicalSampling.markedFirst_event_card_mul",
+   "QuantumParallelRepetition.finiteGroupedExpectation_eq_atom_sum"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 91,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactFiniteFiberLift_absolute_groupedMass",
+  "source_name": "QuantumParallelRepetition.exactFiniteFiberLift_absolute_groupedMass",
+  "formal_statement": "theorem QuantumParallelRepetition.exactFiniteFiberLift_absolute_groupedMass\n    (projection : Ω → T) (original : Ω → ℝ) (target : T → ℝ)\n    (original_nonnegative : ∀ outcome, 0 ≤ original outcome)\n    (supported : ∀ point,\n      groupedMass projection original point = 0 → target point = 0)\n    (point : T) :\n    groupedMass projection\n      (fun outcome =>\n        |original outcome -\n          exactFiniteFiberLift projection original target outcome|)\n      point =\n        |groupedMass projection original point - target point| := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {Ω T : Type*} [Fintype Ω] [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L6542-L6634",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   6542,
+   6634
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 79,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.existsCommonSupportPreservingRationalApproximations",
+  "source_name": "QuantumParallelRepetition.existsCommonSupportPreservingRationalApproximations",
+  "formal_statement": "theorem QuantumParallelRepetition.existsCommonSupportPreservingRationalApproximations\n    {I K : Type*} [Fintype I] [DecidableEq I] [Fintype K]\n    (base : I) (probability : K → I → ℝ)\n    (nonnegative : ∀ index letter, 0 ≤ probability index letter)\n    (normalized : ∀ index, (∑ letter, probability index letter) = 1)\n    {gamma : ℝ} (gamma_positive : 0 < gamma) :\n    ∃ denominator : ℕ, 0 < denominator ∧\n      ∃ numerator : K → I → ℕ,\n        (∀ index, (∑ letter, numerator index letter) = denominator) ∧\n        (∀ index, finiteTotalVariation\n          (probability index)\n          (fun letter => (numerator index letter : ℝ) / denominator) <\n            gamma) ∧\n        (∀ index letter,\n          0 < probability index letter → 0 < numerator index letter) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalSampling",
+   "open QuantumParallelRepetition.ClassicalInformation"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L6684-L6819",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   6684,
+   6819
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.ClassicalInformation.distributionRoundedProbability_totalVariation_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 121,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactLocallySampleableLaw_absolute_continuous_roundedJA",
+  "source_name": "QuantumParallelRepetition.exactLocallySampleableLaw_absolute_continuous_roundedJA",
+  "formal_statement": "theorem QuantumParallelRepetition.exactLocallySampleableLaw_absolute_continuous_roundedJA\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (remaining : 0 < (Finset.univ \\ D).card)\n    (positive : 0 < repeatedPostselectionMass G n S D)\n    (base : ExactHistoryFlag X Y A B D)\n    (denominator : ℕ) (denominator_positive : 0 < denominator)\n    (numerator : ExactLocalSamplerIndex X Y D →\n      ExactHistoryFlag X Y A B D → ℕ)\n    (preserves : ∀ index history,\n      0 < exactLocalConditionalFamily D base\n          (exactLocallySampleableLaw G n S D) index history →\n        0 < numerator index history)\n    (history : ExactLocallySampleableTuple X Y A B D) :\n    exactLocallySampleableJARounded\n      G n D denominator numerator history = 0 →\n        exactLocallySampleableLaw G n S D history = 0 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalSampling",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L6824-L6901",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   6824,
+   6901
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.exactLocallySampleableLaw_absolute_continuous_JA",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exact_exists_support_preserving_local_shared_permutation",
+  "source_name": "QuantumParallelRepetition.exact_exists_support_preserving_local_shared_permutation",
+  "formal_statement": "theorem QuantumParallelRepetition.exact_exists_support_preserving_local_shared_permutation\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (positive : 0 < repeatedPostselectionMass G n S D)\n    (base : ExactHistoryFlag X Y A B D)\n    {gamma : ℝ} (gamma_positive : 0 < gamma) :\n    ∃ denominator : ℕ, 0 < denominator ∧\n      ∃ numerator : ExactLocalSamplerIndex X Y D →\n        ExactHistoryFlag X Y A B D → ℕ,\n        (∀ index, (∑ history, numerator index history) = denominator) ∧\n        (∀ index, finiteTotalVariation\n          (exactLocalConditionalFamily D base\n            (exactLocallySampleableLaw G n S D) index)\n          (fun history =>\n            (numerator index history : ℝ) / denominator) < gamma) ∧\n        (∀ index history,\n          0 < exactLocalConditionalFamily D base\n              (exactLocallySampleableLaw G n S D)\n              index history →\n            0 < numerator index history) ∧\n        ∃ nonempty : ∀ index,\n          (rationalMarked denominator (numerator index)).Nonempty,\n          (∀ index history,\n            uniformPermutationProbability\n              (fun permutation : Equiv.Perm\n                (ExactHistoryFlag X Y A B D × Fin denominator) =>\n                rationalPermutationOutput denominator (numerator index)\n                  (nonempty index) permutation = history) =\n                (numerator index history : ℝ) / denominator) ∧\n          (∀ left right,\n            uniformPermutationProbability\n              (fun permutation : Equiv.Perm\n                (ExactHistoryFlag X Y A B D × Fin denominator) =>\n                rationalPermutationOutput denominator (numerator left)\n                  (nonempty left) permutation ≠\n                rationalPermutationOutput denominator (numerator right)\n                  (nonempty right) permutation) ≤\n              2 * finiteTotalVariation\n                (fun history =>\n                  (numerator left history : ℝ) / denominator)\n                (fun history =>\n                  (numerator right history : ℝ) / denominator)) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalSampling",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L6903-L6969",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   6903,
+   6969
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.ClassicalInformation.rationalPermutationOutput_disagreement_le_two_mul_finiteTotalVariation",
+   "QuantumParallelRepetition.ClassicalSampling.markedFirst_event_card_mul",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_nonneg",
+   "QuantumParallelRepetition.existsCommonSupportPreservingRationalApproximations"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactSourceAcceptedCoordinateMass_le_law",
+  "source_name": "QuantumParallelRepetition.exactSourceAcceptedCoordinateMass_le_law",
+  "formal_statement": "theorem QuantumParallelRepetition.exactSourceAcceptedCoordinateMass_le_law\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (positive : 0 < repeatedPostselectionMass G n S D)\n    (t : ExactLocallySampleableTuple X Y A B D) :\n    exactSourceAcceptedCoordinateMass G n S D t ≤\n      exactLocallySampleableLaw G n S D t := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder Matrix.Norms.L2Operator InnerProductSpace",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L7197-L7218",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   7197,
+   7218
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.exactSeedWeight_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactSourceConditionalWinningProbability_bounds",
+  "source_name": "QuantumParallelRepetition.exactSourceConditionalWinningProbability_bounds",
+  "formal_statement": "theorem QuantumParallelRepetition.exactSourceConditionalWinningProbability_bounds\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (positive : 0 < repeatedPostselectionMass G n S D)\n    (t : ExactLocallySampleableTuple X Y A B D) :\n    0 ≤ exactSourceConditionalWinningProbability\n      G n S D t ∧\n    exactSourceConditionalWinningProbability\n      G n S D t ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder Matrix.Norms.L2Operator InnerProductSpace",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L7227-L7249",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   7227,
+   7249
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.exactSeedWeight_nonneg",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_nonneg",
+   "QuantumParallelRepetition.exactSourceAcceptedCoordinateMass_le_law"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactSourceAcceptedCoordinateMass_sum_eq_remaining_average",
+  "source_name": "QuantumParallelRepetition.exactSourceAcceptedCoordinateMass_sum_eq_remaining_average",
+  "formal_statement": "theorem QuantumParallelRepetition.exactSourceAcceptedCoordinateMass_sum_eq_remaining_average\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n)) :\n    (∑ t : ExactLocallySampleableTuple X Y A B D,\n      exactSourceAcceptedCoordinateMass G n S D t) =\n      (1 / (Fintype.card (SourceRemainingCoordinate D) : ℝ)) *\n        (∑ i : SourceRemainingCoordinate D,\n          (strategyEventLaw (G.repeat n) S).eventMass\n            (FiniteEventLaw.winEvent\n              (repeatedCoordinateWin G n) (insert i.val D)) /\n            repeatedPostselectionMass G n S D) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder Matrix.Norms.L2Operator InnerProductSpace",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L7339-L7401",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   7339,
+   7401
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.exactForwardSeed_sum",
+   "QuantumParallelRepetition.exactSeedCoordinateFiber_sum"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exactSourceAliceFlagCoupling_totalVariation",
+  "source_name": "QuantumParallelRepetition.exactSourceAliceFlagCoupling_totalVariation",
+  "formal_statement": "theorem QuantumParallelRepetition.exactSourceAliceFlagCoupling_totalVariation\n    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (remaining : 0 < (Finset.univ \\ D).card)\n    (positive : 0 < repeatedPostselectionMass G n S D)\n    (base : ExactHistoryFlag X Y A B D)\n    (denominator : ℕ) (denominator_positive : 0 < denominator)\n    (numerator : ExactLocalSamplerIndex X Y D →\n      ExactHistoryFlag X Y A B D → ℕ)\n    (normalized : ∀ index,\n      (∑ history, numerator index history) = denominator)\n    (preserves : ∀ index history,\n      0 < exactLocalConditionalFamily D base\n          (exactLocallySampleableLaw G n S D) index history →\n        0 < numerator index history)\n    (nonempty : ∀ index,\n      (rationalMarked denominator (numerator index)).Nonempty) :\n    finiteTotalVariation\n      (flaggedQuestionWeight G\n        (exactSourceSharedFlagWeight D denominator))\n      (exactSourceAliceFlagCoupling\n        G n S D denominator numerator nonempty) =\n      finiteTotalVariation\n        (exactLocallySampleableJARounded\n          G n D denominator numerator)\n        (exactLocallySampleableLaw G n S D) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset",
+   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder Matrix.Norms.L2Operator InnerProductSpace",
+   "open QuantumParallelRepetition.Pinsker",
+   "open QuantumParallelRepetition.ClassicalSampling",
+   "open QuantumParallelRepetition.ClassicalInformation",
+   "variable {X Y A B dA dB : Type}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable [Fintype dA] [Fintype dB] [DecidableEq dA] [DecidableEq dB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part06",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean#L7609-L7660",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part06.lean",
+  "lines": [
+   7609,
+   7660
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.finiteGroupedExpectation_eq_atom_sum",
+   "QuantumParallelRepetition.exactSourceAliceSampleTuple_expectation",
+   "QuantumParallelRepetition.exactFiniteFiberLift_absolute_groupedMass",
+   "QuantumParallelRepetition.exactLocallySampleableLaw_absolute_continuous_roundedJA"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 26,
+  "is_target": false
+ }
+]

@@ -1,0 +1,525 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.positiveMatrix_cfc_spectral_sum",
+  "source_name": "QuantumParallelRepetition.positiveMatrix_cfc_spectral_sum",
+  "formal_statement": "theorem QuantumParallelRepetition.positiveMatrix_cfc_spectral_sum\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef)\n    (f : ℝ → ℝ) :\n    cfc f F =\n      ∑ i : d,\n        f (hF.isHermitian.eigenvalues i) •\n          positiveMatrixSpectralAtom F hF i := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5286-L5321",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5286,
+   5321
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.bornTracePairing_one_le_one",
+  "source_name": "QuantumParallelRepetition.bornTracePairing_one_le_one",
+  "formal_statement": "theorem QuantumParallelRepetition.bornTracePairing_one_le_one\n    {dA dB : Type*}\n    [Fintype dA] [Fintype dB]\n    [DecidableEq dA] [DecidableEq dB]\n    (ρ : DensityMatrix (dA × dB))\n    (G : Matrix dB dB ℂ)\n    (hGcomplement : (1 - G).PosSemidef) :\n    bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5450-L5469",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5450,
+   5469
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.matrixLogEntropy_born_lower_bound_left",
+  "source_name": "QuantumParallelRepetition.matrixLogEntropy_born_lower_bound_left",
+  "formal_statement": "theorem QuantumParallelRepetition.matrixLogEntropy_born_lower_bound_left\n    {dA dB : Type*}\n    [Fintype dA] [Fintype dB]\n    [DecidableEq dA] [DecidableEq dB]\n    (ρ : DensityMatrix (dA × dB))\n    (F : Matrix dA dA ℂ) (hF : F.PosSemidef)\n    (hFcomplement : (1 - F).PosSemidef)\n    (G : Matrix dB dB ℂ) (hG : G.PosSemidef)\n    (hGcomplement : (1 - G).PosSemidef) :\n    -bornTracePairing ρ.matrix\n        (cfc (fun z : ℝ => z * Real.log z) F) G ≤\n      Real.negMulLog (bornTracePairing ρ.matrix F G) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5501-L5595",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5501,
+   5595
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.positiveMatrix_cfc_spectral_sum",
+   "QuantumParallelRepetition.bornTracePairing_one_le_one"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 83,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.embezzlementState_norm",
+  "source_name": "QuantumParallelRepetition.embezzlementState_norm",
+  "formal_statement": "theorem QuantumParallelRepetition.embezzlementState_norm\n    (n : ℕ) (hn : 0 < n) :\n    ‖embezzlementState n‖ = 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5670-L5676",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5670,
+   5676
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.coherentBinaryJointOutcome_norm_sq",
+  "source_name": "QuantumParallelRepetition.coherentBinaryJointOutcome_norm_sq",
+  "formal_statement": "theorem QuantumParallelRepetition.coherentBinaryJointOutcome_norm_sq\n    {d e : Type*}\n    [Fintype d] [Fintype e] [DecidableEq d] [DecidableEq e]\n    (P : POVM Bool d) (Q : POVM Bool e)\n    (hP : ∀ c : Bool, P.effect c * P.effect c = P.effect c)\n    (hQ : ∀ c : Bool, Q.effect c * Q.effect c = Q.effect c)\n    (z : EuclideanSpace ℂ (d × e)) (hz : ‖z‖ = 1)\n    (a b : Bool) :\n    ‖coherentBinaryJointOutcome P Q z a b‖ ^ 2 =\n      (Matrix.trace\n        ((pureDensityMatrix z hz).matrix *\n          (P.effect a ⊗ₖ Q.effect b))).re := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5823-L5854",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5823,
+   5854
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.pureDensityMatrix_trace_mul"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.finiteTensorVector_norm_sq",
+  "source_name": "QuantumParallelRepetition.finiteTensorVector_norm_sq",
+  "formal_statement": "theorem QuantumParallelRepetition.finiteTensorVector_norm_sq\n    {ι d : Type*} [Fintype ι] [DecidableEq ι] [Fintype d]\n    (v : ι → EuclideanSpace ℂ d) :\n    ‖finiteTensorVector v‖ ^ 2 =\n      ∏ i : ι, ‖v i‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5862-L5884",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5862,
+   5884
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.spectralAtomOverlap_sum_right",
+  "source_name": "QuantumParallelRepetition.spectralAtomOverlap_sum_right",
+  "formal_statement": "theorem QuantumParallelRepetition.spectralAtomOverlap_sum_right\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F G : Matrix d d ℂ)\n    (hF : F.PosSemidef) (hG : G.PosSemidef)\n    (i : d) :\n    (∑ j : d, spectralAtomOverlap F G hF hG i j) = 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5895-L5914",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5895,
+   5914
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.spectralAtomOverlap_sum_left",
+  "source_name": "QuantumParallelRepetition.spectralAtomOverlap_sum_left",
+  "formal_statement": "theorem QuantumParallelRepetition.spectralAtomOverlap_sum_left\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F G : Matrix d d ℂ)\n    (hF : F.PosSemidef) (hG : G.PosSemidef)\n    (j : d) :\n    (∑ i : d, spectralAtomOverlap F G hF hG i j) = 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5916-L5935",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5916,
+   5935
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.positiveDensity_eigenvalues_sum",
+  "source_name": "QuantumParallelRepetition.positiveDensity_eigenvalues_sum",
+  "formal_statement": "theorem QuantumParallelRepetition.positiveDensity_eigenvalues_sum\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef)\n    (htrace : Matrix.trace F = 1) :\n    (∑ i : d, hF.isHermitian.eigenvalues i) = 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5937-L5944",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5937,
+   5944
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.spectralAtomOverlap_schmidtMass_le_one",
+  "source_name": "QuantumParallelRepetition.spectralAtomOverlap_schmidtMass_le_one",
+  "formal_statement": "theorem QuantumParallelRepetition.spectralAtomOverlap_schmidtMass_le_one\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F G : Matrix d d ℂ)\n    (hF : F.PosSemidef) (hG : G.PosSemidef)\n    (hFtrace : Matrix.trace F = 1)\n    (hGtrace : Matrix.trace G = 1) :\n    (∑ i : d, ∑ j : d,\n      Real.sqrt (hF.isHermitian.eigenvalues i) *\n        Real.sqrt (hG.isHermitian.eigenvalues j) *\n          spectralAtomOverlap F G hF hG i j) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5946-L6027",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5946,
+   6027
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.spectralAtomOverlap_sum_right",
+   "QuantumParallelRepetition.spectralAtomOverlap_sum_left",
+   "QuantumParallelRepetition.positiveDensity_eigenvalues_sum",
+   "QuantumParallelRepetition.weighted_real_cauchy"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 72,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.sharedThresholdResourceRaw_norm_sq",
+  "source_name": "QuantumParallelRepetition.sharedThresholdResourceRaw_norm_sq",
+  "formal_statement": "theorem QuantumParallelRepetition.sharedThresholdResourceRaw_norm_sq\n    {κ d : Type*} [Fintype κ] [Fintype d]\n    [DecidableEq κ] [DecidableEq d]\n    (τ : κ → ℝ) :\n    ‖sharedThresholdResourceRaw (d := d) τ‖ ^ 2 =\n      (Fintype.card d : ℝ) * ∑ k : κ, τ k ^ 2 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L6142-L6161",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   6142,
+   6161
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.sharedThresholdResource_block_action_norm_sq",
+  "source_name": "QuantumParallelRepetition.sharedThresholdResource_block_action_norm_sq",
+  "formal_statement": "theorem QuantumParallelRepetition.sharedThresholdResource_block_action_norm_sq\n    {κ d : Type*} [Fintype κ] [Fintype d]\n    [DecidableEq κ] [DecidableEq d]\n    (τ : κ → ℝ)\n    (A B : κ → Matrix d d ℂ)\n    (hA : ∀ k, (A k).PosSemidef)\n    (hB : ∀ k, (B k).PosSemidef)\n    (hAA : ∀ k, A k * A k = A k)\n    (hBB : ∀ k, B k * B k = B k) :\n    ‖toLp 2\n      ((Matrix.blockDiagonal' A ⊗ₖ\n          (Matrix.blockDiagonal' B).transpose).mulVec\n        (ofLp (sharedThresholdResource (d := d) τ)))‖ ^ 2 =\n      (∑ k : κ, τ k ^ 2 *\n        (Matrix.trace (A k * B k)).re) /\n        ((Fintype.card d : ℝ) * ∑ k : κ, τ k ^ 2) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L6408-L6446",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   6408,
+   6446
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.sharedThresholdResourceRaw_norm_sq"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.doublyStochasticSchmidtMass_le_one",
+  "source_name": "QuantumParallelRepetition.doublyStochasticSchmidtMass_le_one",
+  "formal_statement": "theorem QuantumParallelRepetition.doublyStochasticSchmidtMass_le_one\n    {ι κ : Type*} [Fintype ι] [Fintype κ]\n    (σ : ι → ℝ) (μ : κ → ℝ) (w : ι → κ → ℝ)\n    (hσunit : (∑ i : ι, σ i ^ 2) = 1)\n    (hμunit : (∑ j : κ, μ j ^ 2) = 1)\n    (hw : ∀ i j, 0 ≤ w i j)\n    (hrow : ∀ i, (∑ j : κ, w i j) = 1)\n    (hcol : ∀ j, (∑ i : ι, w i j) = 1) :\n    (∑ i : ι, ∑ j : κ, σ i * μ j * w i j) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L6448-L6505",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   6448,
+   6505
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.weighted_real_cauchy"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 49,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.twoSidedSchmidtSpectralEnergy_le",
+  "source_name": "QuantumParallelRepetition.twoSidedSchmidtSpectralEnergy_le",
+  "formal_statement": "theorem QuantumParallelRepetition.twoSidedSchmidtSpectralEnergy_le\n    {ι κ ν : Type*} [Fintype ι] [Fintype κ] [Fintype ν]\n    (ψ φ : EuclideanSpace ℂ ν)\n    (hψ : ‖ψ‖ = 1) (hφ : ‖φ‖ = 1)\n    (σ : ι → ℝ) (μ : κ → ℝ)\n    (hσ : ∀ i, 0 ≤ σ i) (hμ : ∀ j, 0 ≤ μ j)\n    (hσunit : (∑ i : ι, σ i ^ 2) = 1)\n    (hμunit : (∑ j : κ, μ j ^ 2) = 1)\n    (L R : ι → κ → ℂ)\n    (hLrow : ∀ i, (∑ j : κ, ‖L i j‖ ^ 2) = 1)\n    (hLcol : ∀ j, (∑ i : ι, ‖L i j‖ ^ 2) = 1)\n    (hRrow : ∀ i, (∑ j : κ, ‖R i j‖ ^ 2) = 1)\n    (hRcol : ∀ j, (∑ i : ι, ‖R i j‖ ^ 2) = 1)\n    (hinner :\n      inner ℂ ψ φ =\n        inner ℂ\n          (weightedComplexOverlapVector σ μ L)\n          (weightedComplexOverlapVector σ μ R)) :\n    (∑ i : ι, ∑ j : κ,\n      (σ i - μ j) ^ 2 * ‖L i j‖ ^ 2) ≤\n        2 * ‖ψ - φ‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L6583-L6662",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   6583,
+   6662
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.doublyStochasticSchmidtMass_le_one"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.tensorEmbezzlementTarget_norm",
+  "source_name": "QuantumParallelRepetition.tensorEmbezzlementTarget_norm",
+  "formal_statement": "theorem QuantumParallelRepetition.tensorEmbezzlementTarget_norm\n    {d n : ℕ} (hn : 0 < n)\n    (ξ : BipartiteUnitVector d) :\n    ‖tensorEmbezzlementTarget (n := n) ξ‖ = 1 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L6672-L6730",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   6672,
+   6730
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.embezzlementState_norm"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.localUnitaryAction_norm",
+  "source_name": "QuantumParallelRepetition.localUnitaryAction_norm",
+  "formal_statement": "theorem QuantumParallelRepetition.localUnitaryAction_norm {n : ℕ}\n    (U V : Matrix.unitaryGroup (Fin n) ℂ)\n    (ψ : EuclideanSpace ℂ (Fin n × Fin n)) :\n    ‖localUnitaryAction U V ψ‖ = ‖ψ‖ := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L6747-L6763",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   6747,
+   6763
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.schmidtVector_norm_sq",
+  "source_name": "QuantumParallelRepetition.schmidtVector_norm_sq",
+  "formal_statement": "theorem QuantumParallelRepetition.schmidtVector_norm_sq\n    {d : ℕ}\n    (σ : Fin d → ℝ)\n    (U V : Matrix.unitaryGroup (Fin d) ℂ) :\n    ‖schmidtVector σ U V‖ ^ 2 =\n      ∑ i : Fin d, σ i ^ 2 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L6828-L6836",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   6828,
+   6836
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.localUnitaryAction_norm"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.schmidtVector_apply",
+  "source_name": "QuantumParallelRepetition.schmidtVector_apply",
+  "formal_statement": "theorem QuantumParallelRepetition.schmidtVector_apply\n    {d : ℕ}\n    (σ : Fin d → ℝ)\n    (U V : Matrix.unitaryGroup (Fin d) ℂ)\n    (a b : Fin d) :\n    schmidtVector σ U V (a, b) =\n      ∑ i : Fin d, (σ i : ℂ) * U a i * V b i := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L6838-L6849",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   6838,
+   6849
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.schmidtVector_spectralEnergy_le",
+  "source_name": "QuantumParallelRepetition.schmidtVector_spectralEnergy_le",
+  "formal_statement": "theorem QuantumParallelRepetition.schmidtVector_spectralEnergy_le\n    {d : ℕ}\n    (σ μ : Fin d → ℝ)\n    (hσ : ∀ i, 0 ≤ σ i) (hμ : ∀ j, 0 ≤ μ j)\n    (hσunit : (∑ i : Fin d, σ i ^ 2) = 1)\n    (hμunit : (∑ j : Fin d, μ j ^ 2) = 1)\n    (U V X Y : Matrix.unitaryGroup (Fin d) ℂ) :\n    (∑ i : Fin d, ∑ j : Fin d,\n      (σ i - μ j) ^ 2 *\n        ‖unitaryBasisOverlap U X i j‖ ^ 2) ≤\n      2 * ‖schmidtVector σ U V -\n        schmidtVector μ X Y‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open WithLp",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L7009-L7068",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   7009,
+   7068
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.twoSidedSchmidtSpectralEnergy_le",
+   "QuantumParallelRepetition.schmidtVector_norm_sq"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 48,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.linearMap_exists_singularBases",
+  "source_name": "QuantumParallelRepetition.linearMap_exists_singularBases",
+  "formal_statement": "theorem QuantumParallelRepetition.linearMap_exists_singularBases\n    {d : ℕ}\n    (T : EuclideanSpace ℂ (Fin d) →ₗ[ℂ]\n      EuclideanSpace ℂ (Fin d)) :\n    ∃ (σ : Fin d → ℝ)\n      (u v : OrthonormalBasis (Fin d) ℂ\n        (EuclideanSpace ℂ (Fin d))),\n      (∀ i, 0 ≤ σ i) ∧\n        (∀ i, T (v i) = (σ i : ℂ) • u i) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
+   "open Complex Matrix Finset"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L7077-L7171",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   7077,
+   7171
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 86,
+  "is_target": false
+ }
+]

@@ -1,0 +1,1689 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Repeat_RepSampler",
+  "module": "MIPRE.Foundations.Repeat.RepSampler",
+  "module_doc": "/-!\n# The repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`) as a `CL.Sampler`: on an\n`ℓ`-level sampler `S` with dimension `s(n)` and parameters `(λ, τ)`, the sampler of dimension\n`k(n) s(n)`, `k(n) = 2^{τ(|λ| + |n|)}` (`MIPRE.Repetition.reps`), whose CL functions are the\n`k(n)`-fold direct sums `CLFun.famSum` of those of `S`, and whose program is the fixed core\n`Prog.repSampCore` of `MIPRE.Foundations.Repeat.Sampler`, run through the self-interpreter\n`selfUniversal` and the s-m-n construction `hardcode` on `(S.prog, λ, τ)`\n(`planning/repetition-verifier.md`, R3(b)).\n\nThe correctness clauses reduce to those of `S` on the blocks of the query (`Bits.lean`), the\nhalting clause to the case analysis `repSampCore_runs_any` on the shape of the query, which\nalso carries the explicit cost used by the time bound (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/RepSampler.lean",
+  "source_path": "MIPRE/Foundations/Repeat/RepSampler.lean",
+  "defmat": [
+   "MIPRE.Repeat.anyCost",
+   "MIPRE.Repeat.blockQueries",
+   "MIPRE.Repeat.repSampler",
+   "MIPRE.Repeat.repSamplerProg",
+   "MIPRE.Repeat.zBound"
+  ],
+  "embedded": [
+   "MIPRE.Repeat.block_call",
+   "MIPRE.Repeat.chunk_toBits_truncate",
+   "MIPRE.Repeat.dimProg_runs_encode",
+   "MIPRE.Repeat.dim_call",
+   "MIPRE.Repeat.encode_factor",
+   "MIPRE.Repeat.encode_linear",
+   "MIPRE.Repeat.encode_marginal",
+   "MIPRE.Repeat.encode_nat_one",
+   "MIPRE.Repeat.encode_nat_three",
+   "MIPRE.Repeat.encode_nat_two",
+   "MIPRE.Repeat.encode_nat_zero",
+   "MIPRE.Repeat.exists_uniform_bound",
+   "MIPRE.Repeat.lockCost_mono",
+   "MIPRE.Repeat.lockProg_runs_blocks",
+   "MIPRE.Repeat.lockProg_runs_malformed",
+   "MIPRE.Repeat.repSampCore_runs_any",
+   "MIPRE.Repeat.repSamplerProg_runs",
+   "MIPRE.Repeat.repSamplerProg_wellScoped",
+   "MIPRE.Repeat.repSampler_dim",
+   "MIPRE.Repeat.repSampler_halts",
+   "MIPRE.Repeat.repSampler_prog",
+   "MIPRE.Repeat.repSampler_runs_dimension",
+   "MIPRE.Repeat.repSampler_runs_factor",
+   "MIPRE.Repeat.repSampler_runs_linear",
+   "MIPRE.Repeat.repSampler_runs_marginal",
+   "MIPRE.Repeat.repSampler_runs_of_lock",
+   "MIPRE.Repeat.univ_call"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Repeat.anyCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     131,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.blockQueries",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     48,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.block_call",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     249,
+     254
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.chunk_toBits_truncate",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     403,
+     414
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.dimProg_runs_encode",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     96,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.dim_call",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     241,
+     247
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.encode_factor",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     362,
+     368
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.encode_linear",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     354,
+     360
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.encode_marginal",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     346,
+     352
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.encode_nat_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     341,
+     341
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.encode_nat_three",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     343,
+     344
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.encode_nat_two",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     342,
+     342
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.encode_nat_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.exists_uniform_bound",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     31,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.lockCost_mono",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     88,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.lockProg_runs_blocks",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     287,
+     320
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.lockProg_runs_malformed",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     59,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampCore_runs_any",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     141,
+     220
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     497,
+     513
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSamplerProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     224,
+     226
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSamplerProg_runs",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     232,
+     237
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSamplerProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     228,
+     230
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler_dim",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     518,
+     519
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler_halts",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     256,
+     269
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler_prog",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     515,
+     516
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler_runs_dimension",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     277,
+     285
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler_runs_factor",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     457,
+     495
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler_runs_linear",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     416,
+     455
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler_runs_marginal",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     370,
+     401
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repSampler_runs_of_lock",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     330,
+     339
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.univ_call",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     271,
+     275
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.zBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     127,
+     129
+    ]
+   }
+  ],
+  "lines": 598,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Prims",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_MapLoop",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Repeat",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Bits",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Repeat.anyCost": [
+    "/-- The cost of the core on a query of size `D` at index `n`, with the dimension query",
+    "answered in time `td` and each block query in time `Tu`: the sum of the branches' bounds. -/"
+   ],
+   "MIPRE.Repeat.blockQueries": [
+    "/-- The block queries the core asks `S̄` on the query datum `d`, at dimension `s`: for a query",
+    "`(kind, w, j, u, y)` of nonzero kind and `s > 0`, the queries `(kind, w, j, blockU, blockY)` on",
+    "the pairs of blocks; none otherwise. -/"
+   ],
+   "MIPRE.Repeat.repSampler": [
+    "/-- **The repeated sampler** (`ComputeParrepVerifier`, sampler half): `k(n)` independent",
+    "copies of `S`, `k(n) = 2^{τ(|λ| + |n|)}`. -/"
+   ],
+   "MIPRE.Repeat.repSamplerProg": [
+    "/-- The program of the repeated sampler on `(S̄, λ, τ)`: the core, hardcoded. -/"
+   ],
+   "MIPRE.Repeat.zBound": [
+    "/-- A bound on the sizes in the block loop of the core on a query of size `D`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Repeat_Dom",
+  "module": "MIPRE.Foundations.Repeat.Dom",
+  "module_doc": "/-!\n# Domination by a monomial in the parameters and the input size\n\nThe time bounds of the repeated verifier (`thm:parallel-repetition`) have the shape\n`c (W + 1)^m X^{e (K + 1)}`: `W` a number dominating all the parameters at index `n` (the\nargument `MIPRE.Repetition.arg`), `X = |d| + 1` the size of the input and `K` the input's\ndegree. `Dom W X K c m e v` says `v` is below such a monomial. The costs of the programs are\nsums and products of quantities each of which is below `W`, below `X`, or a constant, and the\ncombinators here — `add`, `mul`, `pow`, `ofLeW`, `ofLeX`, `const` — assemble the exponents,\nso that the final `c, m, e` are produced by the chain rather than computed by hand. The\nexponent of `X` is counted in units of `K + 1`, so that a bound `X^{e (K + 1)}` with `e`\nindependent of `K` is what comes out, as the degree clause of the theorem needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Dom.lean",
+  "source_path": "MIPRE/Foundations/Repeat/Dom.lean",
+  "defmat": [
+   "MIPRE.Repeat.Dom"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Repeat.Dom",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     24,
+     25
+    ]
+   }
+  ],
+  "lines": 35,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Repeat.Dom": [
+    "/-- `v ≤ c (W + 1)^m X^{e (K + 1)}`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Repeat_SamplerCost",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
+  "defmat": [
+   "MIPRE.Repeat.SampDom",
+   "MIPRE.Repeat.cU",
+   "MIPRE.Repeat.dU"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Repeat.SampDom",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     54,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.cU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     27,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.dU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     31,
+     32
+    ]
+   }
+  ],
+  "lines": 126,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Prims",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_MapLoop",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Repeat",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Bits",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_RepSampler",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Dom"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Repeat.SampDom": [
+    "/-- The hypotheses on the dominating number `W`. -/"
+   ],
+   "MIPRE.Repeat.cU": [
+    "/-- The constants of the self-interpreter's overhead polynomial. -/"
+   ],
+   "MIPRE.Repeat.dU": [
+    "/-- The degree of the self-interpreter's overhead polynomial. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Repeat_DecLoop",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "defmat": [
+   "MIPRE.Cost.Prog.DecAcc",
+   "MIPRE.Cost.Prog.coordBody",
+   "MIPRE.Cost.Prog.coordIter",
+   "MIPRE.Cost.Prog.decCtx",
+   "MIPRE.Cost.Prog.decQueries",
+   "MIPRE.Cost.Prog.decQuery",
+   "MIPRE.Cost.Prog.decState",
+   "MIPRE.Cost.Prog.finalProg",
+   "MIPRE.Cost.Prog.okBits",
+   "MIPRE.Cost.Prog.preCost",
+   "MIPRE.Cost.Prog.preProg",
+   "MIPRE.Cost.Prog.preResult",
+   "MIPRE.Cost.Prog.stepProg",
+   "MIPRE.Cost.Prog.stepResult"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Prog.DecAcc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     651,
+     663
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.coordBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     565,
+     570
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.coordIter",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     773,
+     775
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.decCtx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     94,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.decQueries",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     763,
+     771
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.decQuery",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.decState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     101,
+     103
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.finalProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     105,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.okBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.preCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     198,
+     202
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.preProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     163,
+     185
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.preResult",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     233,
+     239
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.stepProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     442,
+     450
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.stepResult",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     459,
+     461
+    ]
+   }
+  ],
+  "lines": 202,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Prims",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_MapLoop",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Prog.DecAcc": [
+    "/-- **Acceptance of the coordinate loop**: `k` answers on each side, each a bit string of",
+    "length at most `B`, and the input decider, through `univ`, answering `1` on every",
+    "coordinate. -/"
+   ],
+   "MIPRE.Cost.Prog.coordBody": [
+    "/-- The body of the coordinate loop: on the exhausted counter, `finalProg`; otherwise the",
+    "step on the decremented state. -/"
+   ],
+   "MIPRE.Cost.Prog.coordIter": [
+    "/-- The per-iteration budget of the loop, in a bound `Z` on the sizes and the cost `Tu` of a",
+    "call. -/"
+   ],
+   "MIPRE.Cost.Prog.decCtx": [
+    "/-- The context of the loop: the input decider `D̄`, the index `n`, and `s`, `B` in unary. -/"
+   ],
+   "MIPRE.Cost.Prog.decQueries": [
+    "/-- The potential queries of the loop, in order: one per coordinate while answers remain. -/"
+   ],
+   "MIPRE.Cost.Prog.decQuery": [
+    "/-- The query to the universal machine on one coordinate: `(D̄, (n, x_i, y_i, a_i, b_i))`. -/"
+   ],
+   "MIPRE.Cost.Prog.decState": [
+    "/-- The state of the loop. -/"
+   ],
+   "MIPRE.Cost.Prog.finalProg": [
+    "/-- On the exhausted counter: accept iff no answer is left over. -/"
+   ],
+   "MIPRE.Cost.Prog.okBits": [
+    "/-- `d` is the encoding of a bit string of length at most `B`: the walk `bitWalk` against the",
+    "unary budget `B` ends with the string exhausted. -/"
+   ],
+   "MIPRE.Cost.Prog.preCost": [
+    "/-- The cost of `preProg` at `s`, `B`, on remainders of sizes `U, Y`, answer lists of sizes",
+    "`A, Bs`, a context of size `C` and a counter of size `K`. -/"
+   ],
+   "MIPRE.Cost.Prog.preProg": [
+    "/-- Before the call: cut a block off `remX` and `remY`, check the current answers, and return",
+    "the query with the next state — or `nil`. -/"
+   ],
+   "MIPRE.Cost.Prog.preResult": [
+    "/-- The result of `preProg` on a state with answers `ai, bi` at hand. -/"
+   ],
+   "MIPRE.Cost.Prog.stepProg": [
+    "/-- One coordinate: `preProg`, then the query through `univ`, continuing when the answer is",
+    "`1` (`cons nil nil`), stopping with `0` otherwise. -/"
+   ],
+   "MIPRE.Cost.Prog.stepResult": [
+    "/-- The result of the step from the answer `r` of `univ`: continue with `st'` on `1`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Repeat_DecMain",
+  "module": "MIPRE.Foundations.Repeat.DecMain",
+  "module_doc": "/-!\n# The program of the repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(c)) as a program of the ambient model, before the s-m-n\nconstruction. On `((S̄, D̄, λ, τ, β), (n, x, y, a, b))` it\n\n1. sanitizes `x, y, a, b` into bit strings (`bitsProg`: every element read as a bit), so that\n   the rest of the program is total on every datum;\n2. computes, in unary, `s = s(n)` from `S̄`, `m = τ(|λ| + |n|)`, the repetition count\n   `k = 2^m`, the question length `k s`, and the parse length `B = 2^{β(|λ| + |n|)}`;\n3. checks `|x| = |y| = k s` and that `a`, `b` are the serializations of the data they parse to\n   (`Data.parse`, `Data.toBitsPost`), the four verdicts combined by `andExpr`;\n4. runs the coordinate loop `coordBody` on the state `(k, x, y, parse a, parse b, (D̄, n, s, B))`.\n\n`prepProg` is steps 1–3, returning the state of the loop or `nil`; its run lemma\n`prepProg_runs` is a straight line of deterministic steps, generated mechanically.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecMain.lean",
+  "source_path": "MIPRE/Foundations/Repeat/DecMain.lean",
+  "defmat": [
+   "MIPRE.Cost.Prog.andExpr",
+   "MIPRE.Cost.Prog.bitsBody",
+   "MIPRE.Cost.Prog.bitsCost",
+   "MIPRE.Cost.Prog.bitsProg",
+   "MIPRE.Cost.Prog.decInput",
+   "MIPRE.Cost.Prog.decMain",
+   "MIPRE.Cost.Prog.decParams",
+   "MIPRE.Cost.Prog.eqCost",
+   "MIPRE.Cost.Prog.lenCost",
+   "MIPRE.Cost.Prog.parseCost",
+   "MIPRE.Cost.Prog.prepCost",
+   "MIPRE.Cost.Prog.prepEnv",
+   "MIPRE.Cost.Prog.prepOk",
+   "MIPRE.Cost.Prog.prepPreCost",
+   "MIPRE.Cost.Prog.prepProg",
+   "MIPRE.Cost.Prog.prepResult",
+   "MIPRE.Cost.Prog.prepState",
+   "MIPRE.Cost.Prog.repDecCore",
+   "MIPRE.Cost.Prog.serCost"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Prog.andExpr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     146,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.bitsBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     39,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.bitsCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     195,
+     196
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.bitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     49,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.decInput",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     181,
+     183
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.decMain",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     433,
+     435
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.decParams",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     479,
+     481
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.eqCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     201,
+     202
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.lenCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     198,
+     199
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.parseCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     204,
+     205
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.prepCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     341,
+     347
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.prepEnv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     189,
+     191
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.prepOk",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     318,
+     322
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.prepPreCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     210,
+     225
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.prepProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     185,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.prepResult",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     337,
+     339
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.prepState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     324,
+     328
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.repDecCore",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     483,
+     490
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.serCost",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     207,
+     208
+    ]
+   }
+  ],
+  "lines": 198,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Prims",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_MapLoop",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Repeat",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Bits",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_DecLoop",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Serial"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Prog.andExpr": [
+    "/-- `ok₁ ∧ ok₂ ∧ ok₃ ∧ ok₄` on encoded booleans at the given indices (each test extends the",
+    "environment by two entries). -/"
+   ],
+   "MIPRE.Cost.Prog.bitsBody": [
+    "/-- Body of the sanitizer: on `cons rem acc`, move the head of `rem`, read as a bit, onto `acc`. -/"
+   ],
+   "MIPRE.Cost.Prog.bitsCost": [
+    "/-- The cost of the sanitizer on a list of length `L` and size `sz`. -/"
+   ],
+   "MIPRE.Cost.Prog.bitsProg": [
+    "/-- The sanitizer: the bits of a list, `encode (bitsOf l)`. -/"
+   ],
+   "MIPRE.Cost.Prog.decInput": [
+    "/-- The input of `prepProg`: `(S̄, D̄, λ, τ, β, n, x, y, a, b)`. -/"
+   ],
+   "MIPRE.Cost.Prog.decMain": [
+    "/-- The main program: the preparation, then the coordinate loop on its state. -/"
+   ],
+   "MIPRE.Cost.Prog.decParams": [
+    "/-- The hardcoded datum `((S̄, D̄), λ, τ, β)`. -/"
+   ],
+   "MIPRE.Cost.Prog.eqCost": [
+    "/-- The cost of `eqBitsProg` on `l₁`, `l₂`. -/"
+   ],
+   "MIPRE.Cost.Prog.lenCost": [
+    "/-- The cost of `lenProg` on a list of length `L` and size `sz`. -/"
+   ],
+   "MIPRE.Cost.Prog.parseCost": [
+    "/-- The cost of `parseProg` on `x`. -/"
+   ],
+   "MIPRE.Cost.Prog.prepCost": [
+    "/-- The cost of `prepProg`. -/"
+   ],
+   "MIPRE.Cost.Prog.prepEnv": [
+    "/-- The environment of `prepProg` after its straight-line prefix, in terms of the parameters. -/"
+   ],
+   "MIPRE.Cost.Prog.prepOk": [
+    "/-- The four verdicts of the checks: `|x| = |y| = k s`, and `a`, `b` canonical. -/"
+   ],
+   "MIPRE.Cost.Prog.prepPreCost": [
+    "/-- The cost of the straight-line prefix of `prepProg`. -/"
+   ],
+   "MIPRE.Cost.Prog.prepProg": [
+    "/-- Steps 1–3 of the repeated decider, returning the state of the coordinate loop or `nil`. -/"
+   ],
+   "MIPRE.Cost.Prog.prepResult": [
+    "/-- The result of `prepProg`: the state when the checks pass, `nil` otherwise. -/"
+   ],
+   "MIPRE.Cost.Prog.prepState": [
+    "/-- The state of the coordinate loop assembled by `prepProg`. -/"
+   ],
+   "MIPRE.Cost.Prog.repDecCore": [
+    "/-- The core of the repeated decider, before the s-m-n construction: on",
+    "`(((S̄, D̄), λ, τ, β), (n, x, y, a, b))`, the main program on `(S̄, D̄, λ, τ, β, n, x, y, a, b)`. -/"
+   ],
+   "MIPRE.Cost.Prog.serCost": [
+    "/-- The cost of `serProg` on `d`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Repeat_RepDecider",
+  "module": "MIPRE.Foundations.Repeat.RepDecider",
+  "module_doc": "/-!\n# The repeated decider\n\nThe decider of `ComputeParrepVerifier` (`thm:parallel-repetition`) as a `Decider`: the core\n`Prog.repDecCore` of `MIPRE.Foundations.Repeat.DecMain`, run through the self-interpreter and\nthe s-m-n construction on `((S̄, D̄), λ, τ, β)`. Its acceptance is characterized exactly\n(`repDecider_accepts_iff`): on `(n, x, y, a, b)` it accepts iff `|x| = |y| = k s`, `a` and `b`\nare the serializations of lists of `k` bit strings of length at most `B` each, and the input\ndecider accepts every coordinate `(n, x_i, y_i, a_i, b_i)`, with `k = 2^{τ(|λ| + |n|)}`,\n`s = s(n)` the dimension of the input sampler and `B = 2^{β(|λ| + |n|)}` the parse length.\nBoth directions go through the inversion lemmas of the programs, since the input decider\nneed not halt on inputs it rejects.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/RepDecider.lean",
+  "source_path": "MIPRE/Foundations/Repeat/RepDecider.lean",
+  "defmat": [
+   "MIPRE.Repeat.RepAcc",
+   "MIPRE.Repeat.repDecider",
+   "MIPRE.Repeat.repDeciderProg"
+  ],
+  "embedded": [
+   "MIPRE.Repeat.repDeciderProg_wellScoped"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Repeat.RepAcc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     126,
+     136
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repDecider",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     35,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repDeciderProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     27,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Repeat.repDeciderProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     31,
+     33
+    ]
+   }
+  ],
+  "lines": 122,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Prims",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_MapLoop",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Repeat",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Bits",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_RepSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_DecLoop",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Serial",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_DecMain"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Repeat.RepAcc": [
+    "/-- **Acceptance of the repeated decider**, on the parameters `(λ, τ, β)` at index `n`, read as",
+    "`k`-tuples: `|x| = |y| = k s`, `a` and `b` the serializations of lists of `k` bit strings of",
+    "length at most `B`, and the input decider accepting every coordinate. -/"
+   ],
+   "MIPRE.Repeat.repDecider": [
+    "/-- **The repeated decider** (`ComputeParrepVerifier`, decider half). -/"
+   ],
+   "MIPRE.Repeat.repDeciderProg": [
+    "/-- The program of the repeated decider on `((S̄, D̄), λ, τ, β)`: the core, hardcoded. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Repeat_DeciderCost",
+  "module": "MIPRE.Foundations.Repeat.DeciderCost",
+  "module_doc": "/-!\n# The running time of the repeated decider\n\n`repDecider_timeBound`: when the input sampler and decider run within `R.S (|d| + 1)^{R.k}`\nand `R.D (|d| + 1)^{R.k}` at index `n`, the repeated decider on `(λ, τ, β)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything and\n`W` any number dominating the parameters (`DecDom`). The cost is the explicit one of\n`prepProg_runs` and `coordLoop_runs_bounded`, dominated piece by piece as in\n`SamplerCost.lean`; the one point of care is that the sanitized inputs of the loop are no larger\nthan the raw ones (`size_encode_bitsOf_le`, `size_parse_bitsOf_le`), so that the input decider\nis called on data of size below `|d|` and its bound needs no factor `c^{R.k}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DeciderCost.lean",
+  "source_path": "MIPRE/Foundations/Repeat/DeciderCost.lean",
+  "defmat": [
+   "MIPRE.Repeat.DecDom"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Repeat.DecDom",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     314,
+     328
+    ]
+   }
+  ],
+  "lines": 125,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Prims",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_MapLoop",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Repeat",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Bits",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_RepSampler",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Dom",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_SamplerCost",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_DecLoop",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Serial",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_DecMain",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_RepDecider"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Repeat.DecDom": [
+    "/-- The hypotheses on the dominating number `W`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_Repetition_Verifier",
+  "module": "MIPRE.Background.Repetition.Verifier",
+  "module_doc": "/-!\n# Parallel repetition of normal form verifiers: the assembly\n\n`MIPRE.repetition ℓ : Repetition ℓ` — blueprint `thm:parallel-repetition`, inhabited\n(`planning/repetition-verifier.md`, R4). The output verifier `repVerifier V λ τ β` packages the\nrepeated sampler (`MIPRE.Repeat.repSampler`) and the repeated decider\n(`MIPRE.Repeat.repDecider`). Its game at index `n`, with answers of length at most `T` for any\n`T` past the length of an encoded `k`-tuple, is the `k`-fold direct repetition of `𝒱_n` at the\nparse length `B`, up to two relabelings (`valStar_repVerifier`):\n\n* the questions `𝔽₂^{k s}` are the `k`-tuples of questions `𝔽₂^s` (`CL.blockEquiv`), with the\n  distribution matching because the repeated sampler's CL functions are direct sums\n  (`CL.clDist_famSum`), and the decider reads the `i`-th block of a question where the repeated\n  game reads the `i`-th coordinate (`toBits_block`);\n* the answers of length at most `T` contain the encoded `k`-tuples of answers of length at most\n  `B` (`tupleEmbed`), on which the repeated decider accepts exactly when every coordinate is\n  accepted (`repDecider_accepts_iff`), and it accepts nothing else, so the extra answers do not\n  change the value (`quantumValue_extendAnswers`) nor the PCC strategies (`SyncStrategy.extend`).\n\nCompleteness is then the tensor power (`exists_perfectPCC_repeat_doubled`), soundness is\n`quantumValue_repeat_le_soundBound`, and the complexity clause is the two running-time theorems\n`repSampler_timeBound` and `repDecider_timeBound` at `W = Repetition.arg`, the constants they\nprovide chosen once (`sampC`, `decC`, …) for the polynomial `bound`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Verifier.lean",
+  "source_path": "MIPRE/Background/Repetition/Verifier.lean",
+  "defmat": [
+   "MIPRE.Game.reindex",
+   "MIPRE.decC",
+   "MIPRE.decE",
+   "MIPRE.decM",
+   "MIPRE.midGame",
+   "MIPRE.questionsEquiv",
+   "MIPRE.repAnsBound",
+   "MIPRE.repBound",
+   "MIPRE.repVerifier",
+   "MIPRE.repetition",
+   "MIPRE.sampC",
+   "MIPRE.sampE",
+   "MIPRE.sampM",
+   "MIPRE.tupleEmbed"
+  ],
+  "embedded": [
+   "MIPRE.ansArg_bound",
+   "MIPRE.ans_ineq",
+   "MIPRE.decC_spec",
+   "MIPRE.game_D_range",
+   "MIPRE.game_D_tuple",
+   "MIPRE.game_μ_eq",
+   "MIPRE.hasPerfectPCC_repVerifier",
+   "MIPRE.quantumValue_midGame",
+   "MIPRE.quantumValue_reindex",
+   "MIPRE.repAnsBound_eval",
+   "MIPRE.repBound_eval",
+   "MIPRE.sampC_spec",
+   "MIPRE.toBits_block",
+   "MIPRE.tupleEmbed_val",
+   "MIPRE.tuple_encode_injective",
+   "MIPRE.valStar_repVerifier",
+   "MIPRE.valStar_repVerifier_le",
+   "MIPRE.within_repVerifier"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Game.reindex",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     56,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.ansArg_bound",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     291,
+     296
+    ]
+   },
+   {
+    "name": "MIPRE.ans_ineq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     289,
+     289
+    ]
+   },
+   {
+    "name": "MIPRE.decC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     263,
+     264
+    ]
+   },
+   {
+    "name": "MIPRE.decC_spec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     268,
+     273
+    ]
+   },
+   {
+    "name": "MIPRE.decE",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     266,
+     266
+    ]
+   },
+   {
+    "name": "MIPRE.decM",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     265,
+     265
+    ]
+   },
+   {
+    "name": "MIPRE.game_D_range",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     177,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.game_D_tuple",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     141,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.game_μ_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     133,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.hasPerfectPCC_repVerifier",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     205,
+     237
+    ]
+   },
+   {
+    "name": "MIPRE.midGame",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     120,
+     126
+    ]
+   },
+   {
+    "name": "MIPRE.quantumValue_midGame",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     128,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.quantumValue_reindex",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.questionsEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     115,
+     118
+    ]
+   },
+   {
+    "name": "MIPRE.repAnsBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     283,
+     284
+    ]
+   },
+   {
+    "name": "MIPRE.repAnsBound_eval",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     286,
+     287
+    ]
+   },
+   {
+    "name": "MIPRE.repBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     275,
+     277
+    ]
+   },
+   {
+    "name": "MIPRE.repBound_eval",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     279,
+     281
+    ]
+   },
+   {
+    "name": "MIPRE.repVerifier",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.repetition",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     350,
+     373
+    ]
+   },
+   {
+    "name": "MIPRE.sampC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     253,
+     254
+    ]
+   },
+   {
+    "name": "MIPRE.sampC_spec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     258,
+     261
+    ]
+   },
+   {
+    "name": "MIPRE.sampE",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     256,
+     256
+    ]
+   },
+   {
+    "name": "MIPRE.sampM",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     255,
+     255
+    ]
+   },
+   {
+    "name": "MIPRE.toBits_block",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     74,
+     79
+    ]
+   },
+   {
+    "name": "MIPRE.tupleEmbed",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     95,
+     104
+    ]
+   },
+   {
+    "name": "MIPRE.tupleEmbed_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     106,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.tuple_encode_injective",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     83,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.valStar_repVerifier",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     190,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.valStar_repVerifier_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     239,
+     247
+    ]
+   },
+   {
+    "name": "MIPRE.within_repVerifier",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     300,
+     346
+    ]
+   }
+  ],
+  "lines": 912,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Background_Repetition_Direct",
+   "import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part01",
+   "import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part02",
+   "import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part03",
+   "import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part04",
+   "import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part05",
+   "import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part06",
+   "import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part07",
+   "import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part08",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Background_Repetition_Entangled",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition",
+   "import Definitions.Def_MIPRE_Background_Repetition_Soundness",
+   "import Definitions.Def_MIPRE_Foundations_TensorFamily",
+   "import Definitions.Def_MIPRE_Background_Repetition_TensorPower",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Prims",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_MapLoop",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Repeat",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Bits",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_RepSampler",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Dom",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_SamplerCost",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_DecLoop",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Serial",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_DecMain",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_RepDecider",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_DeciderCost"
+  ],
+  "blueprint": [
+   "thm:parallel-repetition"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.Game.reindex": [
+    "/-- The game `G` played through equivalences of the question alphabets. -/"
+   ],
+   "MIPRE.decC": [
+    "/-- The constants of `repDecider_timeBound`, chosen once. -/"
+   ],
+   "MIPRE.decE": null,
+   "MIPRE.decM": null,
+   "MIPRE.midGame": [
+    "/-- The repeated game, on the output's questions. -/"
+   ],
+   "MIPRE.questionsEquiv": [
+    "/-- The questions of the output at index `n` are `k`-tuples of questions of `𝒱_n`. -/"
+   ],
+   "MIPRE.repAnsBound": [
+    "/-- The polynomial bounding the answers the output accepts, in `k(n) + B(n)`. -/"
+   ],
+   "MIPRE.repBound": [
+    "/-- The polynomial bounding the running times and the dimension of the output. -/"
+   ],
+   "MIPRE.repVerifier": [
+    "/-- The output of the procedure on `𝒱` at `(λ, τ, β)`: the repeated sampler and decider. -/"
+   ],
+   "MIPRE.repetition": [
+    "/-- **Parallel repetition of normal form verifiers** (blueprint `thm:parallel-repetition`),",
+    "inhabited: the repeated sampler and decider, their programs as polynomial-time functions of",
+    "the inputs through the s-m-n map, the complexity clause `within_repVerifier`, completeness",
+    "`hasPerfectPCC_repVerifier` and soundness `valStar_repVerifier_le`. -/"
+   ],
+   "MIPRE.sampC": [
+    "/-- The constants of `repSampler_timeBound`, chosen once. -/"
+   ],
+   "MIPRE.sampE": null,
+   "MIPRE.sampM": null,
+   "MIPRE.tupleEmbed": [
+    "/-- The `k`-tuples of answers of length at most `B`, as answers of length at most `T`, for",
+    "`T` past the length of an encoded tuple. -/"
+   ]
+  }
+ }
+]

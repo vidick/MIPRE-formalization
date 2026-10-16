@@ -1,0 +1,559 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.conditionedBobEffect_complement_positive",
+  "source_name": "QuantumParallelRepetition.conditionedBobEffect_complement_positive",
+  "formal_statement": "theorem QuantumParallelRepetition.conditionedBobEffect_complement_positive\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (β : {i : Fin n // i ∈ D} → B)\n    (ys : Fin n → Y) :\n    (1 - conditionedBobEffect G n S D β ys).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2399-L2425",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   2399,
+   2425
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.spectralSupportSqrt_sq",
+  "source_name": "QuantumParallelRepetition.spectralSupportSqrt_sq",
+  "formal_statement": "theorem QuantumParallelRepetition.spectralSupportSqrt_sq\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef) :\n    spectralSupportSqrt F hF * spectralSupportSqrt F hF = F := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open scoped BigOperators ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2622-L2638",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   2622,
+   2638
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.fullHistoryWeight_mul_hidden",
+  "source_name": "QuantumParallelRepetition.fullHistoryWeight_mul_hidden",
+  "formal_statement": "theorem QuantumParallelRepetition.fullHistoryWeight_mul_hidden\n    (G : Game X Y A B) {n : ℕ}\n    (D L : Finset (Fin n))\n    (hL : L ⊆ Finset.univ \\ D)\n    (h : FullSubsetHistory X Y n D L)\n    (hx : {i : Fin n // i ∈ fullHistoryRemaining n D L} → X)\n    (hy : {i : Fin n // i ∈ L} → Y) :\n    fullHistoryWeight G h *\n        fullHistoryHiddenAliceWeight G h hx *\n        fullHistoryHiddenBobWeight G h hy =\n      (G.repeat n).questionWeight\n        (fullHistoryAliceQuestion h hx)\n        (fullHistoryBobQuestion h hy) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3228-L3367",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   3228,
+   3367
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 127,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.conditionedEffects_born_expansion",
+  "source_name": "QuantumParallelRepetition.conditionedEffects_born_expansion",
+  "formal_statement": "theorem QuantumParallelRepetition.conditionedEffects_born_expansion\n    [DecidableEq A] [DecidableEq B]\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (α : {i : Fin n // i ∈ D} → A)\n    (β : {i : Fin n // i ∈ D} → B)\n    (xs : Fin n → X) (ys : Fin n → Y) :\n    bornTracePairing S.state.matrix\n        (conditionedAliceEffect G n S D α xs)\n        (conditionedBobEffect G n S D β ys) =\n      ∑ aa : Fin n → A, ∑ bb : Fin n → B,\n        if ∀ (i : Fin n) (hi : i ∈ D), aa i = α ⟨i, hi⟩ then\n          if ∀ (i : Fin n) (hi : i ∈ D), bb i = β ⟨i, hi⟩ then\n            S.outcomeProbability xs ys aa bb\n          else 0\n        else 0 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3458-L3487",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   3458,
+   3487
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.finite_sum_four_swap",
+  "source_name": "QuantumParallelRepetition.finite_sum_four_swap",
+  "formal_statement": "theorem QuantumParallelRepetition.finite_sum_four_swap\n    {I J K T : Type*}\n    [Fintype I] [Fintype J] [Fintype K] [Fintype T]\n    (f : I → J → K → T → ℝ) :\n    (∑ i : I, ∑ j : J, ∑ k : K, ∑ t : T, f i j k t) =\n      ∑ k : K, ∑ t : T, ∑ i : I, ∑ j : J, f i j k t := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3489-L3513",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   3489,
+   3513
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection",
+  "source_name": "QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection",
+  "formal_statement": "theorem QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection\n    [DecidableEq A] [DecidableEq B]\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D L : Finset (Fin n))\n    (hL : L ⊆ Finset.univ \\ D) :\n    (∑ h : FullSubsetHistory X Y n D L,\n      ∑ α : {i : Fin n // i ∈ D} → A,\n      ∑ β : {i : Fin n // i ∈ D} → B,\n        fullHistoryWeight G h * fullHistoryWinIndicator G h α β *\n          bornTracePairing S.state.matrix\n            (fullHistoryAliceFilter G n S D L h α)\n            (fullHistoryBobFilter G n S D L h β)) =\n      (strategyEventLaw (G.repeat n) S).eventMass\n        (FiniteEventLaw.winEvent\n          (repeatedCoordinateWin G n) D) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3737-L3848",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   3737,
+   3848
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.fullHistoryWeight_mul_hidden",
+   "QuantumParallelRepetition.conditionedEffects_born_expansion",
+   "QuantumParallelRepetition.finite_sum_four_swap"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 96,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.spectralPurificationFilter_mul_shift",
+  "source_name": "QuantumParallelRepetition.spectralPurificationFilter_mul_shift",
+  "formal_statement": "theorem QuantumParallelRepetition.spectralPurificationFilter_mul_shift\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef)\n    {s : ℝ} (hs : 0 < s) :\n    spectralPurificationFilter F hF s *\n        (F + s • (1 : Matrix d d ℂ)) = F := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open MeasureTheory Filter Set",
+   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3863-L3915",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   3863,
+   3915
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.spectralPurificationFilter_square_contraction",
+  "source_name": "QuantumParallelRepetition.spectralPurificationFilter_square_contraction",
+  "formal_statement": "theorem QuantumParallelRepetition.spectralPurificationFilter_square_contraction\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef)\n    {s : ℝ} (hs : 0 < s) :\n    (spectralPurificationFilter F hF s -\n      star (spectralPurificationFilter F hF s) *\n        spectralPurificationFilter F hF s).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open MeasureTheory Filter Set",
+   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3950-L4011",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   3950,
+   4011
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen",
+  "source_name": "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen",
+  "formal_statement": "theorem QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (weight : ι → ℝ) (F : ι → Matrix d d ℂ)\n    (M : Matrix d d ℂ)\n    (nonnegative : ∀ i, 0 ≤ weight i)\n    (normalized : (∑ i : ι, weight i) = 1)\n    (mean : (∑ i : ι, weight i • F i) = M)\n    (positive : ∀ i, (F i).PosSemidef)\n    {s : ℝ} (hs : 0 < s) :\n    let hM : M.PosSemidef := by\n      rw [← mean]\n      exact weighted_positive_matrix_mean weight F nonnegative positive\n    (s •\n      ((∑ i : ι, weight i •\n        (F i + s • (1 : Matrix d d ℂ))⁻¹) -\n        (M + s • (1 : Matrix d d ℂ))⁻¹) -\n      ∑ i : ι, weight i •\n        (star (spectralPurificationFilter (F i) (positive i) s -\n            spectralPurificationFilter M hM s) *\n          (spectralPurificationFilter (F i) (positive i) s -\n            spectralPurificationFilter M hM s))).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open MeasureTheory Filter Set",
+   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4274-L4351",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   4274,
+   4351
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.spectralPurificationFilter_mul_shift",
+   "QuantumParallelRepetition.spectralPurificationFilter_square_contraction"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 57,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.scalarResolventFilter_memLp_two",
+  "source_name": "QuantumParallelRepetition.scalarResolventFilter_memLp_two",
+  "formal_statement": "theorem QuantumParallelRepetition.scalarResolventFilter_memLp_two\n    {z : ℝ} (hz : 0 ≤ z) :\n    MemLp (fun s : ℝ => z / (z + s)) 2\n      (volume.restrict (Ioi 0)) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open MeasureTheory Filter Set",
+   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4364-L4374",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   4364,
+   4374
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.spectralPurificationFilter_memLp_two",
+  "source_name": "QuantumParallelRepetition.spectralPurificationFilter_memLp_two",
+  "formal_statement": "theorem QuantumParallelRepetition.spectralPurificationFilter_memLp_two\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef) :\n    MemLp (spectralPurificationFilter F hF) 2\n      (volume.restrict (Ioi 0)) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open MeasureTheory Filter Set",
+   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4376-L4407",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   4376,
+   4407
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.scalarResolventFilter_memLp_two"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse",
+  "source_name": "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse",
+  "formal_statement": "theorem QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (weight : ι → ℝ) (F : ι → Matrix d d ℂ)\n    (M : Matrix d d ℂ)\n    (positive : ∀ i, (F i).PosSemidef)\n    (hM : M.PosSemidef)\n    (normalized : (∑ i : ι, weight i) = 1)\n    (mean : (∑ i : ι, weight i • F i) = M)\n    {s : ℝ} (hs : 0 < s) :\n    weightedSpectralEntropyJensen weight F M positive hM s =\n      s •\n        ((∑ i : ι, weight i •\n          (F i + s • (1 : Matrix d d ℂ))⁻¹) -\n          (M + s • (1 : Matrix d d ℂ))⁻¹) := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open MeasureTheory Filter Set",
+   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4622-L4691",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   4622,
+   4691
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.spectralPurificationFilter_mul_shift"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 56,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.scalar_entropy_resolvent_integral",
+  "source_name": "QuantumParallelRepetition.scalar_entropy_resolvent_integral",
+  "formal_statement": "theorem QuantumParallelRepetition.scalar_entropy_resolvent_integral\n    {z : ℝ} (hz : 0 ≤ z) :\n    (∫ s in Ioi (0 : ℝ),\n      (z / (1 + s) - z / (z + s))) = z * Real.log z := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open MeasureTheory Filter Set",
+   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4749-L4826",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   4749,
+   4826
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.scalarResolventFilter_memLp_two"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 74,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen",
+  "source_name": "QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen",
+  "formal_statement": "theorem QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (weight : ι → ℝ) (F : ι → Matrix d d ℂ)\n    (M : Matrix d d ℂ)\n    (nonnegative : ∀ i, 0 ≤ weight i)\n    (normalized : (∑ i : ι, weight i) = 1)\n    (mean : (∑ i : ι, weight i • F i) = M)\n    (positive : ∀ i, (F i).PosSemidef) :\n    let hM : M.PosSemidef := by\n      rw [← mean]\n      exact weighted_positive_matrix_mean weight F nonnegative positive\n    ((∑ i : ι, weight i •\n        cfc (fun z : ℝ => z * Real.log z) (F i)) -\n      cfc (fun z : ℝ => z * Real.log z) M -\n      (∫ s in Ioi (0 : ℝ),\n        weightedSpectralFilterVariance weight F M positive hM s)).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open MeasureTheory Filter Set",
+   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4975-L5004",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   4975,
+   5004
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen",
+   "QuantumParallelRepetition.scalarResolventFilter_memLp_two",
+   "QuantumParallelRepetition.spectralPurificationFilter_memLp_two",
+   "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse",
+   "QuantumParallelRepetition.scalar_entropy_resolvent_integral"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef",
+  "source_name": "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef",
+  "formal_statement": "theorem QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D L : Finset (Fin n))\n    (h : FullSubsetHistory X Y n D L)\n    (α : {i : Fin n // i ∈ D} → A) :\n    (1 - fullHistoryAliceFilter G n S D L h α).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5069-L5099",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5069,
+   5099
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg",
+   "QuantumParallelRepetition.conditionedAliceEffect_complement_positive"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef",
+  "source_name": "QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef",
+  "formal_statement": "theorem QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D L : Finset (Fin n))\n    (h : FullSubsetHistory X Y n D L)\n    (β : {i : Fin n // i ∈ D} → B) :\n    (1 - fullHistoryBobFilter G n S D L h β).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5101-L5130",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5101,
+   5130
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg",
+   "QuantumParallelRepetition.conditionedBobEffect_complement_positive"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction",
+  "source_name": "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction",
+  "formal_statement": "theorem QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction\n    {d : Type*} [Fintype d] [DecidableEq d]\n    {F : Matrix d d ℂ}\n    (hF : F.PosSemidef)\n    (hcomplement : (1 - F).PosSemidef) :\n    (-(cfc (fun z : ℝ => z * Real.log z) F)).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5132-L5152",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5132,
+   5152
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left",
+  "source_name": "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left",
+  "formal_statement": "theorem QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left\n    {dA dB : Type*}\n    [Fintype dA] [Fintype dB]\n    [DecidableEq dA] [DecidableEq dB]\n    (ρ : DensityMatrix (dA × dB))\n    (F : Matrix dA dA ℂ)\n    (G : Matrix dB dB ℂ)\n    (hF : F.PosSemidef)\n    (hFcomplement : (1 - F).PosSemidef)\n    (hG : G.PosSemidef) :\n    bornTracePairing ρ.matrix\n        (cfc (fun z : ℝ => z * Real.log z) F) G ≤ 0 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5154-L5176",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5154,
+   5176
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right",
+  "source_name": "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right",
+  "formal_statement": "theorem QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right\n    {dA dB : Type*}\n    [Fintype dA] [Fintype dB]\n    [DecidableEq dA] [DecidableEq dB]\n    (ρ : DensityMatrix (dA × dB))\n    (F : Matrix dA dA ℂ)\n    (G : Matrix dB dB ℂ)\n    (hF : F.PosSemidef)\n    (hG : G.PosSemidef)\n    (hGcomplement : (1 - G).PosSemidef) :\n    bornTracePairing ρ.matrix F\n        (cfc (fun z : ℝ => z * Real.log z) G) ≤ 0 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5178-L5200",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5178,
+   5200
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos",
+  "source_name": "QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos",
+  "formal_statement": "theorem QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D L : Finset (Fin n)) :\n    fullHistoryAliceEntropyPotential G n S D L ≤ 0 := by sorry",
+  "preamble_opens": [
+   "open QuantumParallelRepetition",
+   "open Matrix",
+   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*}",
+   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5215-L5235",
+  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "lines": [
+   5215,
+   5235
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef",
+   "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left",
+   "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg",
+   "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg",
+   "QuantumParallelRepetition.conditionedAliceEffect_positive",
+   "QuantumParallelRepetition.conditionedBobEffect_positive"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 16,
+  "is_target": false
+ }
+]

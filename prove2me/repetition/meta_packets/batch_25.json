@@ -1,0 +1,388 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.lockProg_runs",
+  "source_name": "MIPRE.Cost.Prog.lockProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.lockProg_runs {univ : Prog} (hU : univ.WellScoped 1) {s : ℕ} (hs : 0 < s)\n    (sD nD kD wD jD : Data) (u y : List Data) (f : List Data → List Data → Data) (Tu Z : ℕ)\n    (hf : ∀ p ∈ chunkPairs s hs u y,\n      ∃ t ≤ Tu, Eval [mapQuery sD nD kD wD jD (list p.1) (list p.2)] univ (f p.1 p.2) t)\n    (hZ : s + (list u).size + (list y).size + (mapCtx sD nD kD wD jD).size + 1 +\n      u.length * (Tu + 1) + Tu ≤ Z) :\n    ∃ t ≤ lockCost s (mapCtx sD nD kD wD jD).size (list u).size (list y).size Z,\n      Eval [lockInput sD nD (encode s) kD wD jD (list u) (list y)] (lockProg univ)\n        (list ((chunkPairs s hs u y).map fun p => toList (f p.1 p.2)).flatten) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "`lockProg` on a nonzero dimension: the block loop, then the reversal.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L195-L267",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
+  "lines": [
+   195,
+   267
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.mapLoop_runs",
+   "MIPRE.Cost.Data.length_le_size_list'"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.repSampCore_wellScoped",
+  "source_name": "MIPRE.Cost.Prog.repSampCore_wellScoped",
+  "formal_statement": "theorem MIPRE.Cost.Prog.repSampCore_wellScoped {univ : Prog} (hU : univ.WellScoped 1) :\n    (repSampCore univ).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L298-L302",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
+  "lines": [
+   298,
+   302
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.repSampCore_prefix",
+  "source_name": "MIPRE.Cost.Prog.repSampCore_prefix",
+  "formal_statement": "theorem MIPRE.Cost.Prog.repSampCore_prefix {univ : Prog} (hU : univ.WellScoped 1) (sD lD tD nD d : Data)\n    {sz : Data} {td : ℕ}\n    (hdim : Eval [Data.cons sD (.cons nD (encode CL.Sampler.Query.dimension))] univ sz td)\n    {r : Data} {t : ℕ} (hc : Eval (coreEnv sD lD tD nD d sz) (coreDispatch univ) r t) :\n    Eval [Data.cons (sampParams sD lD tD) (.cons nD d)] (repSampCore univ) r\n      (t + td + 2 * (sD.size + nD.size) + 32) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The common prefix of the core: the input taken apart and the dimension query answered,\nthen the dispatch.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L316-L337",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
+  "lines": [
+   316,
+   337
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coreDispatch_nil",
+  "source_name": "MIPRE.Cost.Prog.coreDispatch_nil",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coreDispatch_nil (univ : Prog) (sD lD tD nD sz : Data) :\n    Eval (coreEnv sD lD tD nD .nil sz) (coreDispatch univ) .nil 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The dispatch on an empty query: `nil`.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L339-L342",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
+  "lines": [
+   339,
+   342
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coreDispatch_dim",
+  "source_name": "MIPRE.Cost.Prog.coreDispatch_dim",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coreDispatch_dim (univ : Prog) (sD lD tD nD qr sz : Data) {r : Data} {t : ℕ}\n    (hd : Eval [Data.cons sz (.cons lD (.cons nD tD))] dimProg r t) :\n    Eval (coreEnv sD lD tD nD (.cons .nil qr) sz) (coreDispatch univ) r\n      (t + 2 * (sz.size + lD.size + nD.size + tD.size) + 15) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The dispatch on a dimension query (kind `nil`): `dimProg` on `(sz, λ, n, τ)`.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L344-L360",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
+  "lines": [
+   344,
+   360
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coreDispatch_lock",
+  "source_name": "MIPRE.Cost.Prog.coreDispatch_lock",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coreDispatch_lock {univ : Prog} (hU : univ.WellScoped 1) (sD lD tD nD k₀ k₁ qr sz : Data)\n    {r : Data} {t : ℕ}\n    (hl : Eval [Data.cons sD (.cons nD (.cons sz (.cons (.cons k₀ k₁) qr)))] (lockProg univ) r t) :\n    Eval (coreEnv sD lD tD nD (.cons (.cons k₀ k₁) qr) sz) (coreDispatch univ) r\n      (t + 2 * (sD.size + nD.size + sz.size + k₀.size + k₁.size + qr.size) + 20) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The dispatch on a query of nonzero kind: `lockProg` on `(S̄, n, sz, kind, rest)`.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L362-L380",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
+  "lines": [
+   362,
+   380
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.size_le_of_mem_blockQueries",
+  "source_name": "MIPRE.Repeat.size_le_of_mem_blockQueries",
+  "formal_statement": "theorem MIPRE.Repeat.size_le_of_mem_blockQueries (s : ℕ) (d q : Data) (hq : q ∈ blockQueries s d) :\n    q.size ≤ d.size := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL"
+  ],
+  "docstring": "The size of every block query is at most the size of the query datum.",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean#L37-L52",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
+  "lines": [
+   37,
+   52
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.block_calls_time",
+  "source_name": "MIPRE.Repeat.block_calls_time",
+  "formal_statement": "theorem MIPRE.Repeat.block_calls_time (hS : S.TimeBoundAt n R.S R.k) (d : Data) :\n    ∃ fq : Data → Data, ∀ q ∈ blockQueries (S.dim n) d,\n      ∃ t ≤ selfUniversal.bound.eval (esize S.prog + (esize n + d.size + 1) + R.S * (d.size + 1) ^ R.k),\n        Eval [Data.cons (encode S.prog) (.cons (encode n) q)] selfUniversal.univ (fq q) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL",
+   "variable {ℓ : ℕ} (S : CL.Sampler ℓ) (lam tau n : ℕ) (R : Budget) (W : ℕ)"
+  ],
+  "docstring": "The block queries through the universal machine, within a uniform bound.",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean#L88-L103",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
+  "lines": [
+   88,
+   103
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Repeat.size_le_of_mem_blockQueries"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.repSampler_halts_within",
+  "source_name": "MIPRE.Repeat.repSampler_halts_within",
+  "formal_statement": "theorem MIPRE.Repeat.repSampler_halts_within (hS : S.TimeBoundAt n R.S R.k) (d : Data) :\n    ∃ r t, t ≤ anyCost lam tau n (encode S.prog) (S.dim n) d.size\n        (selfUniversal.bound.eval (esize S.prog + (esize n + 10) + R.S * 10 ^ R.k))\n        (selfUniversal.bound.eval (esize S.prog + (esize n + d.size + 1) + R.S * (d.size + 1) ^ R.k)) +\n        (esize S.prog + esize lam + esize tau + 2) + (esize n + d.size + 1) + 3 ∧\n      (repSamplerProg S.prog lam tau).Runs (.cons (encode n) d) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL",
+   "variable {ℓ : ℕ} (S : CL.Sampler ℓ) (lam tau n : ℕ) (R : Budget) (W : ℕ)"
+  ],
+  "docstring": "**The repeated sampler halts within `anyCost`** plus the s-m-n overhead.",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean#L105-L129",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
+  "lines": [
+   105,
+   129
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Repeat.block_calls_time"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Repeat.repSampler_timeBound",
+  "source_name": "MIPRE.Repeat.repSampler_timeBound",
+  "formal_statement": "theorem MIPRE.Repeat.repSampler_timeBound : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (lam tau n : ℕ)\n    (R : Budget) (W : ℕ), SampDom S lam tau n R W → S.TimeBoundAt n R.S R.k →\n    (repSampler S lam tau).TimeBoundAt n (c * (W + 1) ^ m) (e * (R.k + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL",
+   "variable {ℓ : ℕ} (S : CL.Sampler ℓ) (lam tau n : ℕ) (R : Budget) (W : ℕ)"
+  ],
+  "docstring": "**The running time of the repeated sampler**: constants `c, m, e` uniform in everything\nsuch that, whenever `W` dominates the parameters at `n` and the input sampler runs within\n`R.S (|d| + 1)^{R.k}` there, the repeated sampler runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}`.",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean#L269-L294",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
+  "lines": [
+   269,
+   294
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Repeat.repSampler_halts_within"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.tensorFamily_one",
+  "source_name": "MIPRE.tensorFamily_one",
+  "formal_statement": "theorem MIPRE.tensorFamily_one [DecidableEq ι] : tensorFamily (fun _ : Fin k => (1 : Matrix ι ι ℂ)) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "variable {k : ℕ} {ι : Type*}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.TensorFamily",
+  "module_doc": "/-!\n# The Kronecker product of a family of matrices\n\nThe `k`-fold tensor product `M₁ ⊗ ⋯ ⊗ M_k` of matrices on `ℂ^ι`, as a matrix on\n`ℂ^{Fin k → ι}`: `(⊗ᵢ Mᵢ) v w = ∏ᵢ Mᵢ (v i) (w i)`. This is what the `k`-fold tensor power of a\nstrategy measures with (`MIPRE.SyncStrategy.tensorPow`, `Background/Repetition/TensorPower.lean`),\nand the four facts about it that the value and PCC computations use: it is multiplicative\n(`tensorFamily_mul`), compatible with the adjoint (`tensorFamily_conjTranspose`), sends the\nconstant family `1` to `1` (`tensorFamily_one`), sums coordinatewise (`sum_tensorFamily`) and\nhas trace the product of the traces (`trace_tensorFamily`). All are `Fintype.prod_sum`, the\ndistributivity of a product of sums over `Fin k` into a sum over `Fin k → ι`.\n\nMathlib's `Matrix.kronecker` is the binary case with the product index `ι × ι`; the family\nform is more convenient than iterating it, because `Fin k → ι` needs no reassociation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/TensorFamily.lean#L55-L61",
+  "source_path": "MIPRE/Foundations/TensorFamily.lean",
+  "lines": [
+   55,
+   61
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_tensorFamily",
+  "source_name": "MIPRE.sum_tensorFamily",
+  "formal_statement": "theorem MIPRE.sum_tensorFamily {A : Type*} [Fintype A] (M : Fin k → A → Matrix ι ι ℂ) :\n    ∑ a : Fin k → A, tensorFamily (fun i => M i (a i)) = tensorFamily fun i => ∑ a, M i a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "variable {k : ℕ} {ι : Type*}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.TensorFamily",
+  "module_doc": "/-!\n# The Kronecker product of a family of matrices\n\nThe `k`-fold tensor product `M₁ ⊗ ⋯ ⊗ M_k` of matrices on `ℂ^ι`, as a matrix on\n`ℂ^{Fin k → ι}`: `(⊗ᵢ Mᵢ) v w = ∏ᵢ Mᵢ (v i) (w i)`. This is what the `k`-fold tensor power of a\nstrategy measures with (`MIPRE.SyncStrategy.tensorPow`, `Background/Repetition/TensorPower.lean`),\nand the four facts about it that the value and PCC computations use: it is multiplicative\n(`tensorFamily_mul`), compatible with the adjoint (`tensorFamily_conjTranspose`), sends the\nconstant family `1` to `1` (`tensorFamily_one`), sums coordinatewise (`sum_tensorFamily`) and\nhas trace the product of the traces (`trace_tensorFamily`). All are `Fintype.prod_sum`, the\ndistributivity of a product of sums over `Fin k` into a sum over `Fin k → ι`.\n\nMathlib's `Matrix.kronecker` is the binary case with the product index `ι × ι`; the family\nform is more convenient than iterating it, because `Fin k → ι` needs no reassociation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/TensorFamily.lean#L68-L72",
+  "source_path": "MIPRE/Foundations/TensorFamily.lean",
+  "lines": [
+   68,
+   72
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.tensorFamily_mul_self",
+  "source_name": "MIPRE.tensorFamily_mul_self",
+  "formal_statement": "theorem MIPRE.tensorFamily_mul_self [Fintype ι] {M : Fin k → Matrix ι ι ℂ} (h : ∀ i, M i * M i = M i) :\n    tensorFamily M * tensorFamily M = tensorFamily M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "variable {k : ℕ} {ι : Type*}"
+  ],
+  "docstring": "The tensor product of a family of idempotents is idempotent.",
+  "module": "MIPRE.Foundations.TensorFamily",
+  "module_doc": "/-!\n# The Kronecker product of a family of matrices\n\nThe `k`-fold tensor product `M₁ ⊗ ⋯ ⊗ M_k` of matrices on `ℂ^ι`, as a matrix on\n`ℂ^{Fin k → ι}`: `(⊗ᵢ Mᵢ) v w = ∏ᵢ Mᵢ (v i) (w i)`. This is what the `k`-fold tensor power of a\nstrategy measures with (`MIPRE.SyncStrategy.tensorPow`, `Background/Repetition/TensorPower.lean`),\nand the four facts about it that the value and PCC computations use: it is multiplicative\n(`tensorFamily_mul`), compatible with the adjoint (`tensorFamily_conjTranspose`), sends the\nconstant family `1` to `1` (`tensorFamily_one`), sums coordinatewise (`sum_tensorFamily`) and\nhas trace the product of the traces (`trace_tensorFamily`). All are `Fintype.prod_sum`, the\ndistributivity of a product of sums over `Fin k` into a sum over `Fin k → ι`.\n\nMathlib's `Matrix.kronecker` is the binary case with the product index `ι × ι`; the family\nform is more convenient than iterating it, because `Fin k → ι` needs no reassociation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/TensorFamily.lean#L74-L77",
+  "source_path": "MIPRE/Foundations/TensorFamily.lean",
+  "lines": [
+   74,
+   77
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.tensorFamily_star",
+  "source_name": "MIPRE.tensorFamily_star",
+  "formal_statement": "theorem MIPRE.tensorFamily_star {M : Fin k → Matrix ι ι ℂ} (h : ∀ i, star (M i) = M i) :\n    star (tensorFamily M) = tensorFamily M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "variable {k : ℕ} {ι : Type*}"
+  ],
+  "docstring": "The tensor product of a family of self-adjoint matrices is self-adjoint.",
+  "module": "MIPRE.Foundations.TensorFamily",
+  "module_doc": "/-!\n# The Kronecker product of a family of matrices\n\nThe `k`-fold tensor product `M₁ ⊗ ⋯ ⊗ M_k` of matrices on `ℂ^ι`, as a matrix on\n`ℂ^{Fin k → ι}`: `(⊗ᵢ Mᵢ) v w = ∏ᵢ Mᵢ (v i) (w i)`. This is what the `k`-fold tensor power of a\nstrategy measures with (`MIPRE.SyncStrategy.tensorPow`, `Background/Repetition/TensorPower.lean`),\nand the four facts about it that the value and PCC computations use: it is multiplicative\n(`tensorFamily_mul`), compatible with the adjoint (`tensorFamily_conjTranspose`), sends the\nconstant family `1` to `1` (`tensorFamily_one`), sums coordinatewise (`sum_tensorFamily`) and\nhas trace the product of the traces (`trace_tensorFamily`). All are `Fintype.prod_sum`, the\ndistributivity of a product of sums over `Fin k` into a sum over `Fin k → ι`.\n\nMathlib's `Matrix.kronecker` is the binary case with the product index `ι × ι`; the family\nform is more convenient than iterating it, because `Fin k → ι` needs no reassociation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/TensorFamily.lean#L79-L83",
+  "source_path": "MIPRE/Foundations/TensorFamily.lean",
+  "lines": [
+   79,
+   83
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "glue-leaf-closure",
+  "theorem_name": "MIPRE.Repetition.nonempty_seven",
+  "formal_statement": "theorem MIPRE.Repetition.nonempty_seven : Nonempty (MIPRE.Repetition 7) := by sorry",
+  "preamble_opens": [],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Verifier.lean",
+  "source_path": "MIPRE/Background/Repetition/Verifier.lean",
+  "lines": null,
+  "witness": "⟨MIPRE.repetition 7⟩",
+  "blueprint": [],
+  "imported_nodes": [],
+  "stub_published": true,
+  "solution_file": "Solutions/Sol_MIPRE_Repetition_nonempty_seven.lean"
+ }
+]
