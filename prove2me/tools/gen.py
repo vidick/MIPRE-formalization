@@ -127,6 +127,31 @@ def effective_opts(lines):
 
 # ---------- scope map: context of every declaration command ----------
 CTX = {}  # (module, declStart.offset) -> {"ns": [...], "opens": [...], "vars": [...]}
+OPEN_NAMES = {}  # (module, open command text) -> {name as written: unit or None}
+
+def filter_open(m, text, avail):
+    """`open X (a b)` keeping only the named declarations the file can see at that point (`avail` on
+    their units; a name that is no unit of the closure stays): a theorem the source opens by name may
+    have become a helper or a node this file does not import (`open MultiTapeTM (…
+    moveInputPos_neg_of_ne_left …)` in a bundle).  A group left empty goes with its namespace (`open
+    X` alone would open all of X); None when nothing remains."""
+    names = OPEN_NAMES.get((m, text.strip()))
+    if not names or "(" not in text:
+        return text
+    head, body = text.strip()[:len("open")], text.strip()[len("open"):]
+    toks = re.findall(r"\([^)]*\)|\S+", body)
+    out = []
+    for tk in toks:
+        if tk.startswith("(") and out and not out[-1].startswith("("):
+            kept = [n for n in tk[1:-1].split() if names.get(n) is None or avail(names[n])]
+            if kept:
+                out.append("(" + " ".join(kept) + ")")
+            else:
+                out.pop()   # the namespace this group belonged to
+        else:
+            out.append(tk)
+    rest = [x for x in out if x not in ("scoped",)]
+    return (head + " " + " ".join(out)) if rest else None
 ATTRS = {}  # module -> [attribute commands: {"start", "end", "attr", "names": [(token, uid|None)]}]
 const_unit = {}
 for uid, u in U.items():
@@ -182,6 +207,15 @@ for m in modules:
                 (stack[-1] if (stack and is_local) else root)["attrs"].append({"attr": mm.group(1), "names": names})
         elif k == "open":
             (stack[-1] if stack else root)["opens"].append(t)
+            if "(" in t:
+                # the declarations an `open X (a b)` names, resolved by the reference facts inside it
+                a0, b0 = c["start"]["offset"], c["end"]["offset"]
+                found = {}
+                for rf in F[m]["refs"]:
+                    if a0 <= rf["start"]["offset"] and rf["end"]["offset"] <= b0:
+                        tok = txt(m, rf["start"]["offset"], rf["end"]["offset"])
+                        found[tok] = const_unit.get(rf["const"])
+                OPEN_NAMES[(m, t)] = found
         elif k in ("variable", "include", "omit"):
             (stack[-1] if stack else root)["vars"].append(t)
         elif k in ("set_option", "universe"):
@@ -371,6 +405,22 @@ for m in TOPO:
     repl = {}
     visible = set(kept_units) | {uid for uid, u in U.items() if u["cls"] in ("avail",)
                                   or (u["cls"] in ("defmat", "embedded") and u["module"] in mod_closure[m])}
+    visible |= set(bundle_node_deps.get(m, []))   # this tree's nodes the bundle imports
+    pub_imp = set(bundle_node_imports.get(m, []))   # and the published nodes it imports
+    visible |= {uid for uid, u in U.items() if u["cls"] == "pubnode" and slugs.get(uid) in pub_imp}
+    for c in cmds:
+        if c["syntaxKind"].endswith(".open"):
+            a, b = c["start"]["offset"], c["end"]["offset"]
+            ot = txt(m, a, b).strip()
+            if (m, ot) in OPEN_NAMES:
+                nt = filter_open(m, ot, lambda v: v in visible)
+                if nt != ot:
+                    while b < len(B) and B[b:b+1] in (b" ", b"\t"):
+                        b += 1
+                    if B[b:b+1] == b"\n":
+                        b += 1
+                    dele.append((a, b))
+                    repl[a] = (nt + "\n").encode("utf-8") if nt else b""
     for at in ATTRS[m]:
         keep = [tok if uid is None else const for tok, uid, const in at["names"] if uid is None or uid in visible]
         a, b = at["start"], at["end"]
@@ -445,6 +495,9 @@ def hoisted_context(uid):
         if p in NS:
             lines.append(f"open {p}")
     for o in ctx["opens"]:
+        o = filter_open(u["module"], o, lambda v: U[v]["cls"] in ("defmat", "embedded", "avail"))
+        if o is None:
+            continue
         r = resolve_open(o, chain)
         if r not in lines:
             lines.append(r)
@@ -493,7 +546,7 @@ def pasted_block(uid, available):
     if ns:
         body.append(f"namespace {ns}")
     body.append("noncomputable section" if ctx.get("nc") else "section")
-    body += ctx["opens"]
+    body += [o for o in (filter_open(U[uid]["module"], o, available) for o in ctx["opens"]) if o is not None]
     body += ctx["opts"]
     body += ctx["vars"]
     body += attr_lines(uid, available)
@@ -615,7 +668,8 @@ for uid in nodes:
     sol_parts += ns_registrations(sctx, name_ns)
     if sol_ns:
         sol_parts.append(f"namespace {sol_ns}")
-    sol_parts += sctx["opens"] + sctx["opts"] + sctx["vars"]
+    sol_parts += [o for o in (filter_open(u["module"], o, available) for o in sctx["opens"]) if o is not None]
+    sol_parts += sctx["opts"] + sctx["vars"]
     sol_parts += attr_lines(uid, available)
     if extra_open:
         sol_parts.append(f"open {extra_open}")
