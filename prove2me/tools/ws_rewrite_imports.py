@@ -7,7 +7,10 @@ Usage:
       turn the `MODULE <module> <mathlib module>` lines of tools/min_imports.lean (run in the main
       repository) into <P2M_DIR>/minimports.json
   P2M_DIR=<dir> python3 prove2me/tools/ws_rewrite_imports.py
-      rewrite every workspace module listed in minimports.json that still imports Mathlib wholesale
+      rewrite every workspace module listed in minimports.json that still imports Mathlib wholesale;
+      give every other listed module that has not compiled yet its constants' Mathlib modules as
+      explicit imports (a module downstream of a wholesale importer relied on it transitively); add
+      the modules of the namespaces an uncompiled rewritten module opens (NAMESPACE_MODULES)
 
 The lists come from the proof terms (min_imports.lean reads the `.olean.private` parts with
 `value? (allowOpaque := true)`; statement-level lists left the vendored parts short of the lemmas
@@ -35,7 +38,11 @@ RENAME = {"Mathlib.Basic.ENNReal.Basic": "Mathlib.Data.ENNReal.Basic", "Mathlib.
           "Mathlib.Basic.Finite.Sigma": "Mathlib.Data.Finite.Sigma", "Mathlib.Basic.Finite.Sum": "Mathlib.Data.Finite.Sum",
           "Mathlib.Basic.IsEmpty.Defs": "Mathlib.Logic.IsEmpty.Defs", "Mathlib.Basic.NNReal.Defs": "Mathlib.Data.NNReal.Defs",
           "Mathlib.Basic.NNReal.Star": "Mathlib.Data.NNReal.Star", "Mathlib.Basic.Nontrivial.Defs": "Mathlib.Logic.Nontrivial.Defs",
-          "Mathlib.Basic.Unique": "Mathlib.Logic.Unique", "Mathlib.Topology.Algebra.Group.ContinuousDiv": "Mathlib.Topology.Algebra.Group.Basic"}
+          "Mathlib.Basic.Unique": "Mathlib.Logic.Unique", "Mathlib.Topology.Algebra.Group.ContinuousDiv": "Mathlib.Topology.Algebra.Group.Basic",
+          # found by the low-degree-test lists (2026-10-16): the constants named sit in these modules at the platform pin
+          "Mathlib.Basic.ENNReal.Operations": "Mathlib.Data.ENNReal.Operations", "Mathlib.Basic.ENNReal.Real": "Mathlib.Data.ENNReal.Real",
+          "Mathlib.Basic.IsEmpty.Basic": "Mathlib.Logic.IsEmpty.Basic", "Mathlib.MeasureTheory.Measure.Dirac.Def": "Mathlib.MeasureTheory.Measure.Dirac",
+          "Mathlib.MeasureTheory.Measure.Module": "Mathlib.MeasureTheory.Measure.MeasureSpace"}
 DROP = {"Mathlib.RingTheory.Coalgebra.IsFrobenius"}   # an instance the newer typeclass search found; never named in the sources
 # A namespace a module opens (`open scoped MatrixOrder`, `open WithLp`) is not a constant reference, so the
 # proof-level lists miss the Mathlib module that declares it when no constant of that module is used:
@@ -79,6 +86,29 @@ for mod, mods in d["per_module"].items():
     assert n == 1, mod
     open(path, "w", encoding="utf-8").write(t2)
     record[mod] = new; done += 1
+# a module downstream of a wholesale importer relied on that import transitively (the vendored
+# low-degree test's `FiniteMatrix.Order` names `ProperCone`, which only `import Mathlib` brought in),
+# so every module listed in minimports.json that has not compiled yet gets its own constants' Mathlib
+# modules as explicit imports, added after its last import line; a module that compiled is left alone
+explicit = 0
+for mod, mods in d["per_module"].items():
+    path = f"{WS}/{mod.replace('.', '/')}.lean"
+    olean = f"{WS}/.lake/build/lib/lean/{mod.replace('.', '/')}.olean"
+    if not os.path.exists(path) or (os.path.exists(olean) and os.path.getmtime(olean) > os.path.getmtime(path)):
+        continue
+    t = open(path, encoding="utf-8").read()
+    if re.search(r"^(public\s+)?import Mathlib\s*$", t, re.M):
+        continue   # a wholesale importer is handled above
+    have = set(re.findall(r"^(?:public\s+)?import\s+(\S+)", t, re.M))
+    need = sorted({RENAME.get(m, m) for m in mods if m not in DROP} - have)
+    if not need:
+        continue
+    assert all(os.path.exists(f"{root}/{m.replace('.', '/')}.lean") for m in need), (mod, [m for m in need if not os.path.exists(f"{root}/{m.replace('.', '/')}.lean")])
+    last = list(re.finditer(r"^(?:public\s+)?import\s+\S+\s*$", t, re.M))[-1]
+    t = t[:last.end()] + "".join(f"\nimport {m}" for m in need) + t[last.end():]
+    open(path, "w", encoding="utf-8").write(t)
+    record[mod] = sorted(set(record.get(mod, [])) | set(need)); explicit += 1
+
 # second pass, over every rewritten module: the modules of the namespaces it opens
 added = 0
 for mod in list(record):
@@ -98,4 +128,4 @@ for mod in list(record):
     open(path, "w", encoding="utf-8").write(t)
     record[mod] = sorted(set(record[mod]) | set(need)); added += len(need)
 json.dump(record, open(rec_path, "w"), indent=1)
-print(f"rewrote {done} modules, skipped {skipped} not in the workspace, {len(record)} recorded; {added} namespace import(s) added")
+print(f"rewrote {done} wholesale importers, {explicit} downstream modules given explicit imports, skipped {skipped} not in the workspace, {len(record)} recorded; {added} namespace import(s) added")
