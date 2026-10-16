@@ -70,6 +70,10 @@ def compile_one(m):
         return m, 1, [f"{src(m)}: error: {e}"], 0.0
     r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-o", olean(m), src(m)],
                        cwd=WS, env=ENV, capture_output=True, text=True)
+    try:
+        os.remove(setup)
+    except OSError:
+        pass
     out = r.stdout + r.stderr
     open(f"{S}/compile-diag/{m}.txt", "w", encoding="utf-8").write(out)
     errs = [l for l in out.splitlines() if ": error:" in l]

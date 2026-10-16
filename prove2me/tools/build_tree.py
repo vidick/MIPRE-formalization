@@ -83,6 +83,10 @@ def compile_one(m):
     r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-DautoImplicit=false", "-DrelaxedAutoImplicit=false",
                         "-o", o, rel],
                        cwd=WS, env=ENV, capture_output=True, text=True)
+    try:
+        os.remove(setup)
+    except OSError:
+        pass
     out = r.stdout + r.stderr
     diag = f"{A}/diag/{m}.txt"
     open(diag, "w", encoding="utf-8").write(out)

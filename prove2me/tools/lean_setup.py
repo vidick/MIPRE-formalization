@@ -175,7 +175,9 @@ def _setup_for(path, out_dir=None):
     name = module_name_of(path)
     setup = {"name": name, "isModule": is_module_file(path), "importArts": arts,
              "dynlibs": [], "plugins": [], "options": {}}
-    out_dir = out_dir or f"{S}/setup"
+    # setup files are large (every transitive artefact path) and short-lived: keep them in RAM when
+    # the machine offers /dev/shm, and let the drivers remove them after the compile
+    out_dir = out_dir or (f"/dev/shm/p2m_setup" if os.path.isdir("/dev/shm") else f"{S}/setup")
     os.makedirs(out_dir, exist_ok=True)
     out = os.path.join(out_dir, name + ".json")
     json.dump(setup, open(out, "w", encoding="utf-8"))
