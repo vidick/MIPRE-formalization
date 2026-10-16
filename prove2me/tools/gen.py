@@ -121,16 +121,16 @@ for uid, u in U.items():
     for r in u["rows"]:
         const_unit[r] = uid
 for m in modules:
-    stack = []  # frames: {"name" (None for a section), "opens", "vars", "opts"}
-    root = {"name": None, "opens": [], "vars": [], "opts": []}
+    stack = []  # frames: {"name" (None for a section), "opens", "vars", "opts", "attrs"}
+    root = {"name": None, "opens": [], "vars": [], "opts": [], "attrs": []}
     ATTRS[m] = []
     for c in F[m]["cmds"]:
         k = c["syntaxKind"].split(".")[-1]
         t = txt(m, c["start"]["offset"], c["end"]["offset"]).strip()
         if k == "namespace":
-            stack.append({"name": t.split()[1], "opens": [], "vars": [], "opts": []})
+            stack.append({"name": t.split()[1], "opens": [], "vars": [], "opts": [], "attrs": []})
         elif k in ("section", "noncomputableSection"):
-            stack.append({"name": None, "opens": [], "vars": [], "opts": [], "nc": k == "noncomputableSection"})
+            stack.append({"name": None, "opens": [], "vars": [], "opts": [], "attrs": [], "nc": k == "noncomputableSection"})
         elif k == "end":
             if stack:
                 stack.pop()
@@ -161,6 +161,11 @@ for m in modules:
                                 uid = next((x for x, uu in U.items() if uu["name"] and uu["name"].endswith(pm.group(1))), None)
                     names.append((tok.group(0), uid, const))
                 ATTRS[m].append({"start": c["start"]["offset"], "end": c["end"]["offset"], "attr": mm.group(1), "names": names})
+                # a `local`/`scoped` attribute is in effect to the end of its section (the vendored parts open
+                # every section with `attribute [local instance] Classical.propDecidable`, which their
+                # statements need); a global one from its position on
+                is_local = re.match(r"\[\s*(local|scoped)\b", mm.group(1)) is not None
+                (stack[-1] if (stack and is_local) else root)["attrs"].append({"attr": mm.group(1), "names": names})
         elif k == "open":
             (stack[-1] if stack else root)["opens"].append(t)
         elif k in ("variable", "include", "omit"):
@@ -178,6 +183,7 @@ for m in modules:
                 "vars": [v for f in frames for v in f["vars"]],
                 "opts": effective_opts([o for f in frames for o in f["opts"]]),
                 "nc": any(f.get("nc") for f in stack),   # inside a `noncomputable section`
+                "attrs": [a for f in frames for a in f["attrs"]],
             }
         # moduleDoc, macro, export, eoi: no scope effect
     assert not stack, (m, stack)
@@ -411,6 +417,15 @@ def hoisted_context(uid):
     lines += ctx["vars"]
     return lines
 
+def attr_lines(uid, available):
+    """The attribute commands in effect at a declaration, restricted to targets the file can see."""
+    out = []
+    for at in unit_ctx(uid)["attrs"]:
+        names = [tok if tu is None else const for tok, tu, const in at["names"] if tu is None or available(tu)]
+        if names:
+            out.append(f"attribute {at['attr']} " + " ".join(dict.fromkeys(names)))
+    return out
+
 def pasted_block(uid):
     """A helper declaration with its scope: namespace, then a section (noncomputable when the source
     declares it inside one, so that a pasted definition compiles as in the source) holding the `open`,
@@ -469,7 +484,9 @@ for uid in nodes:
     formal = expand_macros(f"theorem {u['name']}{rest} := by sorry")
     prefix_text, prefix_cmds = in_prefix(uid)
     pre_lines = ([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=True)
-                 + [""] + hoisted_context(uid) + prefix_cmds)   # `include G U in` becomes a bare `include G U`
+                 + [""] + hoisted_context(uid)
+                 + attr_lines(uid, lambda tu: U[tu]["cls"] in ("defmat", "embedded", "avail", "pubnode"))
+                 + prefix_cmds)   # `include G U in` becomes a bare `include G U`
     preamble = "\n".join(pre_lines)
     stub = HEADER + gen_note(m, f"statement stub of {u['name']}") + preamble + "\n\n" + formal + "\n"
     stub = expand_macros(stub)
@@ -518,10 +535,21 @@ for uid in nodes:
     sol_parts.append("/-! The uploaded declaration as `solution` (a root name declared inside the source's\n"
                      "namespace, so that names resolve as they do in the source). -/")
     sctx = unit_ctx(uid)
-    sol_ns = ".".join(u["name"].split(".")[:-1])
+    name_ns = ".".join(u["name"].split(".")[:-1])
+    chain_ns = ns_of_chain(sctx["ns"])
+    # names resolve as in the source inside the source's namespace chain; a declaration whose name
+    # extends the chain (`theorem C.foo` in `namespace A.B`) has its own namespace current as well, and
+    # a `_root_` declaration (`theorem _root_.Nat.bits_two_pow_mul` in `namespace MIPRE.Cost.Prog`) has
+    # its prefix opened instead, since `open Data` of the source would not resolve under `namespace Nat`
+    if not chain_ns or name_ns == chain_ns or name_ns.startswith(chain_ns + "."):
+        sol_ns, extra_open = name_ns, None
+    else:
+        sol_ns, extra_open = chain_ns, name_ns
     if sol_ns:
         sol_parts.append(f"namespace {sol_ns}")
     sol_parts += sctx["opens"] + sctx["opts"] + sctx["vars"]
+    if extra_open:
+        sol_parts.append(f"open {extra_open}")
     body = head_rest(uid, 'end').rstrip()
     # a structurally recursive theorem refers to itself inside its own body; those occurrences
     # elaborate as local variables (no ref facts), so the hoisted copy renames them textually
