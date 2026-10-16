@@ -15,6 +15,8 @@ any file failed; the log is <tree dir>/build-tree.log and the per-file diagnosti
 """
 import argparse, json, os, re, subprocess, sys, time
 from concurrent.futures import ThreadPoolExecutor
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import lean_setup   # module-setup files: Lean then loads only the olean parts the cache ships
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
 WS = f"{S}/ws"
@@ -72,8 +74,14 @@ def compile_one(m):
     t0 = time.time()
     # `lake env lean` does not apply the lakefile's leanOptions; the platform compiles with
     # autoImplicit off, so pass the same options explicitly
-    r = subprocess.run(["lake", "env", "lean", "-DautoImplicit=false", "-DrelaxedAutoImplicit=false",
-                        "-o", o, "-i", o[:-6] + ".ilean", rel],
+    try:
+        setup = lean_setup.setup_for(f"{WS}/{rel}")
+    except FileNotFoundError as e:
+        out = f"{rel}: error: {e}"
+        open(f"{A}/diag/{m}.txt", "w", encoding="utf-8").write(out)
+        return m, 1, [out], 0, time.time() - t0
+    r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-DautoImplicit=false", "-DrelaxedAutoImplicit=false",
+                        "-o", o, rel],
                        cwd=WS, env=ENV, capture_output=True, text=True)
     out = r.stdout + r.stderr
     diag = f"{A}/diag/{m}.txt"

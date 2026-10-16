@@ -10,6 +10,8 @@ than their source are skipped unless --all.  Per-module wall time is appended to
 """
 import argparse, json, os, re, subprocess, sys, time
 from concurrent.futures import ThreadPoolExecutor
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import lean_setup   # module-setup files: Lean then loads only the olean parts the cache ships
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
 WS = f"{S}/ws"
@@ -54,7 +56,11 @@ done = set(m for m in order if m not in todo); failed = {}
 def compile_one(m):
     os.makedirs(os.path.dirname(olean(m)), exist_ok=True)
     t0 = time.time()
-    r = subprocess.run(["lake", "env", "lean", "-o", olean(m), "-i", olean(m)[:-6] + ".ilean", src(m)],
+    try:
+        setup = lean_setup.setup_for(src(m))
+    except FileNotFoundError as e:
+        return m, 1, [f"{src(m)}: error: {e}"], 0.0
+    r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-o", olean(m), src(m)],
                        cwd=WS, env=ENV, capture_output=True, text=True)
     out = r.stdout + r.stderr
     open(f"{S}/compile-diag/{m}.txt", "w", encoding="utf-8").write(out)
