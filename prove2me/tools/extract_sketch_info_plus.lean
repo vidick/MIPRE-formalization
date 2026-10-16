@@ -14,8 +14,9 @@ answer with regex, and must not:
      → rewrite those exact ranges to apply the upload namespace and renames.
 
 How to run (from inside the built source project, so imports resolve):
-  lake env lean --run extract_sketch_info.lean <File.lean> [namePrefix] > sketch_info.jsonl
-The optional namePrefix (e.g. `SumSquares`) filters `ref` facts to project
+  lake env lean --run extract_sketch_info.lean <File.lean> [namePrefix[,namePrefix...]] > sketch_info.jsonl
+The optional namePrefix list (e.g. `SumSquares`, or `MIPRE,QuantumParallelRepetition` for a project whose
+vendored code lives in its own namespace) filters `ref` facts to project
 constants; omit it to emit every reference.
 
 It re-elaborates the one file with InfoTree recording enabled and prints one
@@ -100,9 +101,9 @@ partial def collectRefs (t : InfoTree) (acc : Array (Name × String.Pos.Raw × S
 
 unsafe def main (args : List String) : IO UInt32 := do
   let some fileName := args[0]?
-    | do IO.eprintln "usage: lake env lean --run extract_sketch_info.lean <File.lean> [namePrefix]"
+    | do IO.eprintln "usage: lake env lean --run extract_sketch_info.lean <File.lean> [namePrefix[,namePrefix...]]"
          return 1
-  let prefixFilter : Option Name := args[1]?.map String.toName
+  let prefixFilters : List Name := ((args[1]?.map fun s => s.splitOn ",").getD []).filter (· ≠ "") |>.map String.toName
   let input ← IO.FS.readFile (⟨fileName⟩ : System.FilePath)
   Lean.initSearchPath (← Lean.findSysroot)
   Lean.enableInitializersExecution
@@ -169,9 +170,7 @@ unsafe def main (args : List String) : IO UInt32 := do
   for t in s.commandState.infoState.trees do
     refs := collectRefs t refs
   let keep : Name → Bool := fun c =>
-    match prefixFilter with
-    | some p => p.isPrefixOf c || p.isPrefixOf ((privateToUserName? c).getD c)
-    | none => true
+    prefixFilters.isEmpty || prefixFilters.any fun p => p.isPrefixOf c || p.isPrefixOf ((privateToUserName? c).getD c)
   let deduped := refs.foldl (init := (Std.HashSet.emptyWithCapacity, #[]))
     fun (seen, out) r@(c, s', e) =>
       let key := s!"{c}:{s'.byteIdx}:{e.byteIdx}"
