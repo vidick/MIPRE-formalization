@@ -41,8 +41,11 @@ for n in tree["nodes"]:
     items.append({"name": n["theorem_name"], "source_name": n.get("source_name", n["theorem_name"]),
                   "module": n["module"], "slug": n["slug"], "solution": n["solution_file"] is not None, "kind": "node"})
 for g in glue:
-    items.append({"name": g["theorem_name"], "source_name": g["theorem_name"] if g["kind"] != "leaf" else None,
-                  "module": module_of_path(g["source"]["file"]) if g["kind"] != "leaf" else None,
+    # a leaf (`Nonempty (MIPRE.Introspection 7)`) and a leaf closure (its later solution) have no source
+    # declaration: the statement is synthetic, so only stub and solution are compared
+    synthetic = g["kind"] in ("leaf", "leaf-closure")
+    items.append({"name": g["theorem_name"], "source_name": None if synthetic else g["theorem_name"],
+                  "module": None if synthetic else module_of_path(g["source"]["file"]),
                   "slug": g["slug"], "solution": g.get("solution_file") is not None, "kind": "glue-" + g["kind"]})
 
 PP = '''
@@ -69,7 +72,15 @@ def write_check(name, imports, pairs):
     return f"Check/{name}.lean"
 
 def parse(out):
-    return dict(l.split(" :: ", 1) for l in out.splitlines() if " :: " in l)
+    """`label :: type` lines; a type the pretty-printer breaks over several lines is joined back."""
+    d, cur = {}, None
+    for l in out.splitlines():
+        if " :: " in l and not l.startswith(" "):
+            cur, t = l.split(" :: ", 1)
+            d[cur] = t
+        elif cur is not None and l.startswith(" "):
+            d[cur] += "\n" + l
+    return d
 
 # original tree: the source modules of the items that have a source declaration.  A source module
 # outside the workspace (the glue theorems live in `MIPRE/Background/Pipeline.lean` and
@@ -131,7 +142,7 @@ def check_solution(it):
     path = f"Check/Sol_{it['slug']}.lean"
     open(f"{WS}/{path}", "w", encoding="utf-8").write(body)
     rc, out = run_lean(path)
-    t = [l.split(" :: ", 1)[1] for l in out.splitlines() if l.startswith("T :: ")]
+    t = list(parse("\n".join(l for l in out.splitlines() if l.startswith("T :: ") or l.startswith(" "))).values())
     ax = re.search(r"'solution' depends on axioms: \[([^\]]*)\]", out)
     if ax:
         axs = ax.group(1)
