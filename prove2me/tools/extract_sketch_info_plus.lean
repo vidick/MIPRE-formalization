@@ -170,11 +170,17 @@ unsafe def main (args : List String) : IO UInt32 := do
   for t in s.commandState.infoState.trees do
     refs := collectRefs t refs
   -- a constant this file declares (no module index: it is not imported) is always a project constant,
-  -- whatever its namespace (`theorem _root_.Nat.bits_two_pow_mul` in Repeat/Prims.lean)
+  -- whatever its namespace (`theorem _root_.Nat.bits_two_pow_mul` in Repeat/Prims.lean); a prefix
+  -- filter matches the constant's name or the name of the module that declares it, so `MIPRE` keeps
+  -- every constant of the workspace's `MIPRE.*` modules, including the vendored low individual degree
+  -- test's top-level namespaces (`TypedEstimates`, `MirrorSimul`, `SimulPair`, …)
   let finalEnv := s.commandState.env
   let keep : Name → Bool := fun c =>
     prefixFilters.isEmpty || (finalEnv.contains c && (finalEnv.getModuleIdxFor? c).isNone)
-      || prefixFilters.any fun p => p.isPrefixOf c || p.isPrefixOf ((privateToUserName? c).getD c)
+      || prefixFilters.any (fun p => p.isPrefixOf c || p.isPrefixOf ((privateToUserName? c).getD c))
+      || (match finalEnv.getModuleIdxFor? c with
+          | some idx => (finalEnv.header.moduleNames[idx.toNat]?).any fun m => prefixFilters.any (·.isPrefixOf m)
+          | none => false)
   let deduped := refs.foldl (init := (Std.HashSet.emptyWithCapacity, #[]))
     fun (seen, out) r@(c, s', e) =>
       let key := s!"{c}:{s'.byteIdx}:{e.byteIdx}"
