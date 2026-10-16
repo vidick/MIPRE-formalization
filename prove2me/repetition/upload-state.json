@@ -151,6 +151,12 @@
    "job_id": "73ddcc30-6993-4fd7-ac9d-a2a3d7f81ce7",
    "theorem_id": "bbb8c9bc-7981-4e66-9d4f-23d60453794e",
    "error_message": ""
+  },
+  "MIPRE_Background_Repetition_Verifier": {
+   "submitted_at": 1792166294.0909069,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "38ce25ce-f6e0-46fa-ab5d-69388268dc1e"
   }
  },
  "theorems": {
@@ -1500,7 +1506,8 @@
    "submitted_at": 1792166053.6680288,
    "http": 200,
    "submission_id": "66479770-299f-4db7-a291-da9742ab92fa",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Repeat.DecAcc_iff": {
    "submitted_at": 1792165723.5790117,
@@ -1552,13 +1559,19 @@
    "error_message": ""
   },
   "MIPRE.Repeat.repSampler_halts_within": {
-   "submitted_at": 1792165967.2327616,
+   "submitted_at": 1792166118.7678072,
    "http": 200,
-   "submission_id": "4ec182a3-eafb-414b-9452-7b6940d3a681",
-   "status": "ERROR",
-   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+   "submission_id": "8e62263a-b23a-4bec-af86-3a91f3f29aaa",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
-  "MIPRE.Repeat.repSampler_timeBound": {}
+  "MIPRE.Repeat.repSampler_timeBound": {
+   "submitted_at": 1792166196.3931878,
+   "http": 200,
+   "submission_id": "50d2b85d-8ecf-4077-97b0-a77a5d1554b0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  }
  },
  "log": []
 }
