@@ -1,0 +1,23 @@
+{
+ "items": [
+  {
+   "theorem_name": "MIPRE.AnswerReduction.nonempty_five",
+   "slug": "MIPRE_AnswerReduction_nonempty_five",
+   "kind": "leaf-closure",
+   "formal_statement": "theorem MIPRE.AnswerReduction.nonempty_five : Nonempty (MIPRE.AnswerReduction 5) := by sorry",
+   "preamble": "import Definitions.Def_MIPRE_Background_AnswerReduction_Instance\nimport Definitions.Def_MIPRE_Foundations_Pipeline_AnswerReduction",
+   "stub_file": null,
+   "stub_published": true,
+   "solution_file": "Solutions/Sol_MIPRE_AnswerReduction_nonempty_five.lean",
+   "imported_nodes": [],
+   "source": {
+    "file": "MIPRE/Background/AnswerReduction/Instance.lean",
+    "commit": "70cbf1c"
+   },
+   "witness": "\u27e8MIPRE.AnswerReduction.answerReduction\u27e9"
+  }
+ ],
+ "generated": [
+  "Solutions/Sol_MIPRE_AnswerReduction_nonempty_five.lean"
+ ]
+}

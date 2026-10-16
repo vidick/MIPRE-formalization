@@ -235,6 +235,25 @@ def resolve_open(open_text, chain):
         out.append(tk if tk.startswith("(") else resolve_ns(tk, chain))
     return "open " + " ".join(out)
 
+def ns_registrations(ctx, own_ns=None):
+    """`namespace N end N` lines, at the top level, for the declaration's own namespace and each project
+    namespace its `open` lines name.  `open N` fails when no declaration of the file's environment lives
+    in N, which happens once all of N's declarations have become nodes or helpers the file does not
+    import (`open MIPRE.CL.CLFun.ExactlyOn` for `theorem ExactlyOn.concat`); an empty `namespace N end N`
+    registers N and adds nothing to it."""
+    chain = ctx["ns"]
+    names = [own_ns] if own_ns else []
+    for o in ctx["opens"]:
+        for tk in re.findall(r"\([^)]*\)|\S+", o[len("open"):].strip()):
+            if tk in ("hiding", "renaming"):
+                break          # what follows names declarations, not namespaces
+            if tk.startswith("(") or tk in ("scoped", "in"):
+                continue
+            r = resolve_ns(tk, chain)
+            if r in NS:
+                names.append(r)
+    return [f"namespace {n} end {n}" for n in dict.fromkeys(names)]
+
 # ---------- imports ----------
 imports = plan["imports"]
 mod_closure = {m: set(v) for m, v in plan["mod_closure"].items()}
@@ -419,7 +438,7 @@ def hoisted_context(uid):
     ctx = unit_ctx(uid)
     chain = ctx["ns"]
     full_ns = ".".join(u["name"].split(".")[:-1])
-    lines = []
+    lines = ns_registrations(ctx, full_ns)
     parts = full_ns.split(".") if full_ns else []
     for i in range(1, len(parts) + 1):
         p = ".".join(parts[:i])
@@ -433,13 +452,33 @@ def hoisted_context(uid):
     lines += ctx["vars"]
     return lines
 
+REDUCIBILITY = {"reducible", "semireducible", "irreducible", "instance_reducible", "implicit_reducible"}
+
+def replayable(attr):
+    """The attribute list of a replayed command without its global reducibility attributes: Lean sets
+    those only in the file that declares the constant (`attribute [instance_reducible, instance]
+    FieldModel.instField` of the vendored test), and the bundle declaring it carries them to every
+    importer already.  A `local` reducibility attribute is allowed anywhere and stays."""
+    inner, parts, depth, cur = attr.strip()[1:-1], [], 0, ""
+    for ch in inner:
+        if ch in "([{": depth += 1
+        elif ch in ")]}": depth -= 1
+        if ch == "," and depth == 0:
+            parts.append(cur.strip()); cur = ""
+        else:
+            cur += ch
+    parts.append(cur.strip())
+    keep = [q for q in parts if q and q.split()[0] not in REDUCIBILITY]
+    return "[" + ", ".join(keep) + "]" if keep else None
+
 def attr_lines(uid, available):
     """The attribute commands in effect at a declaration, restricted to targets the file can see."""
     out = []
     for at in unit_ctx(uid)["attrs"]:
         names = [tok if tu is None else const for tok, tu, const in at["names"] if tu is None or available(tu)]
-        if names:
-            out.append(f"attribute {at['attr']} " + " ".join(dict.fromkeys(names)))
+        attr = replayable(at["attr"])
+        if names and attr:
+            out.append(f"attribute {attr} " + " ".join(dict.fromkeys(names)))
     return out
 
 def pasted_block(uid, available):
@@ -450,7 +489,7 @@ def pasted_block(uid, available):
     a statement would differ from the source's), so that none of them leaks into the next block."""
     ctx = unit_ctx(uid)
     ns = ns_of_chain(ctx["ns"])
-    body = []
+    body = ns_registrations(ctx)
     if ns:
         body.append(f"namespace {ns}")
     body.append("noncomputable section" if ctx.get("nc") else "section")
@@ -549,11 +588,17 @@ for uid in nodes:
             emitted.add(e[3])
         else:
             at = e[3]
-            names = [tok if tu is None else const for tok, tu, const in at["names"]
-                     if tu is None or U[tu]["cls"] in ("defmat", "embedded", "avail", "pubnode")
-                     or tu in emitted or tu in c["imported_nodes"]]
-            if names:
-                sol_parts.append(f"attribute {at['attr']} " + " ".join(dict.fromkeys(names)) + "\n")
+            # a target pasted into this file takes the command as written; an imported one only what
+            # Lean allows outside the declaring file (no global reducibility attribute, see replayable)
+            here = [const for tok, tu, const in at["names"] if tu is not None and tu in emitted]
+            there = [tok if tu is None else const for tok, tu, const in at["names"]
+                     if (tu is None or U[tu]["cls"] in ("defmat", "embedded", "avail", "pubnode")
+                         or tu in c["imported_nodes"]) and not (tu is not None and tu in emitted)]
+            if here:
+                sol_parts.append(f"attribute {at['attr']} " + " ".join(dict.fromkeys(here)) + "\n")
+            attr = replayable(at["attr"])
+            if there and attr:
+                sol_parts.append(f"attribute {attr} " + " ".join(dict.fromkeys(there)) + "\n")
     sol_parts.append("/-! The uploaded declaration as `solution` (a root name declared inside the source's\n"
                      "namespace, so that names resolve as they do in the source). -/")
     sctx = unit_ctx(uid)
@@ -567,6 +612,7 @@ for uid in nodes:
         sol_ns, extra_open = name_ns, None
     else:
         sol_ns, extra_open = chain_ns, name_ns
+    sol_parts += ns_registrations(sctx, name_ns)
     if sol_ns:
         sol_parts.append(f"namespace {sol_ns}")
     sol_parts += sctx["opens"] + sctx["opts"] + sctx["vars"]
