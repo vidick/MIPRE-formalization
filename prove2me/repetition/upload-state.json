@@ -145,12 +145,12 @@
    "error_message": ""
   },
   "MIPRE_Foundations_Repeat_DeciderCost": {
-   "submitted_at": 1792165274.0907958,
+   "submitted_at": 1792165352.3474631,
    "http": 202,
-   "status": "FAILED",
-   "job_id": "f8e14529-0f76-4684-b6c0-0b59c702af8c",
-   "theorem_id": null,
-   "error_message": "definition does not compile: DB error looking up import 'Theorems.Thm_MIPRE_Cost_Prog_coreDispatch_lock': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "PUBLISHED",
+   "job_id": "73ddcc30-6993-4fd7-ac9d-a2a3d7f81ce7",
+   "theorem_id": "bbb8c9bc-7981-4e66-9d4f-23d60453794e",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -745,6 +745,66 @@
    "status": "PUBLISHED",
    "theorem_id": "18007b85-4ed1-4535-81e3-ac24674651b1",
    "error_message": ""
+  },
+  "MIPRE.Repetition.repConst_pos": {
+   "submitted_at": 1792165409.820949,
+   "http": 202,
+   "job_id": "73860409-8d58-42c4-a37d-ff67cacf8173",
+   "status": "QUEUED"
+  },
+  "MIPRE.Repetition.quantumValue_repeat_le_soundBound": {
+   "submitted_at": 1792165410.3248127,
+   "http": 202,
+   "job_id": "ae1bf898-2cfc-4da4-b9f7-aef42a83155a",
+   "status": "QUEUED"
+  },
+  "MIPRE.sum_pi_prod": {
+   "submitted_at": 1792165410.7759962,
+   "http": 202,
+   "job_id": "3beb2a81-f60a-4b59-8c9a-6f535a517ec1",
+   "status": "QUEUED"
+  },
+  "MIPRE.SyncStrategy.isPCC_tensorPow": {
+   "submitted_at": 1792165411.4530137,
+   "http": 202,
+   "job_id": "ebc47c43-b1e3-43d8-8494-faa0c1a69767",
+   "status": "QUEUED"
+  },
+  "MIPRE.exists_perfectPCC_repeat_doubled": {
+   "submitted_at": 1792165412.020444,
+   "http": 202,
+   "job_id": "3b32e8bd-1c2d-44be-8e76-a5ac9268e716",
+   "status": "QUEUED"
+  },
+  "MIPRE.Repeat.mem_decQueries": {
+   "submitted_at": 1792165412.925354,
+   "http": 202,
+   "job_id": "739622d8-34ef-4cf0-89f3-1eed56663886",
+   "status": "QUEUED"
+  },
+  "MIPRE.Repeat.dom_prepCost": {
+   "submitted_at": 1792165413.664979,
+   "http": 202,
+   "job_id": "ce249278-9d92-4500-99de-360005cc464b",
+   "status": "QUEUED"
+  },
+  "MIPRE.Repeat.loop_calls_time": {
+   "submitted_at": 1792165414.2330534,
+   "http": 202,
+   "job_id": "b1bc0408-f005-4c94-9f08-1d61bacebd32",
+   "status": "QUEUED"
+  },
+  "MIPRE.Repeat.decMalformed_time": {
+   "submitted_at": 1792165414.7289119,
+   "http": 202,
+   "job_id": "eab6abfd-cee1-4460-b6a9-b6ffaca4eff5",
+   "status": "QUEUED"
+  },
+  "MIPRE.Repeat.decWellformed_time": {
+   "submitted_at": 1792165415.2217782,
+   "http": 202,
+   "job_id": "63a6925a-744d-4db8-b9c0-7a77156c4ebc",
+   "status": "QUEUED"
   }
  },
  "solutions": {
