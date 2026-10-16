@@ -54,6 +54,7 @@ def stale(rel):
     return args.all or not os.path.exists(o) or os.path.getmtime(o) < os.path.getmtime(f"{WS}/{rel}")
 
 todo = {m for m, f in mods.items() if stale(f)}
+N_TODO = None   # fixed below once the dependents are added; the loop empties `todo` as it goes
 # a stale module makes its dependents stale
 changed = True
 while changed:
@@ -61,7 +62,8 @@ while changed:
     for m, ds in deps.items():
         if m not in todo and any(d in todo for d in ds):
             todo.add(m); changed = True
-print(f"{len(files)} files, {len(todo)} to compile ({args.jobs} jobs)", flush=True)
+N_TODO = len(todo)
+print(f"{len(files)} files, {N_TODO} to compile ({args.jobs} jobs)", flush=True)
 os.makedirs(f"{A}/diag", exist_ok=True)
 log = open(f"{A}/build-tree.log", "a", encoding="utf-8")
 log.write(f"\n=== {time.strftime('%Y-%m-%d %H:%M:%S')} {len(todo)} files\n")
@@ -129,7 +131,7 @@ with ThreadPoolExecutor(max_workers=args.jobs) as ex:
             for k, ds in deps.items():
                 if m in ds and k in todo:
                     todo.discard(k); failed[k] = ["dependency failed: " + m]
-print(f"compiled {len(todo) - len(failed)} ok, {len(failed)} failed", flush=True)   # todo was fixed before compiling; stale() is false afterwards
+print(f"compiled {N_TODO - len(failed)} ok, {len(failed)} failed", flush=True)
 for m, errs in sorted(failed.items())[:40]:
     print(" ", mods[m], errs[0][:200] if errs else "")
 json.dump({"failed": {mods[m]: errs for m, errs in failed.items()}}, open(f"{A}/build-tree.json", "w"), indent=1)
