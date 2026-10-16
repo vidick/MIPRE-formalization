@@ -20,6 +20,10 @@ Usage (from the repository root):
     python3 scripts/p2m_upload.py --status       # re-read every node's status and summarize
     python3 scripts/p2m_upload.py --tree prove2me/assembly   # another tree directory (tree.json, optional
                                                  # glue.json, metadata.json, upload-config.json, the files)
+    python3 scripts/p2m_upload.py --tree prove2me/introspection --pipeline --after prove2me/answerreduction \\
+        --gate <validation-solutions.jsonl> --max-inflight 20
+                                                 # each item as soon as what it imports is ready, instead of
+                                                 # wave by wave and phase by phase (upload_pipelined)
 """
 import argparse, collections, io, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request, uuid
 
@@ -659,6 +663,340 @@ def upload_solutions(tree, meta, st, args):
                 sys.exit(f"solution of {name} ended {status}: {rec['error_message'][:1500]}")
 
 
+ACCEPTED = ("ACCEPTED", "SKETCH_ACCEPTED", "LEAF_OPEN")
+DEF_IMPORT = re.compile(r"^\s*import\s+Definitions\.Def_(\S+)", re.M)
+
+
+class Sibling:
+    """A tree uploaded alongside this one (--after): what this tree imports from it is ready once its
+    state file records it, a bundle as PUBLISHED, a node as a published statement with an accepted
+    solution.  The file is re-read at most every 30 seconds (the other uploader replaces it
+    atomically); content the sibling does not hold was on the platform before either tree."""
+    def __init__(self, rel):
+        d = os.path.join(ROOT, rel)
+        self.rel, self.path = rel, os.path.join(d, "upload-state.json")
+        t = json.load(open(os.path.join(d, "tree.json"), encoding="utf-8"))
+        self.bundles = {b["definition_name"] for b in t["bundles"]}
+        self.nodes = {n["theorem_name"] for n in t["nodes"]}
+        gp = os.path.join(d, "glue.json")
+        if os.path.exists(gp):
+            self.nodes |= {g["theorem_name"] for g in json.load(open(gp, encoding="utf-8"))["items"]}
+        self.read_at, self.st = 0.0, {"definitions": {}, "theorems": {}, "solutions": {}}
+
+    def state(self):
+        if time.time() - self.read_at > 30:
+            self.read_at = time.time()
+            try:
+                self.st = json.load(open(self.path, encoding="utf-8"))
+            except (OSError, ValueError):
+                pass   # not written yet: keep the last reading
+        return self.st
+
+    def bundle_ready(self, name):
+        return name not in self.bundles or self.state()["definitions"].get(name, {}).get("status") == "PUBLISHED"
+
+    def node_ready(self, name):
+        if name not in self.nodes:
+            return True
+        s = self.state()
+        return (s["theorems"].get(name, {}).get("status") == "PUBLISHED"
+                and s["solutions"].get(name, {}).get("status") in ACCEPTED)
+
+    def theorem_id(self, name):
+        return self.state()["theorems"].get(name, {}).get("theorem_id")
+
+
+def upload_pipelined(tree, meta, st, args, siblings):
+    """One scheduler for bundles, statements and solutions in place of the waves' three barriers: a
+    bundle is submitted once the bundles it imports are published and the nodes it imports are
+    Proved; a statement once the bundles its preamble imports are published; a solution once its
+    statement is published, the bundles it imports are, the nodes it imports are accepted (leaves
+    first) and, with --gate, the local check has passed it.  At most --max-inflight jobs of all three
+    kinds are in flight, the earliest wave first.  A transient failure is resubmitted (three times at
+    most, 60 s apart); any other failure stops only what depends on it, and is reported at the end."""
+    mb = {b["definition_name"]: b for b in meta["bundles"]}
+    mn = {n["theorem_name"]: n for n in meta["nodes"]}
+    by_b = {b["definition_name"]: b for b in tree["bundles"]}
+    by_n = {n["theorem_name"]: n for n in tree["nodes"]}
+    names_b, names_n = set(by_b), set(by_n)
+    wb, wn = compute_waves(tree)
+    b_defs = {b: sorted(set(DEF_IMPORT.findall("\n".join(by_b[b].get("imports", []))))) for b in by_b}
+    b_nodes = {b: sorted(set(by_b[b].get("imported_nodes", [])) | set(by_b[b].get("imported_published_nodes", [])))
+               for b in by_b}
+    t_defs = {n: sorted(set(DEF_IMPORT.findall(by_n[n].get("preamble") or ""))) for n in by_n}
+    s_defs = {n: sorted(set(DEF_IMPORT.findall(read(by_n[n]["solution_file"]))))
+              if by_n[n].get("solution_file") else [] for n in by_n}
+    dry = {"B": set(), "T": set(), "S": set()}
+
+    def def_ok(d):
+        if d in names_b:
+            return d in dry["B"] or st["definitions"].get(d, {}).get("status") == "PUBLISHED"
+        return args.dry_run or all(s.bundle_ready(d) for s in siblings)
+
+    def stmt_ok(n):
+        rec = st["theorems"].get(n, {})
+        return n in dry["T"] or bool(rec.get("status") == "PUBLISHED" and rec.get("theorem_id"))
+
+    def sol_ok(n):   # an imported node: accepted here, ready in a sibling, or on the platform before
+        if n in names_n:
+            return n in dry["S"] or st["solutions"].get(n, {}).get("status") in ACCEPTED
+        return args.dry_run or all(s.node_ready(n) for s in siblings)
+
+    proved, proved_at = set(), {}
+
+    def proved_ok(n):   # a node a bundle imports: the platform must show it Proved
+        if n in proved:
+            return True
+        if not sol_ok(n):
+            return False
+        if args.dry_run:
+            return True
+        if n in names_n:
+            tid = st["theorems"].get(n, {}).get("theorem_id")
+        else:
+            tid = next((s.theorem_id(n) for s in siblings if n in s.nodes), None)
+            if tid is None:
+                proved.add(n)   # published (Proved) before this tree and its siblings
+                return True
+        if time.time() - proved_at.get(n, 0) < 30:
+            return False
+        proved_at[n] = time.time()
+        code, t = request("GET", f"/theorems/{tid}")
+        if code == 200 and t.get("status") == "Proved":
+            proved.add(n)
+            return True
+        return False
+
+    gate = Gate(args.gate) if getattr(args, "gate", None) and not args.dry_run else None
+
+    def ready(kind, x):
+        if kind == "B":
+            return all(def_ok(d) for d in b_defs[x]) and all(proved_ok(c) for c in b_nodes[x])
+        if kind == "T":
+            return all(def_ok(d) for d in t_defs[x])
+        return (stmt_ok(x) and all(def_ok(d) for d in s_defs[x]) and all(sol_ok(c) for c in by_n[x]["imported_nodes"])
+                and (gate is None or not by_n[x].get("solution_file") or gate.passed(x)))
+
+    def deps_in_tree(kind, x):   # the same-tree items whose failure blocks this one
+        if kind == "B":
+            return [("B", d) for d in b_defs[x] if d in names_b] + [("S", c) for c in b_nodes[x] if c in names_n]
+        if kind == "T":
+            return [("B", d) for d in t_defs[x] if d in names_b]
+        return ([("T", x)] + [("B", d) for d in s_defs[x] if d in names_b]
+                + [("S", c) for c in by_n[x]["imported_nodes"] if c in names_n])
+
+    # ---- submitting: each returns a job/submission id, "done" (nothing to wait for) or "failed"
+    def submit_B(name):
+        b, m, rec = by_b[name], mb[name], st["definitions"].setdefault(name, {})
+        if args.dry_run:
+            log(f"[dry-run] submit-definition {name} (wave {wb[name]})")
+            dry["B"].add(name)
+            return "done"
+        body = {"definition_name": name, "definition_title": m["definition_title"][:200],
+                "definition": read(b["file"]), "natural_language_statement": m["natural_language_statement"],
+                "source": m["source"], "tags": sorted(set(m["tags"] + [PROJECT_TAG])), "private": not args.public}
+        code, d = request("POST", "/submit-definition", body=body)
+        rec.update({"submitted_at": time.time(), "http": code, "status": d.get("status", "SUBMITTED")})
+        if code != 202 or not d.get("job_id"):
+            rec["error"] = d
+            save_state(st)
+            log(f"submit-definition {name}: HTTP {code} {json.dumps(d)[:500]}")
+            txt = json.dumps(d).lower()
+            if "already" in txt or "exists" in txt or "duplicate" in txt:
+                tid = find_theorem_id(name)
+                if tid:
+                    rec.update({"status": "PUBLISHED", "theorem_id": tid, "note": "pre-existing"})
+                    save_state(st)
+                    return "done"
+            rec["status"] = "REJECTED"
+            save_state(st)
+            return "failed"
+        rec.update({"job_id": d["job_id"], "status": "PENDING"})
+        save_state(st)
+        log(f"submit-definition {name}: queued job {d['job_id']}")
+        return d["job_id"]
+
+    def submit_T(name):
+        n, rec = by_n[name], st["theorems"].setdefault(name, {})
+        if n.get("stub_published"):
+            tid = find_theorem_id(name)
+            if not tid:
+                log(f"{name} is recorded as already published but the platform has no theorem of that name")
+                return "failed"
+            rec.update({"status": "PUBLISHED", "theorem_id": tid, "note": "published before this tree"})
+            save_state(st)
+            log(f"theorem {name}: already on the platform, {tid}")
+            return "done"
+        if args.dry_run:
+            log(f"[dry-run] submit-problem {name} (wave {wn[name]})")
+            dry["T"].add(name)
+            return "done"
+        m = mn[name]
+        problem = {"theorem_name": name, "theorem_title": m["theorem_title"][:200],
+                   "formal_statement": n["formal_statement"], "natural_language_statement": m["natural_language_statement"],
+                   "preamble": n["preamble"], "source": m["source"], "tags": sorted(set(m["tags"] + [PROJECT_TAG]))}
+        code, d = request("POST", "/submit-problem", body={"problems": [problem], "private": not args.public})
+        rec.update({"submitted_at": time.time(), "http": code})
+        jobs = d.get("jobs") or []
+        if code != 202 or not jobs:
+            rec.update({"error": d, "status": "REJECTED"})
+            save_state(st)
+            log(f"submit-problem {name}: HTTP {code} {json.dumps(d)[:600]}")
+            tid = find_theorem_id(name)
+            if tid:
+                rec.update({"status": "PUBLISHED", "theorem_id": tid, "note": "pre-existing"})
+                save_state(st)
+                return "done"
+            return "failed"
+        rec.update({"job_id": jobs[0]["job_id"], "status": "QUEUED"})
+        save_state(st)
+        log(f"submit-problem {name}: queued job {rec['job_id']}")
+        return rec["job_id"]
+
+    def submit_S(name):
+        n, rec = by_n[name], st["solutions"].setdefault(name, {})
+        if not n.get("solution_file"):
+            rec["status"] = "LEAF_OPEN"   # an Open leaf: statement only, by design
+            save_state(st)
+            return "done"
+        tid = st["theorems"].get(name, {}).get("theorem_id")
+        if args.dry_run:
+            log(f"[dry-run] verify {name} (wave {wn[name]})")
+            dry["S"].add(name)
+            return "done"
+        fields = {"theorem_id": tid, "proof_type": "prove",
+                  "file": (f"Sol_{n['slug']}.lean", open(os.path.join(P2M, n["solution_file"]), "rb").read()),
+                  "explanation": mn[name].get("explanation", "")}
+        code, d = request("POST", "/verify", multipart=fields)
+        rec.update({"submitted_at": time.time(), "http": code})
+        if code not in (200, 201, 202) or not d.get("submission_id"):
+            rec.update({"error": d, "status": "REJECTED"})
+            save_state(st)
+            log(f"verify {name}: HTTP {code} {json.dumps(d)[:800]}")
+            return "failed"
+        rec.update({"submission_id": d["submission_id"], "status": "PENDING"})
+        save_state(st)
+        log(f"verify {name}: submission {d['submission_id']}")
+        return d["submission_id"]
+
+    SUBMIT = {"B": submit_B, "T": submit_T, "S": submit_S}
+    KIND = {"B": "definitions", "T": "theorems", "S": "solutions"}
+
+    def poll(kind, name, jid):
+        """None while the job runs; else (ok, error message)."""
+        rec = st[KIND[kind]][name]
+        if kind == "S":
+            code, res = request("GET", "/verify", params={"submission_id": jid})
+            if code != 200:
+                log(f"  poll {name}: HTTP {code} {str(res)[:120]}")
+                return None
+            if res.get("status") in (None, "PENDING"):
+                return None
+            rec.update({"status": res.get("status"), "error_message": res.get("error_message", "")})
+            save_state(st)
+            log(f"solution {name}: {rec['status']} {rec['error_message'][:400]}")
+            return rec["status"] in ("ACCEPTED", "SKETCH_ACCEPTED"), rec["error_message"]
+        code, job = request("GET", f"/publish-jobs/{jid}")
+        if code != 200:
+            log(f"  poll {name}: HTTP {code} {str(job)[:120]}")
+            return None
+        if job.get("status") not in ("PUBLISHED", "FAILED", "ERROR"):
+            return None
+        rec.update({"status": job.get("status"), "theorem_id": job.get("theorem_id"),
+                    "error_message": job.get("error_message", "")})
+        save_state(st)
+        log(f"{KIND[kind][:-1]} {name}: {rec['status']} {rec.get('theorem_id') or ''} {rec['error_message'][:300]}")
+        return rec["status"] == "PUBLISHED" and bool(rec.get("theorem_id")), rec["error_message"]
+
+    # ---- the work list, earliest wave first; jobs an earlier run left in flight are polled, not resent
+    order = {"B": 0, "T": 1, "S": 2}
+    items = sorted([("B", b) for b in by_b] + [("T", n) for n in by_n] + [("S", n) for n in by_n],
+                   key=lambda kx: ((wb if kx[0] == "B" else wn)[kx[1]], order[kx[0]]))
+    done_now = {"B": lambda x: def_ok(x), "T": lambda x: stmt_ok(x),
+                "S": lambda x: st["solutions"].get(x, {}).get("status") in ACCEPTED}
+    pending = [kx for kx in items if not done_now[kx[0]](kx[1])]
+    inflight = {}   # (kind, name) -> [job id, time of the last poll]
+    for kind, name in list(pending):
+        rec = st[KIND[kind]].get(name, {})
+        jid = rec.get("submission_id") if kind == "S" else rec.get("job_id")
+        live = (rec.get("status") in (None, "PENDING", "SUBMITTED") if kind == "S"
+                else rec.get("status") not in ("FAILED", "ERROR", "REJECTED", "POLL_TIMEOUT", "PUBLISHED"))
+        if jid and live and not args.dry_run:
+            inflight[(kind, name)] = [jid, 0.0]
+            pending.remove((kind, name))
+    log(f"pipeline: {len(pending)} item(s) to submit, {len(inflight)} in flight from an earlier run, "
+        f"at most {args.max_inflight} in flight")
+    attempts, retry_at, failed = collections.defaultdict(int), {}, {}
+    last_report = time.time()
+
+    def dead(kx, memo):
+        """Blocked for this run by a failure upstream in this tree."""
+        if kx in failed:
+            return True
+        if kx not in memo:
+            memo[kx] = False
+            memo[kx] = any(dead(d, memo) for d in deps_in_tree(*kx) if d in failed or d in pending_set)
+        return memo[kx]
+
+    while pending or inflight:
+        submitted = False
+        for kx in list(pending):
+            if len(inflight) >= args.max_inflight:
+                break
+            if retry_at.get(kx, 0) > time.time() or kx in failed or not ready(*kx):
+                continue
+            r = SUBMIT[kx[0]](kx[1])
+            pending.remove(kx)
+            submitted = True
+            if r == "failed":
+                failed[kx] = st[KIND[kx[0]]].get(kx[1], {}).get("error") or "rejected before queueing"
+            elif r != "done":
+                inflight[kx] = [r, time.time()]
+        now = time.time()
+        for kx, (jid, at) in list(inflight.items()):
+            if now - at < 10:
+                continue
+            inflight[kx][1] = now
+            res = poll(kx[0], kx[1], jid)
+            if res is None:
+                continue
+            del inflight[kx]
+            ok, msg = res
+            if ok:
+                continue
+            if is_transient(msg) and attempts[kx] < 3:
+                attempts[kx] += 1
+                retry_at[kx] = time.time() + 60
+                pending.insert(0, kx)
+                log(f"{KIND[kx[0]][:-1]} {kx[1]}: transient platform error; resubmitting in 60 s (attempt {attempts[kx] + 1} of 4)")
+            else:
+                failed[kx] = msg
+        if time.time() - last_report > 300:
+            last_report = time.time()
+            nb = sum(1 for b in by_b if def_ok(b))
+            nt = sum(1 for n in by_n if stmt_ok(n))
+            ns = sum(1 for n in by_n if st["solutions"].get(n, {}).get("status") in ACCEPTED)
+            log(f"progress: definitions {nb}/{len(by_b)}, statements {nt}/{len(by_n)}, solutions {ns}/{len(by_n)}, "
+                f"{len(inflight)} in flight, {len(failed)} failed")
+        if not inflight and not submitted and pending:
+            pending_set, memo = set(pending), {}
+            if all(dead(kx, memo) for kx in pending):
+                break   # everything left waits on a failure of this run
+            if args.dry_run:
+                break   # nothing changes outside a dry run's own walk
+        if not submitted and not args.dry_run:
+            time.sleep(4)
+    if failed:
+        log(f"{len(failed)} item(s) failed and {len(pending)} wait on them:")
+        for (kind, name), msg in list(failed.items())[:40]:
+            log(f"  {KIND[kind][:-1]} {name}: {str(msg)[:400]}")
+        sys.exit(1)
+    if pending:
+        log(f"[dry-run] {len(pending)} item(s) never became ready, e.g. {pending[:3]}")
+        sys.exit(1)
+    log("pipeline: everything " + ("walked" if args.dry_run else "submitted and accepted"))
+
+
 def status(tree, st):
     rows = []
     for n in tree["nodes"]:
@@ -714,6 +1052,11 @@ def main():
     ap.add_argument("--tree", default="prove2me", help="tree directory relative to the repository root")
     ap.add_argument("--gate", default=None,
                     help="submit a solution only once this file (validate.py's validation-solutions.jsonl) records it as passed")
+    ap.add_argument("--pipeline", action="store_true",
+                    help="one scheduler for the three kinds of item instead of the waves (see upload_pipelined)")
+    ap.add_argument("--after", action="append", default=[],
+                    help="with --pipeline: a tree directory being uploaded alongside, whose content this tree "
+                         "imports once that tree's state file records it (repeatable)")
     args = ap.parse_args()
     DRY = args.dry_run
     set_tree_dir(args.tree)
@@ -741,6 +1084,8 @@ def main():
         return
     if args.only:
         {"definitions": upload_definitions, "theorems": upload_theorems, "solutions": upload_solutions}[args.only](tree, meta, st, args)
+    elif args.pipeline:
+        upload_pipelined(tree, meta, st, args, [Sibling(rel) for rel in args.after])
     else:
         wb, wn = compute_waves(tree)
         last = max([0] + list(wb.values()) + list(wn.values()))
