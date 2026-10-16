@@ -37,6 +37,13 @@ RENAME = {"Mathlib.Basic.ENNReal.Basic": "Mathlib.Data.ENNReal.Basic", "Mathlib.
           "Mathlib.Basic.NNReal.Star": "Mathlib.Data.NNReal.Star", "Mathlib.Basic.Nontrivial.Defs": "Mathlib.Logic.Nontrivial.Defs",
           "Mathlib.Basic.Unique": "Mathlib.Logic.Unique", "Mathlib.Topology.Algebra.Group.ContinuousDiv": "Mathlib.Topology.Algebra.Group.Basic"}
 DROP = {"Mathlib.RingTheory.Coalgebra.IsFrobenius"}   # an instance the newer typeclass search found; never named in the sources
+# A namespace a module opens (`open scoped MatrixOrder`, `open WithLp`) is not a constant reference, so the
+# proof-level lists miss the Mathlib module that declares it when no constant of that module is used:
+# the two vendored low-degree-test modules that open these failed with "unknown namespace" (2026-10-16).
+# Namespace -> the platform-pin module declaring it (its `scoped[...]` instances or its `namespace`).
+NAMESPACE_MODULES = {"MatrixOrder": "Mathlib.Analysis.Matrix.Order", "Matrix.Norms.L2Operator": "Mathlib.Analysis.Matrix.Order",
+                     "Matrix.Norms.Elementwise": "Mathlib.Analysis.Matrix.Normed", "WithLp": "Mathlib.Analysis.Normed.Lp.WithLp"}
+OPEN_RE = re.compile(r"^open(?:\s+scoped)?\s+([^\n]+)$", re.M)
 
 root = f"{WS}/.lake/packages/mathlib"
 if args.from_lean:
@@ -72,5 +79,23 @@ for mod, mods in d["per_module"].items():
     assert n == 1, mod
     open(path, "w", encoding="utf-8").write(t2)
     record[mod] = new; done += 1
+# second pass, over every rewritten module: the modules of the namespaces it opens
+added = 0
+for mod in list(record):
+    path = f"{WS}/{mod.replace('.', '/')}.lean"
+    olean = f"{WS}/.lake/build/lib/lean/{mod.replace('.', '/')}.olean"
+    if not os.path.exists(path) or (os.path.exists(olean) and os.path.getmtime(olean) > os.path.getmtime(path)):
+        continue   # a module that compiled has every namespace it opens
+    t = open(path, encoding="utf-8").read()
+    opened = {ns for m in OPEN_RE.finditer(t) for ns in m.group(1).split()}
+    have = set(re.findall(r"^(?:public\s+)?import\s+(\S+)", t, re.M))
+    need = sorted({NAMESPACE_MODULES[ns] for ns in opened if ns in NAMESPACE_MODULES} - have)
+    if not need:
+        continue
+    assert all(os.path.exists(f"{root}/{m.replace('.', '/')}.lean") for m in need), (mod, need)
+    last = list(re.finditer(r"^(?:public\s+)?import\s+Mathlib\.\S+\s*$", t, re.M))[-1]
+    t = t[:last.end()] + "".join(f"\nimport {m}" for m in need) + t[last.end():]
+    open(path, "w", encoding="utf-8").write(t)
+    record[mod] = sorted(set(record[mod]) | set(need)); added += len(need)
 json.dump(record, open(rec_path, "w"), indent=1)
-print(f"rewrote {done} modules, skipped {skipped} not in the workspace, {len(record)} recorded")
+print(f"rewrote {done} modules, skipped {skipped} not in the workspace, {len(record)} recorded; {added} namespace import(s) added")
