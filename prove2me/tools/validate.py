@@ -225,6 +225,7 @@ def remove(p):
     except OSError:
         pass
 
+SECS = {}   # solution -> seconds its checked copy took to compile
 CHECK_TAIL = PP + '\nrun_meta do\n  IO.println s!"T :: {← ppType `solution}"\n#print axioms solution\n'
 
 def compile_and_check(it):
@@ -244,8 +245,10 @@ def compile_and_check(it):
             setup = lean_setup.setup_for(f"{WS}/{path}")
         except FileNotFoundError as e:
             return it, 1, None, f"compile failed: {e}", str(e)
+        t0 = time.time()
         r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-DautoImplicit=false", "-DrelaxedAutoImplicit=false",
                             path], cwd=WS, env=env, capture_output=True, text=True)
+        SECS[it["name"]] = round(time.time() - t0, 1)   # the platform's compile limit is 300 s
         remove(setup)
     finally:
         remove(f"{WS}/{path}")
@@ -282,6 +285,8 @@ def phase_solutions(s):
         for k, (it, rc, t, ax, out) in enumerate(ex.map(fn, todo), 1):
             ok = rc == 0 and t is not None and t == stubs.get(it["name"])
             r = {"name": it["name"], "rc": rc, "type": t, "axioms": ax, "ok": ok}
+            if it["name"] in SECS:
+                r["secs"] = SECS[it["name"]]
             rec[it["name"]] = r
             fo.write(json.dumps(r, ensure_ascii=False) + "\n"); fo.flush()
             if not ok:

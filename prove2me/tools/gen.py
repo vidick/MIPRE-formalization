@@ -551,7 +551,42 @@ def bundle_imports(m, include_self, exclude_delta_of=None):
     mods = set(mod_closure[m]) | ({m} if include_self else set())
     return [f"import {b}" for d in TOPO if d in mods for b in bundle_names(d, exclude_delta_of)]
 
-HEADER = txt(modules[0], 0, F[modules[0]]["B"].find(b"\nimport ")).strip() + "\n"
+def src_header(m):
+    """The copyright header of module m's source: the comments before its first command, verbatim.
+    The closure has seven copyright holders (the vendored low individual degree test is Sirui Lu and
+    the MIPStarRE contributors', two Cslib files are their authors'), so each generated file carries
+    the header of the source it copies, never one header for all."""
+    s = F[m]["B"].decode("utf-8")
+    i, n = 0, len(s)
+    while True:
+        while i < n and s[i] in " \t\r\n":
+            i += 1
+        if s.startswith("/-", i) and not s.startswith("/-!", i) and not s.startswith("/--", i):
+            depth, j = 1, i + 2
+            while j < n and depth:
+                if s.startswith("/-", j):
+                    depth += 1; j += 2
+                elif s.startswith("-/", j):
+                    depth -= 1; j += 2
+                else:
+                    j += 1
+            i = j
+        elif s.startswith("--", i):
+            j = s.find("\n", i)
+            i = n if j < 0 else j
+        else:
+            break
+    h = s[:i].strip()
+    return h + "\n" if h else ""
+
+def headers_of(mods):
+    """The headers of the source modules a generated file copies text from, each once, in order."""
+    out = []
+    for x in mods:
+        h = src_header(x)
+        if h and h not in out:
+            out.append(h)
+    return "".join(out)
 
 def gen_note(m, what):
     return (f"/- Generated for Prove2Me from {REPO}@{COMMIT}, {module_path(m)} ({what});\n"
@@ -701,7 +736,7 @@ for m in TOPO:
     what = ("delta bundle: declarations the new statements need that the published bundle "
             f"Def_{published_bundles[m]} does not carry" if is_delta
             else "definition bundle: declarations the uploaded statements rest on")
-    header = HEADER + gen_note(m, what)
+    header = src_header(m) + gen_note(m, what)
     imps = "\n".join([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=is_delta, exclude_delta_of=m)
                      + [f"import Theorems.Thm_{sl}" for sl in bundle_node_imports.get(m, [])]
                      + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(bundle_node_deps.get(m, []), key=lambda v: slugs[v])])
@@ -845,7 +880,7 @@ for uid in nodes:
                  + attr_lines(uid, lambda tu: U[tu]["cls"] in ("defmat", "embedded", "avail", "pubnode"))
                  + prefix_cmds)   # `include G U in` becomes a bare `include G U`
     preamble = "\n".join(pre_lines)
-    stub = HEADER + gen_note(m, f"statement stub of {u['name']}") + preamble + "\n\n" + formal + "\n"
+    stub = src_header(m) + gen_note(m, f"statement stub of {u['name']}") + preamble + "\n\n" + formal + "\n"
     stub = expand_macros(stub)
     emit(f"Theorems/Thm_{slug}.lean", stub)
 
@@ -854,7 +889,9 @@ for uid in nodes:
     pasted = sorted(c["pasted"], key=lambda v: (TOPO_IDX[U[v]["module"]], U[v]["decl"]["declStart"]["offset"]))
     imp_lines = ([f"import {x}" for x in ext_imports(m)] + bundle_imports(m, include_self=True)
                  + [f"import Theorems.Thm_{slugs[v]}" for v in sorted(c["imported_nodes"], key=lambda v: slugs[v])])
-    sol_parts = [HEADER + gen_note(m, f"solution of {u['name']}"), "\n".join(imp_lines), ""]
+    # the pasted helpers' sources may have other copyright holders: their headers follow the module's own
+    sol_parts = [headers_of([m] + [U[v]["module"] for v in pasted]) + gen_note(m, f"solution of {u['name']}"),
+                 "\n".join(imp_lines), ""]
     # the namespaces of the solution's imports: the stub's bundles and the imported nodes' theorems
     sol_env = stub_env_ns(m) | env_ns_of(c["imported_nodes"])
     nattr = node_attr_lines(c["imported_nodes"])
