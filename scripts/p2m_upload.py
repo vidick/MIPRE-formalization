@@ -21,7 +21,7 @@ Usage (from the repository root):
     python3 scripts/p2m_upload.py --tree prove2me/assembly   # another tree directory (tree.json, optional
                                                  # glue.json, metadata.json, upload-config.json, the files)
 """
-import argparse, json, os, sys, time, urllib.request, urllib.parse, urllib.error, uuid, io
+import argparse, collections, json, os, sys, time, urllib.request, urllib.parse, urllib.error, uuid, io
 
 API = "https://prove2.me/api/v1"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -247,16 +247,46 @@ def read(path):
     return open(os.path.join(P2M, path), encoding="utf-8").read()
 
 
+def bundle_deps(b, names):
+    """Same-tree bundles a bundle imports (its `import Definitions.Def_<name>` lines)."""
+    out = []
+    for line in b.get("imports", []):
+        m = re.match(r"\s*import\s+Definitions\.Def_(\S+)", line)
+        if m and m.group(1) in names:
+            out.append(m.group(1))
+    return out
+
+
 def upload_definitions(tree, meta, st, args):
+    """Publish the bundles in import order, up to --max-inflight jobs at once: a bundle is
+    submitted once every same-tree bundle it imports is PUBLISHED; a job that fails on a transient
+    platform error is resubmitted (three times at most, 60 s apart)."""
     mb = {b["definition_name"]: b for b in meta["bundles"]}
-    for b in tree["bundles"]:
-        name = b["definition_name"]
-        rec = st["definitions"].setdefault(name, {})
-        if rec.get("status") == "PUBLISHED":
-            continue
-        if rec.get("job_id") and rec.get("status") not in ("FAILED", "ERROR"):
-            job = poll_job(rec["job_id"], name)
-        else:
+    by = {b["definition_name"]: b for b in tree["bundles"]}
+    names = set(by)
+    pending = [b["definition_name"] for b in tree["bundles"] if st["definitions"].get(b["definition_name"], {}).get("status") != "PUBLISHED"]
+    inflight, attempts, retry_at, dry_done = {}, collections.defaultdict(int), {}, set()
+
+    def published(n):
+        return n not in names or n in dry_done or st["definitions"].get(n, {}).get("status") == "PUBLISHED"
+
+    while pending or inflight:
+        progressed = False
+        for name in list(pending):
+            if len(inflight) >= args.max_inflight:
+                break
+            b = by[name]
+            if not all(published(d) for d in bundle_deps(b, names)) or retry_at.get(name, 0) > time.time():
+                continue
+            rec = st["definitions"].setdefault(name, {})
+            if rec.get("job_id") and rec.get("status") not in ("FAILED", "ERROR", "REJECTED", "POLL_TIMEOUT"):
+                inflight[name] = rec["job_id"]        # a job from an earlier run: poll it
+                pending.remove(name); progressed = True
+                continue
+            if args.dry_run:
+                log(f"[dry-run] submit-definition {name} ({len(read(b['file']))} bytes, after {bundle_deps(b, names)})")
+                dry_done.add(name); pending.remove(name); progressed = True
+                continue
             m = mb[name]
             body = {
                 "definition_name": name,
@@ -267,9 +297,6 @@ def upload_definitions(tree, meta, st, args):
                 "tags": sorted(set(m["tags"] + [PROJECT_TAG])),
                 "private": not args.public,
             }
-            if args.dry_run:
-                log(f"[dry-run] submit-definition {name} ({len(body['definition'])} bytes)")
-                continue
             code, d = request("POST", "/submit-definition", body=body)
             rec.update({"submitted_at": time.time(), "http": code, "status": d.get("status", "SUBMITTED")})
             if code != 202 or not d.get("job_id"):
@@ -281,19 +308,49 @@ def upload_definitions(tree, meta, st, args):
                     if tid:
                         rec.update({"status": "PUBLISHED", "theorem_id": tid, "note": "pre-existing"})
                         save_state(st)
+                        pending.remove(name); progressed = True
                         continue
                 sys.exit(f"definition {name} was rejected before queueing; fix and rerun")
             rec["job_id"] = d["job_id"]
+            rec["status"] = "PENDING"
             save_state(st)
-            log(f"submit-definition {name}: queued job {d['job_id']}")
-            job = poll_job(d["job_id"], name)
-        rec["status"] = job.get("status")
-        rec["theorem_id"] = job.get("theorem_id")
-        rec["error_message"] = job.get("error_message", "")
-        save_state(st)
-        log(f"definition {name}: {rec['status']} {rec.get('theorem_id') or ''} {rec['error_message'][:300]}")
-        if rec["status"] != "PUBLISHED":
-            sys.exit(f"definition {name} did not publish ({rec['status']}); later content imports it, stopping")
+            log(f"submit-definition {name}: queued job {d['job_id']} ({len(inflight) + 1} in flight)")
+            inflight[name] = d["job_id"]
+            pending.remove(name); progressed = True
+        if not inflight:
+            if pending and not progressed:
+                blocked = [n for n in pending if not all(published(d) for d in bundle_deps(by[n], names))]
+                if blocked and all(retry_at.get(n, 0) <= time.time() for n in pending):
+                    sys.exit(f"{len(blocked)} definition(s) blocked by an unpublished import, e.g. {blocked[0]}: "
+                             f"{[d for d in bundle_deps(by[blocked[0]], names) if not published(d)]}")
+            if not pending:
+                break
+            time.sleep(2)
+            continue
+        time.sleep(4)
+        for name, job_id in list(inflight.items()):
+            code, job = request("GET", f"/publish-jobs/{job_id}")
+            if code != 200:
+                log(f"  poll {name}: HTTP {code} {str(job)[:120]}")
+                continue
+            status = job.get("status")
+            if status not in ("PUBLISHED", "FAILED", "ERROR"):
+                continue
+            del inflight[name]
+            rec = st["definitions"][name]
+            rec["status"] = status
+            rec["theorem_id"] = job.get("theorem_id")
+            rec["error_message"] = job.get("error_message", "")
+            save_state(st)
+            log(f"definition {name}: {status} {rec.get('theorem_id') or ''} {rec['error_message'][:300]}")
+            if status != "PUBLISHED":
+                if is_transient(rec["error_message"]) and attempts[name] < 3:
+                    attempts[name] += 1
+                    retry_at[name] = time.time() + 60
+                    pending.insert(0, name)
+                    log(f"definition {name}: transient platform error; resubmitting in 60 s (attempt {attempts[name] + 1} of 4)")
+                else:
+                    sys.exit(f"definition {name} did not publish ({status}); later content imports it, stopping")
 
 
 def upload_theorems(tree, meta, st, args, rounds=0):
@@ -401,64 +458,96 @@ def leaves_first(tree):
 
 
 def upload_solutions(tree, meta, st, args):
+    """Verify the solutions leaves-first, up to --max-inflight at once: a solution is submitted once
+    every node it imports is Proved (here or before this tree), an accepted sketch, or an Open leaf
+    by design; a verdict lost to a transient platform error is resubmitted (three times at most)."""
     mn = {n["theorem_name"]: n for n in meta["nodes"]}
-    dry_handled = set()   # a dry run walks the whole order, treating each logged node as handled
-    for n in leaves_first(tree):
-        name = n["theorem_name"]
-        rec = st["solutions"].setdefault(name, {})
-        if rec.get("status") in ("ACCEPTED", "SKETCH_ACCEPTED"):
-            continue
-        if not n.get("solution_file"):
-            rec["status"] = "LEAF_OPEN"   # an Open leaf: statement only, by design
-            save_state(st)
-            continue
-        # every child must already be handled: Proved (here or before this tree), a sketch, or an
-        # Open leaf by design; the parent then resolves to Proved or to an accepted sketch
-        for c in n["imported_nodes"]:
-            if c in PUBLISHED or c in dry_handled:
-                continue
-            if st["solutions"].get(c, {}).get("status") not in ("ACCEPTED", "SKETCH_ACCEPTED", "LEAF_OPEN"):
-                sys.exit(f"child {c} of {name} is not handled yet; aborting to keep the leaves-first order")
-        tid = st["theorems"].get(name, {}).get("theorem_id")
-        if args.dry_run:
-            log(f"[dry-run] verify {name} -> theorem {tid or '(id unknown until the theorems phase has run)'}"
-                f" ({len(open(os.path.join(P2M, n['solution_file']), 'rb').read())} bytes, "
-                f"{len(n['imported_nodes'])} imported)")
-            dry_handled.add(name)
-            continue
-        if not tid:
-            sys.exit(f"no theorem_id recorded for {name}; run the theorems phase first")
-        for attempt in range(4):   # a transient platform error gets up to three resubmissions
-            if rec.get("submission_id") and rec.get("status") in (None, "PENDING", "SUBMITTED"):
-                res = poll_submission(rec["submission_id"], name)
-            else:
-                sol = open(os.path.join(P2M, n["solution_file"]), "rb").read()
-                fields = {"theorem_id": tid, "proof_type": "prove",
-                          "file": (f"Sol_{n['slug']}.lean", sol),
-                          "explanation": mn[name].get("explanation", "")}
-                code, d = request("POST", "/verify", multipart=fields)
-                rec.update({"submitted_at": time.time(), "http": code})
-                if code not in (200, 201, 202) or not d.get("submission_id"):
-                    rec["error"] = d
-                    rec["status"] = "REJECTED"
-                    save_state(st)
-                    sys.exit(f"verify {name}: HTTP {code} {json.dumps(d)[:800]}")
-                rec["submission_id"] = d["submission_id"]
-                rec["status"] = "PENDING"
+    order = leaves_first(tree)
+    by = {n["theorem_name"]: n for n in order}
+    inflight, attempts, retry_at, dry_done = {}, collections.defaultdict(int), {}, set()
+
+    def handled(c):
+        return (c in PUBLISHED or c in dry_done
+                or st["solutions"].get(c, {}).get("status") in ("ACCEPTED", "SKETCH_ACCEPTED", "LEAF_OPEN"))
+
+    pending = [n["theorem_name"] for n in order if not handled(n["theorem_name"])]
+    while pending or inflight:
+        progressed = False
+        for name in list(pending):
+            if len(inflight) >= args.max_inflight:
+                break
+            n = by[name]
+            rec = st["solutions"].setdefault(name, {})
+            if not n.get("solution_file"):
+                rec["status"] = "LEAF_OPEN"   # an Open leaf: statement only, by design
                 save_state(st)
-                log(f"verify {name}: submission {d['submission_id']}")
-                res = poll_submission(d["submission_id"], name)
-            rec["status"] = res.get("status")
+                pending.remove(name); progressed = True
+                continue
+            if not all(handled(c) for c in n["imported_nodes"]) or retry_at.get(name, 0) > time.time():
+                continue
+            tid = st["theorems"].get(name, {}).get("theorem_id")
+            if args.dry_run:
+                log(f"[dry-run] verify {name} -> theorem {tid or '(id unknown until the theorems phase has run)'}"
+                    f" ({len(open(os.path.join(P2M, n['solution_file']), 'rb').read())} bytes, "
+                    f"{len(n['imported_nodes'])} imported)")
+                dry_done.add(name); pending.remove(name); progressed = True
+                continue
+            if not tid:
+                sys.exit(f"no theorem_id recorded for {name}; run the theorems phase first")
+            if rec.get("submission_id") and rec.get("status") in (None, "PENDING", "SUBMITTED"):
+                inflight[name] = rec["submission_id"]   # a submission from an earlier run: poll it
+                pending.remove(name); progressed = True
+                continue
+            sol = open(os.path.join(P2M, n["solution_file"]), "rb").read()
+            fields = {"theorem_id": tid, "proof_type": "prove",
+                      "file": (f"Sol_{n['slug']}.lean", sol),
+                      "explanation": mn[name].get("explanation", "")}
+            code, d = request("POST", "/verify", multipart=fields)
+            rec.update({"submitted_at": time.time(), "http": code})
+            if code not in (200, 201, 202) or not d.get("submission_id"):
+                rec["error"] = d
+                rec["status"] = "REJECTED"
+                save_state(st)
+                sys.exit(f"verify {name}: HTTP {code} {json.dumps(d)[:800]}")
+            rec["submission_id"] = d["submission_id"]
+            rec["status"] = "PENDING"
+            save_state(st)
+            log(f"verify {name}: submission {d['submission_id']} ({len(inflight) + 1} in flight)")
+            inflight[name] = d["submission_id"]
+            pending.remove(name); progressed = True
+        if not inflight:
+            if pending and not progressed and all(retry_at.get(n, 0) <= time.time() for n in pending):
+                blocked = pending[0]
+                sys.exit(f"{len(pending)} solution(s) blocked: {blocked} waits for "
+                         f"{[c for c in by[blocked]['imported_nodes'] if not handled(c)]}")
+            if not pending:
+                break
+            time.sleep(2)
+            continue
+        time.sleep(5)
+        for name, sid in list(inflight.items()):
+            code, res = request("GET", "/verify", params={"submission_id": sid})
+            if code != 200:
+                log(f"  poll {name}: HTTP {code} {str(res)[:120]}")
+                continue
+            status = res.get("status")
+            if status in (None, "PENDING"):
+                continue
+            del inflight[name]
+            rec = st["solutions"][name]
+            rec["status"] = status
             rec["error_message"] = res.get("error_message", "")
             save_state(st)
-            log(f"solution {name}: {rec['status']} {rec['error_message'][:400]}")
-            if rec["status"] in ("ACCEPTED", "SKETCH_ACCEPTED"):
-                break
-            if attempt < 3 and is_transient(rec["error_message"]):
-                log(f"solution {name}: transient platform error; resubmitting in 60 s (attempt {attempt + 2} of 4)")
-                time.sleep(60)
+            log(f"solution {name}: {status} {rec['error_message'][:400]}")
+            if status in ("ACCEPTED", "SKETCH_ACCEPTED"):
                 continue
-            sys.exit(f"solution of {name} ended {rec['status']}: {rec['error_message'][:1500]}")
+            if is_transient(rec["error_message"]) and attempts[name] < 3:
+                attempts[name] += 1
+                retry_at[name] = time.time() + 60
+                pending.insert(0, name)
+                log(f"solution {name}: transient platform error; resubmitting in 60 s (attempt {attempts[name] + 1} of 4)")
+            else:
+                sys.exit(f"solution of {name} ended {status}: {rec['error_message'][:1500]}")
 
 
 def status(tree, st):
