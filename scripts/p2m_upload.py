@@ -536,6 +536,28 @@ def leaves_first(tree):
     return [by[x] for x in order]
 
 
+class Gate:
+    """The local check's verdicts (validate.py's validation-solutions.jsonl, one JSON record per
+    solution, the last one counting): with --gate a solution is submitted only once it compiled and
+    matched its stub locally, so the upload can run while the check is still working through the
+    later waves.  The file is re-read at most every 30 seconds; a failed check is reported once."""
+    def __init__(self, path):
+        self.path, self.read_at, self.ok, self.reported = path, 0.0, {}, set()
+
+    def passed(self, name):
+        if time.time() - self.read_at > 30:
+            self.read_at = time.time()
+            if os.path.exists(self.path):
+                for line in open(self.path, encoding="utf-8"):
+                    if line.strip():
+                        r = json.loads(line)
+                        self.ok[r["name"]] = bool(r.get("ok"))
+        if self.ok.get(name) is False and name not in self.reported:
+            self.reported.add(name)
+            log(f"solution {name}: the local check failed; it is held until a new check passes")
+        return self.ok.get(name) is True
+
+
 def upload_solutions(tree, meta, st, args):
     """Verify the solutions leaves-first, up to --max-inflight at once: a solution is submitted once
     every node it imports is Proved (here or before this tree), an accepted sketch, or an Open leaf
@@ -550,8 +572,10 @@ def upload_solutions(tree, meta, st, args):
                 or st["solutions"].get(c, {}).get("status") in ("ACCEPTED", "SKETCH_ACCEPTED", "LEAF_OPEN"))
 
     pending = [n["theorem_name"] for n in order if not handled(n["theorem_name"])]
+    gate = Gate(args.gate) if getattr(args, "gate", None) and not args.dry_run else None
     while pending or inflight:
         progressed = False
+        waiting_gate = False
         for name in list(pending):
             if len(inflight) >= args.max_inflight:
                 break
@@ -563,6 +587,9 @@ def upload_solutions(tree, meta, st, args):
                 pending.remove(name); progressed = True
                 continue
             if not all(handled(c) for c in n["imported_nodes"]) or retry_at.get(name, 0) > time.time():
+                continue
+            if gate is not None and not gate.passed(name):
+                waiting_gate = True   # not yet checked locally (or failed there): submitted once it passes
                 continue
             tid = st["theorems"].get(name, {}).get("theorem_id")
             if args.dry_run:
@@ -595,6 +622,9 @@ def upload_solutions(tree, meta, st, args):
             inflight[name] = d["submission_id"]
             pending.remove(name); progressed = True
         if not inflight:
+            if waiting_gate and not progressed:
+                time.sleep(30)   # the local check of the next solutions is still running
+                continue
             if pending and not progressed and all(retry_at.get(n, 0) <= time.time() for n in pending):
                 blocked = pending[0]
                 sys.exit(f"{len(pending)} solution(s) blocked: {blocked} waits for "
@@ -682,6 +712,8 @@ def main():
     ap.add_argument("--status", action="store_true")
     ap.add_argument("--max-inflight", type=int, default=10)
     ap.add_argument("--tree", default="prove2me", help="tree directory relative to the repository root")
+    ap.add_argument("--gate", default=None,
+                    help="submit a solution only once this file (validate.py's validation-solutions.jsonl) records it as passed")
     args = ap.parse_args()
     DRY = args.dry_run
     set_tree_dir(args.tree)

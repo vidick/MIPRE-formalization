@@ -46,6 +46,9 @@ ap.add_argument("--phase", choices=["all", "orig", "stubs", "solutions"], defaul
 ap.add_argument("--compile", action="store_true",
                 help="solutions: compile each solution to the RAM disk first, check it there, delete the olean")
 ap.add_argument("--redo", action="store_true", help="solutions: check again the solutions already recorded")
+ap.add_argument("--wave-order", default=None,
+                help="solutions: check them in the upload's wave order, read from this staged tree directory "
+                     "(relative to the repository), so that an upload gated on the check can run alongside it")
 ap.add_argument("--orig-from", default=None,
                 help="orig: read the source types from this dump (tools/orig_types.lean) instead of elaborating "
                      "the source modules, so the phase needs no source olean")
@@ -268,6 +271,12 @@ def phase_solutions(s):
             if l.strip():
                 r = json.loads(l); rec[r["name"]] = r
     todo = [it for it in sol_items if not rec.get(it["name"], {}).get("ok")]
+    if args.wave_order:
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "scripts"))
+        import p2m_upload
+        p2m_upload.set_tree_dir(args.wave_order)
+        _, wn = p2m_upload.compute_waves(p2m_upload.load_tree())
+        todo.sort(key=lambda it: wn.get(it["name"], 1 << 30))   # stable: within a wave, the tree's order
     print(f"solutions: {len(sol_items)}, {len(sol_items) - len(todo)} already checked, {len(todo)} to check"
           + (" (compiled on the RAM disk)" if args.compile else ""), flush=True)
     fn = compile_and_check if args.compile else check_solution
