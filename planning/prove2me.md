@@ -528,3 +528,16 @@ the next wave. Two more generator gaps the vendored code exposed: top-level `set
 them: `autoImplicit`, `maxHeartbeats`, `maxRecDepth`, `backward.isDefEq.respectTransparency`) and
 `universe` commands are now scope, reproduced for each declaration with the last assignment per
 option, and pasted helpers sit in their own `section` (`noncomputable` when the source's is).
+Three more generator and extractor gaps surfaced on the way to a clean build and were fixed:
+Stage 2 filtered reference facts to the `MIPRE` prefix and so produced none for the vendored
+namespace (`QuantumParallelRepetition`; the binding-name positions of 421 nodes were missing) nor
+for a `_root_` declaration (`Nat.bits_two_pow_mul`), and now takes several prefixes and always keeps
+the file's own constants; a `local` attribute replayed at the top of a solution reached helpers from
+sections without it (`Classical.propDecidable` found where the source had `FinEnum.decEq`), so each
+pasted block now carries the attribute commands in effect at its own position and only global
+attributes are replayed; and a solution of a `_root_` declaration is placed in the source's
+namespace chain. The validator's check files are written in blocks of 40 names (515 in one
+`run_meta` block exceeded the recursion depth). Result on 2026-10-16: 1,057 generated files compile
+with the platform's options; validation finds the 514 statements' types identical in the source
+module, the stub and the solution, the leaf closure's solution type equal to its published stub, and
+no axiom beyond `propext`, `Classical.choice`, `Quot.sound` and the stubs' `sorryAx`.

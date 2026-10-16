@@ -139,6 +139,39 @@ definitions and 108 statements published, 89 theorems Proved, 16 accepted sketch
 The uploader resumes from `upload-state.json` and treats the platform's transient failures (a
 dropped database connection, a security-checkpoint page in place of the API) as retries.
 
+## The repetition stage (`repetition/`)
+
+The second increment: the closure of the repetition stage instance `MIPRE.repetition 7`
+(`MIPRE/Background/Repetition/Verifier.lean`) at `70cbf1c`, 60 modules of which 28 are new to the
+platform: the own-code repetition layer (`Foundations/Repeat/*`, `CL/Repeat`, `TensorFamily`,
+`Dilation`, `Background/Repetition/{Direct,TensorPower,Entangled,Soundness,Verifier}`) and the
+vendored parallel repetition proof of openai/ten-proofs (`Background/Repetition/TenProofs/`, eight
+parts of about 9,000 lines, Apache 2.0; upstream's wholesale `import Mathlib` replaced by the
+Mathlib modules its proofs use). It closes the leaf `Nonempty (MIPRE.Repetition 7)` with the
+solution `⟨MIPRE.repetition 7⟩`.
+
+The stage's target is a definition, so the planner's increment-1 rule would have made every one of
+the 2,099 theorems reachable through its body an embedded lemma of a definition bundle and the
+stage would have had no statement on the platform at all. The planner now keeps in a bundle only
+what the bundle needs (the same-module theorem closure of its definitions, statement-named,
+short attribute and private theorems); the other theorems are nodes or inline helpers, a theorem
+another bundle's content needs is a node that bundle imports, and since the platform accepts a
+definition's import of a theorem only once that theorem is Proved, the uploader publishes in
+waves (`planning/prove2me.md`, "Increment 2").
+
+| path | what |
+|---|---|
+| `repetition/config.json` (`make_config.py`) | definition-material target `MIPRE.repetition`, the compression and assembly trees as the published registry, the leaf closure, one rename (`length_le_size_list'`). |
+| `repetition/Definitions/`, `Theorems/`, `Solutions/` | 28 bundles (27 new, 1 delta; 934 definitions and 274 embedded theorems; the largest, Part04, 3,066 lines), 514 stubs and 514 solutions (1,366 inline helpers pasted where used), and the leaf-closure solution. |
+| `repetition/tree.json`, `glue.json`, `plan.json` | the manifest (bundles record the same-tree nodes they import), the leaf closure, the classification of the 5,743 units of the closure. |
+| `repetition/validation.json` | 514 statements with identical types in the source module, the stub and the solution; the leaf closure's solution type equals its published stub; no axiom beyond `propext`, `Classical.choice`, `Quot.sound` and the stubs' `sorryAx`. |
+| `repetition/metadata.json`, `META_WRITER.md`, `meta_packets/` | templated records for every item (`tools/auto_meta.py`, with the vendored provenance), writer records for the 12 blueprint-named theorems and the 7 blueprint-named bundles. |
+| `repetition/upload-config.json` | `{"public": true}`. |
+
+The upload, `python3 scripts/p2m_upload.py --tree prove2me/repetition`, runs in seven waves
+(13 bundles and 138 nodes; 6 and 72; 1 and 59; 4 and 223; 2 and 20; 1 and 2; the Verifier bundle
+and the leaf closure), each wave's bundles published after the nodes they import are Proved.
+
 ## Reproducing
 
 The build workspace is a Lake project pinned to the platform environment (toolchain
