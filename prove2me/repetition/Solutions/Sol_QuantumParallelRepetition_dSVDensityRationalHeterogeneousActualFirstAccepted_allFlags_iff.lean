@@ -432,8 +432,6 @@ import Theorems.Thm_QuantumParallelRepetition_dSVUniformDensityFirstAcceptFinite
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -441,6 +439,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem dSVDensityRationalHeterogeneousActualFirstAccepted_prefix_iff
     {β : Type*} {L : ℕ}
     (accepted : Fin L → β → Prop)
@@ -466,6 +465,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem dSVDensityRationalHeterogeneousActualFirstAccepted_zero_iff
     {β : Type*} {L : ℕ}
     (accepted : Fin L → β → Prop)
@@ -508,6 +508,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {β : Type*} {L : ℕ}
     (accepted : Fin L → β → Prop)

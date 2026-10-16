@@ -385,6 +385,7 @@ set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution (S : Strategy G) : S.winProbability ≤ 1 := by
   classical
   have hxy (x : X) (y : Y) :

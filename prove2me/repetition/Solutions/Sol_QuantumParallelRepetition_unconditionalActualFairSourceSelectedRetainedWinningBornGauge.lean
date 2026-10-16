@@ -468,40 +468,6 @@ import Theorems.Thm_QuantumParallelRepetition_rectangular_matrix_quadratic_compr
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -528,10 +494,6 @@ theorem unconditionalMixedConjugateSigmaAtomLift_apply
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -543,6 +505,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem unitaryConjugatePOVM_jointEffect
     {A B d : Type} [Fintype A] [Fintype B]
     [Fintype d] [DecidableEq d]
@@ -566,20 +529,13 @@ theorem unitaryConjugatePOVM_jointEffect
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualRetainedPOVM_ext
     {C ι : Type*} [Fintype C] [Fintype ι] [DecidableEq ι]
     (P Q : POVM C ι)
@@ -599,8 +555,6 @@ theorem unconditionalActualRetainedPOVM_ext
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -609,6 +563,7 @@ open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalSelectedGaugeRetainedPOVMNaturality_effect
     {C : Type} [Fintype C]
     {P N d m : ℕ}
@@ -646,6 +601,7 @@ open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalSelectedGaugeRetainedPOVMNaturality
     {C : Type} [Fintype C]
     {P N d m : ℕ}
@@ -669,8 +625,6 @@ theorem unconditionalSelectedGaugeRetainedPOVMNaturality
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -679,6 +633,7 @@ open WithLp Matrix
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualFairSourceSelectedRetainedWinningEffectGauge
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -721,6 +676,7 @@ open WithLp Matrix
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {X Y A B τ : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]

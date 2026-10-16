@@ -377,39 +377,12 @@ namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
 attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem spectralAtom_trace
     {d : Type*} [Fintype d] [DecidableEq d]
     (F : Matrix d d ℂ) (hF : F.PosSemidef)
@@ -434,6 +407,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 3000000
 set_option maxRecDepth 2048
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem spectralPartitionPOVM_trace_eq_atom_count
     {κ d : Type*}
     [Fintype κ] [Fintype d] [DecidableEq κ] [DecidableEq d]
@@ -458,6 +432,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 3000000
 set_option maxRecDepth 2048
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem spectralPartitionPOVM_trace_mul_eq_atom_overlap
     {κ d : Type*}
     [Fintype κ] [Fintype d] [DecidableEq κ] [DecidableEq d]
@@ -490,6 +465,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 3000000
 set_option maxRecDepth 2048
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution
     {κ d : Type*}
     [Fintype κ] [Fintype d] [DecidableEq κ] [DecidableEq d]

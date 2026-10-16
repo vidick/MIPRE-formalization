@@ -490,24 +490,6 @@ end QuantumParallelRepetition.Game
 
 attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -522,6 +504,7 @@ set_option maxHeartbeats 1600000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem conditionedEventDistribution_nonneg
     {Ω : Type*} [Fintype Ω]
     (law : FiniteEventLaw Ω) (event : Finset Ω)
@@ -534,8 +517,6 @@ theorem conditionedEventDistribution_nonneg
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -544,6 +525,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finiteRelativeEntropy_nonneg
     {Ω : Type*} [Fintype Ω]
     (p q : Ω → ℝ)
@@ -566,6 +548,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem groupedMass_nonneg
     {Ω κ : Type*} [Fintype Ω] [Fintype κ] [DecidableEq κ]
     (f : Ω → κ) (p : Ω → ℝ)
@@ -584,6 +567,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem groupedMass_comp
     {Ω κ θ : Type*} [Fintype Ω] [Fintype κ] [Fintype θ]
     [DecidableEq κ] [DecidableEq θ]
@@ -601,22 +585,13 @@ theorem groupedMass_comp
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem exactRemainingReverse_relativeEntropy_budget
     {n : ℕ} (D : Finset (Fin n))
     (remaining : 0 < (Finset.univ \ D).card)
@@ -638,24 +613,6 @@ theorem exactRemainingReverse_relativeEntropy_budget
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -669,6 +626,7 @@ set_option maxHeartbeats 1200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactGroupedMass_decidableEq_irrel
     {Ω κ : Type*} [Fintype Ω]
     (first second : DecidableEq κ)
@@ -680,12 +638,6 @@ theorem exactGroupedMass_decidableEq_irrel
   rfl
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -700,6 +652,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem reweightedSeed_reverse_source_prefix_information_budget
     {K V : Type*} [Fintype K] [Fintype V]
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -740,8 +693,6 @@ theorem reweightedSeed_reverse_source_prefix_information_budget
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -753,6 +704,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteCoordinateMarginal_nonneg
     {ι V : Type*} [Fintype ι] [Fintype V]
     (p : (ι → V) → ℝ) (hp : ∀ x, 0 ≤ p x)
@@ -763,8 +715,6 @@ theorem finiteCoordinateMarginal_nonneg
   exact groupedMass_nonneg (fun x : ι → V => x i) p hp v
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -779,6 +729,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem finiteCoordinateMarginal_groupedMass
     {Ω ι V : Type*} [Fintype Ω] [Fintype ι] [Fintype V]
     (projection : Ω → (ι → V)) (mass : Ω → ℝ)
@@ -825,6 +776,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem finiteUniformCoordinate_relativeEntropy
     {ι V : Type*} [Fintype ι] [Fintype V]
     (positive : 0 < Fintype.card ι)
@@ -867,6 +819,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem repeatedAlicePostselectedQuestionLaw_nonneg
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -897,6 +850,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem repeatedBobPostselectedQuestionLaw_nonneg
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -927,6 +881,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem repeatedAlicePostselectedCoordinateMarginal
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n)) (j : Fin n) (x : X) :
@@ -963,6 +918,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem repeatedBobPostselectedCoordinateMarginal
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n)) (j : Fin n) (y : Y) :
@@ -999,6 +955,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactAliceSourceMarginalInformation_eq
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -1061,6 +1018,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactBobSourceMarginalInformation_eq
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -1123,6 +1081,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem sourceRemaining_nonnegative_sum_le
     {n : ℕ} (D : Finset (Fin n)) (f : Fin n → ℝ)
     (nonnegative : ∀ j, 0 ≤ f j) :
@@ -1152,6 +1111,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactAliceSourceMarginalInformation_le
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -1216,6 +1176,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactBobSourceMarginalInformation_le
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -1267,8 +1228,6 @@ theorem exactBobSourceMarginalInformation_le
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 /-! The uploaded declaration as `solution` (a root name declared inside the source's
 namespace, so that names resolve as they do in the source). -/
 namespace QuantumParallelRepetition
@@ -1283,6 +1242,7 @@ set_option maxHeartbeats 2000000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {KA KB : Type*} [Fintype KA] [Fintype KB]
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))

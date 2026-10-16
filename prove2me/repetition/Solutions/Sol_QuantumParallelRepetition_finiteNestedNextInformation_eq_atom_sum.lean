@@ -451,28 +451,6 @@ import Theorems.Thm_QuantumParallelRepetition_finiteGroupedExpectation_eq_atom_s
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -486,6 +464,7 @@ set_option maxHeartbeats 1600000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem groupedMass_first
     {Ω Z : Type*} [Fintype Ω] [Fintype Z]
     [DecidableEq Ω]
@@ -500,36 +479,6 @@ theorem groupedMass_first
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -541,6 +490,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem jointAtom_eq_zero_of_firstMarginal_zero
     {I V : Type*} [Fintype I] [Fintype V]
     (mass : I × V → ℝ)
@@ -568,6 +518,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem nestedFirstMarginal_mul_conditional
     {I R V : Type*} [Fintype I] [Fintype R] [Fintype V]
     (mass : I × (R × V) → ℝ)
@@ -609,6 +560,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem nestedConditional_eq_flat
     {I R V : Type*} [Fintype I] [Fintype R] [Fintype V]
     (mass : I × (R × V) → ℝ)
@@ -649,6 +601,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {I R V : Type*} [Fintype I] [Fintype R] [Fintype V]
     (mass : I × (R × V) → ℝ)

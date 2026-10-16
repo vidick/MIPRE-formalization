@@ -479,6 +479,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {ι : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem negMulLog_rescale
     {W p : ℝ} (hW : 0 < W) (hp : 0 < p) :
     W * Real.negMulLog (p / W) = p * Real.log (W / p) := by
@@ -494,6 +495,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {ι : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem finite_weighted_entropy_le
     (s : Finset ι) (w h : ι → ℝ) {W p : ℝ}
     (hw : ∀ i ∈ s, 0 ≤ w i)
@@ -551,6 +553,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {ι : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem finite_weighted_entropy_le_of_weight_bound
     (s : Finset ι) (w h : ι → ℝ) {W N p : ℝ}
     (hw : ∀ i ∈ s, 0 ≤ w i)
@@ -572,16 +575,13 @@ theorem finite_weighted_entropy_le_of_weight_bound
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition.Game
 section
 open scoped BigOperators Kronecker
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem questionWeight_le_marginalX
     (G : Game X Y A B) (x : X) (y : Y) :
     G.questionWeight x y ≤ G.marginalX x := by
@@ -598,6 +598,7 @@ open scoped BigOperators Kronecker
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem questionWeight_le_marginalY
     (G : Game X Y A B) (x : X) (y : Y) :
     G.questionWeight x y ≤ G.marginalY y := by
@@ -614,6 +615,7 @@ open scoped BigOperators Kronecker
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem marginalX_mul_conditionalYGivenX
     (G : Game X Y A B) (x : X) (y : Y) :
     G.marginalX x * G.conditionalYGivenX x y =
@@ -636,6 +638,7 @@ open scoped BigOperators Kronecker
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem marginalY_mul_conditionalXGivenY
     (G : Game X Y A B) (x : X) (y : Y) :
     G.marginalY y * G.conditionalXGivenY y x =
@@ -658,6 +661,7 @@ open scoped BigOperators Kronecker
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem conditionalXGivenY_sum
     (G : Game X Y A B) (y : Y)
     (hy : 0 < G.marginalY y) :
@@ -677,6 +681,7 @@ variable {X Y A B U V : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [AddCommGroup U] [Module ℝ U]
 variable [AddCommGroup V] [Module ℝ V]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem alice_mixed_history_pairing
     (G : Game X Y A B)
     (pair : U →ₗ[ℝ] V →ₗ[ℝ] ℝ)
@@ -708,6 +713,7 @@ variable {X Y A B U V : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [AddCommGroup U] [Module ℝ U]
 variable [AddCommGroup V] [Module ℝ V]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem bob_mixed_history_pairing
     (G : Game X Y A B)
     (pair : U →ₗ[ℝ] V →ₗ[ℝ] ℝ)
@@ -751,6 +757,7 @@ variable {X Y A B U V : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [AddCommGroup U] [Module ℝ U]
 variable [AddCommGroup V] [Module ℝ V]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem alice_reveal_increment
     (G : Game X Y A B)
     (pair : U →ₗ[ℝ] V →ₗ[ℝ] ℝ)
@@ -791,6 +798,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullHistoryWeight_nonneg
     (G : Game X Y A B) {n : ℕ}
     {D L : Finset (Fin n)}
@@ -817,6 +825,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullHistoryHiddenAliceWeight_nonneg
     (G : Game X Y A B) {n : ℕ}
     {D L : Finset (Fin n)}
@@ -838,6 +847,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullHistoryHiddenBobWeight_nonneg
     (G : Game X Y A B) {n : ℕ}
     {D L : Finset (Fin n)}
@@ -859,6 +869,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullHistoryAliceFilter_posSemidef
     (G : Game X Y A B) (n : ℕ)
     (S : Strategy (G.repeat n))
@@ -884,6 +895,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullHistoryBobFilter_posSemidef
     (G : Game X Y A B) (n : ℕ)
     (S : Strategy (G.repeat n))
@@ -909,6 +921,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullHistoryWinIndicator_nonneg
     (G : Game X Y A B) {n : ℕ}
     {D L : Finset (Fin n)}
@@ -921,8 +934,6 @@ theorem fullHistoryWinIndicator_nonneg
   split <;> norm_num
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -1428,8 +1439,6 @@ theorem fullCoordinateNewHistory_weight
   ring
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace QuantumParallelRepetition
 section
@@ -2668,14 +2677,6 @@ theorem sourceUniformPermutationAliceEntropyBudget
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2710,10 +2711,6 @@ theorem aliceMartingaleEntropyBudget
   simpa [martingaleRate, mul_div_assoc] using hbudget
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 /-! The uploaded declaration as `solution` (a root name declared inside the source's
 namespace, so that names resolve as they do in the source). -/

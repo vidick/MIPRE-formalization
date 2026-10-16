@@ -445,12 +445,6 @@ import Theorems.Thm_QuantumParallelRepetition_exactFixedAliceQuestionMass_insert
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -463,6 +457,7 @@ set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactJointPrefixQuestionMass_eq_sum_alice
     (G : Game X Y A B) (n : ℕ)
     (fixedX fixedY : Finset (Fin n))
@@ -512,6 +507,7 @@ set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     (G : Game X Y A B) (n : ℕ)
     (fixedX fixedY : Finset (Fin n)) (j : Fin n)

@@ -451,34 +451,6 @@ namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
 attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -486,6 +458,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem localUnitaryAction_sub
     {m : ℕ}
     (U V : Matrix.unitaryGroup (Fin m) ℂ)
@@ -502,10 +475,6 @@ theorem localUnitaryAction_sub
   exact Matrix.mulVec_sub _ _ _
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -550,52 +519,6 @@ theorem dSVCanonicalFailurePrefix_norm_eq_sqrt
     Real.sqrt_nonneg (rank.val : ℝ)]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -676,10 +599,6 @@ theorem
     dSVCanonicalFailurePrefix_sub_norm_sq]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section

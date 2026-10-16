@@ -416,30 +416,14 @@ namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
 attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem matrix_memLp_two_mul_integrable
     {α d : Type*} [MeasurableSpace α]
     [Fintype d] {μ : Measure α}
@@ -464,6 +448,8 @@ open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem spectralPurificationFilter_difference_gram_integrable
     {d : Type*} [Fintype d] [DecidableEq d]
     (F M : Matrix d d ℂ)
@@ -486,18 +472,6 @@ theorem spectralPurificationFilter_difference_gram_integrable
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -507,6 +481,7 @@ open scoped BigOperators Topology ComplexOrder MatrixOrder
   Matrix.Norms.Elementwise InnerProductSpace
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem finitePurificationMatrix_difference_gram_apply
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (F : ι → Matrix d d ℂ) (M : Matrix d d ℂ)
@@ -556,6 +531,7 @@ open scoped BigOperators Topology ComplexOrder MatrixOrder
   Matrix.Norms.Elementwise InnerProductSpace
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem purificationSubspaceEntry_difference_inner_eq_integral
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (F : ι → Matrix d d ℂ) (M : Matrix d d ℂ)
@@ -615,6 +591,7 @@ open scoped BigOperators Topology ComplexOrder MatrixOrder
   Matrix.Norms.Elementwise InnerProductSpace
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem _root_.solution
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (F : ι → Matrix d d ℂ) (M : Matrix d d ℂ)

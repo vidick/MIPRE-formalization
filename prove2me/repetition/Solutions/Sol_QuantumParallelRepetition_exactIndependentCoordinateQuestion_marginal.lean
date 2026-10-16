@@ -452,28 +452,6 @@ import Theorems.Thm_QuantumParallelRepetition_exactSeedCoordinateFiber_sum
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -481,6 +459,7 @@ open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
 set_option maxHeartbeats 1600000
+attribute [local instance] Classical.propDecidable
 theorem exactSeedWeight_coordinate_sum
     {M : Type*} [Fintype M] [DecidableEq M]
     (f : M → ℝ) :
@@ -503,6 +482,7 @@ open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
 set_option maxHeartbeats 1600000
+attribute [local instance] Classical.propDecidable
 theorem exactSeedWeight_coordinate_marginal
     {M : Type*} [Fintype M] [DecidableEq M]
     (i : M) :
@@ -515,16 +495,6 @@ theorem exactSeedWeight_coordinate_marginal
     Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte] using h
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 /-! The uploaded declaration as `solution` (a root name declared inside the source's
 namespace, so that names resolve as they do in the source). -/
@@ -540,6 +510,7 @@ set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {M Ω V : Type*} [Fintype M] [DecidableEq M]
     [Fintype Ω] [Fintype V]

@@ -468,8 +468,6 @@ theorem dSVHeterogeneousRealPrefix_nonneg
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace

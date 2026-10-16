@@ -448,10 +448,6 @@ import Theorems.Thm_QuantumParallelRepetition_dSVUniformDensityPhysicalAsync_dou
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -474,24 +470,6 @@ theorem dSVUniformDensityThresholdWholeHistorySharedState_norm
   simp [k]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -558,14 +536,6 @@ theorem dSVDensityRationalCompleteProjectiveOutcome_eq_block_action
     dSVDensityRationalCompleteProjectiveBinaryPOVM_effect]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -638,8 +608,6 @@ theorem dSVDensityRationalCompleteStoppedOptionalLocalSchedule_hit
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -647,6 +615,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem dSVDensityRationalHeterogeneousActualPhysicalState_norm
     {S N d L : ℕ} (grid : 0 < N) (dimension : 0 < d)
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)
@@ -659,48 +628,6 @@ theorem dSVDensityRationalHeterogeneousActualPhysicalState_norm
     grid dimension L
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -738,12 +665,6 @@ theorem dSVDensityRationalCompleteStoppedOptionalLocalSchedule_after
     Fin.succ_ne_zero, not_before, not_equal]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -923,8 +844,6 @@ theorem dSVDensityRationalPureFlagBorn_normalized_partition_zero_succ
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -932,6 +851,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     dSVDensityRationalHeterogeneousActualPhysicalFlagMass_eq_optionalProduct
     {S d N L : ℕ} (width : Fin S → ℝ) (schedule : Fin L → Fin S)
@@ -985,6 +905,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     dSVDensityRationalHeterogeneousActualPhysical_firstHitProduct
     {L : ℕ} (continuation : ℕ → ℝ) (success : ℝ) (j : Fin L) :
@@ -1035,6 +956,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     dSVDensityRationalHeterogeneousActualPhysicalMatchedCopyBorn
     {S d N L : ℕ} (grid : 0 < N) (dimension : 0 < d)
@@ -1089,6 +1011,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     dSVDensityRationalHeterogeneousActualPhysicalFlagMass_succ_succ_eq_stage
     {S d N L : ℕ} (grid : 0 < N) (dimension : 0 < d)
@@ -1118,6 +1041,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem dSVDensityRationalHeterogeneousActualPhysicalNoHitCopyBorn
     {S d N L : ℕ} (grid : 0 < N) (dimension : 0 < d)
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)
@@ -1156,6 +1080,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     dSVDensityRationalHeterogeneousActualPhysicalFlagMass_zero_zero_eq_terminal
     {S d N L : ℕ} (grid : 0 < N) (dimension : 0 < d)
@@ -1187,6 +1112,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     dSVDensityRationalHeterogeneousActualPhysicalBaseFlagBorn_eq_flagMass
     {S d N L : ℕ} (width : Fin S → ℝ) (schedule : Fin L → Fin S)
@@ -1217,6 +1143,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     dSVDensityRationalHeterogeneousActualPhysicalMatchedFlagMass_eq_stoppedSuccess
     {S d N L : ℕ} (grid : 0 < N) (dimension : 0 < d)
@@ -1246,6 +1173,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     dSVDensityRationalHeterogeneousActualPhysicalFlagBorn_mass_partition
     {S d N L : ℕ} (grid : 0 < N) (dimension : 0 < d)
@@ -1300,6 +1228,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {S d N L : ℕ} (grid : 0 < N) (dimension : 0 < d)
     (width : Fin S → ℝ) (schedule : Fin L → Fin S)

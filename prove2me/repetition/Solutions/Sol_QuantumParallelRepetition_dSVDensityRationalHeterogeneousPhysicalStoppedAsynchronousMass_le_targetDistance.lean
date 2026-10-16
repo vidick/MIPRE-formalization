@@ -443,39 +443,12 @@ namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
 attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem transposePOVM_projective
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (P : POVM ι d)
@@ -855,28 +828,6 @@ theorem dSVUniformLeftDensitySpectralAtomDiscrepancy_le
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -884,6 +835,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem dSVDensityRationalPhysicalProjectorCrossHazard_eq
     {d N : ℕ} (grid : 0 < N) (dimension : 0 < d)
     (w : ℝ) (ξ ζ : BipartiteUnitVector d) :
@@ -1175,12 +1127,6 @@ theorem dSVDensityRationalActualMixedSuccessMass_eq
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -1205,8 +1151,6 @@ theorem dSVDensityRationalActualMixed_escape_ge_diagonal
   linarith
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section

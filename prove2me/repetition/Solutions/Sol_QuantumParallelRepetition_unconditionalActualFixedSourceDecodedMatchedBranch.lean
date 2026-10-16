@@ -463,40 +463,6 @@ import Theorems.Thm_QuantumParallelRepetition_unconditionalActualPhysicalMixedAc
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -528,12 +494,6 @@ theorem unconditionalMixedConjugateSelectedBranch_tensorAction
     Fintype.sum_prod_type, Finset.sum_mul, mul_assoc]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -667,8 +627,6 @@ theorem
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -676,6 +634,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualCleanedSelectedMatchedStoppingBranch
     {S B N d L m : ℕ} {R : Type}
     [Fintype R] [DecidableEq R]
@@ -736,10 +695,6 @@ theorem unconditionalActualCleanedSelectedMatchedStoppingBranch
     unconditionalActualCleanedSelectedFiniteStageDecoder_succ]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -866,8 +821,6 @@ theorem unconditionalRegroupedSelectedRetainedReindexAction
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -875,6 +828,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualFixedSourceFullBilateralRegroup_eq
     {B N d L m : ℕ} {R : Type} (j : Fin L) :
     unconditionalSourcePhysicalCleanedFullBilateralRegroup
@@ -903,6 +857,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualFixedSourceFullPhysicalBilateralStageTransport
     {S B N d L m : ℕ} {R : Type}
     [Fintype R] [DecidableEq R]
@@ -987,6 +942,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {S B N d L m : ℕ}
     (Q : ℕ) (width : Fin S → ℝ) (schedule : Fin L → Fin S)

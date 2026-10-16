@@ -452,24 +452,6 @@ import Theorems.Thm_QuantumParallelRepetition_weightedConditionalJoint_totalVari
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -484,6 +466,7 @@ set_option maxHeartbeats 1600000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem finiteTotalVariation_equiv
     {ι κ : Type*} [Fintype ι] [Fintype κ]
     (e : ι ≃ κ) (p q : κ → ℝ) :
@@ -509,6 +492,7 @@ set_option maxHeartbeats 1600000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem localQuestionWeight_nonneg
     (G : Game X Y A B) (n : ℕ) (D : Finset (Fin n))
     (c : LocalQuestionContext X Y D) :
@@ -517,8 +501,6 @@ theorem localQuestionWeight_nonneg
     (Nat.cast_nonneg _)
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -534,6 +516,7 @@ set_option maxHeartbeats 2000000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactLocallySampleableJARounded_weightedConditional
     (G : Game X Y A B) (n : ℕ) (D : Finset (Fin n))
     (denominator : ℕ)
@@ -573,6 +556,7 @@ set_option maxHeartbeats 2000000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactLocallySampleableJBRounded_weightedConditional
     (G : Game X Y A B) (n : ℕ) (D : Finset (Fin n))
     (denominator : ℕ)
@@ -612,6 +596,7 @@ set_option maxHeartbeats 2000000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactLocallySampleableRounded_pair_totalVariation
     (G : Game X Y A B) (n : ℕ) (D : Finset (Fin n))
     (denominator : ℕ)
@@ -672,6 +657,7 @@ set_option maxHeartbeats 2000000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     (G : Game X Y A B) (n : ℕ) (D : Finset (Fin n))
     (denominator : ℕ) (positive : 0 < denominator)

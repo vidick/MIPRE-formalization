@@ -469,12 +469,6 @@ import Theorems.Thm_QuantumParallelRepetition_unconditionalActualFixedSourceDeco
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -482,6 +476,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualOneScaleFlagControlledFiniteStageDecoder_eq
     {S B N d L m : ℕ} {R : Type}
     [Fintype R] [DecidableEq R]
@@ -509,6 +504,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualOneScaleFixedSourcePhysicalQuestionAction
     {F X Y : Type} {P N d L m : ℕ}
     (Q : ℕ) (width : Fin 1 → ℝ) (schedule : Fin L → Fin 1)
@@ -548,6 +544,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualOneScaleFixedSourceDecodedMatchedBranch
     {P N d L m : ℕ}
     (Q : ℕ) (width : Fin 1 → ℝ) (schedule : Fin L → Fin 1)
@@ -591,6 +588,7 @@ open Complex Matrix Finset
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     unconditionalActualOneScalePhysicalQuestionDecodedMatchedBranch
     {F X Y : Type} {P N d L m : ℕ}
@@ -817,14 +815,13 @@ theorem unconditionalActualOneScaleDecodedMatchedCleanedVector
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualRetainedPOVM_ext
     {C ι : Type*} [Fintype C] [Fintype ι] [DecidableEq ι]
     (P Q : POVM C ι)
@@ -850,6 +847,7 @@ open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalPhysicalOneScaleActualGlobalFiberPOVM_nested
     {C : Type*} [Fintype C]
     {P N d L m : ℕ} {R : Type}
@@ -908,6 +906,7 @@ open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalPhysicalOneScaleOriginalFlagPOVM_succ_nested
     {C Z : Type*} [Fintype C] [DecidableEq C]
     {P N d L m : ℕ} {R : Type}
@@ -936,12 +935,6 @@ theorem unconditionalPhysicalOneScaleOriginalFlagPOVM_succ_nested
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -950,6 +943,7 @@ open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualC485FullBilateralWorkRegroup
     {P N d L m : ℕ}
     (j : Fin L)
@@ -979,20 +973,6 @@ theorem unconditionalActualC485FullBilateralWorkRegroup
   rfl
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section

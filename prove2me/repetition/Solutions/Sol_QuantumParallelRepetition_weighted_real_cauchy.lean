@@ -382,6 +382,7 @@ namespace QuantumParallelRepetition
 open scoped BigOperators ComplexConjugate InnerProductSpace
 set_option autoImplicit true
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution
     {ι : Type*} [Fintype ι]
     (weight f g : ι → ℝ)

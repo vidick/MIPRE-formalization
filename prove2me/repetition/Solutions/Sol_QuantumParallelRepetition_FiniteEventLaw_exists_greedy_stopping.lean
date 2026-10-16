@@ -382,6 +382,7 @@ namespace QuantumParallelRepetition.FiniteEventLaw
 open scoped BigOperators
 set_option autoImplicit true
 variable {Ω ι : Type*} [Fintype Ω]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution [Fintype ι] [DecidableEq ι]
     (mass : Finset ι → ℝ) {θ η : ℝ} {T : ℕ}
     (_hθ : 0 < θ)

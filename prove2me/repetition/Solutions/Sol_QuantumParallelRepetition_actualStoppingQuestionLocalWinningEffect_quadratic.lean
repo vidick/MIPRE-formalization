@@ -462,20 +462,6 @@ import Theorems.Thm_QuantumParallelRepetition_rectangular_matrix_quadratic_compr
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -489,6 +475,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem sourceHistoryQuadraticExpectation_matrix_sum
     {I d : Type*} [Fintype I] [Fintype d] [DecidableEq d]
     (M : I → Matrix d d ℂ) (z : EuclideanSpace ℂ d) :
@@ -501,44 +488,6 @@ theorem sourceHistoryQuadraticExpectation_matrix_sum
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -550,6 +499,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem unitaryConjugatePOVM_jointEffect
     {A B d : Type} [Fintype A] [Fintype B]
     [Fintype d] [DecidableEq d]
@@ -573,8 +523,6 @@ theorem unitaryConjugatePOVM_jointEffect
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 /-! The uploaded declaration as `solution` (a root name declared inside the source's
 namespace, so that names resolve as they do in the source). -/
 namespace QuantumParallelRepetition
@@ -589,6 +537,7 @@ variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [Fintype R] [DecidableEq R]
 variable {ι : R → Type}
 variable [∀ r, Fintype (ι r)] [∀ r, DecidableEq (ι r)]
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     (G : Game X Y A B)
     (PA : (r : R) → X → POVM A (ι r))

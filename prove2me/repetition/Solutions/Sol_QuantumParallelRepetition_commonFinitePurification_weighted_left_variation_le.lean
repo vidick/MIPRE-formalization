@@ -434,20 +434,6 @@ import Theorems.Thm_QuantumParallelRepetition_strategyPurificationVector_quadrat
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -502,10 +488,6 @@ theorem finiteLocalPurificationVector_norm_sq
     (KA.conjTranspose * KA) (KB.conjTranspose * KB)
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace QuantumParallelRepetition
 section
@@ -562,8 +544,6 @@ theorem finiteLocalPurificationVector_sub_left_norm_sq
   rfl
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
 
 /-! The uploaded declaration as `solution` (a root name declared inside the source's
 namespace, so that names resolve as they do in the source). -/

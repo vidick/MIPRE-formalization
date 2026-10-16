@@ -439,12 +439,6 @@ import Theorems.Thm_QuantumParallelRepetition_exactRevealCode_compatible_iff
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -458,6 +452,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactFiberQuestionWeight_sum_bobQuestion
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
@@ -514,6 +509,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactAliceQuestionMass_eq_sum_fiberMass
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
@@ -569,6 +565,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactCompatible_aliceMixed_coordinate_eq_or
     {n : ℕ} (D : Finset (Fin n))
     (seed : ExactRemainingSeed D)
@@ -629,6 +626,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactQuestionWeight_aliceMixed_rectangle
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
@@ -673,6 +671,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactFiberQuestionWeight_aliceMixed_rectangle
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
@@ -719,6 +718,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactMixedRowMarginal_mul_total
     {ι κ : Type*} [Fintype ι] [Fintype κ]
     (left right : ι → κ → ℝ)
@@ -780,6 +780,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactFiberAliceMarginal_mul_cross_mass
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
@@ -816,6 +817,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactFiberQuestionWeight_nonneg
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
@@ -845,6 +847,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactFiberQuestionMass_nonneg
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))
@@ -875,6 +878,7 @@ set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     (G : Game X Y A B) (n : ℕ)
     (D : Finset (Fin n))

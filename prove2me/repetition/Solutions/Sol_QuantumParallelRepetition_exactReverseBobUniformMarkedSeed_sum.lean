@@ -439,8 +439,6 @@ import Theorems.Thm_QuantumParallelRepetition_reversePartitionWeight_pos_iff
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -460,22 +458,13 @@ theorem reverseMarkedPartitionWeight_eq_forward
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem exactReverseRightSide_markedWeight
     {M : Type*} [Fintype M] [DecidableEq M]
     (seed : ExactForwardSeed M) :
@@ -487,8 +476,6 @@ theorem exactReverseRightSide_markedWeight
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -499,6 +486,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem exactReverseRightPermutation_card
     {M : Type*} [Fintype M] [DecidableEq M]
     (seed : ExactForwardSeed M) :
@@ -527,6 +515,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem exactReverseRightSeedWeight_eq_forward
     {M : Type*} [Fintype M] [DecidableEq M]
     (seed : ExactForwardSeed M) :
@@ -546,32 +535,6 @@ theorem exactReverseRightSeedWeight_eq_forward
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -582,6 +545,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem exactReverseBobConditionalSeedWeight_cancel
     {M : Type*} [Fintype M] [DecidableEq M]
     (nonempty : 0 < Fintype.card M)
@@ -606,12 +570,6 @@ theorem exactReverseBobConditionalSeedWeight_cancel
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -623,6 +581,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 2200000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem exactReverseBobConditionalSeedWeight_eq_context_div_card
     {M : Type*} [Fintype M] [DecidableEq M]
     (nonempty : 0 < Fintype.card M)
@@ -651,20 +610,6 @@ theorem exactReverseBobConditionalSeedWeight_eq_context_div_card
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -676,6 +621,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 5000000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem exactReverseBobOriginalSeedWeight_factor
     {M : Type*} [Fintype M] [DecidableEq M]
     (nonempty : 0 < Fintype.card M)
@@ -711,6 +657,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 5000000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem exactUniformFiniteMarkedAverage_sum
     (n : ℕ) (weight : ℝ) (statistic : Fin n → ℝ) :
     (∑ _marker : Fin n,
@@ -737,6 +684,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 5000000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {M : Type*} [Fintype M] [DecidableEq M]
     (nonempty : 0 < Fintype.card M)

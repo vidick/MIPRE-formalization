@@ -383,6 +383,7 @@ open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 set_option autoImplicit true
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution
     {d : Type*} [Fintype d] [DecidableEq d]
     (z : EuclideanSpace ℂ d) (hz : ‖z‖ = 1)

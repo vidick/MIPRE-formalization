@@ -495,26 +495,6 @@ theorem jointConditional_sum
 end
 end QuantumParallelRepetition.ClassicalInformation
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -523,6 +503,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finiteUniformWeight_pos
     {Z : Type*} [Fintype Z]
     (positive : 0 < Fintype.card Z) :
@@ -540,6 +521,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finiteUniformWeight_sum
     {Z : Type*} [Fintype Z]
     (positive : 0 < Fintype.card Z) :
@@ -560,6 +542,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finiteProbability_le_one
     {Z : Type*} [Fintype Z]
     (p : Z → ℝ)
@@ -583,6 +566,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finiteRelativeEntropy_uniform_le_log_card
     {Z : Type*} [Fintype Z]
     (p : Z → ℝ)
@@ -634,6 +618,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem uniformFlagReference_nonneg
     {Ω Z : Type*} [Fintype Ω] [Fintype Z]
     (prior : Ω → ℝ)
@@ -654,6 +639,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem uniformFlagReference_sum
     {Ω Z : Type*} [Fintype Ω] [Fintype Z]
     (prior : Ω → ℝ)
@@ -677,6 +663,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem uniformFlagReference_firstMarginal
     {Ω Z : Type*} [Fintype Ω] [Fintype Z]
     (prior : Ω → ℝ)
@@ -699,6 +686,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem uniformFlagReference_conditional
     {Ω Z : Type*} [Fintype Ω] [Fintype Z]
     (prior : Ω → ℝ)
@@ -726,6 +714,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {Ω Z : Type*} [Fintype Ω] [Fintype Z]
     (joint : Ω × Z → ℝ)

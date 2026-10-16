@@ -381,22 +381,14 @@ namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
 attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem bochner_integral_posSemidef
     {α d : Type*} [MeasurableSpace α]
     [Fintype d] [DecidableEq d]
@@ -433,20 +425,14 @@ theorem bochner_integral_posSemidef
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem matrix_memLp_two_mul_integrable
     {α d : Type*} [MeasurableSpace α]
     [Fintype d] {μ : Measure α}
@@ -471,6 +457,8 @@ open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem spectralPurificationFilter_difference_gram_integrable
     {d : Type*} [Fintype d] [DecidableEq d]
     (F M : Matrix d d ℂ)
@@ -493,14 +481,14 @@ theorem spectralPurificationFilter_difference_gram_integrable
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem scalar_entropy_resolvent_integrable
     {z : ℝ} (hz : 0 ≤ z) :
     IntegrableOn
@@ -537,6 +525,8 @@ open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem spectralEntropyKernel_integrable
     {d : Type*} [Fintype d] [DecidableEq d]
     (F : Matrix d d ℂ) (hF : F.PosSemidef) :
@@ -573,14 +563,14 @@ theorem spectralEntropyKernel_integrable
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem weightedSpectralFilterVariance_integrable
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (weight : ι → ℝ) (F : ι → Matrix d d ℂ)
@@ -604,6 +594,8 @@ open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem weightedSpectralEntropyJensen_integrable
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (weight : ι → ℝ) (F : ι → Matrix d d ℂ)
@@ -629,6 +621,8 @@ open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem integrated_weighted_spectralPurificationFilter_jensen
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (weight : ι → ℝ) (F : ι → Matrix d d ℂ)
@@ -676,16 +670,14 @@ theorem integrated_weighted_spectralPurificationFilter_jensen
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem diagonalEntropyKernel_integrable
     {d : Type*} [Fintype d] [DecidableEq d]
     (eigenvalue : d → ℝ)
@@ -718,6 +710,8 @@ open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem integral_diagonalEntropyKernel
     {d : Type*} [Fintype d] [DecidableEq d]
     (eigenvalue : d → ℝ)
@@ -766,6 +760,8 @@ open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem integral_spectralEntropyKernel_eq_cfc
     {d : Type*} [Fintype d] [DecidableEq d]
     (F : Matrix d d ℂ) (hF : F.PosSemidef) :
@@ -792,14 +788,14 @@ theorem integral_spectralEntropyKernel_eq_cfc
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem integral_weightedSpectralEntropyJensen_eq_cfc
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (weight : ι → ℝ) (F : ι → Matrix d d ℂ)
@@ -839,6 +835,8 @@ open MeasureTheory Filter Set
 open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem _root_.solution
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (weight : ι → ℝ) (F : ι → Matrix d d ℂ)

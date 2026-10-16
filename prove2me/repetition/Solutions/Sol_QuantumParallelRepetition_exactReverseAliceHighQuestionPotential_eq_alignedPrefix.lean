@@ -448,26 +448,6 @@ import Theorems.Thm_QuantumParallelRepetition_exactReverseBobMarker_induction
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -480,6 +460,7 @@ set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactReverseContextQuestionPrefix_eq_image
     {n : ℕ} (D : Finset (Fin n))
     (side : Finset (SourceRemainingCoordinate D))
@@ -511,6 +492,7 @@ set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactReverseAlicePrefixXMask_eq_fair
     {n : ℕ} (D : Finset (Fin n))
     (seed : ExactRemainingSeed D) :
@@ -542,6 +524,7 @@ set_option maxHeartbeats 2800000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactReverseAliceFixedYMask_eq_insert_fair
     {n : ℕ} (D : Finset (Fin n))
     (seed : ExactRemainingSeed D) :
@@ -562,8 +545,6 @@ theorem exactReverseAliceFixedYMask_eq_insert_fair
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -576,6 +557,7 @@ set_option maxHeartbeats 3000000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactReverseContextQuestionPrefix_succ
     {n : ℕ} (D : Finset (Fin n))
     (side : Finset (SourceRemainingCoordinate D))
@@ -625,10 +607,6 @@ theorem exactReverseContextQuestionPrefix_succ
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -641,6 +619,7 @@ set_option maxHeartbeats 5000000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem exactReverseAlicePrefixXMask_succ
     {n : ℕ} (D : Finset (Fin n))
     (side : Finset (SourceRemainingCoordinate D))
@@ -661,8 +640,6 @@ theorem exactReverseAlicePrefixXMask_succ
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 /-! The uploaded declaration as `solution` (a root name declared inside the source's
 namespace, so that names resolve as they do in the source). -/
 namespace QuantumParallelRepetition
@@ -676,6 +653,7 @@ set_option maxHeartbeats 6000000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))

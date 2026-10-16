@@ -439,6 +439,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {ι : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem negMulLog_rescale
     {W p : ℝ} (hW : 0 < W) (hp : 0 < p) :
     W * Real.negMulLog (p / W) = p * Real.log (W / p) := by
@@ -454,6 +455,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {ι : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem finite_weighted_entropy_le
     (s : Finset ι) (w h : ι → ℝ) {W p : ℝ}
     (hw : ∀ i ∈ s, 0 ≤ w i)
@@ -511,6 +513,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {ι : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem finite_weighted_entropy_le_of_weight_bound
     (s : Finset ι) (w h : ι → ℝ) {W N p : ℝ}
     (hw : ∀ i ∈ s, 0 ≤ w i)
@@ -532,34 +535,6 @@ theorem finite_weighted_entropy_le_of_weight_bound
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open Matrix
@@ -567,6 +542,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem bornTracePairing_one_one
     {dA dB : Type*}
     [Fintype dA] [Fintype dB]
@@ -585,6 +561,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem positiveContraction_eigenvalue_le_one
     {d : Type*} [Fintype d] [DecidableEq d]
     (F : Matrix d d ℂ) (hF : F.PosSemidef)
@@ -598,8 +575,6 @@ theorem positiveContraction_eigenvalue_le_one
   exact hspectrum _ (hF.isHermitian.eigenvalues_mem_spectrum_real i)
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section

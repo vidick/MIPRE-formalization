@@ -510,6 +510,7 @@ set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem winProbability_nonneg (S : Strategy G) : 0 ≤ S.winProbability := by
   unfold winProbability
   refine Finset.sum_nonneg fun x _ => Finset.sum_nonneg fun y _ => ?_
@@ -525,6 +526,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 open Matrix
 set_option autoImplicit true
 variable {X Y A B : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem winProbabilities_bddAbove [Fintype X] [Fintype Y]
     [Fintype A] [Fintype B] (G : Game X Y A B) :
     BddAbove (Set.range (Strategy.winProbability (G := G))) := by
@@ -540,6 +542,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 open Matrix
 set_option autoImplicit true
 variable {X Y A B : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem entangledValue_le_one [Fintype X] [Fintype Y]
     [Fintype A] [Fintype B] (G : Game X Y A B) :
     entangledValue G ≤ 1 := by
@@ -559,6 +562,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 open Matrix
 set_option autoImplicit true
 variable {X Y A B : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem entangledValue_nonneg [Fintype X] [Fintype Y]
     [Fintype A] [Fintype B] (G : Game X Y A B) :
     0 ≤ entangledValue G := by
@@ -571,39 +575,12 @@ theorem entangledValue_nonneg [Fintype X] [Fintype Y]
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open WithLp
 open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 set_option autoImplicit true
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem finiteTensorVector_norm
     {ι d : Type*} [Fintype ι] [DecidableEq ι] [Fintype d]
     (v : ι → EuclideanSpace ℂ d)
@@ -637,8 +614,6 @@ theorem dSVUniformDensityIndependentSharedState_norm
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -665,26 +640,6 @@ theorem dSVUniformDensity_normalize_sub_self_norm
           field_simp [positive.ne']
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -771,16 +726,6 @@ theorem dSVDensityRationalCanonicalAcceptedUnitTarget_distance_le
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -827,52 +772,6 @@ theorem dSVDensityRationalPublicBucketCoherentPhaseHistory_apply_norm_sq
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -901,40 +800,6 @@ theorem
   simpa [zero] using distance
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -1385,12 +1250,6 @@ theorem unconditionalSelectedCopyIdealMatchedBranch_norm_sq
   ring
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -1978,16 +1837,6 @@ theorem unconditionalActualC485NormalizedDiagonalWork_mass_sum_le_one
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2104,14 +1953,6 @@ theorem unconditionalActualC485FairSourceClipEnergy_le_budget
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2187,10 +2028,6 @@ theorem unconditionalSmallSourcePhysicalRoundedLower
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2199,6 +2036,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalSourcePhysicalRoundingUniversalConstant_ge :
     128 ≤ unconditionalSourcePhysicalRoundingUniversalConstant := by
   unfold unconditionalSourcePhysicalRoundingUniversalConstant
@@ -2215,6 +2053,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalSourcePhysicalRounding_largeVerifierBound
     (K eta alpha lam epsilon : ℝ)
     (constant : 128 ≤ K)
@@ -2276,6 +2115,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalSourcePhysicalRounding_exists_large
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -2330,6 +2170,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalSourcePhysicalRounding_smallRoundedLower
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -2406,6 +2247,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem
     unconditionalSourcePhysicalRounding_smallRoundedLower_of_stoppedVerifier
     {X Y A B : Type}
@@ -2468,6 +2310,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalSourceOneGameRounding_uniform_of_small
     (small_rounding :
       ∀ {X Y A B : Type}
@@ -2577,10 +2420,6 @@ theorem unconditionalActualFairSourcePhysicalBranchWitness
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2590,6 +2429,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualFairCachedLedgerStoppingTransfer
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -2710,8 +2550,6 @@ theorem unconditionalActualFairCachedLedgerStoppingTransfer
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition.UnconditionalActualFairSourceRoundingContext
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2725,6 +2563,7 @@ variable {X Y A B : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable {G : Game X Y A B} {n : ℕ} {S : Strategy (G.repeat n)}
 variable {D : Finset (Fin n)} {alpha gamma : ℝ}
+attribute [local instance] Classical.propDecidable
 theorem dimension_pos
     (c : UnconditionalActualFairSourceRoundingContext
       G n S D alpha gamma) : 0 < d c :=
@@ -2745,6 +2584,7 @@ variable {X Y A B : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable {G : Game X Y A B} {n : ℕ} {S : Strategy (G.repeat n)}
 variable {D : Finset (Fin n)} {alpha gamma : ℝ}
+attribute [local instance] Classical.propDecidable
 theorem prepared_normalized
     (c : UnconditionalActualFairSourceRoundingContext
       G n S D alpha gamma) :
@@ -2756,8 +2596,6 @@ theorem prepared_normalized
 end
 end QuantumParallelRepetition.UnconditionalActualFairSourceRoundingContext
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2768,6 +2606,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
 open QuantumParallelRepetition.ClassicalSampling
 open UnconditionalActualFairSourceRoundingContext
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualFairSourceRoundingContext_clippingBound
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -2787,8 +2626,6 @@ theorem unconditionalActualFairSourceRoundingContext_clippingBound
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2798,6 +2635,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualFairSourceRoundingContext_physicalBranch
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -2865,6 +2703,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualFairSourceRoundingContext_stoppedVerifier
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -2911,8 +2750,6 @@ theorem unconditionalActualFairSourceRoundingContext_stoppedVerifier
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -2922,6 +2759,7 @@ open scoped BigOperators Kronecker ComplexOrder MatrixOrder
   Matrix.Norms.L2Operator InnerProductSpace
 open QuantumParallelRepetition.ClassicalSampling
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem unconditionalActualFairSourceRoundingData_exists_stoppedVerifier
     {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]

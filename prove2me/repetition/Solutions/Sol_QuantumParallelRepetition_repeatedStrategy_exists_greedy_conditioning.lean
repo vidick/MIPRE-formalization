@@ -382,6 +382,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {Ω ι : Type*} [Fintype Ω]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem eventMass_univ (law : FiniteEventLaw Ω) :
     law.eventMass Finset.univ = 1 := by
   simpa [eventMass] using law.weight_sum
@@ -393,6 +394,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {Ω ι : Type*} [Fintype Ω]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem eventMass_mono
     (law : FiniteEventLaw Ω) {s t : Finset Ω} (h : s ⊆ t) :
     law.eventMass s ≤ law.eventMass t := by
@@ -407,6 +409,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {Ω ι : Type*} [Fintype Ω]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem winEvent_empty [Fintype ι] (wins : ι → Ω → Bool) :
     winEvent wins ∅ = Finset.univ := by
   classical
@@ -419,6 +422,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {Ω ι : Type*} [Fintype Ω]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem winEvent_antitone [Fintype ι]
     (wins : ι → Ω → Bool) {D E : Finset ι} (h : D ⊆ E) :
     winEvent wins E ⊆ winEvent wins D := by
@@ -436,6 +440,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {Ω ι : Type*} [Fintype Ω]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem allWinMass_le_partial [Fintype ι]
     (law : FiniteEventLaw Ω) (wins : ι → Ω → Bool)
     (D : Finset ι) :
@@ -451,6 +456,7 @@ section
 open scoped BigOperators
 set_option autoImplicit true
 variable {Ω ι : Type*} [Fintype Ω]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem exists_conditioned_win_set [Fintype ι] [DecidableEq ι]
     (law : FiniteEventLaw Ω) (wins : ι → Ω → Bool)
     {θ η : ℝ} {T : ℕ}
@@ -489,6 +495,7 @@ open scoped BigOperators
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem strategyEventLaw_winEvent
     (G : Game X Y A B) (S : Strategy G) :
     (strategyEventLaw G S).eventMass (strategyWinEvent G) =
@@ -525,6 +532,7 @@ open scoped BigOperators
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem repeated_allWinEvent_eq
     (G : Game X Y A B) (n : ℕ) :
     FiniteEventLaw.winEvent (repeatedCoordinateWin G n)
@@ -543,6 +551,7 @@ open scoped BigOperators
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem repeated_allWinMass_eq
     (G : Game X Y A B) (n : ℕ)
     (S : Strategy (G.repeat n)) :
@@ -562,6 +571,7 @@ open scoped BigOperators
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution
     (G : Game X Y A B) (n : ℕ)
     (S : Strategy (G.repeat n))

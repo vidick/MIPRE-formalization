@@ -449,31 +449,6 @@ import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepe
 import Theorems.Thm_QuantumParallelRepetition_exactOrderedSidePrefix_mem_iff
 import Theorems.Thm_QuantumParallelRepetition_exactReverseBobContext_prefix_before_marked
 
-/-! Helper declarations, pasted verbatim from the source modules with their
-namespace and `open` context, each used only by proofs, interleaved with the
-attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 /-! The uploaded declaration as `solution` (a root name declared inside the source's
 namespace, so that names resolve as they do in the source). -/
 namespace QuantumParallelRepetition
@@ -488,6 +463,7 @@ set_option maxHeartbeats 2400000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {n : ℕ} (D : Finset (Fin n))
     (default : X)

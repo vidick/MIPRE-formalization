@@ -523,22 +523,6 @@ theorem jointConditional_sum
 end
 end QuantumParallelRepetition.ClassicalInformation
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -550,6 +534,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteRelativeEntropy_self
     {I : Type*} [Fintype I] (mass : I → ℝ) :
     finiteRelativeEntropy mass mass = 0 := by
@@ -574,6 +559,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {I R V : Type*} [Fintype I] [Fintype R] [Fintype V]
     (p q : I × (R × V) → ℝ)

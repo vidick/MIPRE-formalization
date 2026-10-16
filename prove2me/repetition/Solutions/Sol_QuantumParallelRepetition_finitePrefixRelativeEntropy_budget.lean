@@ -431,26 +431,6 @@ import Definitions.Def_MIPRE_Background_Repetition_TenProofs_QuantumParallelRepe
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -459,6 +439,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finiteRelativeEntropy_nonneg
     {Ω : Type*} [Fintype Ω]
     (p q : Ω → ℝ)
@@ -481,6 +462,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem groupedMass_nonneg
     {Ω κ : Type*} [Fintype Ω] [Fintype κ] [DecidableEq κ]
     (f : Ω → κ) (p : Ω → ℝ)
@@ -499,6 +481,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem groupedMass_id
     {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
     (p : Ω → ℝ) :
@@ -524,6 +507,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finitePrefixMask_last
     {Ω Y : Type*} {h : ℕ} (base : Y) :
     finitePrefixMask (Ω := Ω) base (Fin.last h) = id := by
@@ -544,6 +528,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finitePrefixRelativeEntropy_telescope
     {Ω Y : Type*} [Fintype Ω] [Fintype Y] {h : ℕ}
     (joint prior : Ω × (Fin h → Y) → ℝ)
@@ -579,6 +564,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {Ω Y : Type*} [Fintype Ω] [Fintype Y] {h : ℕ}
     (joint prior : Ω × (Fin h → Y) → ℝ)

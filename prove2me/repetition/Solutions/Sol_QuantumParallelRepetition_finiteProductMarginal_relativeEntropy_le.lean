@@ -451,26 +451,6 @@ import Theorems.Thm_QuantumParallelRepetition_Pinsker_finiteRelativeEntropy_eq_l
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -479,6 +459,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem finiteRelativeEntropy_nonneg
     {Ω : Type*} [Fintype Ω]
     (p q : Ω → ℝ)
@@ -501,6 +482,7 @@ open scoped BigOperators
 open QuantumParallelRepetition.Pinsker
 open QuantumParallelRepetition.ClassicalInformation
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem groupedMass_nonneg
     {Ω κ : Type*} [Fintype Ω] [Fintype κ] [DecidableEq κ]
     (f : Ω → κ) (p : Ω → ℝ)
@@ -510,8 +492,6 @@ theorem groupedMass_nonneg
   exact Finset.sum_nonneg (fun ω _ => hp ω)
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -526,6 +506,7 @@ set_option maxHeartbeats 1600000
 set_option maxRecDepth 2048
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem groupedMass_sum
     {Ω κ : Type*} [Fintype Ω] [Fintype κ] [DecidableEq κ]
     (projection : Ω → κ) (mass : Ω → ℝ) :
@@ -535,14 +516,6 @@ theorem groupedMass_sum
   exact Finset.sum_fiberwise Finset.univ projection mass
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -555,6 +528,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteIndependentProductWeight_nonneg
     {ι V : Type*} [Fintype ι] [Fintype V]
     (q : ι → V → ℝ) (hq : ∀ i v, 0 ≤ q i v)
@@ -577,6 +551,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteIndependentProductWeight_sum
     {ι V : Type*} [Fintype ι] [Fintype V]
     (q : ι → V → ℝ)
@@ -603,6 +578,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteCoordinateMarginal_nonneg
     {ι V : Type*} [Fintype ι] [Fintype V]
     (p : (ι → V) → ℝ) (hp : ∀ x, 0 ≤ p x)
@@ -625,6 +601,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteCoordinateMarginal_sum
     {ι V : Type*} [Fintype ι] [Fintype V]
     (p : (ι → V) → ℝ) (i : ι) :
@@ -647,6 +624,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteJoint_le_coordinateMarginal
     {ι V : Type*} [Fintype ι] [Fintype V]
     (p : (ι → V) → ℝ) (hp : ∀ x, 0 ≤ p x)
@@ -671,6 +649,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteCoordinateMarginal_absolute_continuity
     {ι V : Type*} [Fintype ι] [Fintype V]
     (p : (ι → V) → ℝ) (q : ι → V → ℝ)
@@ -701,6 +680,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteJoint_absolute_continuous_product_marginals
     {ι V : Type*} [Fintype ι] [Fintype V]
     (p : (ι → V) → ℝ) (hp : ∀ x, 0 ≤ p x)
@@ -736,6 +716,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem finiteCoordinateMarginal_sum_mul
     {ι V : Type*} [Fintype ι] [Fintype V]
     (p : (ι → V) → ℝ) (i : ι) (f : V → ℝ) :
@@ -775,6 +756,7 @@ set_option autoImplicit true
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1800000
 set_option maxRecDepth 2048
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {ι V : Type*} [Fintype ι] [Fintype V]
     (p : (ι → V) → ℝ) (q : ι → V → ℝ)

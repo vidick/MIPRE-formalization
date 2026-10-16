@@ -483,6 +483,7 @@ set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem winProbability_nonneg (S : Strategy G) : 0 ≤ S.winProbability := by
   unfold winProbability
   refine Finset.sum_nonneg fun x _ => Finset.sum_nonneg fun y _ => ?_
@@ -498,6 +499,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 open Matrix
 set_option autoImplicit true
 variable {X Y A B : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem winProbabilities_bddAbove [Fintype X] [Fintype Y]
     [Fintype A] [Fintype B] (G : Game X Y A B) :
     BddAbove (Set.range (Strategy.winProbability (G := G))) := by
@@ -513,6 +515,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 open Matrix
 set_option autoImplicit true
 variable {X Y A B : Type*}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem entangledValue_nonneg [Fintype X] [Fintype Y]
     [Fintype A] [Fintype B] (G : Game X Y A B) :
     0 ≤ entangledValue G := by
@@ -524,18 +527,6 @@ theorem entangledValue_nonneg [Fintype X] [Fintype Y]
   · rw [Set.not_nonempty_iff_eq_empty.mp h, Real.sSup_empty]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -578,30 +569,6 @@ theorem remainingCoordinates_card
   simp [Finset.card_sdiff_of_subset (Finset.subset_univ C)]
 end
 end QuantumParallelRepetition
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
 
 namespace QuantumParallelRepetition
 section
@@ -1273,8 +1240,6 @@ theorem entangledValue_eq_zero_of_strategyWinProbability_eq_zero
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -1283,6 +1248,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem pdfConstantStrategy_outcomeProbability
     (G : Game X Y A B) (a : A) (b : B)
     (x : X) (y : Y) (a' : A) (b' : B) :
@@ -1307,6 +1273,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem pdfConstantStrategy_winProbability
     (G : Game X Y A B) (a : A) (b : B) :
     (pdfConstantStrategy G a b).winProbability =
@@ -1339,6 +1306,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem pdfQuestionWeight_le_constantStrategy
     (G : Game X Y A B)
     (x : X) (y : Y) (a : A) (b : B)
@@ -1377,6 +1345,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem pdfPredicate_not_accepted_of_entangledValue_eq_zero
     (G : Game X Y A B)
     (zero : entangledValue G = 0)
@@ -1404,6 +1373,7 @@ open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [local instance] Classical.propDecidable
 theorem pdfRepeatedEntangledValue_eq_zero_of_entangledValue_eq_zero
     (G : Game X Y A B)
     (zero : entangledValue G = 0)

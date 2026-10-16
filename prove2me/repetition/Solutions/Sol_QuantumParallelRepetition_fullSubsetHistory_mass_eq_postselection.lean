@@ -379,10 +379,6 @@ namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
 attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace QuantumParallelRepetition
 section
 open Matrix
@@ -392,6 +388,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem conditionedAnswerMatches_iff
     {T : Type*} {n : ℕ}
     (D : Finset (Fin n))
@@ -418,6 +415,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullHistoryWinIndicator_eq_question
     (G : Game X Y A B) {n : ℕ}
     (D L : Finset (Fin n))
@@ -453,6 +451,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem conditionedEffects_postselection_sum
     [DecidableEq A] [DecidableEq B]
     (G : Game X Y A B) (n : ℕ)
@@ -519,6 +518,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem repeated_partialWinMass_expansion
     (G : Game X Y A B) (n : ℕ)
     (S : Strategy (G.repeat n))
@@ -579,6 +579,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullQuestionConditionedBornMass_eq
     [DecidableEq A] [DecidableEq B]
     (G : Game X Y A B) (n : ℕ)
@@ -643,6 +644,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem fullHistoryFilters_born_expansion
     (G : Game X Y A B) (n : ℕ)
     (S : Strategy (G.repeat n))
@@ -685,6 +687,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 600000
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution
     [DecidableEq A] [DecidableEq B]
     (G : Game X Y A B) (n : ℕ)

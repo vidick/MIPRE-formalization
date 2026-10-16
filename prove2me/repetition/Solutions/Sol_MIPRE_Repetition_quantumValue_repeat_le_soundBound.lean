@@ -507,6 +507,7 @@ set_option autoImplicit true
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem winProbability_nonneg (S : Strategy G) : 0 ≤ S.winProbability := by
   unfold winProbability
   refine Finset.sum_nonneg fun x _ => Finset.sum_nonneg fun y _ => ?_

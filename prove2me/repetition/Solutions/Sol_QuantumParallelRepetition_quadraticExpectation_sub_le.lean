@@ -381,6 +381,7 @@ section
 open scoped BigOperators ComplexConjugate InnerProductSpace
 set_option autoImplicit true
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem norm_le_of_operator_contraction
     (W : H →L[ℂ] H) (hW : ‖W‖ ≤ 1) (z : H) :
     ‖W z‖ ≤ ‖z‖ := by
@@ -397,6 +398,7 @@ namespace QuantumParallelRepetition
 open scoped BigOperators ComplexConjugate InnerProductSpace
 set_option autoImplicit true
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution
     (W : H →L[ℂ] H) (hW : ‖W‖ ≤ 1) (z w : H) :
     |quadraticExpectation W z - quadraticExpectation W w| ≤

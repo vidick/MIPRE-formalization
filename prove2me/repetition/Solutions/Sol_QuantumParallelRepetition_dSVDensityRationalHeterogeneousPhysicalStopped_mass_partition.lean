@@ -470,8 +470,6 @@ theorem dSVHeterogeneousRealStopping_escape_identity
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
 /-! The uploaded declaration as `solution` (a root name declared inside the source's
 namespace, so that names resolve as they do in the source). -/
 namespace QuantumParallelRepetition

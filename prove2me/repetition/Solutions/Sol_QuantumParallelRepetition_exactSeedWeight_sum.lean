@@ -432,18 +432,13 @@ import Theorems.Thm_QuantumParallelRepetition_exactForwardSeed_sum
 /-! Helper declarations, pasted verbatim from the source modules with their
 namespace and `open` context, each used only by proofs, interleaved with the
 attribute commands of those modules at their source positions. -/
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem exactUniform_sum
     {T : Type*} [Fintype T]
     (positive : 0 < Fintype.card T) :
@@ -461,6 +456,7 @@ open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem exactUniform_sum_mul
     {T : Type*} [Fintype T]
     (positive : 0 < Fintype.card T) (value : ℝ) :
@@ -477,6 +473,7 @@ open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem exactPrefixUniform_sum_mul
     (m : ℕ) (value : ℝ) :
     (∑ _k : Fin (m + 1),
@@ -493,6 +490,7 @@ open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
+attribute [local instance] Classical.propDecidable
 theorem exactPermutationUniform_sum_mul
     {T : Type*} [Fintype T] (value : ℝ) :
     (∑ _π : Equiv.Perm T,
@@ -502,12 +500,6 @@ theorem exactPermutationUniform_sum_mul
 end
 end QuantumParallelRepetition
 
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
-attribute [local instance] Classical.propDecidable
-
 namespace QuantumParallelRepetition
 section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
@@ -515,6 +507,7 @@ open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
 set_option maxHeartbeats 1200000
+attribute [local instance] Classical.propDecidable
 theorem exactFintypeCard_eq
     {T : Type*} (first second : Fintype T) :
     @Fintype.card T first = @Fintype.card T second :=
@@ -530,6 +523,7 @@ open Complex Matrix Finset
 open scoped BigOperators
 set_option autoImplicit true
 set_option maxHeartbeats 1200000
+attribute [local instance] Classical.propDecidable
 theorem _root_.solution
     {M : Type*} [Fintype M] [DecidableEq M]
     (nonempty : 0 < Fintype.card M) :

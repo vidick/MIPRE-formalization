@@ -385,6 +385,7 @@ variable {X Y A B : Type*} {J : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [Fintype J] [DecidableEq J]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem mixtureEmbedding_compress (S : J → Strategy G)
     (E : Matrix (mixtureAlice S × mixtureBob S)
       (mixtureAlice S × mixtureBob S) ℂ) :
@@ -406,6 +407,7 @@ variable {X Y A B : Type*} {J : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [Fintype J] [DecidableEq J]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem mixtureJointEffect_compress (S : J → Strategy G)
     (x : X) (y : Y) (a : A) (b : B) :
     (((mixtureAlicePOVM S x).effect a ⊗ₖ
@@ -435,6 +437,7 @@ variable {X Y A B : Type*} {J : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [Fintype J] [DecidableEq J]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem mixtureEmbedding_trace_mul (S : J → Strategy G)
     (R : Matrix (mixtureMatched S) (mixtureMatched S) ℂ)
     (E : Matrix (mixtureAlice S × mixtureBob S)
@@ -477,6 +480,7 @@ variable {X Y A B : Type*} {J : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [Fintype J] [DecidableEq J]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem mixtureBlockMatrix_trace_mul
     (p : J → ℝ) (S : J → Strategy G)
     (E : ∀ j : J,
@@ -499,6 +503,7 @@ variable {X Y A B : Type*} {J : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [Fintype J] [DecidableEq J]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem convexMixtureStrategy_outcomeProbability
     (p : J → ℝ) (hp : ∀ j, 0 ≤ p j)
     (h_normalized : (∑ j : J, p j) = 1)
@@ -528,6 +533,7 @@ variable {X Y A B : Type*} {J : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 variable [Fintype J] [DecidableEq J]
 variable {G : Game X Y A B}
+attribute [instance] QuantumParallelRepetition.Strategy.alice_fintype QuantumParallelRepetition.Strategy.bob_fintype QuantumParallelRepetition.Strategy.alice_decidableEq QuantumParallelRepetition.Strategy.bob_decidableEq
 theorem _root_.solution
     (p : J → ℝ) (hp : ∀ j, 0 ≤ p j)
     (h_normalized : (∑ j : J, p j) = 1)
