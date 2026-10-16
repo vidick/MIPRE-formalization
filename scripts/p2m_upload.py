@@ -411,7 +411,8 @@ def upload_theorems(tree, meta, st, args, rounds=0):
             pending = drain(pending, st, "theorems", 1)
     while pending:
         pending = drain(pending, st, "theorems", len(pending))
-    failed = [k for k, v in st["theorems"].items() if v.get("status") != "PUBLISHED"]
+    mine = {n["theorem_name"] for n in tree["nodes"]}   # the state may hold records of an earlier tree or wave
+    failed = [k for k, v in st["theorems"].items() if k in mine and v.get("status") != "PUBLISHED"]
     transient = [k for k in failed if is_transient(st["theorems"][k].get("error_message"))]
     if transient and rounds < 3 and not args.dry_run:
         log(f"{len(transient)} statement(s) failed on a transient platform error "

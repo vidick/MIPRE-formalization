@@ -8,14 +8,6 @@
    "theorem_id": "370ff774-d2b8-4dbd-b01f-27881900fa8a",
    "error_message": ""
   },
-  "MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part01": {
-   "submitted_at": 1792161426.3558438,
-   "http": 202,
-   "status": "PUBLISHED",
-   "job_id": "eca03d06-ccac-46fb-8846-93ad828d14f6",
-   "theorem_id": "48c35a5c-9c83-42eb-a2ed-0b386020be4a",
-   "error_message": ""
-  },
   "MIPRE_Foundations_Dilation": {
    "submitted_at": 1792161426.8305376,
    "http": 202,
@@ -114,388 +106,6 @@
   }
  },
  "theorems": {
-  "QuantumParallelRepetition.Strategy.winProbability_le_one": {
-   "submitted_at": 1792161559.294706,
-   "http": 202,
-   "error": {
-    "jobs": [],
-    "errors": [
-     "A theorem with theorem_name \"QuantumParallelRepetition.Strategy.winProbability_le_one\" already exists"
-    ],
-    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
-    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
-   },
-   "status": "PUBLISHED",
-   "theorem_id": "ed9848db-566d-432a-a456-b04828146c9d",
-   "note": "pre-existing"
-  },
-  "QuantumParallelRepetition.quadraticExpectation_sub_le": {
-   "submitted_at": 1792161560.134595,
-   "http": 202,
-   "job_id": "935d0463-3014-4e42-aa4f-01ebcd64b2d3",
-   "status": "PUBLISHED",
-   "theorem_id": "7a505b1b-5748-4f13-a993-8f47976a10e1",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.weighted_real_cauchy": {
-   "submitted_at": 1792161560.6016624,
-   "http": 202,
-   "job_id": "63f03c0a-57e8-4d1b-aefb-4c37a83f6ccd",
-   "status": "PUBLISHED",
-   "theorem_id": "3ca06d46-a24c-4ac4-9083-ef216fda7de3",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.convexMixtureStrategy_winProbability": {
-   "submitted_at": 1792161561.169521,
-   "http": 202,
-   "job_id": "263992b5-8220-4b11-a9d2-870d30938665",
-   "status": "PUBLISHED",
-   "theorem_id": "8b09b2a0-ecb5-4af7-93c7-17d974f80692",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.pureDensityMatrix_trace_mul": {
-   "submitted_at": 1792161561.6685615,
-   "http": 202,
-   "job_id": "457a396a-5d23-41e8-b0f3-75bd52bb096b",
-   "status": "PUBLISHED",
-   "theorem_id": "31b696d3-e97e-4e6e-97a2-ad4b932738f3",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.FiniteEventLaw.exists_greedy_stopping": {
-   "submitted_at": 1792161562.279067,
-   "http": 202,
-   "job_id": "8edd2f1e-b271-4305-8de2-5624d3651612",
-   "status": "PUBLISHED",
-   "theorem_id": "024463b9-8d23-4c5d-b7b6-4d628fe05dba",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.repeatedStrategy_exists_greedy_conditioning": {
-   "submitted_at": 1792161562.7065296,
-   "http": 202,
-   "job_id": "3712187e-7904-4028-8cf5-57b322fd2fc6",
-   "status": "PUBLISHED",
-   "theorem_id": "865fb658-0e39-4539-8029-52a2dc8afd91",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg": {
-   "submitted_at": 1792161563.1871207,
-   "http": 202,
-   "job_id": "373cc510-95e9-470c-9456-877229a70779",
-   "status": "PUBLISHED",
-   "theorem_id": "c3f930fc-325c-427d-bb79-40233e0cb5a8",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg": {
-   "submitted_at": 1792161563.6494803,
-   "http": 202,
-   "job_id": "e8b26432-eb93-48ff-aacd-701fa20221e4",
-   "status": "PUBLISHED",
-   "theorem_id": "d8609555-b8d2-41f5-b0c3-572636f9be81",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.conditionedAliceEffect_positive": {
-   "submitted_at": 1792161564.0895498,
-   "http": 202,
-   "job_id": "f6daf3fc-ecde-46c8-9ca5-63fba39c14e7",
-   "status": "PUBLISHED",
-   "theorem_id": "b10f2cd6-3ad7-4efd-8506-60575f1c346b",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.conditionedBobEffect_positive": {
-   "submitted_at": 1792161564.565591,
-   "http": 202,
-   "job_id": "8f27c08c-1856-436a-80f3-fc9746202f1d",
-   "status": "PUBLISHED",
-   "theorem_id": "8548954d-57af-4bb9-abfb-894b5d7c4a0c",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.conditionedAliceEffect_complement_positive": {
-   "submitted_at": 1792161596.2380805,
-   "http": 202,
-   "job_id": "fd459c37-5f0e-4157-a352-de048d4432c8",
-   "status": "PUBLISHED",
-   "theorem_id": "28025465-8de8-481e-b49b-8490fa8b5b27",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.conditionedBobEffect_complement_positive": {
-   "submitted_at": 1792161597.0633569,
-   "http": 202,
-   "job_id": "d130d932-674d-4594-ad97-113d959ef785",
-   "status": "PUBLISHED",
-   "theorem_id": "3834673f-ee55-49d5-9e51-452046c148c6",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.spectralSupportSqrt_sq": {
-   "submitted_at": 1792161598.112825,
-   "http": 202,
-   "job_id": "b777ccec-0c9a-436f-9485-175156fe5a54",
-   "status": "PUBLISHED",
-   "theorem_id": "0098a604-5be1-4106-af74-fc6eae6f56d8",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.fullHistoryWeight_mul_hidden": {
-   "submitted_at": 1792161599.2288187,
-   "http": 202,
-   "job_id": "f45a9d3d-b8c1-4dae-8c2d-b1427a0d854a",
-   "status": "PUBLISHED",
-   "theorem_id": "f450f1af-712f-4ef6-b2c9-e67e372e9989",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.conditionedEffects_born_expansion": {
-   "submitted_at": 1792161600.289627,
-   "http": 202,
-   "job_id": "9f32b8c3-24e4-42a2-a0ed-29f4c22eca4d",
-   "status": "PUBLISHED",
-   "theorem_id": "8910b3d0-b77b-4b2a-8cc4-b295bb6485ff",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.finite_sum_four_swap": {
-   "submitted_at": 1792161601.6060877,
-   "http": 202,
-   "job_id": "e32ea934-f6ce-4a1f-8180-255947b3eb1a",
-   "status": "PUBLISHED",
-   "theorem_id": "6e1f2852-ce2d-46b3-ad51-a9bd74dc0299",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection": {
-   "submitted_at": 1792161603.01872,
-   "http": 202,
-   "error": {
-    "jobs": [],
-    "errors": [
-     "A theorem with theorem_name \"QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection\" already exists"
-    ],
-    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
-    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
-   },
-   "status": "PUBLISHED",
-   "theorem_id": "1763bb6d-6181-4b7b-bf79-38a2f85be3c4",
-   "note": "pre-existing"
-  },
-  "QuantumParallelRepetition.spectralPurificationFilter_mul_shift": {
-   "submitted_at": 1792161604.2030265,
-   "http": 202,
-   "job_id": "e12279a3-1eb1-487c-887a-fd1903385683",
-   "status": "PUBLISHED",
-   "theorem_id": "22ef6863-5489-4710-90e0-e09f900fe53b",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.spectralPurificationFilter_square_contraction": {
-   "submitted_at": 1792161605.1860325,
-   "http": 202,
-   "job_id": "c8647a75-4179-4a24-9f03-8314173d1f55",
-   "status": "PUBLISHED",
-   "theorem_id": "a22a4312-5f68-4df1-bdbe-d4a6152792d9",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen": {
-   "submitted_at": 1792161606.0993385,
-   "http": 202,
-   "job_id": "ee50af2b-c928-4ea4-807c-2e372a8f12be",
-   "status": "PUBLISHED",
-   "theorem_id": "eb60de69-5c21-4b1d-8eb3-d8a271ad80da",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.scalarResolventFilter_memLp_two": {
-   "submitted_at": 1792161607.1329913,
-   "http": 202,
-   "error": {
-    "jobs": [],
-    "errors": [
-     "A theorem with theorem_name \"QuantumParallelRepetition.scalarResolventFilter_memLp_two\" already exists"
-    ],
-    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
-    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
-   },
-   "status": "PUBLISHED",
-   "theorem_id": "fa419794-61b6-4a40-b7b3-95a11148bbe7",
-   "note": "pre-existing"
-  },
-  "QuantumParallelRepetition.spectralPurificationFilter_memLp_two": {
-   "submitted_at": 1792161607.8920422,
-   "http": 202,
-   "error": {
-    "jobs": [],
-    "errors": [
-     "A theorem with theorem_name \"QuantumParallelRepetition.spectralPurificationFilter_memLp_two\" already exists"
-    ],
-    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
-    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
-   },
-   "status": "PUBLISHED",
-   "theorem_id": "3d9d887c-ccf8-47f6-b3a5-97e6a45fda2e",
-   "note": "pre-existing"
-  },
-  "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse": {
-   "submitted_at": 1792161609.1120129,
-   "http": 202,
-   "job_id": "e0ae1030-bc07-44b1-b9bc-c48e7c45f4c5",
-   "status": "PUBLISHED",
-   "theorem_id": "ac9617b0-96fe-47c1-a23c-da278122edde",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.scalar_entropy_resolvent_integral": {
-   "submitted_at": 1792161610.1250627,
-   "http": 202,
-   "job_id": "20f2a1da-b628-4547-8c90-50b2a97b0198",
-   "status": "PUBLISHED",
-   "theorem_id": "488561cc-b4be-4620-bf22-21f1e311554e",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen": {
-   "submitted_at": 1792161637.8089182,
-   "http": 202,
-   "job_id": "c2e4b689-4cf6-4382-973c-3ba5f9a3f745",
-   "status": "PUBLISHED",
-   "theorem_id": "f9be2505-f851-49d4-81e2-2bc7045bd4a9",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef": {
-   "submitted_at": 1792161638.8880267,
-   "http": 202,
-   "job_id": "a780ab24-772b-4ba2-9e48-28b3e9ba3c38",
-   "status": "PUBLISHED",
-   "theorem_id": "8b3b5996-d6db-4062-b62c-60fe58aae0ca",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef": {
-   "submitted_at": 1792161639.8778937,
-   "http": 202,
-   "job_id": "421ea779-2b1a-4d5e-b727-4b3430c54917",
-   "status": "PUBLISHED",
-   "theorem_id": "b4f3406f-a1c3-4a6a-83cf-74c12c206e12",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction": {
-   "submitted_at": 1792161640.734297,
-   "http": 202,
-   "job_id": "01b78e43-d69f-435f-b8c4-958a03eaeb5f",
-   "status": "PUBLISHED",
-   "theorem_id": "e7f42b12-d44d-4fd7-a4e9-4d7a51f1f1ab",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left": {
-   "submitted_at": 1792161641.6380153,
-   "http": 202,
-   "job_id": "4f1f02bd-a34a-4aed-9e9c-8a66d89ad22a",
-   "status": "PUBLISHED",
-   "theorem_id": "046b408c-fa4c-47db-b6ca-27f49fdfb541",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right": {
-   "submitted_at": 1792161642.5705388,
-   "http": 202,
-   "job_id": "30352a99-70cd-4cf6-8df5-4586b2a18e2b",
-   "status": "PUBLISHED",
-   "theorem_id": "5034beaf-84db-4630-a46f-5a46aeb56b1c",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos": {
-   "submitted_at": 1792161643.57006,
-   "http": 202,
-   "job_id": "32b59af9-9f36-406a-bca1-676cea7fb68c",
-   "status": "PUBLISHED",
-   "theorem_id": "8b670915-49b6-4200-8c5b-c914bf090632",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.positiveMatrix_cfc_spectral_sum": {
-   "submitted_at": 1792161644.3765697,
-   "http": 202,
-   "job_id": "44e9c973-8d3d-471d-8db6-27f7705ff56b",
-   "status": "PUBLISHED",
-   "theorem_id": "7c153b02-f47d-448a-a95b-fd723c70f282",
-   "error_message": ""
-  },
-  "QuantumParallelRepetition.bornTracePairing_one_le_one": {
-   "submitted_at": 1792161645.1936517,
-   "http": 202,
-   "job_id": "225b1c32-eead-4570-bdac-ce8a45b4aea3",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.matrixLogEntropy_born_lower_bound_left": {
-   "submitted_at": 1792161645.9501717,
-   "http": 202,
-   "error": {
-    "jobs": [],
-    "errors": [
-     "A theorem with theorem_name \"QuantumParallelRepetition.matrixLogEntropy_born_lower_bound_left\" already exists"
-    ],
-    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
-    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
-   },
-   "status": "PUBLISHED",
-   "theorem_id": "4cf0d6f1-51cf-46f0-8918-f60134faab0e",
-   "note": "pre-existing"
-  },
-  "QuantumParallelRepetition.embezzlementState_norm": {
-   "submitted_at": 1792161646.8835332,
-   "http": 202,
-   "error": {
-    "jobs": [],
-    "errors": [
-     "A theorem with theorem_name \"QuantumParallelRepetition.embezzlementState_norm\" already exists"
-    ],
-    "message": "0/1 problem(s) queued. Poll GET /api/v1/publish-jobs/{job_id} until status is PUBLISHED, FAILED, or ERROR.",
-    "guidelines": "Reminder: write the natural_language_statement like an academic paper, not a Lean dump. Use standard mathematical notation in KaTeX (backslashes doubled in JSON) instead of raw Lean expressions, give context for every variable and symbol, put the main formula in a display-math block, follow it with a short paragraph on the result's mathematical role, keep Lean-specific details in an optional final Formalization Note paragraph, and do not include proof details. Full principles: references/contribute.md#important-principles-of-submit-problemsdefinitions"
-   },
-   "status": "PUBLISHED",
-   "theorem_id": "55a9282c-041c-4ee7-a258-95d473c1600a",
-   "note": "pre-existing"
-  },
-  "QuantumParallelRepetition.coherentBinaryJointOutcome_norm_sq": {
-   "submitted_at": 1792161648.087091,
-   "http": 202,
-   "job_id": "cc6f6682-5ea7-461c-a84c-80ff96c2ea3e",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.finiteTensorVector_norm_sq": {
-   "submitted_at": 1792161675.7036505,
-   "http": 202,
-   "job_id": "2cd5ecc1-066e-4c1a-b4a6-556de52642bf",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.spectralAtomOverlap_sum_right": {
-   "submitted_at": 1792161676.6821153,
-   "http": 202,
-   "job_id": "de6e0029-c18e-468b-95b1-b831d526b638",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.spectralAtomOverlap_sum_left": {
-   "submitted_at": 1792161677.515383,
-   "http": 202,
-   "job_id": "7d58f8a0-4452-419e-961e-ace226aa903b",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.positiveDensity_eigenvalues_sum": {
-   "submitted_at": 1792161678.3766906,
-   "http": 202,
-   "job_id": "4b58dc69-f5e5-45aa-82a0-679f6198e277",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.spectralAtomOverlap_schmidtMass_le_one": {
-   "submitted_at": 1792161679.2324972,
-   "http": 202,
-   "job_id": "7930762b-27fa-417f-8254-da38813b2d50",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.sharedThresholdResourceRaw_norm_sq": {
-   "submitted_at": 1792161680.0035408,
-   "http": 202,
-   "job_id": "58759f66-53fe-4aac-a161-c4c13f7b596b",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.sharedThresholdResource_block_action_norm_sq": {
-   "submitted_at": 1792161681.119702,
-   "http": 202,
-   "job_id": "a5f5fa84-6739-4e08-b4be-2faa76e5ad71",
-   "status": "QUEUED"
-  },
-  "QuantumParallelRepetition.doublyStochasticSchmidtMass_le_one": {
-   "submitted_at": 1792161682.2710128,
-   "http": 202,
-   "job_id": "24e70c28-51e2-42a1-9593-a0f6b756e4f2",
-   "status": "QUEUED"
-  },
   "MIPRE.Repetition.ofTensorProductStrategy_winProbability": {
    "submitted_at": 1792164109.5350814,
    "http": 202,
@@ -596,63 +206,565 @@
    "submitted_at": 1792164143.6467998,
    "http": 202,
    "job_id": "1b5ca053-5b2b-402d-b95b-ad2b1e580a99",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "443fcb82-eb71-4b5a-8b24-fe69ad9f9f49",
+   "error_message": ""
   },
   "MIPRE.exists_isometry_of_povm": {
    "submitted_at": 1792164144.5981553,
    "http": 202,
    "job_id": "01e03d4c-2826-4e6c-9bc1-b1abbd99c45b",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "ce11850c-ff96-44b4-9729-3b49ff6f8d94",
+   "error_message": ""
   },
   "MIPRE.exists_unitary_extending": {
    "submitted_at": 1792164145.439196,
    "http": 202,
    "job_id": "99d65800-5714-4e9b-94ac-1f24bc545040",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "2ca9e7d5-a33e-4131-852d-1bcacbe27b7b",
+   "error_message": ""
   },
   "MIPRE.exists_projective_dilation": {
    "submitted_at": 1792164146.2147605,
    "http": 202,
    "job_id": "098efcd1-7d5b-40c9-9f38-b609180d5807",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "36d5ec00-b305-4132-8d74-a8e999f9d9db",
+   "error_message": ""
   },
   "MIPRE.quantumValue_eq_of_equiv": {
    "submitted_at": 1792164146.988023,
    "http": 202,
    "job_id": "1cedfcd5-8897-4cf3-bd79-8432de8049b3",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "9405a50a-a859-458f-97ea-dd98a214d640",
+   "error_message": ""
   },
   "MIPRE.SyncStrategy.value_relabel": {
    "submitted_at": 1792164147.8938541,
    "http": 202,
    "job_id": "5457faff-04e6-49b1-8a82-250378d0107b",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "b42b7f48-58ff-45a5-b80f-f4a001bc2b56",
+   "error_message": ""
   },
   "MIPRE.SyncStrategy.isPCC_relabel": {
    "submitted_at": 1792164148.75088,
    "http": 202,
    "job_id": "bff40b3c-9b52-4327-8ddb-044d9fee70ac",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "4c352c49-823e-437e-8222-1fa42eb761af",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.bitWalkProg_runs": {
    "submitted_at": 1792164149.423279,
    "http": 202,
    "job_id": "bfa121ae-c3ad-4933-b45f-43e099ac351d",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "9303ed20-c781-477b-aeb2-0c5435220034",
+   "error_message": ""
   },
   "MIPRE.CL.toBits_join": {
    "submitted_at": 1792164150.1321924,
    "http": 202,
    "job_id": "cda0a685-6a2f-42a7-9dcd-c13f6d9ca908",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "f212a687-5fc4-4425-9b83-16ff55c3748e",
+   "error_message": ""
   },
   "MIPRE.CL.indicatorBits_blockSet": {
    "submitted_at": 1792164151.0418503,
    "http": 202,
    "job_id": "26ce7875-6d0e-4334-b605-185c708ea2d1",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "1cf12913-1ebc-4d6e-9231-be45c7fb555d",
+   "error_message": ""
+  },
+  "MIPRE.CL.length_flatten_ofFn": {
+   "submitted_at": 1792164156.1155956,
+   "http": 202,
+   "job_id": "1657a1f6-d0b8-408a-a35f-30e29b35a4f1",
+   "status": "PUBLISHED",
+   "theorem_id": "cbf9ae19-9bb7-4e2f-b176-5eaff40e7d7c",
+   "error_message": ""
+  },
+  "MIPRE.CL.chunk_flatten_ofFn": {
+   "submitted_at": 1792164156.9737735,
+   "http": 202,
+   "job_id": "d1e236ea-8082-4d5d-a8ef-8e00dfc7bfaa",
+   "status": "PUBLISHED",
+   "theorem_id": "79d86e4c-6f06-4fee-b65c-a3166c3835bb",
+   "error_message": ""
+  },
+  "MIPRE.CL.block_ofBits": {
+   "submitted_at": 1792164162.1111047,
+   "http": 202,
+   "job_id": "ac84f2fd-a670-4c93-a900-ab4013fdbf44",
+   "status": "PUBLISHED",
+   "theorem_id": "3d159807-829f-49bd-99e2-63e7778db831",
+   "error_message": ""
+  },
+  "MIPRE.CL.chunk_map": {
+   "submitted_at": 1792164163.0355031,
+   "http": 202,
+   "job_id": "5257064e-f7c5-4b29-873b-95f45068b1d5",
+   "status": "PUBLISHED",
+   "theorem_id": "7e7dbd45-d1d2-435c-8453-a96fba5f9502",
+   "error_message": ""
+  },
+  "MIPRE.CL.length_chunk": {
+   "submitted_at": 1792164163.788228,
+   "http": 202,
+   "job_id": "fbc9c4f1-8818-4054-ad79-3f443ff7b7a1",
+   "status": "PUBLISHED",
+   "theorem_id": "1fb4d971-d660-437c-b3fe-566267a61f5a",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.encode_nat_eq_list": {
+   "submitted_at": 1792164164.7735074,
+   "http": 202,
+   "job_id": "69e846cf-47e3-43c8-8081-233842a33d48",
+   "status": "PUBLISHED",
+   "theorem_id": "569f148b-babc-4b0d-97d1-4dbe53b9e7c6",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.toList_encode_bitStr": {
+   "submitted_at": 1792164165.5439155,
+   "http": 202,
+   "job_id": "ad35df84-1c52-40b2-a07a-e7bd0ecf4c2e",
+   "status": "PUBLISHED",
+   "theorem_id": "0abd9577-d866-4036-8799-ca6bd9b4afaf",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.replicate_nil_eq_map": {
+   "submitted_at": 1792164170.7296536,
+   "http": 202,
+   "job_id": "507d7aae-05f1-4240-84f5-eb1e8dfd0e08",
+   "status": "PUBLISHED",
+   "theorem_id": "5bfa2c9e-f920-4780-99b3-a4ca43cc0db9",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.okBits_iff": {
+   "submitted_at": 1792164180.3499541,
+   "http": 202,
+   "job_id": "ad9a0730-e849-44f2-940c-7bfbeed1fab5",
+   "status": "PUBLISHED",
+   "theorem_id": "bbd6013e-1db6-44fd-ba6d-365c6bc890e1",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.finalProg_runs": {
+   "submitted_at": 1792164181.1072433,
+   "http": 202,
+   "job_id": "18855e4b-18e4-4399-9f90-6acac1c226a7",
+   "status": "PUBLISHED",
+   "theorem_id": "3a393c50-1ccc-4b44-bc09-621d5ac9a4b6",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.preProg_runs_nilB": {
+   "submitted_at": 1792164187.0739822,
+   "http": 202,
+   "job_id": "59165cb4-6559-4109-9a78-d6b60e02b88b",
+   "status": "PUBLISHED",
+   "theorem_id": "999851f2-8a4a-48b4-bb0d-bddb714d1669",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.preProg_runs": {
+   "submitted_at": 1792164223.0763812,
+   "http": 202,
+   "job_id": "e272f4f3-ccc4-46c6-8b7f-75bad518e169",
+   "status": "PUBLISHED",
+   "theorem_id": "77598d88-7c53-418e-a59c-2f21875cea36",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.stepProg_runs_call": {
+   "submitted_at": 1792164223.8600397,
+   "http": 202,
+   "job_id": "eea26669-0196-468f-a90b-c85da0929ea4",
+   "status": "PUBLISHED",
+   "theorem_id": "1dec8542-bba1-44e2-a5d9-6c9350148a1f",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.stepProg_inv": {
+   "submitted_at": 1792164224.5595522,
+   "http": 202,
+   "job_id": "b02510e5-4805-4dda-a4b3-1f5029fc9764",
+   "status": "PUBLISHED",
+   "theorem_id": "1d2e98e5-93b9-4d07-9c9e-8ea363a3e603",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coordBody_stop": {
+   "submitted_at": 1792164225.3208718,
+   "http": 202,
+   "job_id": "f1df1dc7-6620-4ed2-be5e-8a0e8a264834",
+   "status": "PUBLISHED",
+   "theorem_id": "1eb863e8-2f03-4ed8-80ab-154b723ffdce",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coordBody_step": {
+   "submitted_at": 1792164261.24279,
+   "http": 202,
+   "job_id": "23c7dc2f-31a0-41d6-a00f-54aa3f35ab32",
+   "status": "PUBLISHED",
+   "theorem_id": "e785bc6a-9ff3-4b75-aa9d-1aa12d23a299",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coordBody_inv": {
+   "submitted_at": 1792164261.9667253,
+   "http": 202,
+   "job_id": "e4f7498f-8cf4-4340-bf96-bf279e9bc724",
+   "status": "PUBLISHED",
+   "theorem_id": "1426a87c-3bfa-45ea-9416-a2ab7351a92e",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coordLoop_of_acc": {
+   "submitted_at": 1792164262.7650368,
+   "http": 202,
+   "job_id": "641ca808-404c-4f16-a792-7e93ee047303",
+   "status": "PUBLISHED",
+   "theorem_id": "531671bf-f6c8-40e1-b3f7-ea3c9ab0a2fa",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coordLoop_inv": {
+   "submitted_at": 1792164263.462623,
+   "http": 202,
+   "job_id": "dbab1e78-30e1-4a82-ae1f-e085dafbbbbc",
+   "status": "PUBLISHED",
+   "theorem_id": "c2b9b7c2-e8c1-43b6-8571-70871c9f3e03",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coordLoop_runs_bounded": {
+   "submitted_at": 1792164264.1199818,
+   "http": 202,
+   "job_id": "2250e2e9-0d67-4350-ae5c-e1f701bd54f8",
+   "status": "PUBLISHED",
+   "theorem_id": "1b0e73c9-d1e1-4a17-9427-f94427a55fff",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.bitsProg_runs": {
+   "submitted_at": 1792164264.7997015,
+   "http": 202,
+   "job_id": "4c11efc6-f666-49d4-9d04-e7d55854646f",
+   "status": "PUBLISHED",
+   "theorem_id": "99037b75-1023-4801-8319-08cc9c37f6da",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.prepProg_prefix": {
+   "submitted_at": 1792164269.9200392,
+   "http": 202,
+   "job_id": "0b2fec30-f67d-4c43-a2bd-002ea14b6bf2",
+   "status": "PUBLISHED",
+   "theorem_id": "ad06a156-3cc3-4bbc-96cd-cf0197fbabe6",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.prepProg_runs": {
+   "submitted_at": 1792164270.8674068,
+   "http": 202,
+   "job_id": "e17c3987-a8b8-4273-88c4-ca2045ae38b5",
+   "status": "PUBLISHED",
+   "theorem_id": "e822cbc3-1b83-4a0f-aad3-549f5185846a",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.decMain_inv": {
+   "submitted_at": 1792164271.7403953,
+   "http": 202,
+   "job_id": "e4b1f27e-e793-49f2-b2f5-d4d3540a7db5",
+   "status": "PUBLISHED",
+   "theorem_id": "fca0a389-d2db-43bc-9e90-2fcd8f51e3e2",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.repDecCore_wellScoped": {
+   "submitted_at": 1792164272.752249,
+   "http": 202,
+   "job_id": "84d57489-3566-42c5-9c7a-ca9d11cee286",
+   "status": "PUBLISHED",
+   "theorem_id": "fddf9242-f23b-4da0-a81f-65c6f948b32f",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.repDecCore_runs": {
+   "submitted_at": 1792164282.573438,
+   "http": 202,
+   "job_id": "206967bf-ec9d-466d-bb8c-06898304862c",
+   "status": "PUBLISHED",
+   "theorem_id": "654b7dd3-4c00-4726-8228-7feb4b96ce4a",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.repDecCore_inv": {
+   "submitted_at": 1792164292.4624522,
+   "http": 202,
+   "job_id": "2764fba5-76a4-4a83-a373-adf3cf95e1d4",
+   "status": "PUBLISHED",
+   "theorem_id": "91ee200b-8273-40ff-9889-fc70620ff860",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.repDecCore_runs_malformed": {
+   "submitted_at": 1792164297.6259077,
+   "http": 202,
+   "job_id": "b98e9ef7-3371-4305-a3a6-9f4ecd696d4c",
+   "status": "PUBLISHED",
+   "theorem_id": "d69680b4-0f79-4c8c-96b6-67011ccc4671",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.pairTakeProg_runs": {
+   "submitted_at": 1792164298.4960623,
+   "http": 202,
+   "job_id": "2804e1b6-c383-4a14-b37a-0d1575baf8da",
+   "status": "PUBLISHED",
+   "theorem_id": "de076c2c-c654-486e-ab06-e712858fbd0b",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.mapBody_step": {
+   "submitted_at": 1792164299.3914633,
+   "http": 202,
+   "job_id": "e248216d-660f-4b6f-8714-39002e235ea5",
+   "status": "PUBLISHED",
+   "theorem_id": "afa43fd6-7e81-482d-a5b0-e217ac6ac6c7",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.pairTakeCost_le": {
+   "submitted_at": 1792164305.6278608,
+   "http": 202,
+   "job_id": "c64f7826-759b-4b7d-aa99-f7c5bca8c2d7",
+   "status": "PUBLISHED",
+   "theorem_id": "6665fa21-395b-4867-b2a4-53575fe5b257",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.mapLoop_runs": {
+   "submitted_at": 1792164310.834648,
+   "http": 202,
+   "job_id": "76c69f62-663f-45c0-b9a0-4459def9ef19",
+   "status": "PUBLISHED",
+   "theorem_id": "734f08c7-ee98-44fa-ab27-5b81e92bea01",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.length_le_size_list_prime": {
+   "submitted_at": 1792164311.6427724,
+   "http": 202,
+   "job_id": "b8cfed8c-5f73-4ec7-b113-f28bcdd8f8e4",
+   "status": "PUBLISHED",
+   "theorem_id": "fe89e4f0-8591-402a-a9a1-ced74d8a7728",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Data.chunkPairs_eq_ofFn": {
+   "submitted_at": 1792164316.6729667,
+   "http": 202,
+   "job_id": "a5e5908d-31aa-44cd-90b1-5496f086abf2",
+   "status": "PUBLISHED",
+   "theorem_id": "a41375c0-79e4-47ae-a7eb-167888bbb02b",
+   "error_message": ""
+  },
+  "Nat.bits_two_pow_mul": {
+   "submitted_at": 1792164317.3624806,
+   "http": 202,
+   "job_id": "4ae56285-19b1-4ec3-b906-cc594442f894",
+   "status": "PUBLISHED",
+   "theorem_id": "5fce32c4-659b-431a-bc42-6e072e9920f5",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.powBody_step": {
+   "submitted_at": 1792164318.0988028,
+   "http": 202,
+   "job_id": "379c22f8-2b69-4485-9506-eaf3e3919d0e",
+   "status": "PUBLISHED",
+   "theorem_id": "29a32a38-96eb-4e43-98f2-e0a4e59eeab1",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.powLoop_runs": {
+   "submitted_at": 1792164323.3043332,
+   "http": 202,
+   "job_id": "a9bf68da-6fd2-479b-bc3b-f4c2c8535781",
+   "status": "PUBLISHED",
+   "theorem_id": "a13b6862-a1fe-4056-9b7e-e8d28bc1205f",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.dblLoop_runs": {
+   "submitted_at": 1792164337.3833284,
+   "http": 202,
+   "job_id": "17d5c9ab-4096-40b3-99d1-df5faa65bbb5",
+   "status": "PUBLISHED",
+   "theorem_id": "c21dabea-0798-47f0-a2a7-155249698c60",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.takeLoop_runs": {
+   "submitted_at": 1792164373.6736891,
+   "http": 202,
+   "job_id": "ae8372e3-7423-4736-b054-e671d77ceb5d",
+   "status": "PUBLISHED",
+   "theorem_id": "f22694da-3956-4fde-a91c-6299c660531a",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.dimProg_runs_nil": {
+   "submitted_at": 1792164374.6189244,
+   "http": 202,
+   "job_id": "5509393b-79d7-4045-bc7c-10a864786b47",
+   "status": "PUBLISHED",
+   "theorem_id": "1c077a2a-28cf-4f39-81f4-ebe5b3beff0b",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.dimProg_runs": {
+   "submitted_at": 1792164380.6287668,
+   "http": 202,
+   "job_id": "9aed5c31-257a-41d3-9cce-cfe6815897ab",
+   "status": "PUBLISHED",
+   "theorem_id": "7dfbf3ef-edc6-493d-80f0-0fa027d59b70",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.lockProg_runs_zero": {
+   "submitted_at": 1792164381.489768,
+   "http": 202,
+   "job_id": "a7f30dde-2803-4a47-834d-ab63faa82cfa",
+   "status": "PUBLISHED",
+   "theorem_id": "8db85802-43b5-493d-8e56-7168d3da7373",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.lockProg_runs": {
+   "submitted_at": 1792164382.3899753,
+   "http": 202,
+   "job_id": "b181670b-bf95-4668-b31a-6efd88407cd7",
+   "status": "PUBLISHED",
+   "theorem_id": "c2a62f26-0b11-4c9c-aaf0-608995b90887",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.repSampCore_wellScoped": {
+   "submitted_at": 1792164389.51208,
+   "http": 202,
+   "job_id": "c9e23df0-93f1-490c-942b-02b57fc87bb7",
+   "status": "PUBLISHED",
+   "theorem_id": "0c0f4fb3-1e0a-47db-8a8a-9cc13f15d36b",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.repSampCore_prefix": {
+   "submitted_at": 1792164390.3466108,
+   "http": 202,
+   "job_id": "86cbd3b2-d65d-46f0-94c8-4ebfcddc3615",
+   "status": "PUBLISHED",
+   "theorem_id": "3872f551-cf88-4329-81ab-75cc587ae52b",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coreDispatch_nil": {
+   "submitted_at": 1792164396.4324424,
+   "http": 202,
+   "job_id": "a4c47740-50e5-444c-b352-60fe42a6f0cb",
+   "status": "PUBLISHED",
+   "theorem_id": "77e080b4-6758-46a1-bd67-e4360b2e349a",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coreDispatch_dim": {
+   "submitted_at": 1792164397.3600829,
+   "http": 202,
+   "job_id": "a3c82843-33cc-41bc-9696-54b2a53bdfbb",
+   "status": "PUBLISHED",
+   "theorem_id": "0de082e5-f91d-4cd2-934a-017ee9267af3",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coreDispatch_lock": {
+   "submitted_at": 1792164398.1983404,
+   "http": 202,
+   "job_id": "27839e6e-49f9-4b56-bed4-51793f723fa9",
+   "status": "PUBLISHED",
+   "theorem_id": "c6344e9a-ff8a-43e4-9b53-543cef167118",
+   "error_message": ""
+  },
+  "MIPRE.tensorFamily_one": {
+   "submitted_at": 1792164434.3034325,
+   "http": 202,
+   "job_id": "83553e22-e4f6-487b-9981-be2bfcfb7015",
+   "status": "PUBLISHED",
+   "theorem_id": "918d6a50-e056-4ce0-a7c8-f2817192a106",
+   "error_message": ""
+  },
+  "MIPRE.sum_tensorFamily": {
+   "submitted_at": 1792164440.3600059,
+   "http": 202,
+   "job_id": "df83ec96-ec1e-4c10-9920-b4eb5a3707ed",
+   "status": "PUBLISHED",
+   "theorem_id": "bdfcd1a8-b02d-4373-bbc7-1777eb4c7f79",
+   "error_message": ""
+  },
+  "MIPRE.tensorFamily_mul_self": {
+   "submitted_at": 1792164441.1850479,
+   "http": 202,
+   "job_id": "7369cafc-867e-4390-9bf9-fc835b0085bb",
+   "status": "PUBLISHED",
+   "theorem_id": "5cac15af-f6ef-4b21-96fb-b4aa38ba6d3a",
+   "error_message": ""
+  },
+  "MIPRE.tensorFamily_star": {
+   "submitted_at": 1792164442.0714235,
+   "http": 202,
+   "job_id": "00456da1-923e-4436-b1aa-d3d6ba59f5d3",
+   "status": "PUBLISHED",
+   "theorem_id": "18007b85-4ed1-4535-81e3-ac24674651b1",
+   "error_message": ""
   }
  },
- "solutions": {},
+ "solutions": {
+  "MIPRE.Repetition.ofTensorProductStrategy_winProbability": {
+   "submitted_at": 1792164498.4857814,
+   "http": 200,
+   "submission_id": "e5097f68-12ab-40b8-8507-a5f1ec77d5c0",
+   "status": "PENDING"
+  },
+  "MIPRE.Repetition.exists_purification": {
+   "submitted_at": 1792164499.2207403,
+   "http": 200,
+   "submission_id": "4cda6568-36eb-4dff-9e5e-66b13c7a1e3f",
+   "status": "PENDING"
+  },
+  "MIPRE.Repetition.projective_value_le_quantumValue": {},
+  "MIPRE.Repetition.exists_purification_bipartite": {},
+  "MIPRE.exists_isometry_of_povm": {
+   "submitted_at": 1792164500.42215,
+   "http": 200,
+   "submission_id": "a8491b06-314c-40bb-af49-bd2f1010b6c8",
+   "status": "PENDING"
+  },
+  "MIPRE.exists_unitary_extending": {
+   "submitted_at": 1792164501.4098969,
+   "http": 200,
+   "submission_id": "8309fd9c-d17a-41a9-b97d-c379cca9680c",
+   "status": "PENDING"
+  },
+  "MIPRE.exists_projective_dilation": {},
+  "MIPRE.Repetition.entangledValue_le_quantumValue": {},
+  "MIPRE.Repetition.quantumValue_repeat_le": {},
+  "MIPRE.CL.CLFun.exactlyOn_famSum": {
+   "submitted_at": 1792164502.2684116,
+   "http": 200,
+   "submission_id": "26187ff9-19a9-438f-b653-22d9e0def44d",
+   "status": "PENDING"
+  },
+  "MIPRE.CL.CLFun.eval_truncate_famSum": {
+   "submitted_at": 1792164503.018695,
+   "http": 200,
+   "submission_id": "a685b2ca-2687-404c-81df-0f9597b9bd1e",
+   "status": "PENDING"
+  },
+  "MIPRE.CL.CLFun.factorOfPrefix_famSum": {
+   "submitted_at": 1792164503.8770084,
+   "http": 200,
+   "submission_id": "cdd07367-d5b5-4c54-8c4e-319dff209fec",
+   "status": "PENDING"
+  },
+  "MIPRE.CL.CLFun.mapOfPrefix_famSum": {
+   "submitted_at": 1792164504.7124314,
+   "http": 200,
+   "submission_id": "bdef80c7-f8f7-444d-bc33-b35e8de337ce",
+   "status": "PENDING"
+  },
+  "MIPRE.CL.clDist_famSum": {
+   "submitted_at": 1792164505.5483065,
+   "http": 200,
+   "submission_id": "9d8d0d1d-9d0a-4585-b44b-b8afb8f9eb94",
+   "status": "PENDING"
+  },
+  "MIPRE.Cost.encode_injective": {
+   "submitted_at": 1792164506.3584278,
+   "http": 200,
+   "submission_id": "b1c90c64-0ce3-4c81-8a27-af3bf47c49a0",
+   "status": "PENDING"
+  }
+ },
  "log": []
 }
