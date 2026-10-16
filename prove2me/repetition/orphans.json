@@ -1,0 +1,253 @@
+{
+ "note": "Items the first upload attempt of 2026-10-16 published before the platform's own ten-proofs content was discovered: statements of vendored lemmas without solutions (Open), and the Part01 definition bundle. None is used by the re-planned tree. One statement was deprecated during the API probe (PATCH {deprecated: true}); the rest await the maintainer's decision.",
+ "statements": {
+  "QuantumParallelRepetition.quadraticExpectation_sub_le": {
+   "theorem_id": "7a505b1b-5748-4f13-a993-8f47976a10e1",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": "2026-10-16T14:54:07.44+00:00"
+  },
+  "QuantumParallelRepetition.weighted_real_cauchy": {
+   "theorem_id": "3ca06d46-a24c-4ac4-9083-ef216fda7de3",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.convexMixtureStrategy_winProbability": {
+   "theorem_id": "8b09b2a0-ecb5-4af7-93c7-17d974f80692",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.pureDensityMatrix_trace_mul": {
+   "theorem_id": "31b696d3-e97e-4e6e-97a2-ad4b932738f3",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.FiniteEventLaw.exists_greedy_stopping": {
+   "theorem_id": "024463b9-8d23-4c5d-b7b6-4d628fe05dba",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.repeatedStrategy_exists_greedy_conditioning": {
+   "theorem_id": "865fb658-0e39-4539-8029-52a2dc8afd91",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg": {
+   "theorem_id": "c3f930fc-325c-427d-bb79-40233e0cb5a8",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg": {
+   "theorem_id": "d8609555-b8d2-41f5-b0c3-572636f9be81",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.conditionedAliceEffect_positive": {
+   "theorem_id": "b10f2cd6-3ad7-4efd-8506-60575f1c346b",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.conditionedBobEffect_positive": {
+   "theorem_id": "8548954d-57af-4bb9-abfb-894b5d7c4a0c",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.conditionedAliceEffect_complement_positive": {
+   "theorem_id": "28025465-8de8-481e-b49b-8490fa8b5b27",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.conditionedBobEffect_complement_positive": {
+   "theorem_id": "3834673f-ee55-49d5-9e51-452046c148c6",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.spectralSupportSqrt_sq": {
+   "theorem_id": "0098a604-5be1-4106-af74-fc6eae6f56d8",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.fullHistoryWeight_mul_hidden": {
+   "theorem_id": "f450f1af-712f-4ef6-b2c9-e67e372e9989",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.conditionedEffects_born_expansion": {
+   "theorem_id": "8910b3d0-b77b-4b2a-8cc4-b295bb6485ff",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.finite_sum_four_swap": {
+   "theorem_id": "6e1f2852-ce2d-46b3-ad51-a9bd74dc0299",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.spectralPurificationFilter_mul_shift": {
+   "theorem_id": "22ef6863-5489-4710-90e0-e09f900fe53b",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.spectralPurificationFilter_square_contraction": {
+   "theorem_id": "a22a4312-5f68-4df1-bdbe-d4a6152792d9",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen": {
+   "theorem_id": "eb60de69-5c21-4b1d-8eb3-d8a271ad80da",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse": {
+   "theorem_id": "ac9617b0-96fe-47c1-a23c-da278122edde",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.scalar_entropy_resolvent_integral": {
+   "theorem_id": "488561cc-b4be-4620-bf22-21f1e311554e",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen": {
+   "theorem_id": "f9be2505-f851-49d4-81e2-2bc7045bd4a9",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef": {
+   "theorem_id": "8b3b5996-d6db-4062-b62c-60fe58aae0ca",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef": {
+   "theorem_id": "b4f3406f-a1c3-4a6a-83cf-74c12c206e12",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction": {
+   "theorem_id": "e7f42b12-d44d-4fd7-a4e9-4d7a51f1f1ab",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left": {
+   "theorem_id": "046b408c-fa4c-47db-b6ca-27f49fdfb541",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right": {
+   "theorem_id": "5034beaf-84db-4630-a46f-5a46aeb56b1c",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos": {
+   "theorem_id": "8b670915-49b6-4200-8c5b-c914bf090632",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.positiveMatrix_cfc_spectral_sum": {
+   "theorem_id": "7c153b02-f47d-448a-a95b-fd723c70f282",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.bornTracePairing_one_le_one": {
+   "theorem_id": "70d27ef2-033a-4871-8b99-b2c537d787dc",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.coherentBinaryJointOutcome_norm_sq": {
+   "theorem_id": "eab39eb0-49bf-4d42-8d90-d1ed43b9781a",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.finiteTensorVector_norm_sq": {
+   "theorem_id": "b29cec91-e9d6-4eb8-aac5-55680f7c7142",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.spectralAtomOverlap_sum_right": {
+   "theorem_id": "737b67d8-6b56-4158-b78e-b0d78d64344b",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.spectralAtomOverlap_sum_left": {
+   "theorem_id": "00d0620e-fe8c-4803-a1e3-e4718d38108b",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.positiveDensity_eigenvalues_sum": {
+   "theorem_id": "ff5efd1e-8770-4d4a-816e-1c42d28d0357",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.spectralAtomOverlap_schmidtMass_le_one": {
+   "theorem_id": "93a180dc-c55b-4ddd-aaae-e4ea6dc77b54",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.sharedThresholdResourceRaw_norm_sq": {
+   "theorem_id": "22d96b19-6ca1-4593-a8f2-798a53908a6e",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.sharedThresholdResource_block_action_norm_sq": {
+   "theorem_id": "5ffae205-3332-4b41-8007-efeb810c0083",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  },
+  "QuantumParallelRepetition.doublyStochasticSchmidtMass_le_one": {
+   "theorem_id": "a8ea62b1-d909-4fe8-ae6a-09d4bdc88b14",
+   "publish_status": "PUBLISHED",
+   "status": "Open",
+   "deprecated_at": null
+  }
+ },
+ "definitions": {
+  "MIPRE_Background_Repetition_TenProofs_QuantumParallelRepetition_Part01": {
+   "theorem_id": "48c35a5c-9c83-42eb-a2ed-0b386020be4a",
+   "status": "PUBLISHED"
+  }
+ },
+ "adopted_platform_theorems": {
+  "QuantumParallelRepetition.Strategy.winProbability_le_one": "ed9848db-566d-432a-a456-b04828146c9d",
+  "QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection": "1763bb6d-6181-4b7b-bf79-38a2f85be3c4",
+  "QuantumParallelRepetition.scalarResolventFilter_memLp_two": "fa419794-61b6-4a40-b7b3-95a11148bbe7",
+  "QuantumParallelRepetition.spectralPurificationFilter_memLp_two": "3d9d887c-ccf8-47f6-b3a5-97e6a45fda2e",
+  "QuantumParallelRepetition.matrixLogEntropy_born_lower_bound_left": "4cf0d6f1-51cf-46f0-8918-f60134faab0e",
+  "QuantumParallelRepetition.embezzlementState_norm": "55a9282c-041c-4ee7-a258-95d473c1600a"
+ }
+}

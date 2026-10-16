@@ -41,8 +41,20 @@ cfg = {
     "blueprint_names": blueprint,
     "published_trees": [f"{REPO}/prove2me/tree.json", f"{REPO}/prove2me/assembly/tree.json"],
     "published_bundles": [
-        {"module": "MIPRE.HaltingGameValue", "definition_name": "MIPRE_HaltingGameValue", "kept": "all"}
+        {"module": "MIPRE.HaltingGameValue", "definition_name": "MIPRE_HaltingGameValue", "kept": "all"},
+        # the platform's own copy of the ten-proofs statement file (openai/ten-proofs,
+        # ComparatorChallenges/G_QuantumParallelRepetition.lean, uploaded 2026-08-09, public): the
+        # definitions the own-code repetition layer uses, imported from there, not re-uploaded
+        {"module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01", "definition_name": "quantum_parallel_repetition_game", "kept": ["QuantumParallelRepetition.Game", "QuantumParallelRepetition.Game.repeat", "QuantumParallelRepetition.DensityMatrix", "QuantumParallelRepetition.POVM", "QuantumParallelRepetition.Strategy", "QuantumParallelRepetition.Strategy.outcomeProbability", "QuantumParallelRepetition.Strategy.winProbability", "QuantumParallelRepetition.entangledValue", "QuantumParallelRepetition.repeatedEntangledValue"]}
     ],
+    # the ten-proofs theorems the own code applies, Proved on the platform since 2026-08 (same statements)
+    "published_nodes_extra": {
+        "QuantumParallelRepetition.distributionUniformExponential": "QuantumParallelRepetition_distributionUniformExponential",
+        "QuantumParallelRepetition.entangledValue_nonneg": "QuantumParallelRepetition_entangledValue_nonneg",
+        "QuantumParallelRepetition.winProbabilities_bddAbove": "QuantumParallelRepetition_winProbabilities_bddAbove",
+        "QuantumParallelRepetition.Strategy.winProbability_nonneg": "QuantumParallelRepetition_Strategy_winProbability_nonneg",
+        "QuantumParallelRepetition.Strategy.winProbability_le_one": "QuantumParallelRepetition_Strategy_winProbability_le_one"
+    },
     "blueprint_seeds": False,
     "force_blueprint_nodes": False,
     "renames": {"MIPRE.Cost.Data.length_le_size_list'": "MIPRE.Cost.Data.length_le_size_list_prime"},   # the platform wants ASCII identifiers

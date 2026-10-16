@@ -126,6 +126,10 @@ def load_published():
     for b in CFG.get("published_bundles", []):
         bundles[b["module"]] = {"definition_name": b["definition_name"],
                                "kept": None if b.get("kept", "all") == "all" else set(b["kept"])}
+    # theorems another project published on the platform (Proved), imported by name: the platform's
+    # module for a theorem is Theorems.Thm_<name with dots replaced by underscores>
+    for name, slug in CFG.get("published_nodes_extra", {}).items():
+        nodes[name] = slug
     return nodes, bundles
 
 def main():
@@ -215,23 +219,36 @@ def main():
         TARGETS.extend(extra)
     else:
         print("blueprint-named declarations in the closure (promotion signal only):", len(extra))
-    seeds = list(TARGETS) + list(DEFMAT_TARGETS) + [r["name"] for r in rows if r["isInstance"]]
     missing_targets = [t for t in TARGETS + DEFMAT_TARGETS if t not in by_name]
-    reach = set()
-    work = list(seeds)
-    while work:
-        n = work.pop()
-        if n in reach:
-            continue
-        r = by_name.get(n)
-        if r is None:
-            continue
-        reach.add(n)
-        work.extend(r["typeDeps"])
-        work.extend(r["valueDeps"])
-        uid = unit_of_row.get(n)
-        if uid:
-            work.extend(rows_of_unit(uid))
+    def published_unit(uid):
+        return uid in pubnode_units or uid in avail_units
+    def reach_from(seeds, reach):
+        # published content is a boundary here too: what lies behind a published node or bundle
+        # declaration is the platform's (the proof of the ten-proofs root theorem would otherwise pull
+        # the whole vendored development back in)
+        work = list(seeds)
+        while work:
+            n = work.pop()
+            if n in reach:
+                continue
+            r = by_name.get(n)
+            if r is None:
+                continue
+            reach.add(n)
+            uid = unit_of_row.get(n)
+            if uid and published_unit(uid):
+                continue
+            work.extend(r["typeDeps"])
+            work.extend(r["valueDeps"])
+            if uid:
+                work.extend(rows_of_unit(uid))
+        return reach
+    reach = reach_from(list(TARGETS) + list(DEFMAT_TARGETS), set())
+    # instances are found by search, not named, so every instance of a module this tree generates
+    # content for is seeded as well (not those of modules reached only through published content)
+    own_modules = {unit_of_row[n] and units[unit_of_row[n]]["module"] for n in reach
+                   if n in unit_of_row and not published_unit(unit_of_row[n])}
+    reach = reach_from([r["name"] for r in rows if r["isInstance"] and r["module"] in own_modules], reach)
     reach_units = {unit_of_row[n] for n in reach if n in unit_of_row}
     # (ref-based deps are added below; close reach_units under them afterwards)
 
@@ -316,10 +333,14 @@ def main():
             if v in avail_units or v in pubnode_units:
                 continue
             (embedded if units[v]["is_thm"] else defmat).add(v)
-    # simp lemmas with short proofs stay with the definitions (dsimp leaves no trace in proof terms)
+    # simp lemmas with short proofs stay with the definitions (dsimp leaves no trace in proof terms) --
+    # in the modules this tree generates content for; a module reached only through published content
+    # (the platform's own copy of the ten-proofs statement file) contributes nothing, otherwise its simp
+    # lemmas would drag the whole vendored development back in
+    own_modules = {units[uid]["module"] for uid in reach_units if uid not in avail_units and uid not in pubnode_units}
     for uid in units:
         u = units[uid]
-        if uid in avail_units or uid in pubnode_units:
+        if uid in avail_units or uid in pubnode_units or u["module"] not in own_modules:
             continue
         if u["is_thm"] and u["has_attr"] and u["prooflines"] <= INLINE_MAX and not u["is_private"]:
             embedded.add(uid)

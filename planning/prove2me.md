@@ -541,3 +541,36 @@ namespace chain. The validator's check files are written in blocks of 40 names (
 with the platform's options; validation finds the 514 statements' types identical in the source
 module, the stub and the solution, the leaf closure's solution type equal to its published stub, and
 no axiom beyond `propext`, `Classical.choice`, `Quot.sound` and the stubs' `sorryAx`.
+
+**The platform already holds the vendored proof (found 2026-10-16, 14:39 UTC, during the upload).**
+The first statements of wave 0 were refused with "a theorem with this name already exists": the
+openai/ten-proofs `QuantumParallelRepetition.lean` development was uploaded to Prove2Me on
+2026-08-09 (tag `openai-ten-proofs`, public, Proved; the same upstream commit `94bc0feb`), as its
+own decomposition: 221 theorem nodes, among them the root `distributionUniformExponential`, and 30
+definition bundles (`quantum_parallel_repetition_game`, the Mathlib-only statement file
+`ComparatorChallenges/G_QuantumParallelRepetition.lean`, and `qpr_core_00` to `qpr_core_28`, 815
+declarations), each item present in two environments (`mathlib_rev` `0df444a` and `c5ea0035`). The
+upload was stopped after 13 bundles and 35 statements (`prove2me/repetition/orphans.json`): the own
+code's repetition layer reaches the vendored code only through 9 definitions of their game bundle
+(`Game`, `Game.repeat`, `Strategy`, `Strategy.winProbability`, `Strategy.outcomeProbability`,
+`POVM`, `DensityMatrix`, `entangledValue`, `repeatedEntangledValue`; the proof file's
+`Strategy.jointEffect` is the statement file's `jointMeasurementOperator`, and nothing of ours
+names it) and 5 of their theorems (`distributionUniformExponential`, `entangledValue_nonneg`,
+`winProbabilities_bddAbove`, `Strategy.winProbability_nonneg`, `Strategy.winProbability_le_one`),
+whose statements agree with the source up to the placement of the `Fintype` binders. A private probe
+showed that an uploaded statement may import their bundle and their theorems by module name
+(`Definitions.Def_quantum_parallel_repetition_game`, `Theorems.Thm_QuantumParallelRepetition_…`)
+and that a solution applying the theorem makes the statement Proved. So the tree is re-planned
+around their content: the config registers the game bundle as the published bundle of `Part01` for
+those 9 declarations and the 5 theorems as published nodes (`published_nodes_extra`), local
+stand-ins of the six items sit in the workspace for the build and are never uploaded, and the
+planner's reachability now stops at published content from the first pass (it did not: the root
+theorem's proof pulled the whole development back in) and seeds instances and short attribute lemmas
+only from the modules the tree generates content for. The tree is then the own-code layer alone:
+19 new and 1 delta bundle, 94 theorem nodes, 159 inline helpers, 66 embedded theorems, 116
+definitions, and the leaf closure, with Entangled's bundle importing the five platform theorems.
+The 35 published vendored statements (Open, no solution) and the Part01 bundle are duplicates of
+nothing in the new tree; one statement was deprecated during the probe (`PATCH /theorems/<id>`
+with `deprecated: true`, which the platform honoured), and the session's permission policy stops
+the agent from deprecating the rest unasked: that is the maintainer's call, and `orphans.json`
+lists them.
