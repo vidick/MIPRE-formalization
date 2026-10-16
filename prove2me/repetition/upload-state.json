@@ -103,6 +103,18 @@
    "job_id": "4868ac2f-29ff-4a38-a913-8e8b757a9a1b",
    "theorem_id": "f63b7858-9049-46f3-bf41-5642a8e5dad3",
    "error_message": ""
+  },
+  "MIPRE_Background_Repetition_Soundness": {
+   "submitted_at": 1792165114.9125893,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "305e0679-bec0-4bc9-b979-7b906dc648ba"
+  },
+  "MIPRE_Background_Repetition_TensorPower": {
+   "submitted_at": 1792165115.4279296,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "327f1a1a-1ce5-41dc-878f-527fe3df81f4"
   }
  },
  "theorems": {
@@ -987,8 +999,20 @@
    "status": "ACCEPTED",
    "error_message": ""
   },
-  "MIPRE.Cost.Prog.coordLoop_of_acc": {},
-  "MIPRE.Cost.Prog.coordLoop_inv": {},
+  "MIPRE.Cost.Prog.coordLoop_of_acc": {
+   "submitted_at": 1792164983.9230173,
+   "http": 200,
+   "submission_id": "85bb81a8-09eb-42f7-a983-417970886504",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coordLoop_inv": {
+   "submitted_at": 1792165028.6284585,
+   "http": 200,
+   "submission_id": "995aa7fa-45f8-49fe-ae3f-bc06186fabe5",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
   "MIPRE.Cost.Prog.pairTakeCost_le": {
    "submitted_at": 1792164778.8252025,
    "http": 200,
@@ -996,7 +1020,13 @@
    "status": "ACCEPTED",
    "error_message": ""
   },
-  "MIPRE.Cost.Prog.coordLoop_runs_bounded": {},
+  "MIPRE.Cost.Prog.coordLoop_runs_bounded": {
+   "submitted_at": 1792165029.3961315,
+   "http": 200,
+   "submission_id": "d44ddc1c-d941-4e08-88a3-e4625a1ce2b2",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
   "MIPRE.Cost.Prog.bitsProg_runs": {
    "submitted_at": 1792164779.8178535,
    "http": 200,
@@ -1029,9 +1059,16 @@
    "submitted_at": 1792164910.5063705,
    "http": 200,
    "submission_id": "f9ada595-457f-4534-8b23-4e7b9ca51d7c",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
-  "MIPRE.Cost.Prog.prepProg_runs": {},
+  "MIPRE.Cost.Prog.prepProg_runs": {
+   "submitted_at": 1792165030.3412428,
+   "http": 200,
+   "submission_id": "9fd71f09-83f1-48f6-a794-b05d4b6ab4d7",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
   "MIPRE.Cost.Prog.decMain_inv": {
    "submitted_at": 1792164837.0627544,
    "http": 200,
@@ -1043,19 +1080,22 @@
    "submitted_at": 1792164837.7607982,
    "http": 200,
    "submission_id": "d8fa44e1-d5cf-47c4-853a-952cbc8a1919",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.repDecCore_runs": {
    "submitted_at": 1792164838.3849847,
    "http": 200,
    "submission_id": "42a069f4-451a-4eed-b5e6-5f09e22bca75",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.repDecCore_inv": {
    "submitted_at": 1792164839.1255891,
    "http": 200,
    "submission_id": "4e2d5667-fc0c-4e83-99f6-0640105eb36a",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.repDecCore_runs_malformed": {
    "submitted_at": 1792164847.8018773,
@@ -1075,7 +1115,8 @@
    "submitted_at": 1792164966.393877,
    "http": 200,
    "submission_id": "221c25cd-82c1-401c-a10d-b5fc950fe719",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Cost.Data.length_le_size_list_prime": {
    "submitted_at": 1792164900.6964552,
@@ -1109,26 +1150,85 @@
    "submitted_at": 1792164943.7099159,
    "http": 200,
    "submission_id": "e36aa171-d2f7-46fe-bb48-10ce9d50ef9f",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.lockProg_runs_zero": {
    "submitted_at": 1792164953.0898104,
    "http": 200,
    "submission_id": "4e25afda-006c-4792-9a35-ef10f9dbc43e",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
-  "MIPRE.Cost.Prog.lockProg_runs": {},
+  "MIPRE.Cost.Prog.lockProg_runs": {
+   "submitted_at": 1792165040.2612112,
+   "http": 200,
+   "submission_id": "6303e14b-1ea3-4e46-bf57-bc4049d069ec",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
   "MIPRE.Cost.Prog.repSampCore_wellScoped": {
    "submitted_at": 1792164953.6419103,
    "http": 200,
    "submission_id": "64fd5808-809f-4139-9c33-5a667324247f",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Cost.Prog.repSampCore_prefix": {
    "submitted_at": 1792164975.098244,
    "http": 200,
    "submission_id": "7c8c089b-87f3-4add-9c1d-e8d7f698ead0",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coreDispatch_nil": {
+   "submitted_at": 1792165031.0759916,
+   "http": 200,
+   "submission_id": "465e0f46-8f08-44d7-83f3-60f5105123ad",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coreDispatch_dim": {
+   "submitted_at": 1792165041.098546,
+   "http": 200,
+   "submission_id": "52643b16-a309-4848-b1f4-944ad62f716c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Cost.Prog.coreDispatch_lock": {
+   "submitted_at": 1792165041.7753553,
+   "http": 200,
+   "submission_id": "5766d263-d2e8-4c1b-819b-8f8576588a23",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.tensorFamily_one": {
+   "submitted_at": 1792165042.54428,
+   "http": 200,
+   "submission_id": "118ea41f-c140-43bb-b7ba-475e9d490ce7",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.sum_tensorFamily": {
+   "submitted_at": 1792165043.1921504,
+   "http": 200,
+   "submission_id": "631224f3-c4d7-423e-8bc1-b2efa9209382",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.tensorFamily_mul_self": {
+   "submitted_at": 1792165052.2761006,
+   "http": 200,
+   "submission_id": "ac1bee68-f5f9-4d0d-aff9-b81fe8bb23a9",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.tensorFamily_star": {
+   "submitted_at": 1792165074.6091528,
+   "http": 200,
+   "submission_id": "ad73f996-d085-490a-9928-59dc9a80bb34",
+   "status": "ACCEPTED",
+   "error_message": ""
   }
  },
  "log": []
