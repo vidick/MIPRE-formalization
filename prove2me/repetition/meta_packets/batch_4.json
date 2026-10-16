@@ -1,589 +1,388 @@
 [
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.dSVUniformDensitySpectralAtomDiscrepancy_le",
-  "source_name": "QuantumParallelRepetition.dSVUniformDensitySpectralAtomDiscrepancy_le",
-  "formal_statement": "theorem QuantumParallelRepetition.dSVUniformDensitySpectralAtomDiscrepancy_le\n    {d : ℕ} (ξ ζ : BipartiteUnitVector d) :\n    dSVUniformDensitySpectralAtomDiscrepancy ξ ζ ≤\n      2 * Real.sqrt 2 * ‖ξ.val - ζ.val‖ := by sorry",
+  "theorem_name": "MIPRE.Cost.Prog.lockProg_runs",
+  "source_name": "MIPRE.Cost.Prog.lockProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.lockProg_runs {univ : Prog} (hU : univ.WellScoped 1) {s : ℕ} (hs : 0 < s)\n    (sD nD kD wD jD : Data) (u y : List Data) (f : List Data → List Data → Data) (Tu Z : ℕ)\n    (hf : ∀ p ∈ chunkPairs s hs u y,\n      ∃ t ≤ Tu, Eval [mapQuery sD nD kD wD jD (list p.1) (list p.2)] univ (f p.1 p.2) t)\n    (hZ : s + (list u).size + (list y).size + (mapCtx sD nD kD wD jD).size + 1 +\n      u.length * (Tu + 1) + Tu ≤ Z) :\n    ∃ t ≤ lockCost s (mapCtx sD nD kD wD jD).size (list u).size (list y).size Z,\n      Eval [lockInput sD nD (encode s) kD wD jD (list u) (list y)] (lockProg univ)\n        (list ((chunkPairs s hs u y).map fun p => toList (f p.1 p.2)).flatten) t := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators ComplexOrder MatrixOrder"
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L910-L996",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
+  "docstring": "`lockProg` on a nonzero dimension: the block loop, then the reversal.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L195-L267",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
   "lines": [
-   910,
-   996
+   195,
+   267
   ],
   "blueprint": [],
   "imported_nodes": [
-   "QuantumParallelRepetition.positiveDensity_eigenvalues_sum",
-   "QuantumParallelRepetition.schmidtVector_spectralEnergy_le",
-   "QuantumParallelRepetition.weighted_real_cauchy",
-   "QuantumParallelRepetition.targetReducedDensity_trace",
-   "QuantumParallelRepetition.targetSpectralAtomOverlap_eq_basis_norm_sq",
-   "QuantumParallelRepetition.exists_proofTargetCanonicalSpectralSchmidtDecomposition",
-   "QuantumParallelRepetition.dSVUniformDensitySchmidtSumMass_le_four"
+   "MIPRE.Cost.Prog.mapLoop_runs",
+   "MIPRE.Cost.Data.length_le_size_list'"
   ],
-  "pasted_helpers": 5,
-  "prooflines": 83,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.ClassicalSampling.markedFirst_event_card_mul",
-  "source_name": "QuantumParallelRepetition.ClassicalSampling.markedFirst_event_card_mul",
-  "formal_statement": "theorem QuantumParallelRepetition.ClassicalSampling.markedFirst_event_card_mul\n    (rank : α ≃ Fin (Fintype.card α))\n    (marked : Finset α) (nonempty : marked.Nonempty)\n    (event : Finset α) (hevent : event ⊆ marked) :\n    (Finset.univ.filter fun permutation : Equiv.Perm α =>\n        markedFirst rank marked nonempty permutation ∈ event).card *\n        marked.card =\n      event.card * Fintype.card (Equiv.Perm α) := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.ClassicalSampling",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators",
-   "variable {α : Type*} [Fintype α] [DecidableEq α]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L1220-L1271",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   1220,
-   1271
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 7,
-  "prooflines": 44,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.Pinsker.pinskerScalarGap_nonneg",
-  "source_name": "QuantumParallelRepetition.Pinsker.pinskerScalarGap_nonneg",
-  "formal_statement": "theorem QuantumParallelRepetition.Pinsker.pinskerScalarGap_nonneg {x : ℝ} (hx : 0 ≤ x) :\n    0 ≤ pinskerScalarGap x := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.Pinsker",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L1655-L1709",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   1655,
-   1709
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 6,
-  "prooflines": 53,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.Pinsker.finiteRelativeEntropy_eq_log_sum",
-  "source_name": "QuantumParallelRepetition.Pinsker.finiteRelativeEntropy_eq_log_sum",
-  "formal_statement": "theorem QuantumParallelRepetition.Pinsker.finiteRelativeEntropy_eq_log_sum\n    {ι : Type*} [Fintype ι]\n    (p q : ι → ℝ)\n    (hq : ∀ i, 0 < q i)\n    (hp_normalized : (∑ i, p i) = 1)\n    (hq_normalized : (∑ i, q i) = 1) :\n    finiteRelativeEntropy p q =\n      ∑ i, p i * Real.log (p i / q i) := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.Pinsker",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L1737-L1756",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   1737,
-   1756
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 0,
-  "prooflines": 12,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.Pinsker.finite_pinsker",
-  "source_name": "QuantumParallelRepetition.Pinsker.finite_pinsker",
-  "formal_statement": "theorem QuantumParallelRepetition.Pinsker.finite_pinsker\n    {ι : Type*} [Fintype ι]\n    (p q : ι → ℝ)\n    (hp : ∀ i, 0 ≤ p i)\n    (hq : ∀ i, 0 < q i)\n    (hp_normalized : (∑ i, p i) = 1)\n    (hq_normalized : (∑ i, q i) = 1) :\n    2 * (finiteTotalVariation p q) ^ 2 ≤ finiteRelativeEntropy p q := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.Pinsker",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L1758-L1822",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   1758,
-   1822
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.Pinsker.pinskerScalarGap_nonneg"
-  ],
-  "pasted_helpers": 2,
-  "prooflines": 57,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.Pinsker.finiteRelativeEntropy_eq_log_sum_of_absolute_continuity",
-  "source_name": "QuantumParallelRepetition.Pinsker.finiteRelativeEntropy_eq_log_sum_of_absolute_continuity",
-  "formal_statement": "theorem QuantumParallelRepetition.Pinsker.finiteRelativeEntropy_eq_log_sum_of_absolute_continuity\n    {ι : Type*} [Fintype ι]\n    (p q : ι → ℝ)\n    (hq : ∀ i, 0 ≤ q i)\n    (absolute_continuity : ∀ i, q i = 0 → p i = 0)\n    (hp_normalized : (∑ i, p i) = 1)\n    (hq_normalized : (∑ i, q i) = 1) :\n    finiteRelativeEntropy p q =\n      ∑ i, p i * Real.log (p i / q i) := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.Pinsker",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L1891-L1914",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   1891,
-   1914
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 0,
-  "prooflines": 15,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.ClassicalInformation.distributionRoundedProbability_totalVariation_le",
-  "source_name": "QuantumParallelRepetition.ClassicalInformation.distributionRoundedProbability_totalVariation_le",
-  "formal_statement": "theorem QuantumParallelRepetition.ClassicalInformation.distributionRoundedProbability_totalVariation_le\n    (base : ι) (denominator : ℕ) (positive : 0 < denominator)\n    (p : ι → ℝ)\n    (hp : ∀ i, 0 ≤ p i)\n    (normalized : (∑ i, p i) = 1) :\n    finiteTotalVariation p\n        (distributionRoundedProbability base denominator p) ≤\n      (Fintype.card ι : ℝ) / denominator := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.ClassicalInformation",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators",
-   "open QuantumParallelRepetition.Pinsker",
-   "open QuantumParallelRepetition.ClassicalSampling",
-   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L2068-L2138",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   2068,
-   2138
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 6,
+  "pasted_helpers": 8,
   "prooflines": 63,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.ClassicalInformation.finite_log_sum_inequality",
-  "source_name": "QuantumParallelRepetition.ClassicalInformation.finite_log_sum_inequality",
-  "formal_statement": "theorem QuantumParallelRepetition.ClassicalInformation.finite_log_sum_inequality\n    (indices : Finset ι) (p q : ι → ℝ)\n    (hp : ∀ i, 0 ≤ p i)\n    (hq : ∀ i, 0 ≤ q i)\n    (absolute_continuity : ∀ i, q i = 0 → p i = 0)\n    (positive_mass : 0 < ∑ i ∈ indices, q i) :\n    (∑ i ∈ indices, q i) *\n        InformationTheory.klFun\n          ((∑ i ∈ indices, p i) / (∑ i ∈ indices, q i)) ≤\n      ∑ i ∈ indices,\n        q i * InformationTheory.klFun (p i / q i) := by sorry",
+  "theorem_name": "MIPRE.Cost.Prog.repSampCore_wellScoped",
+  "source_name": "MIPRE.Cost.Prog.repSampCore_wellScoped",
+  "formal_statement": "theorem MIPRE.Cost.Prog.repSampCore_wellScoped {univ : Prog} (hU : univ.WellScoped 1) :\n    (repSampCore univ).WellScoped 1 := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.ClassicalInformation",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators",
-   "open QuantumParallelRepetition.Pinsker",
-   "open QuantumParallelRepetition.ClassicalSampling",
-   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
   ],
   "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L2140-L2200",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L298-L302",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
   "lines": [
-   2140,
-   2200
+   298,
+   302
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.repSampCore_prefix",
+  "source_name": "MIPRE.Cost.Prog.repSampCore_prefix",
+  "formal_statement": "theorem MIPRE.Cost.Prog.repSampCore_prefix {univ : Prog} (hU : univ.WellScoped 1) (sD lD tD nD d : Data)\n    {sz : Data} {td : ℕ}\n    (hdim : Eval [Data.cons sD (.cons nD (encode CL.Sampler.Query.dimension))] univ sz td)\n    {r : Data} {t : ℕ} (hc : Eval (coreEnv sD lD tD nD d sz) (coreDispatch univ) r t) :\n    Eval [Data.cons (sampParams sD lD tD) (.cons nD d)] (repSampCore univ) r\n      (t + td + 2 * (sD.size + nD.size) + 32) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The common prefix of the core: the input taken apart and the dimension query answered,\nthen the dispatch.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L316-L337",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
+  "lines": [
+   316,
+   337
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.coreDispatch_nil",
+  "source_name": "MIPRE.Cost.Prog.coreDispatch_nil",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coreDispatch_nil (univ : Prog) (sD lD tD nD sz : Data) :\n    Eval (coreEnv sD lD tD nD .nil sz) (coreDispatch univ) .nil 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The dispatch on an empty query: `nil`.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L339-L342",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
+  "lines": [
+   339,
+   342
   ],
   "blueprint": [],
   "imported_nodes": [],
   "pasted_helpers": 0,
-  "prooflines": 48,
+  "prooflines": 1,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.ClassicalInformation.finite_relative_entropy_data_processing",
-  "source_name": "QuantumParallelRepetition.ClassicalInformation.finite_relative_entropy_data_processing",
-  "formal_statement": "theorem QuantumParallelRepetition.ClassicalInformation.finite_relative_entropy_data_processing\n    (map : ι → κ) (p q : ι → ℝ)\n    (hp : ∀ i, 0 ≤ p i)\n    (hq : ∀ i, 0 ≤ q i)\n    (absolute_continuity : ∀ i, q i = 0 → p i = 0) :\n    finiteRelativeEntropy (groupedMass map p) (groupedMass map q) ≤\n      finiteRelativeEntropy p q := by sorry",
+  "theorem_name": "MIPRE.Cost.Prog.coreDispatch_dim",
+  "source_name": "MIPRE.Cost.Prog.coreDispatch_dim",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coreDispatch_dim (univ : Prog) (sD lD tD nD qr sz : Data) {r : Data} {t : ℕ}\n    (hd : Eval [Data.cons sz (.cons lD (.cons nD tD))] dimProg r t) :\n    Eval (coreEnv sD lD tD nD (.cons .nil qr) sz) (coreDispatch univ) r\n      (t + 2 * (sz.size + lD.size + nD.size + tD.size) + 15) := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.ClassicalInformation",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators",
-   "open QuantumParallelRepetition.Pinsker",
-   "open QuantumParallelRepetition.ClassicalSampling",
-   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]",
-   "variable {κ : Type*} [Fintype κ] [DecidableEq κ]"
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L2209-L2255",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
+  "docstring": "The dispatch on a dimension query (kind `nil`): `dimProg` on `(sz, λ, n, τ)`.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L344-L360",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
   "lines": [
-   2209,
-   2255
+   344,
+   360
   ],
   "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.ClassicalInformation.finite_log_sum_inequality"
-  ],
-  "pasted_helpers": 0,
-  "prooflines": 38,
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 12,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.ClassicalInformation.finite_relative_entropy_joint_chain_rule",
-  "source_name": "QuantumParallelRepetition.ClassicalInformation.finite_relative_entropy_joint_chain_rule",
-  "formal_statement": "theorem QuantumParallelRepetition.ClassicalInformation.finite_relative_entropy_joint_chain_rule\n    (p q : ι × κ → ℝ)\n    (hp : ∀ point, 0 ≤ p point)\n    (hq : ∀ point, 0 ≤ q point)\n    (absolute_continuity : ∀ point, q point = 0 → p point = 0)\n    (hp_normalized : (∑ point, p point) = 1)\n    (hq_normalized : (∑ point, q point) = 1) :\n    finiteRelativeEntropy p q =\n      finiteRelativeEntropy (jointFirstMarginal p)\n        (jointFirstMarginal q) +\n      ∑ i : ι, jointFirstMarginal p i *\n        finiteRelativeEntropy (jointConditional p i)\n          (jointConditional q i) := by sorry",
+  "theorem_name": "MIPRE.Cost.Prog.coreDispatch_lock",
+  "source_name": "MIPRE.Cost.Prog.coreDispatch_lock",
+  "formal_statement": "theorem MIPRE.Cost.Prog.coreDispatch_lock {univ : Prog} (hU : univ.WellScoped 1) (sD lD tD nD k₀ k₁ qr sz : Data)\n    {r : Data} {t : ℕ}\n    (hl : Eval [Data.cons sD (.cons nD (.cons sz (.cons (.cons k₀ k₁) qr)))] (lockProg univ) r t) :\n    Eval (coreEnv sD lD tD nD (.cons (.cons k₀ k₁) qr) sz) (coreDispatch univ) r\n      (t + 2 * (sD.size + nD.size + sz.size + k₀.size + k₁.size + qr.size) + 20) := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.ClassicalInformation",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators",
-   "open QuantumParallelRepetition.Pinsker",
-   "open QuantumParallelRepetition.ClassicalSampling",
-   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]",
-   "variable {κ : Type*} [Fintype κ]"
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L2312-L2467",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
+  "docstring": "The dispatch on a query of nonzero kind: `lockProg` on `(S̄, n, sz, kind, rest)`.",
+  "module": "MIPRE.Foundations.Repeat.Sampler",
+  "module_doc": "/-!\n# The program of the repeated sampler\n\nThe sampler of `ComputeParrepVerifier` (`thm:parallel-repetition`;\n`planning/repetition-verifier.md`, R3(b)) as a program of the ambient model. It is one fixed\nprogram `repSampCore univ` — `univ` a universal machine — run through the s-m-n construction\n`hardcode` on the datum `(S̄, λ, τ)`: its input is then `((S̄, λ, τ), (n, q))`, with `S̄` the\ninput sampler's program, `λ, τ` in binary and `q` a query. It\n\n1. asks `S̄` for its dimension `s = s(n)`, through `univ`;\n2. on the dimension query (`kind = 0`, i.e. `nil`) runs `dimProg`: the numeral `2^m s` with\n   `m = τ (|λ| + |n|)`, written as `m` zero bits in front of the bits of `s` (`powBody`);\n3. on any other query `(kind, w, j, u, y)` runs `lockProg`: `s` in unary, then the block loop\n   `mapBody` over `u` and `y` in blocks of `s`, and the concatenation of the answers.\n\nEvery input of the form `((S̄, λ, τ), (n, d))` halts: the missing components of a malformed\n`d` are `nil`, on which each `elim` stops with `nil`. The costs are explicit throughout, for\nthe time bound of the repeated verifier (`MIPRE.Foundations.Repeat.SamplerCost`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Sampler.lean#L362-L380",
+  "source_path": "MIPRE/Foundations/Repeat/Sampler.lean",
   "lines": [
-   2312,
-   2467
+   362,
+   380
   ],
   "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.Pinsker.finiteRelativeEntropy_eq_log_sum_of_absolute_continuity"
-  ],
-  "pasted_helpers": 4,
-  "prooflines": 141,
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 13,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.ClassicalInformation.rationalMarked_markedTotalVariation_eq",
-  "source_name": "QuantumParallelRepetition.ClassicalInformation.rationalMarked_markedTotalVariation_eq",
-  "formal_statement": "theorem QuantumParallelRepetition.ClassicalInformation.rationalMarked_markedTotalVariation_eq\n    (denominator : ℕ) (positive : 0 < denominator)\n    (left right : ι → ℕ)\n    (hleft : (∑ i, left i) = denominator)\n    (hright : (∑ i, right i) = denominator) :\n    markedTotalVariation\n        (rationalMarked denominator left)\n        (rationalMarked denominator right) =\n      finiteTotalVariation\n        (fun i => (left i : ℝ) / denominator)\n        (fun i => (right i : ℝ) / denominator) := by sorry",
+  "theorem_name": "MIPRE.Repeat.size_le_of_mem_blockQueries",
+  "source_name": "MIPRE.Repeat.size_le_of_mem_blockQueries",
+  "formal_statement": "theorem MIPRE.Repeat.size_le_of_mem_blockQueries (s : ℕ) (d q : Data) (hq : q ∈ blockQueries s d) :\n    q.size ≤ d.size := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.ClassicalInformation",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators",
-   "open QuantumParallelRepetition.Pinsker",
-   "open QuantumParallelRepetition.ClassicalSampling",
-   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L2530-L2621",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
+  "docstring": "The size of every block query is at most the size of the query datum.",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean#L37-L52",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
   "lines": [
-   2530,
-   2621
+   37,
+   52
   ],
   "blueprint": [],
   "imported_nodes": [],
   "pasted_helpers": 5,
-  "prooflines": 81,
+  "prooflines": 13,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.ClassicalInformation.rationalPermutationOutput_disagreement_le_two_mul_finiteTotalVariation",
-  "source_name": "QuantumParallelRepetition.ClassicalInformation.rationalPermutationOutput_disagreement_le_two_mul_finiteTotalVariation",
-  "formal_statement": "theorem QuantumParallelRepetition.ClassicalInformation.rationalPermutationOutput_disagreement_le_two_mul_finiteTotalVariation\n    (denominator : ℕ) (positive : 0 < denominator)\n    (left right : ι → ℕ)\n    (hleft : (∑ i, left i) = denominator)\n    (hright : (∑ i, right i) = denominator)\n    (nonempty_left : (rationalMarked denominator left).Nonempty)\n    (nonempty_right : (rationalMarked denominator right).Nonempty) :\n    uniformPermutationProbability\n        (fun permutation : Equiv.Perm (ι × Fin denominator) =>\n          rationalPermutationOutput denominator left\n            nonempty_left permutation ≠\n          rationalPermutationOutput denominator right\n            nonempty_right permutation) ≤\n      2 * finiteTotalVariation\n        (fun i => (left i : ℝ) / denominator)\n        (fun i => (right i : ℝ) / denominator) := by sorry",
+  "theorem_name": "MIPRE.Repeat.block_calls_time",
+  "source_name": "MIPRE.Repeat.block_calls_time",
+  "formal_statement": "theorem MIPRE.Repeat.block_calls_time (hS : S.TimeBoundAt n R.S R.k) (d : Data) :\n    ∃ fq : Data → Data, ∀ q ∈ blockQueries (S.dim n) d,\n      ∃ t ≤ selfUniversal.bound.eval (esize S.prog + (esize n + d.size + 1) + R.S * (d.size + 1) ^ R.k),\n        Eval [Data.cons (encode S.prog) (.cons (encode n) q)] selfUniversal.univ (fq q) t := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open QuantumParallelRepetition.ClassicalInformation",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators",
-   "open QuantumParallelRepetition.Pinsker",
-   "open QuantumParallelRepetition.ClassicalSampling",
-   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL",
+   "variable {ℓ : ℕ} (S : CL.Sampler ℓ) (lam tau n : ℕ) (R : Budget) (W : ℕ)"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L2686-L2719",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
+  "docstring": "The block queries through the universal machine, within a uniform bound.",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean#L88-L103",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
   "lines": [
-   2686,
-   2719
+   88,
+   103
   ],
   "blueprint": [],
   "imported_nodes": [
-   "QuantumParallelRepetition.ClassicalSampling.markedFirst_event_card_mul",
-   "QuantumParallelRepetition.ClassicalInformation.rationalMarked_markedTotalVariation_eq"
+   "MIPRE.Repeat.size_le_of_mem_blockQueries"
   ],
-  "pasted_helpers": 16,
-  "prooflines": 18,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.normalizeOrDefault_sub_le",
-  "source_name": "QuantumParallelRepetition.normalizeOrDefault_sub_le",
-  "formal_statement": "theorem QuantumParallelRepetition.normalizeOrDefault_sub_le\n    (fallback u v : E)\n    (hfallback : ‖fallback‖ = 1)\n    (hu : u ≠ 0) :\n    ‖normalizeOrDefault fallback u - normalizeOrDefault fallback v‖ ≤\n      2 * ‖u - v‖ / ‖u‖ := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L3105-L3157",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   3105,
-   3157
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 0,
-  "prooflines": 47,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.controlledFiniteTensorLocalUnitary_apply",
-  "source_name": "QuantumParallelRepetition.controlledFiniteTensorLocalUnitary_apply",
-  "formal_statement": "theorem QuantumParallelRepetition.controlledFiniteTensorLocalUnitary_apply\n    {Ω ι β : Type*}\n    [Fintype Ω] [DecidableEq Ω]\n    [Fintype ι] [DecidableEq ι]\n    [Fintype β] [DecidableEq β]\n    (U : Ω → ι → Matrix.unitaryGroup β ℂ)\n    (ω ν : Ω) (q r : ι → β) :\n    (controlledFiniteTensorLocalUnitary U :\n      Matrix (Σ _ : Ω, (ι → β)) (Σ _ : Ω, (ι → β)) ℂ)\n        ⟨ω, q⟩ ⟨ν, r⟩ =\n      if ω = ν then\n        ∏ i : ι, (U ω i : Matrix β β ℂ) (q i) (r i)\n      else 0 := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L3407-L3430",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   3407,
-   3430
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
   "pasted_helpers": 0,
   "prooflines": 11,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.dSVUniformDensityCompletePureHistory_zeroFlag_apply",
-  "source_name": "QuantumParallelRepetition.dSVUniformDensityCompletePureHistory_zeroFlag_apply",
-  "formal_statement": "theorem QuantumParallelRepetition.dSVUniformDensityCompletePureHistory_zeroFlag_apply\n    (N d L : ℕ)\n    (flag other : Fin (L + 1))\n    (alice bob :\n      DSVUniformDensityIndependentHistoryLocalIndex\n        (L + 1) N d) :\n    dSVUniformDensityThresholdWholeHistorySharedState N d L\n      (⟨flag, alice⟩, ⟨other, bob⟩) =\n      if flag.val = 0 ∧ other.val = 0 then\n        dSVUniformDensityIndependentSharedState\n          (L + 1) N d (alice, bob)\n      else 0 := by sorry",
+  "theorem_name": "MIPRE.Repeat.repSampler_halts_within",
+  "source_name": "MIPRE.Repeat.repSampler_halts_within",
+  "formal_statement": "theorem MIPRE.Repeat.repSampler_halts_within (hS : S.TimeBoundAt n R.S R.k) (d : Data) :\n    ∃ r t, t ≤ anyCost lam tau n (encode S.prog) (S.dim n) d.size\n        (selfUniversal.bound.eval (esize S.prog + (esize n + 10) + R.S * 10 ^ R.k))\n        (selfUniversal.bound.eval (esize S.prog + (esize n + d.size + 1) + R.S * (d.size + 1) ^ R.k)) +\n        (esize S.prog + esize lam + esize tau + 2) + (esize n + d.size + 1) + 3 ∧\n      (repSamplerProg S.prog lam tau).Runs (.cons (encode n) d) r t := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open WithLp",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder"
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL",
+   "variable {ℓ : ℕ} (S : CL.Sampler ℓ) (lam tau n : ℕ) (R : Budget) (W : ℕ)"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L3559-L3655",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
+  "docstring": "**The repeated sampler halts within `anyCost`** plus the s-m-n overhead.",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean#L105-L129",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
   "lines": [
-   3559,
-   3655
+   105,
+   129
   ],
   "blueprint": [],
   "imported_nodes": [
-   "QuantumParallelRepetition.sharedThresholdResourceRaw_norm_sq"
-  ],
-  "pasted_helpers": 5,
-  "prooflines": 85,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.finitePurificationMatrix_gram",
-  "source_name": "QuantumParallelRepetition.finitePurificationMatrix_gram",
-  "formal_statement": "theorem QuantumParallelRepetition.finitePurificationMatrix_gram\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (F : ι → Matrix d d ℂ) (M : Matrix d d ℂ)\n    (positive : ∀ i, (F i).PosSemidef)\n    (hM : M.PosSemidef) (a : ι) :\n    (finitePurificationMatrix F M positive hM a).conjTranspose *\n      finitePurificationMatrix F M positive hM a = F a := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise InnerProductSpace"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L4021-L4029",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   4021,
-   4029
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.spectralPurificationFilter_memLp_two"
-  ],
-  "pasted_helpers": 13,
-  "prooflines": 2,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.finitePurificationMatrix_difference_gram_eq_integral",
-  "source_name": "QuantumParallelRepetition.finitePurificationMatrix_difference_gram_eq_integral",
-  "formal_statement": "theorem QuantumParallelRepetition.finitePurificationMatrix_difference_gram_eq_integral\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (F : ι → Matrix d d ℂ) (M : Matrix d d ℂ)\n    (positive : ∀ i, (F i).PosSemidef)\n    (hM : M.PosSemidef) (a : ι) :\n    (finitePurificationMatrix F M positive hM a -\n        meanFinitePurificationMatrix F M positive hM).conjTranspose *\n      (finitePurificationMatrix F M positive hM a -\n        meanFinitePurificationMatrix F M positive hM) =\n      ∫ s in Ioi (0 : ℝ),\n        star (spectralPurificationFilter (F a) (positive a) s -\n          spectralPurificationFilter M hM s) *\n        (spectralPurificationFilter (F a) (positive a) s -\n          spectralPurificationFilter M hM s) := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise InnerProductSpace"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L4128-L4180",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   4128,
-   4180
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.spectralPurificationFilter_memLp_two"
-  ],
-  "pasted_helpers": 4,
-  "prooflines": 39,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.finite_purification_log_entropy_jensen",
-  "source_name": "QuantumParallelRepetition.finite_purification_log_entropy_jensen",
-  "formal_statement": "theorem QuantumParallelRepetition.finite_purification_log_entropy_jensen\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (weight : ι → ℝ) (F : ι → Matrix d d ℂ)\n    (M : Matrix d d ℂ)\n    (nonnegative : ∀ i, 0 ≤ weight i)\n    (normalized : (∑ i : ι, weight i) = 1)\n    (mean : (∑ i : ι, weight i • F i) = M)\n    (positive : ∀ i, (F i).PosSemidef) :\n    let hM : M.PosSemidef := by\n      rw [← mean]\n      exact weighted_positive_matrix_mean weight F nonnegative positive\n    ((∑ i : ι, weight i •\n        cfc (fun z : ℝ => z * Real.log z) (F i)) -\n      cfc (fun z : ℝ => z * Real.log z) M -\n      (∑ i : ι, weight i •\n        ((finitePurificationMatrix F M positive hM i -\n            meanFinitePurificationMatrix F M positive hM).conjTranspose *\n          (finitePurificationMatrix F M positive hM i -\n            meanFinitePurificationMatrix F M positive hM)))).PosSemidef := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise InnerProductSpace"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L4223-L4256",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   4223,
-   4256
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.spectralPurificationFilter_memLp_two",
-   "QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen",
-   "QuantumParallelRepetition.finitePurificationMatrix_difference_gram_eq_integral"
-  ],
-  "pasted_helpers": 3,
-  "prooflines": 15,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.strategyPurificationVector_quadratic",
-  "source_name": "QuantumParallelRepetition.strategyPurificationVector_quadratic",
-  "formal_statement": "theorem QuantumParallelRepetition.strategyPurificationVector_quadratic\n    {X Y A B : Type*}\n    [Fintype X] [Fintype Y] [Fintype A] [Fintype B]\n    {G : Game X Y A B} (S : Strategy G)\n    (EA : Matrix S.Alice S.Alice ℂ)\n    (EB : Matrix S.Bob S.Bob ℂ) :\n    quadraticExpectation\n      (Matrix.toEuclideanCLM\n        (n := (S.Alice × (S.Alice × S.Bob)) × S.Bob) (𝕜 := ℂ)\n        ((EA ⊗ₖ (1 : Matrix (S.Alice × S.Bob)\n          (S.Alice × S.Bob) ℂ)) ⊗ₖ EB))\n      (strategyPurificationVector S) =\n      (Matrix.trace\n        (S.state.matrix * (EA ⊗ₖ EB))).re := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open WithLp",
-   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder Matrix.Norms.L2Operator InnerProductSpace"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L4409-L4461",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
-  "lines": [
-   4409,
-   4461
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.spectralSupportSqrt_sq"
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Repeat.block_calls_time"
   ],
   "pasted_helpers": 2,
-  "prooflines": 39,
+  "prooflines": 18,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.rectangular_matrix_mulVec_norm_sq",
-  "source_name": "QuantumParallelRepetition.rectangular_matrix_mulVec_norm_sq",
-  "formal_statement": "theorem QuantumParallelRepetition.rectangular_matrix_mulVec_norm_sq\n    {d e : Type*} [Fintype d] [Fintype e] [DecidableEq d]\n    (K : Matrix e d ℂ) (z : EuclideanSpace ℂ d) :\n    ‖toLp 2 (K.mulVec (ofLp z))‖ ^ 2 =\n      quadraticExpectation\n        (Matrix.toEuclideanCLM (n := d) (𝕜 := ℂ)\n          (K.conjTranspose * K)) z := by sorry",
+  "theorem_name": "MIPRE.Repeat.repSampler_timeBound",
+  "source_name": "MIPRE.Repeat.repSampler_timeBound",
+  "formal_statement": "theorem MIPRE.Repeat.repSampler_timeBound : ∃ c m e, ∀ {ℓ : ℕ} (S : CL.Sampler ℓ) (lam tau n : ℕ)\n    (R : Budget) (W : ℕ), SampDom S lam tau n R W → S.TimeBoundAt n R.S R.k →\n    (repSampler S lam tau).TimeBoundAt n (c * (W + 1) ^ m) (e * (R.k + 1)) := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped ComplexOrder Matrix BigOperators InnerProductSpace",
-   "open Complex Matrix Finset",
-   "open WithLp",
-   "open scoped BigOperators ComplexOrder Kronecker MatrixOrder Matrix.Norms.L2Operator InnerProductSpace"
+   "open MIPRE",
+   "open MIPRE.Repeat",
+   "open MIPRE.Cost MIPRE.Cost.Data MIPRE.Cost.Prog MIPRE.CL",
+   "variable {ℓ : ℕ} (S : CL.Sampler ℓ) (lam tau n : ℕ) (R : Budget) (W : ℕ)"
+  ],
+  "docstring": "**The running time of the repeated sampler**: constants `c, m, e` uniform in everything\nsuch that, whenever `W` dominates the parameters at `n` and the input sampler runs within\n`R.S (|d| + 1)^{R.k}` there, the repeated sampler runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}`.",
+  "module": "MIPRE.Foundations.Repeat.SamplerCost",
+  "module_doc": "/-!\n# The running time of the repeated sampler\n\n`repSampler_timeBound`: when the input sampler runs within `R.S (|d| + 1)^{R.k}` at index `n`\nand has dimension at most `R.d` there, the repeated sampler on `(λ, τ)` runs within\n`c (W + 1)^m (|d| + 1)^{e (R.k + 1)}` for constants `c, m, e` independent of everything, `W`\nany number dominating `R.S`, `R.d`, `λ`, `τ`, `n`, the description length of the input\nsampler, the repetition count and `10^{R.k}` (the input's time on the dimension query). The\ncost is the explicit one of `repSampCore_runs_any`, each of whose pieces is a sum and product\nof quantities below `W`, below `|d| + 1`, or of the cost of a call to the input sampler\nthrough the universal machine, bounded by `Dom` combinators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/SamplerCost.lean#L269-L294",
+  "source_path": "MIPRE/Foundations/Repeat/SamplerCost.lean",
+  "lines": [
+   269,
+   294
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Repeat.repSampler_halts_within"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.tensorFamily_one",
+  "source_name": "MIPRE.tensorFamily_one",
+  "formal_statement": "theorem MIPRE.tensorFamily_one [DecidableEq ι] : tensorFamily (fun _ : Fin k => (1 : Matrix ι ι ℂ)) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "variable {k : ℕ} {ι : Type*}"
   ],
   "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part02",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean#L4493-L4526",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part02.lean",
+  "module": "MIPRE.Foundations.TensorFamily",
+  "module_doc": "/-!\n# The Kronecker product of a family of matrices\n\nThe `k`-fold tensor product `M₁ ⊗ ⋯ ⊗ M_k` of matrices on `ℂ^ι`, as a matrix on\n`ℂ^{Fin k → ι}`: `(⊗ᵢ Mᵢ) v w = ∏ᵢ Mᵢ (v i) (w i)`. This is what the `k`-fold tensor power of a\nstrategy measures with (`MIPRE.SyncStrategy.tensorPow`, `Background/Repetition/TensorPower.lean`),\nand the four facts about it that the value and PCC computations use: it is multiplicative\n(`tensorFamily_mul`), compatible with the adjoint (`tensorFamily_conjTranspose`), sends the\nconstant family `1` to `1` (`tensorFamily_one`), sums coordinatewise (`sum_tensorFamily`) and\nhas trace the product of the traces (`trace_tensorFamily`). All are `Fintype.prod_sum`, the\ndistributivity of a product of sums over `Fin k` into a sum over `Fin k → ι`.\n\nMathlib's `Matrix.kronecker` is the binary case with the product index `ι × ι`; the family\nform is more convenient than iterating it, because `Fin k → ι` needs no reassociation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/TensorFamily.lean#L55-L61",
+  "source_path": "MIPRE/Foundations/TensorFamily.lean",
   "lines": [
-   4493,
-   4526
+   55,
+   61
   ],
   "blueprint": [],
   "imported_nodes": [],
   "pasted_helpers": 0,
-  "prooflines": 27,
+  "prooflines": 6,
   "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_tensorFamily",
+  "source_name": "MIPRE.sum_tensorFamily",
+  "formal_statement": "theorem MIPRE.sum_tensorFamily {A : Type*} [Fintype A] (M : Fin k → A → Matrix ι ι ℂ) :\n    ∑ a : Fin k → A, tensorFamily (fun i => M i (a i)) = tensorFamily fun i => ∑ a, M i a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "variable {k : ℕ} {ι : Type*}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.TensorFamily",
+  "module_doc": "/-!\n# The Kronecker product of a family of matrices\n\nThe `k`-fold tensor product `M₁ ⊗ ⋯ ⊗ M_k` of matrices on `ℂ^ι`, as a matrix on\n`ℂ^{Fin k → ι}`: `(⊗ᵢ Mᵢ) v w = ∏ᵢ Mᵢ (v i) (w i)`. This is what the `k`-fold tensor power of a\nstrategy measures with (`MIPRE.SyncStrategy.tensorPow`, `Background/Repetition/TensorPower.lean`),\nand the four facts about it that the value and PCC computations use: it is multiplicative\n(`tensorFamily_mul`), compatible with the adjoint (`tensorFamily_conjTranspose`), sends the\nconstant family `1` to `1` (`tensorFamily_one`), sums coordinatewise (`sum_tensorFamily`) and\nhas trace the product of the traces (`trace_tensorFamily`). All are `Fintype.prod_sum`, the\ndistributivity of a product of sums over `Fin k` into a sum over `Fin k → ι`.\n\nMathlib's `Matrix.kronecker` is the binary case with the product index `ι × ι`; the family\nform is more convenient than iterating it, because `Fin k → ι` needs no reassociation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/TensorFamily.lean#L68-L72",
+  "source_path": "MIPRE/Foundations/TensorFamily.lean",
+  "lines": [
+   68,
+   72
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.tensorFamily_mul_self",
+  "source_name": "MIPRE.tensorFamily_mul_self",
+  "formal_statement": "theorem MIPRE.tensorFamily_mul_self [Fintype ι] {M : Fin k → Matrix ι ι ℂ} (h : ∀ i, M i * M i = M i) :\n    tensorFamily M * tensorFamily M = tensorFamily M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "variable {k : ℕ} {ι : Type*}"
+  ],
+  "docstring": "The tensor product of a family of idempotents is idempotent.",
+  "module": "MIPRE.Foundations.TensorFamily",
+  "module_doc": "/-!\n# The Kronecker product of a family of matrices\n\nThe `k`-fold tensor product `M₁ ⊗ ⋯ ⊗ M_k` of matrices on `ℂ^ι`, as a matrix on\n`ℂ^{Fin k → ι}`: `(⊗ᵢ Mᵢ) v w = ∏ᵢ Mᵢ (v i) (w i)`. This is what the `k`-fold tensor power of a\nstrategy measures with (`MIPRE.SyncStrategy.tensorPow`, `Background/Repetition/TensorPower.lean`),\nand the four facts about it that the value and PCC computations use: it is multiplicative\n(`tensorFamily_mul`), compatible with the adjoint (`tensorFamily_conjTranspose`), sends the\nconstant family `1` to `1` (`tensorFamily_one`), sums coordinatewise (`sum_tensorFamily`) and\nhas trace the product of the traces (`trace_tensorFamily`). All are `Fintype.prod_sum`, the\ndistributivity of a product of sums over `Fin k` into a sum over `Fin k → ι`.\n\nMathlib's `Matrix.kronecker` is the binary case with the product index `ι × ι`; the family\nform is more convenient than iterating it, because `Fin k → ι` needs no reassociation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/TensorFamily.lean#L74-L77",
+  "source_path": "MIPRE/Foundations/TensorFamily.lean",
+  "lines": [
+   74,
+   77
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.tensorFamily_star",
+  "source_name": "MIPRE.tensorFamily_star",
+  "formal_statement": "theorem MIPRE.tensorFamily_star {M : Fin k → Matrix ι ι ℂ} (h : ∀ i, star (M i) = M i) :\n    star (tensorFamily M) = tensorFamily M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "variable {k : ℕ} {ι : Type*}"
+  ],
+  "docstring": "The tensor product of a family of self-adjoint matrices is self-adjoint.",
+  "module": "MIPRE.Foundations.TensorFamily",
+  "module_doc": "/-!\n# The Kronecker product of a family of matrices\n\nThe `k`-fold tensor product `M₁ ⊗ ⋯ ⊗ M_k` of matrices on `ℂ^ι`, as a matrix on\n`ℂ^{Fin k → ι}`: `(⊗ᵢ Mᵢ) v w = ∏ᵢ Mᵢ (v i) (w i)`. This is what the `k`-fold tensor power of a\nstrategy measures with (`MIPRE.SyncStrategy.tensorPow`, `Background/Repetition/TensorPower.lean`),\nand the four facts about it that the value and PCC computations use: it is multiplicative\n(`tensorFamily_mul`), compatible with the adjoint (`tensorFamily_conjTranspose`), sends the\nconstant family `1` to `1` (`tensorFamily_one`), sums coordinatewise (`sum_tensorFamily`) and\nhas trace the product of the traces (`trace_tensorFamily`). All are `Fintype.prod_sum`, the\ndistributivity of a product of sums over `Fin k` into a sum over `Fin k → ι`.\n\nMathlib's `Matrix.kronecker` is the binary case with the product index `ι × ι`; the family\nform is more convenient than iterating it, because `Fin k → ι` needs no reassociation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/TensorFamily.lean#L79-L83",
+  "source_path": "MIPRE/Foundations/TensorFamily.lean",
+  "lines": [
+   79,
+   83
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "glue-leaf-closure",
+  "theorem_name": "MIPRE.Repetition.nonempty_seven",
+  "formal_statement": "theorem MIPRE.Repetition.nonempty_seven : Nonempty (MIPRE.Repetition 7) := by sorry",
+  "preamble_opens": [],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/Verifier.lean",
+  "source_path": "MIPRE/Background/Repetition/Verifier.lean",
+  "lines": null,
+  "witness": "⟨MIPRE.repetition 7⟩",
+  "blueprint": [],
+  "imported_nodes": [],
+  "stub_published": true,
+  "solution_file": "Solutions/Sol_MIPRE_Repetition_nonempty_seven.lean"
  }
 ]

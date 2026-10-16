@@ -1,559 +1,535 @@
 [
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.conditionedBobEffect_complement_positive",
-  "source_name": "QuantumParallelRepetition.conditionedBobEffect_complement_positive",
-  "formal_statement": "theorem QuantumParallelRepetition.conditionedBobEffect_complement_positive\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (β : {i : Fin n // i ∈ D} → B)\n    (ys : Fin n → Y) :\n    (1 - conditionedBobEffect G n S D β ys).PosSemidef := by sorry",
+  "theorem_name": "MIPRE.exists_projective_dilation",
+  "source_name": "MIPRE.exists_projective_dilation",
+  "formal_statement": "theorem MIPRE.exists_projective_dilation {d A X : Type*} [Fintype d] [DecidableEq d]\n    [Fintype A] [DecidableEq A] (a₀ : A) {E : X → A → Matrix d d ℂ}\n    (hpos : ∀ x a, (E x a).PosSemidef) (hsum : ∀ x, ∑ a, E x a = 1) :\n    ∃ P : X → A → Matrix (d × A) (d × A) ℂ,\n      (∀ x a, star (P x a) = P x a) ∧\n      (∀ x a, P x a * P x a = P x a) ∧\n      (∀ x, ∑ a, P x a = 1) ∧\n      (∀ x a, (ancillaEmbed d a₀)ᴴ * (P x a * ancillaEmbed d a₀) = E x a) := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped BigOperators Kronecker",
-   "open scoped ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2399-L2425",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   2399,
-   2425
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 0,
-  "prooflines": 20,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.spectralSupportSqrt_sq",
-  "source_name": "QuantumParallelRepetition.spectralSupportSqrt_sq",
-  "formal_statement": "theorem QuantumParallelRepetition.spectralSupportSqrt_sq\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef) :\n    spectralSupportSqrt F hF * spectralSupportSqrt F hF = F := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open scoped BigOperators ComplexOrder MatrixOrder"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L2622-L2638",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   2622,
-   2638
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 0,
-  "prooflines": 13,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.fullHistoryWeight_mul_hidden",
-  "source_name": "QuantumParallelRepetition.fullHistoryWeight_mul_hidden",
-  "formal_statement": "theorem QuantumParallelRepetition.fullHistoryWeight_mul_hidden\n    (G : Game X Y A B) {n : ℕ}\n    (D L : Finset (Fin n))\n    (hL : L ⊆ Finset.univ \\ D)\n    (h : FullSubsetHistory X Y n D L)\n    (hx : {i : Fin n // i ∈ fullHistoryRemaining n D L} → X)\n    (hy : {i : Fin n // i ∈ L} → Y) :\n    fullHistoryWeight G h *\n        fullHistoryHiddenAliceWeight G h hx *\n        fullHistoryHiddenBobWeight G h hy =\n      (G.repeat n).questionWeight\n        (fullHistoryAliceQuestion h hx)\n        (fullHistoryBobQuestion h hy) := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
+   "open MIPRE",
    "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+   "open scoped ComplexOrder Kronecker MatrixOrder"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3228-L3367",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "docstring": "**Naimark dilation of a question-indexed POVM family against a fixed state.** A family of\nPOVMs `{E^x_a}` on `d` is the compression, by the *single* question-independent isometry\n`ancillaEmbed d a₀`, of a family of genuinely *projective* measurements `{P^x_a}` on `d × A`.\nThat the compression does not depend on the question is what lets the dilation be applied to a\nfixed shared state, and it is why the unitary extension of the previous step was needed.",
+  "module": "MIPRE.Foundations.Dilation",
+  "module_doc": "/-!\n# Naimark dilation against a fixed state\n\nA POVM is the compression of a projective measurement on a larger space. What the applications\nneed is more than that: a whole *question-indexed family* of POVMs must be the compression of a\nfamily of projective measurements by **one** question-independent isometry, because the state\nthe expectations are taken against is shared and must not depend on the question.\n`exists_projective_dilation` is that statement, and the unitary extension\n(`exists_unitary_extending`) is the step that buys it.\n\nThis file was extracted from `MIPRE/Background/Repetition/Entangled.lean`, where it was written\nfor the dilation direction of `lem:povm-value-eq`. It is generic mathematics --- matrices, an\nancilla register, and the completion of an orthonormal family to a basis --- and it reaches\nnone of the vendored trees, but `Entangled.lean` imports the 71k-line vendored\n`Repetition/TenProofs/QuantumParallelRepetition`, and `MIPRE/LCS/` may not import\n`MIPRE/Background/` at all. The second consumer is blueprint `lem:ms-direct-anticomm`, whose\nproof dilates each of the Magic Square's six constraint POVMs against one shared ancilla, so\nthe code has to live outside `MIPRE/Background/` to be usable at all.\n\nThe Born-rule transport lemmas at the end travel with it: they are how a dilated projective\nmeasurement is compressed back, and they say nothing about repetition either.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Dilation.lean#L189-L226",
+  "source_path": "MIPRE/Foundations/Dilation.lean",
   "lines": [
-   3228,
-   3367
+   189,
+   226
   ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 4,
-  "prooflines": 127,
+  "blueprint": [
+   {
+    "label": "lem:naimark-dilation",
+    "env": "lemma",
+    "title": "Naimark dilation of a question-indexed family",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.exists_isometry_of_povm",
+   "MIPRE.exists_unitary_extending"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 25,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.conditionedEffects_born_expansion",
-  "source_name": "QuantumParallelRepetition.conditionedEffects_born_expansion",
-  "formal_statement": "theorem QuantumParallelRepetition.conditionedEffects_born_expansion\n    [DecidableEq A] [DecidableEq B]\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D : Finset (Fin n))\n    (α : {i : Fin n // i ∈ D} → A)\n    (β : {i : Fin n // i ∈ D} → B)\n    (xs : Fin n → X) (ys : Fin n → Y) :\n    bornTracePairing S.state.matrix\n        (conditionedAliceEffect G n S D α xs)\n        (conditionedBobEffect G n S D β ys) =\n      ∑ aa : Fin n → A, ∑ bb : Fin n → B,\n        if ∀ (i : Fin n) (hi : i ∈ D), aa i = α ⟨i, hi⟩ then\n          if ∀ (i : Fin n) (hi : i ∈ D), bb i = β ⟨i, hi⟩ then\n            S.outcomeProbability xs ys aa bb\n          else 0\n        else 0 := by sorry",
+  "theorem_name": "MIPRE.quantumValue_eq_of_equiv",
+  "source_name": "MIPRE.quantumValue_eq_of_equiv",
+  "formal_statement": "theorem MIPRE.quantumValue_eq_of_equiv {X' Y' A' B' : Type*} [Fintype X'] [Fintype Y'] [Fintype A']\n    [Fintype B'] (G : Game X Y A B) (G' : Game X' Y' A' B') (eX : X' ≃ X) (eY : Y' ≃ Y)\n    (eA : A' ≃ A) (eB : B' ≃ B)\n    (hμ : ∀ x' y', G'.μ x' y' = G.μ (eX x') (eY y'))\n    (hD : ∀ x' y' a' b', G'.D x' y' a' b' = G.D (eX x') (eY y') (eA a') (eB b')) :\n    quantumValue G' = quantumValue G := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+   "open MIPRE",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3458-L3487",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "docstring": "Games related by equivalences of their alphabets, with matching distribution and\ndecision predicate, have the same quantum value.",
+  "module": "MIPRE.Foundations.GameTransport",
+  "module_doc": "/-!\n# Transport of games and strategies\n\nBookkeeping lemmas about the quantum value under changes of presentation of a game, used to\nidentify a verifier's game with its tabulation as a game description and to compare the same\ngame under different answer-length bounds (blueprint `rem:compression-abstract`):\n\n* **Relabeling.** `quantumValue_eq_of_equiv`: two games related by equivalences of their four\n  alphabets, with matching distribution and decision predicate, have the same quantum value.\n  Strategies are transported by `TensorProductStrategy.relabel`.\n* **Monotonicity.** `quantumValue_mono`: accepting more answer tuples, on the same alphabets\n  and distribution, can only raise the value.\n* **Answer extension.** `quantumValue_extendAnswers`: enlarging the answer alphabets by\n  answers that are always rejected does not change the value. From the small game to the\n  large one a strategy extends by zero operators (`ProjectiveMeasurement.extend`); from the\n  large game to the small one the new answers are merged into an old one\n  (`ProjectiveMeasurement.merge`), which needs the orthogonality of the outcomes of a\n  projective measurement (`ProjectiveMeasurement.mul_eq_zero_of_ne`) and can only raise the\n  value.\n* The synchronous counterparts for PCC strategies: `SyncStrategy.relabel` plays a strategy\n  through a relabeling of the questions and of the answers, keeping the value\n  (`value_relabel`) and the commutation condition (`isPCC_relabel`), whence\n  `syncValue_eq_of_equiv` by the same two-sided `iSup` argument as `quantumValue_eq_of_equiv`;\n  `SyncStrategy.extend` keeps the value and the PCC property; and the constant strategy\n  `SyncStrategy.const` is PCC with value the acceptance mass of a fixed answer pair.\n\nThe synchronous relabeling is what carries a value-`1` PCC strategy of a verifier's game to a\ntabulation of it as a game description, which is item 1 of blueprint `thm:halting`; the\nconsumer is `MIPRE.Foundations.SyncTransport`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameTransport.lean#L322-L339",
+  "source_path": "MIPRE/Foundations/GameTransport.lean",
   "lines": [
-   3458,
-   3487
+   322,
+   339
   ],
   "blueprint": [],
   "imported_nodes": [],
-  "pasted_helpers": 0,
-  "prooflines": 13,
+  "pasted_helpers": 1,
+  "prooflines": 10,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.finite_sum_four_swap",
-  "source_name": "QuantumParallelRepetition.finite_sum_four_swap",
-  "formal_statement": "theorem QuantumParallelRepetition.finite_sum_four_swap\n    {I J K T : Type*}\n    [Fintype I] [Fintype J] [Fintype K] [Fintype T]\n    (f : I → J → K → T → ℝ) :\n    (∑ i : I, ∑ j : J, ∑ k : K, ∑ t : T, f i j k t) =\n      ∑ k : K, ∑ t : T, ∑ i : I, ∑ j : J, f i j k t := by sorry",
+  "theorem_name": "MIPRE.SyncStrategy.value_relabel",
+  "source_name": "MIPRE.SyncStrategy.value_relabel",
+  "formal_statement": "theorem MIPRE.SyncStrategy.value_relabel {X' A' : Type*} [Fintype X'] [Fintype A'] [DecidableEq A']\n    (S : SyncStrategy G) (G' : SynchronousGame X' A') (eX : X' ≃ X) (eA : A' ≃ A)\n    (hμ : ∀ x' y', G'.μ x' y' = G.μ (eX x') (eX y'))\n    (hD : ∀ x' y' a' b', G'.D x' y' a' b' = G.D (eX x') (eX y') (eA a') (eA b')) :\n    (S.relabel G' eX eA).value = S.value := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+   "open MIPRE",
+   "open MIPRE.SyncStrategy",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable [DecidableEq A] {G : SynchronousGame X A}"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3489-L3513",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "docstring": "Relabeling along equivalences with matching distribution and decision predicate\npreserves the value.",
+  "module": "MIPRE.Foundations.GameTransport",
+  "module_doc": "/-!\n# Transport of games and strategies\n\nBookkeeping lemmas about the quantum value under changes of presentation of a game, used to\nidentify a verifier's game with its tabulation as a game description and to compare the same\ngame under different answer-length bounds (blueprint `rem:compression-abstract`):\n\n* **Relabeling.** `quantumValue_eq_of_equiv`: two games related by equivalences of their four\n  alphabets, with matching distribution and decision predicate, have the same quantum value.\n  Strategies are transported by `TensorProductStrategy.relabel`.\n* **Monotonicity.** `quantumValue_mono`: accepting more answer tuples, on the same alphabets\n  and distribution, can only raise the value.\n* **Answer extension.** `quantumValue_extendAnswers`: enlarging the answer alphabets by\n  answers that are always rejected does not change the value. From the small game to the\n  large one a strategy extends by zero operators (`ProjectiveMeasurement.extend`); from the\n  large game to the small one the new answers are merged into an old one\n  (`ProjectiveMeasurement.merge`), which needs the orthogonality of the outcomes of a\n  projective measurement (`ProjectiveMeasurement.mul_eq_zero_of_ne`) and can only raise the\n  value.\n* The synchronous counterparts for PCC strategies: `SyncStrategy.relabel` plays a strategy\n  through a relabeling of the questions and of the answers, keeping the value\n  (`value_relabel`) and the commutation condition (`isPCC_relabel`), whence\n  `syncValue_eq_of_equiv` by the same two-sided `iSup` argument as `quantumValue_eq_of_equiv`;\n  `SyncStrategy.extend` keeps the value and the PCC property; and the constant strategy\n  `SyncStrategy.const` is PCC with value the acceptance mass of a fixed answer pair.\n\nThe synchronous relabeling is what carries a value-`1` PCC strategy of a verifier's game to a\ntabulation of it as a game description, which is item 1 of blueprint `thm:halting`; the\nconsumer is `MIPRE.Foundations.SyncTransport`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameTransport.lean#L469-L484",
+  "source_path": "MIPRE/Foundations/GameTransport.lean",
   "lines": [
-   3489,
-   3513
+   469,
+   484
   ],
   "blueprint": [],
   "imported_nodes": [],
   "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SyncStrategy.isPCC_relabel",
+  "source_name": "MIPRE.SyncStrategy.isPCC_relabel",
+  "formal_statement": "theorem MIPRE.SyncStrategy.isPCC_relabel {X' A' : Type*} [Fintype X'] [Fintype A'] [DecidableEq A']\n    {S : SyncStrategy G} (hS : S.IsPCC) (G' : SynchronousGame X' A') (eX : X' → X)\n    (eA : A' ≃ A) (hμ : ∀ x' y', G'.μ x' y' = G.μ (eX x') (eX y')) :\n    (S.relabel G' eX eA).IsPCC := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SyncStrategy",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable [DecidableEq A] {G : SynchronousGame X A}"
+  ],
+  "docstring": "Relabeling preserves the PCC property: the operators of the relabeled strategy are\noperators of the original one, at question pairs that keep their weight.",
+  "module": "MIPRE.Foundations.GameTransport",
+  "module_doc": "/-!\n# Transport of games and strategies\n\nBookkeeping lemmas about the quantum value under changes of presentation of a game, used to\nidentify a verifier's game with its tabulation as a game description and to compare the same\ngame under different answer-length bounds (blueprint `rem:compression-abstract`):\n\n* **Relabeling.** `quantumValue_eq_of_equiv`: two games related by equivalences of their four\n  alphabets, with matching distribution and decision predicate, have the same quantum value.\n  Strategies are transported by `TensorProductStrategy.relabel`.\n* **Monotonicity.** `quantumValue_mono`: accepting more answer tuples, on the same alphabets\n  and distribution, can only raise the value.\n* **Answer extension.** `quantumValue_extendAnswers`: enlarging the answer alphabets by\n  answers that are always rejected does not change the value. From the small game to the\n  large one a strategy extends by zero operators (`ProjectiveMeasurement.extend`); from the\n  large game to the small one the new answers are merged into an old one\n  (`ProjectiveMeasurement.merge`), which needs the orthogonality of the outcomes of a\n  projective measurement (`ProjectiveMeasurement.mul_eq_zero_of_ne`) and can only raise the\n  value.\n* The synchronous counterparts for PCC strategies: `SyncStrategy.relabel` plays a strategy\n  through a relabeling of the questions and of the answers, keeping the value\n  (`value_relabel`) and the commutation condition (`isPCC_relabel`), whence\n  `syncValue_eq_of_equiv` by the same two-sided `iSup` argument as `quantumValue_eq_of_equiv`;\n  `SyncStrategy.extend` keeps the value and the PCC property; and the constant strategy\n  `SyncStrategy.const` is PCC with value the acceptance mass of a fixed answer pair.\n\nThe synchronous relabeling is what carries a value-`1` PCC strategy of a verifier's game to a\ntabulation of it as a game description, which is item 1 of blueprint `thm:halting`; the\nconsumer is `MIPRE.Foundations.SyncTransport`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameTransport.lean#L486-L494",
+  "source_path": "MIPRE/Foundations/GameTransport.lean",
+  "lines": [
+   486,
+   494
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.bitWalkProg_runs",
+  "source_name": "MIPRE.Cost.Prog.bitWalkProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.bitWalkProg_runs (l u : Data) (env : Env) (S : ℕ) (hS : l.size + u.size ≤ S) :\n    ∃ t ≤ (u.spine + 1) * (S + 21),\n      Eval (Data.cons l u :: env) bitWalkProg (bitWalk l u) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "The bounded bit walk computes `bitWalk l u`, in time `(|u| + 1) · (S + 21)` for `S`\ndominating the sizes of `l` and `u`: linear in the input, times the budget.",
+  "module": "MIPRE.Foundations.Halting.Lists",
+  "module_doc": "/-!\n# Bounded walks over lists, in the ambient model\n\nThe programs with which the wrapper decider of `Halting/Wrapper.lean` performs the paper's\nformat checks: the questions must be bit strings of the sampler's length, the answers bit\nstrings within the answer-length budget, and equal questions must carry equal answers. All of\nthem walk their input under a *budget*, so that their cost is the budget times the size of the\ninput — the shape `T · (|input| + 1)` of `Decider.TimeBoundAt` — rather than a power of it.\n\n* `Prog.bitWalkProg`: on `cons l u`, walk `l` against the budget `u` (a list, typically a unary\n  numeral), checking that each element passed is a bit; the result is `nil` on a non-bit\n  element, and otherwise the pair of what remains of `l` and of `u` (`Data.bitWalk`). Both\n  format checks read off it: `|l| = |u|` is the result `cons nil nil`, `|l| ≤ |u|` a result\n  `cons nil _`.\n* `Prog.eqBitsProg`: equality of two bit lists (`Data.eqBits`).\n* `Prog.normBinProg`: the normalization `Data.normBin` of a parameter, by a walk recording the\n  last bit seen (`Data.canonWalk`).\n\nEvery walk copies the remainder of the lists at each step, which is what the ambient model\ncharges; the cost bounds are `(budget + 1) · (S + c)` for `S` the size of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Lists.lean#L310-L349",
+  "source_path": "MIPRE/Foundations/Halting/Lists.lean",
+  "lines": [
+   310,
+   349
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.toBits_join",
+  "source_name": "MIPRE.CL.toBits_join",
+  "formal_statement": "theorem MIPRE.CL.toBits_join (v : Fin k → Fin s → 𝔽₂) :\n    toBits (join finProdFinEquiv v) = (List.ofFn fun i => toBits (v i)).flatten := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.Cost.Data (chunk)",
+   "variable {k s : ℕ}"
+  ],
+  "docstring": "The bits of a joined vector: the bits of its blocks, concatenated.",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L42-L47",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   42,
+   47
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.indicatorBits_blockSet",
+  "source_name": "MIPRE.CL.indicatorBits_blockSet",
+  "formal_statement": "theorem MIPRE.CL.indicatorBits_blockSet (T : Fin k → Finset (Fin s)) :\n    indicatorBits (blockSet finProdFinEquiv T) = (List.ofFn fun i => indicatorBits (T i)).flatten := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.Cost.Data (chunk)",
+   "variable {k s : ℕ}"
+  ],
+  "docstring": "The indicator string of a block set: the indicator strings of the blocks, concatenated.",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L49-L54",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   49,
+   54
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.length_flatten_ofFn",
+  "source_name": "MIPRE.CL.length_flatten_ofFn",
+  "formal_statement": "theorem MIPRE.CL.length_flatten_ofFn {α : Type*} (g : Fin k → List α) (hg : ∀ i, (g i).length = s) :\n    (List.ofFn g).flatten.length = k * s := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.Cost.Data (chunk)",
+   "variable {k s : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L56-L59",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   56,
+   59
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.chunk_flatten_ofFn",
+  "source_name": "MIPRE.CL.chunk_flatten_ofFn",
+  "formal_statement": "theorem MIPRE.CL.chunk_flatten_ofFn {α : Type*} : ∀ {k : ℕ} (g : Fin k → List α),\n    (∀ i, (g i).length = s) → ∀ i : Fin k, chunk s i (List.ofFn g).flatten = g i := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.Cost.Data (chunk)",
+   "variable {k s : ℕ}"
+  ],
+  "docstring": "The `i`-th chunk of a concatenation of `k` lists of length `s` is the `i`-th list.",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L61-L74",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   61,
+   74
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.block_ofBits",
+  "source_name": "MIPRE.CL.block_ofBits",
+  "formal_statement": "theorem MIPRE.CL.block_ofBits (z : Cost.BitStr) (i : Fin k) :\n    block finProdFinEquiv i (ofBits (k * s) z) = ofBits s (chunk s i z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.Cost.Data (chunk)",
+   "variable {k s : ℕ}"
+  ],
+  "docstring": "The `i`-th block of the vector read off a bit string is the vector read off its `i`-th\nchunk.",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L76-L83",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   76,
+   83
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.chunk_map",
+  "source_name": "MIPRE.CL.chunk_map",
+  "formal_statement": "theorem MIPRE.CL.chunk_map {α β : Type*} (f : α → β) (i : ℕ) (l : List α) :\n    chunk s i (l.map f) = (chunk s i l).map f := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.Cost.Data (chunk)",
+   "variable {k s : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L85-L87",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   85,
+   87
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.length_chunk",
+  "source_name": "MIPRE.CL.length_chunk",
+  "formal_statement": "theorem MIPRE.CL.length_chunk {α : Type*} {l : List α} (hl : l.length = k * s) (i : Fin k) :\n    (chunk s i l).length = s := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.Cost.Data (chunk)",
+   "variable {k s : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L96-L101",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   96,
+   101
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.encode_nat_eq_list",
+  "source_name": "MIPRE.Cost.Data.encode_nat_eq_list",
+  "formal_statement": "theorem MIPRE.Cost.Data.encode_nat_eq_list (n : ℕ) : (encode n : Data) = list (n.bits.map ofBool) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L118-L119",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   118,
+   119
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.toList_encode_bitStr",
+  "source_name": "MIPRE.Cost.Data.toList_encode_bitStr",
+  "formal_statement": "theorem MIPRE.Cost.Data.toList_encode_bitStr (x : BitStr) : toList (encode x) = x.map ofBool := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L121-L122",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   121,
+   122
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Data.replicate_nil_eq_map",
+  "source_name": "MIPRE.Cost.Data.replicate_nil_eq_map",
+  "formal_statement": "theorem MIPRE.Cost.Data.replicate_nil_eq_map (m : ℕ) :\n    List.replicate m (nil : Data) = (List.replicate m false).map ofBool := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.Bits",
+  "module_doc": "/-!\n# Blocks of bit strings\n\nThe repeated sampler of `thm:parallel-repetition` presents `k` copies of an input CL function\non `𝔽₂^s` as one CL function on `𝔽₂^{k s}` (`CLFun.famSum`, along `finProdFinEquiv`), and its\nprogram handles vectors as bit strings cut into `k` consecutive blocks of `s` bits\n(`Data.chunk`). This module relates the two: the bits of a joined vector are the concatenation\nof the bits of its blocks (`toBits_join`), the `i`-th block of the vector read off a bit\nstring is the vector read off the `i`-th chunk (`block_ofBits`), and likewise for indicator\nstrings of register subspaces (`indicatorBits_blockSet`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/Bits.lean#L124-L126",
+  "source_path": "MIPRE/Foundations/Repeat/Bits.lean",
+  "lines": [
+   124,
+   126
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.okBits_iff",
+  "source_name": "MIPRE.Cost.Prog.okBits_iff",
+  "formal_statement": "theorem MIPRE.Cost.Prog.okBits_iff (B : ℕ) (d : Data) :\n    okBits B d = true ↔ ∃ x : BitStr, d = encode x ∧ x.length ≤ B := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L70-L90",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
+  "lines": [
+   70,
+   90
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
   "prooflines": 19,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection",
-  "source_name": "QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection",
-  "formal_statement": "theorem QuantumParallelRepetition.fullSubsetHistory_mass_eq_postselection\n    [DecidableEq A] [DecidableEq B]\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D L : Finset (Fin n))\n    (hL : L ⊆ Finset.univ \\ D) :\n    (∑ h : FullSubsetHistory X Y n D L,\n      ∑ α : {i : Fin n // i ∈ D} → A,\n      ∑ β : {i : Fin n // i ∈ D} → B,\n        fullHistoryWeight G h * fullHistoryWinIndicator G h α β *\n          bornTracePairing S.state.matrix\n            (fullHistoryAliceFilter G n S D L h α)\n            (fullHistoryBobFilter G n S D L h β)) =\n      (strategyEventLaw (G.repeat n) S).eventMass\n        (FiniteEventLaw.winEvent\n          (repeatedCoordinateWin G n) D) := by sorry",
+  "theorem_name": "MIPRE.Cost.Prog.finalProg_runs",
+  "source_name": "MIPRE.Cost.Prog.finalProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.finalProg_runs (remX remY remA remB : List Data) (ctx : Data) :\n    ∃ t ≤ 12, Eval [Data.cons (list remX) (.cons (list remY) (.cons (list remA)\n      (.cons (list remB) ctx)))] finalProg\n      (.cons .nil (ofBool (decide (remA = [] ∧ remB = [])))) t := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
   ],
   "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3737-L3848",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L116-L161",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
   "lines": [
-   3737,
-   3848
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.fullHistoryWeight_mul_hidden",
-   "QuantumParallelRepetition.conditionedEffects_born_expansion",
-   "QuantumParallelRepetition.finite_sum_four_swap"
-  ],
-  "pasted_helpers": 6,
-  "prooflines": 96,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.spectralPurificationFilter_mul_shift",
-  "source_name": "QuantumParallelRepetition.spectralPurificationFilter_mul_shift",
-  "formal_statement": "theorem QuantumParallelRepetition.spectralPurificationFilter_mul_shift\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef)\n    {s : ℝ} (hs : 0 < s) :\n    spectralPurificationFilter F hF s *\n        (F + s • (1 : Matrix d d ℂ)) = F := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3863-L3915",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   3863,
-   3915
+   116,
+   161
   ],
   "blueprint": [],
   "imported_nodes": [],
   "pasted_helpers": 0,
-  "prooflines": 47,
+  "prooflines": 42,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.spectralPurificationFilter_square_contraction",
-  "source_name": "QuantumParallelRepetition.spectralPurificationFilter_square_contraction",
-  "formal_statement": "theorem QuantumParallelRepetition.spectralPurificationFilter_square_contraction\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef)\n    {s : ℝ} (hs : 0 < s) :\n    (spectralPurificationFilter F hF s -\n      star (spectralPurificationFilter F hF s) *\n        spectralPurificationFilter F hF s).PosSemidef := by sorry",
+  "theorem_name": "MIPRE.Cost.Prog.preProg_runs_nilB",
+  "source_name": "MIPRE.Cost.Prog.preProg_runs_nilB",
+  "formal_statement": "theorem MIPRE.Cost.Prog.preProg_runs_nilB (uk : Data) (remX remY : List Data) (a : Data) (remA : List Data)\n    (ctx : Data) :\n    ∃ t ≤ 8, Eval [decState uk remX remY (a :: remA) [] ctx] preProg .nil t := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
   ],
   "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L3950-L4011",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L217-L231",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
   "lines": [
-   3950,
-   4011
+   217,
+   231
   ],
   "blueprint": [],
   "imported_nodes": [],
   "pasted_helpers": 0,
-  "prooflines": 55,
+  "prooflines": 12,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen",
-  "source_name": "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen",
-  "formal_statement": "theorem QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (weight : ι → ℝ) (F : ι → Matrix d d ℂ)\n    (M : Matrix d d ℂ)\n    (nonnegative : ∀ i, 0 ≤ weight i)\n    (normalized : (∑ i : ι, weight i) = 1)\n    (mean : (∑ i : ι, weight i • F i) = M)\n    (positive : ∀ i, (F i).PosSemidef)\n    {s : ℝ} (hs : 0 < s) :\n    let hM : M.PosSemidef := by\n      rw [← mean]\n      exact weighted_positive_matrix_mean weight F nonnegative positive\n    (s •\n      ((∑ i : ι, weight i •\n        (F i + s • (1 : Matrix d d ℂ))⁻¹) -\n        (M + s • (1 : Matrix d d ℂ))⁻¹) -\n      ∑ i : ι, weight i •\n        (star (spectralPurificationFilter (F i) (positive i) s -\n            spectralPurificationFilter M hM s) *\n          (spectralPurificationFilter (F i) (positive i) s -\n            spectralPurificationFilter M hM s))).PosSemidef := by sorry",
+  "theorem_name": "MIPRE.Cost.Prog.preProg_runs",
+  "source_name": "MIPRE.Cost.Prog.preProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.Prog.preProg_runs (dD nD : Data) (s B : ℕ) (uk : Data) (remX remY : List Data) (ai bi : Data)\n    (remA remB : List Data) :\n    ∃ t ≤ preCost s B (list remX).size (list remY).size (list (ai :: remA)).size\n        (list (bi :: remB)).size (decCtx dD nD s B).size uk.size,\n      Eval [decState uk remX remY (ai :: remA) (bi :: remB) (decCtx dD nD s B)] preProg\n        (preResult dD nD s B uk remX remY ai bi remA remB) t := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
   ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4274-L4351",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "docstring": "`preProg` on a state with answers at hand.",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L241-L438",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
   "lines": [
-   4274,
-   4351
+   241,
+   438
   ],
   "blueprint": [],
   "imported_nodes": [
-   "QuantumParallelRepetition.spectralPurificationFilter_mul_shift",
-   "QuantumParallelRepetition.spectralPurificationFilter_square_contraction"
+   "MIPRE.Cost.Prog.bitWalkProg_runs",
+   "MIPRE.Cost.Prog.pairTakeProg_runs"
   ],
-  "pasted_helpers": 14,
-  "prooflines": 57,
+  "pasted_helpers": 5,
+  "prooflines": 191,
   "is_target": false
  },
  {
   "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.scalarResolventFilter_memLp_two",
-  "source_name": "QuantumParallelRepetition.scalarResolventFilter_memLp_two",
-  "formal_statement": "theorem QuantumParallelRepetition.scalarResolventFilter_memLp_two\n    {z : ℝ} (hz : 0 ≤ z) :\n    MemLp (fun s : ℝ => z / (z + s)) 2\n      (volume.restrict (Ioi 0)) := by sorry",
+  "theorem_name": "MIPRE.Cost.Prog.stepProg_runs_call",
+  "source_name": "MIPRE.Cost.Prog.stepProg_runs_call",
+  "formal_statement": "theorem MIPRE.Cost.Prog.stepProg_runs_call {univ : Prog} (hU : univ.WellScoped 1) (inp q st' : Data) {t₀ : ℕ}\n    (hp : Eval [inp] preProg (.cons q st') t₀) {r : Data} {tr : ℕ} (hr : Eval [q] univ r tr) :\n    ∃ t ≤ t₀ + tr + inp.size + q.size + st'.size + 20,\n      Eval [inp] (stepProg univ) (stepResult st' r) t := by sorry",
   "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
   ],
   "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4364-L4374",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
+  "module": "MIPRE.Foundations.Repeat.DecLoop",
+  "module_doc": "/-!\n# The coordinate loop of the repeated decider\n\nThe repeated decider of `thm:parallel-repetition` runs the input decider `D̄` on each of the\n`k` coordinates of its input (`planning/repetition-verifier.md`, R3(c)). This module is that\nloop, on the state `(k, remX, remY, remA, remB, ctx)` — `k` a unary counter, `remX, remY` the\nquestions still to be cut into blocks of `s`, `remA, remB` the answers still to be checked,\n`ctx = (D̄, n, s, B)`:\n\n* `preProg` cuts a block off `remX` and `remY`, checks that the current answers are bit\n  strings of length at most `B` (`okBits`), and returns the query `(D̄, (n, x_i, y_i, a_i, b_i))`\n  for the universal machine with the next state, or `nil` when a check fails;\n* `stepProg` runs the query through `univ` and continues when the answer is `1`;\n* `finalProg` accepts, once the counter is exhausted, when no answer is left over;\n* `coordBody` is the body of the loop.\n\nTwo readings of the loop are proved: a forward one, `decLoop_of_acc` — the loop accepts when\nevery coordinate passes (`DecAcc`) — and an *inversion*, `decLoop_inv` — the loop accepts\nonly then, obtained from `stepProg_inv` by determinism of the semantics. The inversion is\nwhat the game equivalence of the repeated verifier needs, since the input decider may not\nhalt on inputs it does not accept. A third, `decLoop_runs_bounded`, is the forward reading\nwith costs, against an oracle for the answers of `univ`, for the time bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Repeat/DecLoop.lean#L470-L505",
+  "source_path": "MIPRE/Foundations/Repeat/DecLoop.lean",
   "lines": [
-   4364,
-   4374
+   470,
+   505
   ],
   "blueprint": [],
   "imported_nodes": [],
-  "pasted_helpers": 2,
-  "prooflines": 7,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.spectralPurificationFilter_memLp_two",
-  "source_name": "QuantumParallelRepetition.spectralPurificationFilter_memLp_two",
-  "formal_statement": "theorem QuantumParallelRepetition.spectralPurificationFilter_memLp_two\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (F : Matrix d d ℂ) (hF : F.PosSemidef) :\n    MemLp (spectralPurificationFilter F hF) 2\n      (volume.restrict (Ioi 0)) := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4376-L4407",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   4376,
-   4407
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.scalarResolventFilter_memLp_two"
-  ],
-  "pasted_helpers": 0,
-  "prooflines": 27,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse",
-  "source_name": "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse",
-  "formal_statement": "theorem QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (weight : ι → ℝ) (F : ι → Matrix d d ℂ)\n    (M : Matrix d d ℂ)\n    (positive : ∀ i, (F i).PosSemidef)\n    (hM : M.PosSemidef)\n    (normalized : (∑ i : ι, weight i) = 1)\n    (mean : (∑ i : ι, weight i • F i) = M)\n    {s : ℝ} (hs : 0 < s) :\n    weightedSpectralEntropyJensen weight F M positive hM s =\n      s •\n        ((∑ i : ι, weight i •\n          (F i + s • (1 : Matrix d d ℂ))⁻¹) -\n          (M + s • (1 : Matrix d d ℂ))⁻¹) := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4622-L4691",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   4622,
-   4691
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.spectralPurificationFilter_mul_shift"
-  ],
   "pasted_helpers": 4,
-  "prooflines": 56,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.scalar_entropy_resolvent_integral",
-  "source_name": "QuantumParallelRepetition.scalar_entropy_resolvent_integral",
-  "formal_statement": "theorem QuantumParallelRepetition.scalar_entropy_resolvent_integral\n    {z : ℝ} (hz : 0 ≤ z) :\n    (∫ s in Ioi (0 : ℝ),\n      (z / (1 + s) - z / (z + s))) = z * Real.log z := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4749-L4826",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   4749,
-   4826
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.scalarResolventFilter_memLp_two"
-  ],
-  "pasted_helpers": 1,
-  "prooflines": 74,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen",
-  "source_name": "QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen",
-  "formal_statement": "theorem QuantumParallelRepetition.exact_matrix_log_entropy_filter_jensen\n    {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]\n    (weight : ι → ℝ) (F : ι → Matrix d d ℂ)\n    (M : Matrix d d ℂ)\n    (nonnegative : ∀ i, 0 ≤ weight i)\n    (normalized : (∑ i : ι, weight i) = 1)\n    (mean : (∑ i : ι, weight i • F i) = M)\n    (positive : ∀ i, (F i).PosSemidef) :\n    let hM : M.PosSemidef := by\n      rw [← mean]\n      exact weighted_positive_matrix_mean weight F nonnegative positive\n    ((∑ i : ι, weight i •\n        cfc (fun z : ℝ => z * Real.log z) (F i)) -\n      cfc (fun z : ℝ => z * Real.log z) M -\n      (∫ s in Ioi (0 : ℝ),\n        weightedSpectralFilterVariance weight F M positive hM s)).PosSemidef := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open MeasureTheory Filter Set",
-   "open scoped BigOperators Topology ComplexOrder MatrixOrder Matrix.Norms.Elementwise"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L4975-L5004",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   4975,
-   5004
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.weighted_spectralPurificationFilter_variance_le_inverse_jensen",
-   "QuantumParallelRepetition.scalarResolventFilter_memLp_two",
-   "QuantumParallelRepetition.spectralPurificationFilter_memLp_two",
-   "QuantumParallelRepetition.weightedSpectralEntropyJensen_eq_shifted_inverse",
-   "QuantumParallelRepetition.scalar_entropy_resolvent_integral"
-  ],
-  "pasted_helpers": 12,
-  "prooflines": 14,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef",
-  "source_name": "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef",
-  "formal_statement": "theorem QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D L : Finset (Fin n))\n    (h : FullSubsetHistory X Y n D L)\n    (α : {i : Fin n // i ∈ D} → A) :\n    (1 - fullHistoryAliceFilter G n S D L h α).PosSemidef := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5069-L5099",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   5069,
-   5099
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg",
-   "QuantumParallelRepetition.conditionedAliceEffect_complement_positive"
-  ],
-  "pasted_helpers": 5,
-  "prooflines": 24,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef",
-  "source_name": "QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef",
-  "formal_statement": "theorem QuantumParallelRepetition.fullHistoryBobFilter_complement_posSemidef\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D L : Finset (Fin n))\n    (h : FullSubsetHistory X Y n D L)\n    (β : {i : Fin n // i ∈ D} → B) :\n    (1 - fullHistoryBobFilter G n S D L h β).PosSemidef := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5101-L5130",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   5101,
-   5130
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg",
-   "QuantumParallelRepetition.conditionedBobEffect_complement_positive"
-  ],
-  "pasted_helpers": 5,
-  "prooflines": 23,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction",
-  "source_name": "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction",
-  "formal_statement": "theorem QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction\n    {d : Type*} [Fintype d] [DecidableEq d]\n    {F : Matrix d d ℂ}\n    (hF : F.PosSemidef)\n    (hcomplement : (1 - F).PosSemidef) :\n    (-(cfc (fun z : ℝ => z * Real.log z) F)).PosSemidef := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5132-L5152",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   5132,
-   5152
-  ],
-  "blueprint": [],
-  "imported_nodes": [],
-  "pasted_helpers": 0,
-  "prooflines": 15,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left",
-  "source_name": "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left",
-  "formal_statement": "theorem QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left\n    {dA dB : Type*}\n    [Fintype dA] [Fintype dB]\n    [DecidableEq dA] [DecidableEq dB]\n    (ρ : DensityMatrix (dA × dB))\n    (F : Matrix dA dA ℂ)\n    (G : Matrix dB dB ℂ)\n    (hF : F.PosSemidef)\n    (hFcomplement : (1 - F).PosSemidef)\n    (hG : G.PosSemidef) :\n    bornTracePairing ρ.matrix\n        (cfc (fun z : ℝ => z * Real.log z) F) G ≤ 0 := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5154-L5176",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   5154,
-   5176
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction"
-  ],
-  "pasted_helpers": 0,
-  "prooflines": 11,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right",
-  "source_name": "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right",
-  "formal_statement": "theorem QuantumParallelRepetition.matrixLogEntropy_born_nonpos_right\n    {dA dB : Type*}\n    [Fintype dA] [Fintype dB]\n    [DecidableEq dA] [DecidableEq dB]\n    (ρ : DensityMatrix (dA × dB))\n    (F : Matrix dA dA ℂ)\n    (G : Matrix dB dB ℂ)\n    (hF : F.PosSemidef)\n    (hG : G.PosSemidef)\n    (hGcomplement : (1 - G).PosSemidef) :\n    bornTracePairing ρ.matrix F\n        (cfc (fun z : ℝ => z * Real.log z) G) ≤ 0 := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5178-L5200",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   5178,
-   5200
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.matrixLogEntropy_nonpos_of_contraction"
-  ],
-  "pasted_helpers": 0,
-  "prooflines": 11,
-  "is_target": false
- },
- {
-  "kind": "theorem",
-  "theorem_name": "QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos",
-  "source_name": "QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos",
-  "formal_statement": "theorem QuantumParallelRepetition.fullHistoryAliceEntropyPotential_nonpos\n    (G : Game X Y A B) (n : ℕ)\n    (S : Strategy (G.repeat n))\n    (D L : Finset (Fin n)) :\n    fullHistoryAliceEntropyPotential G n S D L ≤ 0 := by sorry",
-  "preamble_opens": [
-   "open QuantumParallelRepetition",
-   "open Matrix",
-   "open scoped BigOperators Kronecker ComplexOrder MatrixOrder",
-   "variable {X Y A B : Type*}",
-   "variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
-  ],
-  "docstring": "",
-  "module": "MIPRE.Background.Repetition.TenProofs.QuantumParallelRepetition.Part01",
-  "module_doc": "",
-  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean#L5215-L5235",
-  "source_path": "MIPRE/Background/Repetition/TenProofs/QuantumParallelRepetition/Part01.lean",
-  "lines": [
-   5215,
-   5235
-  ],
-  "blueprint": [],
-  "imported_nodes": [
-   "QuantumParallelRepetition.fullHistoryAliceFilter_complement_posSemidef",
-   "QuantumParallelRepetition.matrixLogEntropy_born_nonpos_left",
-   "QuantumParallelRepetition.Game.conditionalYGivenX_nonneg",
-   "QuantumParallelRepetition.Game.conditionalXGivenY_nonneg",
-   "QuantumParallelRepetition.conditionedAliceEffect_positive",
-   "QuantumParallelRepetition.conditionedBobEffect_positive"
-  ],
-  "pasted_helpers": 8,
-  "prooflines": 16,
+  "prooflines": 32,
   "is_target": false
  }
 ]
