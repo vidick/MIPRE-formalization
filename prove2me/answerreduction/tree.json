@@ -76861,7 +76861,7 @@
    "prooflines": 11,
    "docstring": "A matrix whose rows form an orthonormal family is a coisometry.",
    "formal_statement": "theorem Matrix.mul_conjTranspose_eq_one_of_orthonormal_rows\n    {\ud835\udd5c : Type*} [RCLike \ud835\udd5c]\n    {m n : Type*} [DecidableEq m] [Fintype n]\n    (row : m \u2192 EuclideanSpace \ud835\udd5c n)\n    (hrow : Orthonormal \ud835\udd5c row) :\n    (Matrix.of fun i j => row i j) * (Matrix.of fun i j => row i j)\u1d34 =\n      (1 : Matrix m m \ud835\udd5c) := by sorry",
-   "preamble": "import Mathlib.Analysis.InnerProductSpace.Adjoint\nimport Mathlib.Analysis.InnerProductSpace.PiL2\n\nopen Module\nset_option backward.isDefEq.respectTransparency false",
+   "preamble": "import Mathlib.Analysis.InnerProductSpace.Adjoint\nimport Mathlib.Analysis.InnerProductSpace.PiL2\n\nopen Matrix\nopen Module\nset_option backward.isDefEq.respectTransparency false",
    "in_prefix": [],
    "imported_nodes": [],
    "imported_published_nodes": [],

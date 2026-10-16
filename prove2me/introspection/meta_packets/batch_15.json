@@ -110,7 +110,7 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open Finset MIPRE MIPRE.LIDT MIPRE.Weyl",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl",
    "open scoped Kronecker ComplexOrder MatrixOrder",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
    "variable {D : Type*} [Fintype D] [DecidableEq D]"
@@ -140,7 +140,7 @@
   "preamble_opens": [
    "open MIPRE",
    "open MIPRE.QLD",
-   "open Finset MIPRE MIPRE.LIDT MIPRE.Weyl",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl",
    "open scoped Kronecker ComplexOrder MatrixOrder",
    "open MIPRE.LIDT.Adapter",
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",

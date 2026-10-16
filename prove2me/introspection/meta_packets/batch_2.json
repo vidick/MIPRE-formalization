@@ -412,7 +412,7 @@
    "open MIPRE",
    "open MIPRE.Introspection",
    "open MIPRE.Introspection.NumberedSoundness",
-   "open Finset MIPRE.CL Classical MIPRE.Introspection.BinaryComplete MIPRE.Introspection.RestrictedSoundness",
+   "open Matrix Finset MIPRE.CL Classical MIPRE.Introspection.BinaryComplete MIPRE.Introspection.RestrictedSoundness",
    "open MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters",
    "variable {F A I : Type} [Field F] [Fintype F] [DecidableEq F]"
   ],
