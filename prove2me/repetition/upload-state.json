@@ -843,12 +843,12 @@
    "error_message": ""
   },
   "MIPRE.Repeat.repDecider_accepts_iff": {
-   "submitted_at": 1792165515.265002,
+   "submitted_at": 1792165656.665234,
    "http": 202,
-   "job_id": "d7450851-eb1d-42ed-9501-95e144db8e56",
-   "status": "FAILED",
-   "theorem_id": null,
-   "error_message": "formal statement does not compile: Import parser timed out after 5s"
+   "job_id": "fe327fe2-751c-446a-89fd-3898bbfeb9f8",
+   "status": "PUBLISHED",
+   "theorem_id": "2662c270-886d-41cc-b8c2-2be7ae77f4b6",
+   "error_message": ""
   },
   "MIPRE.Repeat.repDecider_accepts_length": {
    "submitted_at": 1792165516.2124772,
@@ -1425,7 +1425,125 @@
    "submission_id": "ad73f996-d085-490a-9928-59dc9a80bb34",
    "status": "ACCEPTED",
    "error_message": ""
-  }
+  },
+  "MIPRE.Repetition.repConst_pos": {
+   "submitted_at": 1792165718.0596142,
+   "http": 200,
+   "submission_id": "240f4a35-9fe1-4d07-9088-7115fd178182",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repetition.quantumValue_repeat_le_soundBound": {
+   "submitted_at": 1792165718.9527793,
+   "http": 200,
+   "submission_id": "a020f616-34f5-43a4-9f9a-ef054536242e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.sum_pi_prod": {
+   "submitted_at": 1792165719.9933107,
+   "http": 200,
+   "submission_id": "52abadb5-547e-4dee-8b96-1ec0c77493ed",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.SyncStrategy.isPCC_tensorPow": {
+   "submitted_at": 1792165720.7002735,
+   "http": 200,
+   "submission_id": "43a1c522-00fe-4f0a-986d-e4503bc6f04a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.exists_perfectPCC_repeat_doubled": {
+   "submitted_at": 1792165823.8269353,
+   "http": 200,
+   "submission_id": "788d6f31-2413-40e6-b81d-c0bca35bf523",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.mem_decQueries": {
+   "submitted_at": 1792165721.4177344,
+   "http": 200,
+   "submission_id": "b12eacef-0fb5-4b51-bba5-38331e29ccce",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.dom_prepCost": {
+   "submitted_at": 1792165722.0693896,
+   "http": 200,
+   "submission_id": "17edbf1e-0a06-435d-ba76-6ef953c276f8",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.loop_calls_time": {
+   "submitted_at": 1792165847.2304618,
+   "http": 200,
+   "submission_id": "d3e9f535-463e-40c8-a5db-140480acf591",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.decMalformed_time": {
+   "submitted_at": 1792165722.8932843,
+   "http": 200,
+   "submission_id": "40174f00-d54d-4003-883f-0fa4ea1cd699",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.decWellformed_time": {
+   "submitted_at": 1792165925.9951177,
+   "http": 200,
+   "submission_id": "24313688-73f9-4e2e-967b-c33ef12780f2",
+   "status": "PENDING"
+  },
+  "MIPRE.Repeat.repDecider_timeBound": {},
+  "MIPRE.Repeat.DecAcc_iff": {
+   "submitted_at": 1792165723.5790117,
+   "http": 200,
+   "submission_id": "ad0b8ae7-f89b-446e-8775-8a4bedd6ba3e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.repDecider_accepts_iff": {
+   "submitted_at": 1792165831.918869,
+   "http": 200,
+   "submission_id": "4c2201ff-959d-4dc0-ba57-f36208d88312",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.repDecider_accepts_length": {
+   "submitted_at": 1792165926.9304998,
+   "http": 200,
+   "submission_id": "b45ad8c6-de2a-4ee3-b192-ddddae5cd474",
+   "status": "PENDING"
+  },
+  "MIPRE.Repeat.length_toBitsPost_list_le": {
+   "submitted_at": 1792165724.35099,
+   "http": 200,
+   "submission_id": "980be93b-7347-4373-ba3c-07e48525e29c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.repDecider_rejectsLong": {
+   "submitted_at": 1792165927.6635697,
+   "http": 200,
+   "submission_id": "7d7f730b-7a95-4e10-9d49-879244bb4004",
+   "status": "PENDING"
+  },
+  "MIPRE.Repeat.size_le_of_mem_blockQueries": {
+   "submitted_at": 1792165725.0645227,
+   "http": 200,
+   "submission_id": "2275b26c-0116-4496-af3d-96c71c530e44",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.block_calls_time": {
+   "submitted_at": 1792165883.4814854,
+   "http": 200,
+   "submission_id": "a2a7d4ca-e970-4d5a-9a82-2f638c552eae",
+   "status": "PENDING"
+  },
+  "MIPRE.Repeat.repSampler_halts_within": {},
+  "MIPRE.Repeat.repSampler_timeBound": {}
  },
  "log": []
 }
