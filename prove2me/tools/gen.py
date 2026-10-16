@@ -23,7 +23,7 @@ REPO = "vidick/MIPRE-formalization"
 COMMIT = "70cbf1c"
 
 CFG = {"extract_dir": f"{S}/extract", "plan": f"{S}/plan.json", "tree_out": f"{S}/tree.json",
-       "manifest": None, "wipe": True}
+       "manifest": None, "wipe": True, "token_renames": {}}
 if os.environ.get("P2M_CONFIG"):
     c = json.load(open(os.environ["P2M_CONFIG"], encoding="utf-8"))
     CFG.update({k: v for k, v in c.items() if k in CFG})
