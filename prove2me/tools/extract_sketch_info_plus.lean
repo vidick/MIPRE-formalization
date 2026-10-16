@@ -169,8 +169,12 @@ unsafe def main (args : List String) : IO UInt32 := do
   let mut refs : Array (Name × String.Pos.Raw × String.Pos.Raw) := #[]
   for t in s.commandState.infoState.trees do
     refs := collectRefs t refs
+  -- a constant this file declares (no module index: it is not imported) is always a project constant,
+  -- whatever its namespace (`theorem _root_.Nat.bits_two_pow_mul` in Repeat/Prims.lean)
+  let finalEnv := s.commandState.env
   let keep : Name → Bool := fun c =>
-    prefixFilters.isEmpty || prefixFilters.any fun p => p.isPrefixOf c || p.isPrefixOf ((privateToUserName? c).getD c)
+    prefixFilters.isEmpty || (finalEnv.contains c && (finalEnv.getModuleIdxFor? c).isNone)
+      || prefixFilters.any fun p => p.isPrefixOf c || p.isPrefixOf ((privateToUserName? c).getD c)
   let deduped := refs.foldl (init := (Std.HashSet.emptyWithCapacity, #[]))
     fun (seen, out) r@(c, s', e) =>
       let key := s!"{c}:{s'.byteIdx}:{e.byteIdx}"
