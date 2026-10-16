@@ -128,6 +128,18 @@ def effective_opts(lines):
 # ---------- scope map: context of every declaration command ----------
 CTX = {}  # (module, declStart.offset) -> {"ns": [...], "opens": [...], "vars": [...]}
 OPEN_NAMES = {}  # (module, open command text) -> {name as written: unit or None}
+OPEN_CHAIN = {}  # (module, open command offset) -> the namespace chain the command sits in
+
+def open_ns_tokens(text):
+    """The namespaces an `open` line names (not its declaration groups, keywords or hidden names)."""
+    out = []
+    for tk in re.findall(r"\([^)]*\)|\S+", text.strip()[len("open"):].strip()):
+        if tk in ("hiding", "renaming"):
+            break
+        if tk.startswith("(") or tk in ("scoped", "in"):
+            continue
+        out.append(tk)
+    return out
 VAR_GROUPS = {}  # (module, variable command text) -> [(binder group text, {units it references}, [names it binds])]
 BRACKETS = {"(": ")", "{": "}", "[": "]", "⦃": "⦄"}
 
@@ -342,6 +354,7 @@ for m in modules:
                 (stack[-1] if (stack and is_local) else root)["attrs"].append({"attr": mm.group(1), "names": names})
         elif k == "open":
             (stack[-1] if stack else root)["opens"].append(t)
+            OPEN_CHAIN[(m, c["start"]["offset"])] = [f["name"] for f in stack if f["name"]]
             if "(" in t:
                 # the declarations an `open X (a b)` names, resolved by the reference facts inside it
                 a0, b0 = c["start"]["offset"], c["end"]["offset"]
@@ -549,15 +562,21 @@ for m in TOPO:
         if c["syntaxKind"].endswith(".open"):
             a, b = c["start"]["offset"], c["end"]["offset"]
             ot = txt(m, a, b).strip()
-            if (m, ot) in OPEN_NAMES:
-                nt = filter_open(m, ot, lambda v: v in visible)
-                if nt != ot:
-                    while b < len(B) and B[b:b+1] in (b" ", b"\t"):
-                        b += 1
-                    if B[b:b+1] == b"\n":
-                        b += 1
-                    dele.append((a, b))
-                    repl[a] = (nt + "\n").encode("utf-8") if nt else b""
+            nt = filter_open(m, ot, lambda v: v in visible) if (m, ot) in OPEN_NAMES else ot
+            # a project namespace no declaration of the bundle's environment lives in makes `open`
+            # fail (`open GCommStability.Scalar` inside `namespace MIPStarRE.LDT.Commutativity`, all of
+            # whose declarations became nodes): an empty `namespace N end N` just before the command,
+            # in the same scope, registers the namespace the name resolves to there
+            chain = OPEN_CHAIN.get((m, a), [])
+            regs = [f"namespace {tk} end {tk}" for tk in (open_ns_tokens(nt) if nt else [])
+                    if resolve_ns(tk, chain) in NS]
+            if nt != ot or regs:
+                while b < len(B) and B[b:b+1] in (b" ", b"\t"):
+                    b += 1
+                if B[b:b+1] == b"\n":
+                    b += 1
+                dele.append((a, b))
+                repl[a] = ("\n".join(regs + ([nt] if nt else [])) + "\n").encode("utf-8") if (nt or regs) else b""
     bundle_dropped = set()
     for c in cmds:
         k = c["syntaxKind"].split(".")[-1]
