@@ -1493,9 +1493,15 @@
    "submitted_at": 1792165925.9951177,
    "http": 200,
    "submission_id": "24313688-73f9-4e2e-967b-c33ef12780f2",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Repeat.repDecider_timeBound": {
+   "submitted_at": 1792166053.6680288,
+   "http": 200,
+   "submission_id": "66479770-299f-4db7-a291-da9742ab92fa",
    "status": "PENDING"
   },
-  "MIPRE.Repeat.repDecider_timeBound": {},
   "MIPRE.Repeat.DecAcc_iff": {
    "submitted_at": 1792165723.5790117,
    "http": 200,
@@ -1514,7 +1520,8 @@
    "submitted_at": 1792165926.9304998,
    "http": 200,
    "submission_id": "b45ad8c6-de2a-4ee3-b192-ddddae5cd474",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Repeat.length_toBitsPost_list_le": {
    "submitted_at": 1792165724.35099,
@@ -1527,7 +1534,8 @@
    "submitted_at": 1792165927.6635697,
    "http": 200,
    "submission_id": "7d7f730b-7a95-4e10-9d49-879244bb4004",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Repeat.size_le_of_mem_blockQueries": {
    "submitted_at": 1792165725.0645227,
@@ -1540,9 +1548,16 @@
    "submitted_at": 1792165883.4814854,
    "http": 200,
    "submission_id": "a2a7d4ca-e970-4d5a-9a82-2f638c552eae",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
-  "MIPRE.Repeat.repSampler_halts_within": {},
+  "MIPRE.Repeat.repSampler_halts_within": {
+   "submitted_at": 1792165967.2327616,
+   "http": 200,
+   "submission_id": "4ec182a3-eafb-414b-9452-7b6940d3a681",
+   "status": "ERROR",
+   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+  },
   "MIPRE.Repeat.repSampler_timeBound": {}
  },
  "log": []
