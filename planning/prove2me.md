@@ -451,3 +451,29 @@ part), increment 3 (introspection and answer reduction, own-code parts), and the
 and `MIPStarRE`-dependent material, which needs the platform to accept larger import closures or
 a decomposition of the vendored proofs into platform-sized pieces. Each increment is the same
 pipeline with a new `config.json`; the uploader and the mission script need no change.
+
+**Workspace notes for the later increments (2026-10-16).** The remaining closure at `70cbf1c` is
+1,083 modules and 372,708 lines (about 14,300 theorems): Foundations/TM/LCS own code (534 modules),
+the in-repo low individual degree test (351), the vendored parallel repetition proof (8 parts of
+9,000 lines, Apache 2.0, `import Mathlib` wholesale), the Pauli basis test (81) and the two stage
+instances. Three facts about the build workspace cost most of a day and are recorded so that no
+session repeats them. (1) *Never `lake build` in the workspace.* Mathlib's cache ships `.olean`,
+`.olean.private`, `.olean.server`, `.ir`, `.ir.sig` and the Lake trace files; deleting any of them
+(the `.c` files in `ir/` included) makes Lake rebuild Mathlib from source. Compile the source
+modules with `tools/compile_modules.py` and the generated trees with `tools/build_tree.py`, both of
+which run `lean` directly. (2) *A plain `lean` opens all three olean parts of every module-system
+import* (`readModuleDataPartsOfMod`), and 8,241 of Mathlib's 8,312 modules at this pin are
+module-system files; a legacy importer (the `70cbf1c` sources and the generated files are legacy)
+needs the private parts too. So the parts must all be present, and the drivers also pass Lean a
+module-setup file (`tools/lean_setup.py`, the artefact map Lake would pass) so that nothing is
+resolved through `LEAN_PATH`. The platform compiles module-system files as well (checked with a
+private probe), which is not needed now but is the fallback if the private parts ever have to go.
+(3) *Parse imports from the header only.* An `import` mentioned in a Mathlib docstring, parsed with
+a whole-file regex, made the closure look like all of Mathlib (8,312 modules) when the repetition
+increment needs 3,278; that mistake drove a deletion of the private and server parts that then had
+to be re-fetched (`lake exe cache get!`, in batches of 150 files, dropping the archives and the
+`ir/` output between batches: the session's disk allowance is about 8.5 GB in all, of which the
+toolchain takes 2.4 GB and the 3,278-module Mathlib closure about 1.5 GB). The 27 wholesale
+`import Mathlib` lines of the vendored modules are rewritten in the workspace copies to the Mathlib
+modules their constants use (computed from the compiled oleans in the main repository, module
+names mapped to this pin) plus `Mathlib.Tactic`; the uploaded files carry those explicit imports.
