@@ -68,7 +68,11 @@ def compile_one(m):
         setup = lean_setup.setup_for(src(m))
     except FileNotFoundError as e:
         return m, 1, [f"{src(m)}: error: {e}"], 0.0
-    r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", "-o", olean(m), src(m)],
+    # each package's own lakefile options: Mathlib elaborates with maxSynthPendingDepth 3 (a module
+    # compiled without it can fail where Mathlib's CI did not), the workspace with autoImplicit off
+    opts = (["-DmaxSynthPendingDepth=3", "-Dpp.unicode.fun=true", "-DautoImplicit=false"]
+            if m == "Mathlib" or m.startswith("Mathlib.") else ["-DautoImplicit=false", "-DrelaxedAutoImplicit=false"])
+    r = subprocess.run(["lake", "env", "lean", f"--setup={setup}", *opts, "-o", olean(m), src(m)],
                        cwd=WS, env=ENV, capture_output=True, text=True)
     try:
         os.remove(setup)
