@@ -91,7 +91,7 @@ VENDORED = [  # (module prefix, provenance sentence): third-party code the repos
      "*exponential parallel repetition for all two-player entangled games* (Chapter 6 of OpenAI's *Ten Advances in Mathematics "
      "and Theoretical Computer Science*, 2026); it is vendored read-only by `scripts/vendor-repetition.py`, which also records its "
      "toolchain compile fixes, and the uploaded copy replaces upstream's wholesale `import Mathlib` by the Mathlib modules the "
-     "proofs use. Statement and proof are upstream's, not this repository's."),
+     "proofs use. The declarations, statements and proofs are upstream's, not this repository's."),
     ("MIPRE.Background.Repetition.CommutingRepetition.",
      "The module is vendored read-only from [vidick/commuting-repetition](https://github.com/vidick/commuting-repetition) "
      "(Apache 2.0; commit and upstream path in the file header) by `scripts/vendor-repetition.py`."),
@@ -205,7 +205,10 @@ def bundle_record(b):
                  "imports rewritten to the bundles of the module's import closure; the declarations keep their names, statements and bodies"
                  + (f"; the source module is split over {len(b.get('imports', []))} imported bundle(s)" if b.get("imports") else "") + ".")
     short = module.split(".")[-1]
-    return {"definition_name": name, "definition_title": (f"Definitions of {short}" + (" (addendum)" if b.get("published_bundle") else "") + f": {first_sentence(b.get('module_doc', ''), 120).rstrip('.')}")[:200],
+    lead = first_sentence(b.get("module_doc", ""), 120).rstrip(".")
+    title = (f"Definitions of {short}" + (" (addendum)" if b.get("published_bundle") else "")
+             + (f": {lead}" if lead else f" ({len(defs)} definitions" + (f", {len(emb)} embedded lemmas" if emb else "") + ")"))
+    return {"definition_name": name, "definition_title": title[:200],
             "natural_language_statement": "\n\n".join(parts), "source": (b["source"] + ("; blueprint " + ", ".join(b["blueprint"]) if b.get("blueprint") else "")),
             "tags": tags_for(module), "auto": True}
 
