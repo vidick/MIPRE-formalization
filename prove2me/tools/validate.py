@@ -180,18 +180,25 @@ def phase_stubs(o):
   print("stub tree:", rc, len(stubs), "types of", len(items))
   if rc != 0:
       print(out[:3000])
-  bad = 0
+  bad, priv = 0, []
   for name in o["with_src"]:
-      if o["orig"].get(name) != stubs.get(name):
+      a, b = o["orig"].get(name), stubs.get(name)
+      if a != b:
+          # a statement naming a private declaration prints it `name✝` in the source; the generated
+          # copy of that declaration is public, so the stub prints it bare: the same statement
+          if a is not None and b is not None and a.replace("✝", "") == b.replace("✝", ""):
+              priv.append(name)
+              continue
           bad += 1
           print("STUB TYPE DIFFERS:", name)
-          print("  orig:", o["orig"].get(name))
-          print("  stub:", stubs.get(name))
-  print("stub types identical to the original:", len(o["with_src"]) - bad, "of", len(o["with_src"]))
+          print("  orig:", a)
+          print("  stub:", b)
+  print("stub types identical to the original:", len(o["with_src"]) - bad, "of", len(o["with_src"]),
+        f"({len(priv)} of them up to the `✝` of a private declaration the copies make public)")
   for it in items:
       if not it["source_name"]:
           print("leaf (no source declaration):", it["name"], "::", stubs.get(it["name"]))
-  res = {"stubs": stubs, "stub_mismatch": bad, "rc": rc}
+  res = {"stubs": stubs, "stub_mismatch": bad, "stub_private_marker_only": priv, "rc": rc}
   json.dump(res, open(STUB_OUT, "w", encoding="utf-8"), indent=1)
   return res
 
@@ -315,6 +322,7 @@ if args.phase in ("all", "solutions"):
     axioms, sol_bad, extra, complete = phase_solutions(s)
     if complete:
         json.dump({"orig": o["orig"], "stubs": s["stubs"], "axioms": axioms, "stub_mismatch": s["stub_mismatch"],
+                   "stub_private_marker_only": s.get("stub_private_marker_only", []),
                    "solution_mismatch": sol_bad, "textual_mismatch": o["textual_mismatch"],
                    "textual_checked": o["textual_checked"], "extra_axioms": extra},
                   open(VOUT, "w", encoding="utf-8"), indent=1)

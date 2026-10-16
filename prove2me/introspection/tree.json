@@ -1268,7 +1268,7 @@
    "kind": "delta",
    "file": "Definitions/Def_MIPRE_Foundations_SAT_FieldTrace_B.lean",
    "module": "MIPRE.Foundations.SAT.FieldTrace",
-   "lines": 182,
+   "lines": 184,
    "kept": [
     "MIPRE.SAT.shoupFrobeniusTraceProg",
     "MIPRE.SAT.shoupTraceProg"
@@ -7157,7 +7157,7 @@
    "kind": "new",
    "file": "Definitions/Def_MIPRE_Foundations_Introspection_FieldIndicatorProg.lean",
    "module": "MIPRE.Foundations.Introspection.FieldIndicatorProg",
-   "lines": 203,
+   "lines": 205,
    "kept": [
     "MIPRE.Introspection.FieldIndicatorProgram.factorProg",
     "MIPRE.Introspection.FieldIndicatorProgram.indicatorProg"
@@ -7839,7 +7839,7 @@
    "kind": "new",
    "file": "Definitions/Def_MIPRE_Foundations_Introspection_FieldGammaProg.lean",
    "module": "MIPRE.Foundations.Introspection.FieldGammaProg",
-   "lines": 214,
+   "lines": 216,
    "kept": [
     "MIPRE.Introspection.FieldGammaProgram.gammaProg",
     "MIPRE.Introspection.FieldGammaProgram.pairFactorProg",

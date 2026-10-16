@@ -6884,7 +6884,7 @@
    "kind": "new",
    "file": "Definitions/Def_MIPRE_Foundations_SAT_FieldCoordinates.lean",
    "module": "MIPRE.Foundations.SAT.FieldCoordinates",
-   "lines": 229,
+   "lines": 231,
    "kept": [
     "MIPRE.LowDegree.BinaryLinear.vectorBits_vectorValue",
     "MIPRE.SAT.instFactPrimeOfNatNat_mIPRE_1",
@@ -44006,7 +44006,7 @@
    "kind": "new",
    "file": "Definitions/Def_MIPRE_TM_CookLevin_ClassicalPcp.lean",
    "module": "MIPRE.TM.CookLevin.ClassicalPcp",
-   "lines": 382,
+   "lines": 384,
    "kept": [
     "MIPRE.TM.CookLevin.Pad.classicalPcpDecider",
     "MIPRE.TM.CookLevin.Pad.classicalPcp_completeness",

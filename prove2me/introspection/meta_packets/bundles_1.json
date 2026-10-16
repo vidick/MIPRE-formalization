@@ -720,7 +720,7 @@
     ]
    }
   ],
-  "lines": 182,
+  "lines": 184,
   "published_bundle": "MIPRE_Foundations_SAT_FieldTrace",
   "imports": [
    "import Definitions.Def_MIPRE_Foundations_Games",
