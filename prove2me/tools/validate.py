@@ -46,6 +46,9 @@ ap.add_argument("--phase", choices=["all", "orig", "stubs", "solutions"], defaul
 ap.add_argument("--compile", action="store_true",
                 help="solutions: compile each solution to the RAM disk first, check it there, delete the olean")
 ap.add_argument("--redo", action="store_true", help="solutions: check again the solutions already recorded")
+ap.add_argument("--orig-from", default=None,
+                help="orig: read the source types from this dump (tools/orig_types.lean) instead of elaborating "
+                     "the source modules, so the phase needs no source olean")
 args = ap.parse_args()
 if args.compile:
     # a solution's olean lives on the RAM disk while it is checked: the module-setup files find it there
@@ -115,11 +118,19 @@ def in_workspace(module):
     return os.path.exists(f"{WS}/.lake/build/lib/lean/{module.replace('.', '/')}.olean")
 
 def phase_orig():
-  with_src = [it for it in items if it["source_name"] and in_workspace(it["module"])]
-  textual = [it for it in items if it["source_name"] and not in_workspace(it["module"])]
-  p = write_check("Orig", sorted({it["module"] for it in with_src}), [(it["source_name"], it["name"]) for it in with_src])
-  rc, out = run_lean(p)
-  orig = parse(out)
+  if args.orig_from:
+    # the dump keys the types by source name, in the same `name :: type` form as the check output
+    dump = parse(open(args.orig_from, encoding="utf-8").read())
+    with_src = [it for it in items if it["source_name"] and it["source_name"] in dump]
+    textual = [it for it in items if it["source_name"] and it["source_name"] not in dump]
+    orig, rc = {it["name"]: dump[it["source_name"]] for it in with_src}, 0
+    print(f"original types read from {args.orig_from}")
+  else:
+    with_src = [it for it in items if it["source_name"] and in_workspace(it["module"])]
+    textual = [it for it in items if it["source_name"] and not in_workspace(it["module"])]
+    p = write_check("Orig", sorted({it["module"] for it in with_src}), [(it["source_name"], it["name"]) for it in with_src])
+    rc, out = run_lean(p)
+    orig = parse(out)
   # a field another project published under a different name is renamed in the generated copies
   # (config `token_renames`); the source's types are read with the same renaming
   for o, n in CFG.get("token_renames", {}).items():

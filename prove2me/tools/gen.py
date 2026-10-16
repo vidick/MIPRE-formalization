@@ -49,8 +49,13 @@ def expand_macros(text):
     for name in sorted(MACRO_EXPANSIONS, key=len, reverse=True):   # longest first: cost_omega₂ before cost_omega
         text = re.sub(r"(?<![\w.'])" + re.escape(name) + r"(?![\w'])", MACRO_EXPANSIONS[name], text)
     for old, new in RENAMES.items():
-        for o, n in ((old, new), (old.split(".")[-1], new.split(".")[-1])):
-            text = re.sub(r"(?<![\w.'])" + re.escape(o) + r"(?![\w'])", n, text)
+        # every written form of the name: in full, and qualified by any suffix of its namespace
+        # (`POVM.ext'` inside `namespace MIPRE`), as well as bare; a rename changes the last component
+        op, np_ = old.split("."), new.split(".")
+        assert op[:-1] == np_[:-1], (old, new)
+        for k in range(len(op)):
+            o, n = ".".join(op[k:]), ".".join(np_[k:])
+            text = re.sub(r"(?<![\w.'])" + re.escape(o) + r"(?![\w'])", lambda _m, n=n: n, text)
     # a field or method of a structure another project published under a different name (the ten-proofs
     # statement file's `POVM.operator` is the proof file's `POVM.effect`): every occurrence of the
     # token, in field notation (`P.effect a`) and in structure instances (`{ effect := … }`); the
@@ -137,7 +142,9 @@ for m in modules:
         if k == "namespace":
             stack.append({"name": t.split()[1], "opens": [], "vars": [], "opts": [], "attrs": []})
         elif k in ("section", "noncomputableSection"):
-            stack.append({"name": None, "opens": [], "vars": [], "opts": [], "attrs": [], "nc": k == "noncomputableSection"})
+            # Lean 4.33 parses `noncomputable section` as a `section` command with the modifier
+            nc = k == "noncomputableSection" or re.match(r"(?:@\[[^\]]*\]\s*)?(?:public\s+)?noncomputable\b", t) is not None
+            stack.append({"name": None, "opens": [], "vars": [], "opts": [], "attrs": [], "nc": nc})
         elif k == "end":
             if stack:
                 stack.pop()
@@ -182,7 +189,8 @@ for m in modules:
             # `maxRecDepth` and `backward.isDefEq.respectTransparency` this way, hundreds of times)
             # and a `universe` declaration are in effect for the rest of their section
             (stack[-1] if stack else root)["opts"].append(t)
-        elif k in ("declaration", "in"):
+        elif k in ("declaration", "in", "lemma", "deriving") or k.startswith("command_Irreducible_def"):
+            # Mathlib's `lemma`, `deriving instance … for …` and `irreducible_def` declare constants too
             frames = [root] + stack
             CTX[(m, c["start"]["offset"])] = {
                 "ns": [f["name"] for f in stack if f["name"]],
@@ -193,7 +201,8 @@ for m in modules:
                 "attrs": [a for f in frames for a in f["attrs"]],
             }
         # moduleDoc, macro, export, eoi: no scope effect
-    assert not stack, (m, stack)
+    # a file may end inside a section or namespace (a file-level `noncomputable section` is often left
+    # open), which Lean closes at the end of the file; only an `end` without a scope would be wrong
 
 def unit_ctx(uid):
     u = U[uid]
