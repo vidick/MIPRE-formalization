@@ -112,6 +112,7 @@ def txt(m, a, b):
 
 # all namespaces of the project (prefixes of declaration names)
 rows = [json.loads(l) for l in open(f"{E}/decl_graph.jsonl", encoding="utf-8") if l.strip()]
+INSTANCES = {r["name"] for r in rows if r.get("isInstance")}
 NS = set()
 for r in rows:
     parts = r["userName"].split(".")
@@ -208,7 +209,7 @@ def node_attr_lines(uids):
     out = []
     for v in sorted(uids, key=lambda v: U[v]["name"]):
         u = U[v]
-        if not u.get("has_attr"):
+        if not u.get("has_attr") and u.get("name") not in INSTANCES:
             continue
         attrs = []
         for a in u.get("attr_text") or []:
@@ -220,6 +221,14 @@ def node_attr_lines(uids):
                 q = q.strip()
                 if q and q.split()[0] not in NO_REPLAY:
                     attrs.append(q)
+        # a node the source declares with the `instance` keyword (a Prop-valued class: `instance
+        # shoupBinField_charP : CharP (shoupBinField k hk).carrier 2`) has a plain `theorem` stub, so
+        # the instance is registered here, with the source's priority
+        if u.get("name") in INSTANCES and not any(q.split()[0] == "instance" for q in attrs):
+            head = txt(u["module"], u["decl"]["declStart"]["offset"], u["decl"]["valStart"]["offset"])
+            mm = re.search(r"\binstance\b\s*(?:\(\s*priority\s*:=\s*([^)]*?)\s*\))?", head)
+            if mm:
+                attrs.insert(0, f"instance {mm.group(1)}" if mm.group(1) else "instance")
         if attrs:
             out.append(f"attribute [{', '.join(attrs)}] {u['name']}")
     return out
